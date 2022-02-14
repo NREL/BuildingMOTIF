@@ -32,6 +32,7 @@ def test_create_graph(tmpdir):
     assert gh.get_all_graph_identifiers() == ["my_graph"]
 
 
+@pytest.mark.skip(reason="empty graphs can't be entered")
 def test_create_empty_graph(tmpdir):
     gh = make_test_graph_handler(tmpdir)
 
@@ -55,6 +56,7 @@ def test_get_graph(tmpdir):
     assert isomorphic(res, g)
 
 
+@pytest.mark.skip(reason="a non-existant graph will just come back empty")
 def test_get_graph_does_not_exist(tmpdir):
     gh = make_test_graph_handler(tmpdir)
 

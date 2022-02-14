@@ -1,4 +1,4 @@
-# BuildingMotif
+# BuildingMotif [![codecov](https://codecov.io/gh/haneslinger/BuildingMotif/branch/main/graph/badge.svg?token=2SNN5HPOHL)](https://codecov.io/gh/haneslinger/BuildingMotif)
 
 # Set up for Development 
 
