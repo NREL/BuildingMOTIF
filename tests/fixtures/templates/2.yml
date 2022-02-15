@@ -1,0 +1,14 @@
+- vav:
+    head: ["name", "zone"]
+    body: >
+      {name} a brick:VAV ;
+        brick:feeds {zone} ;
+        brick:hasPoint {sen} .
+    dependencies:
+     - rule: temp-sensor
+       args: ['sen']
+
+- temp-sensor:
+    head: ['name']
+    body: >
+      {name} a brick:Temperature_Sensor .
