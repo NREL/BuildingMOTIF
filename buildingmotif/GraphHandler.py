@@ -3,6 +3,7 @@ from typing import Callable, Optional
 
 import rdflib
 from rdflib.graph import ConjunctiveGraph, Graph, Store, plugin
+
 from buildingmotif.namespaces import bind_prefixes
 
 PROJECT_DIR = Path(__file__).resolve().parent
