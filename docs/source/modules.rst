@@ -1,9 +1,9 @@
-modules
+autodoc
 =============
 
 GraphHandler
 ------------
-.. automodule:: buildingmotif.GraphHandler
+.. autoclass:: GraphHandler
    :members:
    :undoc-members:
    :show-inheritance:

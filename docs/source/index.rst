@@ -10,7 +10,7 @@ Welcome to BuildingMOTIF's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   buildingmotif
+   modules
 
 
 Indices and tables
