@@ -1,9 +1,7 @@
-autodoc
+buildingmotif
 =============
 
-GraphHandler
-------------
-.. autoclass:: GraphHandler
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. toctree::
+   :maxdepth: 4
+
+   buildingmotif
