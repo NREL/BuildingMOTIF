@@ -11,7 +11,7 @@ Welcome to BuildingMOTIF's documentation!
    :caption: Contents:
 
    buildingmotif
-   modules
+
 
 Indices and tables
 ==================
