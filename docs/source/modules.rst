@@ -1,5 +1,5 @@
 buildingmotif
-===========
+=============
 
 .. toctree::
    :maxdepth: 2
