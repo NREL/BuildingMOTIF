@@ -1,8 +1,7 @@
 buildingmotif
-===================
+=============
 
-GraphHandler
-------------
-.. automodule:: buildingmotif.GraphHandler
-   :members:
-   :undoc-members:
+.. toctree::
+   :maxdepth: 2
+
+   modules
