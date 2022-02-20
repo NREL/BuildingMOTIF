@@ -1,4 +1,8 @@
-# BuildingMotif [![codecov](https://codecov.io/gh/haneslinger/BuildingMotif/branch/main/graph/badge.svg?token=2SNN5HPOHL)](https://codecov.io/gh/haneslinger/BuildingMotif)
+# [![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/haneslinger/BuildingMotif/branch/main/graph/badge.svg?token=2SNN5HPOHL)](https://codecov.io/gh/haneslinger/BuildingMotif)
+
+# BuildingMOTIF
+
+The Building Metadata OnTology Interoperability Framework (BuildingMOTIF)...
 
 # Set up for Development 
 
