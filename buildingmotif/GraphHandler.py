@@ -66,7 +66,7 @@ class GraphHandler:
         return graph
 
     @_with_db_open
-    def get_all_graph_identifiers(self) -> list[str]:
+    def get_all_graph_identifiers(self) -> list:
         """get all graph identifiers
 
         :return: all graph identifiers
