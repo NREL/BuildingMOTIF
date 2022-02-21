@@ -1,5 +1,6 @@
 from collections import defaultdict
 from copy import copy
+from pathlib import Path
 from secrets import token_hex
 from string import Formatter
 from typing import Dict, List, Optional, Set, Union
@@ -89,7 +90,7 @@ class Template:
     def inline_dependencies(self) -> None:
         for dep_name, dep_args in self.deps.items():
             # TODO: handle list
-            dep_templ = self.library[dep_name][0]
+            dep_templ = copy(self.library[dep_name][0])
             dep_templ.inline_dependencies()
 
             # map the parameters: the callee (dep_templ.parameters) args need to be replaced
@@ -110,6 +111,8 @@ class Template:
             self.head += dep_templ.head
             self.body += "\n" + dep_templ.body
             self.deps.update(dep_templ.deps)
+        # erase all deps -- they are resolved!
+        self.deps = {}
 
     def evaluate(
         self, bindings: Dict[str, str], more_namespaces: Optional[dict]
@@ -140,6 +143,7 @@ class Template:
         # with the provided elements filled in
         partial = copy(self)
         partial.body = self.body.format(**all_bindings)
+        partial.head = [x for x in self.head if x not in bindings.keys()]
         return partial
 
     def fill_in(self, bldg: Namespace) -> Graph:
@@ -156,7 +160,7 @@ class Template:
 
 
 class TemplateLibrary:
-    def __init__(self, filename):
+    def __init__(self, filename: Union[str, Path]) -> None:
         self.templates = self._load_template_file(filename)
 
     def __getitem__(self, key):
