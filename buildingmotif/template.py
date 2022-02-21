@@ -2,7 +2,7 @@ from collections import defaultdict
 from copy import copy
 from secrets import token_hex
 from string import Formatter
-from typing import Dict, List, Optional, Union, Set
+from typing import Dict, List, Optional, Set, Union
 
 import yaml
 from rdflib import Graph, Namespace
@@ -40,7 +40,9 @@ def new_graph(more_namespaces: Optional[dict]) -> Graph:
 
 
 class Template:
-    def __init__(self, library: 'TemplateLibrary', template_data: Dict[str, Dict]) -> None:
+    def __init__(
+        self, library: "TemplateLibrary", template_data: Dict[str, Dict]
+    ) -> None:
         self.name, self.template_data = list(template_data.items())[0]
         self.head = self.template_data["head"]
         self.body = self.template_data["body"]
@@ -69,7 +71,7 @@ class Template:
     #            #'deps': self.deps + other.deps,
     #        }
     #        return Template(self.library, {self.name: merged_args})
-    def to_inline(self, preserve_args: List[str]) -> 'Template':
+    def to_inline(self, preserve_args: List[str]) -> "Template":
         """
         Return an inline-able version of this template with a unique
         name prefix to avoid name collisions. Preserve names of
