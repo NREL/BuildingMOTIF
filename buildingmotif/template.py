@@ -2,7 +2,7 @@ from collections import defaultdict
 from copy import copy
 from secrets import token_hex
 from string import Formatter
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Set
 
 import yaml
 from rdflib import Graph, Namespace
@@ -40,7 +40,7 @@ def new_graph(more_namespaces: Optional[dict]) -> Graph:
 
 
 class Template:
-    def __init__(self, library, template_data):
+    def __init__(self, library: 'TemplateLibrary', template_data: Dict[str, Dict]) -> None:
         self.name, self.template_data = list(template_data.items())[0]
         self.head = self.template_data["head"]
         self.body = self.template_data["body"]
@@ -48,7 +48,7 @@ class Template:
         self.library = library
 
     @property
-    def parameters(self):
+    def parameters(self) -> Set[str]:
         params = {fname for _, fname, _, _ in Formatter().parse(self.body) if fname}
         # pull in the parameters for all dependencies....hope there are no loops!
         # TODO: handle or detect circular dependencies
@@ -69,7 +69,7 @@ class Template:
     #            #'deps': self.deps + other.deps,
     #        }
     #        return Template(self.library, {self.name: merged_args})
-    def to_inline(self, preserve_args: List[str]):
+    def to_inline(self, preserve_args: List[str]) -> 'Template':
         """
         Return an inline-able version of this template with a unique
         name prefix to avoid name collisions. Preserve names of
@@ -84,7 +84,7 @@ class Template:
                 )
         return inlined_templ
 
-    def inline_dependencies(self):
+    def inline_dependencies(self) -> None:
         for dep_name, dep_args in self.deps.items():
             # TODO: handle list
             dep_templ = self.library[dep_name][0]
@@ -103,14 +103,14 @@ class Template:
                 dep_templ.body = dep_templ.body.replace(
                     f"{{{callee}}}", f"{{{caller}}}"
                 )
-            dep_templ = dep_templ.to_inline(mapping.values())
+            dep_templ = dep_templ.to_inline(list(mapping.values()))
 
             self.head += dep_templ.head
             self.body += "\n" + dep_templ.body
             self.deps.update(dep_templ.deps)
 
     def evaluate(
-        self, bindings, more_namespaces: Optional[dict]
+        self, bindings: Dict[str, str], more_namespaces: Optional[dict]
     ) -> Union["Template", Graph]:
         """
         Evaluate the template with as many bindings as are provided.
