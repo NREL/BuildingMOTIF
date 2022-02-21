@@ -1,3 +1,4 @@
+from functools import wraps
 from pathlib import Path
 from typing import Callable, Optional
 
@@ -14,6 +15,7 @@ def _with_db_open(func: Callable) -> Callable:
     :type func: Callable
     """
 
+    @wraps(func)
     def wrapper(self, *args):
         self.dataset.open(self.db_uri)
         res = func(self, *args)
