@@ -179,7 +179,7 @@ class TemplateLibrary:
 def dump(
     templ: Template,
     params: Dict[str, str],
-    more_namespaces: Dict[str, Namespace] = None,
+    more_namespaces: Optional[Dict[str, Namespace]] = None,
 ) -> None:
     templ.inline_dependencies()
     if params:
@@ -198,7 +198,7 @@ def dump(
 
 if __name__ == "__main__":
     BLDG = Namespace("urn:bldg#")
-    more_ns = {"bldg": str(BLDG)}
+    more_ns = {"bldg": BLDG}
 
     templates = TemplateLibrary("1.yml")
     sf_templ = templates["supply-fan"][0]
@@ -207,8 +207,8 @@ if __name__ == "__main__":
     ahu_templ = templates["single-zone-vav-ahu"][0]
     dump(ahu_templ, {"name": "bldg:ahu1"}, more_namespaces=more_ns)
 
-    dump(ahu_templ, None, more_namespaces=more_ns)
+    dump(ahu_templ, {}, more_namespaces=more_ns)
 
     templates = TemplateLibrary("2.yml")
     vav_templ = templates["vav"][0]
-    dump(vav_templ, None, more_namespaces=more_ns)
+    dump(vav_templ, {}, more_namespaces=more_ns)
