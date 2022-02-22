@@ -61,17 +61,6 @@ class Template:
             params.update(dep.parameters)
         return params
 
-    #    def merge(self, other: 'Template') -> 'Template':
-    #        """
-    #        Merge two templates together.
-    #        """
-    #        merged_args = {
-    #            'head': self.head + other.head,
-    #            'body': self.body + '\n' + other.body,
-    #            'deps': {},
-    #            #'deps': self.deps + other.deps,
-    #        }
-    #        return Template(self.library, {self.name: merged_args})
     def to_inline(self, preserve_args: List[str]) -> "Template":
         """
         Return an inline-able version of this template with a unique
@@ -155,7 +144,7 @@ class Template:
         assert isinstance(res, Graph)
         return res
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Template({self.name})"
 
 
@@ -163,15 +152,17 @@ class TemplateLibrary:
     def __init__(self, filename: Union[str, Path]) -> None:
         self.templates = self._load_template_file(filename)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> List[Template]:
         return self.templates[key]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"TemplateLibrary({self.templates})"
 
-    def _load_template_file(self, filename) -> Dict[str, List[Template]]:
+    def _load_template_file(
+        self, filename: Union[str, Path]
+    ) -> Dict[str, List[Template]]:
         """
-        Returns list of Tempalte objets defined in the file
+        Returns list of Template objets defined in the file
         """
         ret = defaultdict(list)
         with open(filename, "r") as f:
@@ -185,7 +176,11 @@ class TemplateLibrary:
         return ret
 
 
-def dump(templ, params, more_namespaces=None):
+def dump(
+    templ: Template,
+    params: Dict[str, str],
+    more_namespaces: Dict[str, Namespace] = None,
+) -> None:
     templ.inline_dependencies()
     if params:
         res = templ.evaluate(params, more_namespaces)
