@@ -194,21 +194,3 @@ def dump(
             f"original params ({len(templ.parameters)}): {templ.parameters}"
             "\nnow have ({len(res.parameters)}): {res.parameters}"
         )
-
-
-if __name__ == "__main__":
-    BLDG = Namespace("urn:bldg#")
-    more_ns = {"bldg": BLDG}
-
-    templates = TemplateLibrary("1.yml")
-    sf_templ = templates["supply-fan"][0]
-    dump(sf_templ, {"name": "bldg:sf1"}, more_namespaces=more_ns)
-
-    ahu_templ = templates["single-zone-vav-ahu"][0]
-    dump(ahu_templ, {"name": "bldg:ahu1"}, more_namespaces=more_ns)
-
-    dump(ahu_templ, {}, more_namespaces=more_ns)
-
-    templates = TemplateLibrary("2.yml")
-    vav_templ = templates["vav"][0]
-    dump(vav_templ, {}, more_namespaces=more_ns)
