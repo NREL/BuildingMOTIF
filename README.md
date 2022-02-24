@@ -1,4 +1,4 @@
-# BuildingMOTIF [![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/haneslinger/BuildingMotif/branch/main/graph/badge.svg?token=2SNN5HPOHL)](https://codecov.io/gh/haneslinger/BuildingMotif)
+# BuildingMOTIF [![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF)
 
 The Building Metadata OnTology Interoperability Framework (BuildingMOTIF)...
 
