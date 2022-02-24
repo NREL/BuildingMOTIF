@@ -5,7 +5,7 @@ from rdflib import RDF, Graph, Literal, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
-from buildingmotif.GraphHandler import GraphHandler
+from buildingmotif.graph_handler import GraphHandler
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 SMALL_OFFICE_BRICK_TTL = FIXTURES_DIR / "smallOffice_brick.ttl"
