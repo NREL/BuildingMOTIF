@@ -1,0 +1,9 @@
+.PHONY: test format
+
+test:
+	poetry run pytest -s -vvvv
+
+format:
+	poetry run black .
+	poetry run isort .
+	poetry run pylama

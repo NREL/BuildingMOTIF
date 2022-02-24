@@ -1,0 +1,47 @@
+- single-zone-vav-ahu:
+    head: ["name", "zone"]
+    body: >
+      {name} a brick:AHU ;
+            brick:hasPoint {oat}, {mat}, {rat}, {sat}, {cd}, {hd}, {zt}, {occ} ;
+            brick:hasPart {sf}, {oad} ;
+            brick:feeds {zone} .
+      {oat} a brick:Outside_Air_Temperature_Sensor .
+      {mat} a brick:Mixed_Air_Temperature_Sensor .
+      {rat} a brick:Return_Air_Temperature_Sensor .
+      {sat} a brick:Supply_Air_Temperature_Sensor .
+      {cd} a brick:Cooling_Command .
+      {hd} a brick:Heating_Command .
+      {zt} a brick:Zone_Air_Temperature_Sensor ;
+          brick:isPointOf {zone} .
+      {occ} a brick:Occupancy_Sensor ;
+          brick:isPoitnOf {zone} .
+    dependencies:
+      - rule: supply-fan
+        args: ['sf']
+      - rule: outside-air-damper
+        args: ['oad']
+    
+- supply-fan:
+    head: ["name"]
+    body: >
+      {name} a brick:Supply_Fan ;
+          brick:hasPoint {spd}, {st}, {ss} .
+      {spd} a brick:Fan_Speed_Command .
+      {st} a brick:Fan_Status .
+      {ss} a brick:Start_Stop_Command .
+
+# with command
+- outside-air-damper:
+    head: ["name"]
+    body: >
+      {name} a brick:Outside_Air_Damper ;
+            brick:hasPoint {pos} .
+      {pos} a brick:Damper_Position_Command .
+  
+# with sensor
+- outside-air-damper:
+    head: ["name"]
+    body: >
+      {name} a brick:Outside_Air_Damper ;
+            brick:hasPoint {pos} .
+      {pos} a brick:Damper_Position_Sensor .
