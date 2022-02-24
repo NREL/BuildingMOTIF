@@ -1,20 +1,31 @@
-# BuildingMotif [![codecov](https://codecov.io/gh/haneslinger/BuildingMotif/branch/main/graph/badge.svg?token=2SNN5HPOHL)](https://codecov.io/gh/haneslinger/BuildingMotif)
+# BuildingMOTIF [![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/haneslinger/BuildingMotif/branch/main/graph/badge.svg?token=2SNN5HPOHL)](https://codecov.io/gh/haneslinger/BuildingMotif)
 
-# Set up for Development 
+The Building Metadata OnTology Interoperability Framework (BuildingMOTIF)...
+
+# Installing
 
 Requirements:
 - Python >= 3.9.0
 - [Poetry](https://python-poetry.org/docs/)
 
 Simply clone and run `poetry install`.
-# QuickStart
 
+# Developing
 To test, run 
 ``` 
 poetry run pytest
 ```
+
 To format and lint, run
 ```
 poetry run black .
 poetry run isort .
 poetry run pylama
+```
+
+Documentation can be built locally with the following command, which will make the HTML files in the `docs/build/html` directory.
+
+```
+cd docs
+poetry run make html
+```
