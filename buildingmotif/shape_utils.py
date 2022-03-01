@@ -4,10 +4,11 @@ from dataclasses import dataclass
 from typing import Dict, List
 from warnings import warn
 
-from namespaces import RDF, SH, bind_prefixes
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
 from rdflib.term import Node
-from template import Template
+
+from buildingmotif.namespaces import RDF, SH, bind_prefixes
+from buildingmotif.template import Template
 
 MARK = Namespace("urn:___mark___#")
 
