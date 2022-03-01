@@ -1,21 +1,23 @@
 from collections import defaultdict
 from copy import copy
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict, List
 from warnings import warn
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
 from rdflib.term import Node
 
 from buildingmotif.namespaces import RDF, SH, bind_prefixes
-from buildingmotif.template import Template
+
+if TYPE_CHECKING:
+    from buildingmotif.template import Template
 
 MARK = Namespace("urn:___mark___#")
 
 
 @dataclass
 class _TemplateIndex:
-    template: Template
+    template: "Template"
     param_types: Dict[URIRef, List[URIRef]]
     prop_types: Dict[URIRef, List[URIRef]]
     prop_values: Dict[URIRef, List[Node]]
@@ -34,7 +36,7 @@ def _prep_shape_graph() -> Graph:
     return shape
 
 
-def _index_properties(templ: Template) -> _TemplateIndex:
+def _index_properties(templ: "Template") -> _TemplateIndex:
     templ_graph = templ.evaluate(
         {p: f"mark:{p}" for p in templ.parameters}, {"mark": MARK}
     )
@@ -72,7 +74,7 @@ def _index_properties(templ: Template) -> _TemplateIndex:
     )
 
 
-def template_to_shape(template: Template) -> Graph:
+def template_to_shape(template: "Template") -> Graph:
     """
     Turn this template into a SHACL shape. If 'use_all' is True, this will
     create a shape that incorporates all templates by the same name in the same library.

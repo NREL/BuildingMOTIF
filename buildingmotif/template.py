@@ -9,6 +9,7 @@ import yaml
 from rdflib import Graph, Namespace
 
 from buildingmotif.namespaces import bind_prefixes
+from buildingmotif.shape_utils import template_to_shape
 
 PREAMBLE = """@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -200,7 +201,7 @@ class TemplateLibrary:
         full_graph = new_graph({"mark": MARK})
         for templates in self.templates.values():
             for template in templates:
-                full_graph += template.get_shacl_shape()
+                full_graph += template_to_shape(template)
         return full_graph
 
 
