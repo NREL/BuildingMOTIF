@@ -31,7 +31,7 @@ PREAMBLE = """@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
 """
 
 
-def new_graph(more_namespaces: Optional[dict]) -> Graph:
+def new_graph(more_namespaces: Optional[dict] = None) -> Graph:
     g = Graph()
     bind_prefixes(g)
     if more_namespaces:
@@ -60,6 +60,26 @@ class Template:
             dep = self.library[dep_name][0]
             params.update(dep.parameters)
         return params
+
+    @property
+    def dependency_parameters(self) -> Set[str]:
+        params = set()
+        # TODO: handle or detect circular dependencies
+        for dep_name, dep_args in self.deps.items():
+            params = params.union(dep_args)
+            # TODO: handle list
+            dep = self.library[dep_name][0]
+            params.update(dep.parameters)
+            params.update(dep.dependency_parameters)
+        return params
+
+    def dependency_for_parameter(self, param: str) -> Optional["Template"]:
+        """
+        Returns the dependency that uses the given parameter, if one exists
+        """
+        for dep_name, dep_args in self.deps.items():
+            if param in dep_args:
+                return dep_name
 
     def to_inline(self, preserve_args: List[str]) -> "Template":
         """
@@ -104,7 +124,7 @@ class Template:
         self.deps = {}
 
     def evaluate(
-        self, bindings: Dict[str, str], more_namespaces: Optional[dict]
+        self, bindings: Dict[str, str], more_namespaces: Optional[dict] = None
     ) -> Union["Template", Graph]:
         """
         Evaluate the template with as many bindings as are provided.
@@ -174,6 +194,14 @@ class TemplateLibrary:
                 templ = Template(self, templ)
                 ret[templ.name].append(templ)
         return ret
+
+    def get_shacl_shapes(self) -> Graph:
+        MARK = Namespace("urn:___mark___#")
+        full_graph = new_graph({"mark": MARK})
+        for templates in self.templates.values():
+            for template in templates:
+                full_graph += template.get_shacl_shape()
+        return full_graph
 
 
 def dump(
