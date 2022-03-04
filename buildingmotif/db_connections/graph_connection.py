@@ -1,23 +1,19 @@
-from functools import wraps
 from pathlib import Path
 from typing import Callable, Optional
 
 import rdflib
 from rdflib.graph import ConjunctiveGraph, Graph, Store, plugin
 
-from buildingmotif.namespaces import bind_prefixes
-
 PROJECT_DIR = Path(__file__).resolve().parent
 
 
 def _with_db_open(func: Callable) -> Callable:
-    """Decorator that opens and closes database.
+    """Decorator that opens and closes db
 
     :param func: decorated function
     :type func: Callable
     """
 
-    @wraps(func)
     def wrapper(self, *args):
         self.dataset.open(self.db_uri)
         res = func(self, *args)
@@ -28,13 +24,13 @@ def _with_db_open(func: Callable) -> Callable:
     return wrapper
 
 
-class GraphHandler:
+class GraphConnection:
     def __init__(
         self,
         db_uri: Optional[str] = None,
         db_identifier: Optional[str] = "buildingmotif_store",
     ) -> None:
-        """Creates datastore and database.
+        """Creates store and db
 
         :param db_uri: defaults to None
         :type db_uri: Optional[str], optional
@@ -54,13 +50,13 @@ class GraphHandler:
         self.dataset.close()
 
     @_with_db_open
-    def create_graph(self, identifier: str, graph: Optional[Graph] = None) -> Graph:
-        """Create a graph in the dataset.
+    def create_graph(self, identifier: str, graph: Graph = None) -> Graph:
+        """Create a graph in the dataset
 
         :param identifier: identifier of graph
         :type identifier: str
         :param graph: graph to add, defaults to None
-        :type graph: Optional[Graph], optional
+        :type graph: Graph
         :return: graph added
         :rtype: Graph
         """
@@ -70,8 +66,8 @@ class GraphHandler:
         return graph
 
     @_with_db_open
-    def get_all_graph_identifiers(self) -> list:
-        """Get all graph identifiers.
+    def get_all_graph_identifiers(self) -> list[str]:
+        """get all graph identifiers
 
         :return: all graph identifiers
         :rtype: list[str]
@@ -83,7 +79,7 @@ class GraphHandler:
 
     @_with_db_open
     def get_graph(self, identifier: str) -> Graph:
-        """Get graph by identifier. Graph has triples, no context.
+        """get Graph by identifier. Graph has triples, no context
 
         :param identifier: graph identifier
         :type identifier: str
@@ -91,7 +87,6 @@ class GraphHandler:
         :rtype: Graph
         """
         result = Graph()
-        bind_prefixes(result)
         for t in self.dataset.get_context(identifier):
             result.add(t)
 
@@ -99,11 +94,23 @@ class GraphHandler:
 
     @_with_db_open
     def update_graph(self, identifier: str, update_graph: Graph) -> Graph:
-        """Not implemented."""
-        raise NotImplementedError
+        """update graph
+
+        :param identifier: id of graph
+        :type identifier: str
+        :param update_graph: new graph
+        :type update_graph: Graph
+        :return: new graph
+        :rtype: Graph
+        """
+        self.dataset.remove((None, None, None, identifier))
+
+        new_triples = [(s, o, p, identifier) for (s, o, p) in update_graph]
+        self.dataset.addN(new_triples)
+
+        return update_graph
 
     @_with_db_open
     def delete_graph(self, identifier: str) -> None:
-        """Delete Graph."""
         context = rdflib.term.URIRef(identifier)
         self.dataset.remove((None, None, None, context))
