@@ -84,3 +84,20 @@ def test_update_db_model_name_does_not_exist(tmpdir):
 
     with pytest.raises(NoResultFound):
         tc.update_db_model_name("I don't exist", "new_name")
+
+
+def test_delete_db_model(tmpdir):
+    tc = make_tmp_table_connection(tmpdir)
+
+    db_model = tc.create_db_model(name="my_db_model")
+    tc.delete_db_model(db_model.id)
+
+    with pytest.raises(NoResultFound):
+        tc.get_db_model(db_model.id)
+
+
+def tests_delete_db_model_does_does_exist(tmpdir):
+    tc = make_tmp_table_connection(tmpdir)
+
+    with pytest.raises(NoResultFound):
+        tc.delete_db_model("does not exist")

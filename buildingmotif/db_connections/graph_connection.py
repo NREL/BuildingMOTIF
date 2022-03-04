@@ -1,19 +1,23 @@
+from functools import wraps
 from pathlib import Path
 from typing import Callable, Optional
 
 import rdflib
 from rdflib.graph import ConjunctiveGraph, Graph, Store, plugin
 
+from buildingmotif.namespaces import bind_prefixes
+
 PROJECT_DIR = Path(__file__).resolve().parent
 
 
 def _with_db_open(func: Callable) -> Callable:
-    """Decorator that opens and closes db
+    """Decorator that opens and closes database.
 
     :param func: decorated function
     :type func: Callable
     """
 
+    @wraps(func)
     def wrapper(self, *args):
         self.dataset.open(self.db_uri)
         res = func(self, *args)
@@ -30,7 +34,7 @@ class GraphConnection:
         db_uri: Optional[str] = None,
         db_identifier: Optional[str] = "buildingmotif_store",
     ) -> None:
-        """Creates store and db
+        """Creates datastore and database.
 
         :param db_uri: defaults to None
         :type db_uri: Optional[str], optional
@@ -51,7 +55,7 @@ class GraphConnection:
 
     @_with_db_open
     def create_graph(self, identifier: str, graph: Graph = None) -> Graph:
-        """Create a graph in the dataset
+        """Create a graph in the dataset.
 
         :param identifier: identifier of graph
         :type identifier: str
@@ -67,7 +71,7 @@ class GraphConnection:
 
     @_with_db_open
     def get_all_graph_identifiers(self) -> list[str]:
-        """get all graph identifiers
+        """Get all graph identifiers.
 
         :return: all graph identifiers
         :rtype: list[str]
@@ -79,7 +83,7 @@ class GraphConnection:
 
     @_with_db_open
     def get_graph(self, identifier: str) -> Graph:
-        """get Graph by identifier. Graph has triples, no context
+        """Get graph by identifier. Graph has triples, no context.
 
         :param identifier: graph identifier
         :type identifier: str
@@ -87,6 +91,7 @@ class GraphConnection:
         :rtype: Graph
         """
         result = Graph()
+        bind_prefixes(result)
         for t in self.dataset.get_context(identifier):
             result.add(t)
 
@@ -112,5 +117,6 @@ class GraphConnection:
 
     @_with_db_open
     def delete_graph(self, identifier: str) -> None:
+        """Delete Graph."""
         context = rdflib.term.URIRef(identifier)
         self.dataset.remove((None, None, None, context))
