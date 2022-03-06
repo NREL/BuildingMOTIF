@@ -71,7 +71,12 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
         elif o in MARK and o not in param_types:
             warn(f"{o} is does not have a type and does not seem to be a literal")
     return _TemplateIndex(
-        templ, param_types, prop_types, prop_values, prop_shapes, target
+        templ,
+        param_types,
+        dict(prop_types),
+        dict(prop_values),
+        dict(prop_shapes),
+        target,
     )
 
 

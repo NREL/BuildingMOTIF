@@ -64,7 +64,7 @@ class Template:
         """
         The set of parameters used in the dependencies of this template
         """
-        params = set()
+        params: Set[str] = set()
         # TODO: handle or detect circular dependencies
         for dep_name, dep_args in self.deps.items():
             params = params.union(dep_args)
@@ -81,6 +81,7 @@ class Template:
         for dep_name, dep_args in self.deps.items():
             if param in dep_args:
                 return dep_name
+        return None
 
     def to_inline(self, preserve_args: List[str]) -> "Template":
         """
