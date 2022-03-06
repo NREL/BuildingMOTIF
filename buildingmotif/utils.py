@@ -1,7 +1,7 @@
 from collections import defaultdict
 from copy import copy
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Dict, List, Optional
 from warnings import warn
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
@@ -12,6 +12,7 @@ from buildingmotif.namespaces import RDF, SH, bind_prefixes
 if TYPE_CHECKING:
     from buildingmotif.template import Template
 
+# special namespace to denote template parameters inside RDF graphs
 MARK = Namespace("urn:___mark___#")
 
 
@@ -74,12 +75,34 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
     )
 
 
+def _add_property_shape(
+    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Node
+):
+    pshape = BNode()
+    graph.add((name, SH.property, pshape))
+    graph.add((pshape, SH.path, path))
+    graph.add((pshape, constraint, value))
+    graph.add((pshape, SH["minCount"], Literal(1)))
+    graph.add((pshape, SH["maxCount"], Literal(1)))
+
+
+def _add_qualified_property_shape(
+    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Node
+):
+    pshape = BNode()
+    graph.add((name, SH.property, pshape))
+    graph.add((pshape, SH.path, path))
+    qvc = BNode()
+    graph.add((pshape, SH["qualifiedValueShape"], qvc))
+    graph.add((qvc, constraint, value))
+    graph.add((pshape, SH["qualifiedMinCount"], Literal(1)))
+    graph.add((pshape, SH["qualifiedMaxCount"], Literal(1)))
+
+
 def template_to_shape(template: "Template") -> Graph:
     """
     Turn this template into a SHACL shape. If 'use_all' is True, this will
     create a shape that incorporates all templates by the same name in the same library.
-
-    # TODO: handle use_all
     """
     templ = copy(template)
     shape = _prep_shape_graph()
@@ -115,36 +138,16 @@ def template_to_shape(template: "Template") -> Graph:
                     shape, MARK[templ.name], SH.node, prop, MARK[shp]
                 )
 
-            # orn = BNode(f"orn_{target}{prop}")
-            # shape.add((pshape, SH["or"], orn))
-            # ors = []
-            # for ptype in ptypes:
-            #     ors.append(BNode())
-            #     shape.add((ors[-1], SH["class"], ptype))
-            # Collection(shape, orn, ors)
-
     return shape
 
 
-def _add_property_shape(
-    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Node
-):
-    pshape = BNode()
-    graph.add((name, SH.property, pshape))
-    graph.add((pshape, SH.path, path))
-    graph.add((pshape, constraint, value))
-    graph.add((pshape, SH["minCount"], Literal(1)))
-    graph.add((pshape, SH["maxCount"], Literal(1)))
-
-
-def _add_qualified_property_shape(
-    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Node
-):
-    pshape = BNode()
-    graph.add((name, SH.property, pshape))
-    graph.add((pshape, SH.path, path))
-    qvc = BNode()
-    graph.add((pshape, SH["qualifiedValueShape"], qvc))
-    graph.add((qvc, constraint, value))
-    graph.add((pshape, SH["qualifiedMinCount"], Literal(1)))
-    graph.add((pshape, SH["qualifiedMaxCount"], Literal(1)))
+def new_temporary_graph(more_namespaces: Optional[dict] = None) -> Graph:
+    """
+    Creates a new in-memory RDF graph with common and additional namespace bindings
+    """
+    g = Graph()
+    bind_prefixes(g)
+    if more_namespaces:
+        for prefix, uri in more_namespaces.items():
+            g.bind(prefix, uri)
+    return g

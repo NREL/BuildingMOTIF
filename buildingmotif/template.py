@@ -8,8 +8,7 @@ from typing import Dict, List, Optional, Set, Union
 import yaml
 from rdflib import Graph, Namespace
 
-from buildingmotif.namespaces import bind_prefixes
-from buildingmotif.shape_utils import template_to_shape
+from buildingmotif.utils import new_temporary_graph, template_to_shape
 
 PREAMBLE = """@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -32,16 +31,11 @@ PREAMBLE = """@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
 """
 
 
-def new_graph(more_namespaces: Optional[dict] = None) -> Graph:
-    g = Graph()
-    bind_prefixes(g)
-    if more_namespaces:
-        for prefix, uri in more_namespaces.items():
-            g.bind(prefix, uri)
-    return g
-
-
 class Template:
+    """
+    A template is a function that takes a set of parameters and returns a graph.
+    """
+
     def __init__(
         self, library: "TemplateLibrary", template_data: Dict[str, Dict]
     ) -> None:
@@ -53,6 +47,9 @@ class Template:
 
     @property
     def parameters(self) -> Set[str]:
+        """
+        The set of all parameters used in this template, including its dependencies
+        """
         params = {fname for _, fname, _, _ in Formatter().parse(self.body) if fname}
         # pull in the parameters for all dependencies....hope there are no loops!
         # TODO: handle or detect circular dependencies
@@ -64,6 +61,9 @@ class Template:
 
     @property
     def dependency_parameters(self) -> Set[str]:
+        """
+        The set of parameters used in the dependencies of this template
+        """
         params = set()
         # TODO: handle or detect circular dependencies
         for dep_name, dep_args in self.deps.items():
@@ -98,6 +98,9 @@ class Template:
         return inlined_templ
 
     def inline_dependencies(self) -> None:
+        """
+        Transforms the template by inlining all of its dependencies (this happens recursively)
+        """
         for dep_name, dep_args in self.deps.items():
             # TODO: handle list
             dep_templ = copy(self.library[dep_name][0])
@@ -137,7 +140,7 @@ class Template:
         # if all of the parameters have been bound then produce a serialized graph
         # and then parse it to an rdflib.Graph
         if len(bindings) == len(self.parameters):
-            g = new_graph(more_namespaces)
+            g = new_temporary_graph(more_namespaces)
             if more_namespaces:
                 preamble = PREAMBLE + "\n".join(
                     f"@prefix {prefix}: <{uri}> .\n"
@@ -198,7 +201,7 @@ class TemplateLibrary:
 
     def get_shacl_shapes(self) -> Graph:
         MARK = Namespace("urn:___mark___#")
-        full_graph = new_graph({"mark": MARK})
+        full_graph = new_temporary_graph({"mark": MARK})
         for templates in self.templates.values():
             for template in templates:
                 full_graph += template_to_shape(template)
