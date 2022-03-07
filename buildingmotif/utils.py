@@ -148,7 +148,7 @@ def template_to_shape(template: "Template") -> Graph:
 
 def new_temporary_graph(more_namespaces: Optional[dict] = None) -> Graph:
     """
-    Creates a new in-memory RDF graph with common and additional namespace bindings
+    Creates a new in-memory RDF graph with common and additional namespace bindings.
     """
     g = Graph()
     bind_prefixes(g)
