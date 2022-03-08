@@ -94,10 +94,11 @@ class VF2SemanticMatcher(DiGraphMatcher):
 
 def generate_all_template_subgraphs(T: Graph) -> Generator[Graph, None, None]:
     """
-    Generates all node-induced subgraphs of T in order of increasing size
+    Generates all node-induced subgraphs of T in order of decreasing size
     """
-    for nodecount in range(len(T.all_nodes())):
+    for nodecount in reversed(range(len(T.all_nodes()))):
         for nodelist in combinations(T.all_nodes(), nodecount):
+            # print(nodelist)
             yield digraph_to_rdflib(rdflib_to_networkx_digraph(T).subgraph(nodelist))
 
 
@@ -118,13 +119,17 @@ def find_largest_subgraph_monomorphism(
     """
     Returns the largest subgraph of T that is monomorphic to G.
     """
-    largest_mapping = {}
-    largest_subgraph = nx.DiGraph()
+    largest_mapping: Dict[Node, Node] = {}
+    largest_subgraph = Graph()
     for Tsubgraph in generate_all_template_subgraphs(T):
+        assert Tsubgraph is not None
+        if len(Tsubgraph) < len(largest_subgraph):
+            continue
         matching = VF2SemanticMatcher(G, Tsubgraph, ontology)
         if matching.subgraph_is_monomorphic():
             for sg in matching.subgraph_monomorphisms_iter():
                 if len(sg) >= len(largest_mapping):
+                    # print(Tsubgraph.serialize(format="turtle"))
                     largest_mapping = sg
                     largest_subgraph = Tsubgraph
     return largest_mapping, largest_subgraph

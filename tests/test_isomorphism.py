@@ -1,8 +1,17 @@
+from pathlib import Path
+
 from rdflib import Namespace
 
 from buildingmotif.monomorphism import find_largest_subgraph_monomorphism
 from buildingmotif.namespaces import BRICK, RDF
+from buildingmotif.template import TemplateLibrary
 from buildingmotif.utils import new_temporary_graph
+
+FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
+SMALL_OFFICE_BRICK_TTL = FIXTURES_DIR / "smallOffice_brick.ttl"
+
+ONTOLOGY = new_temporary_graph()
+ONTOLOGY.parse("https://sparql.gtf.fyi/ttl/Brick1.3rc1.ttl")
 
 
 def test_simple_monomorphism():
@@ -20,11 +29,23 @@ def test_simple_monomorphism():
     G.add((BLDG.C, BRICK.isPartOf, BLDG.D))
     G.add((BLDG.D, RDF.type, BRICK.Building))
 
-    ontology = new_temporary_graph()
-    ontology.parse("https://sparql.gtf.fyi/ttl/Brick1.3rc1.ttl")
-    mapping, tsub = find_largest_subgraph_monomorphism(T, G, ontology)
+    mapping, tsub = find_largest_subgraph_monomorphism(T, G, ONTOLOGY)
     assert len(mapping) == 3
     assert tsub is not None
     assert (BLDG.A, RDF.type, BRICK.Room) in tsub
     assert (BLDG.A, BRICK.isPartOf, BLDG.B) in tsub
     assert len(tsub) == 2
+
+
+def test_template_monomorphism():
+    BLDG = Namespace("urn:bldg#")
+    lib = TemplateLibrary(FIXTURES_DIR / "templates" / "smalloffice.yml")
+    templ = lib["zone"][0]
+    T = templ.fill_in(BLDG)
+    print(T.serialize(format="turtle"))
+    B = new_temporary_graph()
+    B.parse(SMALL_OFFICE_BRICK_TTL)
+
+    mapping, tsub = find_largest_subgraph_monomorphism(T, B, ONTOLOGY)
+    print(tsub.serialize(format="turtle"))
+    print(mapping)
