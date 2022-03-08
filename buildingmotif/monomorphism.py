@@ -65,7 +65,7 @@ def get_semantic_feasibility(
         # case 2: both are instances
         if _compatible_types(n1, G1, n2, G2, ontology):
             return True
-        return True
+        return False
 
     return semantic_feasibility
 

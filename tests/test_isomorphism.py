@@ -30,11 +30,12 @@ def test_simple_monomorphism():
     G.add((BLDG.D, RDF.type, BRICK.Building))
 
     mapping, tsub = find_largest_subgraph_monomorphism(T, G, ONTOLOGY)
-    assert len(mapping) == 3
+    assert len(mapping) == 2
+    assert mapping[BLDG.C] == BLDG.A
+    assert mapping[BRICK.Room] == BRICK.Room
     assert tsub is not None
     assert (BLDG.A, RDF.type, BRICK.Room) in tsub
-    assert (BLDG.A, BRICK.isPartOf, BLDG.B) in tsub
-    assert len(tsub) == 2
+    assert len(tsub) == 1
 
 
 def test_template_monomorphism():
