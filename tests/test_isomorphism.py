@@ -1,11 +1,11 @@
 from rdflib import Namespace
 
-from buildingmotif.isomorphism import find_largest_subgraph_monomorphism
+from buildingmotif.monomorphism import find_largest_subgraph_monomorphism
 from buildingmotif.namespaces import BRICK, RDF
 from buildingmotif.utils import new_temporary_graph
 
 
-def test_simple_isomorphism():
+def test_simple_monomorphism():
     BLDG = Namespace("urn:bldg#")
     T = new_temporary_graph()
     T.bind("bldg", BLDG)
@@ -25,8 +25,6 @@ def test_simple_isomorphism():
     mapping, tsub = find_largest_subgraph_monomorphism(T, G, ontology)
     assert len(mapping) == 3
     assert tsub is not None
-    print(mapping)
-    print(tsub.serialize(format="turtle"))
     assert (BLDG.A, RDF.type, BRICK.Room) in tsub
     assert (BLDG.A, BRICK.isPartOf, BLDG.B) in tsub
     assert len(tsub) == 2
