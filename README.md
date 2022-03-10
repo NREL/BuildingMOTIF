@@ -2,8 +2,6 @@
 
 The Building Metadata OnTology Interoperability Framework (BuildingMOTIF)...
 
-![repo-vis](./diagram.svg)
-
 # Installing
 
 Requirements:
@@ -31,3 +29,7 @@ Documentation can be built locally with the following command, which will make t
 cd docs
 poetry run make html
 ```
+
+# Visualizing
+
+![repo-vis](./diagram.svg)
