@@ -1,11 +1,13 @@
 # https://github.com/githubocto/repo-visualizer
 
-name: Create diagram
+name: repo-vis
+
 on:
   workflow_dispatch: {}
   push:
     branches:
       - add/repo-vis
+
 jobs:
   get_data:
     runs-on: ubuntu-latest
@@ -16,4 +18,10 @@ jobs:
         uses: githubocto/repo-visualizer@main
         with:
           excluded_paths: "ignore,.github"
-          
+          output_file: "repo-vis.svg"
+          artifact_name: "repo-vis"
+      - name: Get artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: "repo-vis"
+          path: "downloads"
