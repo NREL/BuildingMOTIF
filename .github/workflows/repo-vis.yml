@@ -9,7 +9,7 @@ on:
       - add/repo-vis
 
 jobs:
-  get_data:
+  repo-vis:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,10 +18,3 @@ jobs:
         uses: githubocto/repo-visualizer@main
         with:
           excluded_paths: "ignore,.github"
-          output_file: "repo-vis.svg"
-          artifact_name: "repo-vis"
-      - name: Get artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: "repo-vis"
-          path: "downloads"
