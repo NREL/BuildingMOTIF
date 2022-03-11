@@ -3,9 +3,10 @@ Using the VF2 algorithm to compute subgraph isomorphisms between a template T an
 If the found isomorphism is a subgraph of T, then T is not fully matched and additional
 input is required to fully populate the template.
 """
+from collections import defaultdict
 from collections.abc import Callable
 from itertools import combinations
-from typing import Dict, Generator, Set, Tuple
+from typing import Dict, Generator, List, Set
 
 import networkx as nx
 from networkx.algorithms.isomorphism import DiGraphMatcher
@@ -115,21 +116,86 @@ def digraph_to_rdflib(digraph: nx.DiGraph) -> Graph:
 
 def find_largest_subgraph_monomorphism(
     T: Graph, G: Graph, ontology: Graph
-) -> Tuple[Dict[Node, Node], Graph]:
+) -> "TemplateMonomorphisms":
     """
-    Returns the largest subgraph of T that is monomorphic to G.
+    Returns the set of subgraphs of G that are monomorphic to T; these are organized
+    by how "complete" the monomorphism is.
+
+    TODO: fix it! Make a new class that can hold and organize the results.
     """
-    largest_mapping: Dict[Node, Node] = {}
-    largest_subgraph = Graph()
+    # saves all of the mappings we have seen, organized by how big the mapping is
+    ret = TemplateMonomorphisms(G, T)
     for Tsubgraph in generate_all_template_subgraphs(T):
         assert Tsubgraph is not None
-        if len(Tsubgraph) < len(largest_subgraph):
-            continue
         matching = VF2SemanticMatcher(G, Tsubgraph, ontology)
         if matching.subgraph_is_monomorphic():
             for sg in matching.subgraph_monomorphisms_iter():
-                if len(sg) >= len(largest_mapping):
-                    # print(Tsubgraph.serialize(format="turtle"))
-                    largest_mapping = sg
-                    largest_subgraph = Tsubgraph
-    return largest_mapping, largest_subgraph
+                ret.add_mapping(sg)
+    return ret
+
+
+class TemplateMonomorphisms:
+    """
+    A class that holds the results of the template matching process.
+    """
+
+    mappings: Dict[int, List[Dict[Node, Node]]] = defaultdict(list)
+    template: Graph
+    building: Graph
+
+    def __init__(self, building: Graph, template: Graph):
+        self.template = template
+        self.building = building
+
+    def add_mapping(self, mapping: Dict[Node, Node]):
+        """
+        Adds a mapping to the set of mappings.
+        """
+        if mapping not in self.mappings[len(mapping)]:
+            self.mappings[len(mapping)].append(mapping)
+
+    @property
+    def largest_mapping_size(self) -> int:
+        """
+        Returns the size of the largest mapping
+        """
+        return max(self.mappings.keys())
+
+    def mappings_of_size(self, size: int) -> List[Dict[Node, Node]]:
+        """
+        Returns the mappings of the given size
+        """
+        return self.mappings[size]
+
+    def subgraph_from_mapping(self, mapping: Dict[Node, Node]) -> Graph:
+        """
+        Returns the subgraph of the building graph that corresponds to the given
+        mapping.
+        """
+        g = rdflib_to_networkx_digraph(self.building)
+        sg = g.subgraph(list(mapping.keys()))
+        return digraph_to_rdflib(sg)
+
+    def mappings_iter(self) -> Generator[Dict[Node, Node], None, None]:
+        """
+        Returns an iterator over all of the mappings in descending order
+        of the size of the mapping. This means the most complete mappings
+        will be returned first.
+        """
+        for size in sorted(self.mappings.keys(), reverse=True):
+            for mapping in self.mappings_of_size(size):
+                if not mapping:
+                    continue
+                yield mapping
+
+    def subgraphs_iter(self) -> Generator[Graph, None, None]:
+        """
+        Returns an iterator over all of the subgraphs in descending order
+        of the size of the subgraph. This means the most complete subgraphs
+        will be returned first.
+        """
+        for size in sorted(self.mappings.keys(), reverse=True):
+            for mapping in self.mappings_of_size(size):
+                if not mapping:
+                    continue
+                yield self.subgraph_from_mapping(mapping)

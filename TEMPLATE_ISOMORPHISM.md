@@ -12,3 +12,7 @@ Put another way, the difference between a subgraph monomorphism and a node-induc
 The isomorphism or monomorphism between two graphs *G* and *G'* is an *injective* mapping *M: V -> V'*.
 The injective requirement means that each element of *V'* is mapped to at most one element of *V*.
 A *subgraph homomorphism* is a subgraph monomorphism that does not have the injective requirement.
+
+## Problem Statement
+
+Given a building graph *G* and a template *T*, our goal is to find the set of subgraphs of *G* that are monomorphic to *T*.
