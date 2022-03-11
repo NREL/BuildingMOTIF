@@ -1,0 +1,21 @@
+# https://github.com/githubocto/repo-visualizer
+
+name: repo-vis
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+
+jobs:
+  repo-vis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Update diagram
+        uses: githubocto/repo-visualizer@main
+        with:
+          excluded_paths: "ignore,.github"
+          commit_message: "Repo visualizer: updated diagram [skip ci]"

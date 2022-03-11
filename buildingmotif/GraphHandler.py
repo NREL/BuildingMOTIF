@@ -54,13 +54,13 @@ class GraphHandler:
         self.dataset.close()
 
     @_with_db_open
-    def create_graph(self, identifier: str, graph: Optional[Graph] = None) -> Graph:
+    def create_graph(self, identifier: str, graph: Graph) -> Graph:
         """Create a graph in the dataset.
 
         :param identifier: identifier of graph
         :type identifier: str
         :param graph: graph to add, defaults to None
-        :type graph: Optional[Graph], optional
+        :type graph: Graph
         :return: graph added
         :rtype: Graph
         """
