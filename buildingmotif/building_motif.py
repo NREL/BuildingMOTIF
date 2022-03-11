@@ -8,10 +8,10 @@ from buildingmotif.db_connections.table_connection import TableConnection
 
 
 class BuildingMotif:
-    """Manages buildingMOTIF data classes"""
+    """Manages BuildingMOTIF data classes."""
 
     def __init__(self, db_uri: str) -> None:
-        """create BuildingMotif
+        """Class constructor.
 
         :param db_uri: db uri
         :type db_uri: str
@@ -20,7 +20,7 @@ class BuildingMotif:
         self.graph_con = GraphConnection(db_uri)
 
     def create_model(self, name: str, graph: Optional[rdflib.Graph] = None) -> Model:
-        """create model
+        """Create model.
 
         :param name: name
         :type name: str
@@ -39,7 +39,7 @@ class BuildingMotif:
         return Model(id=db_model.id, name=db_model.name, graph=new_graph)
 
     def get_model(self, id: str) -> Model:
-        """get Model
+        """Get model.
 
         :param id: id
         :type id: str
@@ -52,7 +52,7 @@ class BuildingMotif:
         return Model(id=id, name=db_model.name, graph=graph)
 
     def save_model(self, model: Model) -> None:
-        """save model to the db
+        """Save model to the database.
 
         :param model: model
         :type model: Model
@@ -63,7 +63,7 @@ class BuildingMotif:
         self.graph_con.update_graph(db_model.graph_id, model.graph)
 
     def delete_model(self, model: Model) -> None:
-        """Deep delete model
+        """Deep delete model.
 
         :param model: model to delete
         :type model: Model

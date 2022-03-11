@@ -7,10 +7,10 @@ from buildingmotif.tables import Base, DBModel
 
 
 class TableConnection:
-    """Controls intercation with the db"""
+    """Controls interaction with the database."""
 
     def __init__(self, db_uri: str) -> None:
-        """create TableConnection
+        """Class constructor.
 
         :param db_uri: defaults to None
         :type db_uri: str, optional
@@ -26,7 +26,7 @@ class TableConnection:
         self.session = Session()
 
     def create_db_model(self, name: str) -> DBModel:
-        """create a DBModel
+        """Create a database model.
 
         :param name: name of dbmodel
         :type name: str
@@ -41,7 +41,7 @@ class TableConnection:
         return db_model
 
     def get_all_db_models(self) -> list("DBModel"):
-        """get all db models
+        """Get all database models.
 
         :return: all DBModels
         :rtype: DBModel
@@ -49,7 +49,7 @@ class TableConnection:
         return self.session.query(DBModel).all()
 
     def get_db_model(self, id: str) -> DBModel:
-        """get DBModel from id
+        """Get database model from id.
 
         :param id: id of DBModel
         :type id: str
@@ -59,7 +59,7 @@ class TableConnection:
         return self.session.query(DBModel).filter(DBModel.id == id).one()
 
     def update_db_model_name(self, id: str, name: str) -> None:
-        """update DBModel
+        """Update database model.
 
         :param id: id of DBModel
         :type id: str
@@ -72,7 +72,7 @@ class TableConnection:
         self.session.commit()
 
     def delete_db_model(self, id: str) -> None:
-        """delete DBModel
+        """Delete database model.
 
         :param id: id of deleted DBModel
         :type id: str

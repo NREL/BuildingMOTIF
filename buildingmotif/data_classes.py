@@ -5,7 +5,7 @@ import rdflib
 
 @dataclass
 class Model:
-    """Model of a building. This class mirrors DBModel"""
+    """Model of a building. This class mirrors DBModel."""
 
     id: str
     name: str

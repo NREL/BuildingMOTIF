@@ -29,6 +29,8 @@ def _with_db_open(func: Callable) -> Callable:
 
 
 class GraphConnection:
+    """Manages graph connection."""
+
     def __init__(
         self,
         db_uri: Optional[str] = None,
@@ -55,7 +57,7 @@ class GraphConnection:
 
     @_with_db_open
     def create_graph(self, identifier: str, graph: Graph = None) -> Graph:
-        """Create a graph in the dataset.
+        """Create a graph in the database.
 
         :param identifier: identifier of graph
         :type identifier: str
@@ -99,7 +101,7 @@ class GraphConnection:
 
     @_with_db_open
     def update_graph(self, identifier: str, update_graph: Graph) -> Graph:
-        """update graph
+        """Update graph.
 
         :param identifier: id of graph
         :type identifier: str
@@ -117,6 +119,6 @@ class GraphConnection:
 
     @_with_db_open
     def delete_graph(self, identifier: str) -> None:
-        """Delete Graph."""
+        """Delete graph."""
         context = rdflib.term.URIRef(identifier)
         self.dataset.remove((None, None, None, context))

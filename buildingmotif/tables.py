@@ -5,7 +5,7 @@ Base = declarative_base()
 
 
 class DBModel(Base):
-    """Model containing all building infomation"""
+    """Model containing all building information."""
 
     __tablename__ = "models"
     id = Column(Integer, primary_key=True)
