@@ -116,26 +116,6 @@ def digraph_to_rdflib(digraph: nx.DiGraph) -> Graph:
     return g
 
 
-# def find_largest_subgraph_monomorphism(
-#     T: Graph, G: Graph, ontology: Graph
-# ) -> "TemplateMonomorphisms":
-#     """
-#     Returns the set of subgraphs of G that are monomorphic to T; these are organized
-#     by how "complete" the monomorphism is.
-#
-#     TODO: fix it! Make a new class that can hold and organize the results.
-#     """
-#     # saves all of the mappings we have seen, organized by how big the mapping is
-#     ret = TemplateMonomorphisms(G, T)
-#     for Tsubgraph in generate_all_subgraphs(T):
-#         assert Tsubgraph is not None
-#         matching = _VF2SemanticMatcher(G, Tsubgraph, ontology)
-#         if matching.subgraph_is_monomorphic():
-#             for sg in matching.subgraph_monomorphisms_iter():
-#                 ret.add_mapping(sg)
-#     return ret
-
-
 class TemplateMonomorphisms:
     """
     Computes the set of subgraphs of G that are monomorphic to T; these are organized
@@ -173,12 +153,6 @@ class TemplateMonomorphisms:
         """
         return max(self.mappings.keys())
 
-    def mappings_of_size(self, size: int) -> List[Mapping]:
-        """
-        Returns the mappings of the given size
-        """
-        return self.mappings[size]
-
     def building_subgraph_from_mapping(self, mapping: Mapping) -> Graph:
         """
         Returns the subgraph of the building graph that corresponds to the given
@@ -207,40 +181,48 @@ class TemplateMonomorphisms:
         sg = self.template_subgraph_from_mapping(mapping)
         return self.template - sg
 
-    def mappings_iter(self) -> Generator[Mapping, None, None]:
+    # TODO: how to handle only getting mappings of a certain size?
+    def mappings_iter(self, size=None) -> Generator[Mapping, None, None]:
         """
-        Returns an iterator over all of the mappings in descending order
+        Returns an iterator over all of the mappings of the given size.
+        If size is None, then all mappings are returned in descending order
         of the size of the mapping. This means the most complete mappings
         will be returned first.
         """
-        for size in sorted(self.mappings.keys(), reverse=True):
-            for mapping in self.mappings_of_size(size):
+        if size is None:
+            for size in sorted(self.mappings.keys(), reverse=True):
+                for mapping in self.mappings[size]:
+                    if not mapping:
+                        continue
+                    yield mapping
+        else:
+            for mapping in self.mappings[size]:
                 if not mapping:
                     continue
                 yield mapping
 
-    def building_subgraphs_iter(self) -> Generator[Graph, None, None]:
+    def building_subgraphs_iter(self, size=None) -> Generator[Graph, None, None]:
         """
-        Returns an iterator over all of the subgraphs in descending order
+        Returns an iterator over all of the subgraphs with a mapping of the given
+        size. If size is None, then all mappings are returned in descending order
         of the size of the mapping. This means the most complete subgraphs
         will be returned first.
         """
-        for size in sorted(self.mappings.keys(), reverse=True):
-            for mapping in self.mappings_of_size(size):
-                if not mapping:
-                    continue
-                yield self.building_subgraph_from_mapping(mapping)
+        for mapping in self.mappings_iter(size):
+            yield self.building_subgraph_from_mapping(mapping)
 
     def building_mapping_subgraphs_iter(
         self,
+        size=None,
     ) -> Generator[Tuple[Mapping, Graph], None, None]:
         """
-        Returns an iterator over all of the mappings and subgraphs in descending order
+        Returns an iterator over all of the subgraphs with a mapping of the given
+        size. If size is None, then all mappings are returned in descending order
         of the size of the mapping. This means the most complete subgraphs
         will be returned first.
         """
         for size in sorted(self.mappings.keys(), reverse=True):
-            for mapping in self.mappings_of_size(size):
+            for mapping in self.mappings_iter(size):
                 if not mapping:
                     continue
                 yield mapping, self.building_subgraph_from_mapping(mapping)

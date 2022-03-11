@@ -11,7 +11,7 @@ FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 SMALL_OFFICE_BRICK_TTL = FIXTURES_DIR / "smallOffice_brick.ttl"
 
 ONTOLOGY = new_temporary_graph()
-ONTOLOGY.parse("https://sparql.gtf.fyi/ttl/Brick1.3rc1.ttl")
+ONTOLOGY.parse(FIXTURES_DIR / "Brick1.3rc1.ttl")
 
 
 def test_simple_monomorphism():
@@ -52,8 +52,9 @@ def test_template_monomorphism():
     B = new_temporary_graph()
     B.parse(SMALL_OFFICE_BRICK_TTL)
     mms = TemplateMonomorphisms(B, T, ONTOLOGY)
-    mapping = next(mms.mappings_iter())
-    assert mapping is not None
-    graph = mms.building_subgraph_from_mapping(mapping)
-    print(graph.serialize(format="turtle"))
-    print(mapping)
+    mappings = [m for m in mms.mappings_iter() if len(m) == mms.largest_mapping_size]
+    assert len(mappings) == 5, "Should have 5 template matchings"
+    graphs = [mms.building_subgraph_from_mapping(m) for m in mappings]
+    for mapping, graph in zip(mappings, graphs):
+        leftover = mms.remaining_template(mapping)
+        assert leftover is not None
