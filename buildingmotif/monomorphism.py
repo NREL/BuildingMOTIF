@@ -167,11 +167,14 @@ class TemplateMonomorphisms:
         """
         Returns the subgraph of the template graph that corresponds to the given
         mapping.
+        TODO: need to keep the edges that are more generic than what we have inside the graph.
+        For example, if the building has (x a brick:AHU) then we don't need to remind them to
+        add an edge (x a brick:Equipment) because that is redundant
         """
-        g = rdflib_to_networkx_digraph(self.building)
-        edges = permutations(mapping.values(), 2)
-        sg = g.edge_subgraph(edges)
-        return digraph_to_rdflib(sg)
+        g = rdflib_to_networkx_digraph(self.template)
+        sg = digraph_to_rdflib(g.subgraph(mapping.values()))
+        # remove all edges not in the template
+        return self.template - sg
 
     def remaining_template(self, mapping: Mapping) -> Graph:
         """
