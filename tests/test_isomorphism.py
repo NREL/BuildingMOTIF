@@ -2,7 +2,7 @@ from pathlib import Path
 
 from rdflib import Namespace
 
-from buildingmotif.monomorphism import find_largest_subgraph_monomorphism
+from buildingmotif.monomorphism import TemplateMonomorphisms
 from buildingmotif.namespaces import BRICK, RDF
 from buildingmotif.template import TemplateLibrary
 from buildingmotif.utils import new_temporary_graph
@@ -29,13 +29,18 @@ def test_simple_monomorphism():
     G.add((BLDG.C, BRICK.isPartOf, BLDG.D))
     G.add((BLDG.D, RDF.type, BRICK.Building))
 
-    mapping, tsub = find_largest_subgraph_monomorphism(T, G, ONTOLOGY)
-    assert len(mapping) == 2
+    mms = TemplateMonomorphisms(G, T, ONTOLOGY)
+    assert mms.largest_mapping_size == 2
+    mapping = next(mms.mappings_iter())
+    assert mapping is not None
     assert mapping[BLDG.C] == BLDG.A
     assert mapping[BRICK.Room] == BRICK.Room
-    assert tsub is not None
-    assert (BLDG.A, RDF.type, BRICK.Room) in tsub
-    assert len(tsub) == 1
+    graph = mms.building_subgraph_from_mapping(mapping)
+    assert graph is not None
+    assert (BLDG.C, RDF.type, BRICK.Room) in graph
+    remaining = mms.remaining_template(mapping)
+    assert remaining is not None
+    assert (BLDG.B, RDF.type, BRICK.Floor) in remaining
 
 
 def test_template_monomorphism():
@@ -46,7 +51,9 @@ def test_template_monomorphism():
     print(T.serialize(format="turtle"))
     B = new_temporary_graph()
     B.parse(SMALL_OFFICE_BRICK_TTL)
-
-    mapping, tsub = find_largest_subgraph_monomorphism(T, B, ONTOLOGY)
-    print(tsub.serialize(format="turtle"))
+    mms = TemplateMonomorphisms(B, T, ONTOLOGY)
+    mapping = next(mms.mappings_iter())
+    assert mapping is not None
+    graph = mms.building_subgraph_from_mapping(mapping)
+    print(graph.serialize(format="turtle"))
     print(mapping)
