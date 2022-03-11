@@ -41,6 +41,7 @@ def test_simple_monomorphism():
     remaining = mms.remaining_template(mapping)
     assert remaining is not None
     assert (BLDG.B, RDF.type, BRICK.Floor) in remaining
+    assert (BLDG.A, BRICK.isPartOf, BLDG.B) in remaining
 
 
 def test_template_monomorphism():

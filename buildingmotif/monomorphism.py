@@ -172,9 +172,7 @@ class TemplateMonomorphisms:
         add an edge (x a brick:Equipment) because that is redundant
         """
         g = rdflib_to_networkx_digraph(self.template)
-        sg = digraph_to_rdflib(g.subgraph(mapping.values()))
-        # remove all edges not in the template
-        return self.template - sg
+        return digraph_to_rdflib(g.subgraph(mapping.values()))
 
     def remaining_template(self, mapping: Mapping) -> Graph:
         """
