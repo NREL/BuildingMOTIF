@@ -1,4 +1,4 @@
-# BuildingMOTIF [![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF)
+# BuildingMOTIF [![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) [![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF) 
 
 The Building Metadata OnTology Interoperability Framework (BuildingMOTIF)...
 
@@ -29,3 +29,7 @@ Documentation can be built locally with the following command, which will make t
 cd docs
 poetry run make html
 ```
+
+# Visualizing
+
+![repo-vis](./diagram.svg)

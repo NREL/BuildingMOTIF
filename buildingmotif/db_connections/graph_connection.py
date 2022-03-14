@@ -56,7 +56,7 @@ class GraphConnection:
         self.dataset.close()
 
     @_with_db_open
-    def create_graph(self, identifier: str, graph: Graph = None) -> Graph:
+    def create_graph(self, identifier: str, graph: Graph) -> Graph:
         """Create a graph in the database.
 
         :param identifier: identifier of graph
