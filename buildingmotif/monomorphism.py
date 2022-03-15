@@ -10,13 +10,15 @@ from typing import Dict, Generator, List, Set, Tuple
 
 import networkx as nx
 from networkx.algorithms.isomorphism import DiGraphMatcher
-from rdflib import Graph
+from rdflib import Graph, Namespace
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_digraph
 from rdflib.term import Node
 
 from buildingmotif.namespaces import OWL, RDF, RDFS
+from buildingmotif.template import Template, Term
 
 Mapping = Dict[Node, Node]
+_MARK = Namespace("urn:__mark__#")
 
 
 def _get_types(n: Node, g: Graph) -> Set[Node]:
@@ -123,21 +125,33 @@ class TemplateMonomorphisms:
     """
 
     mappings: Dict[int, List[Mapping]] = defaultdict(list)
-    template: Graph
+    template: Template
     building: Graph
+    template_bindings: Dict[str, Term] = {}
+    template_graph: Graph
 
-    def __init__(self, building: Graph, template: Graph, ontology: Graph):
+    def __init__(self, building: Graph, template: Template, ontology: Graph):
         self.template = template
         self.building = building
         self.ontology = ontology
 
-        for template_subgraph in generate_all_subgraphs(self.template):
+        # create an RDF graph from the template that we can use to compute
+        # monomorphisms
+        self.template_bindings, self.template_graph = template.fill_in(_MARK)
+        head_nodes = [
+            node
+            for param, node in self.template_bindings.items()
+            if param in template.head
+        ]
+
+        for template_subgraph in generate_all_subgraphs(self.template_graph):
             matching = _VF2SemanticMatcher(
                 self.building, template_subgraph, self.ontology
             )
             if matching.subgraph_is_monomorphic():
                 for sg in matching.subgraph_monomorphisms_iter():
-                    self.add_mapping(sg)
+                    if all([n in sg.values() for n in head_nodes]):
+                        self.add_mapping(sg)
 
     def add_mapping(self, mapping: Mapping):
         """
@@ -171,7 +185,7 @@ class TemplateMonomorphisms:
         For example, if the building has (x a brick:AHU) then we don't need to remind them to
         add an edge (x a brick:Equipment) because that is redundant
         """
-        g = rdflib_to_networkx_digraph(self.template)
+        g = rdflib_to_networkx_digraph(self.template_graph)
         return digraph_to_rdflib(g.subgraph(mapping.values()))
 
     def remaining_template(self, mapping: Mapping) -> Graph:
@@ -180,7 +194,7 @@ class TemplateMonomorphisms:
         a mapping
         """
         sg = self.template_subgraph_from_mapping(mapping)
-        return self.template - sg
+        return self.template_graph - sg
 
     # TODO: how to handle only getting mappings of a certain size?
     def mappings_iter(self, size=None) -> Generator[Mapping, None, None]:

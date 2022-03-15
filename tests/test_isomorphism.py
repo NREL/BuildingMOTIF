@@ -4,7 +4,7 @@ from rdflib import Namespace
 
 from buildingmotif.monomorphism import TemplateMonomorphisms
 from buildingmotif.namespaces import BRICK, RDF
-from buildingmotif.template import TemplateLibrary
+from buildingmotif.template import Template, TemplateLibrary
 from buildingmotif.utils import new_temporary_graph
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -16,14 +16,18 @@ ONTOLOGY.parse(FIXTURES_DIR / "Brick1.3rc1.ttl")
 
 def test_simple_monomorphism():
     BLDG = Namespace("urn:bldg#")
-    T = new_temporary_graph()
-    T.bind("bldg", BLDG)
+    T = Template(
+        None,
+        name="temp",
+        head=["room"],
+        body="""
+        {room} a brick:Room ;
+            brick:isPartOf {floor} .
+        {floor} a brick:Floor .""",
+        deps={},
+    )
     G = new_temporary_graph()
     G.bind("bldg", BLDG)
-
-    T.add((BLDG.A, RDF.type, BRICK.Room))
-    T.add((BLDG.A, BRICK.isPartOf, BLDG.B))
-    T.add((BLDG.B, RDF.type, BRICK.Floor))
 
     G.add((BLDG.C, RDF.type, BRICK.Room))
     G.add((BLDG.C, BRICK.isPartOf, BLDG.D))
@@ -33,26 +37,27 @@ def test_simple_monomorphism():
     assert mms.largest_mapping_size == 2
     mapping = next(mms.mappings_iter())
     assert mapping is not None
-    assert mapping[BLDG.C] == BLDG.A
+    assert mapping[BLDG.C] == mms.template_bindings["room"]
     assert mapping[BRICK.Room] == BRICK.Room
     graph = mms.building_subgraph_from_mapping(mapping)
     assert graph is not None
     assert (BLDG.C, RDF.type, BRICK.Room) in graph
     remaining = mms.remaining_template(mapping)
     assert remaining is not None
-    assert (BLDG.B, RDF.type, BRICK.Floor) in remaining
-    assert (BLDG.A, BRICK.isPartOf, BLDG.B) in remaining
+    assert (mms.template_bindings["floor"], RDF.type, BRICK.Floor) in remaining
+    assert (
+        mms.template_bindings["room"],
+        BRICK.isPartOf,
+        mms.template_bindings["floor"],
+    ) in remaining
 
 
 def test_template_monomorphism():
-    BLDG = Namespace("urn:bldg#")
     lib = TemplateLibrary(FIXTURES_DIR / "templates" / "smalloffice.yml")
     templ = lib["zone"][0]
-    T = templ.fill_in(BLDG)
-    print(T.serialize(format="turtle"))
     B = new_temporary_graph()
     B.parse(SMALL_OFFICE_BRICK_TTL)
-    mms = TemplateMonomorphisms(B, T, ONTOLOGY)
+    mms = TemplateMonomorphisms(B, templ, ONTOLOGY)
     mappings = [m for m in mms.mappings_iter() if len(m) == mms.largest_mapping_size]
     assert len(mappings) == 5, "Should have 5 template matchings"
     graphs = [mms.building_subgraph_from_mapping(m) for m in mappings]

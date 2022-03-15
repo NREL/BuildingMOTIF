@@ -27,7 +27,7 @@ def test_full_template_evaluations_no_deps():
     temp_sensor_template = lib["temp-sensor"][0]
     assert temp_sensor_template.parameters == {"name"}
     result = temp_sensor_template.evaluate(
-        {"name": "bldg:temp-sensor-1"}, more_namespaces=more_ns
+        {"name": BLDG["temp-sensor-1"]}, more_namespaces=more_ns
     )
     assert isinstance(result, Graph)
     assert len(result) == 1
@@ -41,9 +41,9 @@ def test_full_template_evaluations_with_deps():
     assert vav_template.parameters == {"name", "zone", "sen"}
     result = vav_template.evaluate(
         {
-            "zone": "bldg:zone1",
-            "sen": "bldg:temp-sensor-1",
-            "name": "bldg:temp-sensor-1",
+            "zone": BLDG["zone1"],
+            "sen": BLDG["temp-sensor-1"],
+            "name": BLDG["temp-sensor-1"],
         },
         more_namespaces=more_ns,
     )
@@ -55,7 +55,7 @@ def test_template_fillin_no_deps():
     lib = TemplateLibrary(FIXTURES_DIR / "2.yml")
     temp_sensor_template = lib["temp-sensor"][0]
     assert temp_sensor_template.parameters == {"name"}
-    result = temp_sensor_template.fill_in(BLDG)
+    _, result = temp_sensor_template.fill_in(BLDG)
     assert isinstance(result, Graph)
     assert len(result) == 1
 
@@ -65,7 +65,7 @@ def test_template_fillin_with_deps():
     vav_template = lib["vav"][0]
     vav_template.inline_dependencies()
     assert vav_template.parameters == {"name", "zone", "sen"}
-    result = vav_template.fill_in(BLDG)
+    _, result = vav_template.fill_in(BLDG)
     assert isinstance(result, Graph)
     assert len(result) == 4
 
@@ -84,6 +84,6 @@ def test_partial_template_with_deps():
     vav_template = lib["vav"][0]
     vav_template.inline_dependencies()
     assert vav_template.parameters == {"name", "zone", "sen"}
-    result = vav_template.evaluate({"name": "bldg:vav1"}, more_namespaces=more_ns)
+    result = vav_template.evaluate({"name": BLDG["vav1"]}, more_namespaces=more_ns)
     assert isinstance(result, Template)
     assert result.parameters == {"zone", "sen"}
