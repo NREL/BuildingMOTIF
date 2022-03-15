@@ -150,6 +150,7 @@ class TemplateMonomorphisms:
             )
             if matching.subgraph_is_monomorphic():
                 for sg in matching.subgraph_monomorphisms_iter():
+                    # limit mappings to those that include all of the head params
                     if all([n in sg.values() for n in head_nodes]):
                         self.add_mapping(sg)
 
@@ -224,7 +225,10 @@ class TemplateMonomorphisms:
         will be returned first.
         """
         for mapping in self.mappings_iter(size):
-            yield self.building_subgraph_from_mapping(mapping)
+            subgraph = self.building_subgraph_from_mapping(mapping)
+            if not subgraph.connected():
+                continue
+            yield subgraph
 
     def building_mapping_subgraphs_iter(
         self,
@@ -240,4 +244,7 @@ class TemplateMonomorphisms:
             for mapping in self.mappings_iter(size):
                 if not mapping:
                     continue
-                yield mapping, self.building_subgraph_from_mapping(mapping)
+                subgraph = self.building_subgraph_from_mapping(mapping)
+                if not subgraph.connected():
+                    continue
+                yield mapping, subgraph
