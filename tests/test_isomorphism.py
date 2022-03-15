@@ -52,15 +52,30 @@ def test_simple_monomorphism():
     ) in remaining
 
 
+def test_template_monomorphism_sizeiter():
+    lib = TemplateLibrary(FIXTURES_DIR / "templates" / "smalloffice.yml")
+    templ = lib["zone"][0]
+    B = new_temporary_graph()
+    B.parse(SMALL_OFFICE_BRICK_TTL)
+    mms = TemplateMonomorphisms(B, templ, ONTOLOGY)
+    assert mms.largest_mapping_size == 4
+    for mapping in mms.mappings_iter(4):
+        assert mapping is not None
+        assert len(mapping) == 4
+
+
 def test_template_monomorphism():
     lib = TemplateLibrary(FIXTURES_DIR / "templates" / "smalloffice.yml")
     templ = lib["zone"][0]
     B = new_temporary_graph()
     B.parse(SMALL_OFFICE_BRICK_TTL)
     mms = TemplateMonomorphisms(B, templ, ONTOLOGY)
-    mappings = [m for m in mms.mappings_iter() if len(m) == mms.largest_mapping_size]
-    assert len(mappings) == 5, "Should have 5 template matchings"
-    graphs = [mms.building_subgraph_from_mapping(m) for m in mappings]
-    for mapping, graph in zip(mappings, graphs):
+    assert mms.largest_mapping_size == 4
+    for mapping, subgraph in mms.building_mapping_subgraphs_iter(
+        size=mms.largest_mapping_size
+    ):
+        assert mapping is not None
+        assert len(mapping) == 4
+        assert subgraph is not None
         leftover = mms.remaining_template(mapping)
         assert leftover is not None

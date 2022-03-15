@@ -217,19 +217,6 @@ class TemplateMonomorphisms:
                     continue
                 yield mapping
 
-    def building_subgraphs_iter(self, size=None) -> Generator[Graph, None, None]:
-        """
-        Returns an iterator over all of the subgraphs with a mapping of the given
-        size. If size is None, then all mappings are returned in descending order
-        of the size of the mapping. This means the most complete subgraphs
-        will be returned first.
-        """
-        for mapping in self.mappings_iter(size):
-            subgraph = self.building_subgraph_from_mapping(mapping)
-            if not subgraph.connected():
-                continue
-            yield subgraph
-
     def building_mapping_subgraphs_iter(
         self,
         size=None,
@@ -240,11 +227,8 @@ class TemplateMonomorphisms:
         of the size of the mapping. This means the most complete subgraphs
         will be returned first.
         """
-        for size in sorted(self.mappings.keys(), reverse=True):
-            for mapping in self.mappings_iter(size):
-                if not mapping:
-                    continue
-                subgraph = self.building_subgraph_from_mapping(mapping)
-                if not subgraph.connected():
-                    continue
-                yield mapping, subgraph
+        for mapping in self.mappings_iter(size):
+            subgraph = self.building_subgraph_from_mapping(mapping)
+            if not subgraph.connected():
+                continue
+            yield mapping, subgraph
