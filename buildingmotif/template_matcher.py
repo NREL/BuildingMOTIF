@@ -118,7 +118,7 @@ def digraph_to_rdflib(digraph: nx.DiGraph) -> Graph:
     return g
 
 
-class TemplateMonomorphisms:
+class TemplateMatcher:
     """
     Computes the set of subgraphs of G that are monomorphic to T; these are organized
     by how "complete" the monomorphism is.

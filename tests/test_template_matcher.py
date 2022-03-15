@@ -2,9 +2,9 @@ from pathlib import Path
 
 from rdflib import Namespace
 
-from buildingmotif.monomorphism import TemplateMonomorphisms
 from buildingmotif.namespaces import BRICK, RDF
 from buildingmotif.template import Template, TemplateLibrary
+from buildingmotif.template_matcher import TemplateMatcher
 from buildingmotif.utils import new_temporary_graph
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -33,7 +33,7 @@ def test_simple_monomorphism():
     G.add((BLDG.C, BRICK.isPartOf, BLDG.D))
     G.add((BLDG.D, RDF.type, BRICK.Building))
 
-    mms = TemplateMonomorphisms(G, T, ONTOLOGY)
+    mms = TemplateMatcher(G, T, ONTOLOGY)
     assert mms.largest_mapping_size == 2
     mapping = next(mms.mappings_iter())
     assert mapping is not None
@@ -57,7 +57,7 @@ def test_template_monomorphism_sizeiter():
     templ = lib["zone"][0]
     B = new_temporary_graph()
     B.parse(SMALL_OFFICE_BRICK_TTL)
-    mms = TemplateMonomorphisms(B, templ, ONTOLOGY)
+    mms = TemplateMatcher(B, templ, ONTOLOGY)
     assert mms.largest_mapping_size == 4
     for mapping in mms.mappings_iter(4):
         assert mapping is not None
@@ -69,7 +69,7 @@ def test_template_monomorphism():
     templ = lib["zone"][0]
     B = new_temporary_graph()
     B.parse(SMALL_OFFICE_BRICK_TTL)
-    mms = TemplateMonomorphisms(B, templ, ONTOLOGY)
+    mms = TemplateMatcher(B, templ, ONTOLOGY)
     assert mms.largest_mapping_size == 4
     for mapping, subgraph in mms.building_mapping_subgraphs_iter(
         size=mms.largest_mapping_size
