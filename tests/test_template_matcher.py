@@ -42,7 +42,7 @@ def test_simple_monomorphism():
     graph = mms.building_subgraph_from_mapping(mapping)
     assert graph is not None
     assert (BLDG.C, RDF.type, BRICK.Room) in graph
-    remaining = mms.remaining_template(mapping)
+    remaining = mms.remaining_template_graph(mapping)
     assert remaining is not None
     assert (mms.template_bindings["floor"], RDF.type, BRICK.Floor) in remaining
     assert (
@@ -77,7 +77,7 @@ def test_template_monomorphism():
         assert mapping is not None
         assert len(mapping) == 4
         assert subgraph is not None
-        leftover = mms.remaining_template(mapping)
+        leftover = mms.remaining_template_graph(mapping)
         assert leftover is not None
     assert (
         len(list(mms.building_mapping_subgraphs_iter(size=mms.largest_mapping_size)))

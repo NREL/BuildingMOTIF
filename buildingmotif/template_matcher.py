@@ -8,25 +8,24 @@ from collections.abc import Callable
 from itertools import combinations, permutations
 from typing import Dict, Generator, List, Set, Tuple
 
-import networkx as nx
-from networkx.algorithms.isomorphism import DiGraphMatcher
+import networkx as nx  # type: ignore
+from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
 from rdflib import Graph, Namespace
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_digraph
-from rdflib.term import Node
 
 from buildingmotif.namespaces import OWL, RDF, RDFS
 from buildingmotif.template import Template, Term
 
-Mapping = Dict[Node, Node]
+Mapping = Dict[Term, Term]
 _MARK = Namespace("urn:__mark__#")
 
 
-def _get_types(n: Node, g: Graph) -> Set[Node]:
+def _get_types(n: Term, g: Graph) -> Set[Term]:  # type: ignore
     return set(g.objects(n, RDF.type))
 
 
 def _compatible_types(
-    n1: Node, g1: Graph, n2: Node, g2: Graph, ontology: Graph
+    n1: Term, g1: Graph, n2: Term, g2: Graph, ontology: Graph
 ) -> bool:
     for n1type in _get_types(n1, g1):
         for n2type in _get_types(n2, g2):
@@ -39,7 +38,7 @@ def _compatible_types(
 
 def get_semantic_feasibility(
     G1: Graph, G2: Graph, ontology: Graph
-) -> Callable[[Node, Node], bool]:
+) -> Callable[[Term, Term], bool]:
     """
     Returns a function that checks if two nodes are semantically feasible to be
     matched given the information in the provided ontology.
@@ -51,7 +50,7 @@ def get_semantic_feasibility(
     TODO: other checks?
     """
 
-    def semantic_feasibility(n1: Node, n2: Node) -> bool:
+    def semantic_feasibility(n1: Term, n2: Term) -> bool:
         # case 0: same node
         if n1 == n2:
             return True
@@ -90,7 +89,7 @@ class _VF2SemanticMatcher(DiGraphMatcher):
         self.ontology = ontology
         self._semantic_feasibility = get_semantic_feasibility(T, G, ontology)
 
-    def semantic_feasibility(self, g1: Node, g2: Node) -> bool:
+    def semantic_feasibility(self, g1: Term, g2: Term) -> bool:
         """
         Returns true if the two nodes are semantically feasible to be matched
         """
@@ -189,13 +188,28 @@ class TemplateMatcher:
         g = rdflib_to_networkx_digraph(self.template_graph)
         return digraph_to_rdflib(g.subgraph(mapping.values()))
 
-    def remaining_template(self, mapping: Mapping) -> Graph:
+    def remaining_template_graph(self, mapping: Mapping) -> Graph:
         """
         Returns the part of the template that is remaining to be filled out given
         a mapping
         """
         sg = self.template_subgraph_from_mapping(mapping)
         return self.template_graph - sg
+
+    def remaining_template(self, mapping: Mapping) -> Template:
+        """
+        Returns the part of the template that is remaining to be filled out given
+        a mapping
+        """
+        # graph = self.building_subgraph_from_mapping(mapping)
+        # tg = self.remaining_template_graph(mapping)
+        reverse_template_mapping = {v: k for k, v in self.template_bindings.items()}
+        bindings = {}
+        for building_node, template_node in mapping.items():
+            param = reverse_template_mapping.get(template_node)
+            if param is not None:
+                bindings[param] = building_node
+        return self.template.evaluate(bindings)
 
     # TODO: how to handle only getting mappings of a certain size?
     def mappings_iter(self, size=None) -> Generator[Mapping, None, None]:

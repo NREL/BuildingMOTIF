@@ -6,7 +6,8 @@ from string import Formatter
 from typing import Dict, List, Optional, Set, Tuple, Union
 
 import yaml  # type: ignore
-from rdflib import BNode, Graph, Literal, Namespace, URIRef
+from rdflib import Graph, Namespace
+from rdflib.term import BNode, Literal, URIRef
 
 from buildingmotif.utils import new_temporary_graph, template_to_shape
 
@@ -30,7 +31,7 @@ PREAMBLE = """@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 """
 
-Term = Union[URIRef, Literal, BNode]
+Term = Union[Literal, BNode, URIRef]
 
 
 class Template:
