@@ -38,7 +38,7 @@ class BuildingMotif:
 
         return Model(id=db_model.id, name=db_model.name, graph=new_graph)
 
-    def get_model(self, id: str) -> Model:
+    def get_model(self, id: int) -> Model:
         """Get model.
 
         :param id: id

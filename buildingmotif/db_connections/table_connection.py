@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -40,7 +41,7 @@ class TableConnection:
 
         return db_model
 
-    def get_all_db_models(self) -> list("DBModel"):
+    def get_all_db_models(self) -> list[DBModel]:
         """Get all database models.
 
         :return: all DBModels
@@ -48,7 +49,7 @@ class TableConnection:
         """
         return self.session.query(DBModel).all()
 
-    def get_db_model(self, id: str) -> DBModel:
+    def get_db_model(self, id: int) -> DBModel:
         """Get database model from id.
 
         :param id: id of DBModel
@@ -58,7 +59,7 @@ class TableConnection:
         """
         return self.session.query(DBModel).filter(DBModel.id == id).one()
 
-    def update_db_model_name(self, id: str, name: str) -> None:
+    def update_db_model_name(self, id: int, name: Optional[str]) -> None:
         """Update database model.
 
         :param id: id of DBModel
@@ -71,7 +72,7 @@ class TableConnection:
 
         self.session.commit()
 
-    def delete_db_model(self, id: str) -> None:
+    def delete_db_model(self, id: int) -> None:
         """Delete database model.
 
         :param id: id of deleted DBModel

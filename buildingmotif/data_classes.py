@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 import rdflib
 
@@ -7,6 +8,6 @@ import rdflib
 class Model:
     """Model of a building. This class mirrors DBModel."""
 
-    id: str
-    name: str
+    id: int
+    name: Optional[str]
     graph: rdflib.Graph
