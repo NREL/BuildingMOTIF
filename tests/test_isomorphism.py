@@ -79,3 +79,7 @@ def test_template_monomorphism():
         assert subgraph is not None
         leftover = mms.remaining_template(mapping)
         assert leftover is not None
+    assert (
+        len(list(mms.building_mapping_subgraphs_iter(size=mms.largest_mapping_size)))
+        == 5
+    )

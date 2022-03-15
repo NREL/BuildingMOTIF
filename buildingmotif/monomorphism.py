@@ -227,8 +227,13 @@ class TemplateMonomorphisms:
         of the size of the mapping. This means the most complete subgraphs
         will be returned first.
         """
+        cache = set()
         for mapping in self.mappings_iter(size):
             subgraph = self.building_subgraph_from_mapping(mapping)
             if not subgraph.connected():
                 continue
+            key = tuple(sorted(subgraph.all_nodes()))
+            if key in cache:
+                continue
+            cache.add(key)
             yield mapping, subgraph
