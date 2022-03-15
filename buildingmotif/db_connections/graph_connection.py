@@ -28,7 +28,9 @@ def _with_db_open(func: Callable) -> Callable:
     return wrapper
 
 
-class GraphHandler:
+class GraphConnection:
+    """Manages graph connection."""
+
     def __init__(
         self,
         db_uri: Optional[str] = None,
@@ -55,7 +57,7 @@ class GraphHandler:
 
     @_with_db_open
     def create_graph(self, identifier: str, graph: Graph) -> Graph:
-        """Create a graph in the dataset.
+        """Create a graph in the database.
 
         :param identifier: identifier of graph
         :type identifier: str
@@ -70,7 +72,7 @@ class GraphHandler:
         return graph
 
     @_with_db_open
-    def get_all_graph_identifiers(self) -> list:
+    def get_all_graph_identifiers(self) -> list[str]:
         """Get all graph identifiers.
 
         :return: all graph identifiers
@@ -99,11 +101,24 @@ class GraphHandler:
 
     @_with_db_open
     def update_graph(self, identifier: str, update_graph: Graph) -> Graph:
-        """Not implemented."""
-        raise NotImplementedError
+        """Update graph.
+
+        :param identifier: id of graph
+        :type identifier: str
+        :param update_graph: new graph
+        :type update_graph: Graph
+        :return: new graph
+        :rtype: Graph
+        """
+        self.dataset.remove((None, None, None, identifier))
+
+        new_triples = [(s, o, p, identifier) for (s, o, p) in update_graph]
+        self.dataset.addN(new_triples)
+
+        return update_graph
 
     @_with_db_open
     def delete_graph(self, identifier: str) -> None:
-        """Delete Graph."""
+        """Delete graph."""
         context = rdflib.term.URIRef(identifier)
         self.dataset.remove((None, None, None, context))
