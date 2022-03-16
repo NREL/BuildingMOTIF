@@ -6,7 +6,7 @@ input is required to fully populate the template.
 from collections import defaultdict
 from collections.abc import Callable
 from itertools import combinations, permutations
-from typing import Dict, Generator, List, Set, Tuple
+from typing import Dict, Generator, List, Set, Tuple, Union
 
 import networkx as nx  # type: ignore
 from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
@@ -196,22 +196,26 @@ class TemplateMatcher:
         sg = self.template_subgraph_from_mapping(mapping)
         return self.template_graph - sg
 
-    def remaining_template(self, mapping: Mapping) -> Template:
+    def remaining_template(self, mapping: Mapping) -> Union[Graph, Template]:
         """
         Returns the part of the template that is remaining to be filled out given
         a mapping
         """
-        # graph = self.building_subgraph_from_mapping(mapping)
-        # tg = self.remaining_template_graph(mapping)
+        # if all parameters are fulfilled by the mapping, then return the graph
+        if all([p in mapping.keys() for p in self.template.parameters]):
+            return self.building_subgraph_from_mapping(mapping)
         reverse_template_mapping = {v: k for k, v in self.template_bindings.items()}
         bindings = {}
         for building_node, template_node in mapping.items():
             param = reverse_template_mapping.get(template_node)
             if param is not None:
                 bindings[param] = building_node
-        return self.template.evaluate(bindings)
+        # this *should* be a template because we don't have bindings for all of
+        # the template's parameters
+        res = self.template.evaluate(bindings)
+        assert isinstance(res, Template)
+        return res
 
-    # TODO: how to handle only getting mappings of a certain size?
     def mappings_iter(self, size=None) -> Generator[Mapping, None, None]:
         """
         Returns an iterator over all of the mappings of the given size.
