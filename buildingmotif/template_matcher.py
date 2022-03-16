@@ -10,7 +10,7 @@ from typing import Dict, Generator, List, Set, Tuple, Union
 
 import networkx as nx  # type: ignore
 from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
-from rdflib import Graph, Namespace
+from rdflib import Graph, Namespace, URIRef
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_digraph
 
 from buildingmotif.namespaces import OWL, RDF, RDFS
@@ -20,8 +20,12 @@ Mapping = Dict[Term, Term]
 _MARK = Namespace("urn:__mark__#")
 
 
-def _get_types(n: Term, g: Graph) -> Set[Term]:  # type: ignore
-    return set(g.objects(n, RDF.type))
+def _get_types(n: Term, g: Graph) -> Set[URIRef]:
+    """
+    Types for a node should only be URIRefs, so the
+    type filtering here should be safe
+    """
+    return set(x for x in g.objects(n, RDF.type) if isinstance(x, URIRef))
 
 
 def _compatible_types(
