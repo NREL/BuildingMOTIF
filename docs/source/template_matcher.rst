@@ -1,6 +1,9 @@
 Template Matching
 =============
 
+Overview
+========
+
 *Template matching* is the process of identifying fully or partially evaluated templates inside a building graph, given the template definition.
 We use the :class:`~buildingmotif.template_matcher.TemplateMatcher` class to perform template matching.
 The matching is performed when the :class:`~buildingmotif.template_matcher.TemplateMatcher` class is instantiated; instantiation takes as arguments:
