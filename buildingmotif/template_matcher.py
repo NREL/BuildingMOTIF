@@ -23,7 +23,7 @@ _MARK = Namespace("urn:__mark__#")
 def _get_types(n: Term, g: Graph) -> Set[URIRef]:
     """
     Types for a node should only be URIRefs, so the
-    type filtering here should be safe
+    type filtering here should be safe.
     """
     return set(x for x in g.objects(n, RDF.type) if isinstance(x, URIRef))
 
@@ -49,8 +49,8 @@ def get_semantic_feasibility(
 
     The function returns true if the two nodes are semantically feasible to be matched.
     We use the following checks:
-    1. if the two nodes are both classes, then one must be a subclass of the other
-    2. if the two nodes are instances, then they must be of the same class
+    1. If the two nodes are both classes, then one must be a subclass of the other.
+    2. If the two nodes are instances, then they must be of the same class.
     TODO: other checks?
     """
 
@@ -83,9 +83,9 @@ class _VF2SemanticMatcher(DiGraphMatcher):
     A subclass of DiGraphMatcher that incorporates semantic feasibility into the matching
     process using the provided ontology.
 
-    :param T: The template graph
-    :param G: The building graph
-    :param ontology: The ontology that contains the information about node semantics
+    :param T: template graph
+    :param G: building graph
+    :param ontology: ontology that contains the information about node semantics
     """
 
     def __init__(self, T: Graph, G: Graph, ontology: Graph):
@@ -95,14 +95,14 @@ class _VF2SemanticMatcher(DiGraphMatcher):
 
     def semantic_feasibility(self, g1: Term, g2: Term) -> bool:
         """
-        Returns true if the two nodes are semantically feasible to be matched
+        Returns true if the two nodes are semantically feasible to be matched.
         """
         return self._semantic_feasibility(g1, g2)
 
 
 def generate_all_subgraphs(T: Graph) -> Generator[Graph, None, None]:
     """
-    Generates all node-induced subgraphs of T in order of decreasing size
+    Generates all node-induced subgraphs of T in order of decreasing size.
     """
     for nodecount in reversed(range(len(T.all_nodes()))):
         for nodelist in combinations(T.all_nodes(), nodecount):
@@ -167,7 +167,7 @@ class TemplateMatcher:
     @property
     def largest_mapping_size(self) -> int:
         """
-        Returns the size of the largest mapping
+        Returns the size of the largest mapping.
         """
         return max(self.mappings.keys())
 
@@ -195,7 +195,7 @@ class TemplateMatcher:
     def remaining_template_graph(self, mapping: Mapping) -> Graph:
         """
         Returns the part of the template that is remaining to be filled out given
-        a mapping
+        a mapping.
         """
         sg = self.template_subgraph_from_mapping(mapping)
         return self.template_graph - sg
@@ -203,7 +203,7 @@ class TemplateMatcher:
     def remaining_template(self, mapping: Mapping) -> Union[Graph, Template]:
         """
         Returns the part of the template that is remaining to be filled out given
-        a mapping
+        a mapping.
         """
         # if all parameters are fulfilled by the mapping, then return the graph
         if all([p in mapping.keys() for p in self.template.parameters]):
