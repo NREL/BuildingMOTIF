@@ -5,7 +5,7 @@ from secrets import token_hex
 from string import Formatter
 from typing import Dict, List, Optional, Set, Union
 
-import yaml
+import yaml  # type: ignore
 from rdflib import Graph, Namespace
 
 from buildingmotif.utils import new_temporary_graph, template_to_shape
@@ -174,6 +174,11 @@ class Template:
 
 
 class TemplateLibrary:
+    """
+    A group of templates defined in a file. Supports basic lookups via __getitem__ and
+    can convert included templates to SHACL shapes.
+    """
+
     def __init__(self, filename: Union[str, Path]) -> None:
         self.templates = self._load_template_file(filename)
 
@@ -201,6 +206,10 @@ class TemplateLibrary:
         return ret
 
     def get_shacl_shapes(self) -> Graph:
+        """
+        Returns a graph containing the SHACL shape corresponding to each
+        template defined in the library
+        """
         MARK = Namespace("urn:___mark___#")
         full_graph = new_temporary_graph({"mark": MARK})
         for templates in self.templates.values():
@@ -214,6 +223,9 @@ def dump(
     params: Dict[str, str],
     more_namespaces: Optional[Dict[str, Namespace]] = None,
 ) -> None:
+    """
+    Dump the contents of the templates as a Graph. Helpful for debuggin
+    """
     templ.inline_dependencies()
     if params:
         res = templ.evaluate(params, more_namespaces)

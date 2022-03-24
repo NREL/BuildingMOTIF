@@ -8,8 +8,8 @@ from collections.abc import Callable
 from itertools import combinations, permutations
 from typing import Dict, Generator, List, Set, Tuple
 
-import networkx as nx
-from networkx.algorithms.isomorphism import DiGraphMatcher
+import networkx as nx  # type: ignore
+from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
 from rdflib import Graph
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_digraph
 from rdflib.term import Node
