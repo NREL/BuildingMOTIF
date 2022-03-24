@@ -1,11 +1,10 @@
 from collections import defaultdict
 from copy import copy
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 from warnings import warn
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
-from rdflib.term import Node
 
 from buildingmotif.namespaces import RDF, SH, bind_prefixes
 
@@ -14,6 +13,7 @@ if TYPE_CHECKING:
 
 # special namespace to denote template parameters inside RDF graphs
 MARK = Namespace("urn:___mark___#")
+Term = Union[URIRef, Literal, BNode]
 
 
 @dataclass
@@ -21,7 +21,7 @@ class _TemplateIndex:
     template: "Template"
     param_types: Dict[URIRef, List[URIRef]]
     prop_types: Dict[URIRef, List[URIRef]]
-    prop_values: Dict[URIRef, List[Node]]
+    prop_values: Dict[URIRef, List[Term]]
     prop_shapes: Dict[URIRef, List[URIRef]]
     target: URIRef
 
@@ -38,9 +38,7 @@ def _prep_shape_graph() -> Graph:
 
 
 def _index_properties(templ: "Template") -> _TemplateIndex:
-    templ_graph = templ.evaluate(
-        {p: f"mark:{p}" for p in templ.parameters}, {"mark": MARK}
-    )
+    templ_graph = templ.evaluate({p: MARK[p] for p in templ.parameters}, {"mark": MARK})
     assert isinstance(templ_graph, Graph)
 
     # pick a random node to act as the 'target' of the shape
@@ -81,7 +79,7 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
 
 
 def _add_property_shape(
-    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Node
+    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Term
 ):
     pshape = BNode()
     graph.add((name, SH.property, pshape))
@@ -92,7 +90,7 @@ def _add_property_shape(
 
 
 def _add_qualified_property_shape(
-    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Node
+    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Term
 ):
     pshape = BNode()
     graph.add((name, SH.property, pshape))
