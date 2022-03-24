@@ -211,7 +211,7 @@ class TemplateLibrary:
         self, filename: Union[str, Path]
     ) -> Dict[str, List[Template]]:
         """
-        Returns list of Template objets defined in the file.
+        Returns list of Template objects defined in the file.
         """
         ret = defaultdict(list)
         with open(filename, "r") as f:
@@ -228,7 +228,7 @@ class TemplateLibrary:
     def get_shacl_shapes(self) -> Graph:
         """
         Returns a graph containing the SHACL shape corresponding to each
-        template defined in the library
+        template defined in the library.
         """
         MARK = Namespace("urn:___mark___#")
         full_graph = new_temporary_graph({"mark": MARK})
@@ -244,7 +244,7 @@ def dump(
     more_namespaces: Optional[Dict[str, Namespace]] = None,
 ) -> None:
     """
-    Dump the contents of the templates as a Graph. Helpful for debuggin
+    Dump the contents of the templates as a Graph. Helpful for debugging.
     """
     templ.inline_dependencies()
     if params:
