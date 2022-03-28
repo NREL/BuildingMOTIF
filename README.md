@@ -8,7 +8,7 @@ Requirements:
 - Python >= 3.9.0
 - [Poetry](https://python-poetry.org/docs/)
 
-Simply clone and run `poetry install`.
+Simply clone and run `poetry install`. Then run `poetry run pre-commit install` to set up pre-commit.
 
 # Developing
 To test, run 
