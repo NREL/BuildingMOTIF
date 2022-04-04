@@ -1,3 +1,6 @@
+import os
+import tempfile
+
 import rdflib
 from rdflib import RDF, Graph, URIRef
 from rdflib.compare import isomorphic
@@ -5,17 +8,25 @@ from rdflib.namespace import FOAF
 
 from buildingmotif.building_motif import BuildingMotif
 from buildingmotif.data_classes import Model
+from buildingmotif.utils import get_building_motif
 
 
-def make_test_building_motif(dir):
-    temp_db_path = dir / "temp.db"
-    uri = f"sqlite:///{temp_db_path}"
+def with_clean_building_motif(func):
+    def run_clean(*args, **kwargs):
+        BuildingMotif.clean()
+        with tempfile.TemporaryDirectory() as tempdir:
+            temp_db_path = os.path.join(tempdir, "temp.db")
+            uri = f"sqlite:///{temp_db_path}"
+            BuildingMotif(uri)
+            func(*args, **kwargs)
+            BuildingMotif.clean()
 
-    return BuildingMotif(uri)
+    return run_clean
 
 
-def test_create_model(tmpdir):
-    bm = make_test_building_motif(tmpdir)
+@with_clean_building_motif
+def test_create_model():
+    bm = get_building_motif()
 
     g = Graph()
     hannahs_personhood = (URIRef("http://example.org/hannah"), RDF.type, FOAF.Person)
@@ -29,8 +40,9 @@ def test_create_model(tmpdir):
     assert isomorphic(model.graph, g)
 
 
-def test_get_model(tmpdir):
-    bm = make_test_building_motif(tmpdir)
+@with_clean_building_motif
+def test_get_model():
+    bm = get_building_motif()
 
     g = Graph()
     hannahs_personhood = (URIRef("http://example.org/hannah"), RDF.type, FOAF.Person)
@@ -45,8 +57,9 @@ def test_get_model(tmpdir):
     assert isomorphic(model.graph, g)
 
 
-def test_save_model(tmpdir):
-    bm = make_test_building_motif(tmpdir)
+@with_clean_building_motif
+def test_save_model():
+    bm = get_building_motif()
 
     g = Graph()
     hannahs_personhood = (URIRef("http://example.org/hannah"), RDF.type, FOAF.Person)
@@ -68,8 +81,9 @@ def test_save_model(tmpdir):
     assert isomorphic(model.graph, new_triples)
 
 
-def test_delete_model(tmpdir):
-    bm = make_test_building_motif(tmpdir)
+@with_clean_building_motif
+def test_delete_model():
+    bm = get_building_motif()
 
     g = Graph()
     hannahs_personhood = (URIRef("http://example.org/hannah"), RDF.type, FOAF.Person)
