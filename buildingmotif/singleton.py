@@ -1,5 +1,5 @@
 class Singleton(type):
-    """Metaclass that makes a class into a singleton"""
+    """Metaclass that makes a class into a singleton."""
 
     def __new__(cls, name, bases, cls_dict):
         singleton_cls = super().__new__(cls, name, bases, cls_dict)
@@ -18,4 +18,4 @@ class Singleton(type):
 
 
 class SingletonNotInstantiatedException(Exception):
-    """Raised when a singelton is accessed without being initialized"""
+    """Raised when a singelton is accessed without being initialized."""
