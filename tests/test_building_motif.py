@@ -1,3 +1,7 @@
+import os
+import tempfile
+
+import pytest
 import rdflib
 from rdflib import RDF, Graph, URIRef
 from rdflib.compare import isomorphic
@@ -7,15 +11,19 @@ from buildingmotif.building_motif import BuildingMotif
 from buildingmotif.data_classes import Model
 
 
-def make_test_building_motif(dir):
-    temp_db_path = dir / "temp.db"
-    uri = f"sqlite:///{temp_db_path}"
+@pytest.fixture
+def clean_building_motif():
+    BuildingMotif.clean()
+    with tempfile.TemporaryDirectory() as tempdir:
+        temp_db_path = os.path.join(tempdir, "temp.db")
+        uri = f"sqlite:///{temp_db_path}"
+        building_motif = BuildingMotif(uri)
+        yield building_motif
+        BuildingMotif.clean()
 
-    return BuildingMotif(uri)
 
-
-def test_create_model(tmpdir):
-    bm = make_test_building_motif(tmpdir)
+def test_create_model(clean_building_motif):
+    bm = clean_building_motif
 
     g = Graph()
     hannahs_personhood = (URIRef("http://example.org/hannah"), RDF.type, FOAF.Person)
@@ -29,8 +37,8 @@ def test_create_model(tmpdir):
     assert isomorphic(model.graph, g)
 
 
-def test_get_model(tmpdir):
-    bm = make_test_building_motif(tmpdir)
+def test_get_model(clean_building_motif):
+    bm = clean_building_motif
 
     g = Graph()
     hannahs_personhood = (URIRef("http://example.org/hannah"), RDF.type, FOAF.Person)
@@ -45,8 +53,8 @@ def test_get_model(tmpdir):
     assert isomorphic(model.graph, g)
 
 
-def test_save_model(tmpdir):
-    bm = make_test_building_motif(tmpdir)
+def test_save_model(clean_building_motif):
+    bm = clean_building_motif
 
     g = Graph()
     hannahs_personhood = (URIRef("http://example.org/hannah"), RDF.type, FOAF.Person)
@@ -68,8 +76,8 @@ def test_save_model(tmpdir):
     assert isomorphic(model.graph, new_triples)
 
 
-def test_delete_model(tmpdir):
-    bm = make_test_building_motif(tmpdir)
+def test_delete_model(clean_building_motif):
+    bm = clean_building_motif
 
     g = Graph()
     hannahs_personhood = (URIRef("http://example.org/hannah"), RDF.type, FOAF.Person)

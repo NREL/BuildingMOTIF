@@ -5,9 +5,10 @@ import rdflib
 from buildingmotif.data_classes import Model
 from buildingmotif.db_connections.graph_connection import GraphConnection
 from buildingmotif.db_connections.table_connection import TableConnection
+from buildingmotif.singleton import Singleton
 
 
-class BuildingMotif:
+class BuildingMotif(metaclass=Singleton):
     """Manages BuildingMOTIF data classes."""
 
     def __init__(self, db_uri: str) -> None:
