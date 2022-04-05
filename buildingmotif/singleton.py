@@ -1,13 +1,15 @@
 class Singleton(type):
+    """Metaclass that makes a class into a singleton"""
+
     def __new__(cls, name, bases, cls_dict):
-        klazz = super().__new__(cls, name, bases, cls_dict)
+        singleton_cls = super().__new__(cls, name, bases, cls_dict)
 
         def clean():
-            if hasattr(klazz, "instance"):
-                delattr(klazz, "instance")
+            if hasattr(singleton_cls, "instance"):
+                delattr(singleton_cls, "instance")
 
-        setattr(klazz, "clean", clean)
-        return klazz
+        setattr(singleton_cls, "clean", clean)
+        return singleton_cls
 
     def __call__(cls, *args, **kwargs):
         if not hasattr(cls, "instance"):

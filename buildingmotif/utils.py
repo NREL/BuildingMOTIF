@@ -159,6 +159,9 @@ def new_temporary_graph(more_namespaces: Optional[dict] = None) -> Graph:
 
 
 def get_building_motif() -> BuildingMotif:
+    """Returns singleton instance of BuildingMotif.
+    Requires that BuildingMotif has been instantiated before,
+    otherwise an exception will be thrown."""
     if hasattr(BuildingMotif, "instance"):
         return BuildingMotif.instance
     raise SingletonNotInstantiatedException
