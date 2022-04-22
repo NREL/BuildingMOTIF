@@ -2,7 +2,7 @@ import uuid
 from functools import wraps
 from typing import Callable, Optional
 
-from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
 from buildingmotif.tables import Base, DBModel, DBTemplate, DBTemplateLibrary
@@ -26,15 +26,12 @@ def _commit_or_rollback(func: Callable) -> Callable:
 class TableConnection:
     """Controls interaction with the database."""
 
-    def __init__(self, db_uri: str) -> None:
+    def __init__(self, engine: Engine) -> None:
         """Class constructor.
 
-        :param db_uri: defaults to None
-        :type db_uri: str, optional
+        :param engine: db engine
+        :type engine: Engine
         """
-        # create engine
-        engine = create_engine(db_uri, echo=True)
-
         # create tables
         Base.metadata.create_all(engine)
 

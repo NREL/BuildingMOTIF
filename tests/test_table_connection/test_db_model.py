@@ -1,21 +1,12 @@
 import uuid
 
 import pytest
-from rdflib import Literal
 from sqlalchemy.exc import NoResultFound
 
-from buildingmotif.db_connections.table_connection import TableConnection
 from buildingmotif.tables import DBModel
 
 
-def make_tmp_table_connection(dir):
-    temp_db_path = dir / "temp.db"
-    uri = Literal(f"sqlite:///{temp_db_path}")
-
-    return TableConnection(uri)
-
-
-def test_create_db_model(tmpdir, monkeypatch):
+def test_create_db_model(monkeypatch, table_connection):
     mocked_uuid = uuid.uuid4()
 
     def mockreturn():
@@ -23,28 +14,24 @@ def test_create_db_model(tmpdir, monkeypatch):
 
     monkeypatch.setattr(uuid, "uuid4", mockreturn)
 
-    tc = make_tmp_table_connection(tmpdir)
-
-    db_model = tc.create_db_model(name="my_db_model")
+    db_model = table_connection.create_db_model(name="my_db_model")
 
     assert db_model.name == "my_db_model"
     assert db_model.graph_id == str(mocked_uuid)
 
 
-def test_get_db_models(tmpdir):
-    tc = make_tmp_table_connection(tmpdir)
+def test_get_db_models(table_connection):
+    table_connection.create_db_model(name="my_db_model")
+    table_connection.create_db_model(name="your_db_model")
 
-    tc.create_db_model(name="my_db_model")
-    tc.create_db_model(name="your_db_model")
-
-    db_models = tc.get_all_db_models()
+    db_models = table_connection.get_all_db_models()
 
     assert len(db_models) == 2
     assert all(type(m) == DBModel for m in db_models)
     assert set([m.name for m in db_models]) == {"my_db_model", "your_db_model"}
 
 
-def test_get_db_model(tmpdir, monkeypatch):
+def test_get_db_model(table_connection, monkeypatch):
     mocked_uuid = uuid.uuid4()
 
     def mockreturn():
@@ -52,52 +39,41 @@ def test_get_db_model(tmpdir, monkeypatch):
 
     monkeypatch.setattr(uuid, "uuid4", mockreturn)
 
-    tc = make_tmp_table_connection(tmpdir)
-
-    db_model = tc.create_db_model(name="my_db_model")
-    db_model = tc.get_db_model(id=db_model.id)
+    db_model = table_connection.create_db_model(name="my_db_model")
+    db_model = table_connection.get_db_model(id=db_model.id)
 
     assert db_model.name == "my_db_model"
     assert db_model.graph_id == str(mocked_uuid)
 
 
-def test_get_db_model_does_not_exist(tmpdir):
-    tc = make_tmp_table_connection(tmpdir)
+def test_get_db_model_does_not_exist(table_connection, tmpdir):
+    with pytest.raises(NoResultFound):
+        table_connection.get_db_model("I don't exist")
+
+
+def test_update_db_model_name(table_connection):
+    db_model_id = table_connection.create_db_model(name="my_db_model").id
+
+    assert table_connection.get_db_model(db_model_id).name == "my_db_model"
+
+    table_connection.update_db_model_name(db_model_id, "your_db_model")
+
+    assert table_connection.get_db_model(db_model_id).name == "your_db_model"
+
+
+def test_update_db_model_name_does_not_exist(table_connection):
+    with pytest.raises(NoResultFound):
+        table_connection.update_db_model_name("I don't exist", "new_name")
+
+
+def test_delete_db_model(table_connection):
+    db_model = table_connection.create_db_model(name="my_db_model")
+    table_connection.delete_db_model(db_model.id)
 
     with pytest.raises(NoResultFound):
-        tc.get_db_model("I don't exist")
+        table_connection.get_db_model(db_model.id)
 
 
-def test_update_db_model_name(tmpdir):
-    tc = make_tmp_table_connection(tmpdir)
-    db_model_id = tc.create_db_model(name="my_db_model").id
-
-    assert tc.get_db_model(db_model_id).name == "my_db_model"
-
-    tc.update_db_model_name(db_model_id, "your_db_model")
-
-    assert tc.get_db_model(db_model_id).name == "your_db_model"
-
-
-def test_update_db_model_name_does_not_exist(tmpdir):
-    tc = make_tmp_table_connection(tmpdir)
-
+def tests_delete_db_model_does_does_exist(table_connection):
     with pytest.raises(NoResultFound):
-        tc.update_db_model_name("I don't exist", "new_name")
-
-
-def test_delete_db_model(tmpdir):
-    tc = make_tmp_table_connection(tmpdir)
-
-    db_model = tc.create_db_model(name="my_db_model")
-    tc.delete_db_model(db_model.id)
-
-    with pytest.raises(NoResultFound):
-        tc.get_db_model(db_model.id)
-
-
-def tests_delete_db_model_does_does_exist(tmpdir):
-    tc = make_tmp_table_connection(tmpdir)
-
-    with pytest.raises(NoResultFound):
-        tc.delete_db_model("does not exist")
+        table_connection.delete_db_model("does not exist")
