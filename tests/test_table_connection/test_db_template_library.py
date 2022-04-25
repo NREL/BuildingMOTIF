@@ -28,7 +28,7 @@ def test_get_db_template_libraries(tmpdir):
     tc.create_db_template_library(name="my_db_template_library")
     tc.create_db_template_library(name="your_db_template_library")
 
-    db_template_libraries = tc.get_all_db_template_library()
+    db_template_libraries = tc.get_all_db_template_libraries()
 
     assert len(db_template_libraries) == 2
     assert all(type(tl) == DBTemplateLibrary for tl in db_template_libraries)

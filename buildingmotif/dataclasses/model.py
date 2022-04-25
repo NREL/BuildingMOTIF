@@ -17,7 +17,7 @@ class Model:
     _bm: BuildingMotif
 
     @classmethod
-    def create(self, name: str) -> "Model":
+    def create(cls, name: str) -> "Model":
         """create new Model
 
         :param name: new model name
@@ -29,7 +29,7 @@ class Model:
         db_model = bm.table_con.create_db_model(name)
         graph = bm.graph_con.create_graph(db_model.graph_id, rdflib.Graph())
 
-        return Model(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
+        return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
 
     @classmethod
     def load(cls, id: int) -> "Model":

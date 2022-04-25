@@ -117,7 +117,7 @@ class TableConnection:
 
         return template_library
 
-    def get_all_db_template_library(self) -> list[DBTemplateLibrary]:
+    def get_all_db_template_libraries(self) -> list[DBTemplateLibrary]:
         """Get all database template library.
 
         :return: all DBTemplateLibrary
@@ -186,8 +186,6 @@ class TableConnection:
         template = DBTemplate(
             name=name, body_id=str(uuid.uuid4()), template_library=template_library
         )
-
-        self.session.commit()
 
         return template
 
