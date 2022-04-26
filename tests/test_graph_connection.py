@@ -58,22 +58,6 @@ def test_get_graph(tmpdir):
     assert isomorphic(res, g)
 
 
-def test_update_graph(tmpdir):
-    gc = make_test_graph_connect(tmpdir)
-
-    g = Graph()
-    hannahs_personhood = (URIRef("http://example.org/hannah"), RDF.type, FOAF.Person)
-    g.add(hannahs_personhood)
-    gc.create_graph("my_graph", g)
-
-    g = Graph()
-    alexs_personhood = (URIRef("http://example.org/alex"), RDF.type, FOAF.Person)
-    g.add(alexs_personhood)
-    res = gc.update_graph("my_graph", g)
-
-    assert isomorphic(res, g)
-
-
 @pytest.mark.skip(reason="a non-existant graph will just come back empty")
 def test_get_graph_does_not_exist(tmpdir):
     gc = make_test_graph_connect(tmpdir)

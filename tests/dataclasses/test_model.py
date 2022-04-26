@@ -17,7 +17,6 @@ def test_create_model(clean_building_motif):
 def test_load_model(clean_building_motif):
     m = Model.create(name="my_model")
     m.graph.add((URIRef("http://example.org/alex"), RDF.type, FOAF.Person))
-    m.save_graph()
 
     result = Model.load(m.id)
     assert result.id == m.id
