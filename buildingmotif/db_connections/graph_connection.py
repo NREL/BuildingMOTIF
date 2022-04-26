@@ -1,30 +1,12 @@
-from functools import wraps
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Optional
 
 from rdflib.graph import Graph, Store, plugin
+from sqlalchemy.engine import Engine
 
 from buildingmotif.namespaces import bind_prefixes
 
 PROJECT_DIR = Path(__file__).resolve().parent
-
-
-def _with_db_open(func: Callable) -> Callable:
-    """Decorator that opens and closes database.
-
-    :param func: decorated function
-    :type func: Callable
-    """
-
-    @wraps(func)
-    def wrapper(self, *args):
-        self.dataset.open(self.db_uri)
-        res = func(self, *args)
-        self.dataset.close()
-
-        return res
-
-    return wrapper
 
 
 class GraphConnection:
@@ -32,24 +14,20 @@ class GraphConnection:
 
     def __init__(
         self,
-        db_uri: Optional[str] = None,
+        engine: Engine,
         db_identifier: Optional[str] = "buildingmotif_store",
     ) -> None:
         """Creates datastore and database.
 
-        :param db_uri: defaults to None
-        :type db_uri: Optional[str], optional
+        :param engine: db engine
+        :type engine: Engine
         :param db_identifier: defaults to "buildingmotif_store"
         :type db_identifier: Optional[str], optional
         """
-        if db_uri is None:
-            db_path = PROJECT_DIR / f"{db_identifier}.db"
-            db_uri = f"sqlite:///{db_path}"
-
-        self.db_uri = db_uri
-
-        self.store = plugin.get("SQLAlchemy", Store)(identifier=db_identifier)
-        self.store.open(self.db_uri)
+        self.store = plugin.get("SQLAlchemy", Store)(
+            engine=engine, identifier=db_identifier
+        )
+        self.store.create_all()
 
     def create_graph(self, identifier: str, graph: Graph) -> Graph:
         """Create a graph in the database.
