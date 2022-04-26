@@ -22,7 +22,6 @@ def test_load(clean_building_motif):
     tl = TemplateLibrary.create("my_template_library")
     t = tl.create_template("my_template")
     t.body.add((URIRef("http://example.org/alex"), RDF.type, FOAF.Person))
-    t.save_body()
 
     result = Template.load(t.id)
     assert result.id == t.id
@@ -72,7 +71,6 @@ def test_save_body(clean_building_motif):
 
     triple = (URIRef("http://example.org/alex"), RDF.type, FOAF.Person)
     t.body.add(triple)
-    t.save_body()
 
     also_t = Template.load(t.id)
     assert also_t.id == t.id

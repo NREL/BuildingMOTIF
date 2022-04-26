@@ -42,7 +42,7 @@ class Model:
         """
         bm = get_building_motif()
         db_model = bm.table_con.get_db_model(id)
-        graph = bm.graph_con.get_graph(db_model.graph_id)
+        graph = bm.graph_con.get_graph(db_model.graph_id)  # type: ignore
 
         return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
 
@@ -62,8 +62,3 @@ class Model:
     def name(self, new_name: str):
         self._bm.table_con.update_db_model_name(self._id, new_name)
         self._name = new_name
-
-    def save_graph(self) -> None:
-        """Save graph to db"""
-        db_model = self._bm.table_con.get_db_model(self._id)
-        self._bm.graph_con.update_graph(db_model.graph_id, self.graph)

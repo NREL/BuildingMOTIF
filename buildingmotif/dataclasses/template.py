@@ -26,7 +26,7 @@ class Template:
         """
         bm = get_building_motif()
         db_template = bm.table_con.get_db_template(id)
-        body = bm.graph_con.get_graph(db_template.body_id)
+        body = bm.graph_con.get_graph(db_template.body_id)  # type: ignore
 
         return cls(_id=db_template.id, _name=db_template.name, body=body, _bm=bm)
 
@@ -46,8 +46,3 @@ class Template:
     def name(self, new_name: str) -> None:
         self._bm.table_con.update_db_template_name(self._id, new_name)
         self._name = new_name
-
-    def save_body(self):
-        """Save body to db"""
-        db_template = self._bm.table_con.get_db_template(self._id)
-        self._bm.graph_con.update_graph(db_template.body_id, self.body)
