@@ -4,6 +4,7 @@ import pytest
 from rdflib import RDF, Graph, Literal, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
+from sqlalchemy import create_engine
 
 from buildingmotif.db_connections.graph_connection import GraphConnection
 
@@ -15,8 +16,9 @@ DB_FILE = FIXTURES_DIR / "smallOffice.db"
 def make_test_graph_connect(dir):
     temp_db_path = dir / "temp.db"
     uri = Literal(f"sqlite:///{temp_db_path}")
+    engine = create_engine(uri, echo=True)
 
-    return GraphConnection(uri)
+    return GraphConnection(engine)
 
 
 def test_create_graph(tmpdir):
