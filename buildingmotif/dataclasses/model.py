@@ -42,7 +42,7 @@ class Model:
         """
         bm = get_building_motif()
         db_model = bm.table_con.get_db_model(id)
-        graph = bm.graph_con.get_graph(db_model.graph_id)  # type: ignore
+        graph = bm.graph_con.get_graph(db_model.graph_id)
 
         return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
 

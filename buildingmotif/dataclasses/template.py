@@ -26,7 +26,7 @@ class Template:
         """
         bm = get_building_motif()
         db_template = bm.table_con.get_db_template(id)
-        body = bm.graph_con.get_graph(db_template.body_id)  # type: ignore
+        body = bm.graph_con.get_graph(db_template.body_id)
 
         return cls(_id=db_template.id, _name=db_template.name, body=body, _bm=bm)
 

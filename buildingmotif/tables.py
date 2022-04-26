@@ -10,7 +10,7 @@ class DBModel(Base):
     __tablename__ = "models"
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String())
-    graph_id = Column(String())
+    graph_id: Mapped[str] = Column(String())
 
 
 class DBTemplateLibrary(Base):
@@ -31,7 +31,7 @@ class DBTemplate(Base):
     __tablename__ = "template"
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False)
-    body_id = Column(String())
+    body_id: Mapped[str] = Column(String())
 
     template_library_id = Column(
         Integer, ForeignKey("template_library.id"), nullable=False
