@@ -17,7 +17,7 @@ class BuildingMotif(metaclass=Singleton):
         """
         self.db_uri = db_uri
         self.engine = create_engine(db_uri, echo=False)
-        Session = sessionmaker(bind=self.engine)
+        Session = sessionmaker(bind=self.engine, autoflush=True)
         self.session = Session()
 
         self.table_con = TableConnection(self.engine, self)
