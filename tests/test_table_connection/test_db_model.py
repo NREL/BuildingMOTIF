@@ -46,7 +46,7 @@ def test_get_db_model(table_connection, monkeypatch):
     assert db_model.graph_id == str(mocked_uuid)
 
 
-def test_get_db_model_does_not_exist(table_connection, tmpdir):
+def test_get_db_model_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
         table_connection.get_db_model("I don't exist")
 

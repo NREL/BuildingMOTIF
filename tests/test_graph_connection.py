@@ -5,6 +5,7 @@ from rdflib import RDF, Graph, Literal, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from buildingmotif.db_connections.graph_connection import GraphConnection
 
@@ -18,7 +19,13 @@ def make_test_graph_connect(dir):
     uri = Literal(f"sqlite:///{temp_db_path}")
     engine = create_engine(uri, echo=True)
 
-    return GraphConnection(engine)
+    class MockBuildingMotif:
+        def __init__(self):
+            self.engine = engine
+            Session = sessionmaker(bind=self.engine)
+            self.session = Session()
+
+    return GraphConnection(engine, MockBuildingMotif())
 
 
 def test_create_graph(tmpdir):

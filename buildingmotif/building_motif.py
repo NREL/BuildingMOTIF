@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from buildingmotif.db_connections.graph_connection import GraphConnection
 from buildingmotif.db_connections.table_connection import TableConnection
@@ -14,9 +15,14 @@ class BuildingMotif(metaclass=Singleton):
         :param db_uri: db uri
         :type db_uri: str
         """
-        self.engine = create_engine(db_uri, echo=True)
-        self.table_con = TableConnection(self.engine)
-        self.graph_con = GraphConnection(self.engine)
+        self.db_uri = db_uri
+        self.engine = create_engine(db_uri, echo=False)
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
 
-    def __del__(self):
+        self.table_con = TableConnection(self.engine, self)
+        self.graph_con = GraphConnection(self.engine, self)
+
+    def release(self):
+        self.session.close()
         self.engine.dispose()

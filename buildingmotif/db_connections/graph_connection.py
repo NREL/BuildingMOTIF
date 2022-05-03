@@ -15,6 +15,7 @@ class GraphConnection:
     def __init__(
         self,
         engine: Engine,
+        session_manager,
         db_identifier: Optional[str] = "buildingmotif_store",
     ) -> None:
         """Creates datastore and database.
@@ -25,7 +26,7 @@ class GraphConnection:
         :type db_identifier: Optional[str], optional
         """
         self.store = plugin.get("SQLAlchemy", Store)(
-            engine=engine, identifier=db_identifier
+            session_manager, identifier=db_identifier, engine=engine
         )
         self.store.create_all()
 
