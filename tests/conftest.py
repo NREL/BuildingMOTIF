@@ -1,13 +1,13 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from buildingmotif.db_connections.graph_connection import GraphConnection
-from buildingmotif.db_connections.table_connection import TableConnection
-from buildingmotif.singleton import Singleton
 
+class MockBuildingMotif:
+    """BuildingMOTIF for testing connections.
 
-class BuildingMotif(metaclass=Singleton):
-    """Manages BuildingMOTIF data classes."""
+    Not a singletion, no connections classes, just the engine and connection. So
+    we can pass this to the connections.
+    """
 
     def __init__(self, db_uri: str) -> None:
         """Class constructor.
@@ -19,9 +19,6 @@ class BuildingMotif(metaclass=Singleton):
         self.engine = create_engine(db_uri, echo=False)
         Session = sessionmaker(bind=self.engine, autoflush=True)
         self.session = Session()
-
-        self.table_con = TableConnection(self.engine, self)
-        self.graph_con = GraphConnection(self.engine, self)
 
     def release(self) -> None:
         """

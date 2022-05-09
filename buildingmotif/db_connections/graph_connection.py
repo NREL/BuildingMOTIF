@@ -15,13 +15,15 @@ class GraphConnection:
     def __init__(
         self,
         engine: Engine,
-        session_manager,
+        session_manager,  # type BuildingMotif
         db_identifier: Optional[str] = "buildingmotif_store",
     ) -> None:
         """Creates datastore and database.
 
         :param engine: db engine
         :type engine: Engine
+        :param session_manager: contains the session to use
+        :type session_manager: BuildingMotif TODO: add stronger typing
         :param db_identifier: defaults to "buildingmotif_store"
         :type db_identifier: Optional[str], optional
         """

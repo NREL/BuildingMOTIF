@@ -14,6 +14,8 @@ class TableConnection:
 
         :param engine: db engine
         :type engine: Engine
+        :param bm: contains the session to use
+        :type bm: BuildingMotif TODO: add stronger typing
         """
         # create tables
         Base.metadata.create_all(engine)
