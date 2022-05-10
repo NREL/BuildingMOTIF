@@ -40,6 +40,10 @@ class DBTemplate(Base):
         "DBTemplateLibrary", back_populates="templates"
     )
 
-    UniqueConstraint(
-        "name", "template_library", name="name_template_library_unique_constraint"
+    __table_args__ = (
+        UniqueConstraint(
+            "name",
+            "template_library_id",
+            name="name_template_library_unique_constraint",
+        ),
     )
