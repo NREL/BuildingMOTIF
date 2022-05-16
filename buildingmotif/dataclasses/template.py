@@ -12,6 +12,7 @@ class Template:
 
     _id: int
     _name: str
+    _head: tuple[str, ...]
     body: rdflib.Graph
     _bm: BuildingMotif
 
@@ -28,7 +29,13 @@ class Template:
         db_template = bm.table_connection.get_db_template(id)
         body = bm.graph_connection.get_graph(db_template.body_id)
 
-        return cls(_id=db_template.id, _name=db_template.name, body=body, _bm=bm)
+        return cls(
+            _id=db_template.id,
+            _name=db_template.name,
+            _head=db_template.head,
+            body=body,
+            _bm=bm,
+        )
 
     @property
     def id(self):
@@ -46,3 +53,20 @@ class Template:
     def name(self, new_name: str) -> None:
         self._bm.table_connection.update_db_template_name(self._id, new_name)
         self._name = new_name
+
+    @property
+    def head(self):
+        return self._head
+
+    @head.setter
+    def head(self, new_head: str) -> None:
+        raise AttributeError("Cannot modify head")
+
+    def get_dependancies(self):
+        return self._bm.table_connection.get_db_tempalte_dependancies(self.id)
+
+    def add_dependancy(self, dependancy: "Template", args: list[str]) -> None:
+        self._bm.table_connection.add_template_dependancy(self.id, dependancy.id, args)
+
+    def remove_dependancy(self, dependancy: "Template") -> None:
+        self._bm.table_connection.remove_template_dependancy(self.id, dependancy.id)
