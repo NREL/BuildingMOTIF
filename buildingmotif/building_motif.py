@@ -25,7 +25,7 @@ class BuildingMotif(metaclass=Singleton):
 
     def release(self) -> None:
         """
-        close session and engine.
+        Close session and engine.
         """
         self.session.close()
         self.engine.dispose()
