@@ -120,7 +120,7 @@ def test_update_db_template_name(table_connection):
     assert table_connection.get_db_template(db_template.id).name == "your_db_template"
 
 
-def test_update_db_template_nme_bad_name(table_connection):
+def test_update_db_template_name_bad_name(table_connection):
     db_template_library = table_connection.create_db_template_library(
         name="my_db_template_library"
     )

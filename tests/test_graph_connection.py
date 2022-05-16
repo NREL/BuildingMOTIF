@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from rdflib import RDF, Graph, Literal, URIRef
+from rdflib import RDF, Graph, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
@@ -14,16 +14,14 @@ DB_FILE = FIXTURES_DIR / "smallOffice.db"
 
 
 @pytest.fixture
-def graph_connection(tmpdir):
-    temp_db_path = tmpdir / "temp.db"
-    uri = Literal(f"sqlite:///{temp_db_path}")
-    bm = MockBuildingMotif(uri)
+def graph_connection():
+    bm = MockBuildingMotif()
 
     graph_connection = GraphConnection(bm.engine, bm)
     yield graph_connection
 
     bm.session.commit()
-    bm.release()
+    bm.close()
 
 
 def test_create_graph(graph_connection):

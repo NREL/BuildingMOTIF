@@ -54,7 +54,7 @@ to the db until after the commit.
 """
 tl = TemplateLibrary.create("my_template_library")
 print(tl)
-assert len(building_motif.table_con.get_all_db_template_libraries()) == 1
+assert len(building_motif.table_connection.get_all_db_template_libraries()) == 1
 
 cur.execute("SELECT * FROM template_library")
 print(f"pre-commit template_library: {cur.fetchall()}")
@@ -72,7 +72,7 @@ Same thing with a template.
 t = tl.create_template(name="my_template")
 print(t)
 assert tl.get_templates()[0] == t
-assert len(building_motif.table_con.get_all_db_templates()) == 1
+assert len(building_motif.table_connection.get_all_db_templates()) == 1
 
 cur.execute("SELECT * FROM template")
 print(f"pre-commit template: {cur.fetchall()}")
@@ -89,8 +89,8 @@ Graphs abide by sessioning, too
 """
 print(t.body)
 t.body.add((URIRef("http://example.org/alex"), RDF.type, FOAF.Person))
-body_id = building_motif.table_con.get_db_template(t.id).body_id
-assert isomorphic(building_motif.graph_con.get_graph(body_id), t.body)
+body_id = building_motif.table_connection.get_db_template(t.id).body_id
+assert isomorphic(building_motif.graph_connection.get_graph(body_id), t.body)
 
 cur.execute("SELECT * FROM kb_625d302a74_type_statements")
 print(f"pre-commit statements: {cur.fetchall()}")

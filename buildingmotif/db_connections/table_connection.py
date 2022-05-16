@@ -3,19 +3,20 @@ from typing import Optional
 
 from sqlalchemy.engine import Engine
 
+from buildingmotif import building_motif
 from buildingmotif.tables import Base, DBModel, DBTemplate, DBTemplateLibrary
 
 
 class TableConnection:
     """Controls interaction with the database."""
 
-    def __init__(self, engine: Engine, bm) -> None:
+    def __init__(self, engine: Engine, bm: "building_motif.BuildingMotif") -> None:
         """Class constructor.
 
         :param engine: db engine
         :type engine: Engine
         :param bm: contains the session to use
-        :type bm: BuildingMotif TODO: add stronger typing
+        :type bm: BuildingMotif
         """
         # create tables
         Base.metadata.create_all(engine)

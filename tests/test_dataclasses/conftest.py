@@ -17,5 +17,5 @@ def clean_building_motif():
         yield building_motif
 
         building_motif.session.commit()
-        building_motif.release()
+        building_motif.close()
         BuildingMotif.clean()

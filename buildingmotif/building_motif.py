@@ -20,12 +20,10 @@ class BuildingMotif(metaclass=Singleton):
         Session = sessionmaker(bind=self.engine, autoflush=True)
         self.session = Session()
 
-        self.table_con = TableConnection(self.engine, self)
-        self.graph_con = GraphConnection(self.engine, self)
+        self.table_connection = TableConnection(self.engine, self)
+        self.graph_connection = GraphConnection(self.engine, self)
 
-    def release(self) -> None:
-        """
-        Close session and engine.
-        """
+    def close(self) -> None:
+        """Close session and engine."""
         self.session.close()
         self.engine.dispose()
