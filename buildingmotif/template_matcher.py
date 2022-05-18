@@ -4,9 +4,8 @@ If the found isomorphism is a subgraph of T, then T is not fully matched and add
 input is required to fully populate the template.
 """
 from collections import defaultdict
-from collections.abc import Callable
 from itertools import combinations, permutations
-from typing import Dict, Generator, List, Set, Tuple, Union
+from typing import Callable, Dict, Generator, List, Set, Tuple, Union
 
 import networkx as nx  # type: ignore
 from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
