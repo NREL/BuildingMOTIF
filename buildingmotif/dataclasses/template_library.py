@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 
 import rdflib
 
@@ -79,7 +79,7 @@ class TemplateLibrary:
             _id=db_template.id, _name=db_template.name, body=body, _bm=self._bm
         )
 
-    def get_templates(self) -> list[Template]:
+    def get_templates(self) -> List[Template]:
         """get Templates in Library
 
         :return: list of templates
@@ -88,5 +88,5 @@ class TemplateLibrary:
         db_template_library = self._bm.table_connection.get_db_template_library(
             self._id
         )
-        templates: list[DBTemplate] = db_template_library.templates
+        templates: List[DBTemplate] = db_template_library.templates
         return [Template.load(t.id) for t in templates]

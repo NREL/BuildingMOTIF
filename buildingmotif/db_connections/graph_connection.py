@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from rdflib.graph import Graph, Store, plugin
 from sqlalchemy.engine import Engine
@@ -49,7 +49,7 @@ class GraphConnection:
 
         return g
 
-    def get_all_graph_identifiers(self) -> list[str]:
+    def get_all_graph_identifiers(self) -> List[str]:
         """Get all graph identifiers.
 
         :return: all graph identifiers
