@@ -208,13 +208,14 @@ class TableConnection:
         :return: tuple of tuple, where each tuple has 1. the dependant_id, and 2. it's args
         :rtype: tuple[tuple[int, list[str]]]
         """
-        relationships: List[DepsAssociation] = (
-            self.bm.session.query(DepsAssociation)
-            .filter(DepsAssociation.dependant_id == id)
-            .all()
+        return tuple(
+            [
+                self.bm.session.query(DepsAssociation)
+                .filter(DepsAssociation.dependant_id == id)
+                .all()
+                .map(lambda x: Dependency(x.dependee_id, x.args))
+            ]
         )
-
-        return tuple([Dependency(r.dependee_id, r.args) for r in relationships])
 
     def update_db_template_name(self, id: int, name: Optional[str]) -> None:
         """Update database template.
