@@ -1,4 +1,4 @@
 Developer Note
 ----
 
-Please save your notebooks as `.md`. We are using [jupytext](https://github.com/mwouts/jupytext) to make our notebook git friendly. 
+Any `.ipynb` files placed in this directory or sub-directories will be run as integration tests. In possible use in memory `sqlite` databases or check for and delete the database file as an initial step in your notebook.
