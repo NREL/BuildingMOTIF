@@ -1,6 +1,6 @@
 import uuid
 from functools import wraps
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
@@ -56,7 +56,7 @@ class TableConnection:
 
         return db_model
 
-    def get_all_db_models(self) -> list[DBModel]:
+    def get_all_db_models(self) -> List[DBModel]:
         """Get all database models.
 
         :return: all DBModels
@@ -114,7 +114,7 @@ class TableConnection:
 
         return template_library
 
-    def get_all_db_template_libraries(self) -> list[DBTemplateLibrary]:
+    def get_all_db_template_libraries(self) -> List[DBTemplateLibrary]:
         """Get all database template library.
 
         :return: all DBTemplateLibrary
@@ -186,7 +186,7 @@ class TableConnection:
 
         return template
 
-    def get_all_db_templates(self) -> list[DBTemplate]:
+    def get_all_db_templates(self) -> List[DBTemplate]:
         """Get all database template.
 
         :return: all DBTemplate

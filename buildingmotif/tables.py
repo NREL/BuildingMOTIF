@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, declarative_base, relationship
 
@@ -20,7 +22,7 @@ class DBTemplateLibrary(Base):
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False, unique=True)
 
-    templates: Mapped[list["DBTemplate"]] = relationship(
+    templates: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate", back_populates="template_library", cascade="all,delete"
     )
 
