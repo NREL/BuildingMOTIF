@@ -59,14 +59,32 @@ class Template:
         return self._head
 
     @head.setter
-    def head(self, new_head: str) -> None:
+    def head(self, _: str) -> None:
         raise AttributeError("Cannot modify head")
 
-    def get_dependancies(self):
-        return self._bm.table_connection.get_db_tempalte_dependancies(self.id)
+    def get_dependencies(self):
+        return self._bm.table_connection.get_db_template_dependencies(self.id)
 
-    def add_dependancy(self, dependancy: "Template", args: list[str]) -> None:
-        self._bm.table_connection.add_template_dependancy(self.id, dependancy.id, args)
+    def add_dependency(self, dependency: "Template", args: list[str]) -> None:
+        self._bm.table_connection.add_template_dependency(self.id, dependency.id, args)
 
-    def remove_dependancy(self, dependancy: "Template") -> None:
-        self._bm.table_connection.remove_template_dependancy(self.id, dependancy.id)
+    def remove_dependency(self, dependency: "Template") -> None:
+        self._bm.table_connection.remove_template_dependency(self.id, dependency.id)
+
+
+@dataclass
+class Dependency:
+    _template_id: int
+    _args: list[str]
+
+    @property
+    def template_id(self):
+        return self._template_id
+
+    @property
+    def template(self) -> Template:
+        return Template.load(self._template_id)
+
+    @property
+    def args(self):
+        return self._args

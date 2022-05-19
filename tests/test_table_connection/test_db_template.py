@@ -191,25 +191,25 @@ def tests_delete_db_template_does_does_exist(table_connection):
         table_connection.delete_db_template("does not exist")
 
 
-def test_add_template_dependancy(table_connection):
+def test_add_template_dependency(table_connection):
     (
         _,
         dependant_template,
         dependee_template,
     ) = create_dependacy_test_fixtures(table_connection)
 
-    table_connection.add_template_dependancy(
+    table_connection.add_template_dependency(
         dependant_template.id, dependee_template.id, ["ding", "dong"]
     )
 
-    assert dependant_template.dependancies == [dependee_template]
+    assert dependant_template.dependencies == [dependee_template]
     assert dependee_template.dependants == [dependant_template]
-    assert table_connection.get_db_tempalte_dependancies(dependant_template.id) == (
+    assert table_connection.get_db_tempalte_dependencies(dependant_template.id) == (
         (dependee_template.id, ("ding", "dong")),
     )
 
 
-def test_add_template_dependancy_bad_args(table_connection):
+def test_add_template_dependency_bad_args(table_connection):
     (
         _,
         dependant_template,
@@ -217,69 +217,69 @@ def test_add_template_dependancy_bad_args(table_connection):
     ) = create_dependacy_test_fixtures(table_connection)
 
     with pytest.raises(ValueError):
-        table_connection.add_template_dependancy(
+        table_connection.add_template_dependency(
             dependant_template.id, dependee_template.id, ["ding"]
         )
 
 
-def test_add_template_dependancy_already_exist(table_connection):
+def test_add_template_dependency_already_exist(table_connection):
     (
         _,
         dependant_template,
         dependee_template,
     ) = create_dependacy_test_fixtures(table_connection)
 
-    table_connection.add_template_dependancy(
+    table_connection.add_template_dependency(
         dependant_template.id, dependee_template.id, ["ding", "dong"]
     )
 
     with pytest.raises(IntegrityError):
-        table_connection.add_template_dependancy(
+        table_connection.add_template_dependency(
             dependant_template.id, dependee_template.id, ["ding", "dong"]
         )
 
     table_connection.bm.session.rollback()
 
 
-def test_get_dependancies(table_connection):
+def test_get_dependencies(table_connection):
     (
         _,
         dependant_template,
         dependee_template,
     ) = create_dependacy_test_fixtures(table_connection)
 
-    table_connection.add_template_dependancy(
+    table_connection.add_template_dependency(
         dependant_template.id, dependee_template.id, ["ding", "dong"]
     )
 
-    assert table_connection.get_db_tempalte_dependancies(dependant_template.id) == (
+    assert table_connection.get_db_tempalte_dependencies(dependant_template.id) == (
         (dependee_template.id, ("ding", "dong")),
     )
 
 
-def test_remove_dependancies(table_connection):
+def test_remove_dependencies(table_connection):
     (
         _,
         dependant_template,
         dependee_template,
     ) = create_dependacy_test_fixtures(table_connection)
 
-    table_connection.add_template_dependancy(
+    table_connection.add_template_dependency(
         dependant_template.id, dependee_template.id, ["ding", "dong"]
     )
 
-    assert table_connection.get_db_tempalte_dependancies(dependant_template.id) == (
+    assert table_connection.get_db_tempalte_dependencies(dependant_template.id) == (
         (dependee_template.id, ("ding", "dong")),
     )
 
-    table_connection.remove_template_dependancy(
+    table_connection.remove_template_dependency(
         dependant_template.id, dependee_template.id
     )
 
-    assert table_connection.get_db_tempalte_dependancies(dependant_template.id) == ()
+    assert table_connection.get_db_tempalte_dependencies(dependant_template.id) == ()
 
 
-def test_remove_dependancies_does_not_exist(table_connection):
+def test_remove_dependencies_does_not_exist(table_connection):
     (
         _,
         dependant_template,
@@ -287,7 +287,7 @@ def test_remove_dependancies_does_not_exist(table_connection):
     ) = create_dependacy_test_fixtures(table_connection)
 
     with pytest.raises(NoResultFound):
-        table_connection.remove_template_dependancy(
+        table_connection.remove_template_dependency(
             dependant_template.id, dependee_template.id
         )
 

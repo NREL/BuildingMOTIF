@@ -1,8 +1,9 @@
 import uuid
-from typing import Optional
+from typing import List, Optional, Tuple
 
 from sqlalchemy.engine import Engine
 
+from buildingmotif.dataclasses.template import Dependency
 from buildingmotif.tables import (
     Base,
     DBModel,
@@ -44,7 +45,7 @@ class TableConnection:
 
         return db_model
 
-    def get_all_db_models(self) -> list[DBModel]:
+    def get_all_db_models(self) -> List[DBModel]:
         """Get all database models.
 
         :return: all DBModels
@@ -100,7 +101,7 @@ class TableConnection:
 
         return template_library
 
-    def get_all_db_template_libraries(self) -> list[DBTemplateLibrary]:
+    def get_all_db_template_libraries(self) -> List[DBTemplateLibrary]:
         """Get all database template library.
 
         :return: all DBTemplateLibrary
@@ -179,7 +180,7 @@ class TableConnection:
 
         return template
 
-    def get_all_db_templates(self) -> list[DBTemplate]:
+    def get_all_db_templates(self) -> List[DBTemplate]:
         """Get all database template.
 
         :return: all DBTemplate
@@ -197,23 +198,23 @@ class TableConnection:
         """
         return self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
 
-    def get_db_tempalte_dependancies(self, id: int) -> tuple[tuple[int, list[str]]]:
-        """get a templates dependancies and it args
+    def get_db_template_dependencies(self, id: int) -> Tuple[Dependency, ...]:
+        """get a templates dependencies and it args
 
-        if you dont need the args, consider using `template.dependancies`.
+        if you dont need the args, consider using `template.dependencies`.
 
         :param id: template id
         :type id: int
         :return: tuple of tuple, where each tuple has 1. the dependant_id, and 2. it's args
         :rtype: tuple[tuple[int, list[str]]]
         """
-        relationships = (
+        relationships: List[DepsAssociation] = (
             self.bm.session.query(DepsAssociation)
             .filter(DepsAssociation.dependant_id == id)
             .all()
         )
 
-        return tuple([(r.dependee_id, r.args) for r in relationships])
+        return tuple([Dependency(r.dependee_id, r.args) for r in relationships])
 
     def update_db_template_name(self, id: int, name: Optional[str]) -> None:
         """Update database template.
@@ -228,29 +229,29 @@ class TableConnection:
         )
         db_template.name = name
 
-    def add_template_dependancy(
-        self, template_id: int, dependancy_id: int, args: list[str]
+    def add_template_dependency(
+        self, template_id: int, dependency_id: int, args: list[str]
     ):
-        dependancy = self.get_db_template(dependancy_id)
-        if len(args) != len(dependancy.head):
+        dependency = self.get_db_template(dependency_id)
+        if len(args) != len(dependency.head):
             raise ValueError(
-                f"len of args must equal the len of head of the dependancy: \
-                    {len(args)} != {len(dependancy.head)}"
+                f"len of args must equal the len of head of the dependency: \
+                    {len(args)} != {len(dependency.head)}"
             )
 
         relationship = DepsAssociation(
-            dependant_id=template_id, dependee_id=dependancy_id, _args=";".join(args)
+            dependant_id=template_id, dependee_id=dependency_id, _args=";".join(args)
         )
 
         self.bm.session.add(relationship)
         self.bm.session.flush()
 
-    def remove_template_dependancy(self, template_id: int, dependancy_id: int):
+    def remove_template_dependency(self, template_id: int, dependency_id: int):
         relationship = (
             self.bm.session.query(DepsAssociation)
             .filter(
                 DepsAssociation.dependant_id == template_id,
-                DepsAssociation.dependee_id == dependancy_id,
+                DepsAssociation.dependee_id == dependency_id,
             )
             .one()
         )

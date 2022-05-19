@@ -80,58 +80,58 @@ def test_save_body(clean_building_motif):
     assert isomorphic(also_t.body, t.body)
 
 
-def test_add_dependancy(clean_building_motif):
+def test_add_dependency(clean_building_motif):
     tl = TemplateLibrary.create("my_template_library")
     dependant = tl.create_template("dependant", head=[])
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
-    dependant.add_dependancy(dependee, ["1", "2"])
+    dependant.add_dependency(dependee, ["1", "2"])
 
-    assert dependant.get_dependancies() == ((dependee.id, ("1", "2")),)
+    assert dependant.get_dependencies() == ((dependee.id, ("1", "2")),)
 
 
-def test_add_dependancy_bad_args(clean_building_motif):
+def test_add_dependency_bad_args(clean_building_motif):
     tl = TemplateLibrary.create("my_template_library")
     dependant = tl.create_template("dependant", head=[])
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
     with pytest.raises(ValueError):
-        dependant.add_dependancy(dependee, [])
+        dependant.add_dependency(dependee, [])
 
 
-def test_add_dependancy_already_exist(clean_building_motif):
+def test_add_dependency_already_exist(clean_building_motif):
     tl = TemplateLibrary.create("my_template_library")
     dependant = tl.create_template("dependant", head=[])
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
-    dependant.add_dependancy(dependee, ["1", "2"])
+    dependant.add_dependency(dependee, ["1", "2"])
 
     with pytest.raises(IntegrityError):
-        dependant.add_dependancy(dependee, ["1", "2"])
+        dependant.add_dependency(dependee, ["1", "2"])
 
     clean_building_motif.session.rollback()
 
 
-def test_get_dependancies(clean_building_motif):
+def test_get_dependencies(clean_building_motif):
     tl = TemplateLibrary.create("my_template_library")
     dependant = tl.create_template("dependant", head=[])
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
-    dependant.add_dependancy(dependee, ["1", "2"])
+    dependant.add_dependency(dependee, ["1", "2"])
 
-    assert dependant.get_dependancies() == ((dependee.id, ("1", "2")),)
+    assert dependant.get_dependencies() == ((dependee.id, ("1", "2")),)
 
 
-def test_remove_dependancy(clean_building_motif):
+def test_remove_dependency(clean_building_motif):
     tl = TemplateLibrary.create("my_template_library")
     dependant = tl.create_template("dependant", head=[])
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
-    dependant.add_dependancy(dependee, ["1", "2"])
-    assert dependant.get_dependancies() == ((dependee.id, ("1", "2")),)
+    dependant.add_dependency(dependee, ["1", "2"])
+    assert dependant.get_dependencies() == ((dependee.id, ("1", "2")),)
 
-    dependant.remove_dependancy(dependee)
-    assert dependant.get_dependancies() == ()
+    dependant.remove_dependency(dependee)
+    assert dependant.get_dependencies() == ()
 
 
 def test_remove_depedancy_does_not_exist(clean_building_motif):
@@ -140,6 +140,6 @@ def test_remove_depedancy_does_not_exist(clean_building_motif):
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
     with pytest.raises(NoResultFound):
-        dependant.remove_dependancy(dependee)
+        dependant.remove_dependency(dependee)
 
     clean_building_motif.session.rollback()

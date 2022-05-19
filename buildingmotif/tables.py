@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, declarative_base, relationship
@@ -21,7 +23,7 @@ class DBTemplateLibrary(Base):
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False, unique=True)
 
-    templates: Mapped[list["DBTemplate"]] = relationship(
+    templates: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate", back_populates="template_library", cascade="all,delete"
     )
 
@@ -58,7 +60,7 @@ class DBTemplate(Base):
     template_library: DBTemplateLibrary = relationship(
         "DBTemplateLibrary", back_populates="templates"
     )
-    dependancies: Mapped["DBTemplate"] = relationship(
+    dependencies: Mapped["DBTemplate"] = relationship(
         "DBTemplate",
         secondary="deps_association_table",
         primaryjoin=id == DepsAssociation.dependant_id,
@@ -70,7 +72,7 @@ class DBTemplate(Base):
         secondary="deps_association_table",
         primaryjoin=id == DepsAssociation.dependee_id,
         secondaryjoin=id == DepsAssociation.dependant_id,
-        back_populates="dependancies",
+        back_populates="dependencies",
     )
 
     __table_args__ = (

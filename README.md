@@ -5,7 +5,7 @@ The Building Metadata OnTology Interoperability Framework (BuildingMOTIF)...
 # Installing
 
 Requirements:
-- Python >= 3.9.0
+- Python >= 3.8.0
 - [Poetry](https://python-poetry.org/docs/)
 
 Simply clone and run `poetry install`. Then run `poetry run pre-commit install` to set up pre-commit.

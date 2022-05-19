@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 
 import rdflib
 
@@ -85,7 +85,7 @@ class TemplateLibrary:
             _bm=self._bm,
         )
 
-    def get_templates(self) -> list[Template]:
+    def get_templates(self) -> List[Template]:
         """get Templates in Library
 
         :return: list of templates
