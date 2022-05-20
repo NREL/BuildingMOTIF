@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from sqlalchemy import JSON, Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -81,5 +81,5 @@ class DBTemplate(Base):
     )
 
     @hybrid_property
-    def head(self) -> tuple[str, ...]:
+    def head(self) -> Tuple[str, ...]:
         return tuple([x for x in self._head.split(";")])
