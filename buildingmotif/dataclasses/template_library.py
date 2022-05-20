@@ -62,7 +62,7 @@ class TemplateLibrary:
         self._bm.table_connection.update_db_template_library_name(self._id, new_name)
         self._name = new_name
 
-    def create_template(self, name: str, head: list[str]) -> Template:
+    def create_template(self, name: str, head: List[str]) -> Template:
         """Create Template in this Template Library
 
         :param name: name
