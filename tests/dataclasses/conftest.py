@@ -13,5 +13,9 @@ def clean_building_motif():
         temp_db_path = os.path.join(tempdir, "temp.db")
         uri = f"sqlite:///{temp_db_path}"
         building_motif = BuildingMotif(uri)
+
         yield building_motif
+
+        building_motif.session.commit()
+        building_motif.close()
         BuildingMotif.clean()

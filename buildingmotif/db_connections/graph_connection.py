@@ -4,6 +4,7 @@ from typing import List, Optional
 from rdflib.graph import Graph, Store, plugin
 from sqlalchemy.engine import Engine
 
+from buildingmotif import building_motif
 from buildingmotif.namespaces import bind_prefixes
 
 PROJECT_DIR = Path(__file__).resolve().parent
@@ -15,17 +16,20 @@ class GraphConnection:
     def __init__(
         self,
         engine: Engine,
+        session_manager: "building_motif.BuildingMotif",
         db_identifier: Optional[str] = "buildingmotif_store",
     ) -> None:
         """Creates datastore and database.
 
         :param engine: db engine
         :type engine: Engine
+        :param session_manager: contains the session to use
+        :type session_manager: BuildingMotif
         :param db_identifier: defaults to "buildingmotif_store"
         :type db_identifier: Optional[str], optional
         """
         self.store = plugin.get("SQLAlchemy", Store)(
-            engine=engine, identifier=db_identifier
+            session_manager, identifier=db_identifier, engine=engine
         )
         self.store.create_all()
 

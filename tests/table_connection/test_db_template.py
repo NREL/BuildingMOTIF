@@ -40,6 +40,22 @@ def test_create_db_template_bad_template_library(table_connection, monkeypatch):
         )
 
 
+def test_create_template_bad_name(table_connection):
+    db_template_library = table_connection.create_db_template_library(
+        name="my_db_template_library"
+    )
+    table_connection.create_db_template(
+        name="my_db_template", template_library_id=db_template_library.id
+    )
+
+    with pytest.raises(Exception):
+        table_connection.create_db_template(
+            name="my_db_template", template_library_id=db_template_library.id
+        )
+
+    table_connection.bm.session.rollback()
+
+
 def test_get_db_templates(table_connection):
     my_db_template_library = table_connection.create_db_template_library(
         name="my_db_template_library"
@@ -102,6 +118,25 @@ def test_update_db_template_name(table_connection):
     table_connection.update_db_template_name(db_template.id, "your_db_template")
 
     assert table_connection.get_db_template(db_template.id).name == "your_db_template"
+
+
+def test_update_db_template_name_bad_name(table_connection):
+    db_template_library = table_connection.create_db_template_library(
+        name="my_db_template_library"
+    )
+    table_connection.create_db_template(
+        name="my_db_template", template_library_id=db_template_library.id
+    )
+
+    bad_t = table_connection.create_db_template(
+        name="a fine name", template_library_id=db_template_library.id
+    )
+    table_connection.update_db_template_name(bad_t.id, "my_db_template")
+
+    with pytest.raises(Exception):
+        table_connection.bm.session.flush()
+
+    table_connection.bm.session.rollback()
 
 
 def test_update_db_template_name_does_not_exist(table_connection):

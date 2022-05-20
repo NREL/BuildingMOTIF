@@ -26,8 +26,8 @@ class Model:
         :rtype: Model
         """
         bm = get_building_motif()
-        db_model = bm.table_con.create_db_model(name)
-        graph = bm.graph_con.create_graph(db_model.graph_id, rdflib.Graph())
+        db_model = bm.table_connection.create_db_model(name)
+        graph = bm.graph_connection.create_graph(db_model.graph_id, rdflib.Graph())
 
         return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
 
@@ -41,8 +41,8 @@ class Model:
         :rtype: Model
         """
         bm = get_building_motif()
-        db_model = bm.table_con.get_db_model(id)
-        graph = bm.graph_con.get_graph(db_model.graph_id)
+        db_model = bm.table_connection.get_db_model(id)
+        graph = bm.graph_connection.get_graph(db_model.graph_id)
 
         return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
 
@@ -60,5 +60,5 @@ class Model:
 
     @name.setter
     def name(self, new_name: str):
-        self._bm.table_con.update_db_model_name(self._id, new_name)
+        self._bm.table_connection.update_db_model_name(self._id, new_name)
         self._name = new_name

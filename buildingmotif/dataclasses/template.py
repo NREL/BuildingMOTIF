@@ -25,8 +25,8 @@ class Template:
         :rtype: Template
         """
         bm = get_building_motif()
-        db_template = bm.table_con.get_db_template(id)
-        body = bm.graph_con.get_graph(db_template.body_id)
+        db_template = bm.table_connection.get_db_template(id)
+        body = bm.graph_connection.get_graph(db_template.body_id)
 
         return cls(_id=db_template.id, _name=db_template.name, body=body, _bm=bm)
 
@@ -44,5 +44,5 @@ class Template:
 
     @name.setter
     def name(self, new_name: str) -> None:
-        self._bm.table_con.update_db_template_name(self._id, new_name)
+        self._bm.table_connection.update_db_template_name(self._id, new_name)
         self._name = new_name

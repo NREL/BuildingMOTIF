@@ -1,47 +1,29 @@
 import uuid
-from functools import wraps
-from typing import Callable, List, Optional
+from typing import List, Optional
 
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import sessionmaker
 
+from buildingmotif import building_motif
 from buildingmotif.tables import Base, DBModel, DBTemplate, DBTemplateLibrary
-
-
-def _commit_or_rollback(func: Callable) -> Callable:
-    @wraps(func)
-    def wrapper(self, *args, **kwargs):
-        res = func(self, *args, **kwargs)
-        try:
-            self.session.commit()
-        except Exception:
-            self.session.rollback()
-            raise
-
-        return res
-
-    return wrapper
 
 
 class TableConnection:
     """Controls interaction with the database."""
 
-    def __init__(self, engine: Engine) -> None:
+    def __init__(self, engine: Engine, bm: "building_motif.BuildingMotif") -> None:
         """Class constructor.
 
         :param engine: db engine
         :type engine: Engine
+        :param bm: contains the session to use
+        :type bm: BuildingMotif
         """
         # create tables
         Base.metadata.create_all(engine)
-
-        # create session
-        Session = sessionmaker(bind=engine)
-        self.session = Session()
+        self.bm = bm
 
     # model functions
 
-    @_commit_or_rollback
     def create_db_model(self, name: str) -> DBModel:
         """Create a database model.
 
@@ -52,7 +34,8 @@ class TableConnection:
         """
         db_model = DBModel(name=name, graph_id=str(uuid.uuid4()))
 
-        self.session.add(db_model)
+        self.bm.session.add(db_model)
+        self.bm.session.flush()
 
         return db_model
 
@@ -62,7 +45,7 @@ class TableConnection:
         :return: all DBModels
         :rtype: DBModel
         """
-        return self.session.query(DBModel).all()
+        return self.bm.session.query(DBModel).all()
 
     def get_db_model(self, id: int) -> DBModel:
         """Get database model from id.
@@ -72,9 +55,8 @@ class TableConnection:
         :return: DBModel
         :rtype: DBModel
         """
-        return self.session.query(DBModel).filter(DBModel.id == id).one()
+        return self.bm.session.query(DBModel).filter(DBModel.id == id).one()
 
-    @_commit_or_rollback
     def update_db_model_name(self, id: int, name: Optional[str]) -> None:
         """Update database model.
 
@@ -83,23 +65,21 @@ class TableConnection:
         :param name: new name
         :type name: str
         """
-        db_model = self.session.query(DBModel).filter(DBModel.id == id).one()
+        db_model = self.bm.session.query(DBModel).filter(DBModel.id == id).one()
         db_model.name = name
 
-    @_commit_or_rollback
     def delete_db_model(self, id: int) -> None:
         """Delete database model.
 
         :param id: id of deleted DBModel
         :type id: str
         """
-        db_model = self.session.query(DBModel).filter(DBModel.id == id).one()
+        db_model = self.bm.session.query(DBModel).filter(DBModel.id == id).one()
 
-        self.session.delete(db_model)
+        self.bm.session.delete(db_model)
 
     # template library functions
 
-    @_commit_or_rollback
     def create_db_template_library(self, name: str) -> DBTemplateLibrary:
         """Create a database template_library.
 
@@ -110,7 +90,8 @@ class TableConnection:
         """
         template_library = DBTemplateLibrary(name=name)
 
-        self.session.add(template_library)
+        self.bm.session.add(template_library)
+        self.bm.session.flush()
 
         return template_library
 
@@ -120,7 +101,7 @@ class TableConnection:
         :return: all DBTemplateLibrary
         :rtype: DBTemplateLibrary
         """
-        return self.session.query(DBTemplateLibrary).all()
+        return self.bm.session.query(DBTemplateLibrary).all()
 
     def get_db_template_library(self, id: int) -> DBTemplateLibrary:
         """Get database template library from id.
@@ -131,12 +112,11 @@ class TableConnection:
         :rtype: DBTemplateLibrary
         """
         return (
-            self.session.query(DBTemplateLibrary)
+            self.bm.session.query(DBTemplateLibrary)
             .filter(DBTemplateLibrary.id == id)
             .one()
         )
 
-    @_commit_or_rollback
     def update_db_template_library_name(self, id: int, name: Optional[str]) -> None:
         """Update database template library.
 
@@ -146,13 +126,12 @@ class TableConnection:
         :type name: str
         """
         db_template_library = (
-            self.session.query(DBTemplateLibrary)
+            self.bm.session.query(DBTemplateLibrary)
             .filter(DBTemplateLibrary.id == id)
             .one()
         )
         db_template_library.name = name
 
-    @_commit_or_rollback
     def delete_db_template_library(self, id: int) -> None:
         """Delete database template library.
 
@@ -160,16 +139,15 @@ class TableConnection:
         :type id: str
         """
         db_template_library = (
-            self.session.query(DBTemplateLibrary)
+            self.bm.session.query(DBTemplateLibrary)
             .filter(DBTemplateLibrary.id == id)
             .one()
         )
 
-        self.session.delete(db_template_library)
+        self.bm.session.delete(db_template_library)
 
     # template functions
 
-    @_commit_or_rollback
     def create_db_template(self, name: str, template_library_id: int) -> DBTemplate:
         """Create a database template.
 
@@ -184,6 +162,9 @@ class TableConnection:
             name=name, body_id=str(uuid.uuid4()), template_library=template_library
         )
 
+        self.bm.session.add(template)
+        self.bm.session.flush()
+
         return template
 
     def get_all_db_templates(self) -> List[DBTemplate]:
@@ -192,7 +173,7 @@ class TableConnection:
         :return: all DBTemplate
         :rtype: DBTemplate
         """
-        return self.session.query(DBTemplate).all()
+        return self.bm.session.query(DBTemplate).all()
 
     def get_db_template(self, id: int) -> DBTemplate:
         """Get database template from id.
@@ -202,9 +183,8 @@ class TableConnection:
         :return: DBTemplate
         :rtype: DBTemplate
         """
-        return self.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        return self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
 
-    @_commit_or_rollback
     def update_db_template_name(self, id: int, name: Optional[str]) -> None:
         """Update database template.
 
@@ -213,10 +193,11 @@ class TableConnection:
         :param name: new name
         :type name: str
         """
-        db_template = self.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        db_template = (
+            self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        )
         db_template.name = name
 
-    @_commit_or_rollback
     def update_db_template_template_library(
         self, id: int, template_library_id: int
     ) -> None:
@@ -227,16 +208,19 @@ class TableConnection:
         :param name: id of the new template_library
         :type name: int
         """
-        db_template = self.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        db_template = (
+            self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        )
         db_template.template_library = template_library_id
 
-    @_commit_or_rollback
     def delete_db_template(self, id: int) -> None:
         """Delete database template.
 
         :param id: id of deleted DBTemplate
         :type id: str
         """
-        db_template = self.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        db_template = (
+            self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        )
 
-        self.session.delete(db_template)
+        self.bm.session.delete(db_template)
