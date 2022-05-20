@@ -1,6 +1,6 @@
-from typing import List
+from typing import Dict, List
 
-from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import JSON, Column, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, declarative_base, relationship
 
@@ -35,11 +35,8 @@ class DepsAssociation(Base):
 
     dependant_id: Mapped[int] = Column(ForeignKey("template.id"), primary_key=True)
     dependee_id: Mapped[int] = Column(ForeignKey("template.id"), primary_key=True)
-    _args: Mapped[str] = Column(String(), nullable=False)
-
-    @hybrid_property
-    def args(self) -> tuple[str, ...]:
-        return tuple([x for x in self._args.split(";")])
+    # args are a mapping of dependee args to dependant args
+    args: Mapped[Dict[str, str]] = Column(JSON)
 
 
 class DBTemplate(Base):

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Dict
 
 import rdflib
 
@@ -72,7 +73,7 @@ class Template:
             ]
         )
 
-    def add_dependency(self, dependency: "Template", args: list[str]) -> None:
+    def add_dependency(self, dependency: "Template", args: Dict[str, str]) -> None:
         self._bm.table_connection.add_template_dependency(self.id, dependency.id, args)
 
     def remove_dependency(self, dependency: "Template") -> None:
@@ -82,7 +83,7 @@ class Template:
 @dataclass
 class Dependency:
     _template_id: int
-    _args: list[str]
+    args: Dict[str, str]
 
     @property
     def template_id(self):
@@ -91,7 +92,3 @@ class Dependency:
     @property
     def template(self) -> Template:
         return Template.load(self._template_id)
-
-    @property
-    def args(self):
-        return self._args

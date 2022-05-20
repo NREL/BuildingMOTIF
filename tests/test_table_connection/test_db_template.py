@@ -199,14 +199,17 @@ def test_add_template_dependency(table_connection):
     ) = create_dependacy_test_fixtures(table_connection)
 
     table_connection.add_template_dependency(
-        dependant_template.id, dependee_template.id, ["ding", "dong"]
+        dependant_template.id, dependee_template.id, {"h1": "ding", "h2": "dong"}
     )
 
     assert dependant_template.dependencies == [dependee_template]
     assert dependee_template.dependants == [dependant_template]
-    assert table_connection.get_db_template_dependencies(dependant_template.id) == (
-        (dependee_template.id, ("ding", "dong")),
-    )
+    res = table_connection.get_db_template_dependencies(dependant_template.id)
+    assert len(res) == 1
+    dep_assoc = res[0]
+    assert dep_assoc.dependant_id == dependant_template.id
+    assert dep_assoc.dependee_id == dependee_template.id
+    assert dep_assoc.args == {"h1": "ding", "h2": "dong"}
 
 
 def test_add_template_dependency_bad_args(table_connection):
@@ -218,7 +221,7 @@ def test_add_template_dependency_bad_args(table_connection):
 
     with pytest.raises(ValueError):
         table_connection.add_template_dependency(
-            dependant_template.id, dependee_template.id, ["ding"]
+            dependant_template.id, dependee_template.id, {"h1": "ding"}
         )
 
 
@@ -230,12 +233,12 @@ def test_add_template_dependency_already_exist(table_connection):
     ) = create_dependacy_test_fixtures(table_connection)
 
     table_connection.add_template_dependency(
-        dependant_template.id, dependee_template.id, ["ding", "dong"]
+        dependant_template.id, dependee_template.id, {"h1": "ding", "h2": "dong"}
     )
 
     with pytest.raises(IntegrityError):
         table_connection.add_template_dependency(
-            dependant_template.id, dependee_template.id, ["ding", "dong"]
+            dependant_template.id, dependee_template.id, {"h1": "ding", "h2": "dong"}
         )
 
     table_connection.bm.session.rollback()
@@ -249,12 +252,15 @@ def test_get_dependencies(table_connection):
     ) = create_dependacy_test_fixtures(table_connection)
 
     table_connection.add_template_dependency(
-        dependant_template.id, dependee_template.id, ["ding", "dong"]
+        dependant_template.id, dependee_template.id, {"h1": "ding", "h2": "dong"}
     )
 
-    assert table_connection.get_db_template_dependencies(dependant_template.id) == (
-        (dependee_template.id, ("ding", "dong")),
-    )
+    res = table_connection.get_db_template_dependencies(dependant_template.id)
+    assert len(res) == 1
+    dep_assoc = res[0]
+    assert dep_assoc.dependant_id == dependant_template.id
+    assert dep_assoc.dependee_id == dependee_template.id
+    assert dep_assoc.args == {"h1": "ding", "h2": "dong"}
 
 
 def test_remove_dependencies(table_connection):
@@ -265,12 +271,15 @@ def test_remove_dependencies(table_connection):
     ) = create_dependacy_test_fixtures(table_connection)
 
     table_connection.add_template_dependency(
-        dependant_template.id, dependee_template.id, ["ding", "dong"]
+        dependant_template.id, dependee_template.id, {"h1": "ding", "h2": "dong"}
     )
 
-    assert table_connection.get_db_template_dependencies(dependant_template.id) == (
-        (dependee_template.id, ("ding", "dong")),
-    )
+    res = table_connection.get_db_template_dependencies(dependant_template.id)
+    assert len(res) == 1
+    dep_assoc = res[0]
+    assert dep_assoc.dependant_id == dependant_template.id
+    assert dep_assoc.dependee_id == dependee_template.id
+    assert dep_assoc.args == {"h1": "ding", "h2": "dong"}
 
     table_connection.remove_template_dependency(
         dependant_template.id, dependee_template.id

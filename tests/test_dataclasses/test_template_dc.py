@@ -5,7 +5,7 @@ from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
-from buildingmotif.dataclasses.template import Template
+from buildingmotif.dataclasses.template import Dependency, Template
 from buildingmotif.dataclasses.template_library import TemplateLibrary
 
 
@@ -85,9 +85,11 @@ def test_add_dependency(clean_building_motif):
     dependant = tl.create_template("dependant", head=[])
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
-    dependant.add_dependency(dependee, ["1", "2"])
+    dependant.add_dependency(dependee, {"ding": "1", "dong": "2"})
 
-    assert dependant.get_dependencies() == ((dependee.id, ("1", "2")),)
+    assert dependant.get_dependencies() == (
+        Dependency(dependee.id, {"ding": "1", "dong": "2"}),
+    )
 
 
 def test_add_dependency_bad_args(clean_building_motif):
@@ -96,7 +98,7 @@ def test_add_dependency_bad_args(clean_building_motif):
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
     with pytest.raises(ValueError):
-        dependant.add_dependency(dependee, [])
+        dependant.add_dependency(dependee, {})
 
 
 def test_add_dependency_already_exist(clean_building_motif):
@@ -104,10 +106,10 @@ def test_add_dependency_already_exist(clean_building_motif):
     dependant = tl.create_template("dependant", head=[])
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
-    dependant.add_dependency(dependee, ["1", "2"])
+    dependant.add_dependency(dependee, {"ding": "1", "dong": "2"})
 
     with pytest.raises(IntegrityError):
-        dependant.add_dependency(dependee, ["1", "2"])
+        dependant.add_dependency(dependee, {"ding": "1", "dong": "2"})
 
     clean_building_motif.session.rollback()
 
@@ -117,9 +119,11 @@ def test_get_dependencies(clean_building_motif):
     dependant = tl.create_template("dependant", head=[])
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
-    dependant.add_dependency(dependee, ["1", "2"])
+    dependant.add_dependency(dependee, {"ding": "1", "dong": "2"})
 
-    assert dependant.get_dependencies() == ((dependee.id, ("1", "2")),)
+    assert dependant.get_dependencies() == (
+        Dependency(dependee.id, {"ding": "1", "dong": "2"}),
+    )
 
 
 def test_remove_dependency(clean_building_motif):
@@ -127,8 +131,10 @@ def test_remove_dependency(clean_building_motif):
     dependant = tl.create_template("dependant", head=[])
     dependee = tl.create_template("dependee", head=["ding", "dong"])
 
-    dependant.add_dependency(dependee, ["1", "2"])
-    assert dependant.get_dependencies() == ((dependee.id, ("1", "2")),)
+    dependant.add_dependency(dependee, {"ding": "1", "dong": "2"})
+    assert dependant.get_dependencies() == (
+        Dependency(dependee.id, {"ding": "1", "dong": "2"}),
+    )
 
     dependant.remove_dependency(dependee)
     assert dependant.get_dependencies() == ()

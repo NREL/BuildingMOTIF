@@ -1,5 +1,5 @@
 import uuid
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy.engine import Engine
 
@@ -227,17 +227,18 @@ class TableConnection:
         db_template.name = name
 
     def add_template_dependency(
-        self, template_id: int, dependency_id: int, args: list[str]
+        self, template_id: int, dependency_id: int, args: Dict[str, str]
     ):
         dependency = self.get_db_template(dependency_id)
-        if len(args) != len(dependency.head):
+        if not all((dependee_arg in args.keys()) for dependee_arg in dependency.head):
             raise ValueError(
-                f"len of args must equal the len of head of the dependency: \
-                    {len(args)} != {len(dependency.head)}"
+                f"All args in dependee template {dependency_id}'s head must be in args ({args})"
             )
 
         relationship = DepsAssociation(
-            dependant_id=template_id, dependee_id=dependency_id, _args=";".join(args)
+            dependant_id=template_id,
+            dependee_id=dependency_id,
+            args=args,
         )
 
         self.bm.session.add(relationship)
