@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Tuple
 
 import rdflib
 
@@ -63,7 +63,7 @@ class Template:
     def head(self, _: str) -> None:
         raise AttributeError("Cannot modify head")
 
-    def get_dependencies(self):
+    def get_dependencies(self) -> Tuple["Dependency", ...]:
         return tuple(
             [
                 Dependency(da.dependee_id, da.args)
