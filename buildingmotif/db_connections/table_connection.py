@@ -154,7 +154,7 @@ class TableConnection:
     # template functions
 
     def create_db_template(
-        self, name: str, head: list[str], template_library_id: int
+        self, name: str, head: List[str], template_library_id: int
     ) -> DBTemplate:
         """Create a database template.
 
