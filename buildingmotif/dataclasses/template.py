@@ -63,7 +63,14 @@ class Template:
         raise AttributeError("Cannot modify head")
 
     def get_dependencies(self):
-        return self._bm.table_connection.get_db_template_dependencies(self.id)
+        return tuple(
+            [
+                Dependency(da.dependee_id, da.args)
+                for da in self._bm.table_connection.get_db_template_dependencies(
+                    self._id
+                )
+            ]
+        )
 
     def add_dependency(self, dependency: "Template", args: list[str]) -> None:
         self._bm.table_connection.add_template_dependency(self.id, dependency.id, args)

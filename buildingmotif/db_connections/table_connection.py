@@ -3,7 +3,6 @@ from typing import List, Optional, Tuple
 
 from sqlalchemy.engine import Engine
 
-from buildingmotif.dataclasses.template import Dependency
 from buildingmotif.tables import (
     Base,
     DBModel,
@@ -198,7 +197,7 @@ class TableConnection:
         """
         return self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
 
-    def get_db_template_dependencies(self, id: int) -> Tuple[Dependency, ...]:
+    def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
         """get a templates dependencies and it args
 
         if you dont need the args, consider using `template.dependencies`.
@@ -209,12 +208,9 @@ class TableConnection:
         :rtype: tuple[tuple[int, list[str]]]
         """
         return tuple(
-            [
-                self.bm.session.query(DepsAssociation)
-                .filter(DepsAssociation.dependant_id == id)
-                .all()
-                .map(lambda x: Dependency(x.dependee_id, x.args))
-            ]
+            self.bm.session.query(DepsAssociation)
+            .filter(DepsAssociation.dependant_id == id)
+            .all()
         )
 
     def update_db_template_name(self, id: int, name: Optional[str]) -> None:

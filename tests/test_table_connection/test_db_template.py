@@ -204,7 +204,7 @@ def test_add_template_dependency(table_connection):
 
     assert dependant_template.dependencies == [dependee_template]
     assert dependee_template.dependants == [dependant_template]
-    assert table_connection.get_db_tempalte_dependencies(dependant_template.id) == (
+    assert table_connection.get_db_template_dependencies(dependant_template.id) == (
         (dependee_template.id, ("ding", "dong")),
     )
 
@@ -252,7 +252,7 @@ def test_get_dependencies(table_connection):
         dependant_template.id, dependee_template.id, ["ding", "dong"]
     )
 
-    assert table_connection.get_db_tempalte_dependencies(dependant_template.id) == (
+    assert table_connection.get_db_template_dependencies(dependant_template.id) == (
         (dependee_template.id, ("ding", "dong")),
     )
 
@@ -268,7 +268,7 @@ def test_remove_dependencies(table_connection):
         dependant_template.id, dependee_template.id, ["ding", "dong"]
     )
 
-    assert table_connection.get_db_tempalte_dependencies(dependant_template.id) == (
+    assert table_connection.get_db_template_dependencies(dependant_template.id) == (
         (dependee_template.id, ("ding", "dong")),
     )
 
@@ -276,7 +276,7 @@ def test_remove_dependencies(table_connection):
         dependant_template.id, dependee_template.id
     )
 
-    assert table_connection.get_db_tempalte_dependencies(dependant_template.id) == ()
+    assert table_connection.get_db_template_dependencies(dependant_template.id) == ()
 
 
 def test_remove_dependencies_does_not_exist(table_connection):
