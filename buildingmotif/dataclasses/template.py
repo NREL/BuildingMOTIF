@@ -13,7 +13,7 @@ class Template:
 
     _id: int
     _name: str
-    _head: tuple[str, ...]
+    _head: Tuple[str, ...]
     body: rdflib.Graph
     _bm: BuildingMotif
 
