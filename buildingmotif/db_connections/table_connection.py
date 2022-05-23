@@ -229,10 +229,28 @@ class TableConnection:
     def add_template_dependency(
         self, template_id: int, dependency_id: int, args: Dict[str, str]
     ):
+        """create dependency between two templates
+
+        :param template_id: dependant template id
+        :type template_id: int
+        :param dependency_id: dependency template id
+        :type dependency_id: int
+        :param args: dependency head to dependant variable mapping
+        :type args: Dict[str, str]
+        :raises ValueError: if all dependee heads not in args
+        :raises ValueError: if dependant and dependency template don't share a library
+        """
+        dependant = self.get_db_template(template_id)
         dependency = self.get_db_template(dependency_id)
         if not all((dependee_arg in args.keys()) for dependee_arg in dependency.head):
             raise ValueError(
                 f"All args in dependee template {dependency_id}'s head must be in args ({args})"
+            )
+        if dependant.template_library != dependency.template_library:
+            raise ValueError(
+                "Dependant and dependency template must have the same template "
+                "library. Dependant and dependency template have library with "
+                f"id {dependant.template_library.id} and {dependency.template_library.id}"
             )
 
         relationship = DepsAssociation(
@@ -245,6 +263,13 @@ class TableConnection:
         self.bm.session.flush()
 
     def remove_template_dependency(self, template_id: int, dependency_id: int):
+        """remove dependency between two templates
+
+        :param template_id: dependant template id
+        :type template_id: int
+        :param dependency_id: dependency template id
+        :type dependency_id: int
+        """
         relationship = (
             self.bm.session.query(DepsAssociation)
             .filter(

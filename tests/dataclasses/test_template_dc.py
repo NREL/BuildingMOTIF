@@ -92,6 +92,17 @@ def test_add_dependency(clean_building_motif):
     )
 
 
+def test_add_dependency_from_different_library(clean_building_motif):
+    tl = TemplateLibrary.create("my_template_library")
+    dependant = tl.create_template("dependant", head=[])
+
+    other_tl = TemplateLibrary.create("other_template_library")
+    dependee = other_tl.create_template("dependee", head=["ding", "dong"])
+
+    with pytest.raises(ValueError):
+        dependant.add_dependency(dependee, {"ding": "1", "dong": "2"})
+
+
 def test_add_dependency_bad_args(clean_building_motif):
     tl = TemplateLibrary.create("my_template_library")
     dependant = tl.create_template("dependant", head=[])
