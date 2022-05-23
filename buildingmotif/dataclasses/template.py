@@ -66,8 +66,8 @@ class Template:
     def get_dependencies(self) -> Tuple["Dependency", ...]:
         return tuple(
             [
-                Dependency(da.dependee_id, da.args)
-                for da in self._bm.table_connection.get_db_template_dependencies(
+                Dependency(dep.dependee_id, dep.args)
+                for dep in self._bm.table_connection.get_db_template_dependencies(
                     self._id
                 )
             ]
