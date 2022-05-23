@@ -2,10 +2,7 @@ from dataclasses import dataclass
 
 import rdflib
 
-from buildingmotif.building_motif.building_motif import (
-    BuildingMotif,
-    get_building_motif,
-)
+from buildingmotif import BuildingMOTIF, get_building_motif
 
 
 @dataclass
@@ -15,7 +12,7 @@ class Template:
     _id: int
     _name: str
     body: rdflib.Graph
-    _bm: BuildingMotif
+    _bm: BuildingMOTIF
 
     @classmethod
     def load(cls, id: int) -> "Template":
