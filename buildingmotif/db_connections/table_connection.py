@@ -198,9 +198,8 @@ class TableConnection:
         return self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
 
     def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
-        """get a templates dependencies and it args
-
-        if you dont need the args, consider using `template.dependencies`.
+        """Get a template's dependencies and its arguments.
+        If you don't need the arguments, consider using `template.dependencies`.
 
         :param id: template id
         :type id: int
@@ -229,7 +228,7 @@ class TableConnection:
     def add_template_dependency(
         self, template_id: int, dependency_id: int, args: Dict[str, str]
     ):
-        """create dependency between two templates
+        """Create dependency between two templates.
 
         :param template_id: dependant template id
         :type template_id: int
@@ -263,7 +262,7 @@ class TableConnection:
         self.bm.session.flush()
 
     def remove_template_dependency(self, template_id: int, dependency_id: int):
-        """remove dependency between two templates
+        """Remove dependency between two templates.
 
         :param template_id: dependant template id
         :type template_id: int

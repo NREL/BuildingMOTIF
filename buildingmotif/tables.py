@@ -29,7 +29,7 @@ class DBTemplateLibrary(Base):
 
 
 class DepsAssociation(Base):
-    """m-2-m relationship between dependant templates"""
+    """Many-to-many relationship between dependant templates."""
 
     __tablename__ = "deps_association_table"
 
@@ -40,7 +40,7 @@ class DepsAssociation(Base):
 
 
 class DBTemplate(Base):
-    """Template
+    """Template.
 
     # TODO: doc table properties better.
     """
