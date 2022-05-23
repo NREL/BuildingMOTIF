@@ -16,8 +16,6 @@ class MockBuildingMotif:
         self.session = Session()
 
     def close(self) -> None:
-        """
-        close session and engine.
-        """
+        """Close session and engine."""
         self.session.close()
         self.engine.dispose()

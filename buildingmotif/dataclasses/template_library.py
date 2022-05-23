@@ -94,5 +94,5 @@ class TemplateLibrary:
         db_template_library = self._bm.table_connection.get_db_template_library(
             self._id
         )
-        templates: list[DBTemplate] = db_template_library.templates
+        templates: List[DBTemplate] = db_template_library.templates
         return [Template.load(t.id) for t in templates]
