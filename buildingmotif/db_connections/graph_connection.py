@@ -4,7 +4,7 @@ from typing import List, Optional
 from rdflib.graph import Graph, Store, plugin
 from sqlalchemy.engine import Engine
 
-from buildingmotif import building_motif
+from buildingmotif.building_motif import building_motif
 from buildingmotif.namespaces import bind_prefixes
 
 PROJECT_DIR = Path(__file__).resolve().parent

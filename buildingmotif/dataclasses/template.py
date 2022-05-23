@@ -2,8 +2,10 @@ from dataclasses import dataclass
 
 import rdflib
 
-from buildingmotif.building_motif import BuildingMotif
-from buildingmotif.utils import get_building_motif
+from buildingmotif.building_motif.building_motif import (
+    BuildingMotif,
+    get_building_motif,
+)
 
 
 @dataclass

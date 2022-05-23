@@ -3,10 +3,12 @@ from typing import List, Optional
 
 import rdflib
 
-from buildingmotif.building_motif import BuildingMotif
+from buildingmotif.building_motif.building_motif import (
+    BuildingMotif,
+    get_building_motif,
+)
 from buildingmotif.dataclasses import Template
-from buildingmotif.tables import DBTemplate
-from buildingmotif.utils import get_building_motif
+from buildingmotif.db_connections.tables import DBTemplate
 
 
 @dataclass

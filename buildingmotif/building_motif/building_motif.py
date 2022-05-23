@@ -1,9 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from buildingmotif.building_motif.singleton import (
+    Singleton,
+    SingletonNotInstantiatedException,
+)
 from buildingmotif.db_connections.graph_connection import GraphConnection
 from buildingmotif.db_connections.table_connection import TableConnection
-from buildingmotif.singleton import Singleton
 
 
 class BuildingMotif(metaclass=Singleton):
@@ -27,3 +30,12 @@ class BuildingMotif(metaclass=Singleton):
         """Close session and engine."""
         self.session.close()
         self.engine.dispose()
+
+
+def get_building_motif() -> "BuildingMotif":
+    """Returns singleton instance of BuildingMotif.
+    Requires that BuildingMotif has been instantiated before,
+    otherwise an exception will be thrown."""
+    if hasattr(BuildingMotif, "instance"):
+        return BuildingMotif.instance  # type: ignore
+    raise SingletonNotInstantiatedException

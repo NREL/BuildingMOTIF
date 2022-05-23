@@ -3,7 +3,7 @@ import uuid
 import pytest
 from sqlalchemy.exc import NoResultFound
 
-from buildingmotif.tables import DBTemplate
+from buildingmotif.db_connections.tables import DBTemplate
 
 
 def test_create_db_template(table_connection, monkeypatch):

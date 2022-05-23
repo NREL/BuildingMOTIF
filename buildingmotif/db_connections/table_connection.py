@@ -3,8 +3,13 @@ from typing import List, Optional
 
 from sqlalchemy.engine import Engine
 
-from buildingmotif import building_motif
-from buildingmotif.tables import Base, DBModel, DBTemplate, DBTemplateLibrary
+from buildingmotif.building_motif import building_motif
+from buildingmotif.db_connections.tables import (
+    Base,
+    DBModel,
+    DBTemplate,
+    DBTemplateLibrary,
+)
 
 
 class TableConnection:
