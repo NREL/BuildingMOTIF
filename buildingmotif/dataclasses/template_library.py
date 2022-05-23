@@ -4,7 +4,7 @@ from typing import List, Optional
 import rdflib
 
 from buildingmotif.building_motif import BuildingMotif
-from buildingmotif.dataclasses.template import Template
+from buildingmotif.dataclasses import Template
 from buildingmotif.tables import DBTemplate
 from buildingmotif.utils import get_building_motif
 

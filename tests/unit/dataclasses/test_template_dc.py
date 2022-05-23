@@ -4,8 +4,7 @@ from rdflib import RDF, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
-from buildingmotif.dataclasses.template import Template
-from buildingmotif.dataclasses.template_library import TemplateLibrary
+from buildingmotif.dataclasses import Template, TemplateLibrary
 
 
 def test_create(clean_building_motif):
