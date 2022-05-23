@@ -3,7 +3,7 @@ import tempfile
 
 import pytest
 
-from buildingmotif.building_motif.building_motif import BuildingMotif
+from buildingmotif import BuildingMotif
 
 
 @pytest.fixture
