@@ -61,21 +61,27 @@ class TemplateLibrary:
         self._bm.table_connection.update_db_template_library_name(self._id, new_name)
         self._name = new_name
 
-    def create_template(self, name: str) -> Template:
+    def create_template(self, name: str, head: List[str]) -> Template:
         """Create Template in this Template Library
 
         :param name: name
         :type name: str
+        :param head: variables in template body
+        :type head: list[str]
         :return: created Template
         :rtype: Template
         """
-        db_template = self._bm.table_connection.create_db_template(name, self._id)
+        db_template = self._bm.table_connection.create_db_template(name, head, self._id)
         body = self._bm.graph_connection.create_graph(
             db_template.body_id, rdflib.Graph()
         )
 
         return Template(
-            _id=db_template.id, _name=db_template.name, body=body, _bm=self._bm
+            _id=db_template.id,
+            _name=db_template.name,
+            _head=db_template.head,
+            body=body,
+            _bm=self._bm,
         )
 
     def get_templates(self) -> List[Template]:
