@@ -28,7 +28,7 @@ class BuildingMotif(metaclass=Singleton):
         self.table_connection = TableConnection(self.engine, self)
         self.graph_connection = GraphConnection(self.engine, self)
 
-    def load_library(self, ontology_graph: Optional[str] = None) -> None:
+    def load_library(self, ontology_graph: Optional[str] = None) -> TemplateLibrary:
         """
         Loads a library from the provided source.
 
@@ -48,6 +48,7 @@ class BuildingMotif(metaclass=Singleton):
             print(
                 f"Defined libary {lib.name} with {len(lib.get_templates())} templates"
             )
+            return lib
         else:
             raise Exception("No library information provided")
 
