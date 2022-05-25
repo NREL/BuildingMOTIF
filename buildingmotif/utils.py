@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from buildingmotif.template import Template
 
 # special namespace to denote template parameters inside RDF graphs
-MARK = Namespace("urn:___mark___#")
+PARAM = Namespace("urn:___param___#")
 Term = Union[URIRef, Literal, BNode]
 _gensym_counter = 0
 
@@ -25,7 +25,7 @@ def gensym(prefix: str = "p") -> URIRef:
     """
     global _gensym_counter
     _gensym_counter += 1
-    return MARK[f"{prefix}{_gensym_counter}"]
+    return PARAM[f"{prefix}{_gensym_counter}"]
 
 
 def get_template_from_shape(
@@ -43,7 +43,7 @@ def get_template_from_shape(
     """
     # the template body
     body = Graph()
-    root_param = MARK["name"]
+    root_param = PARAM["name"]
 
     deps = []
 
@@ -97,12 +97,14 @@ class _TemplateIndex:
 def _prep_shape_graph() -> Graph:
     shape = Graph()
     bind_prefixes(shape)
-    shape.bind("mark", MARK)
+    shape.bind("mark", PARAM)
     return shape
 
 
 def _index_properties(templ: "Template") -> _TemplateIndex:
-    templ_graph = templ.evaluate({p: MARK[p] for p in templ.parameters}, {"mark": MARK})
+    templ_graph = templ.evaluate(
+        {p: PARAM[p] for p in templ.parameters}, {"mark": PARAM}
+    )
     assert isinstance(templ_graph, Graph)
 
     # pick a random node to act as the 'target' of the shape
@@ -123,14 +125,14 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
     for p, o in templ_graph.predicate_objects(target):
         if p == RDF.type:
             continue
-        maybe_param = o.removeprefix(MARK)
+        maybe_param = o.removeprefix(PARAM)
         if maybe_param in templ.dependency_parameters:
             prop_shapes[p].append(templ.dependency_for_parameter(maybe_param))
         elif o in param_types:
             prop_types[p].append(param_types[o][0])
-        elif o not in MARK:
+        elif o not in PARAM:
             prop_values[p].append(o)
-        elif o in MARK and o not in param_types:
+        elif o in PARAM and o not in param_types:
             warn(f"{o} is does not have a type and does not seem to be a literal")
     return _TemplateIndex(
         templ,
@@ -176,33 +178,33 @@ def template_to_shape(template: "Template") -> Graph:
 
     idx = _index_properties(templ)
 
-    shape.add((MARK[templ.name], SH.targetClass, idx.target_type))
+    shape.add((PARAM[templ.name], SH.targetClass, idx.target_type))
     # create the shape
-    shape.add((MARK[templ.name], RDF.type, SH.NodeShape))
-    shape.add((MARK[templ.name], SH["class"], idx.target_type))
+    shape.add((PARAM[templ.name], RDF.type, SH.NodeShape))
+    shape.add((PARAM[templ.name], SH["class"], idx.target_type))
     for prop, ptypes in idx.prop_types.items():
         if len(ptypes) == 1:
-            _add_property_shape(shape, MARK[templ.name], SH["class"], prop, ptypes[0])
+            _add_property_shape(shape, PARAM[templ.name], SH["class"], prop, ptypes[0])
         else:  # more than one ptype
             for ptype in ptypes:
                 _add_qualified_property_shape(
-                    shape, MARK[templ.name], SH["class"], prop, ptype
+                    shape, PARAM[templ.name], SH["class"], prop, ptype
                 )
     for prop, values in idx.prop_values.items():
         if len(values) == 1:
-            _add_property_shape(shape, MARK[templ.name], SH.hasValue, prop, values[0])
+            _add_property_shape(shape, PARAM[templ.name], SH.hasValue, prop, values[0])
         else:  # more than one ptype
             for value in values:
                 _add_qualified_property_shape(
-                    shape, MARK[templ.name], SH.hasValue, prop, value
+                    shape, PARAM[templ.name], SH.hasValue, prop, value
                 )
     for prop, shapes in idx.prop_shapes.items():
         if len(shapes) == 1:
-            _add_property_shape(shape, MARK[templ.name], SH["node"], prop, shapes[0])
+            _add_property_shape(shape, PARAM[templ.name], SH["node"], prop, shapes[0])
         else:  # more than one ptype
             for shp in shapes:
                 _add_qualified_property_shape(
-                    shape, MARK[templ.name], SH.node, prop, MARK[shp]
+                    shape, PARAM[templ.name], SH.node, prop, PARAM[shp]
                 )
 
     return shape
