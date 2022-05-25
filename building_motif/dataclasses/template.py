@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 
 import rdflib
 
-from buildingmotif import BuildingMOTIF, get_building_motif
+from building_motif import BuildingMOTIF, get_building_motif
 
 
 @dataclass

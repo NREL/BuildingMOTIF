@@ -3,7 +3,7 @@ import uuid
 import pytest
 from sqlalchemy.exc import NoResultFound
 
-from buildingmotif.db_connections.tables import DBModel
+from building_motif.database.tables import DBModel
 
 
 def test_create_db_model(monkeypatch, table_connection):

@@ -6,10 +6,10 @@ from warnings import warn
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
 
-from buildingmotif.namespaces import RDF, SH, bind_prefixes
+from building_motif.namespaces import RDF, SH, bind_prefixes
 
 if TYPE_CHECKING:
-    from buildingmotif.template import Template
+    from building_motif.template import Template
 
 # special namespace to denote template parameters inside RDF graphs
 MARK = Namespace("urn:___mark___#")

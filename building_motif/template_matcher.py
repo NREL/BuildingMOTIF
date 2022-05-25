@@ -12,8 +12,8 @@ from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
 from rdflib import Graph, Namespace, URIRef
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_digraph
 
-from buildingmotif.namespaces import OWL, RDF, RDFS
-from buildingmotif.template import Template, Term
+from building_motif.namespaces import OWL, RDF, RDFS
+from building_motif.template import Template, Term
 
 Mapping = Dict[Term, Term]
 _MARK = Namespace("urn:__mark__#")
