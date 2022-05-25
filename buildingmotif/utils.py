@@ -45,7 +45,6 @@ def get_template_from_shape(
     body = Graph()
     root_param = MARK["name"]
 
-    # TODO: track dependencies + their parameters
     deps = []
 
     property_shape_query = f"""SELECT ?path ?otype ?mincount WHERE {{
