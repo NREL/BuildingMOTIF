@@ -1,12 +1,14 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import rdflib
 
-from buildingmotif.building_motif import BuildingMotif
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.tables import DBTemplate
-from buildingmotif.utils import get_building_motif
+from buildingmotif.utils import get_building_motif, get_template_from_shape
+
+if TYPE_CHECKING:
+    from buildingmotif.building_motif import BuildingMotif
 
 
 @dataclass
@@ -15,7 +17,7 @@ class TemplateLibrary:
 
     _id: int
     _name: str
-    _bm: BuildingMotif
+    _bm: "BuildingMotif"
 
     @classmethod
     def create(cls, name: str) -> "TemplateLibrary":
@@ -45,6 +47,48 @@ class TemplateLibrary:
 
         return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
 
+    @classmethod
+    def from_ontology(cls, ontology: rdflib.Graph) -> "TemplateLibrary":
+        """Load a template library from an ontology graph. This proceeds as follows.
+        First, get all entities in the graph which are instances of *both* owl:Class
+        and sh:NodeShape. (this is "candidates")
+
+        For each candidate, use the utility function to parse the NodeShape and turn
+        it into a Template.
+        """
+        # get the name of the ontology; this will be the name of the library
+        # any=False will raise an error if there is more than one ontology defined  in the graph
+        ontology_name = ontology.value(
+            predicate=rdflib.RDF.type, object=rdflib.OWL.Ontology, any=False
+        )
+        # create the library
+        lib = cls.create(ontology_name)
+        class_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.OWL.Class))
+        shape_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
+        candidates = class_candidates.intersection(shape_candidates)
+
+        # stores the lookup from template *names* to template *ids*
+        # this is necessary because while we know the *name* of the dependee templates
+        # for each dependent template, we don't know the *id* of the dependee templates,
+        # which is necessary to populate the dependencies
+        template_id_lookup: Dict[str, int] = {}
+        for candidate in candidates:
+            assert isinstance(candidate, rdflib.URIRef)
+            partial_body, deps = get_template_from_shape(candidate, ontology)
+            templ = lib.create_template(str(candidate), ["name"], partial_body)
+            setattr(templ, "__deps__", deps)
+            template_id_lookup[str(candidate)] = templ.id
+
+        # now that we have all the templates, we can populate the dependencies
+        for template in lib.get_templates():
+            if not hasattr(template, "__deps__"):
+                continue
+            deps = getattr(template, "__deps__")
+            for dep in deps:
+                dependee = Template.load(template_id_lookup[dep["rule"]])
+                template.add_dependency(dependee, dep["args"])
+        return lib
+
     @property
     def id(self) -> Optional[int]:
         return self._id
@@ -62,7 +106,9 @@ class TemplateLibrary:
         self._bm.table_connection.update_db_template_library_name(self._id, new_name)
         self._name = new_name
 
-    def create_template(self, name: str, head: List[str]) -> Template:
+    def create_template(
+        self, name: str, head: List[str], body: Optional[rdflib.Graph] = None
+    ) -> Template:
         """Create Template in this Template Library
 
         :param name: name
@@ -74,7 +120,7 @@ class TemplateLibrary:
         """
         db_template = self._bm.table_connection.create_db_template(name, head, self._id)
         body = self._bm.graph_connection.create_graph(
-            db_template.body_id, rdflib.Graph()
+            db_template.body_id, body if body else rdflib.Graph()
         )
 
         return Template(

@@ -1,21 +1,84 @@
 from collections import defaultdict
 from copy import copy
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 from warnings import warn
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
 
-from buildingmotif.building_motif import BuildingMotif
-from buildingmotif.namespaces import RDF, SH, bind_prefixes
+from buildingmotif.namespaces import OWL, RDF, SH, bind_prefixes
 from buildingmotif.singleton import SingletonNotInstantiatedException
 
 if TYPE_CHECKING:
+    from buildingmotif.building_motif import BuildingMotif
     from buildingmotif.template import Template
 
 # special namespace to denote template parameters inside RDF graphs
 MARK = Namespace("urn:___mark___#")
 Term = Union[URIRef, Literal, BNode]
+_gensym_counter = 0
+
+
+def gensym(prefix: str = "p") -> URIRef:
+    """
+    Generate a unique identifier.
+    """
+    global _gensym_counter
+    _gensym_counter += 1
+    return MARK[f"{prefix}{_gensym_counter}"]
+
+
+def get_template_from_shape(
+    shape_name: URIRef, shape_graph: Graph
+) -> Tuple[Graph, List[Dict]]:
+    """
+    Turn a SHACL shape into a template. The following attributes of NodeShapes
+    will be incorporated into the resulting template:
+    - sh:property with sh:minCount
+    - sh:property with sh:qualifiedMinCount
+    - sh:class
+    - sh:node
+
+    TODO: sh:or?
+    """
+    # the template body
+    body = Graph()
+    root_param = MARK["name"]
+
+    # TODO: track dependencies + their parameters
+    deps = []
+
+    property_shape_query = f"""SELECT ?path ?otype ?mincount WHERE {{
+        {shape_name.n3()} sh:property ?prop .
+        ?prop sh:path ?path .
+        {{ ?prop sh:minCount ?mincount }}
+        UNION
+        {{ ?prop sh:qualifiedMinCount ?mincount }}
+        {{ ?prop sh:qualifiedValueShape?/sh:class ?otype }}
+        UNION
+        {{ ?prop sh:qualifiedValueShape?/sh:node ?otype }}
+    }}"""
+    for row in shape_graph.query(property_shape_query):
+        assert isinstance(row, tuple)
+        (path, otype, mincount) = row
+        for _ in range(int(mincount)):
+            param = gensym()
+            body.add((root_param, path, param))
+            deps.append({"rule": otype, "args": {"name": param}})
+            # body.add((param, RDF.type, otype))
+
+    if (shape_name, RDF.type, OWL.Class) in shape_graph:
+        body.add((root_param, RDF.type, shape_name))
+
+    classes = shape_graph.objects(shape_name, SH["class"])
+    for cls in classes:
+        body.add((root_param, RDF.type, cls))
+
+    nodes = shape_graph.objects(shape_name, SH["node"])
+    for node in nodes:
+        deps.append({"rule": node, "args": {"name": "name"}})  # tie to root param
+
+    return body, deps
 
 
 @dataclass
@@ -158,10 +221,12 @@ def new_temporary_graph(more_namespaces: Optional[dict] = None) -> Graph:
     return g
 
 
-def get_building_motif() -> BuildingMotif:
+def get_building_motif() -> "BuildingMotif":
     """Returns singleton instance of BuildingMotif.
     Requires that BuildingMotif has been instantiated before,
     otherwise an exception will be thrown."""
+    from buildingmotif.building_motif import BuildingMotif
+
     if hasattr(BuildingMotif, "instance"):
         return BuildingMotif.instance
     raise SingletonNotInstantiatedException

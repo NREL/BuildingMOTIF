@@ -1,10 +1,12 @@
 from dataclasses import dataclass
-from typing import Dict, Tuple
+from typing import TYPE_CHECKING, Dict, Tuple
 
 import rdflib
 
-from buildingmotif.building_motif import BuildingMotif
 from buildingmotif.utils import get_building_motif
+
+if TYPE_CHECKING:
+    from buildingmotif.building_motif import BuildingMotif
 
 
 @dataclass
@@ -15,7 +17,7 @@ class Template:
     _name: str
     _head: Tuple[str, ...]
     body: rdflib.Graph
-    _bm: BuildingMotif
+    _bm: "BuildingMotif"
 
     @classmethod
     def load(cls, id: int) -> "Template":
