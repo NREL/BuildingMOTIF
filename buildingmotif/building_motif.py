@@ -29,16 +29,27 @@ class BuildingMotif(metaclass=Singleton):
         self.graph_connection = GraphConnection(self.engine, self)
 
     def load_library(self, ontology_graph: Optional[str] = None) -> None:
+        """
+        Loads a library from the provided source.
+
+        Currently only supports reading in *templates* from an ontology graph,
+        but eventually we will want to add other sources.
+
+        :param ontology_graph: ontology graph filename or URL
+        :type ontology_graph: str
+        """
         # if ontology graph is provided, then read shapes from it and turn
         # those into templates
         if ontology_graph is not None:
             ontology = rdflib.Graph()
             ontology.parse(ontology_graph, format=guess_format(ontology_graph))
-            print(len(ontology))
             lib = TemplateLibrary.from_ontology(ontology)
-            # TODO: add deps, etc? Or is this done in the template library constructor?
-            print(lib)
-        pass
+            self.session.commit()
+            print(
+                f"Defined libary {lib.name} with {len(lib.get_templates())} templates"
+            )
+        else:
+            raise Exception("No library information provided")
 
     def close(self) -> None:
         """Close session and engine."""
