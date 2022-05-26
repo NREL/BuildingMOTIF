@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
 
 import rdflib
 
+from buildingmotif.namespaces import bind_prefixes
 from buildingmotif.utils import (
     PARAM,
     Term,
@@ -162,7 +163,11 @@ class Template:
 
         return templ
 
-    def evaluate(self, bindings: Dict[str, Term]) -> Union["Template", rdflib.Graph]:
+    def evaluate(
+        self,
+        bindings: Dict[str, Term],
+        namespaces: Optional[Dict[str, rdflib.Namespace]] = None,
+    ) -> Union["Template", rdflib.Graph]:
         """
         Evaluate the template with the provided bindings. If all parameters in the template
         have a provided binding, then a Graph will be returend. Otherwise, a new Template
@@ -175,6 +180,10 @@ class Template:
         print(uri_bindings, templ.parameters)
         # true if all parameters are now bound
         if len(templ.parameters) == 0:
+            bind_prefixes(templ.body)
+            if namespaces:
+                for prefix, namespace in namespaces.items():
+                    templ.body.bind(prefix, namespace)
             return templ.body
         # remove bound 'head' parameters
         templ._head = tuple(set(templ._head) - set(bindings.keys()))
