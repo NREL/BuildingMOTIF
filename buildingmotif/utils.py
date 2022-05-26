@@ -28,6 +28,34 @@ def gensym(prefix: str = "p") -> URIRef:
     return PARAM[f"{prefix}{_gensym_counter}"]
 
 
+def copy_graph(g: Graph) -> Graph:
+    """
+    Copy a graph.
+    """
+    c = Graph()
+    for t in g.triples((None, None, None)):
+        c.add(t)
+    return c
+
+
+def replace_nodes(g: Graph, replace: Dict[URIRef, Term]) -> None:
+    """
+    Replace nodes in a graph.
+
+    :param g: graph to replace nodes in
+    :param replace: mapping from old nodes to new nodes
+    """
+    for s, p, o in g.triples((None, None, None)):
+        g.remove((s, p, o))
+        if s in replace:
+            s = replace[s]
+        if p in replace:
+            p = replace[p]
+        if o in replace:
+            o = replace[o]
+        g.add((s, p, o))
+
+
 def get_template_from_shape(
     shape_name: URIRef, shape_graph: Graph
 ) -> Tuple[Graph, List[Dict]]:
