@@ -9,4 +9,3 @@ def test_load_library_from_ontology():
     # spot check a certain template
     templ = lib.get_template_by_name("https://brickschema.org/schema/Brick#AHU")
     assert templ is not None
-    assert templ.parameters == {"name"}
