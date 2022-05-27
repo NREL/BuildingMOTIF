@@ -50,7 +50,7 @@ class TemplateLibrary:
     @classmethod
     def from_ontology(cls, ontology: rdflib.Graph) -> "TemplateLibrary":
         """Load a template library from an ontology graph. This proceeds as follows.
-        First, get all entities in the graph which are instances of *both* owl:Class
+        First, get all entities in the graph that are instances of *both* owl:Class
         and sh:NodeShape. (this is "candidates")
 
         For each candidate, use the utility function to parse the NodeShape and turn

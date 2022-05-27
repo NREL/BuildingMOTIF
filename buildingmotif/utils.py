@@ -19,7 +19,7 @@ Term = Union[URIRef, Literal, BNode]
 _gensym_counter = 0
 
 
-def gensym(prefix: str = "p") -> URIRef:
+def _gensym(prefix: str = "p") -> URIRef:
     """
     Generate a unique identifier.
     """
@@ -61,7 +61,7 @@ def get_template_from_shape(
         assert isinstance(row, tuple)
         (path, otype, mincount) = row
         for _ in range(int(mincount)):
-            param = gensym()
+            param = _gensym()
             body.add((root_param, path, param))
             deps.append({"rule": otype, "args": {"name": param}})
             # body.add((param, RDF.type, otype))
