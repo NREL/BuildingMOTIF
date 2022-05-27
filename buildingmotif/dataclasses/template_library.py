@@ -142,3 +142,12 @@ class TemplateLibrary:
         )
         templates: List[DBTemplate] = db_template_library.templates
         return [Template.load(t.id) for t in templates]
+
+    def get_template_by_name(self, name: str) -> Template:
+        """
+        Return template within this library with the given name, if any
+        """
+        dbt = self._bm.table_connection.get_db_template_by_name(name)
+        if dbt.template_library_id != self._id:
+            raise ValueError(f"Template {name} not in library {self._name}")
+        return Template.load(dbt.id)

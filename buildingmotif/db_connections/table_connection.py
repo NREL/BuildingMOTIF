@@ -197,6 +197,16 @@ class TableConnection:
         """
         return self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
 
+    def get_db_template_by_name(self, name: str) -> DBTemplate:
+        """Get database template from id.
+
+        :param name: name of DBTemplate
+        :type name: str
+        :return: DBTemplate
+        :rtype: DBTemplate
+        """
+        return self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
+
     def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
         """Get a template's dependencies and its arguments.
         If you don't need the arguments, consider using `template.dependencies`.
