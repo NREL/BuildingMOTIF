@@ -1,12 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from building_motif.building_motif.singleton import (
+from buildingmotif.building_motif.singleton import (
     Singleton,
     SingletonNotInstantiatedException,
 )
-from building_motif.database.graph_connection import GraphConnection
-from building_motif.database.table_connection import TableConnection
+from buildingmotif.database.graph_connection import GraphConnection
+from buildingmotif.database.table_connection import TableConnection
 
 
 class BuildingMOTIF(metaclass=Singleton):

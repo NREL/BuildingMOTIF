@@ -2,10 +2,10 @@ from pathlib import Path
 
 from rdflib import Namespace
 
-from building_motif.namespaces import BRICK, RDF
-from building_motif.template import Template, TemplateLibrary
-from building_motif.template_matcher import TemplateMatcher
-from building_motif.utils import new_temporary_graph
+from buildingmotif.namespaces import BRICK, RDF
+from buildingmotif.template import Template, TemplateLibrary
+from buildingmotif.template_matcher import TemplateMatcher
+from buildingmotif.utils import new_temporary_graph
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 SMALL_OFFICE_BRICK_TTL = FIXTURES_DIR / "smallOffice_brick.ttl"

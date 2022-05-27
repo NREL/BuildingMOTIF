@@ -5,7 +5,7 @@ from rdflib import RDF, Graph, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
-from building_motif.database.graph_connection import GraphConnection
+from buildingmotif.database.graph_connection import GraphConnection
 from tests.unit.conftest import MockBuildingMotif
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from rdflib import Graph, Namespace
 
-from building_motif.template import Template, TemplateLibrary
+from buildingmotif.template import Template, TemplateLibrary
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures/templates"
 BLDG = Namespace("urn:bldg#")

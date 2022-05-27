@@ -1,3 +1,3 @@
-from building_motif.dataclasses.model import Model  # noqa
-from building_motif.dataclasses.template import Template  # noqa
-from building_motif.dataclasses.template_library import TemplateLibrary  # noqa
+from buildingmotif.dataclasses.model import Model  # noqa
+from buildingmotif.dataclasses.template import Template  # noqa
+from buildingmotif.dataclasses.template_library import TemplateLibrary  # noqa

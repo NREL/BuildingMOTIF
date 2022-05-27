@@ -3,9 +3,9 @@ from typing import List, Optional
 
 import rdflib
 
-from building_motif import BuildingMOTIF, get_building_motif
-from building_motif.database.tables import DBTemplate
-from building_motif.dataclasses import Template
+from buildingmotif import BuildingMOTIF, get_building_motif
+from buildingmotif.database.tables import DBTemplate
+from buildingmotif.dataclasses import Template
 
 
 @dataclass

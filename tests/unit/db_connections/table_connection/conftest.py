@@ -1,6 +1,6 @@
 import pytest
 
-from building_motif.database.table_connection import TableConnection
+from buildingmotif.database.table_connection import TableConnection
 from tests.unit.conftest import MockBuildingMotif
 
 
