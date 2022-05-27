@@ -1,11 +1,17 @@
+import pathlib
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 import rdflib
+import yaml
 
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.tables import DBTemplate
-from buildingmotif.utils import get_building_motif, get_template_from_shape
+from buildingmotif.utils import (
+    get_building_motif,
+    get_template_from_shape,
+    new_temporary_graph,
+)
 
 if TYPE_CHECKING:
     from buildingmotif.building_motif import BuildingMotif
@@ -56,6 +62,8 @@ class TemplateLibrary:
         For each candidate, use the utility function to parse the NodeShape and turn
         it into a Template.
         """
+        # TODO: handle shapes (eventually)
+
         # get the name of the ontology; this will be the name of the library
         # any=False will raise an error if there is more than one ontology defined  in the graph
         ontology_name = ontology.value(
@@ -79,6 +87,41 @@ class TemplateLibrary:
             setattr(templ, "__deps__", deps)
             template_id_lookup[str(candidate)] = templ.id
 
+        # now that we have all the templates, we can populate the dependencies
+        for template in lib.get_templates():
+            if not hasattr(template, "__deps__"):
+                continue
+            deps = getattr(template, "__deps__")
+            for dep in deps:
+                dependee = Template.load(template_id_lookup[dep["rule"]])
+                template.add_dependency(dependee, dep["args"])
+        return lib
+
+    @classmethod
+    def from_directory(cls, directory: pathlib.Path) -> "TemplateLibrary":
+        """
+        Load a library from a directory. Templates are read from .yml files
+        in the directory. The name of the library is given by the name of the directory
+        """
+        # TODO: handle shapes (eventually)
+
+        lib = cls.create(directory.name)
+        template_id_lookup: Dict[str, int] = {}
+        # read all .yml files
+        for file in directory.glob("**/*.yml"):
+            contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
+            for templ_name, templ_spec in contents.items():
+                # input name of template
+                templ_spec.update({"name": templ_name})
+                # turn the template body into a graph
+                body = new_temporary_graph()
+                body.parse(data=templ_spec.pop("body"), format="turtle")
+                templ_spec.update({"body": body})
+                # remove dependencies so we can resolve them to their IDs later
+                deps = templ_spec.pop("dependencies", [])
+                templ = lib.create_template(**templ_spec)
+                setattr(templ, "__deps__", deps)
+                template_id_lookup[str(templ)] = templ.id
         # now that we have all the templates, we can populate the dependencies
         for template in lib.get_templates():
             if not hasattr(template, "__deps__"):

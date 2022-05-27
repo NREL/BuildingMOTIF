@@ -1,8 +1,10 @@
-- zone:
-    head: ["zone", "point"]
-    body: >
-      {name} a brick:HVAC_Equipment .
-      {cav} a brick:CAV ;
-         brick:isFedBy {name} .
-      {zone} brick:isFedBy {cav} ;
-         a brick:HVAC_Zone .
+zone:
+  head: ["zone", "point"]
+  body: >
+    @prefix bmparam: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    bmparam:name a brick:HVAC_Equipment .
+    bmparam:cav a brick:CAV ;
+       brick:isFedBy bmparam:name .
+    bmparam:zone brick:isFedBy bmparam:cav ;
+       a brick:HVAC_Zone .

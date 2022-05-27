@@ -4,17 +4,15 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 from warnings import warn
 
-from rdflib import BNode, Graph, Literal, Namespace, URIRef
+from rdflib import BNode, Graph, Literal, URIRef
 
-from buildingmotif.namespaces import OWL, RDF, SH, bind_prefixes
+from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
 from buildingmotif.singleton import SingletonNotInstantiatedException
 
 if TYPE_CHECKING:
     from buildingmotif.building_motif import BuildingMotif
     from buildingmotif.template import Template
 
-# special namespace to denote template parameters inside RDF graphs
-PARAM = Namespace("urn:___param___#")
 Term = Union[URIRef, Literal, BNode]
 _gensym_counter = 0
 

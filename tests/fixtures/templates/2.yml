@@ -1,14 +1,18 @@
-- vav:
-    head: ["name", "zone"]
-    body: >
-      {name} a brick:VAV ;
-        brick:feeds {zone} ;
-        brick:hasPoint {sen} .
-    dependencies:
-     - rule: temp-sensor
-       args: ['sen']
+vav:
+  head: ["name", "zone"]
+  body: >
+    @prefix bmparam: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    bmparam:name a brick:VAV ;
+      brick:feeds bmparam:zone ;
+      brick:hasPoint bmparam:sen .
+  dependencies:
+   - rule: temp-sensor
+     args: ['sen']
 
-- temp-sensor:
-    head: ['name']
-    body: >
-      {name} a brick:Temperature_Sensor .
+temp-sensor:
+  head: ['name']
+  body: >
+    @prefix bmparam: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    bmparam:name a brick:Temperature_Sensor .

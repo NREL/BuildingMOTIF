@@ -1,47 +1,45 @@
-- single-zone-vav-ahu:
-    head: ["name", "zone"]
-    body: >
-      {name} a brick:AHU ;
-            brick:hasPoint {oat}, {mat}, {rat}, {sat}, {cd}, {hd}, {zt}, {occ} ;
-            brick:hasPart {sf}, {oad} ;
-            brick:feeds {zone} .
-      {oat} a brick:Outside_Air_Temperature_Sensor .
-      {mat} a brick:Mixed_Air_Temperature_Sensor .
-      {rat} a brick:Return_Air_Temperature_Sensor .
-      {sat} a brick:Supply_Air_Temperature_Sensor .
-      {cd} a brick:Cooling_Command .
-      {hd} a brick:Heating_Command .
-      {zt} a brick:Zone_Air_Temperature_Sensor ;
-          brick:isPointOf {zone} .
-      {occ} a brick:Occupancy_Sensor ;
-          brick:isPointOf {zone} .
-    dependencies:
-      - rule: supply-fan
-        args: ['sf']
-      - rule: outside-air-damper
-        args: ['oad']
-    
-- supply-fan:
-    head: ["name"]
-    body: >
-      {name} a brick:Supply_Fan ;
-          brick:hasPoint {spd}, {st}, {ss} .
-      {spd} a brick:Fan_Speed_Command .
-      {st} a brick:Fan_Status .
-      {ss} a brick:Start_Stop_Command .
-
-# with command
-- outside-air-damper:
-    head: ["name"]
-    body: >
-      {name} a brick:Outside_Air_Damper ;
-            brick:hasPoint {pos} .
-      {pos} a brick:Damper_Position_Command .
+single-zone-vav-ahu:
+  head: ["name", "zone"]
+  body: >
+    @prefix bmparam: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    bmparam:name a brick:AHU ;
+          brick:hasPoint bmparam:oat, bmparam:mat, bmparam:rat, bmparam:sat, bmparam:cd, bmparam:hd, bmparam:zt, bmparam:occ ;
+          brick:hasPart bmparam:sf, bmparam:oad ;
+          brick:feeds bmparam:zone .
+    bmparam:oat a brick:Outside_Air_Temperature_Sensor .
+    bmparam:mat a brick:Mixed_Air_Temperature_Sensor .
+    bmparam:rat a brick:Return_Air_Temperature_Sensor .
+    bmparam:sat a brick:Supply_Air_Temperature_Sensor .
+    bmparam:cd a brick:Cooling_Command .
+    bmparam:hd a brick:Heating_Command .
+    bmparam:zt a brick:Zone_Air_Temperature_Sensor ;
+        brick:isPointOf bmparam:zone .
+    bmparam:occ a brick:Occupancy_Sensor ;
+        brick:isPointOf bmparam:zone .
+  dependencies:
+    - rule: supply-fan
+      args: ['sf']
+    - rule: outside-air-damper
+      args: ['oad']
   
-# with sensor
-- outside-air-damper:
-    head: ["name"]
-    body: >
-      {name} a brick:Outside_Air_Damper ;
-            brick:hasPoint {pos} .
-      {pos} a brick:Damper_Position_Sensor .
+supply-fan:
+  head: ["name"]
+  body: >
+    @prefix bmparam: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    bmparam:name a brick:Supply_Fan ;
+        brick:hasPoint bmparam:spd, bmparam:st, bmparam:ss .
+    bmparam:spd a brick:Fan_Speed_Command .
+    bmparam:st a brick:Fan_Status .
+    bmparam:ss a brick:Start_Stop_Command .
+
+    # with command
+outside-air-damper:
+  head: ["name"]
+  body: >
+    @prefix bmparam: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    bmparam:name a brick:Outside_Air_Damper ;
+          brick:hasPoint bmparam:pos .
+    bmparam:pos a brick:Damper_Position_Command .

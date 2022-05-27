@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 
 import rdflib
@@ -28,7 +29,9 @@ class BuildingMotif(metaclass=Singleton):
         self.table_connection = TableConnection(self.engine, self)
         self.graph_connection = GraphConnection(self.engine, self)
 
-    def load_library(self, ontology_graph: Optional[str] = None) -> TemplateLibrary:
+    def load_library(
+        self, ontology_graph: Optional[str] = None, directory: Optional[str] = None
+    ) -> TemplateLibrary:
         """
         Loads a library from the provided source.
 
@@ -37,6 +40,9 @@ class BuildingMotif(metaclass=Singleton):
 
         :param ontology_graph: ontology graph filename or URL
         :type ontology_graph: str
+
+        :param directory: directory containing templates + shapes
+        :type directory: str
         """
         # if ontology graph is provided, then read shapes from it and turn
         # those into templates
@@ -44,6 +50,13 @@ class BuildingMotif(metaclass=Singleton):
             ontology = rdflib.Graph()
             ontology.parse(ontology_graph, format=guess_format(ontology_graph))
             lib = TemplateLibrary.from_ontology(ontology)
+            self.session.commit()
+            print(
+                f"Defined libary {lib.name} with {len(lib.get_templates())} templates"
+            )
+            return lib
+        elif directory is not None:
+            lib = TemplateLibrary.from_directory(Path(directory))
             self.session.commit()
             print(
                 f"Defined libary {lib.name} with {len(lib.get_templates())} templates"
