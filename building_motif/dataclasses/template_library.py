@@ -3,10 +3,9 @@ from typing import List, Optional
 
 import rdflib
 
-from buildingmotif.building_motif import BuildingMotif
-from buildingmotif.dataclasses.template import Template
-from buildingmotif.tables import DBTemplate
-from buildingmotif.utils import get_building_motif
+from building_motif import BuildingMOTIF, get_building_motif
+from building_motif.database.tables import DBTemplate
+from building_motif.dataclasses import Template
 
 
 @dataclass
@@ -15,7 +14,7 @@ class TemplateLibrary:
 
     _id: int
     _name: str
-    _bm: BuildingMotif
+    _bm: BuildingMOTIF
 
     @classmethod
     def create(cls, name: str) -> "TemplateLibrary":

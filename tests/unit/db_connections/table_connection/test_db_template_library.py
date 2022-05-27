@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.exc import NoResultFound
 
-from buildingmotif.tables import DBTemplate, DBTemplateLibrary
+from building_motif.database.tables import DBTemplate, DBTemplateLibrary
 
 
 def test_create_db_template_library(table_connection):

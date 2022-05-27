@@ -15,7 +15,7 @@ The matching is performed when the :class:`~buildingmotif.template_matcher.Templ
 .. code-block:: python
    
     # for loading templates from a file
-    from buildingmotif.template import TemplateLibrary
+    from building_motif.template import TemplateLibrary
     # for performing the template matching
     from buildingmotif.template_matcher import TemplateMatcher
     from buildingmotif.utils import new_temporary_graph

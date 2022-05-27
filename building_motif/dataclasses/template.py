@@ -3,8 +3,7 @@ from typing import Dict, Tuple
 
 import rdflib
 
-from buildingmotif.building_motif import BuildingMotif
-from buildingmotif.utils import get_building_motif
+from building_motif import BuildingMOTIF, get_building_motif
 
 
 @dataclass
@@ -15,7 +14,7 @@ class Template:
     _name: str
     _head: Tuple[str, ...]
     body: rdflib.Graph
-    _bm: BuildingMotif
+    _bm: BuildingMOTIF
 
     @classmethod
     def load(cls, id: int) -> "Template":

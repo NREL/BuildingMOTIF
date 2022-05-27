@@ -6,12 +6,10 @@ from warnings import warn
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
 
-from buildingmotif.building_motif import BuildingMotif
-from buildingmotif.namespaces import RDF, SH, bind_prefixes
-from buildingmotif.singleton import SingletonNotInstantiatedException
+from building_motif.namespaces import RDF, SH, bind_prefixes
 
 if TYPE_CHECKING:
-    from buildingmotif.template import Template
+    from building_motif.template import Template
 
 # special namespace to denote template parameters inside RDF graphs
 MARK = Namespace("urn:___mark___#")
@@ -156,12 +154,3 @@ def new_temporary_graph(more_namespaces: Optional[dict] = None) -> Graph:
         for prefix, uri in more_namespaces.items():
             g.bind(prefix, uri)
     return g
-
-
-def get_building_motif() -> BuildingMotif:
-    """Returns singleton instance of BuildingMotif.
-    Requires that BuildingMotif has been instantiated before,
-    otherwise an exception will be thrown."""
-    if hasattr(BuildingMotif, "instance"):
-        return BuildingMotif.instance
-    raise SingletonNotInstantiatedException
