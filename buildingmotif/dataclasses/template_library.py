@@ -5,7 +5,7 @@ import rdflib
 
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.tables import DBTemplate
-from buildingmotif.utils import get_building_motif, get_template_from_shape
+from buildingmotif.utils import get_building_motif, get_template_parts_from_shape
 
 if TYPE_CHECKING:
     from buildingmotif.building_motif import BuildingMotif
@@ -74,7 +74,7 @@ class TemplateLibrary:
         template_id_lookup: Dict[str, int] = {}
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
-            partial_body, deps = get_template_from_shape(candidate, ontology)
+            partial_body, deps = get_template_parts_from_shape(candidate, ontology)
             templ = lib.create_template(str(candidate), ["name"], partial_body)
             setattr(templ, "__deps__", deps)
             template_id_lookup[str(candidate)] = templ.id
