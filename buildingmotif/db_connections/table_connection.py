@@ -245,12 +245,10 @@ class TableConnection:
             raise ValueError(
                 f"All args in dependee template {dependency_id}'s head must be in args ({args})"
             )
-        # if dependant.template_library != dependency.template_library:
-        #    raise ValueError(
-        #        "Dependant and dependency template must have the same template "
-        #        "library. Dependant and dependency template have library with "
-        #        f"id {dependant.template_library.id} and {dependency.template_library.id}"
-        #    )
+
+        # In the past we had a check here to make sure the two templates were in the same library.
+        # This has been removed because it wasn't actually necessary, but we may add it back in
+        # in the future.
 
         relationship = DepsAssociation(
             dependant_id=template_id,
