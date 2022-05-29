@@ -81,6 +81,7 @@ def get_template_parts_from_shape(
         {{ ?prop sh:minCount ?mincount }}
         UNION
         {{ ?prop sh:qualifiedMinCount ?mincount }}
+
         {{ ?prop sh:qualifiedValueShape?/sh:class ?otype }}
         UNION
         {{ ?prop sh:qualifiedValueShape?/sh:node ?otype }}
