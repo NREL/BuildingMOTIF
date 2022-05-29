@@ -9,7 +9,7 @@ from buildingmotif.dataclasses.template import Template
 from buildingmotif.tables import DBTemplate
 from buildingmotif.utils import (
     get_building_motif,
-    get_template_from_shape,
+    get_template_parts_from_shape,
     new_temporary_graph,
 )
 
@@ -56,7 +56,7 @@ class TemplateLibrary:
     @classmethod
     def from_ontology(cls, ontology: rdflib.Graph) -> "TemplateLibrary":
         """Load a template library from an ontology graph. This proceeds as follows.
-        First, get all entities in the graph which are instances of *both* owl:Class
+        First, get all entities in the graph that are instances of *both* owl:Class
         and sh:NodeShape. (this is "candidates")
 
         For each candidate, use the utility function to parse the NodeShape and turn
@@ -82,7 +82,7 @@ class TemplateLibrary:
         template_id_lookup: Dict[str, int] = {}
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
-            partial_body, deps = get_template_from_shape(candidate, ontology)
+            partial_body, deps = get_template_parts_from_shape(candidate, ontology)
             templ = lib.create_template(str(candidate), ["name"], partial_body)
             setattr(templ, "__deps__", deps)
             template_id_lookup[str(candidate)] = templ.id
@@ -185,3 +185,12 @@ class TemplateLibrary:
         )
         templates: List[DBTemplate] = db_template_library.templates
         return [Template.load(t.id) for t in templates]
+
+    def get_template_by_name(self, name: str) -> Template:
+        """
+        Return template within this library with the given name, if any
+        """
+        dbt = self._bm.table_connection.get_db_template_by_name(name)
+        if dbt.template_library_id != self._id:
+            raise ValueError(f"Template {name} not in library {self._name}")
+        return Template.load(dbt.id)

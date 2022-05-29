@@ -17,7 +17,7 @@ Term = Union[URIRef, Literal, BNode]
 _gensym_counter = 0
 
 
-def gensym(prefix: str = "p") -> URIRef:
+def _gensym(prefix: str = "p") -> URIRef:
     """
     Generate a unique identifier.
     """
@@ -54,7 +54,7 @@ def replace_nodes(g: Graph, replace: Dict[URIRef, Term]) -> None:
         g.add((s, p, o))
 
 
-def get_template_from_shape(
+def get_template_parts_from_shape(
     shape_name: URIRef, shape_graph: Graph
 ) -> Tuple[Graph, List[Dict]]:
     """
@@ -79,15 +79,17 @@ def get_template_from_shape(
         {{ ?prop sh:minCount ?mincount }}
         UNION
         {{ ?prop sh:qualifiedMinCount ?mincount }}
+
         {{ ?prop sh:qualifiedValueShape?/sh:class ?otype }}
         UNION
         {{ ?prop sh:qualifiedValueShape?/sh:node ?otype }}
     }}"""
     for row in shape_graph.query(property_shape_query):
+        # for the type checker; graph.query can return boolean for ASK queries
         assert isinstance(row, tuple)
         (path, otype, mincount) = row
         for _ in range(int(mincount)):
-            param = gensym()
+            param = _gensym()
             body.add((root_param, path, param))
             deps.append({"rule": otype, "args": {"name": param}})
             # body.add((param, RDF.type, otype))
