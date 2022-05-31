@@ -10,7 +10,7 @@ def test_load_library_from_ontology():
     templ = lib.get_template_by_name("https://brickschema.org/schema/Brick#AHU")
     assert templ is not None
     assert templ.parameters == {"name"}
-    assert templ.head == {"name"}
+    assert templ.head == ("name",)
 
 
 def test_load_library_from_directory():
@@ -22,4 +22,4 @@ def test_load_library_from_directory():
     templ = lib.get_template_by_name("zone")
     assert templ is not None
     assert templ.parameters == {"zone", "cav"}
-    assert templ.head == {"zone", "cav"}
+    assert sorted(templ.head) == sorted(("zone", "cav"))
