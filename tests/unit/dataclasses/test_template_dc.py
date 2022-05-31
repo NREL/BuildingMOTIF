@@ -5,8 +5,8 @@ from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
-from buildingmotif.dataclasses.template import Dependency, Template
-from buildingmotif.dataclasses.template_library import TemplateLibrary
+from buildingmotif.dataclasses import Template, TemplateLibrary
+from buildingmotif.dataclasses.template import Dependency
 
 
 def test_create(clean_building_motif):

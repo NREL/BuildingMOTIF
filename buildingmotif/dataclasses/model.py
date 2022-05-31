@@ -3,8 +3,7 @@ from typing import Optional
 
 import rdflib
 
-from buildingmotif.building_motif import BuildingMotif
-from buildingmotif.utils import get_building_motif
+from buildingmotif import BuildingMOTIF, get_building_motif
 
 
 @dataclass
@@ -14,7 +13,7 @@ class Model:
     _id: int
     _name: str
     graph: rdflib.Graph
-    _bm: BuildingMotif
+    _bm: BuildingMOTIF
 
     @classmethod
     def create(cls, name: str) -> "Model":
