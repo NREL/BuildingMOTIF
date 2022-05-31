@@ -41,7 +41,10 @@ def test_template_fill():
     assert zone.parameters == {"zone", "cav"}
     assert sorted(zone.head) == sorted(("zone", "cav"))
 
-    graph = zone.fill(BLDG)
+    bindings, graph = zone.fill(BLDG)
+    assert isinstance(bindings, dict)
+    assert "zone" in bindings.keys()
+    assert "cav" in bindings.keys()
     assert isinstance(graph, Graph)
     assert len(list(graph.triples((None, None, None)))) == 3
     bm.close()
