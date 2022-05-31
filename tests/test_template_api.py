@@ -7,11 +7,10 @@ from buildingmotif.namespaces import BRICK, A
 BLDG = Namespace("urn:building/")
 
 
-def test_template_evaluate():
+def test_template_evaluate(bm: BuildingMotif):
     """
     Test the Template.evaluate() method.
     """
-    bm = BuildingMotif("sqlite:///")
     lib = bm.load_library(directory="tests/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"zone", "cav"}
@@ -28,14 +27,12 @@ def test_template_evaluate():
     assert (BLDG["zone1"], A, BRICK.HVAC_Zone) in graph
     assert (BLDG["zone1"], BRICK.isFedBy, BLDG["cav1"]) in graph
     assert len(list(graph.triples((None, None, None)))) == 3
-    bm.close()
 
 
-def test_template_fill():
+def test_template_fill(bm: BuildingMotif):
     """
     Test the Template.evaluate() method.
     """
-    bm = BuildingMotif("sqlite:///")
     lib = bm.load_library(directory="tests/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"zone", "cav"}
@@ -47,4 +44,3 @@ def test_template_fill():
     assert "cav" in bindings.keys()
     assert isinstance(graph, Graph)
     assert len(list(graph.triples((None, None, None)))) == 3
-    bm.close()
