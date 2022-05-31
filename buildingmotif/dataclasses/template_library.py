@@ -74,6 +74,7 @@ class TemplateLibrary:
         # which is necessary to populate the dependencies
         template_id_lookup: Dict[str, int] = {}
         for candidate in candidates:
+            # need this assertion to make the type-checker happy
             assert isinstance(candidate, rdflib.URIRef)
             partial_body, deps = get_template_parts_from_shape(candidate, ontology)
             templ = lib.create_template(str(candidate), ["name"], partial_body)
