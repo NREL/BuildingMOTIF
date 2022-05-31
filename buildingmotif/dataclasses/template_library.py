@@ -5,16 +5,13 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 import rdflib
 import yaml
 
-from buildingmotif.dataclasses.template import Template
-from buildingmotif.tables import DBTemplate
-from buildingmotif.utils import (
-    get_building_motif,
-    get_template_parts_from_shape,
-    new_temporary_graph,
-)
+from buildingmotif import get_building_motif
+from buildingmotif.database.tables import DBTemplate
+from buildingmotif.dataclasses import Template
+from buildingmotif.utils import get_template_parts_from_shape, new_temporary_graph
 
 if TYPE_CHECKING:
-    from buildingmotif.building_motif import BuildingMotif
+    from buildingmotif import BuildingMOTIF
 
 
 @dataclass
@@ -23,7 +20,7 @@ class TemplateLibrary:
 
     _id: int
     _name: str
-    _bm: "BuildingMotif"
+    _bm: "BuildingMOTIF"
 
     @classmethod
     def create(cls, name: str) -> "TemplateLibrary":

@@ -1,18 +1,23 @@
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import rdflib
 from rdflib.util import guess_format
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from buildingmotif.dataclasses.template_library import TemplateLibrary
-from buildingmotif.db_connections.graph_connection import GraphConnection
-from buildingmotif.db_connections.table_connection import TableConnection
-from buildingmotif.singleton import Singleton
+from buildingmotif.building_motif.singleton import (
+    Singleton,
+    SingletonNotInstantiatedException,
+)
+from buildingmotif.database.graph_connection import GraphConnection
+from buildingmotif.database.table_connection import TableConnection
+
+if TYPE_CHECKING:
+    from buildingmotif.dataclasses.template_library import TemplateLibrary
 
 
-class BuildingMotif(metaclass=Singleton):
+class BuildingMOTIF(metaclass=Singleton):
     """Manages BuildingMOTIF data classes."""
 
     def __init__(self, db_uri: str) -> None:
@@ -31,7 +36,7 @@ class BuildingMotif(metaclass=Singleton):
 
     def load_library(
         self, ontology_graph: Optional[str] = None, directory: Optional[str] = None
-    ) -> TemplateLibrary:
+    ) -> "TemplateLibrary":
         """
         Loads a library from the provided source.
 
@@ -44,6 +49,11 @@ class BuildingMotif(metaclass=Singleton):
         :param directory: directory containing templates + shapes
         :type directory: str
         """
+        # avoids circular import...obviously not ideal but it would be nice
+        # to have a unified API surface somewhere so that users don't have to search
+        # all over the project in order to find the methods they need
+        from buildingmotif.dataclasses.template_library import TemplateLibrary
+
         # if ontology graph is provided, then read shapes from it and turn
         # those into templates
         if ontology_graph is not None:
@@ -69,3 +79,12 @@ class BuildingMotif(metaclass=Singleton):
         """Close session and engine."""
         self.session.close()
         self.engine.dispose()
+
+
+def get_building_motif() -> "BuildingMOTIF":
+    """Returns singleton instance of BuildingMOTIF.
+    Requires that BuildingMOTIF has been instantiated before,
+    otherwise an exception will be thrown."""
+    if hasattr(BuildingMOTIF, "instance"):
+        return BuildingMOTIF.instance  # type: ignore
+    raise SingletonNotInstantiatedException

@@ -1,10 +1,12 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import rdflib
 
-from buildingmotif.building_motif import BuildingMotif
-from buildingmotif.utils import get_building_motif
+from buildingmotif import get_building_motif
+
+if TYPE_CHECKING:
+    from buildingmotif import BuildingMOTIF
 
 
 @dataclass
@@ -14,7 +16,7 @@ class Model:
     _id: int
     _name: str
     graph: rdflib.Graph
-    _bm: BuildingMotif
+    _bm: "BuildingMOTIF"
 
     @classmethod
     def create(cls, name: str) -> "Model":

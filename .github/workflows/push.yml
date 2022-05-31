@@ -29,10 +29,10 @@ jobs:
       run: poetry install
 
     - name: Run unit tests with pytest
-      run: poetry run pytest --cov=./ --cov-report=xml
+      run: poetry run pytest  tests/unit --cov=./ --cov-report=xml
 
     - name: Run integration tests with pytest
-      run: poetry run pytest -m integration
+      run: poetry run pytest tests/integration
 
     - name: Codecov
       uses: codecov/codecov-action@v2.1.0

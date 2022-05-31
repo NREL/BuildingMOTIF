@@ -6,17 +6,12 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
 
 import rdflib
 
+from buildingmotif import get_building_motif
 from buildingmotif.namespaces import bind_prefixes
-from buildingmotif.utils import (
-    PARAM,
-    Term,
-    copy_graph,
-    get_building_motif,
-    replace_nodes,
-)
+from buildingmotif.utils import PARAM, Term, copy_graph, replace_nodes
 
 if TYPE_CHECKING:
-    from buildingmotif.building_motif import BuildingMotif
+    from buildingmotif import BuildingMOTIF
 
 
 @dataclass
@@ -27,7 +22,7 @@ class Template:
     _name: str
     _head: Tuple[str, ...]
     body: rdflib.Graph
-    _bm: "BuildingMotif"
+    _bm: "BuildingMOTIF"
 
     @classmethod
     def load(cls, id: int) -> "Template":

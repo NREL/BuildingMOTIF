@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from buildingmotif.building_motif import BuildingMotif
+from buildingmotif import BuildingMOTIF
 
 
 class MockBuildingMotif:
@@ -29,8 +29,8 @@ def bm():
     """
     BuildingMotif instance for tests involving dataclasses and API calls
     """
-    bm = BuildingMotif("sqlite://")
+    bm = BuildingMOTIF("sqlite://")
     yield bm
     bm.close()
     # clean up the singleton so that tables are re-created correctly later
-    BuildingMotif.clean()
+    BuildingMOTIF.clean()
