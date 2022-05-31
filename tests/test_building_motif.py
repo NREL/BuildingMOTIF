@@ -9,3 +9,15 @@ def test_load_library_from_ontology():
     # spot check a certain template
     templ = lib.get_template_by_name("https://brickschema.org/schema/Brick#AHU")
     assert templ is not None
+    assert templ.parameters == {"name"}
+
+
+def test_load_library_from_directory():
+    bm = BuildingMotif("sqlite:///")
+    lib = bm.load_library(directory="tests/fixtures/templates")
+    assert lib is not None
+    assert len(lib.get_templates()) == 6
+    # spot check a certain template
+    templ = lib.get_template_by_name("zone")
+    assert templ is not None
+    assert templ.parameters == {"zone", "point"}
