@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy.engine import Engine
 
-from building_motif.database.tables import (
+from buildingmotif.database.tables import (
     Base,
     DBModel,
     DBTemplate,

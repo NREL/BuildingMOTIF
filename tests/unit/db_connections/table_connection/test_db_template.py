@@ -3,7 +3,7 @@ import uuid
 import pytest
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
-from building_motif.database.tables import DBTemplate
+from buildingmotif.database.tables import DBTemplate
 
 
 def create_dependacy_test_fixtures(table_connection):

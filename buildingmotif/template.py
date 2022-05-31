@@ -9,7 +9,7 @@ import yaml  # type: ignore
 from rdflib import Graph, Namespace
 from rdflib.term import BNode, Literal, URIRef
 
-from building_motif.utils import new_temporary_graph, template_to_shape
+from buildingmotif.utils import new_temporary_graph, template_to_shape
 
 PREAMBLE = """@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .

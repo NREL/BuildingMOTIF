@@ -3,7 +3,7 @@ from rdflib import RDF, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
-from building_motif.dataclasses.model import Model
+from buildingmotif.dataclasses.model import Model
 
 
 def test_create_model(clean_building_motif):

@@ -3,7 +3,7 @@ from typing import Optional
 
 import rdflib
 
-from building_motif import BuildingMOTIF, get_building_motif
+from buildingmotif import BuildingMOTIF, get_building_motif
 
 
 @dataclass

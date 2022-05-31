@@ -1,6 +1,6 @@
 import pytest
 
-from building_motif.dataclasses import TemplateLibrary
+from buildingmotif.dataclasses import TemplateLibrary
 
 
 def test_create(clean_building_motif):
