@@ -1,7 +1,7 @@
 from rdflib import Graph, Namespace
 
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses.template import Template
+from buildingmotif.dataclasses import Template, TemplateLibrary
 from buildingmotif.namespaces import BRICK, A
 
 BLDG = Namespace("urn:building/")
@@ -11,7 +11,7 @@ def test_template_evaluate(bm: BuildingMOTIF):
     """
     Test the Template.evaluate() method.
     """
-    lib = bm.load_library(directory="tests/unit/fixtures/templates")
+    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"zone", "cav"}
     assert sorted(zone.head) == sorted(("zone", "cav"))
@@ -33,7 +33,7 @@ def test_template_fill(bm: BuildingMOTIF):
     """
     Test the Template.evaluate() method.
     """
-    lib = bm.load_library(directory="tests/unit/fixtures/templates")
+    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"zone", "cav"}
     assert sorted(zone.head) == sorted(("zone", "cav"))

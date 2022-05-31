@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 
 import rdflib
 import yaml
+from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBTemplate
@@ -37,7 +38,25 @@ class TemplateLibrary:
         return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
 
     @classmethod
-    def load(cls, id: int) -> "TemplateLibrary":
+    def load(
+        cls,
+        db_id: Optional[int] = None,
+        ontology_graph: Optional[str] = None,
+        directory: Optional[str] = None,
+    ) -> "TemplateLibrary":
+        if db_id is not None:
+            return cls._load_from_db(db_id)
+        elif ontology_graph is not None:
+            ontology = rdflib.Graph()
+            ontology.parse(ontology_graph, format=guess_format(ontology_graph))
+            return cls._load_from_ontology_graph(ontology)
+        elif directory is not None:
+            return cls._load_from_directory(pathlib.Path(directory))
+        else:
+            raise Exception("No library information provided")
+
+    @classmethod
+    def _load_from_db(cls, id: int) -> "TemplateLibrary":
         """load Template Library from db
 
         :param id: id of template library
@@ -51,7 +70,7 @@ class TemplateLibrary:
         return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
 
     @classmethod
-    def from_ontology(cls, ontology: rdflib.Graph) -> "TemplateLibrary":
+    def _load_from_ontology_graph(cls, ontology: rdflib.Graph) -> "TemplateLibrary":
         """Load a template library from an ontology graph. This proceeds as follows.
         First, get all entities in the graph that are instances of *both* owl:Class
         and sh:NodeShape. (this is "candidates")
@@ -95,7 +114,7 @@ class TemplateLibrary:
         return lib
 
     @classmethod
-    def from_directory(cls, directory: pathlib.Path) -> "TemplateLibrary":
+    def _load_from_directory(cls, directory: pathlib.Path) -> "TemplateLibrary":
         """
         Load a library from a directory. Templates are read from .yml files
         in the directory. The name of the library is given by the name of the directory

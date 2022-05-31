@@ -1,8 +1,9 @@
 from buildingmotif import BuildingMOTIF
+from buildingmotif.dataclasses import TemplateLibrary
 
 
 def test_load_library_from_ontology(bm: BuildingMOTIF):
-    lib = bm.load_library(
+    lib = TemplateLibrary.load(
         ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl"
     )
     assert lib is not None
@@ -15,7 +16,7 @@ def test_load_library_from_ontology(bm: BuildingMOTIF):
 
 
 def test_load_library_from_directory(bm: BuildingMOTIF):
-    lib = bm.load_library(directory="tests/unit/fixtures/templates")
+    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
     assert lib is not None
     assert len(lib.get_templates()) == 6
     # spot check a certain template
