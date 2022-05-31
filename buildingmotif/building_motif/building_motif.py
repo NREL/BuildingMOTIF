@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import rdflib
 from rdflib.util import guess_format
@@ -11,7 +11,9 @@ from buildingmotif.building_motif.singleton import (
 )
 from buildingmotif.database.graph_connection import GraphConnection
 from buildingmotif.database.table_connection import TableConnection
-from buildingmotif.dataclasses.template_library import TemplateLibrary
+
+if TYPE_CHECKING:
+    from buildingmotif.dataclasses.template_library import TemplateLibrary
 
 
 class BuildingMOTIF(metaclass=Singleton):
@@ -31,7 +33,7 @@ class BuildingMOTIF(metaclass=Singleton):
         self.table_connection = TableConnection(self.engine, self)
         self.graph_connection = GraphConnection(self.engine, self)
 
-    def load_library(self, ontology_graph: Optional[str] = None) -> TemplateLibrary:
+    def load_library(self, ontology_graph: Optional[str] = None) -> "TemplateLibrary":
         """
         Loads a library from the provided source.
 
@@ -41,6 +43,11 @@ class BuildingMOTIF(metaclass=Singleton):
         :param ontology_graph: ontology graph filename or URL
         :type ontology_graph: str
         """
+        # avoids circular import...obviously not ideal but it would be nice
+        # to have a unified API surface somewhere so that users don't have to search
+        # all over the project in order to find the methods they need
+        from buildingmotif.dataclasses.template_library import TemplateLibrary
+
         # if ontology graph is provided, then read shapes from it and turn
         # those into templates
         if ontology_graph is not None:
