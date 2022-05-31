@@ -28,6 +28,11 @@ def _gensym(prefix: str = "p") -> URIRef:
 def copy_graph(g: Graph) -> Graph:
     """
     Copy a graph.
+
+    :param g: the graph to copy
+    :type g: Graph
+    :return: a copy of the input graph
+    :rtype: Graph
     """
     c = Graph()
     for t in g.triples((None, None, None)):
