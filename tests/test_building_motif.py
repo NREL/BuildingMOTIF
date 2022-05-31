@@ -11,6 +11,7 @@ def test_load_library_from_ontology():
     assert templ is not None
     assert templ.parameters == {"name"}
     assert templ.head == ("name",)
+    bm.close()
 
 
 def test_load_library_from_directory():
@@ -23,3 +24,4 @@ def test_load_library_from_directory():
     assert templ is not None
     assert templ.parameters == {"zone", "cav"}
     assert sorted(templ.head) == sorted(("zone", "cav"))
+    bm.close()

@@ -197,7 +197,6 @@ class Template:
         templ = self.copy()
         uri_bindings = {PARAM[k]: v for k, v in bindings.items()}
         replace_nodes(templ.body, uri_bindings)
-        print(uri_bindings, templ.parameters)
         # true if all parameters are now bound
         if len(templ.parameters) == 0:
             bind_prefixes(templ.body)

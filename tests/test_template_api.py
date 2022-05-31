@@ -22,12 +22,13 @@ def test_template_evaluate():
     assert partial.parameters == {"cav"}
     assert partial.head == ("cav",)
 
-    graph = zone.evaluate({"cav": BLDG["cav1"]})
+    graph = partial.evaluate({"cav": BLDG["cav1"]})
     assert isinstance(graph, Graph)
     assert (BLDG["cav1"], A, BRICK.CAV) in graph
     assert (BLDG["zone1"], A, BRICK.HVAC_Zone) in graph
     assert (BLDG["zone1"], BRICK.isFedBy, BLDG["cav1"]) in graph
     assert len(list(graph.triples((None, None, None)))) == 3
+    bm.close()
 
 
 def test_template_fill():
@@ -43,3 +44,4 @@ def test_template_fill():
     graph = zone.fill(BLDG)
     assert isinstance(graph, Graph)
     assert len(list(graph.triples((None, None, None)))) == 3
+    bm.close()
