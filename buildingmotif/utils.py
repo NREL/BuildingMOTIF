@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from buildingmotif.template import Template
 
 Term = Union[URIRef, Literal, BNode]
+Triple = Tuple[Term, Term, Term]
 _gensym_counter = 0
 
 

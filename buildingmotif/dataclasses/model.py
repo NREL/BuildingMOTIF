@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional
 import rdflib
 
 from buildingmotif import get_building_motif
+from buildingmotif.utils import Triple
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -64,3 +65,22 @@ class Model:
     def name(self, new_name: str):
         self._bm.table_connection.update_db_model_name(self._id, new_name)
         self._name = new_name
+
+    def add_triples(self, *triples: Triple) -> None:
+        """
+        Add the given triples to the graph
+
+        :param triples: a sequence of triples to add to the graph
+        :type triples: Triple
+        """
+        for triple in triples:
+            self.graph.add(triple)
+
+    def add_graph(self, graph: rdflib.Graph) -> None:
+        """
+        Add the given graph to the model
+
+        :param graph: the graph to add to the model
+        :type graph: rdflib.Graph
+        """
+        self.graph += graph
