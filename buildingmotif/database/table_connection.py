@@ -197,6 +197,16 @@ class TableConnection:
         """
         return self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
 
+    def get_db_template_by_name(self, name: str) -> DBTemplate:
+        """Get database template from id.
+
+        :param name: name of DBTemplate
+        :type name: str
+        :return: DBTemplate
+        :rtype: DBTemplate
+        """
+        return self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
+
     def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
         """Get a template's dependencies and its arguments.
         If you don't need the arguments, consider using `template.dependencies`.
@@ -239,17 +249,10 @@ class TableConnection:
         :raises ValueError: if all dependee heads not in args
         :raises ValueError: if dependant and dependency template don't share a library
         """
-        dependant = self.get_db_template(template_id)
         dependency = self.get_db_template(dependency_id)
         if not all((dependee_arg in args.keys()) for dependee_arg in dependency.head):
             raise ValueError(
                 f"All args in dependee template {dependency_id}'s head must be in args ({args})"
-            )
-        if dependant.template_library != dependency.template_library:
-            raise ValueError(
-                "Dependant and dependency template must have the same template "
-                "library. Dependant and dependency template have library with "
-                f"id {dependant.template_library.id} and {dependency.template_library.id}"
             )
 
         relationship = DepsAssociation(

@@ -11,7 +11,7 @@ FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 SMALL_OFFICE_BRICK_TTL = FIXTURES_DIR / "smallOffice_brick.ttl"
 
 ONTOLOGY = new_temporary_graph()
-ONTOLOGY.parse(FIXTURES_DIR / "Brick1.3rc1.ttl")
+ONTOLOGY.parse(FIXTURES_DIR / "Brick1.3rc1-equip-only.ttl")
 
 
 def test_simple_monomorphism():
