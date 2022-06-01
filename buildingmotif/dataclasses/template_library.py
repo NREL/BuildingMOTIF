@@ -124,7 +124,7 @@ class TemplateLibrary:
         lib = cls.create(directory.name)
         template_id_lookup: Dict[str, int] = {}
         # read all .yml files
-        for file in directory.glob("**/*.yml"):
+        for file in directory.rglob("*.yml"):
             contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
             for templ_name, templ_spec in contents.items():
                 # input name of template
