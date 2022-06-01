@@ -123,7 +123,7 @@ class TemplateLibrary:
 
         lib = cls.create(directory.name)
         template_id_lookup: Dict[str, int] = {}
-        dependency_cache: Dict[int, dict] = {}
+        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
         # read all .yml files
         for file in directory.rglob("*.yml"):
             contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
@@ -140,12 +140,10 @@ class TemplateLibrary:
                 dependency_cache[templ.id] = deps
                 template_id_lookup[templ.name] = templ.id
         # now that we have all the templates, we can populate the dependencies
-        print(template_id_lookup.keys())
         for template in lib.get_templates():
-            deps = dependency_cache.get(template.id)
-            if deps is None:
+            if template.id not in dependency_cache:
                 continue
-            for dep in deps:
+            for dep in dependency_cache[template.id]:
                 if dep["rule"] in template_id_lookup:
                     # local lookup
                     dependee = Template.load(template_id_lookup[dep["rule"]])
