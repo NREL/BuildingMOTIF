@@ -1,6 +1,6 @@
 import pathlib
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import rdflib
 import yaml
@@ -96,20 +96,19 @@ class TemplateLibrary:
         # for each dependent template, we don't know the *id* of the dependee templates,
         # which is necessary to populate the dependencies
         template_id_lookup: Dict[str, int] = {}
+        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
         for candidate in candidates:
-            # need this assertion to make the type-checker happy
             assert isinstance(candidate, rdflib.URIRef)
             partial_body, deps = get_template_parts_from_shape(candidate, ontology)
             templ = lib.create_template(str(candidate), ["name"], partial_body)
-            setattr(templ, "__deps__", deps)
+            dependency_cache[templ.id] = deps
             template_id_lookup[str(candidate)] = templ.id
 
         # now that we have all the templates, we can populate the dependencies
         for template in lib.get_templates():
-            if not hasattr(template, "__deps__"):
+            if template.id not in dependency_cache:
                 continue
-            deps = getattr(template, "__deps__")
-            for dep in deps:
+            for dep in dependency_cache[template.id]:
                 dependee = Template.load(template_id_lookup[dep["rule"]])
                 template.add_dependency(dependee, dep["args"])
         return lib
@@ -124,8 +123,9 @@ class TemplateLibrary:
 
         lib = cls.create(directory.name)
         template_id_lookup: Dict[str, int] = {}
+        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
         # read all .yml files
-        for file in directory.glob("**/*.yml"):
+        for file in directory.rglob("*.yml"):
             contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
             for templ_name, templ_spec in contents.items():
                 # input name of template
@@ -137,15 +137,20 @@ class TemplateLibrary:
                 # remove dependencies so we can resolve them to their IDs later
                 deps = templ_spec.pop("dependencies", [])
                 templ = lib.create_template(**templ_spec)
-                setattr(templ, "__deps__", deps)
-                template_id_lookup[str(templ)] = templ.id
+                dependency_cache[templ.id] = deps
+                template_id_lookup[templ.name] = templ.id
         # now that we have all the templates, we can populate the dependencies
         for template in lib.get_templates():
-            if not hasattr(template, "__deps__"):
+            if template.id not in dependency_cache:
                 continue
-            deps = getattr(template, "__deps__")
-            for dep in deps:
-                dependee = Template.load(template_id_lookup[dep["rule"]])
+            for dep in dependency_cache[template.id]:
+                if dep["rule"] in template_id_lookup:
+                    # local lookup
+                    dependee = Template.load(template_id_lookup[dep["rule"]])
+                else:
+                    # global lookup; returns fist template with given name
+                    # TODO: this is not ideal!
+                    dependee = Template.load_by_name(dep["rule"])
                 template.add_dependency(dependee, dep["args"])
         return lib
 
