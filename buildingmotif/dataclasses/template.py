@@ -45,6 +45,15 @@ class Template:
             _bm=bm,
         )
 
+    @classmethod
+    def load_by_name(cls, name: str) -> "Template":
+        """
+        Return template within this library with the given name, if any
+        """
+        bm = get_building_motif()
+        dbt = bm.table_connection.get_db_template_by_name(name)
+        return Template.load(dbt.id)
+
     def copy(self) -> "Template":
         """
         Return a copy of this template.
