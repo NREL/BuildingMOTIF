@@ -1,4 +1,3 @@
-# pylama:ignore=E203
 from dataclasses import dataclass
 from itertools import chain
 from secrets import token_hex
@@ -54,7 +53,7 @@ class Template:
         dbt = bm.table_connection.get_db_template_by_name(name)
         return Template.load(dbt.id)
 
-    def copy(self) -> "Template":
+    def in_memory_copy(self) -> "Template":
         """
         Return a copy of this template.
         """
@@ -147,7 +146,7 @@ class Template:
         :return: a template w/ globally unique parameters
         :rtype: "Template"
         """
-        templ = self.copy()
+        templ = self.in_memory_copy()
         sfx = f"{token_hex(4)}"
         for param in templ.parameters:
             if (preserve_args and param in preserve_args) or (
@@ -165,7 +164,7 @@ class Template:
         :return: copy of this template with all dependencies inlined
         :rtype: "Template"
         """
-        templ = self.copy()
+        templ = self.in_memory_copy()
         if not self.get_dependencies():
             return templ
 
@@ -198,7 +197,7 @@ class Template:
         :return: either a template or a graph, depending on whether all parameters were provided
         :rtype: Union["Template", rdflib.Graph]
         """
-        templ = self.copy()
+        templ = self.in_memory_copy()
         uri_bindings = {PARAM[k]: v for k, v in bindings.items()}
         replace_nodes(templ.body, uri_bindings)
         # true if all parameters are now bound
