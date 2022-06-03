@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from rdflib.graph import Graph, Store, plugin
 
-from buildingmotif.building_motif.building_motif import BuildingMotifEngine
+if TYPE_CHECKING:
+    from buildingmotif.building_motif.building_motif import BuildingMotifEngine
 from buildingmotif.namespaces import bind_prefixes
 
 PROJECT_DIR = Path(__file__).resolve().parent
@@ -14,7 +15,7 @@ class GraphConnection:
 
     def __init__(
         self,
-        engine: BuildingMotifEngine,
+        engine: "BuildingMotifEngine",
         db_identifier: Optional[str] = "buildingmotif_store",
     ) -> None:
         """Creates datastore and database.
