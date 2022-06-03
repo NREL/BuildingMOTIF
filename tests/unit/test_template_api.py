@@ -55,7 +55,7 @@ def test_template_copy(bm: BuildingMOTIF):
     assert zone.parameters == {"zone", "cav"}
     assert sorted(zone.head) == sorted(("zone", "cav"))
 
-    zone2 = zone.copy()
+    zone2 = zone.in_memory_copy()
     assert zone2.parameters == {"zone", "cav"}
     assert sorted(zone2.head) == sorted(("zone", "cav"))
     # should be able to edit the copy without editing the original
