@@ -255,6 +255,10 @@ class TableConnection:
                 f"All args in dependee template {dependency_id}'s head must be in args ({args})"
             )
 
+        # In the past we had a check here to make sure the two templates were in the same library.
+        # This has been removed because it wasn't actually necessary, but we may add it back in
+        # in the future.
+
         relationship = DepsAssociation(
             dependant_id=template_id,
             dependee_id=dependency_id,

@@ -1,5 +1,8 @@
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from buildingmotif import BuildingMOTIF
 
 
 class MockBuildingMotif:
@@ -19,3 +22,15 @@ class MockBuildingMotif:
         """Close session and engine."""
         self.session.close()
         self.engine.dispose()
+
+
+@pytest.fixture
+def bm():
+    """
+    BuildingMotif instance for tests involving dataclasses and API calls
+    """
+    bm = BuildingMOTIF("sqlite://")
+    yield bm
+    bm.close()
+    # clean up the singleton so that tables are re-created correctly later
+    BuildingMOTIF.clean()

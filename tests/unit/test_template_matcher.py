@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 from rdflib import Namespace
 
 from buildingmotif.namespaces import BRICK, RDF
@@ -12,6 +13,8 @@ SMALL_OFFICE_BRICK_TTL = FIXTURES_DIR / "smallOffice_brick.ttl"
 
 ONTOLOGY = new_temporary_graph()
 ONTOLOGY.parse(FIXTURES_DIR / "Brick1.3rc1-equip-only.ttl")
+
+pytest.skip("old template implementation", allow_module_level=True)
 
 
 def test_simple_monomorphism():

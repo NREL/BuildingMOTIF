@@ -4,16 +4,15 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 from warnings import warn
 
-from rdflib import BNode, Graph, Literal, Namespace, URIRef
+from rdflib import BNode, Graph, Literal, URIRef
 
-from buildingmotif.namespaces import OWL, RDF, SH, bind_prefixes
+from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
 
 if TYPE_CHECKING:
     from buildingmotif.template import Template
 
-# special namespace to denote template parameters inside RDF graphs
-PARAM = Namespace("urn:___param___#")
 Term = Union[URIRef, Literal, BNode]
+Triple = Tuple[Term, Term, Term]
 _gensym_counter = 0
 
 
@@ -29,6 +28,11 @@ def _gensym(prefix: str = "p") -> URIRef:
 def copy_graph(g: Graph) -> Graph:
     """
     Copy a graph.
+
+    :param g: the graph to copy
+    :type g: Graph
+    :return: a copy of the input graph
+    :rtype: Graph
     """
     c = Graph()
     for t in g.triples((None, None, None)):

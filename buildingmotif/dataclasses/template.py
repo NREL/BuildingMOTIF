@@ -1,9 +1,13 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, Tuple
+from itertools import chain
+from secrets import token_hex
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
 
 import rdflib
 
 from buildingmotif import get_building_motif
+from buildingmotif.namespaces import bind_prefixes
+from buildingmotif.utils import PARAM, Term, copy_graph, replace_nodes
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -38,6 +42,27 @@ class Template:
             _head=db_template.head,
             body=body,
             _bm=bm,
+        )
+
+    @classmethod
+    def load_by_name(cls, name: str) -> "Template":
+        """
+        Return template within this library with the given name, if any
+        """
+        bm = get_building_motif()
+        dbt = bm.table_connection.get_db_template_by_name(name)
+        return Template.load(dbt.id)
+
+    def in_memory_copy(self) -> "Template":
+        """
+        Return a copy of this template.
+        """
+        return Template(
+            _id=-1,
+            _name=self._name,
+            _head=self._head,
+            body=copy_graph(self.body),
+            _bm=self._bm,
         )
 
     @property
@@ -80,6 +105,125 @@ class Template:
 
     def remove_dependency(self, dependency: "Template") -> None:
         self._bm.table_connection.remove_template_dependency(self.id, dependency.id)
+
+    @property
+    def parameters(self) -> Set[str]:
+        """
+        The set of all parameters used in this template, including its dependencies
+        """
+        # handle local parameters first
+        nodes = chain.from_iterable(self.body.triples((None, None, None)))
+        params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
+
+        # then handle dependencies
+        for dep in self.get_dependencies():
+            params.update(dep.template.parameters)
+        return params
+
+    def dependency_for_parameter(self, param: str) -> Optional["Template"]:
+        """
+        Returns the dependency that uses the given parameter if one exists.
+
+        :param param: parameter to search for
+        :type param: str
+        :return: dependency which uses the given parameter
+        :rtype: Optional["Template"]
+        """
+        for dep in self.get_dependencies():
+            if param in dep.args.values():
+                return dep.template
+        return None
+
+    def to_inline(self, preserve_args: Optional[List[str]] = None) -> "Template":
+        """
+        Return an inline-able copy of this template by suffixing all parameters
+        with a unique identifier which will avoid parameter name collisions when templates
+        are combined with one another. Any argument names in the preserve_args list will
+        not be adjusted
+
+        :param preserve_args: parameters whose names will be preserved, defaults to None
+        :type preserve_args: Optional[List[str]], optional
+        :return: a template w/ globally unique parameters
+        :rtype: "Template"
+        """
+        templ = self.in_memory_copy()
+        sfx = f"{token_hex(4)}"
+        for param in templ.parameters:
+            if (preserve_args and param in preserve_args) or (
+                param.endswith("-inlined")
+            ):
+                continue
+            param = PARAM[param]
+            replace_nodes(templ.body, {param: rdflib.URIRef(f"{param}-{sfx}-inlined")})
+        return templ
+
+    def inline_dependencies(self) -> "Template":
+        """
+        Returns a copy of this template with all dependencies recursively inlined
+
+        :return: copy of this template with all dependencies inlined
+        :rtype: "Template"
+        """
+        templ = self.in_memory_copy()
+        if not self.get_dependencies():
+            return templ
+
+        for dep in self.get_dependencies():
+            inlined_dep = dep.template.inline_dependencies()
+            # concat bodies
+            templ.body += inlined_dep.to_inline().body
+            # concat heads
+            old_head = list(templ._head)
+            old_head.extend(inlined_dep.head)
+            templ._head = tuple(set(old_head))
+
+        return templ
+
+    def evaluate(
+        self,
+        bindings: Dict[str, Term],
+        namespaces: Optional[Dict[str, rdflib.Namespace]] = None,
+    ) -> Union["Template", rdflib.Graph]:
+        """
+        Evaluate the template with the provided bindings. If all parameters in the template
+        have a provided binding, then a Graph will be returend. Otherwise, a new Template
+        will be returned which incorporates the provided bindings and preserves unbound
+        parameters.
+
+        :param bindings: map of parameter name -> RDF term to substitute
+        :type bindings: Dict[str, Term]
+        :param namespaces: namespace bindings to add to the graph, defaults to None
+        :type namespaces: Optional[Dict[str, rdflib.Namespace]], optional
+        :return: either a template or a graph, depending on whether all parameters were provided
+        :rtype: Union["Template", rdflib.Graph]
+        """
+        templ = self.in_memory_copy()
+        uri_bindings = {PARAM[k]: v for k, v in bindings.items()}
+        replace_nodes(templ.body, uri_bindings)
+        # true if all parameters are now bound
+        if len(templ.parameters) == 0:
+            bind_prefixes(templ.body)
+            if namespaces:
+                for prefix, namespace in namespaces.items():
+                    templ.body.bind(prefix, namespace)
+            return templ.body
+        # remove bound 'head' parameters
+        templ._head = tuple(set(templ._head) - set(bindings.keys()))
+        return templ
+
+    def fill(self, ns: rdflib.Namespace) -> Tuple[Dict[str, Term], rdflib.Graph]:
+        """
+        Evaluates the template with autogenerated bindings w/n the given "ns" namespace.
+
+        :param ns: namespace to contain the autogenerated entities
+        :type ns: rdflib.Namespace
+        :return: a tuple of the bindings used and the resulting graph
+        :rtype: Tuple[Dict[str, Term], rdflib.Graph]
+        """
+        bindings = {param: ns[f"{param}_{token_hex(4)}"] for param in self.parameters}
+        res = self.evaluate(bindings)
+        assert isinstance(res, rdflib.Graph)
+        return bindings, res
 
 
 @dataclass

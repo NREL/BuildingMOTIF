@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 from rdflib import Graph, Namespace
 
 from buildingmotif.template import Template, TemplateLibrary
@@ -7,6 +8,8 @@ from buildingmotif.template import Template, TemplateLibrary
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures/templates"
 BLDG = Namespace("urn:bldg#")
 more_ns = {"bldg": str(BLDG)}
+
+pytest.skip("old template implementation", allow_module_level=True)
 
 
 def test_make_library():
