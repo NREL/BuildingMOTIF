@@ -1,4 +1,3 @@
-# pylama:ignore=E203
 from dataclasses import dataclass
 from itertools import chain
 from secrets import token_hex
