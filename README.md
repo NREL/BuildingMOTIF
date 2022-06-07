@@ -1,7 +1,6 @@
 # BuildingMOTIF 
 [![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) 
 [![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF) 
-![PyPi Downloads](https://img.shields.io/pypi/dm/buildingmotif)
 
 The Building Metadata OnTology Interoperability Framework (BuildingMOTIF) is a tool for working with the following semantic data models.
 
