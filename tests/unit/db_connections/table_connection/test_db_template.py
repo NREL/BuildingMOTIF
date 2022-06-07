@@ -3,7 +3,7 @@ import uuid
 import pytest
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
-from buildingmotif.tables import DBTemplate
+from buildingmotif.database.tables import DBTemplate
 
 
 def create_dependacy_test_fixtures(table_connection):
@@ -222,25 +222,6 @@ def test_add_template_dependency_bad_args(table_connection):
     with pytest.raises(ValueError):
         table_connection.add_template_dependency(
             dependant_template.id, dependee_template.id, {"h1": "ding"}
-        )
-
-
-def test_add_dependency_from_different_library(table_connection):
-    (
-        _,
-        dependant_template,
-        _,
-    ) = create_dependacy_test_fixtures(table_connection)
-    tl = table_connection.create_db_template_library(name="some_other_template_library")
-    dependee_template = table_connection.create_db_template(
-        name="dependee_template",
-        template_library_id=tl.id,
-        head=["h1", "h2"],
-    )
-
-    with pytest.raises(ValueError):
-        table_connection.add_template_dependency(
-            dependant_template.id, dependee_template.id, {"h1": "ding", "h2": "dong"}
         )
 
 

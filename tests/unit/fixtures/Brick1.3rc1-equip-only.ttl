@@ -1,0 +1,69 @@
+@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix bsh: <https://brickschema.org/schema/BrickShape#> .
+@prefix dcterms1: <http://purl.org/dc/terms#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix qudtqk: <http://qudt.org/vocab/quantitykind/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ref: <https://brickschema.org/schema/Brick/ref#> .
+@prefix s223: <http://data.ashrae.org/standard223#> .
+@prefix sdo: <http://schema.org/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix tag: <https://brickschema.org/schema/BrickTag#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://brickschema.org/schema/1.3/Brick> a owl:Ontology ;
+    rdfs:label "Brick" ;
+    dcterms1:creator ( [ a sdo:Person ;
+                sdo:email "gtfierro@cs.berkeley.edu" ;
+                sdo:name "Gabe Fierro" ] [ a sdo:Person ;
+                sdo:email "jbkoh@eng.ucsd.edu" ;
+                sdo:name "Jason Koh" ] ) ;
+    dcterms1:issued "2016-11-16" ;
+    dcterms1:license <https://github.com/BrickSchema/brick/blob/master/LICENSE> ;
+    dcterms1:modified "2022-05-25" ;
+    dcterms1:publisher [ a sdo:Consortium ;
+            sdo:legalName "Brick Consortium, Inc" ;
+            sdo:sameAs <https://brickschema.org/consortium/> ] ;
+    rdfs:isDefinedBy <https://brickschema.org/schema/1.3/Brick> ;
+    rdfs:seeAlso <https://brickschema.org> ;
+    owl:versionInfo "1.3.0rc1" .
+
+brick:AHU a owl:Class,
+        sh:NodeShape ;
+    rdfs:label "AHU" ;
+    rdfs:subClassOf brick:HVAC_Equipment ;
+    skos:definition "Assembly consisting of sections containing a fan or fans and other necessary equipment to perform one or more of the following functions: circulating, filtration, heating, cooling, heat recovery, humidifying, dehumidifying, and mixing of air. Is usually connected to an air-distribution system."@en ;
+    sh:rule [ a sh:TripleRule ;
+            sh:object tag:AHU ;
+            sh:predicate brick:hasTag ;
+            sh:subject sh:this ],
+        [ a sh:TripleRule ;
+            sh:object tag:Equipment ;
+            sh:predicate brick:hasTag ;
+            sh:subject sh:this ] ;
+    brick:hasAssociatedTag tag:AHU,
+        tag:Equipment .
+
+brick:Fan a owl:Class,
+        sh:NodeShape ;
+    rdfs:label "Fan" ;
+    rdfs:subClassOf brick:HVAC_Equipment ;
+    skos:definition "Any device with two or more blades or vanes attached to a rotating shaft used to produce an airflow for the purpose of comfort, ventilation, exhaust, heating, cooling, or any other gaseous transport."@en ;
+    sh:rule [ a sh:TripleRule ;
+            sh:object tag:Equipment ;
+            sh:predicate brick:hasTag ;
+            sh:subject sh:this ],
+        [ a sh:TripleRule ;
+            sh:object tag:Fan ;
+            sh:predicate brick:hasTag ;
+            sh:subject sh:this ] ;
+    brick:hasAssociatedTag tag:Equipment,
+        tag:Fan .
+

@@ -1,5 +1,8 @@
 from rdflib import XSD, Namespace
 
+# special namespace to denote template parameters inside RDF graphs
+PARAM = Namespace("urn:___param___#")
+
 # all versions of Brick > 1.1 have these namespaces
 BRICK = Namespace("https://brickschema.org/schema/Brick#")
 TAG = Namespace("https://brickschema.org/schema/BrickTag#")
@@ -37,3 +40,4 @@ def bind_prefixes(graph):
     graph.bind("brick", BRICK)
     graph.bind("tag", TAG)
     graph.bind("bsh", BSH)
+    graph.bind("bmparam", PARAM)

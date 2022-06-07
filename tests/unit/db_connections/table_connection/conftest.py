@@ -1,7 +1,7 @@
 import pytest
 
-from buildingmotif.db_connections.table_connection import TableConnection
-from tests.conftest import MockBuildingMotif
+from buildingmotif.database.table_connection import TableConnection
+from tests.unit.conftest import MockBuildingMotif
 
 
 @pytest.fixture

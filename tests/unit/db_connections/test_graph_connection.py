@@ -5,8 +5,9 @@ from rdflib import RDF, Graph, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
-from buildingmotif.db_connections.graph_connection import GraphConnection
-from tests.conftest import MockBuildingMotif
+from buildingmotif.building_motif.building_motif import BuildingMotifEngine
+from buildingmotif.database.graph_connection import GraphConnection
+from tests.unit.conftest import MockBuildingMotif
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 SMALL_OFFICE_BRICK_TTL = FIXTURES_DIR / "smallOffice_brick.ttl"
@@ -17,7 +18,7 @@ DB_FILE = FIXTURES_DIR / "smallOffice.db"
 def graph_connection():
     bm = MockBuildingMotif()
 
-    graph_connection = GraphConnection(bm.engine, bm)
+    graph_connection = GraphConnection(BuildingMotifEngine(bm.engine, bm.session))
     yield graph_connection
 
     bm.session.commit()
