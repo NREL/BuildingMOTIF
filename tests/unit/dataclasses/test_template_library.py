@@ -1,6 +1,10 @@
 import pytest
+from rdflib import RDF, URIRef
+from rdflib.compare import isomorphic
+from rdflib.namespace import FOAF
 
 from buildingmotif.dataclasses import TemplateLibrary
+from buildingmotif.dataclasses.shape import Shape
 
 
 def test_create(clean_building_motif):
@@ -39,3 +43,12 @@ def test_get_templates(clean_building_motif):
     results = tl.get_templates()
     assert len(results) == 2
     assert [r.id for r in results] == [t1.id, t2.id]
+
+
+def test_get_shape(clean_building_motif):
+    tl = TemplateLibrary.create("my_template_library")
+    shape = tl.get_shape()
+    shape.graph.add((URIRef("http://example.org/alex"), RDF.type, FOAF.Person))
+
+    assert tl.get_shape() == shape
+    assert isomorphic(Shape.load(shape.id).graph, shape.graph)

@@ -6,6 +6,7 @@ from sqlalchemy.engine import Engine
 from buildingmotif.database.tables import (
     Base,
     DBModel,
+    DBShape,
     DBTemplate,
     DBTemplateLibrary,
     DepsAssociation,
@@ -83,6 +84,48 @@ class TableConnection:
 
         self.bm.session.delete(db_model)
 
+    # shape functions
+    def create_db_shape(self) -> DBShape:
+        """Create a database shape.
+
+        :return: DBShape
+        :rtype: DBShape
+        """
+        db_shape = DBShape(graph_id=str(uuid.uuid4()))
+
+        self.bm.session.add(db_shape)
+        self.bm.session.flush()
+
+        return db_shape
+
+    def get_all_db_shapes(self) -> List[DBShape]:
+        """Get all database shapes.
+
+        :return: all DBShapes
+        :rtype: DBShape
+        """
+        return self.bm.session.query(DBShape).all()
+
+    def get_db_shape(self, id: int) -> DBShape:
+        """Get database shape from id.
+
+        :param id: id of DBShape
+        :type id: str
+        :return: DBShape
+        :rtype: DBShape
+        """
+        return self.bm.session.query(DBShape).filter(DBShape.id == id).one()
+
+    def delete_db_shape(self, id: int) -> None:
+        """Delete database shape.
+
+        :param id: id of deleted DBShape
+        :type id: str
+        """
+        db_shape = self.bm.session.query(DBShape).filter(DBShape.id == id).one()
+
+        self.bm.session.delete(db_shape)
+
     # template library functions
 
     def create_db_template_library(self, name: str) -> DBTemplateLibrary:
@@ -93,9 +136,12 @@ class TableConnection:
         :return: DBTemplateLibrary
         :rtype: DBTemplateLibrary
         """
-        template_library = DBTemplateLibrary(name=name)
+        shape = DBShape(graph_id=str(uuid.uuid4()))
+        self.bm.session.add(shape)
 
+        template_library = DBTemplateLibrary(name=name, shape=shape)
         self.bm.session.add(template_library)
+
         self.bm.session.flush()
 
         return template_library

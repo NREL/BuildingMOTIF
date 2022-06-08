@@ -1,16 +1,27 @@
+import uuid
+
 import pytest
 from sqlalchemy.exc import NoResultFound
 
-from buildingmotif.database.tables import DBTemplate, DBTemplateLibrary
+from buildingmotif.database.tables import DBShape, DBTemplate, DBTemplateLibrary
 
 
-def test_create_db_template_library(table_connection):
+def test_create_db_template_library(table_connection, monkeypatch):
+    mocked_uuid = uuid.uuid4()
+
+    def mockreturn():
+        return mocked_uuid
+
+    monkeypatch.setattr(uuid, "uuid4", mockreturn)
+
     db_template_library = table_connection.create_db_template_library(
         name="my_db_template_library"
     )
 
     assert db_template_library.name == "my_db_template_library"
     assert db_template_library.templates == []
+    assert isinstance(db_template_library.shape, DBShape)
+    assert db_template_library.shape.graph_id == str(mocked_uuid)
 
 
 def test_get_db_template_libraries(table_connection):
@@ -81,6 +92,7 @@ def test_delete_db_template_library(table_connection):
     db_template = table_connection.create_db_template(
         "my_db_template", template_library_id=db_template_library.id, head=[]
     )
+    db_shape = db_template_library.shape
 
     table_connection.delete_db_template_library(db_template_library.id)
 
@@ -89,6 +101,9 @@ def test_delete_db_template_library(table_connection):
 
     with pytest.raises(NoResultFound):
         table_connection.get_db_template(db_template.id)
+
+    with pytest.raises(NoResultFound):
+        table_connection.get_db_shape(db_shape.id)
 
 
 def tests_delete_db_template_library_does_does_exist(table_connection):
