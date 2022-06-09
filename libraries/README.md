@@ -6,13 +6,20 @@ Templates (which help generate models) are contained in `.yml` files; shapes (wh
 
 ```
 libraries/
-└── ashrae
-    └── guideline36
-        ├── 4.1-vav-cooling-only.yml
-        ├── 4.2-vav-with-reheat.yml
-        └── 4.3-fan-powered.yml
-```
+├── ashrae
+│   └── guideline36
+│       ├── 4.1-vav-cooling-only.yml
+│       ├── 4.2-vav-with-reheat.yml
+│       └── 4.3-fan-powered.yml
+└── brick
+    └── Brick-subset.ttl
+ ```
 
 ## ASHRAE / Guideline 36
 
 This library contains templates for equipment adhering to the point list requirements as defined by ASHRAE Guideline 36.
+
+## Brick
+
+This library contains a subset of the Brick v1.3 distribution, allowing the use of Brick types as "templates" for building models.
+This also contains a set of shapes that verify that a model conforms to the Brick v1.3 requirements.
