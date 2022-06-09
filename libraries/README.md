@@ -4,6 +4,50 @@ This directory contains sample libraries for use with BuildingMOTIF. The librari
 
 Templates (which help generate models) are contained in `.yml` files; shapes (which help validate models) are contained in `.ttl` files.
 
+## Template Structure
+
+**TODO: A fuller template tutorial**
+
+Templates are expressed as documents in `.yml` files. The name of the template is at the top level of the YAML file.
+Each template has a
+- `head`: mandatory list of parameters
+- a set of `dependencies`: list of other template names and mappings between those template's parameters and this template's parameters
+- `body`: a Turtle-encoded graph which defines the content of the template. The `urn:__param__#` namespace is used to name the parameters
+
+The following is an example of a template:
+
+```yaml
+my-vav-template:
+  head: ["name"]
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:VAV ;
+      brick:feeds P:zone ;
+      brick:hasPoint P:sen .
+  dependencies:
+   - rule: temp-sensor
+     args: {"name": "sen"}
+   - rule: https://brickschema.org/schema/Brick#HVAC_Zone
+     args: {"name": "zone"}
+
+temp-sensor:
+  head: ['name', 'id']
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    bmparam:name a brick:Temperature_Sensor ;
+        ref:hasExternalRepresentation [
+           ref:hasTimeseriesId P:id ;
+        ] ;
+    .
+```
+
+BuildingMOTIF will handle template *evaluation*, which produces a graph from the template `body` using bindings provided by program using BuildingMOTIF.
+
+
+## Packaged Libraries
+
 ```
 libraries/
 ├── ashrae
@@ -15,11 +59,11 @@ libraries/
     └── Brick-subset.ttl
  ```
 
-## ASHRAE / Guideline 36
+### ASHRAE / Guideline 36
 
 This library contains templates for equipment adhering to the point list requirements as defined by ASHRAE Guideline 36.
 
-## Brick
+### Brick
 
 This library contains a subset of the Brick v1.3 distribution, allowing the use of Brick types as "templates" for building models.
 This also contains a set of shapes that verify that a model conforms to the Brick v1.3 requirements.
