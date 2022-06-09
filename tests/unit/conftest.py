@@ -47,6 +47,6 @@ def pytest_generate_tests(metafunc):
     if "library" in metafunc.fixturenames:
         libdir = pathlib.Path("../../libraries")
         libraries_files = libdir.rglob("*.yml")
-        libraries = {lib.parent for lib in libraries_files}
+        libraries = {str(lib.parent) for lib in libraries_files}
 
         metafunc.parametrize("library", libraries)
