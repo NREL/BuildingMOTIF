@@ -18,7 +18,7 @@ def test_load_library_from_ontology(bm: BuildingMOTIF):
 def test_load_library_from_directory(bm: BuildingMOTIF):
     lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
     assert lib is not None
-    assert len(lib.get_templates()) == 6
+    assert len(lib.get_templates()) == 7
     # spot check a certain template
     templ = lib.get_template_by_name("zone")
     assert templ is not None

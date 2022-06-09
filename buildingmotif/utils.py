@@ -40,6 +40,27 @@ def copy_graph(g: Graph) -> Graph:
     return c
 
 
+def graph_size(g: Graph) -> int:
+    """
+    Returns the number of triples in a graph
+
+    :param g: graph to be measured
+    :type g: Graph
+    :return: number of triples in the graph
+    :rtype: int
+    """
+    return len(tuple(g.triples((None, None, None))))
+
+
+def remove_triples_with_node(g: Graph, node: URIRef) -> None:
+    """
+    Remove all triples with a given node.
+    """
+    for s, p, o in g.triples((None, None, None)):
+        if s == node or p == node or o == node:
+            g.remove((s, p, o))
+
+
 def replace_nodes(g: Graph, replace: Dict[URIRef, Term]) -> None:
     """
     Replace nodes in a graph.

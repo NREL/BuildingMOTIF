@@ -9,7 +9,8 @@ from rdflib.util import guess_format
 from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBTemplate
 from buildingmotif.dataclasses import Template
-from buildingmotif.utils import get_template_parts_from_shape, new_temporary_graph
+from buildingmotif.template_compilation import compile_template_spec
+from buildingmotif.utils import get_template_parts_from_shape
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -37,6 +38,7 @@ class TemplateLibrary:
 
         return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
 
+    # TODO: load library from URI? Does the URI identify the library uniquely?
     @classmethod
     def load(
         cls,
@@ -109,8 +111,11 @@ class TemplateLibrary:
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
-                dependee = Template.load(template_id_lookup[dep["rule"]])
-                template.add_dependency(dependee, dep["args"])
+                if dep["rule"] in template_id_lookup:
+                    dependee = Template.load(template_id_lookup[dep["rule"]])
+                    template.add_dependency(dependee, dep["args"])
+                else:
+                    print(f"Warning: could not find dependee {dep['rule']}")
         return lib
 
     @classmethod
@@ -128,14 +133,13 @@ class TemplateLibrary:
         for file in directory.rglob("*.yml"):
             contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
             for templ_name, templ_spec in contents.items():
+                # compile the template body using its rules
+                templ_spec = compile_template_spec(templ_spec)
                 # input name of template
                 templ_spec.update({"name": templ_name})
-                # turn the template body into a graph
-                body = new_temporary_graph()
-                body.parse(data=templ_spec.pop("body"), format="turtle")
-                templ_spec.update({"body": body})
                 # remove dependencies so we can resolve them to their IDs later
                 deps = templ_spec.pop("dependencies", [])
+                templ_spec["optional_args"] = templ_spec.pop("optional", [])
                 templ = lib.create_template(**templ_spec)
                 dependency_cache[templ.id] = deps
                 template_id_lookup[templ.name] = templ.id
@@ -150,6 +154,8 @@ class TemplateLibrary:
                 else:
                     # global lookup; returns fist template with given name
                     # TODO: this is not ideal!
+                    # TODO: include a field for the template library we are loading from.
+                    # Shouldn't need to touch the database
                     dependee = Template.load_by_name(dep["rule"])
                 template.add_dependency(dependee, dep["args"])
         return lib
@@ -172,7 +178,11 @@ class TemplateLibrary:
         self._name = new_name
 
     def create_template(
-        self, name: str, head: List[str], body: Optional[rdflib.Graph] = None
+        self,
+        name: str,
+        head: List[str],
+        body: Optional[rdflib.Graph] = None,
+        optional_args: Optional[List[str]] = None,
     ) -> Template:
         """Create Template in this Template Library
 
@@ -180,6 +190,10 @@ class TemplateLibrary:
         :type name: str
         :param head: variables in template body
         :type head: list[str]
+        :param body: template body
+        :type body: rdflib.Graph
+        :param optional_args: optional parameters for the template
+        :type optional_args: list[str]
         :return: created Template
         :rtype: Template
         """
@@ -187,12 +201,18 @@ class TemplateLibrary:
         body = self._bm.graph_connection.create_graph(
             db_template.body_id, body if body else rdflib.Graph()
         )
+        if optional_args is None:
+            optional_args = []
+        self._bm.table_connection.update_db_template_optional_args(
+            db_template.id, optional_args
+        )
 
         return Template(
             _id=db_template.id,
             _name=db_template.name,
             _head=db_template.head,
             body=body,
+            optional_args=optional_args,
             _bm=self._bm,
         )
 

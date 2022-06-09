@@ -171,6 +171,7 @@ class TableConnection:
             name=name,
             _head=";".join(head),
             body_id=str(uuid.uuid4()),
+            optional_args=[],
             template_library=template_library,
         )
 
@@ -234,6 +235,21 @@ class TableConnection:
             self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
         )
         db_template.name = name
+
+    def update_db_template_optional_args(
+        self, id: int, optional_args: List[str]
+    ) -> None:
+        """Update database template.
+
+        :param id: id of DBTemplate
+        :type id: str
+        :param optional_args: new list of optional_args
+        :type name: List[str]
+        """
+        db_template = (
+            self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        )
+        db_template.optional_args = optional_args
 
     def add_template_dependency(
         self, template_id: int, dependency_id: int, args: Dict[str, str]

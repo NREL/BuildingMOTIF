@@ -7,6 +7,8 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from buildingmotif.dataclasses import Template, TemplateLibrary
 from buildingmotif.dataclasses.template import Dependency
+from buildingmotif.template_compilation import compile_template_spec
+from buildingmotif.utils import graph_size
 
 
 def test_create(clean_building_motif):
@@ -149,3 +151,28 @@ def test_remove_depedancy_does_not_exist(clean_building_motif):
         dependant.remove_dependency(dependee)
 
     clean_building_motif.session.rollback()
+
+
+def test_template_compilation(clean_building_motif):
+    spec = {
+        "head": ["name"],
+        "hasPoint": {
+            "occ": "https://brickschema.org/schema/Brick#Occupancy_Sensor",
+            "temp": "https://brickschema.org/schema/Brick#Temperature_Sensor",
+            "sp": "https://brickschema.org/schema/Brick#Temperature_Setpoint",
+        },
+        "downstream": {"zone": "https://brickschema.org/schema/Brick#HVAC_Zone"},
+    }
+    spec = compile_template_spec(spec)
+    assert isinstance(spec, dict)
+    assert spec["head"] == ["name"]
+    assert isinstance(spec["body"], rdflib.Graph)
+    spec["name"] = "test"
+    tl = TemplateLibrary.create("my_template_library")
+    # no dependencies to resolve, so we can just throw this away
+    _ = spec.pop("dependencies")
+    spec["optional_args"] = spec.pop("optional", [])
+    templ = tl.create_template(**spec)
+    assert templ.name == "test"
+    assert sorted(templ.parameters) == sorted(("name", "occ", "temp", "sp", "zone"))
+    assert graph_size(templ.body) == 8

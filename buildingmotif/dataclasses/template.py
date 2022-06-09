@@ -7,7 +7,13 @@ import rdflib
 
 from buildingmotif import get_building_motif
 from buildingmotif.namespaces import bind_prefixes
-from buildingmotif.utils import PARAM, Term, copy_graph, replace_nodes
+from buildingmotif.utils import (
+    PARAM,
+    Term,
+    copy_graph,
+    remove_triples_with_node,
+    replace_nodes,
+)
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -21,6 +27,7 @@ class Template:
     _name: str
     _head: Tuple[str, ...]
     body: rdflib.Graph
+    optional_args: List[str]
     _bm: "BuildingMOTIF"
 
     @classmethod
@@ -40,6 +47,7 @@ class Template:
             _id=db_template.id,
             _name=db_template.name,
             _head=db_template.head,
+            optional_args=db_template.optional_args,
             body=body,
             _bm=bm,
         )
@@ -62,6 +70,7 @@ class Template:
             _name=self._name,
             _head=self._head,
             body=copy_graph(self.body),
+            optional_args=self.optional_args[:],
             _bm=self._bm,
         )
 
@@ -149,6 +158,7 @@ class Template:
         templ = self.in_memory_copy()
         sfx = f"{token_hex(4)}"
         for param in templ.parameters:
+            # skip if (a) we want to preserve the param or (b) it is already inlined
             if (preserve_args and param in preserve_args) or (
                 param.endswith("-inlined")
             ):
@@ -188,29 +198,46 @@ class Template:
         self,
         bindings: Dict[str, Term],
         namespaces: Optional[Dict[str, rdflib.Namespace]] = None,
+        require_optional_args: bool = False,
     ) -> Union["Template", rdflib.Graph]:
         """
         Evaluate the template with the provided bindings. If all parameters in the template
-        have a provided binding, then a Graph will be returend. Otherwise, a new Template
+        have a provided binding, then a Graph will be returned. Otherwise, a new Template
         will be returned which incorporates the provided bindings and preserves unbound
-        parameters.
+        parameters. If require_optional_args is True, then the template evaluation will not return
+        a Graph unless all optional arguments are bound. If require_optional_args is False, then
+        the template evaluation will return a Graph even if some optional arguments are unbound.
 
         :param bindings: map of parameter name -> RDF term to substitute
         :type bindings: Dict[str, Term]
         :param namespaces: namespace bindings to add to the graph, defaults to None
         :type namespaces: Optional[Dict[str, rdflib.Namespace]], optional
+        :param require_optional_args: whether to require all optional arguments to be bound,
+                defaults to False
+        :type require_optional_args: bool
         :return: either a template or a graph, depending on whether all parameters were provided
         :rtype: Union["Template", rdflib.Graph]
         """
         templ = self.in_memory_copy()
         uri_bindings = {PARAM[k]: v for k, v in bindings.items()}
         replace_nodes(templ.body, uri_bindings)
-        # true if all parameters are now bound
-        if len(templ.parameters) == 0:
+        # true if all parameters are now bound or only optional args are unbound
+        if len(templ.parameters) == 0 or (
+            not require_optional_args and templ.parameters == set(self.optional_args)
+        ):
             bind_prefixes(templ.body)
             if namespaces:
                 for prefix, namespace in namespaces.items():
                     templ.body.bind(prefix, namespace)
+            if not require_optional_args:
+                # remove all triples that touch unbound optional_args
+                unbound_optional_args = set(templ.optional_args) - set(
+                    uri_bindings.keys()
+                )
+                print(templ.body.serialize(format="turtle"))
+                print(unbound_optional_args)
+                for arg in unbound_optional_args:
+                    remove_triples_with_node(templ.body, PARAM[arg])
             return templ.body
         # remove bound 'head' parameters
         templ._head = tuple(set(templ._head) - set(bindings.keys()))

@@ -50,6 +50,7 @@ class DBTemplate(Base):
     name: Mapped[str] = Column(String(), nullable=False)
     _head: Mapped[str] = Column(String(), nullable=False)
     body_id: Mapped[str] = Column(String())
+    optional_args: Mapped[List[str]] = Column(JSON)
 
     template_library_id = Column(
         Integer, ForeignKey("template_library.id"), nullable=False

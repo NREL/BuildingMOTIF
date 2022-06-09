@@ -3,6 +3,7 @@ from rdflib import Graph, Namespace
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Template, TemplateLibrary
 from buildingmotif.namespaces import BRICK, A
+from buildingmotif.utils import graph_size
 
 BLDG = Namespace("urn:building/")
 
@@ -112,3 +113,22 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     }
     inlined_params = {x for x in inlined.parameters if x.endswith("-inlined")}
     assert inlined.parameters == preserved_params.union(inlined_params)
+
+
+def test_template_evaluate_with_optional(bm: BuildingMOTIF):
+    """
+    Test that template evaluation works with optional params
+    """
+    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    templ = lib.get_template_by_name("opt-vav")
+    assert templ.parameters == {"name", "occ", "zone"}
+    assert templ.optional_args == ["occ"]
+    g = templ.evaluate({"name": BLDG["vav"], "zone": BLDG["zone1"]})
+    assert isinstance(g, Graph)
+    assert graph_size(g) == 1
+
+    t = templ.evaluate(
+        {"name": BLDG["vav"], "zone": BLDG["zone1"]}, require_optional_args=True
+    )
+    assert isinstance(t, Template)
+    assert t.parameters == {"occ"}
