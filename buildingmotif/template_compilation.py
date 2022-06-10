@@ -116,7 +116,7 @@ def compile_template_spec(spec: Dict) -> Dict:
     :rtype: Dict
     """
     # extract metadata that doesn't correspond to rule executions
-    head = spec.pop("head", [])
+    # required_params = spec.pop("required_params", [])
     deps = spec.pop("dependencies", [])
     optionals = spec.pop("optional", [])
 
@@ -135,7 +135,7 @@ def compile_template_spec(spec: Dict) -> Dict:
         body += G
 
     # put the metadata back
-    spec["head"] = head
+    # spec["required_params"] = required_params
     spec["dependencies"] = deps
     spec["body"] = body
     spec["optional"] = optionals

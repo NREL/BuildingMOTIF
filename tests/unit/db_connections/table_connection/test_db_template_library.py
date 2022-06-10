@@ -32,7 +32,7 @@ def test_get_db_template_library(table_connection):
         name="my_template_library"
     )
     table_connection.create_db_template(
-        "my_db_template", template_library_id=db_template_library.id, head=[]
+        "my_db_template", template_library_id=db_template_library.id
     )
 
     db_template_library = table_connection.get_db_template_library(
@@ -79,7 +79,7 @@ def test_delete_db_template_library(table_connection):
         name="my_template_library"
     )
     db_template = table_connection.create_db_template(
-        "my_db_template", template_library_id=db_template_library.id, head=[]
+        "my_db_template", template_library_id=db_template_library.id
     )
 
     table_connection.delete_db_template_library(db_template_library.id)

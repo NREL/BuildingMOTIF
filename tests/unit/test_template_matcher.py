@@ -22,7 +22,6 @@ def test_simple_monomorphism():
     T = Template(
         None,
         name="temp",
-        head=["room"],
         body="""
         {room} a brick:Room ;
             brick:isPartOf {floor} .

@@ -103,7 +103,7 @@ class TemplateLibrary:
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
             partial_body, deps = get_template_parts_from_shape(candidate, ontology)
-            templ = lib.create_template(str(candidate), ["name"], partial_body)
+            templ = lib.create_template(str(candidate), partial_body)
             dependency_cache[templ.id] = deps
             template_id_lookup[str(candidate)] = templ.id
 
@@ -185,7 +185,6 @@ class TemplateLibrary:
     def create_template(
         self,
         name: str,
-        head: List[str],
         body: Optional[rdflib.Graph] = None,
         optional_args: Optional[List[str]] = None,
     ) -> Template:
@@ -193,8 +192,6 @@ class TemplateLibrary:
 
         :param name: name
         :type name: str
-        :param head: variables in template body
-        :type head: list[str]
         :param body: template body
         :type body: rdflib.Graph
         :param optional_args: optional parameters for the template
@@ -202,7 +199,7 @@ class TemplateLibrary:
         :return: created Template
         :rtype: Template
         """
-        db_template = self._bm.table_connection.create_db_template(name, head, self._id)
+        db_template = self._bm.table_connection.create_db_template(name, self._id)
         body = self._bm.graph_connection.create_graph(
             db_template.body_id, body if body else rdflib.Graph()
         )
@@ -215,7 +212,6 @@ class TemplateLibrary:
         return Template(
             _id=db_template.id,
             _name=db_template.name,
-            _head=db_template.head,
             body=body,
             optional_args=optional_args,
             _bm=self._bm,

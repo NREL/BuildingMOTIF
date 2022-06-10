@@ -12,7 +12,6 @@ def test_load_library_from_ontology(bm: BuildingMOTIF):
     templ = lib.get_template_by_name("https://brickschema.org/schema/Brick#AHU")
     assert templ is not None
     assert templ.parameters == {"name"}
-    assert templ.head == ("name",)
 
 
 def test_load_library_from_directory(bm: BuildingMOTIF):
@@ -22,8 +21,7 @@ def test_load_library_from_directory(bm: BuildingMOTIF):
     # spot check a certain template
     templ = lib.get_template_by_name("zone")
     assert templ is not None
-    assert templ.parameters == {"zone", "cav"}
-    assert sorted(templ.head) == sorted(("zone", "cav"))
+    assert templ.parameters == {"name", "cav"}
 
 
 def test_libraries(bm: BuildingMOTIF, library: str):

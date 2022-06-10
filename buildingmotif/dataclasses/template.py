@@ -25,7 +25,6 @@ class Template:
 
     _id: int
     _name: str
-    _head: Tuple[str, ...]
     body: rdflib.Graph
     optional_args: List[str]
     _bm: "BuildingMOTIF"
@@ -46,7 +45,6 @@ class Template:
         return cls(
             _id=db_template.id,
             _name=db_template.name,
-            _head=db_template.head,
             optional_args=db_template.optional_args,
             body=body,
             _bm=bm,
@@ -68,7 +66,6 @@ class Template:
         return Template(
             _id=-1,
             _name=self._name,
-            _head=self._head,
             body=copy_graph(self.body),
             optional_args=self.optional_args[:],
             _bm=self._bm,
@@ -90,14 +87,6 @@ class Template:
     def name(self, new_name: str) -> None:
         self._bm.table_connection.update_db_template_name(self._id, new_name)
         self._name = new_name
-
-    @property
-    def head(self):
-        return self._head
-
-    @head.setter
-    def head(self, _: str) -> None:
-        raise AttributeError("Cannot modify head")
 
     def get_dependencies(self) -> Tuple["Dependency", ...]:
         return tuple(
@@ -156,7 +145,7 @@ class Template:
         :rtype: "Template"
         """
         templ = self.in_memory_copy()
-        sfx = f"{token_hex(4)}"
+        sfx = f"{self.name}{token_hex(4)}"
         for param in templ.parameters:
             # skip if (a) we want to preserve the param or (b) it is already inlined
             if (preserve_args and param in preserve_args) or (
@@ -187,10 +176,11 @@ class Template:
             preserved_params = list(dep.args.values())
             # concat bodies
             templ.body += inlined_dep.to_inline(preserved_params).body
-            # concat heads
-            old_head = list(templ._head)
-            old_head.extend(inlined_dep.head)
-            templ._head = tuple(set(old_head))
+            # TODO: maybe remove because of no more required parameters
+            # # concat required_paramss
+            # old_required_params = list(templ._required_params)
+            # old_required_params.extend(inlined_dep.required_params)
+            # templ._required_params = tuple(set(old_required_params))
 
         return templ
 
@@ -239,8 +229,8 @@ class Template:
                 for arg in unbound_optional_args:
                     remove_triples_with_node(templ.body, PARAM[arg])
             return templ.body
-        # remove bound 'head' parameters
-        templ._head = tuple(set(templ._head) - set(bindings.keys()))
+        # remove bound 'required_params' parameters
+        # templ._required_params = tuple(set(templ._required_params) - set(bindings.keys()))
         return templ
 
     def fill(self, ns: rdflib.Namespace) -> Tuple[Dict[str, Term], rdflib.Graph]:
