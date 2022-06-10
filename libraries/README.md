@@ -10,7 +10,6 @@ Templates (which help generate models) are contained in `.yml` files; shapes (wh
 
 Templates are expressed as documents in `.yml` files. The name of the template is at the top level of the YAML file.
 Each template has a
-- `head`: mandatory list of parameters
 - a set of `dependencies`: list of other template names and mappings between those template's parameters and this template's parameters
 - `body`: a Turtle-encoded graph which defines the content of the template. The `urn:__param__#` namespace is used to name the parameters
 
@@ -18,7 +17,6 @@ The following is an example of a template:
 
 ```yaml
 my-vav-template:
-  head: ["name"]
   body: >
     @prefix P: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -32,7 +30,6 @@ my-vav-template:
      args: {"name": "zone"}
 
 temp-sensor:
-  head: ['name', 'id']
   body: >
     @prefix P: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
