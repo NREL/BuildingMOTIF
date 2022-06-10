@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 import rdflib
 import yaml
 from rdflib.util import guess_format
+from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBTemplate
@@ -156,7 +157,11 @@ class TemplateLibrary:
                     # TODO: this is not ideal!
                     # TODO: include a field for the template library we are loading from.
                     # Shouldn't need to touch the database
-                    dependee = Template.load_by_name(dep["rule"])
+                    try:
+                        dependee = Template.load_by_name(dep["rule"])
+                    except NoResultFound:
+                        print(f"Warning: could not find dependee {dep['rule']}")
+                        continue
                 template.add_dependency(dependee, dep["args"])
         return lib
 

@@ -45,7 +45,8 @@ def pytest_generate_tests(metafunc):
 
     # validates that example files pass validation
     if "library" in metafunc.fixturenames:
-        libdir = pathlib.Path("../../libraries")
+        libdir = pathlib.Path("libraries")
+        print("EXISTS", libdir, libdir.exists())
         libraries_files = libdir.rglob("*.yml")
         libraries = {str(lib.parent) for lib in libraries_files}
 
