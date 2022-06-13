@@ -116,7 +116,7 @@ def get_template_parts_from_shape(
         for _ in range(int(mincount)):
             param = _gensym()
             body.add((root_param, path, param))
-            deps.append({"rule": otype, "args": {"name": param}})
+            deps.append({"template": otype, "args": {"name": param}})
             # body.add((param, RDF.type, otype))
 
     if (shape_name, RDF.type, OWL.Class) in shape_graph:
@@ -128,7 +128,7 @@ def get_template_parts_from_shape(
 
     nodes = shape_graph.objects(shape_name, SH["node"])
     for node in nodes:
-        deps.append({"rule": node, "args": {"name": "name"}})  # tie to root param
+        deps.append({"template": node, "args": {"name": "name"}})  # tie to root param
 
     return body, deps
 

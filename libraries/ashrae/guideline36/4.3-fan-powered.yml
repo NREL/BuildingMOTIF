@@ -6,15 +6,15 @@ fan-powered-terminal-unit:
       brick:hasPart p:fan, p:damper ;
       brick:hasPoint p:heating_signal, p:airflow, p:dat, p:zat .
   dependencies:
-  - rule: fan
+  - template: fan
     args: {"name": "fan"}
-  - rule: damper
+  - template: damper
     args: {"name": "damper"}
-  - rule: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor 
+  - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor 
     args: {"name": "airflow"}
-  - rule: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor 
+  - template: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor 
     args: {"name": "dat"}
-  - rule: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor 
+  - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor 
     args: {"name": "zat"}
 
 # TODO: can I "compose" templates, for instance to require
@@ -28,9 +28,9 @@ fan:
     p:name a brick:Fan ;
        brick:hasPoint p:speed, p:start_stop, p:status .
   dependencies:
-    - rule: https://brickschema.org/schema/Brick#Frequency_Command
+    - template: https://brickschema.org/schema/Brick#Frequency_Command
       args: {"name": "speed"}
-    - rule: https://brickschema.org/schema/Brick#Start_Stop_Command
+    - template: https://brickschema.org/schema/Brick#Start_Stop_Command
       args: {"name": "start_stop"}
-    - rule: https://brickschema.org/schema/Brick#Fan_Status
+    - template: https://brickschema.org/schema/Brick#Fan_Status
       args: {"name": "status"}

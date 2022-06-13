@@ -8,17 +8,17 @@ vav-cooling-only:
         brick:feeds p:zone .
   optional: ['occ', 'co2']
   dependencies:
-    - rule: damper
+    - template: damper
       args: {"name": "dmp"}
-    - rule: https://brickschema.org/schema/Brick#HVAC_Zone
+    - template: https://brickschema.org/schema/Brick#HVAC_Zone
       args: {"name": "zone"}
-    - rule: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+    - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
       args: {"name": "ztemp"}
-    - rule: https://brickschema.org/schema/Brick#Occupancy_Sensor
+    - template: https://brickschema.org/schema/Brick#Occupancy_Sensor
       args: {"name": "occ"}
-    - rule: https://brickschema.org/schema/Brick#CO2_Level_Sensor
+    - template: https://brickschema.org/schema/Brick#CO2_Level_Sensor
       args: {"name": "co2"}
-    - rule: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor
+    - template: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor
       args: {"name": "dat"}
 
 damper:
@@ -28,5 +28,5 @@ damper:
     p:name a brick:Damper ;
       brick:hasPoint p:dmppos .
   dependencies:
-  - rule: https://brickschema.org/schema/Brick#Damper_Position_Command
+  - template: https://brickschema.org/schema/Brick#Damper_Position_Command
     args: {"name": "dmppos"}

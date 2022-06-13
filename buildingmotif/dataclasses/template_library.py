@@ -112,11 +112,11 @@ class TemplateLibrary:
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
-                if dep["rule"] in template_id_lookup:
-                    dependee = Template.load(template_id_lookup[dep["rule"]])
+                if dep["template"] in template_id_lookup:
+                    dependee = Template.load(template_id_lookup[dep["template"]])
                     template.add_dependency(dependee, dep["args"])
                 else:
-                    print(f"Warning: could not find dependee {dep['rule']}")
+                    print(f"Warning: could not find dependee {dep['template']}")
         return lib
 
     @classmethod
@@ -149,18 +149,18 @@ class TemplateLibrary:
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
-                if dep["rule"] in template_id_lookup:
+                if dep["template"] in template_id_lookup:
                     # local lookup
-                    dependee = Template.load(template_id_lookup[dep["rule"]])
+                    dependee = Template.load(template_id_lookup[dep["template"]])
                 else:
                     # global lookup; returns fist template with given name
                     # TODO: this is not ideal!
                     # TODO: include a field for the template library we are loading from.
                     # Shouldn't need to touch the database
                     try:
-                        dependee = Template.load_by_name(dep["rule"])
+                        dependee = Template.load_by_name(dep["template"])
                     except NoResultFound:
-                        print(f"Warning: could not find dependee {dep['rule']}")
+                        print(f"Warning: could not find dependee {dep['template']}")
                         continue
                 template.add_dependency(dependee, dep["args"])
         return lib
