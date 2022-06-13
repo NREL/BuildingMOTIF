@@ -19,8 +19,6 @@ Notes:
 - don't hardcode template names into these rules/macros --- pass in from user
 """
 
-# TODO: can i write a rule that mandates all Points have a BACnet reference?
-
 
 def rule(name: str):
     """

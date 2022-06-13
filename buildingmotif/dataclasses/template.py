@@ -181,11 +181,6 @@ class Template:
             preserved_params = list(dep.args.values())
             # concat bodies
             templ.body += inlined_dep.to_inline(preserved_params).body
-            # TODO: maybe remove because of no more required parameters
-            # # concat required_paramss
-            # old_required_params = list(templ._required_params)
-            # old_required_params.extend(inlined_dep.required_params)
-            # templ._required_params = tuple(set(old_required_params))
 
         return templ
 
@@ -232,8 +227,6 @@ class Template:
                 for arg in unbound_optional_args:
                     remove_triples_with_node(templ.body, PARAM[arg])
             return templ.body
-        # remove bound 'required_params' parameters
-        # templ._required_params = tuple(set(templ._required_params) - set(bindings.keys()))
         return templ
 
     def fill(self, ns: rdflib.Namespace) -> Tuple[Dict[str, Term], rdflib.Graph]:

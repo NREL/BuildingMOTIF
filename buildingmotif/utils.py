@@ -54,7 +54,13 @@ def graph_size(g: Graph) -> int:
 
 def remove_triples_with_node(g: Graph, node: URIRef) -> None:
     """
-    Remove all triples with a given node.
+    Remove all triples that include the given node. Edits
+    the graph in-place
+
+    :param g: the graph to remove triples from
+    :type g: Graph
+    :param node: the node to remove
+    :type node: URIRef
     """
     for s, p, o in g.triples((None, None, None)):
         if s == node or p == node or o == node:

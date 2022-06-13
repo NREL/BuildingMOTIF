@@ -30,8 +30,6 @@ class _template_dependency:
     template_id: Optional[int] = None
 
     def __repr__(self):
-        # print all non-None fields in the instance
-        # enclosed in angle brackets
         return (
             f"dep<name={self.template_name} bindings={self.bindings} "
             "library={self.library} id={self.template_id}>"
@@ -48,6 +46,14 @@ class _template_dependency:
         return cls(template_name, bindings, library, template_id)
 
     def to_template(self, id_lookup: Dict[str, int]) -> Template:
+        """
+        Resolve this dependency to a Template
+
+        :param id_lookup: a local cache of name -> id for uncommitted templates
+        :type id_lookup: Dict[str, int]
+        :return: the Template instance this dependency points to
+        :rtype: Template
+        """
         # direct lookup if id is provided
         if self.template_id is not None:
             return Template.load(self.template_id)
