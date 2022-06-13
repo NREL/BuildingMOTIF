@@ -14,7 +14,7 @@ Each template has a
   Each dependency has three required keys:
   - `template`: the name of the template the outer template is dependent on
   - `args`: the association of dependency parameters to this template's parameters
-  - `library`: the name of the library from which the template is drawn
+  - `library`: the name of the library from which the template is drawn (defaults to current library)
 - `body`: a Turtle-encoded graph which defines the content of the template. The `urn:__param__#` namespace is used to name the parameters
 
 The following is an example of a template:
@@ -28,9 +28,10 @@ my-vav-template:
       brick:feeds P:zone ;
       brick:hasPoint P:sen .
   dependencies:
-   - rule: temp-sensor
+   - template: temp-sensor
      args: {"name": "sen"}
-   - rule: https://brickschema.org/schema/Brick#HVAC_Zone
+   - template: https://brickschema.org/schema/Brick#HVAC_Zone
+     library: https://brickschema.org/schema/1.3/Brick
      args: {"name": "zone"}
 
 temp-sensor:
