@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from itertools import chain
 from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
+from warnings import warn
 
 import rdflib
 
@@ -17,6 +18,7 @@ from buildingmotif.utils import (
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
+    from buildingmotif.dataclasses import TemplateLibrary
 
 
 @dataclass
@@ -55,9 +57,19 @@ class Template:
         """
         Return template within this library with the given name, if any
         """
+        warn(
+            "This returns the *first* template by the given name, which may not be "
+            "what you want. Recommend you use load_by_name_with_library()"
+        )
         bm = get_building_motif()
         dbt = bm.table_connection.get_db_template_by_name(name)
         return Template.load(dbt.id)
+
+    @classmethod
+    def load_by_name_with_library(
+        cls, name: str, library: "TemplateLibrary"
+    ) -> "Template":
+        return library.get_template_by_name(name)
 
     def in_memory_copy(self) -> "Template":
         """

@@ -1,6 +1,7 @@
 import pathlib
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from warnings import warn
 
 import rdflib
 import yaml
@@ -15,6 +16,43 @@ from buildingmotif.utils import get_template_parts_from_shape
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
+
+
+@dataclass
+class _template_dependency:
+    """
+    Represents early-bound (template_id) or late-bound (template_name + library)
+    dependency of a template on another template.
+    """
+
+    template_name: str
+    bindings: Dict[str, Any]
+    library: Optional[str] = None
+    template_id: Optional[int] = None
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "_template_dependency":
+        template_name = d["template"]
+        bindings = d.get("args", {})
+        library = d.get("library")
+        template_id = d.get("template_id")
+        return cls(template_name, bindings, library, template_id)
+
+    def to_template(self, id_lookup: Dict[str, int]) -> Template:
+        if self.template_id is not None:
+            # direct lookup if id is provided
+            return Template.load(self.template_id)
+        elif self.library is not None:
+            # resolve template by lookup name w/n the given library
+            try:
+                library = TemplateLibrary.load_by_name(self.library)
+                return library.get_template_by_name(self.template_name)
+            except NoResultFound:
+                warn(
+                    f"No library named '{self.library}' found. Defaulting to global search"
+                )
+        # fallback to global search
+        return Template.load_by_name(self.template_name)
 
 
 @dataclass
@@ -57,6 +95,19 @@ class TemplateLibrary:
             return cls._load_from_directory(pathlib.Path(directory))
         else:
             raise Exception("No library information provided")
+
+    @classmethod
+    def load_by_name(cls, name: str) -> "TemplateLibrary":
+        """load Template Library by name
+
+        :param name: name
+        :type name: str
+        :return: TemplateLibrary
+        :rtype: TemplateLibrary
+        """
+        bm = get_building_motif()
+        db_template_library = bm.table_connection.get_db_template_library_by_name(name)
+        return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
 
     @classmethod
     def _load_from_db(cls, id: int) -> "TemplateLibrary":
@@ -129,7 +180,7 @@ class TemplateLibrary:
 
         lib = cls.create(directory.name)
         template_id_lookup: Dict[str, int] = {}
-        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
+        dependency_cache: Dict[int, List[_template_dependency]] = {}
         # read all .yml files
         for file in directory.rglob("*.yml"):
             contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
@@ -139,7 +190,10 @@ class TemplateLibrary:
                 # input name of template
                 templ_spec.update({"name": templ_name})
                 # remove dependencies so we can resolve them to their IDs later
-                deps = templ_spec.pop("dependencies", [])
+                deps = [
+                    _template_dependency.from_dict(d)
+                    for d in templ_spec.pop("dependencies", [])
+                ]
                 templ_spec["optional_args"] = templ_spec.pop("optional", [])
                 templ = lib.create_template(**templ_spec)
                 dependency_cache[templ.id] = deps
@@ -149,20 +203,8 @@ class TemplateLibrary:
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
-                if dep["template"] in template_id_lookup:
-                    # local lookup
-                    dependee = Template.load(template_id_lookup[dep["template"]])
-                else:
-                    # global lookup; returns fist template with given name
-                    # TODO: this is not ideal!
-                    # TODO: include a field for the template library we are loading from.
-                    # Shouldn't need to touch the database
-                    try:
-                        dependee = Template.load_by_name(dep["template"])
-                    except NoResultFound:
-                        print(f"Warning: could not find dependee {dep['template']}")
-                        continue
-                template.add_dependency(dependee, dep["args"])
+                dependee = dep.to_template(template_id_lookup)
+                template.add_dependency(dependee, dep.bindings)
         return lib
 
     @property

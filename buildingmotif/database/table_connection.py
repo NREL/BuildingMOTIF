@@ -124,6 +124,20 @@ class TableConnection:
             .one()
         )
 
+    def get_db_template_library_by_name(self, name: str) -> DBTemplateLibrary:
+        """Get database template library from id.
+
+        :param name: name of DBTemplateLibrary
+        :type name: str
+        :return: DBTemplateLibrary
+        :rtype: DBTemplateLibrary
+        """
+        return (
+            self.bm.session.query(DBTemplateLibrary)
+            .filter(DBTemplateLibrary.name == name)
+            .one()
+        )
+
     def update_db_template_library_name(self, id: int, name: Optional[str]) -> None:
         """Update database template library.
 
