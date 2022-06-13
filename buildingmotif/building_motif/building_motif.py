@@ -1,3 +1,4 @@
+import logging
 from contextlib import contextmanager
 
 from sqlalchemy import create_engine
@@ -14,11 +15,14 @@ from buildingmotif.database.table_connection import TableConnection
 class BuildingMOTIF(metaclass=Singleton):
     """Manages BuildingMOTIF data classes."""
 
-    def __init__(self, db_uri: str) -> None:
+    def __init__(self, db_uri: str, debug=False) -> None:
         """Class constructor.
 
         :param db_uri: db uri
         :type db_uri: str
+
+        :param debug: Whether to print debug messages
+        :type debug: boolean
         """
         self.db_uri = db_uri
         self.engine = create_engine(db_uri, echo=False)
@@ -29,6 +33,9 @@ class BuildingMOTIF(metaclass=Singleton):
         self.graph_connection = GraphConnection(
             BuildingMotifEngine(self.engine, self.session)
         )
+
+        if debug:
+            logging.basicConfig(level=logging.DEBUG)
 
     def close(self) -> None:
         """Close session and engine."""
