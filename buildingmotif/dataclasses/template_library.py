@@ -6,7 +6,6 @@ from warnings import warn
 import rdflib
 import yaml
 from rdflib.util import guess_format
-from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBTemplate
@@ -27,32 +26,36 @@ class _template_dependency:
 
     template_name: str
     bindings: Dict[str, Any]
-    library: Optional[str] = None
+    library: str
     template_id: Optional[int] = None
 
+    def __repr__(self):
+        # print all non-None fields in the instance
+        # enclosed in angle brackets
+        return f"dep<{self.template_name} {self.bindings} {self.library} {self.template_id}>"
+
     @classmethod
-    def from_dict(cls, d: Dict[str, Any]) -> "_template_dependency":
+    def from_dict(
+        cls, d: Dict[str, Any], dependent_library_name: str
+    ) -> "_template_dependency":
         template_name = d["template"]
         bindings = d.get("args", {})
-        library = d.get("library")
+        library = d.get("library", dependent_library_name)
         template_id = d.get("template_id")
         return cls(template_name, bindings, library, template_id)
 
     def to_template(self, id_lookup: Dict[str, int]) -> Template:
+        # direct lookup if id is provided
         if self.template_id is not None:
-            # direct lookup if id is provided
             return Template.load(self.template_id)
-        elif self.library is not None:
-            # resolve template by lookup name w/n the given library
-            try:
-                library = TemplateLibrary.load_by_name(self.library)
-                return library.get_template_by_name(self.template_name)
-            except NoResultFound:
-                warn(
-                    f"No library named '{self.library}' found. Defaulting to global search"
-                )
-        # fallback to global search
-        return Template.load_by_name(self.template_name)
+        # if id is not provided, look at our local 'cache' of to-be-committed
+        # templates for the id (id_lookup)
+        if self.template_name in id_lookup:
+            return Template.load(id_lookup[self.template_name])
+        # if not in the local cache, then search the database for the template
+        # within the given library
+        library = TemplateLibrary.load_by_name(self.library)
+        return library.get_template_by_name(self.template_name)
 
 
 @dataclass
@@ -167,7 +170,7 @@ class TemplateLibrary:
                     dependee = Template.load(template_id_lookup[dep["template"]])
                     template.add_dependency(dependee, dep["args"])
                 else:
-                    print(f"Warning: could not find dependee {dep['template']}")
+                    warn(f"Warning: could not find dependee {dep['template']}")
         return lib
 
     @classmethod
@@ -191,7 +194,7 @@ class TemplateLibrary:
                 templ_spec.update({"name": templ_name})
                 # remove dependencies so we can resolve them to their IDs later
                 deps = [
-                    _template_dependency.from_dict(d)
+                    _template_dependency.from_dict(d, lib.name)
                     for d in templ_spec.pop("dependencies", [])
                 ]
                 templ_spec["optional_args"] = templ_spec.pop("optional", [])

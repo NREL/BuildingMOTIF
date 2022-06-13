@@ -236,8 +236,6 @@ class Template:
                 unbound_optional_args = set(templ.optional_args) - set(
                     uri_bindings.keys()
                 )
-                print(templ.body.serialize(format="turtle"))
-                print(unbound_optional_args)
                 for arg in unbound_optional_args:
                     remove_triples_with_node(templ.body, PARAM[arg])
             return templ.body

@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import TemplateLibrary
+from tests.unit.conftest import MockTemplateLibrary
 
 
 def test_load_library_from_ontology(bm: BuildingMOTIF):
@@ -28,5 +31,8 @@ def test_libraries(bm: BuildingMOTIF, library: str):
     """
     Ensures that the libraries can be loaded and used
     """
-    lib = TemplateLibrary.load(directory=library)
+    # Brick dependencies always resolve for the test library
+    TemplateLibrary.load_by_name = MockTemplateLibrary.load_by_name  # type: ignore
+    MockTemplateLibrary.create("https://brickschema.org/schema/1.3/Brick")
+    lib = TemplateLibrary._load_from_directory(Path(library))
     assert lib is not None
