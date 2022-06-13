@@ -2,7 +2,7 @@ from typing import Callable, Dict
 
 import rdflib
 
-from buildingmotif.namespaces import BRICK, PARAM, RDF
+from buildingmotif.namespaces import BACNET, BRICK, PARAM, RDF, REF
 from buildingmotif.utils import new_temporary_graph
 
 RULES: Dict[str, Callable] = {}
@@ -100,6 +100,23 @@ def feeds(*args, **kwargs) -> rdflib.Graph:
         equiptype = rdflib.URIRef(equiptype)
         G.add((PARAM[param], RDF["type"], equiptype))
         G.add((PARAM["name"], BRICK.feeds, PARAM[param]))
+    return G
+
+
+@rule("bacnet")
+def bacnet(*args, **kwargs) -> rdflib.Graph:
+    """
+    Adds template fields for each of the param names in 'args' to ensure
+    they have BACnet references
+    """
+    G = new_temporary_graph()
+    G.add((PARAM["BACnet_device"], RDF["type"], BACNET.BACnetDevice))
+    for param in args:
+        ref_name = rdflib.BNode()
+        object_name = param + "_object"
+        G.add((PARAM[param], REF.hasExternalReference, ref_name))
+        G.add((ref_name, BACNET["object-identifier"], rdflib.Literal(object_name)))
+        G.add((ref_name, BACNET["objectOf"], PARAM["BACnet_device"]))
     return G
 
 

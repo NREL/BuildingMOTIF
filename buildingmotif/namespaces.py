@@ -7,6 +7,7 @@ PARAM = Namespace("urn:___param___#")
 BRICK = Namespace("https://brickschema.org/schema/Brick#")
 TAG = Namespace("https://brickschema.org/schema/BrickTag#")
 BSH = Namespace("https://brickschema.org/schema/BrickShape#")
+REF = Namespace("https://brickschema.org/schema/Brick/ref#")
 
 # defaults
 OWL = Namespace("http://www.w3.org/2002/07/owl#")
@@ -20,6 +21,8 @@ QUDT = Namespace("http://qudt.org/schema/qudt/")
 QUDTQK = Namespace("http://qudt.org/vocab/quantitykind/")
 QUDTDV = Namespace("http://qudt.org/vocab/dimensionvector/")
 UNIT = Namespace("http://qudt.org/vocab/unit/")
+
+BACNET = Namespace("http://data.ashrae.org/bacnet/2020#")
 
 A = RDF.type
 
