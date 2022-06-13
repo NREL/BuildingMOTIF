@@ -116,12 +116,14 @@ def compile_template_spec(spec: Dict) -> Dict:
     :rtype: Dict
     """
     # extract metadata that doesn't correspond to rule executions
-    # required_params = spec.pop("required_params", [])
     deps = spec.pop("dependencies", [])
     optionals = spec.pop("optional", [])
 
-    # compile the template's bo from the rules
+    # compile the template's body from the rules
     body = new_temporary_graph()
+    existing_body = spec.pop("body", None)
+    if existing_body is not None:
+        body.parse(data=existing_body, format="turtle")
     for rule_name in tuple(spec.keys()):
         rule_args = spec.pop(rule_name)
         if rule_name not in RULES:
@@ -135,7 +137,6 @@ def compile_template_spec(spec: Dict) -> Dict:
         body += G
 
     # put the metadata back
-    # spec["required_params"] = required_params
     spec["dependencies"] = deps
     spec["body"] = body
     spec["optional"] = optionals
