@@ -18,7 +18,6 @@ from buildingmotif.utils import (
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
-    from buildingmotif.dataclasses import TemplateLibrary
 
 
 @dataclass
@@ -59,17 +58,11 @@ class Template:
         """
         warn(
             "This returns the *first* template by the given name, which may not be "
-            "what you want. Recommend you use load_by_name_with_library()"
+            "what you want. Recommend you use library.get_template_by_name()"
         )
         bm = get_building_motif()
         dbt = bm.table_connection.get_db_template_by_name(name)
         return Template.load(dbt.id)
-
-    @classmethod
-    def load_by_name_with_library(
-        cls, name: str, library: "TemplateLibrary"
-    ) -> "Template":
-        return library.get_template_by_name(name)
 
     def in_memory_copy(self) -> "Template":
         """
