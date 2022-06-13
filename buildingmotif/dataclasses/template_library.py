@@ -32,7 +32,10 @@ class _template_dependency:
     def __repr__(self):
         # print all non-None fields in the instance
         # enclosed in angle brackets
-        return f"dep<{self.template_name} {self.bindings} {self.library} {self.template_id}>"
+        return (
+            f"dep<name={self.template_name} bindings={self.bindings} "
+            "library={self.library} id={self.template_id}>"
+        )
 
     @classmethod
     def from_dict(
@@ -206,8 +209,12 @@ class TemplateLibrary:
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
-                dependee = dep.to_template(template_id_lookup)
-                template.add_dependency(dependee, dep.bindings)
+                try:
+                    dependee = dep.to_template(template_id_lookup)
+                    template.add_dependency(dependee, dep.bindings)
+                except Exception as e:
+                    warn(f"Warning: could not resolve dependency {dep}")
+                    raise e
         return lib
 
     @property
