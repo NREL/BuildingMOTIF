@@ -98,7 +98,10 @@ class TemplateLibrary:
             ontology.parse(ontology_graph, format=guess_format(ontology_graph))
             return cls._load_from_ontology_graph(ontology)
         elif directory is not None:
-            return cls._load_from_directory(pathlib.Path(directory))
+            src = pathlib.Path(directory)
+            if not src.exists():
+                raise ValueError(f"Directory {src} does not exist")
+            return cls._load_from_directory(src)
         else:
             raise Exception("No library information provided")
 
