@@ -113,7 +113,7 @@ def bacnet(*args, **kwargs) -> rdflib.Graph:
     G.add((PARAM["BACnet_device"], RDF["type"], BACNET.BACnetDevice))
     for param in args:
         ref_name = rdflib.BNode()
-        object_name = param + "_object"
+        object_name = PARAM[param + "_object"]
         G.add((PARAM[param], REF.hasExternalReference, ref_name))
         G.add((ref_name, BACNET["object-identifier"], rdflib.Literal(object_name)))
         G.add((ref_name, BACNET["objectOf"], PARAM["BACnet_device"]))

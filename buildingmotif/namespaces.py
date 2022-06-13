@@ -43,4 +43,4 @@ def bind_prefixes(graph):
     graph.bind("brick", BRICK)
     graph.bind("tag", TAG)
     graph.bind("bsh", BSH)
-    graph.bind("bmparam", PARAM)
+    graph.bind("P", PARAM)
