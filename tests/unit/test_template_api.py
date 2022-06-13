@@ -96,3 +96,19 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     assert len(templ.get_dependencies()) == 2
     inlined = templ.inline_dependencies()
     assert len(inlined.get_dependencies()) == 0
+    preserved_params = {
+        "name",
+        "sf",
+        "oad",
+        "cd",
+        "hd",
+        "zt",
+        "occ",
+        "mat",
+        "rat",
+        "sat",
+        "oat",
+        "zone",
+    }
+    inlined_params = {x for x in inlined.parameters if x.endswith("-inlined")}
+    assert inlined.parameters == preserved_params.union(inlined_params)

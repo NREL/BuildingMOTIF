@@ -1,3 +1,5 @@
+import pathlib
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -34,3 +36,17 @@ def bm():
     bm.close()
     # clean up the singleton so that tables are re-created correctly later
     BuildingMOTIF.clean()
+
+
+def pytest_generate_tests(metafunc):
+    """
+    Generates BuildingMOTIF tests for a variety of contexts
+    """
+
+    # validates that example files pass validation
+    if "library" in metafunc.fixturenames:
+        libdir = pathlib.Path("../../libraries")
+        libraries_files = libdir.rglob("*.yml")
+        libraries = {str(lib.parent) for lib in libraries_files}
+
+        metafunc.parametrize("library", libraries)
