@@ -16,7 +16,7 @@ from buildingmotif.database.table_connection import TableConnection
 class BuildingMOTIF(metaclass=Singleton):
     """Manages BuildingMOTIF data classes."""
 
-    def __init__(self, db_uri: str, log_level=logging.INFO) -> None:
+    def __init__(self, db_uri: str, log_level=logging.WARNING) -> None:
         """Class constructor.
 
         :param db_uri: db uri
@@ -51,6 +51,12 @@ class BuildingMOTIF(metaclass=Singleton):
         )
         log_file_handler.setLevel(logging.DEBUG)
         log_file_handler.setFormatter(formatter)
+
+        engine_logger = logging.getLogger("sqlalchemy.engine")
+        pool_logger = logging.getLogger("sqlalchemy.pool")
+
+        engine_logger.setLevel(logging.DEBUG)
+        pool_logger.setLevel(logging.DEBUG)
 
         stream_handler = logging.StreamHandler()
         stream_handler.setLevel(log_level)
