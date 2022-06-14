@@ -26,7 +26,6 @@ class TableConnection:
         """
         # create tables
         self.logger = logging.getLogger(__name__)
-        self.logger.addHandler(logging.NullHandler())
 
         self.logger.debug("Creating tables for data storage")
         Base.metadata.create_all(engine)

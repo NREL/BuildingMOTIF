@@ -29,7 +29,6 @@ class GraphConnection:
         :type db_identifier: Optional[str], optional
         """
         self.logger = logging.getLogger(__name__)
-        self.logger.addHandler(logging.NullHandler())
 
         self.store = plugin.get("SQLAlchemy", Store)(
             identifier=db_identifier, engine=engine
