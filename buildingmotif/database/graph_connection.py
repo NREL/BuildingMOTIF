@@ -48,11 +48,10 @@ class GraphConnection:
         :rtype: Graph
         """
         self.logger.debug(
-            f"Creating graph '{identifier}' in database with '{len(graph)}' triples"
+            f"Creating graph: '{identifier}' in database with: {len(graph)} triples"
         )
         g = Graph(self.store, identifier=identifier)
         new_triples = [(s, o, p, g) for (s, o, p) in graph]
-        self.logger.debug(f"Adding '{len(new_triples)}' to empty graph '{identifier}'")
         g.addN(new_triples)
 
         return g
@@ -64,9 +63,6 @@ class GraphConnection:
         :rtype: list[str]
         """
         graph_identifiers = [str(c) for c in self.store.contexts()]
-        self.logger.debug(
-            f"Got all graph identifiers from database and found '{len(graph_identifiers)}'"
-        )
         return graph_identifiers
 
     def get_graph(self, identifier: str) -> Graph:
@@ -77,15 +73,13 @@ class GraphConnection:
         :return: graph without context
         :rtype: Graph
         """
-        self.logger.debug(f"Retrieving graph '{identifier}' from database")
         result = Graph(self.store, identifier=identifier)
-        self.logger.debug(f"Binding prefixes to graph '{identifier}'")
         bind_prefixes(result)
 
         return result
 
     def delete_graph(self, identifier: str) -> None:
         """Delete graph."""
-        self.logger.debug(f"Deleting graph '{identifier}' from database")
+        self.logger.debug(f"Deleting graph: '{identifier}'")
         g = Graph(self.store, identifier=identifier)
         self.store.remove((None, None, None), g)
