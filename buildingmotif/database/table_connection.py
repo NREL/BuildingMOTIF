@@ -5,7 +5,6 @@ from typing import Dict, List, Tuple
 from sqlalchemy.engine import Engine
 
 from buildingmotif.database.tables import (
-    Base,
     DBModel,
     DBShapeCollection,
     DBTemplate,
@@ -25,11 +24,7 @@ class TableConnection:
         :param bm: contains the session to use
         :type bm: BuildingMotif
         """
-        # create tables
         self.logger = logging.getLogger(__name__)
-
-        self.logger.debug("Creating tables for data storage")
-        Base.metadata.create_all(engine)
         self.bm = bm
 
     # model functions

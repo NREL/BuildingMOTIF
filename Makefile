@@ -7,4 +7,4 @@ format:
 	poetry run black .
 	poetry run isort .
 	poetry run pylama buildingmotif tests
-	poetry run mypy buildingmotif/*.py tests/*.py
+	poetry run mypy buildingmotif/*.py tests/*.py migrations/*.py

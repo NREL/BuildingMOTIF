@@ -21,11 +21,19 @@ See the `notebooks` directory.
 1. Install [Python >= 3.8.0](https://www.python.org/downloads/).
 2. Install [Poetry](https://python-poetry.org/docs/#installation).
 3. Clone, download, or fork this repository.
+4. Install dependenices with poetry.
+    ```
+    poetry install
+    poetry run pre-commit install
+    ```
+5. To initialize your database, create your local configs file, enter your db uri, and run the migrations.
+    ```
+    cp configs.py.dist configs.py
 
-```
-poetry install
-poetry run pre-commit install
-```
+    echo "DB_URI = 'sqlite:////path/to/db.db'" > configs.py
+
+    poetry run alembic upgrade head
+    ```
 
 ## Testing
 ``` 
