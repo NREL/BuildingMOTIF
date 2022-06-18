@@ -69,3 +69,7 @@ This library contains templates for equipment adhering to the point list require
 
 This library contains a subset of the Brick v1.3 distribution, allowing the use of Brick types as "templates" for building models.
 This also contains a set of shapes that verify that a model conforms to the Brick v1.3 requirements.
+
+### Chiller Plant
+
+This is a set of templates for simple chiller plants with some basic points.
