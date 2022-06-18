@@ -299,3 +299,22 @@ def test_remove_dependencies_does_not_exist(bm: BuildingMOTIF):
         )
 
     bm.table_connection.bm.session.rollback()
+
+
+def test_update_optional_args(bm: BuildingMOTIF):
+    db_template_library = bm.table_connection.create_db_template_library(
+        name="my_db_template_library"
+    )
+    db_template = bm.table_connection.create_db_template(
+        name="my_db_template",
+        template_library_id=db_template_library.id,
+    )
+
+    assert bm.table_connection.get_db_template(db_template.id).optional_args == []
+
+    bm.table_connection.update_db_template_optional_args(db_template.id, ["a", "b"])
+
+    assert bm.table_connection.get_db_template(db_template.id).optional_args == [
+        "a",
+        "b",
+    ]
