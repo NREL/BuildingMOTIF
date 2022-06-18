@@ -10,7 +10,7 @@ RULES: Dict[str, Callable] = {}
 """
 Notes:
 - maybe more useful for authoring than for distribution
-- "compile" into template definitions which then get distributed
+- "compile" into template definitions that then get distributed
 - standardize the "subject" of the template: 'name' param
 - have rules generate dependencies rather than introducing additional subjects?
 - give the rules/macros access to the template library and/or the template they
@@ -23,7 +23,7 @@ Notes:
 def rule(name: str):
     """
     This decorator is applied to a function in order to register that function
-    as a rule which can be executed during template compilation.
+    as a rule that can be executed during template compilation.
     """
 
     def wrapper(func: Callable):

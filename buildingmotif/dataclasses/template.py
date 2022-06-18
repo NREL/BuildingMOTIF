@@ -150,7 +150,7 @@ class Template:
         :rtype: "Template"
         """
         templ = self.in_memory_copy()
-        sfx = f"{self.name}{token_hex(4)}"
+        suffix = f"{self.name}{token_hex(4)}-inlined"
         for param in templ.parameters:
             # skip if (a) we want to preserve the param or (b) it is already inlined
             if (preserve_args and param in preserve_args) or (
@@ -158,7 +158,7 @@ class Template:
             ):
                 continue
             param = PARAM[param]
-            replace_nodes(templ.body, {param: rdflib.URIRef(f"{param}-{sfx}-inlined")})
+            replace_nodes(templ.body, {param: rdflib.URIRef(f"{param}-{suffix}")})
         return templ
 
     def inline_dependencies(self) -> "Template":
