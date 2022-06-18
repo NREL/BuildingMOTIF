@@ -1,7 +1,7 @@
+import logging
 import pathlib
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
-from warnings import warn
 
 import rdflib
 import yaml
@@ -182,7 +182,7 @@ class TemplateLibrary:
                     dependee = Template.load(template_id_lookup[dep["template"]])
                     template.add_dependency(dependee, dep["args"])
                 else:
-                    warn(f"Warning: could not find dependee {dep['template']}")
+                    logging.warn(f"Warning: could not find dependee {dep['template']}")
         return lib
 
     @classmethod
@@ -222,7 +222,7 @@ class TemplateLibrary:
                     dependee = dep.to_template(template_id_lookup)
                     template.add_dependency(dependee, dep.bindings)
                 except Exception as e:
-                    warn(f"Warning: could not resolve dependency {dep}")
+                    logging.warn(f"Warning: could not resolve dependency {dep}")
                     raise e
         return lib
 

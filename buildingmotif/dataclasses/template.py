@@ -1,8 +1,8 @@
+import logging
 from dataclasses import dataclass
 from itertools import chain
 from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
-from warnings import warn
 
 import rdflib
 
@@ -56,7 +56,7 @@ class Template:
         """
         Return template within this library with the given name, if any
         """
-        warn(
+        logging.warn(
             "This returns the *first* template by the given name, which may not be "
             "what you want. Recommend you use library.get_template_by_name()"
         )

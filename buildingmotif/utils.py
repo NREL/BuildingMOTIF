@@ -1,8 +1,8 @@
+import logging
 from collections import defaultdict
 from copy import copy
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
-from warnings import warn
 
 from rdflib import BNode, Graph, Literal, URIRef
 
@@ -192,7 +192,9 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
         elif o not in PARAM:
             prop_values[p].append(o)
         elif o in PARAM and o not in param_types:
-            warn(f"{o} is does not have a type and does not seem to be a literal")
+            logging.warn(
+                f"{o} is does not have a type and does not seem to be a literal"
+            )
     return _TemplateIndex(
         templ,
         param_types,
