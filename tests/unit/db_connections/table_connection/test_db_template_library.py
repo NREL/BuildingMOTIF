@@ -44,6 +44,22 @@ def test_get_db_template_library(table_connection):
     assert db_template_library.templates[0].name == "my_db_template"
 
 
+def test_get_db_template_library_by_name(table_connection):
+    # create library  w/ template
+    db_template_library = table_connection.create_db_template_library(
+        name="my_template_library"
+    )
+    table_connection.create_db_template(
+        "my_db_template", template_library_id=db_template_library.id
+    )
+    # get by name
+    found = table_connection.get_db_template_library_by_name("my_template_library")
+    assert found.name == "my_template_library"
+    assert len(found.templates) == 1
+    assert type(found.templates[0]) == DBTemplate
+    assert found.templates[0].name == "my_db_template"
+
+
 def test_get_db_template_library_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
         table_connection.get_db_template_library("I don't exist")
