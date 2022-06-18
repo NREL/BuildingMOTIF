@@ -63,7 +63,7 @@ class _template_dependency:
             return Template.load(id_lookup[self.template_name])
         # if not in the local cache, then search the database for the template
         # within the given library
-        library = TemplateLibrary.load_by_name(self.library)
+        library = TemplateLibrary.load(name=self.library)
         return library.get_template_by_name(self.template_name)
 
 
@@ -96,7 +96,23 @@ class TemplateLibrary:
         db_id: Optional[int] = None,
         ontology_graph: Optional[str] = None,
         directory: Optional[str] = None,
+        name: Optional[str] = None,
     ) -> "TemplateLibrary":
+        """
+        Loads a template library from the database or an external source
+
+        :param db_id: the unique id of the library in the database, defaults to None
+        :type db_id: Optional[int], optional
+        :param ontology_graph: a path to a serialized RDF graph, defaults to None
+        :type ontology_graph: Optional[str], optional
+        :param directory: a path to a direcotry containing a template library, defaults to None
+        :type directory: Optional[str], optional
+        :param name: the name of the library inside the database, defaults to None
+        :type name: Optional[str], optional
+        :return: the loaded template library
+        :rtype: "TemplateLibrary"
+        :raises Exception: if the library cannot be loaded
+        """
         if db_id is not None:
             return cls._load_from_db(db_id)
         elif ontology_graph is not None:
@@ -106,23 +122,18 @@ class TemplateLibrary:
         elif directory is not None:
             src = pathlib.Path(directory)
             if not src.exists():
-                raise ValueError(f"Directory {src} does not exist")
+                raise Exception(f"Directory {src} does not exist")
             return cls._load_from_directory(src)
+        elif name is not None:
+            bm = get_building_motif()
+            db_template_library = bm.table_connection.get_db_template_library_by_name(
+                name
+            )
+            return cls(
+                _id=db_template_library.id, _name=db_template_library.name, _bm=bm
+            )
         else:
             raise Exception("No library information provided")
-
-    @classmethod
-    def load_by_name(cls, name: str) -> "TemplateLibrary":
-        """load Template Library by name
-
-        :param name: name
-        :type name: str
-        :return: TemplateLibrary
-        :rtype: TemplateLibrary
-        """
-        bm = get_building_motif()
-        db_template_library = bm.table_connection.get_db_template_library_by_name(name)
-        return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
 
     @classmethod
     def _load_from_db(cls, id: int) -> "TemplateLibrary":
@@ -210,7 +221,13 @@ class TemplateLibrary:
                     for d in templ_spec.pop("dependencies", [])
                 ]
                 templ_spec["optional_args"] = templ_spec.pop("optional", [])
-                templ = lib.create_template(**templ_spec)
+                try:
+                    templ = lib.create_template(**templ_spec)
+                except Exception as e:
+                    logging.error(
+                        f"Error creating template {templ_name} from file {file}: {e}"
+                    )
+                    raise e
                 dependency_cache[templ.id] = deps
                 template_id_lookup[templ.name] = templ.id
         # now that we have all the templates, we can populate the dependencies
