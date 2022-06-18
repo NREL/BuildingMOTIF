@@ -62,9 +62,12 @@ def remove_triples_with_node(g: Graph, node: URIRef) -> None:
     :param node: the node to remove
     :type node: URIRef
     """
-    for s, p, o in g.triples((None, None, None)):
-        if s == node or p == node or o == node:
-            g.remove((s, p, o))
+    for triple in g.triples((node, None, None)):
+        g.remove(triple)
+    for triple in g.triples((None, node, None)):
+        g.remove(triple)
+    for triple in g.triples((None, None, node)):
+        g.remove(triple)
 
 
 def replace_nodes(g: Graph, replace: Dict[URIRef, Term]) -> None:

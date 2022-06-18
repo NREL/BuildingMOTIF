@@ -151,6 +151,8 @@ class Template:
         """
         templ = self.in_memory_copy()
         suffix = f"{self.name}{token_hex(4)}-inlined"
+        # the lookup table of old to new parameter names
+        to_replace = {}
         for param in templ.parameters:
             # skip if (a) we want to preserve the param or (b) it is already inlined
             if (preserve_args and param in preserve_args) or (
@@ -158,7 +160,8 @@ class Template:
             ):
                 continue
             param = PARAM[param]
-            replace_nodes(templ.body, {param: rdflib.URIRef(f"{param}-{suffix}")})
+            to_replace[param] = rdflib.URIRef(f"{param}-{suffix}")
+        replace_nodes(templ.body, to_replace)
         return templ
 
     def inline_dependencies(self) -> "Template":
@@ -174,8 +177,10 @@ class Template:
 
         for dep in self.get_dependencies():
             inlined_dep = dep.template.inline_dependencies()
-            for theirs, ours in dep.args.items():
-                replace_nodes(inlined_dep.body, {PARAM[theirs]: PARAM[ours]})
+            to_replace: Dict[rdflib.URIRef, Term] = {
+                PARAM[theirs]: PARAM[ours] for ours, theirs in dep.args.items()
+            }
+            replace_nodes(inlined_dep.body, to_replace)
             # rewrite the names of all parameters in the dependency that aren't
             # mentioned in the dependent template
             preserved_params = list(dep.args.values())
