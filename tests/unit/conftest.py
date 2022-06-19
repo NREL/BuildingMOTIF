@@ -60,7 +60,7 @@ class MockTemplateLibrary(TemplateLibrary):
             except Exception:
                 return cls.create(name)
         else:
-            return super().load(
+            return super()._load(
                 db_id=db_id, ontology_graph=ontology_graph, directory=directory
             )
 

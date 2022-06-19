@@ -113,6 +113,20 @@ class TemplateLibrary:
         :rtype: "TemplateLibrary"
         :raises Exception: if the library cannot be loaded
         """
+        return cls._load(db_id, ontology_graph, directory, name)
+
+    @classmethod
+    def _load(
+        cls,
+        db_id: Optional[int] = None,
+        ontology_graph: Optional[str] = None,
+        directory: Optional[str] = None,
+        name: Optional[str] = None,
+    ) -> "TemplateLibrary":
+        """
+        Placing the logic behind _load means we can override load to interecept different
+        arguments, e.g. for testing purposes.
+        """
         if db_id is not None:
             return cls._load_from_db(db_id)
         elif ontology_graph is not None:
