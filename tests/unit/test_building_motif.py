@@ -32,7 +32,7 @@ def test_libraries(bm: BuildingMOTIF, library: str):
     Ensures that the libraries can be loaded and used
     """
     # Brick dependencies always resolve for the test library
-    setattr(TemplateLibrary, "load_by_name", MockTemplateLibrary.load_by_name)
+    setattr(TemplateLibrary, "load", MockTemplateLibrary.load)
     MockTemplateLibrary.create("https://brickschema.org/schema/1.3/Brick")
     lib = TemplateLibrary._load_from_directory(Path(library))
     assert lib is not None
