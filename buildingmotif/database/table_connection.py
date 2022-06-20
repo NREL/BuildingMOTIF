@@ -7,6 +7,7 @@ from sqlalchemy.engine import Engine
 from buildingmotif.database.tables import (
     Base,
     DBModel,
+    DBShapeCollection,
     DBTemplate,
     DBTemplateLibrary,
     DepsAssociation,
@@ -92,6 +93,56 @@ class TableConnection:
         self.logger.debug(f"Deleting model: '{db_model.name}'")
         self.bm.session.delete(db_model)
 
+    # shape collection functions
+    def create_db_shape_collection(self) -> DBShapeCollection:
+        """Create a database shape collection.
+
+        :return: DBShapeCollection
+        :rtype: DBShapeCollection
+        """
+        db_shape_collection = DBShapeCollection(graph_id=str(uuid.uuid4()))
+
+        self.bm.session.add(db_shape_collection)
+        self.bm.session.flush()
+
+        return db_shape_collection
+
+    def get_all_db_shape_collections(self) -> List[DBShapeCollection]:
+        """Get all database shape collections.
+
+        :return: all DBShapeCollections
+        :rtype: DBShapeCollection
+        """
+        return self.bm.session.query(DBShapeCollection).all()
+
+    def get_db_shape_collection(self, id: int) -> DBShapeCollection:
+        """Get database shape collection from id.
+
+        :param id: id of DBShapeCollection
+        :type id: str
+        :return: DBShapeCollection
+        :rtype: DBShapeCollection
+        """
+        return (
+            self.bm.session.query(DBShapeCollection)
+            .filter(DBShapeCollection.id == id)
+            .one()
+        )
+
+    def delete_db_shape_collection(self, id: int) -> None:
+        """Delete database shape collection.
+
+        :param id: id of deleted DBShapeCollection
+        :type id: str
+        """
+        db_shape_collection = (
+            self.bm.session.query(DBShapeCollection)
+            .filter(DBShapeCollection.id == id)
+            .one()
+        )
+
+        self.bm.session.delete(db_shape_collection)
+
     # template library functions
 
     def create_db_template_library(self, name: str) -> DBTemplateLibrary:
@@ -102,10 +153,16 @@ class TableConnection:
         :return: DBTemplateLibrary
         :rtype: DBTemplateLibrary
         """
-        self.logger.debug(f"Creating template library '{name}'")
-        template_library = DBTemplateLibrary(name=name)
+        self.logger.debug(f"Creating shape collection for template library '{name}'")
+        shape_collection = DBShapeCollection(graph_id=str(uuid.uuid4()))
+        self.bm.session.add(shape_collection)
 
+        self.logger.debug(f"Creating template library '{name}'")
+        template_library = DBTemplateLibrary(
+            name=name, shape_collection=shape_collection
+        )
         self.bm.session.add(template_library)
+
         self.bm.session.flush()
 
         return template_library
