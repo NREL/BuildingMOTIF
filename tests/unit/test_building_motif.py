@@ -24,3 +24,11 @@ def test_load_library_from_directory(bm: BuildingMOTIF):
     assert templ is not None
     assert templ.parameters == {"zone", "cav"}
     assert sorted(templ.head) == sorted(("zone", "cav"))
+
+
+def test_libraries(bm: BuildingMOTIF, library: str):
+    """
+    Ensures that the libraries can be loaded and used
+    """
+    lib = TemplateLibrary.load(directory=library)
+    assert lib is not None

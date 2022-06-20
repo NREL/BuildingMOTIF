@@ -170,8 +170,13 @@ class Template:
 
         for dep in self.get_dependencies():
             inlined_dep = dep.template.inline_dependencies()
+            for theirs, ours in dep.args.items():
+                replace_nodes(inlined_dep.body, {PARAM[theirs]: PARAM[ours]})
+            # rewrite the names of all parameters in the dependency that aren't
+            # mentioned in the dependent template
+            preserved_params = list(dep.args.values())
             # concat bodies
-            templ.body += inlined_dep.to_inline().body
+            templ.body += inlined_dep.to_inline(preserved_params).body
             # concat heads
             old_head = list(templ._head)
             old_head.extend(inlined_dep.head)

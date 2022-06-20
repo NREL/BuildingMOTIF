@@ -1,0 +1,38 @@
+fan-powered-terminal-unit:
+  head: ["name"]
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:VAV ;
+      brick:hasPart p:fan, p:damper ;
+      brick:hasPoint p:heating_signal, p:airflow, p:dat, p:zat .
+  dependencies:
+  - rule: fan
+    args: {"name": "fan"}
+  - rule: damper
+    args: {"name": "damper"}
+  - rule: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor 
+    args: {"name": "airflow"}
+  - rule: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor 
+    args: {"name": "dat"}
+  - rule: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor 
+    args: {"name": "zat"}
+
+# TODO: can I "compose" templates, for instance to require
+# that the frequency command point has an external reference?
+# I don't want to have to duplicate a template for each point as a result
+# Much easier to just "join" my template w/ another. Kind of like a mix-in?
+fan:
+  head: ["name"]
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Fan ;
+       brick:hasPoint p:speed, p:start_stop, p:status .
+  dependencies:
+    - rule: https://brickschema.org/schema/Brick#Frequency_Command
+      args: {"name": "speed"}
+    - rule: https://brickschema.org/schema/Brick#Start_Stop_Command
+      args: {"name": "start_stop"}
+    - rule: https://brickschema.org/schema/Brick#Fan_Status
+      args: {"name": "status"}

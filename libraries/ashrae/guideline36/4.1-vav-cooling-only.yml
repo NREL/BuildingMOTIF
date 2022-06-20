@@ -1,0 +1,33 @@
+vav-cooling-only:
+  head: ["name"]
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:VAV ;
+        brick:hasPoint p:ztemp, p:occ, p:co2, p:dat ;
+        brick:hasPart p:dmp ;
+        brick:feeds p:zone .
+  dependencies:
+    - rule: damper
+      args: {"name": "dmp"}
+    - rule: https://brickschema.org/schema/Brick#HVAC_Zone
+      args: {"name": "zone"}
+    - rule: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+      args: {"name": "ztemp"}
+    - rule: https://brickschema.org/schema/Brick#Occupancy_Sensor
+      args: {"name": "occ"}
+    - rule: https://brickschema.org/schema/Brick#CO2_Level_Sensor
+      args: {"name": "co2"}
+    - rule: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor
+      args: {"name": "dat"}
+
+damper:
+  head: ["name"]
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Damper ;
+      brick:hasPoint p:dmppos .
+  dependencies:
+  - rule: https://brickschema.org/schema/Brick#Damper_Position_Command
+    args: {"name": "dmppos"}

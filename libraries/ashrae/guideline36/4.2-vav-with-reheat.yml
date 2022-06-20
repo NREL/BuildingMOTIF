@@ -1,0 +1,33 @@
+vav-with-reheat:
+  head: ["name"]
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name brick:hasPart p:rhc .
+  dependencies:
+   - rule: vav-cooling-only
+     args: {"name": "name"}
+   - rule: reheat-coil
+     args: {"name": "rhc"}
+
+heating-coil:
+  head: ["name"]
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Heating_Coil ;
+      brick:hasPoint p:cmd .
+  dependencies:
+  - rule: https://brickschema.org/schema/Brick#Valve_Command
+    args: {"name": "cmd"}
+
+reheat-coil:
+  head: ["name"]
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Reheat_Coil ;
+      brick:hasPoint p:cmd .
+  dependencies:
+  - rule: https://brickschema.org/schema/Brick#Valve_Command
+    args: {"name": "cmd"}
