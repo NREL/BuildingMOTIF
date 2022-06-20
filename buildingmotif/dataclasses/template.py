@@ -1,4 +1,3 @@
-import logging
 from dataclasses import dataclass
 from itertools import chain
 from secrets import token_hex
@@ -50,19 +49,6 @@ class Template:
             body=body,
             _bm=bm,
         )
-
-    @classmethod
-    def load_by_name(cls, name: str) -> "Template":
-        """
-        Return template within this library with the given name, if any
-        """
-        logging.warn(
-            "This returns the *first* template by the given name, which may not be "
-            "what you want. Recommend you use library.get_template_by_name()"
-        )
-        bm = get_building_motif()
-        dbt = bm.table_connection.get_db_template_by_name(name)
-        return Template.load(dbt.id)
 
     def in_memory_copy(self) -> "Template":
         """
