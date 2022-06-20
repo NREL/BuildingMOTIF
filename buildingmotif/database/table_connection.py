@@ -6,7 +6,7 @@ from sqlalchemy.engine import Engine
 from buildingmotif.database.tables import (
     Base,
     DBModel,
-    DBShape,
+    DBShapeCollection,
     DBTemplate,
     DBTemplateLibrary,
     DepsAssociation,
@@ -84,47 +84,55 @@ class TableConnection:
 
         self.bm.session.delete(db_model)
 
-    # shape functions
-    def create_db_shape(self) -> DBShape:
-        """Create a database shape.
+    # shape collection functions
+    def create_db_shape_collection(self) -> DBShapeCollection:
+        """Create a database shape collection.
 
-        :return: DBShape
-        :rtype: DBShape
+        :return: DBShapeCollection
+        :rtype: DBShapeCollection
         """
-        db_shape = DBShape(graph_id=str(uuid.uuid4()))
+        db_shape_collection = DBShapeCollection(graph_id=str(uuid.uuid4()))
 
-        self.bm.session.add(db_shape)
+        self.bm.session.add(db_shape_collection)
         self.bm.session.flush()
 
-        return db_shape
+        return db_shape_collection
 
-    def get_all_db_shapes(self) -> List[DBShape]:
-        """Get all database shapes.
+    def get_all_db_shape_collections(self) -> List[DBShapeCollection]:
+        """Get all database shape collections.
 
-        :return: all DBShapes
-        :rtype: DBShape
+        :return: all DBShapeCollections
+        :rtype: DBShapeCollection
         """
-        return self.bm.session.query(DBShape).all()
+        return self.bm.session.query(DBShapeCollection).all()
 
-    def get_db_shape(self, id: int) -> DBShape:
-        """Get database shape from id.
+    def get_db_shape_collection(self, id: int) -> DBShapeCollection:
+        """Get database shape collection from id.
 
-        :param id: id of DBShape
+        :param id: id of DBShapeCollection
         :type id: str
-        :return: DBShape
-        :rtype: DBShape
+        :return: DBShapeCollection
+        :rtype: DBShapeCollection
         """
-        return self.bm.session.query(DBShape).filter(DBShape.id == id).one()
+        return (
+            self.bm.session.query(DBShapeCollection)
+            .filter(DBShapeCollection.id == id)
+            .one()
+        )
 
-    def delete_db_shape(self, id: int) -> None:
-        """Delete database shape.
+    def delete_db_shape_collection(self, id: int) -> None:
+        """Delete database shape collection.
 
-        :param id: id of deleted DBShape
+        :param id: id of deleted DBShapeCollection
         :type id: str
         """
-        db_shape = self.bm.session.query(DBShape).filter(DBShape.id == id).one()
+        db_shape_collection = (
+            self.bm.session.query(DBShapeCollection)
+            .filter(DBShapeCollection.id == id)
+            .one()
+        )
 
-        self.bm.session.delete(db_shape)
+        self.bm.session.delete(db_shape_collection)
 
     # template library functions
 
@@ -136,10 +144,12 @@ class TableConnection:
         :return: DBTemplateLibrary
         :rtype: DBTemplateLibrary
         """
-        shape = DBShape(graph_id=str(uuid.uuid4()))
-        self.bm.session.add(shape)
+        shape_collection = DBShapeCollection(graph_id=str(uuid.uuid4()))
+        self.bm.session.add(shape_collection)
 
-        template_library = DBTemplateLibrary(name=name, shape=shape)
+        template_library = DBTemplateLibrary(
+            name=name, shape_collection=shape_collection
+        )
         self.bm.session.add(template_library)
 
         self.bm.session.flush()

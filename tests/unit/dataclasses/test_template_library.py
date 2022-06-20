@@ -4,7 +4,6 @@ from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
 from buildingmotif.dataclasses import TemplateLibrary
-from buildingmotif.dataclasses.shape import Shape
 
 
 def test_create(clean_building_motif):
@@ -45,10 +44,14 @@ def test_get_templates(clean_building_motif):
     assert [r.id for r in results] == [t1.id, t2.id]
 
 
-def test_get_shape(clean_building_motif):
+def test_get_shape_collection(clean_building_motif):
     tl = TemplateLibrary.create("my_template_library")
-    shape = tl.get_shape()
-    shape.graph.add((URIRef("http://example.org/alex"), RDF.type, FOAF.Person))
+    shape_collection = tl.get_shape_collection()
+    shape_collection.graph.add(
+        (URIRef("http://example.org/alex"), RDF.type, FOAF.Person)
+    )
 
-    assert tl.get_shape() == shape
-    assert isomorphic(Shape.load(shape.id).graph, shape.graph)
+    assert tl.get_shape_collection() == shape_collection
+    assert isomorphic(
+        shape_collection.load(shape_collection.id).graph, shape_collection.graph
+    )

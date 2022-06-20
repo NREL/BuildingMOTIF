@@ -3,10 +3,10 @@ import uuid
 import pytest
 from sqlalchemy.exc import NoResultFound
 
-from buildingmotif.database.tables import DBShape
+from buildingmotif.database.tables import DBShapeCollection
 
 
-def test_create_db_shape(monkeypatch, table_connection):
+def test_create_db_shape_collection(monkeypatch, table_connection):
     mocked_uuid = uuid.uuid4()
 
     def mockreturn():
@@ -14,23 +14,23 @@ def test_create_db_shape(monkeypatch, table_connection):
 
     monkeypatch.setattr(uuid, "uuid4", mockreturn)
 
-    db_shape = table_connection.create_db_shape()
+    db_shape_collection = table_connection.create_db_shape_collection()
 
-    assert db_shape.graph_id == str(mocked_uuid)
-
-
-def test_get_db_shapes(table_connection):
-    shape1 = table_connection.create_db_shape()
-    shape2 = table_connection.create_db_shape()
-
-    db_shapes = table_connection.get_all_db_shapes()
-
-    assert len(db_shapes) == 2
-    assert all(type(m) == DBShape for m in db_shapes)
-    assert set(db_shapes) == {shape1, shape2}
+    assert db_shape_collection.graph_id == str(mocked_uuid)
 
 
-def test_get_db_shape(table_connection, monkeypatch):
+def test_get_db_shape_collections(table_connection):
+    shape_collection1 = table_connection.create_db_shape_collection()
+    shape_collection2 = table_connection.create_db_shape_collection()
+
+    db_shape_collections = table_connection.get_all_db_shape_collections()
+
+    assert len(db_shape_collections) == 2
+    assert all(type(m) == DBShapeCollection for m in db_shape_collections)
+    assert set(db_shape_collections) == {shape_collection1, shape_collection2}
+
+
+def test_get_db_shape_collection(table_connection, monkeypatch):
     mocked_uuid = uuid.uuid4()
 
     def mockreturn():
@@ -38,25 +38,27 @@ def test_get_db_shape(table_connection, monkeypatch):
 
     monkeypatch.setattr(uuid, "uuid4", mockreturn)
 
-    db_shape = table_connection.create_db_shape()
-    db_shape = table_connection.get_db_shape(id=db_shape.id)
+    db_shape_collection = table_connection.create_db_shape_collection()
+    db_shape_collection = table_connection.get_db_shape_collection(
+        id=db_shape_collection.id
+    )
 
-    assert db_shape.graph_id == str(mocked_uuid)
+    assert db_shape_collection.graph_id == str(mocked_uuid)
 
 
-def test_get_db_shape_does_not_exist(table_connection):
+def test_get_db_shape_collection_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.get_db_shape("I don't exist")
+        table_connection.get_db_shape_collection("I don't exist")
 
 
-def test_delete_db_shape(table_connection):
-    db_shape = table_connection.create_db_shape()
-    table_connection.delete_db_shape(db_shape.id)
+def test_delete_db_shape_collection(table_connection):
+    db_shape_collection = table_connection.create_db_shape_collection()
+    table_connection.delete_db_shape_collection(db_shape_collection.id)
 
     with pytest.raises(NoResultFound):
-        table_connection.get_db_shape(db_shape.id)
+        table_connection.get_db_shape_collection(db_shape_collection.id)
 
 
-def tests_delete_db_shape_does_does_exist(table_connection):
+def tests_delete_db_shape_collection_does_does_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.delete_db_shape("does not exist")
+        table_connection.delete_db_shape_collection("does not exist")
