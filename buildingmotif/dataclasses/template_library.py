@@ -321,6 +321,18 @@ class TemplateLibrary:
         templates: List[DBTemplate] = db_template_library.templates
         return [Template.load(t.id) for t in templates]
 
+    def get_shape_collection(self) -> ShapeCollection:
+        """get Library's shape collection
+
+        :return: library's shape collection
+        :rtype: ShapeCollection
+        """
+        db_template_library = self._bm.table_connection.get_db_template_library(
+            self._id
+        )
+
+        return ShapeCollection.load(db_template_library.shape_collection.id)
+
     def get_template_by_name(self, name: str) -> Template:
         """
         Return template within this library with the given name, if any

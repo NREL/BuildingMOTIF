@@ -31,6 +31,7 @@ poetry run pre-commit install
 ``` 
 poetry run pytest
 ```
+To run tests with DEBUG prints add the `-o log_cli=true` argument to the command
 
 ## Formatting
 ```
