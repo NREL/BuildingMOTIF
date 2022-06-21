@@ -1,7 +1,7 @@
 import logging
 import uuid
 from itertools import chain
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 from sqlalchemy.engine import Engine
 
