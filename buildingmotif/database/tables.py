@@ -1,7 +1,6 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from sqlalchemy import JSON, Column, ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, declarative_base, relationship
 
 Base = declarative_base()
@@ -68,8 +67,8 @@ class DBTemplate(Base):
     __tablename__ = "template"
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False)
-    _head: Mapped[str] = Column(String(), nullable=False)
     body_id: Mapped[str] = Column(String())
+    optional_args: Mapped[List[str]] = Column(JSON)
 
     template_library_id = Column(
         Integer, ForeignKey("template_library.id"), nullable=False
@@ -99,7 +98,3 @@ class DBTemplate(Base):
             name="name_template_library_unique_constraint",
         ),
     )
-
-    @hybrid_property
-    def head(self) -> Tuple[str, ...]:
-        return tuple([x for x in self._head.split(";")])

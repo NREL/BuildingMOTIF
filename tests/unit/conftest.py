@@ -4,7 +4,9 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from buildingmotif import BuildingMOTIF
+from buildingmotif import BuildingMOTIF, get_building_motif
+from buildingmotif.dataclasses.template import Template
+from buildingmotif.dataclasses.template_library import TemplateLibrary
 
 
 class MockBuildingMotif:
@@ -26,6 +28,28 @@ class MockBuildingMotif:
         self.engine.dispose()
 
 
+class MockTemplateLibrary(TemplateLibrary):
+    """
+    Mock template library which always returns the requested template
+    """
+
+    @classmethod
+    def create(cls, name: str) -> "MockTemplateLibrary":
+        bm = get_building_motif()
+        db_template_library = bm.table_connection.create_db_template_library(name)
+        return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
+
+    def get_template_by_name(self, name: str) -> Template:
+        """
+        Get the requested template by name or create it if it doesn't exist.
+        TODO: do we need to mock the template to have arbitrary parameters?
+        """
+        try:
+            return super().get_template_by_name(name)
+        except Exception:
+            return self.create_template(name)
+
+
 @pytest.fixture
 def bm():
     """
@@ -45,7 +69,7 @@ def pytest_generate_tests(metafunc):
 
     # validates that example files pass validation
     if "library" in metafunc.fixturenames:
-        libdir = pathlib.Path("../../libraries")
+        libdir = pathlib.Path("libraries")
         libraries_files = libdir.rglob("*.yml")
         libraries = {str(lib.parent) for lib in libraries_files}
 

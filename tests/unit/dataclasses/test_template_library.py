@@ -36,8 +36,8 @@ def test_update_id(clean_building_motif):
 
 def test_get_templates(clean_building_motif):
     tl = TemplateLibrary.create("my_template_library")
-    t1 = tl.create_template("my_template", head=[])
-    t2 = tl.create_template("your_template", head=[])
+    t1 = tl.create_template("my_template")
+    t2 = tl.create_template("your_template")
 
     results = tl.get_templates()
     assert len(results) == 2

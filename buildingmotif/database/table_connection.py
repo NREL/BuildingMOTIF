@@ -1,5 +1,6 @@
 import logging
 import uuid
+from itertools import chain
 from typing import Dict, List, Tuple
 
 from sqlalchemy.engine import Engine
@@ -12,6 +13,7 @@ from buildingmotif.database.tables import (
     DBTemplateLibrary,
     DepsAssociation,
 )
+from buildingmotif.namespaces import PARAM
 
 
 class TableConnection:
@@ -191,6 +193,20 @@ class TableConnection:
         )
         return db_template_library
 
+    def get_db_template_library_by_name(self, name: str) -> DBTemplateLibrary:
+        """Get database template library from id.
+
+        :param name: name of DBTemplateLibrary
+        :type name: str
+        :return: DBTemplateLibrary
+        :rtype: DBTemplateLibrary
+        """
+        return (
+            self.bm.session.query(DBTemplateLibrary)
+            .filter(DBTemplateLibrary.name == name)
+            .one()
+        )
+
     def update_db_template_library_name(self, id: int, name: str) -> None:
         """Update database template library.
 
@@ -219,15 +235,11 @@ class TableConnection:
 
     # template functions
 
-    def create_db_template(
-        self, name: str, head: List[str], template_library_id: int
-    ) -> DBTemplate:
+    def create_db_template(self, name: str, template_library_id: int) -> DBTemplate:
         """Create a database template.
 
         :param name: name of DBTemplate
         :type name: str
-        :param name: list of heads
-        :type name: list[str]
         :param template_library_id: id of the template's library
         :return: DBTemplate
         :rtype: DBTemplate
@@ -236,8 +248,8 @@ class TableConnection:
         template_library = self.get_db_template_library(template_library_id)
         template = DBTemplate(
             name=name,
-            _head=";".join(head),
             body_id=str(uuid.uuid4()),
+            optional_args=[],
             template_library=template_library,
         )
 
@@ -311,6 +323,21 @@ class TableConnection:
         )
         db_template.name = name
 
+    def update_db_template_optional_args(
+        self, id: int, optional_args: List[str]
+    ) -> None:
+        """Update database template.
+
+        :param id: id of DBTemplate
+        :type id: str
+        :param optional_args: new list of optional_args
+        :type name: List[str]
+        """
+        db_template = (
+            self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        )
+        db_template.optional_args = optional_args
+
     def add_template_dependency(
         self, template_id: int, dependency_id: int, args: Dict[str, str]
     ):
@@ -320,18 +347,28 @@ class TableConnection:
         :type template_id: int
         :param dependency_id: dependency template id
         :type dependency_id: int
-        :param args: dependency head to dependant variable mapping
+        :param args: mapping of dependency params to dependant params
         :type args: Dict[str, str]
-        :raises ValueError: if all dependee heads not in args
+        :raises ValueError: if all dependee required_params not in args
         :raises ValueError: if dependant and dependency template don't share a library
         """
         self.logger.debug(
             f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
         )
-        dependency = self.get_db_template(dependency_id)
-        if not all((dependee_arg in args.keys()) for dependee_arg in dependency.head):
+        templ = self.get_db_template(template_id)
+        graph = self.bm.graph_connection.get_graph(templ.body_id)
+        nodes = chain.from_iterable(graph.triples((None, None, None)))
+        params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
+
+        # TODO: do we need this kind of check?
+        if "name" not in args.keys():
             raise ValueError(
-                f"All args in dependee template {dependency_id}'s head must be in args ({args})"
+                f"The name parameter is required for the dependency '{templ.name}'"
+            )
+        if len(params) > 0 and args["name"] not in params:
+            raise ValueError(
+                "The name parameter of the dependency must be bound to a param in this template."
+                f"'name' was bound to {args['name']} but available params are {params}"
             )
 
         # In the past we had a check here to make sure the two templates were in the same library.

@@ -1,8 +1,18 @@
 zone:
-  head: ["zone", "cav"]
   body: >
     @prefix bmparam: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     bmparam:cav a brick:CAV .
-    bmparam:zone brick:isFedBy bmparam:cav ;
+    bmparam:name brick:isFedBy bmparam:cav ;
        a brick:HVAC_Zone .
+
+opt-vav:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:VAV ;
+      brick:hasPoint P:occ .
+    P:occ a brick:Occupancy_Sensor ;
+      brick:isPointOf P:zone .
+  optional:
+  - occ

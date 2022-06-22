@@ -10,15 +10,17 @@ Templates (which help generate models) are contained in `.yml` files; shapes (wh
 
 Templates are expressed as documents in `.yml` files. The name of the template is at the top level of the YAML file.
 Each template has a
-- `head`: mandatory list of parameters
-- a set of `dependencies`: list of other template names and mappings between those template's parameters and this template's parameters
+- a set of `dependencies`: list of other template names and mappings between those template's parameters and this template's parameters.
+  Each dependency has three required keys:
+  - `template`: the name of the template the outer template is dependent on
+  - `args`: the association of dependency parameters to this template's parameters
+  - `library`: the name of the library from which the template is drawn (defaults to current library)
 - `body`: a Turtle-encoded graph which defines the content of the template. The `urn:__param__#` namespace is used to name the parameters
 
 The following is an example of a template:
 
 ```yaml
 my-vav-template:
-  head: ["name"]
   body: >
     @prefix P: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -26,13 +28,13 @@ my-vav-template:
       brick:feeds P:zone ;
       brick:hasPoint P:sen .
   dependencies:
-   - rule: temp-sensor
+   - template: temp-sensor
      args: {"name": "sen"}
-   - rule: https://brickschema.org/schema/Brick#HVAC_Zone
+   - template: https://brickschema.org/schema/Brick#HVAC_Zone
+     library: https://brickschema.org/schema/1.3/Brick
      args: {"name": "zone"}
 
 temp-sensor:
-  head: ['name', 'id']
   body: >
     @prefix P: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -67,3 +69,7 @@ This library contains templates for equipment adhering to the point list require
 
 This library contains a subset of the Brick v1.3 distribution, allowing the use of Brick types as "templates" for building models.
 This also contains a set of shapes that verify that a model conforms to the Brick v1.3 requirements.
+
+### Chiller Plant
+
+This is a set of templates for simple chiller plants with some basic points.

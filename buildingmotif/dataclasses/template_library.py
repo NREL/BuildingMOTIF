@@ -1,3 +1,4 @@
+import logging
 import pathlib
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
@@ -9,10 +10,61 @@ from rdflib.util import guess_format
 from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBTemplate
 from buildingmotif.dataclasses import ShapeCollection, Template
-from buildingmotif.utils import get_template_parts_from_shape, new_temporary_graph
+from buildingmotif.template_compilation import compile_template_spec
+from buildingmotif.utils import get_template_parts_from_shape
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
+
+
+@dataclass
+class _template_dependency:
+    """
+    Represents early-bound (template_id) or late-bound (template_name + library)
+    dependency of a template on another template.
+    """
+
+    template_name: str
+    bindings: Dict[str, Any]
+    library: str
+    template_id: Optional[int] = None
+
+    def __repr__(self):
+        return (
+            f"dep<name={self.template_name} bindings={self.bindings} "
+            "library={self.library} id={self.template_id}>"
+        )
+
+    @classmethod
+    def from_dict(
+        cls, d: Dict[str, Any], dependent_library_name: str
+    ) -> "_template_dependency":
+        template_name = d["template"]
+        bindings = d.get("args", {})
+        library = d.get("library", dependent_library_name)
+        template_id = d.get("template_id")
+        return cls(template_name, bindings, library, template_id)
+
+    def to_template(self, id_lookup: Dict[str, int]) -> Template:
+        """
+        Resolve this dependency to a Template
+
+        :param id_lookup: a local cache of name -> id for uncommitted templates
+        :type id_lookup: Dict[str, int]
+        :return: the Template instance this dependency points to
+        :rtype: Template
+        """
+        # direct lookup if id is provided
+        if self.template_id is not None:
+            return Template.load(self.template_id)
+        # if id is not provided, look at our local 'cache' of to-be-committed
+        # templates for the id (id_lookup)
+        if self.template_name in id_lookup:
+            return Template.load(id_lookup[self.template_name])
+        # if not in the local cache, then search the database for the template
+        # within the given library
+        library = TemplateLibrary.load(name=self.library)
+        return library.get_template_by_name(self.template_name)
 
 
 @dataclass
@@ -37,13 +89,30 @@ class TemplateLibrary:
 
         return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
 
+    # TODO: load library from URI? Does the URI identify the library uniquely?
     @classmethod
     def load(
         cls,
         db_id: Optional[int] = None,
         ontology_graph: Optional[str] = None,
         directory: Optional[str] = None,
+        name: Optional[str] = None,
     ) -> "TemplateLibrary":
+        """
+        Loads a template library from the database or an external source
+
+        :param db_id: the unique id of the library in the database, defaults to None
+        :type db_id: Optional[int], optional
+        :param ontology_graph: a path to a serialized RDF graph, defaults to None
+        :type ontology_graph: Optional[str], optional
+        :param directory: a path to a direcotry containing a template library, defaults to None
+        :type directory: Optional[str], optional
+        :param name: the name of the library inside the database, defaults to None
+        :type name: Optional[str], optional
+        :return: the loaded template library
+        :rtype: "TemplateLibrary"
+        :raises Exception: if the library cannot be loaded
+        """
         if db_id is not None:
             return cls._load_from_db(db_id)
         elif ontology_graph is not None:
@@ -51,7 +120,18 @@ class TemplateLibrary:
             ontology.parse(ontology_graph, format=guess_format(ontology_graph))
             return cls._load_from_ontology_graph(ontology)
         elif directory is not None:
-            return cls._load_from_directory(pathlib.Path(directory))
+            src = pathlib.Path(directory)
+            if not src.exists():
+                raise Exception(f"Directory {src} does not exist")
+            return cls._load_from_directory(src)
+        elif name is not None:
+            bm = get_building_motif()
+            db_template_library = bm.table_connection.get_db_template_library_by_name(
+                name
+            )
+            return cls(
+                _id=db_template_library.id, _name=db_template_library.name, _bm=bm
+            )
         else:
             raise Exception("No library information provided")
 
@@ -100,7 +180,7 @@ class TemplateLibrary:
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
             partial_body, deps = get_template_parts_from_shape(candidate, ontology)
-            templ = lib.create_template(str(candidate), ["name"], partial_body)
+            templ = lib.create_template(str(candidate), partial_body)
             dependency_cache[templ.id] = deps
             template_id_lookup[str(candidate)] = templ.id
 
@@ -109,8 +189,11 @@ class TemplateLibrary:
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
-                dependee = Template.load(template_id_lookup[dep["rule"]])
-                template.add_dependency(dependee, dep["args"])
+                if dep["template"] in template_id_lookup:
+                    dependee = Template.load(template_id_lookup[dep["template"]])
+                    template.add_dependency(dependee, dep["args"])
+                else:
+                    logging.warn(f"Warning: could not find dependee {dep['template']}")
         return lib
 
     @classmethod
@@ -123,20 +206,28 @@ class TemplateLibrary:
 
         lib = cls.create(directory.name)
         template_id_lookup: Dict[str, int] = {}
-        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
+        dependency_cache: Dict[int, List[_template_dependency]] = {}
         # read all .yml files
         for file in directory.rglob("*.yml"):
             contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
             for templ_name, templ_spec in contents.items():
+                # compile the template body using its rules
+                templ_spec = compile_template_spec(templ_spec)
                 # input name of template
                 templ_spec.update({"name": templ_name})
-                # turn the template body into a graph
-                body = new_temporary_graph()
-                body.parse(data=templ_spec.pop("body"), format="turtle")
-                templ_spec.update({"body": body})
                 # remove dependencies so we can resolve them to their IDs later
-                deps = templ_spec.pop("dependencies", [])
-                templ = lib.create_template(**templ_spec)
+                deps = [
+                    _template_dependency.from_dict(d, lib.name)
+                    for d in templ_spec.pop("dependencies", [])
+                ]
+                templ_spec["optional_args"] = templ_spec.pop("optional", [])
+                try:
+                    templ = lib.create_template(**templ_spec)
+                except Exception as e:
+                    logging.error(
+                        f"Error creating template {templ_name} from file {file}: {e}"
+                    )
+                    raise e
                 dependency_cache[templ.id] = deps
                 template_id_lookup[templ.name] = templ.id
         # now that we have all the templates, we can populate the dependencies
@@ -144,14 +235,12 @@ class TemplateLibrary:
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
-                if dep["rule"] in template_id_lookup:
-                    # local lookup
-                    dependee = Template.load(template_id_lookup[dep["rule"]])
-                else:
-                    # global lookup; returns fist template with given name
-                    # TODO: this is not ideal!
-                    dependee = Template.load_by_name(dep["rule"])
-                template.add_dependency(dependee, dep["args"])
+                try:
+                    dependee = dep.to_template(template_id_lookup)
+                    template.add_dependency(dependee, dep.bindings)
+                except Exception as e:
+                    logging.warn(f"Warning: could not resolve dependency {dep}")
+                    raise e
         return lib
 
     @property
@@ -172,27 +261,37 @@ class TemplateLibrary:
         self._name = new_name
 
     def create_template(
-        self, name: str, head: List[str], body: Optional[rdflib.Graph] = None
+        self,
+        name: str,
+        body: Optional[rdflib.Graph] = None,
+        optional_args: Optional[List[str]] = None,
     ) -> Template:
         """Create Template in this Template Library
 
         :param name: name
         :type name: str
-        :param head: variables in template body
-        :type head: list[str]
+        :param body: template body
+        :type body: rdflib.Graph
+        :param optional_args: optional parameters for the template
+        :type optional_args: list[str]
         :return: created Template
         :rtype: Template
         """
-        db_template = self._bm.table_connection.create_db_template(name, head, self._id)
+        db_template = self._bm.table_connection.create_db_template(name, self._id)
         body = self._bm.graph_connection.create_graph(
             db_template.body_id, body if body else rdflib.Graph()
+        )
+        if optional_args is None:
+            optional_args = []
+        self._bm.table_connection.update_db_template_optional_args(
+            db_template.id, optional_args
         )
 
         return Template(
             _id=db_template.id,
             _name=db_template.name,
-            _head=db_template.head,
             body=body,
+            optional_args=optional_args,
             _bm=self._bm,
         )
 
