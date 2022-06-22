@@ -9,7 +9,8 @@ from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBTemplate
-from buildingmotif.dataclasses import ShapeCollection, Template
+from buildingmotif.dataclasses.shape_collection import ShapeCollection
+from buildingmotif.dataclasses.template import Template
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import get_template_parts_from_shape
 
