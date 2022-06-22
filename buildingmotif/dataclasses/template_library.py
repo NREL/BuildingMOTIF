@@ -9,7 +9,7 @@ from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBTemplate
-from buildingmotif.dataclasses import Template
+from buildingmotif.dataclasses import ShapeCollection, Template
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import get_template_parts_from_shape
 
@@ -112,20 +112,6 @@ class TemplateLibrary:
         :return: the loaded template library
         :rtype: "TemplateLibrary"
         :raises Exception: if the library cannot be loaded
-        """
-        return cls._load(db_id, ontology_graph, directory, name)
-
-    @classmethod
-    def _load(
-        cls,
-        db_id: Optional[int] = None,
-        ontology_graph: Optional[str] = None,
-        directory: Optional[str] = None,
-        name: Optional[str] = None,
-    ) -> "TemplateLibrary":
-        """
-        Placing the logic behind _load means we can override load to interecept different
-        arguments, e.g. for testing purposes.
         """
         if db_id is not None:
             return cls._load_from_db(db_id)
@@ -320,6 +306,18 @@ class TemplateLibrary:
         )
         templates: List[DBTemplate] = db_template_library.templates
         return [Template.load(t.id) for t in templates]
+
+    def get_shape_collection(self) -> ShapeCollection:
+        """get Library's shape collection
+
+        :return: library's shape collection
+        :rtype: ShapeCollection
+        """
+        db_template_library = self._bm.table_connection.get_db_template_library(
+            self._id
+        )
+
+        return ShapeCollection.load(db_template_library.shape_collection.id)
 
     def get_template_by_name(self, name: str) -> Template:
         """

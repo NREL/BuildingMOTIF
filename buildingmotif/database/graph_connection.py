@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional
 
@@ -27,9 +28,13 @@ class GraphConnection:
         :param db_identifier: defaults to "buildingmotif_store"
         :type db_identifier: Optional[str], optional
         """
+        self.logger = logging.getLogger(__name__)
+
         self.store = plugin.get("SQLAlchemy", Store)(
             identifier=db_identifier, engine=engine
         )
+
+        self.logger.debug("Creating tables for graph storage")
         self.store.create_all()
 
     def create_graph(self, identifier: str, graph: Graph) -> Graph:
@@ -42,6 +47,9 @@ class GraphConnection:
         :return: graph added
         :rtype: Graph
         """
+        self.logger.debug(
+            f"Creating graph: '{identifier}' in database with: {len(graph)} triples"
+        )
         g = Graph(self.store, identifier=identifier)
         new_triples = [(s, o, p, g) for (s, o, p) in graph]
         g.addN(new_triples)
@@ -54,7 +62,8 @@ class GraphConnection:
         :return: all graph identifiers
         :rtype: list[str]
         """
-        return [str(c) for c in self.store.contexts()]
+        graph_identifiers = [str(c) for c in self.store.contexts()]
+        return graph_identifiers
 
     def get_graph(self, identifier: str) -> Graph:
         """Get graph by identifier. Graph has triples, no context.
@@ -71,5 +80,6 @@ class GraphConnection:
 
     def delete_graph(self, identifier: str) -> None:
         """Delete graph."""
+        self.logger.debug(f"Deleting graph: '{identifier}'")
         g = Graph(self.store, identifier=identifier)
         self.store.remove((None, None, None), g)

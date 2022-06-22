@@ -1,7 +1,7 @@
 .PHONY: test format
 
 test:
-	poetry run pytest -s -vvvv
+	poetry run pytest -s -vvvv -o log_cli=true
 
 format:
 	poetry run black .

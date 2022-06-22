@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import TemplateLibrary
@@ -27,12 +28,33 @@ def test_load_library_from_directory(bm: BuildingMOTIF):
     assert templ.parameters == {"name", "cav"}
 
 
-def test_libraries(bm: BuildingMOTIF, library: str):
+def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
     """
     Ensures that the libraries can be loaded and used
     """
+    original_load = TemplateLibrary.load
+
+    def mock_load(
+        db_id: Optional[int] = None,
+        ontology_graph: Optional[str] = None,
+        directory: Optional[str] = None,
+        name: Optional[str] = None,
+    ):
+        if name is not None:
+            try:
+                db_template_library = (
+                    bm.table_connection.get_db_template_library_by_name(name)
+                )
+                return MockTemplateLibrary(
+                    _id=db_template_library.id, _name=db_template_library.name, _bm=bm
+                )
+            except Exception:
+                return MockTemplateLibrary.create(name)
+        else:
+            original_load(db_id, ontology_graph, directory, name)
+
+    monkeypatch.setattr(TemplateLibrary, "load", mock_load)
     # Brick dependencies always resolve for the test library
-    setattr(TemplateLibrary, "load", MockTemplateLibrary.load)
     MockTemplateLibrary.create("https://brickschema.org/schema/1.3/Brick")
     lib = TemplateLibrary._load_from_directory(Path(library))
     assert lib is not None

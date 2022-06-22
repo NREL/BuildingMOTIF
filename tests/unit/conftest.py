@@ -1,5 +1,4 @@
 import pathlib
-from typing import Optional
 
 import pytest
 from sqlalchemy import create_engine
@@ -39,30 +38,6 @@ class MockTemplateLibrary(TemplateLibrary):
         bm = get_building_motif()
         db_template_library = bm.table_connection.create_db_template_library(name)
         return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
-
-    @classmethod
-    def load(
-        cls,
-        db_id: Optional[int] = None,
-        ontology_graph: Optional[str] = None,
-        directory: Optional[str] = None,
-        name: Optional[str] = None,
-    ):
-        bm = get_building_motif()
-        if name is not None:
-            try:
-                db_template_library = (
-                    bm.table_connection.get_db_template_library_by_name(name)
-                )
-                return cls(
-                    _id=db_template_library.id, _name=db_template_library.name, _bm=bm
-                )
-            except Exception:
-                return cls.create(name)
-        else:
-            return super()._load(
-                db_id=db_id, ontology_graph=ontology_graph, directory=directory
-            )
 
     def get_template_by_name(self, name: str) -> Template:
         """

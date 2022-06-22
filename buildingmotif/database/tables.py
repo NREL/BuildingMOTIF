@@ -15,6 +15,19 @@ class DBModel(Base):
     graph_id: Mapped[str] = Column(String())
 
 
+class DBShapeCollection(Base):
+    """ShapeCollection containing all building rules."""
+
+    __tablename__ = "shape_collection"
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    graph_id: Mapped[str] = Column(String())
+
+    template_library_id = Column(Integer, ForeignKey("template_library.id"))
+    template_library: "DBTemplateLibrary" = relationship(
+        "DBTemplateLibrary", back_populates="shape_collection"
+    )
+
+
 class DBTemplateLibrary(Base):
     """Collection of Templates"""
 
@@ -24,6 +37,13 @@ class DBTemplateLibrary(Base):
 
     templates: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate", back_populates="template_library", cascade="all,delete"
+    )
+
+    shape_collection: DBShapeCollection = relationship(
+        "DBShapeCollection",
+        back_populates="template_library",
+        uselist=False,
+        cascade="all,delete",
     )
 
 
