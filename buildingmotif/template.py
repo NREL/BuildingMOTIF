@@ -41,7 +41,7 @@ class Template:
 
     def __init__(
         self,
-        library: Optional["TemplateLibrary"],
+        library: Optional["Library"],
         name: str,
         head: List[str],
         body: str,
@@ -192,7 +192,7 @@ class Template:
         return f"Template({self.name})"
 
 
-class TemplateLibrary:
+class Library:
     """
     A group of templates defined in a file. Supports basic lookups via __getitem__ and
     can convert included templates to SHACL shapes.
@@ -205,7 +205,7 @@ class TemplateLibrary:
         return self.templates[key]
 
     def __repr__(self) -> str:
-        return f"TemplateLibrary({self.templates})"
+        return f"Library({self.templates})"
 
     def _load_template_file(
         self, filename: Union[str, Path]

@@ -3,55 +3,55 @@ from rdflib import RDF, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
-from buildingmotif.dataclasses import TemplateLibrary
+from buildingmotif.dataclasses import Library
 
 
 def test_create(clean_building_motif):
-    tl = TemplateLibrary.create("my_template_library")
+    lib = Library.create("my_library")
 
-    assert tl.name == "my_template_library"
-    assert isinstance(tl.id, int)
+    assert lib.name == "my_library"
+    assert isinstance(lib.id, int)
 
-    also_tl = TemplateLibrary.load(tl.id)
+    also_lib = Library.load(lib.id)
 
-    assert also_tl.name == "my_template_library"
-    assert also_tl.id == tl.id
+    assert also_lib.name == "my_library"
+    assert also_lib.id == lib.id
 
 
 def test_update_name(clean_building_motif):
-    tl = TemplateLibrary.create("my_template_library")
+    lib = Library.create("my_library")
 
-    assert tl.name == "my_template_library"
+    assert lib.name == "my_library"
 
-    tl.name = "a_new_name"
-    assert tl.name == "a_new_name"
+    lib.name = "a_new_name"
+    assert lib.name == "a_new_name"
 
 
 def test_update_id(clean_building_motif):
-    tl = TemplateLibrary.create("my_template_library")
+    lib = Library.create("my_library")
 
     with pytest.raises(AttributeError):
-        tl.id = 1
+        lib.id = 1
 
 
 def test_get_templates(clean_building_motif):
-    tl = TemplateLibrary.create("my_template_library")
-    t1 = tl.create_template("my_template")
-    t2 = tl.create_template("your_template")
+    lib = Library.create("my_library")
+    t1 = lib.create_template("my_template")
+    t2 = lib.create_template("your_template")
 
-    results = tl.get_templates()
+    results = lib.get_templates()
     assert len(results) == 2
     assert [r.id for r in results] == [t1.id, t2.id]
 
 
 def test_get_shape_collection(clean_building_motif):
-    tl = TemplateLibrary.create("my_template_library")
-    shape_collection = tl.get_shape_collection()
+    lib = Library.create("my_library")
+    shape_collection = lib.get_shape_collection()
     shape_collection.graph.add(
         (URIRef("http://example.org/alex"), RDF.type, FOAF.Person)
     )
 
-    assert tl.get_shape_collection() == shape_collection
+    assert lib.get_shape_collection() == shape_collection
     assert isomorphic(
         shape_collection.load(shape_collection.id).graph, shape_collection.graph
     )
