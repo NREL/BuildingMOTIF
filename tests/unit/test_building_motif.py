@@ -16,6 +16,10 @@ def test_load_library_from_ontology(bm: BuildingMOTIF):
     templ = lib.get_template_by_name("https://brickschema.org/schema/Brick#AHU")
     assert templ is not None
     assert templ.parameters == {"name"}
+    # check that Brick was loaded as a shape collection
+    shapeg = lib.get_shape_collection()
+    assert shapeg is not None
+    assert len(shapeg.graph) > 1
 
 
 def test_load_library_from_directory(bm: BuildingMOTIF):
@@ -26,6 +30,14 @@ def test_load_library_from_directory(bm: BuildingMOTIF):
     templ = lib.get_template_by_name("zone")
     assert templ is not None
     assert templ.parameters == {"name", "cav"}
+
+
+def test_load_library_from_directory_with_shapes(bm: BuildingMOTIF):
+    lib = TemplateLibrary.load(directory="tests/unit/fixtures")
+    assert lib is not None
+    shapeg = lib.get_shape_collection()
+    assert shapeg is not None
+    assert len(shapeg.graph) > 1
 
 
 def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):

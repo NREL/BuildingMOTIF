@@ -2,6 +2,8 @@ import logging
 from collections import defaultdict
 from copy import copy
 from dataclasses import dataclass
+from itertools import chain
+from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 
 from rdflib import BNode, Graph, Literal, URIRef
@@ -86,6 +88,32 @@ def replace_nodes(g: Graph, replace: Dict[URIRef, Term]) -> None:
         if o in replace:
             o = replace[o]
         g.add((s, p, o))
+
+
+def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
+    """
+    Returns a list of all ontology files in the given directory. If recursive
+    is true, traverses the directory structure to find ontology files not just
+    in the given directory
+
+    :param directory: the directory to begin the search
+    :type directory: Path
+    :param recursive: if true, find ontology files in nested directories, defaults to True
+    :type recursive: bool, optional
+    :return: a list of filenames
+    :rtype: List[Path]
+    """
+    patterns = [
+        "*.ttl",
+        "*.n3",
+        "*.rdf",
+        "*.xml",
+    ]
+    if recursive:
+        searches = (directory.rglob(f"{pat}") for pat in patterns)
+    else:
+        searches = (directory.glob(f"{pat}") for pat in patterns)
+    return list(chain.from_iterable(searches))
 
 
 def get_template_parts_from_shape(
