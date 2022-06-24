@@ -48,6 +48,13 @@ poetry run isort .
 poetry run pylama
 ```
 
+## Migrating
+After making changes to the tables, you must make a new db migration.
+```
+poetry run alembic revision -m "Description of Changes." --autogenerate
+```
+Additional changes may need to be made to the migration, so be sure to check it. [Read here](https://alembic.sqlalchemy.org/en/latest/autogenerate.html#auto-generating-migrations) for more information on alembic autogenerate migrations.
+
 ## Documenting
 Documentation can be built locally with the following command, which will make the HTML files in the `docs/build/html/` directory.
 

@@ -19,12 +19,12 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Do not autogenerate migrations for rdflib sqlalchemly tables
-sqlalchemly_rdflib_table_base_names = [
+sqlalchemy_rdflib_table_base_names = [
     "asserted_statements",
-    "kb_625d302a74_literal_statements",
-    "kb_625d302a74_namespace_binds",
-    "kb_625d302a74_quoted_statements",
-    "kb_625d302a74_type_statements",
+    "literal_statements",
+    "namespace_binds",
+    "quoted_statements",
+    "type_statements",
 ]
 
 
@@ -32,7 +32,7 @@ def include_name(name, type_, parent_names):
     if name is None:
         return True
     else:
-        return not any(n in name for n in sqlalchemly_rdflib_table_base_names)
+        return not any(n in name for n in sqlalchemy_rdflib_table_base_names)
 
 
 # add your model's MetaData object here
