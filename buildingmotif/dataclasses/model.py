@@ -1,10 +1,12 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
+import pyshacl
 import rdflib
 
 from buildingmotif import get_building_motif
-from buildingmotif.utils import Triple
+from buildingmotif.dataclasses.shape_collection import ShapeCollection
+from buildingmotif.utils import Triple, copy_graph
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -86,3 +88,28 @@ class Model:
         :type graph: rdflib.Graph
         """
         self.graph += graph
+
+    def validate(self, shape_collections: List[ShapeCollection]) -> bool:
+        """
+        Validates this model against the given shape collections. Loads all of the shape_collections
+        into a single graph.
+
+        TODO: determien the return types; At least a bool for valid/invalid, but also want
+         a report. Is this the base pySHACL report? Or a useful transformation, like a list
+         of deltas for potential fixes?
+
+        :param shape_collections: a list of shape_collections against which the
+                                  graph should be validated
+        :type shape_collections: List[ShapeCollection]
+        :return: True if the model passes validation, false otherwise
+        :rtype: bool
+        """
+        shapeg = rdflib.Graph()
+        for sc in shape_collections:
+            shapeg += sc.graph
+        # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
+        data_graph = copy_graph(self.graph)
+        valid, _, _ = pyshacl.validate(
+            data_graph, shacl_graph=shapeg, advanced=True, js=True, allow_warnings=True
+        )
+        return valid
