@@ -5,8 +5,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from buildingmotif import BuildingMOTIF, get_building_motif
+from buildingmotif.dataclasses.library import Library
 from buildingmotif.dataclasses.template import Template
-from buildingmotif.dataclasses.template_library import TemplateLibrary
 
 
 class MockBuildingMotif:
@@ -28,16 +28,16 @@ class MockBuildingMotif:
         self.engine.dispose()
 
 
-class MockTemplateLibrary(TemplateLibrary):
+class MockLibrary(Library):
     """
-    Mock template library which always returns the requested template
+    Mock library that always returns the requested template.
     """
 
     @classmethod
-    def create(cls, name: str) -> "MockTemplateLibrary":
+    def create(cls, name: str) -> "MockLibrary":
         bm = get_building_motif()
-        db_template_library = bm.table_connection.create_db_template_library(name)
-        return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
+        db_library = bm.table_connection.create_db_library(name)
+        return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
     def get_template_by_name(self, name: str) -> Template:
         """

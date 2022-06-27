@@ -13,7 +13,7 @@ Notes:
 - "compile" into template definitions that then get distributed
 - standardize the "subject" of the template: 'name' param
 - have rules generate dependencies rather than introducing additional subjects?
-- give the rules/macros access to the template library and/or the template they
+- give the rules/macros access to the library and/or the template they
   are associated with?:
     - new signature: def foo(library, template, *args, **kwargs) -> rdflib.Graph
 - don't hardcode template names into these rules/macros --- pass in from user
