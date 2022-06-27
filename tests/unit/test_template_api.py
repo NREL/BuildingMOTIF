@@ -1,8 +1,9 @@
 from rdflib import Graph, Namespace
 
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Template, TemplateLibrary
-from buildingmotif.namespaces import BRICK, A
+from buildingmotif.dataclasses import Library, Template
+from buildingmotif.namespaces import BRICK, PARAM, A
+from buildingmotif.utils import graph_size
 
 BLDG = Namespace("urn:building/")
 
@@ -11,15 +12,13 @@ def test_template_evaluate(bm: BuildingMOTIF):
     """
     Test the Template.evaluate() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
-    assert zone.parameters == {"zone", "cav"}
-    assert sorted(zone.head) == sorted(("zone", "cav"))
+    assert zone.parameters == {"name", "cav"}
 
-    partial = zone.evaluate({"zone": BLDG["zone1"]})
+    partial = zone.evaluate({"name": BLDG["zone1"]})
     assert isinstance(partial, Template)
     assert partial.parameters == {"cav"}
-    assert partial.head == ("cav",)
 
     graph = partial.evaluate({"cav": BLDG["cav1"]})
     assert isinstance(graph, Graph)
@@ -31,16 +30,15 @@ def test_template_evaluate(bm: BuildingMOTIF):
 
 def test_template_fill(bm: BuildingMOTIF):
     """
-    Test the Template.evaluate() method.
+    Test the Template.fill() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
-    assert zone.parameters == {"zone", "cav"}
-    assert sorted(zone.head) == sorted(("zone", "cav"))
+    assert zone.parameters == {"name", "cav"}
 
     bindings, graph = zone.fill(BLDG)
     assert isinstance(bindings, dict)
-    assert "zone" in bindings.keys()
+    assert "name" in bindings.keys()
     assert "cav" in bindings.keys()
     assert isinstance(graph, Graph)
     assert len(list(graph.triples((None, None, None)))) == 3
@@ -50,28 +48,25 @@ def test_template_copy(bm: BuildingMOTIF):
     """
     Test the Template.copy() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
-    assert zone.parameters == {"zone", "cav"}
-    assert sorted(zone.head) == sorted(("zone", "cav"))
+    assert zone.parameters == {"name", "cav"}
 
     zone2 = zone.in_memory_copy()
-    assert zone2.parameters == {"zone", "cav"}
-    assert sorted(zone2.head) == sorted(("zone", "cav"))
+    assert zone2.parameters == {"name", "cav"}
     # should be able to edit the copy without editing the original
-    zone2._head = ("a", "b")
-    assert sorted(zone2.head) == sorted(("a", "b"))
-    assert zone.parameters == {"zone", "cav"}
-    assert sorted(zone.head) == sorted(("zone", "cav"))
+    zone2.body.add((PARAM["zone2"], A, BRICK.Zone))
+    assert zone2.parameters == {"name", "zone2", "cav"}
+    assert zone.parameters == {"name", "cav"}
 
 
 def test_template_to_inline(bm: BuildingMOTIF):
     """
-    Test the Template.to_inline() method
+    Test the Template.to_inline() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
-    assert zone.parameters == {"zone", "cav"}
+    assert zone.parameters == {"name", "cav"}
 
     # inline *all* parameters
     inlined = zone.to_inline()
@@ -79,19 +74,19 @@ def test_template_to_inline(bm: BuildingMOTIF):
     assert len(inlined.parameters) == len(zone.parameters)
 
     # inline *some* parameters
-    inlined = zone.to_inline(preserve_args=["zone"])
+    inlined = zone.to_inline(preserve_args=["cav"])
     inlined_params = [
-        x for x in inlined.parameters if x.endswith("-inlined") and x.startswith("cav")
+        x for x in inlined.parameters if x.endswith("-inlined") and x.startswith("name")
     ]
     assert len(inlined_params) == 1
-    assert "zone" in inlined.parameters
+    assert "cav" in inlined.parameters
 
 
 def test_template_inline_dependencies(bm: BuildingMOTIF):
     """
-    Test the Template.inline_dependencies() method
+    Test the Template.inline_dependencies() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     templ = lib.get_template_by_name("single-zone-vav-ahu")
     assert len(templ.get_dependencies()) == 2
     inlined = templ.inline_dependencies()
@@ -112,3 +107,22 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     }
     inlined_params = {x for x in inlined.parameters if x.endswith("-inlined")}
     assert inlined.parameters == preserved_params.union(inlined_params)
+
+
+def test_template_evaluate_with_optional(bm: BuildingMOTIF):
+    """
+    Test that template evaluation works with optional parameters.
+    """
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    templ = lib.get_template_by_name("opt-vav")
+    assert templ.parameters == {"name", "occ", "zone"}
+    assert templ.optional_args == ["occ"]
+    g = templ.evaluate({"name": BLDG["vav"], "zone": BLDG["zone1"]})
+    assert isinstance(g, Graph)
+    assert graph_size(g) == 1
+
+    t = templ.evaluate(
+        {"name": BLDG["vav"], "zone": BLDG["zone1"]}, require_optional_args=True
+    )
+    assert isinstance(t, Template)
+    assert t.parameters == {"occ"}

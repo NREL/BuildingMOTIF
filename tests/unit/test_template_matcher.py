@@ -4,7 +4,7 @@ import pytest
 from rdflib import Namespace
 
 from buildingmotif.namespaces import BRICK, RDF
-from buildingmotif.template import Template, TemplateLibrary
+from buildingmotif.template import Library, Template
 from buildingmotif.template_matcher import TemplateMatcher
 from buildingmotif.utils import new_temporary_graph
 
@@ -22,7 +22,6 @@ def test_simple_monomorphism():
     T = Template(
         None,
         name="temp",
-        head=["room"],
         body="""
         {room} a brick:Room ;
             brick:isPartOf {floor} .
@@ -56,7 +55,7 @@ def test_simple_monomorphism():
 
 
 def test_template_monomorphism_sizeiter():
-    lib = TemplateLibrary(FIXTURES_DIR / "templates" / "smalloffice.yml")
+    lib = Library(FIXTURES_DIR / "templates" / "smalloffice.yml")
     templ = lib["zone"][0]
     B = new_temporary_graph()
     B.parse(SMALL_OFFICE_BRICK_TTL)
@@ -68,7 +67,7 @@ def test_template_monomorphism_sizeiter():
 
 
 def test_template_monomorphism():
-    lib = TemplateLibrary(FIXTURES_DIR / "templates" / "smalloffice.yml")
+    lib = Library(FIXTURES_DIR / "templates" / "smalloffice.yml")
     templ = lib["zone"][0]
     B = new_temporary_graph()
     B.parse(SMALL_OFFICE_BRICK_TTL)

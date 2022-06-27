@@ -1,16 +1,18 @@
 import logging
 import uuid
+from itertools import chain
 from typing import Dict, List, Tuple
 
 from sqlalchemy.engine import Engine
 
 from buildingmotif.database.tables import (
+    DBLibrary,
     DBModel,
     DBShapeCollection,
     DBTemplate,
-    DBTemplateLibrary,
     DepsAssociation,
 )
+from buildingmotif.namespaces import PARAM
 
 
 class TableConnection:
@@ -138,102 +140,102 @@ class TableConnection:
 
         self.bm.session.delete(db_shape_collection)
 
-    # template library functions
+    # library functions
 
-    def create_db_template_library(self, name: str) -> DBTemplateLibrary:
-        """Create a database template_library.
+    def create_db_library(self, name: str) -> DBLibrary:
+        """Create database library.
 
-        :param name: name of DBTemplateLibrary
+        :param name: name of DBLibrary
         :type name: str
-        :return: DBTemplateLibrary
-        :rtype: DBTemplateLibrary
+        :return: DBLibrary
+        :rtype: DBLibrary
         """
-        self.logger.debug(f"Creating shape collection for template library '{name}'")
+        self.logger.debug(f"Creating shape collection in library: '{name}'")
         shape_collection = DBShapeCollection(graph_id=str(uuid.uuid4()))
         self.bm.session.add(shape_collection)
 
-        self.logger.debug(f"Creating template library '{name}'")
-        template_library = DBTemplateLibrary(
-            name=name, shape_collection=shape_collection
-        )
-        self.bm.session.add(template_library)
+        self.logger.debug(f"Creating database library: '{name}'")
+        library = DBLibrary(name=name, shape_collection=shape_collection)
+        self.bm.session.add(library)
 
         self.bm.session.flush()
 
-        return template_library
+        return library
 
-    def get_all_db_template_libraries(self) -> List[DBTemplateLibrary]:
-        """Get all database template library.
+    def get_all_db_libraries(self) -> List[DBLibrary]:
+        """Get all database libraries.
 
-        :return: all DBTemplateLibrary
-        :rtype: DBTemplateLibrary
+        :return: all DBLibrary
+        :rtype: DBLibrary
         """
-        db_template_libraries = self.bm.session.query(DBTemplateLibrary).all()
-        return db_template_libraries
+        db_libraries = self.bm.session.query(DBLibrary).all()
+        return db_libraries
 
-    def get_db_template_library(self, id: int) -> DBTemplateLibrary:
-        """Get database template library from id.
+    def get_db_library_by_id(self, id: int) -> DBLibrary:
+        """Get database library by id.
 
-        :param id: id of DBTemplateLibrary
+        :param id: id of DBLibrary
         :type id: str
-        :return: DBTemplateLibrary
-        :rtype: DBTemplateLibrary
+        :return: DBLibrary
+        :rtype: DBLibrary
         """
-        db_template_library = (
-            self.bm.session.query(DBTemplateLibrary)
-            .filter(DBTemplateLibrary.id == id)
-            .one()
-        )
-        return db_template_library
+        db_library = self.bm.session.query(DBLibrary).filter(DBLibrary.id == id).one()
+        return db_library
 
-    def update_db_template_library_name(self, id: int, name: str) -> None:
-        """Update database template library.
+    def get_db_library_by_name(self, name: str) -> DBLibrary:
+        """Get database library by name.
 
-        :param id: id of DBTemplateLibrary
+        :param name: name of DBLibrary
+        :type name: str
+        :return: DBLibrary
+        :rtype: DBLibrary
+        """
+        return self.bm.session.query(DBLibrary).filter(DBLibrary.name == name).one()
+
+    def update_db_library_name(self, id: int, name: str) -> None:
+        """Update database library name.
+
+        :param id: id of DBLibrary
         :type id: str
         :param name: new name
         :type name: str
         """
-        db_template_library = self.get_db_template_library(id)
+        db_library = self.get_db_library_by_id(id)
         self.logger.debug(
-            f"Updating template library name from: '{db_template_library.name}' to: '{name}'"
+            f"Updating database library name: '{db_library.name}' -> '{name}'"
         )
-        db_template_library.name = name
+        db_library.name = name
 
-    def delete_db_template_library(self, id: int) -> None:
-        """Delete database template library.
+    def delete_db_library(self, id: int) -> None:
+        """Delete database library.
 
-        :param id: id of deleted DBTemplateLibrary
+        :param id: id of deleted DBLibrary
         :type id: str
         """
 
-        db_template_library = self.get_db_template_library(id)
+        db_library = self.get_db_library_by_id(id)
 
-        self.logger.debug(f"Deleting template library: '{db_template_library.name}'")
-        self.bm.session.delete(db_template_library)
+        self.logger.debug(f"Deleting database library: '{db_library.name}'")
+        self.bm.session.delete(db_library)
 
     # template functions
 
-    def create_db_template(
-        self, name: str, head: List[str], template_library_id: int
-    ) -> DBTemplate:
-        """Create a database template.
+    def create_db_template(self, name: str, library_id: int) -> DBTemplate:
+        """Create database template.
 
         :param name: name of DBTemplate
         :type name: str
-        :param name: list of heads
-        :type name: list[str]
-        :param template_library_id: id of the template's library
+        :param library_id: id of the template's library
         :return: DBTemplate
         :rtype: DBTemplate
         """
-        self.logger.debug(f"Creating template: '{name}'")
-        template_library = self.get_db_template_library(template_library_id)
+        self.logger.debug(f"Creating database template: '{name}'")
+        library = self.get_db_library_by_id(library_id)
         template = DBTemplate(
             name=name,
-            _head=";".join(head),
             body_id=str(uuid.uuid4()),
-            template_library=template_library,
+            optional_args=[],
+            library=library,
         )
 
         self.bm.session.add(template)
@@ -250,8 +252,8 @@ class TableConnection:
         db_templates = self.bm.session.query(DBTemplate).all()
         return db_templates
 
-    def get_db_template(self, id: int) -> DBTemplate:
-        """Get database template from id.
+    def get_db_template_by_id(self, id: int) -> DBTemplate:
+        """Get database template by id.
 
         :param id: id of DBTemplate
         :type id: str
@@ -293,18 +295,33 @@ class TableConnection:
         return db_template_dependencies
 
     def update_db_template_name(self, id: int, name: str) -> None:
-        """Update database template.
+        """Update database template name.
 
         :param id: id of DBTemplate
         :type id: str
         :param name: new name
         :type name: str
         """
-        db_template = self.get_db_template(id)
+        db_template = self.get_db_template_by_id(id)
         self.logger.debug(
-            f"Updating template library name from: '{db_template.name}' to: '{name}'"
+            f"Updating database template name: '{db_template.name}' -> '{name}'"
         )
         db_template.name = name
+
+    def update_db_template_optional_args(
+        self, id: int, optional_args: List[str]
+    ) -> None:
+        """Update database template.
+
+        :param id: id of DBTemplate
+        :type id: str
+        :param optional_args: new list of optional_args
+        :type name: List[str]
+        """
+        db_template = (
+            self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+        )
+        db_template.optional_args = optional_args
 
     def add_template_dependency(
         self, template_id: int, dependency_id: int, args: Dict[str, str]
@@ -315,18 +332,28 @@ class TableConnection:
         :type template_id: int
         :param dependency_id: dependency template id
         :type dependency_id: int
-        :param args: dependency head to dependant variable mapping
+        :param args: mapping of dependency params to dependant params
         :type args: Dict[str, str]
-        :raises ValueError: if all dependee heads not in args
+        :raises ValueError: if all dependee required_params not in args
         :raises ValueError: if dependant and dependency template don't share a library
         """
         self.logger.debug(
             f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
         )
-        dependency = self.get_db_template(dependency_id)
-        if not all((dependee_arg in args.keys()) for dependee_arg in dependency.head):
+        templ = self.get_db_template_by_id(template_id)
+        graph = self.bm.graph_connection.get_graph(templ.body_id)
+        nodes = chain.from_iterable(graph.triples((None, None, None)))
+        params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
+
+        # TODO: do we need this kind of check?
+        if "name" not in args.keys():
             raise ValueError(
-                f"All args in dependee template {dependency_id}'s head must be in args ({args})"
+                f"The name parameter is required for the dependency '{templ.name}'"
+            )
+        if len(params) > 0 and args["name"] not in params:
+            raise ValueError(
+                "The name parameter of the dependency must be bound to a param in this template."
+                f"'name' was bound to {args['name']} but available params are {params}"
             )
 
         # In the past we had a check here to make sure the two templates were in the same library.
@@ -363,21 +390,19 @@ class TableConnection:
         )
         self.bm.session.delete(relationship)
 
-    def update_db_template_template_library(
-        self, id: int, template_library_id: int
-    ) -> None:
-        """Update database template.
+    def update_db_template_library(self, id: int, library_id: int) -> None:
+        """Update database template library.
 
         :param id: id of DBTemplate
         :type id: str
-        :param name: id of the new template_library
+        :param name: id of the new library
         :type name: int
         """
-        db_template = self.get_db_template(id)
+        db_template = self.get_db_template_by_id(id)
         self.logger.debug(
-            f"Updating template library for template with id: '{id}' from: '{db_template.template_library_id}' to: '{template_library_id}'"  # noqa
+            f"Updating database template library: '{db_template.library_id}' -> '{library_id}'"  # noqa
         )
-        db_template.template_library_id = template_library_id
+        db_template.library_id = library_id
 
     def delete_db_template(self, id: int) -> None:
         """Delete database template.
@@ -385,7 +410,7 @@ class TableConnection:
         :param id: id of deleted DBTemplate
         :type id: str
         """
-        db_template = self.get_db_template(id)
+        db_template = self.get_db_template_by_id(id)
         self.logger.debug(f"Deleting template: '{db_template.name}'")
 
         self.bm.session.delete(db_template)

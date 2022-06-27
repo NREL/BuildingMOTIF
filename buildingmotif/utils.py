@@ -1,8 +1,8 @@
+import logging
 from collections import defaultdict
 from copy import copy
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
-from warnings import warn
 
 from rdflib import BNode, Graph, Literal, URIRef
 
@@ -38,6 +38,36 @@ def copy_graph(g: Graph) -> Graph:
     for t in g.triples((None, None, None)):
         c.add(t)
     return c
+
+
+def graph_size(g: Graph) -> int:
+    """
+    Returns the number of triples in a graph
+
+    :param g: graph to be measured
+    :type g: Graph
+    :return: number of triples in the graph
+    :rtype: int
+    """
+    return len(tuple(g.triples((None, None, None))))
+
+
+def remove_triples_with_node(g: Graph, node: URIRef) -> None:
+    """
+    Remove all triples that include the given node. Edits
+    the graph in-place
+
+    :param g: the graph to remove triples from
+    :type g: Graph
+    :param node: the node to remove
+    :type node: URIRef
+    """
+    for triple in g.triples((node, None, None)):
+        g.remove(triple)
+    for triple in g.triples((None, node, None)):
+        g.remove(triple)
+    for triple in g.triples((None, None, node)):
+        g.remove(triple)
 
 
 def replace_nodes(g: Graph, replace: Dict[URIRef, Term]) -> None:
@@ -95,7 +125,7 @@ def get_template_parts_from_shape(
         for _ in range(int(mincount)):
             param = _gensym()
             body.add((root_param, path, param))
-            deps.append({"rule": otype, "args": {"name": param}})
+            deps.append({"template": otype, "args": {"name": param}})
             # body.add((param, RDF.type, otype))
 
     if (shape_name, RDF.type, OWL.Class) in shape_graph:
@@ -107,7 +137,7 @@ def get_template_parts_from_shape(
 
     nodes = shape_graph.objects(shape_name, SH["node"])
     for node in nodes:
-        deps.append({"rule": node, "args": {"name": "name"}})  # tie to root param
+        deps.append({"template": node, "args": {"name": "name"}})  # tie to root param
 
     return body, deps
 
@@ -165,7 +195,9 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
         elif o not in PARAM:
             prop_values[p].append(o)
         elif o in PARAM and o not in param_types:
-            warn(f"{o} is does not have a type and does not seem to be a literal")
+            logging.warn(
+                f"{o} is does not have a type and does not seem to be a literal"
+            )
     return _TemplateIndex(
         templ,
         param_types,

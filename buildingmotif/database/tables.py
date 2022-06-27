@@ -1,7 +1,6 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from sqlalchemy import JSON, Column, ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, declarative_base, relationship
 
 Base = declarative_base()
@@ -23,20 +22,18 @@ class DBShapeCollection(Base):
     id: Mapped[int] = Column(Integer, primary_key=True)
     graph_id: Mapped[str] = Column(String())
 
-    template_library: "DBTemplateLibrary" = relationship(
-        "DBTemplateLibrary", back_populates="shape_collection"
-    )
+    library: "DBLibrary" = relationship("DBLibrary", back_populates="shape_collection")
 
 
-class DBTemplateLibrary(Base):
-    """Collection of Templates"""
+class DBLibrary(Base):
+    """Collection of Shapes and Templates"""
 
-    __tablename__ = "template_library"
+    __tablename__ = "library"
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False, unique=True)
 
     templates: Mapped[List["DBTemplate"]] = relationship(
-        "DBTemplate", back_populates="template_library", cascade="all,delete"
+        "DBTemplate", back_populates="library", cascade="all,delete"
     )
 
     shape_collection_id = Column(
@@ -44,7 +41,7 @@ class DBTemplateLibrary(Base):
     )
     shape_collection: DBShapeCollection = relationship(
         "DBShapeCollection",
-        back_populates="template_library",
+        back_populates="library",
         uselist=False,
         cascade="all,delete",
     )
@@ -70,15 +67,11 @@ class DBTemplate(Base):
     __tablename__ = "template"
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False)
-    _head: Mapped[str] = Column(String(), nullable=False)
     body_id: Mapped[str] = Column(String())
+    optional_args: Mapped[List[str]] = Column(JSON)
 
-    template_library_id = Column(
-        Integer, ForeignKey("template_library.id"), nullable=False
-    )
-    template_library: DBTemplateLibrary = relationship(
-        "DBTemplateLibrary", back_populates="templates"
-    )
+    library_id = Column(Integer, ForeignKey("library.id"), nullable=False)
+    library: DBLibrary = relationship("DBLibrary", back_populates="templates")
     dependencies: Mapped["DBTemplate"] = relationship(
         "DBTemplate",
         secondary="deps_association_table",
@@ -97,11 +90,7 @@ class DBTemplate(Base):
     __table_args__ = (
         UniqueConstraint(
             "name",
-            "template_library_id",
-            name="name_template_library_unique_constraint",
+            "library_id",
+            name="name_library_unique_constraint",
         ),
     )
-
-    @hybrid_property
-    def head(self) -> Tuple[str, ...]:
-        return tuple([x for x in self._head.split(";")])

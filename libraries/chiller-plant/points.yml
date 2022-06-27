@@ -1,0 +1,107 @@
+chiller:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Chiller ;
+    brick:hasPart P:cvlv, P:cnd, P:chwp ;
+      brick:hasPoint P:chwst, P:chwrt ;
+      brick:isMeteredBy P:meter .
+  dependencies:
+    - template: electrical_meter
+      args: {"name": "meter"}
+    - template: control_valve
+      args: {"name": "cvlv"}
+    - template: condenser
+      args: {"name": "cnd"}
+    - template: https://brickschema.org/schema/Brick#Chilled_Water_Supply_Temperature_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "chwst"}
+    - template: https://brickschema.org/schema/Brick#Chilled_Water_Return_Temperature_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "chwrt"}
+    - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "chwp"}
+    - template: pump
+      args: {"name": "chwp"}
+
+
+control_valve:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    P:name a brick:Valve ;
+      rdfs:label "Control Valve" ;
+      brick:hasPoint P:vlv_cmd .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Valve_Command
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "vlv_cmd"}
+
+bypass_valve:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Bypass_Valve ;
+      brick:hasPoint P:vlv_cmd .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Valve_Command
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "vlv_cmd"}
+
+
+condenser:
+  type: https://brickschema.org/schema/Brick#Condenser
+  hasPoint:
+    sup: https://brickschema.org/schema/Brick#Condenser_Water_Supply_Temperature_Sensor
+    ret: https://brickschema.org/schema/Brick#Condenser_Water_Return_Temperature_Sensor
+    flow: https://brickschema.org/schema/Brick#Condenser_Water_Flow_Sensor
+  hasPart:
+    pump: https://brickschema.org/schema/Brick#Condenser_Water_Pump
+  dependencies:
+    - template: pump
+      args: {"name": "pump"}
+
+
+electrical_meter:
+  type: https://brickschema.org/schema/Brick#Electrical_Meter
+  hasPoint:
+    current: https://brickschema.org/schema/Brick#Current_Sensor
+    voltage: https://brickschema.org/schema/Brick#Voltage_Sensor
+    power: https://brickschema.org/schema/Brick#Power_Sensor
+    breaker_status: breaker_status
+
+
+breaker_status:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    P:name a brick:Status ;
+      rdfs:label "Breaker status" .
+
+pump:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Pump ;
+      brick:isMeteredBy P:meter ;
+    brick:hasPart P:control_valve, P:bypass_valve ;
+      brick:hasPoint P:run, P:vsd, P:mode .
+  dependencies:
+    - template: electrical_meter
+      args: {"name": "meter"}
+    - template:  https://brickschema.org/schema/Brick#Run_Status
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "run"}
+    - template:  https://brickschema.org/schema/Brick#Frequency_Command
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "vsd"}
+    - template:  https://brickschema.org/schema/Brick#Mode_Command
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "mode"}
+    - template: control_valve
+      args: {"name": "control_valve"}
+    - template: bypass_valve
+      args: {"name": "bypass_valve"}

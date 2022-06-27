@@ -1,5 +1,4 @@
 single-zone-vav-ahu:
-  head: ["name", "zone"]
   body: >
     @prefix bmparam: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -17,14 +16,15 @@ single-zone-vav-ahu:
         brick:isPointOf bmparam:zone .
     bmparam:occ a brick:Occupancy_Sensor ;
         brick:isPointOf bmparam:zone .
+  optional: ['occ']
+  # TODO: data types on parameters?
   dependencies:
-    - rule: supply-fan
+    - template: supply-fan
       args: {"name": "sf"}
-    - rule: outside-air-damper
+    - template: outside-air-damper
       args: {"name": "oad"}
   
 supply-fan:
-  head: ["name"]
   body: >
     @prefix bmparam: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -34,9 +34,8 @@ supply-fan:
     bmparam:st a brick:Fan_Status .
     bmparam:ss a brick:Start_Stop_Command .
 
-    # with command
+# with command
 outside-air-damper:
-  head: ["name"]
   body: >
     @prefix bmparam: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
