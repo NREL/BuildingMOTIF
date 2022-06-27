@@ -3,8 +3,10 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-import configs as building_motif_configs
 from buildingmotif.database.tables import Base
+
+# If config doesn't exist, this is considered a third party import and module cant be found.
+import configs as building_motif_configs  # type: ignore # isort:skip
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
