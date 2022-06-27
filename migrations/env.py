@@ -20,7 +20,7 @@ config.set_main_option("sqlalchemy.url", building_motif_configs.DB_URI)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Do not autogenerate migrations for rdflib sqlalchemly tables
+# Do not autogenerate migrations for rdflib sqlalchemy tables
 sqlalchemy_rdflib_table_base_names = [
     "asserted_statements",
     "literal_statements",
