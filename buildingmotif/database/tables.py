@@ -22,7 +22,6 @@ class DBShapeCollection(Base):
     id: Mapped[int] = Column(Integer, primary_key=True)
     graph_id: Mapped[str] = Column(String())
 
-    library_id = Column(Integer, ForeignKey("library.id"))
     library: "DBLibrary" = relationship("DBLibrary", back_populates="shape_collection")
 
 
@@ -37,6 +36,9 @@ class DBLibrary(Base):
         "DBTemplate", back_populates="library", cascade="all,delete"
     )
 
+    shape_collection_id = Column(
+        Integer, ForeignKey("shape_collection.id"), nullable=False
+    )
     shape_collection: DBShapeCollection = relationship(
         "DBShapeCollection",
         back_populates="library",
