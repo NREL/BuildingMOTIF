@@ -64,31 +64,31 @@ class _template_dependency:
             return Template.load(id_lookup[self.template_name])
         # if not in the local cache, then search the database for the template
         # within the given library
-        library = TemplateLibrary.load(name=self.library)
+        library = Library.load(name=self.library)
         return library.get_template_by_name(self.template_name)
 
 
 @dataclass
-class TemplateLibrary:
-    """Collection of Templates. This class mirrors DBTemplateLibrary."""
+class Library:
+    """Collection of shapes and templates. This class mirrors DBLibrary."""
 
     _id: int
     _name: str
     _bm: "BuildingMOTIF"
 
     @classmethod
-    def create(cls, name: str) -> "TemplateLibrary":
-        """create new Template Library
+    def create(cls, name: str) -> "Library":
+        """Create new Library.
 
-        :param name: tl name
+        :param name: library name
         :type name: str
-        :return: new TemplateLibrary
-        :rtype: TemplateLibrary
+        :return: new Library
+        :rtype: "Library"
         """
         bm = get_building_motif()
-        db_template_library = bm.table_connection.create_db_template_library(name)
+        db_library = bm.table_connection.create_db_library(name)
 
-        return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
+        return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
     # TODO: load library from URI? Does the URI identify the library uniquely?
     @classmethod
@@ -98,20 +98,20 @@ class TemplateLibrary:
         ontology_graph: Optional[str] = None,
         directory: Optional[str] = None,
         name: Optional[str] = None,
-    ) -> "TemplateLibrary":
+    ) -> "Library":
         """
-        Loads a template library from the database or an external source
+        Loads a Library from the database or an external source.
 
         :param db_id: the unique id of the library in the database, defaults to None
         :type db_id: Optional[int], optional
         :param ontology_graph: a path to a serialized RDF graph, defaults to None
         :type ontology_graph: Optional[str], optional
-        :param directory: a path to a direcotry containing a template library, defaults to None
+        :param directory: a path to a directory containing a library, defaults to None
         :type directory: Optional[str], optional
         :param name: the name of the library inside the database, defaults to None
         :type name: Optional[str], optional
-        :return: the loaded template library
-        :rtype: "TemplateLibrary"
+        :return: the loaded library
+        :rtype: "Library"
         :raises Exception: if the library cannot be loaded
         """
         if db_id is not None:
@@ -127,32 +127,28 @@ class TemplateLibrary:
             return cls._load_from_directory(src)
         elif name is not None:
             bm = get_building_motif()
-            db_template_library = bm.table_connection.get_db_template_library_by_name(
-                name
-            )
-            return cls(
-                _id=db_template_library.id, _name=db_template_library.name, _bm=bm
-            )
+            db_library = bm.table_connection.get_db_library_by_name(name)
+            return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
         else:
             raise Exception("No library information provided")
 
     @classmethod
-    def _load_from_db(cls, id: int) -> "TemplateLibrary":
-        """load Template Library from db
+    def _load_from_db(cls, id: int) -> "Library":
+        """Load Library from database.
 
-        :param id: id of template library
+        :param id: id of library
         :type id: int
-        :return: TemplateLibrary
-        :rtype: TemplateLibrary
+        :return: Library
+        :rtype: "Library"
         """
         bm = get_building_motif()
-        db_template_library = bm.table_connection.get_db_template_library(id)
+        db_library = bm.table_connection.get_db_library_by_id(id)
 
-        return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
+        return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
     @classmethod
-    def _load_from_ontology_graph(cls, ontology: rdflib.Graph) -> "TemplateLibrary":
-        """Load a template library from an ontology graph. This proceeds as follows.
+    def _load_from_ontology_graph(cls, ontology: rdflib.Graph) -> "Library":
+        """Load a library from an ontology graph. This proceeds as follows.
         First, get all entities in the graph that are instances of *both* owl:Class
         and sh:NodeShape. (this is "candidates")
 
@@ -198,10 +194,10 @@ class TemplateLibrary:
         return lib
 
     @classmethod
-    def _load_from_directory(cls, directory: pathlib.Path) -> "TemplateLibrary":
+    def _load_from_directory(cls, directory: pathlib.Path) -> "Library":
         """
         Load a library from a directory. Templates are read from .yml files
-        in the directory. The name of the library is given by the name of the directory
+        in the directory. The name of the library is given by the name of the directory.
         """
         # TODO: handle shapes (eventually)
 
@@ -258,7 +254,7 @@ class TemplateLibrary:
 
     @name.setter
     def name(self, new_name: str):
-        self._bm.table_connection.update_db_template_library_name(self._id, new_name)
+        self._bm.table_connection.update_db_library_name(self._id, new_name)
         self._name = new_name
 
     def create_template(
@@ -267,7 +263,7 @@ class TemplateLibrary:
         body: Optional[rdflib.Graph] = None,
         optional_args: Optional[List[str]] = None,
     ) -> Template:
-        """Create Template in this Template Library
+        """Create Template in this Library.
 
         :param name: name
         :type name: str
@@ -299,34 +295,30 @@ class TemplateLibrary:
         )
 
     def get_templates(self) -> List[Template]:
-        """get Templates in Library
+        """Get Templates from Library.
 
         :return: list of templates
         :rtype: list[Template]
         """
-        db_template_library = self._bm.table_connection.get_db_template_library(
-            self._id
-        )
-        templates: List[DBTemplate] = db_template_library.templates
+        db_library = self._bm.table_connection.get_db_library_by_id(self._id)
+        templates: List[DBTemplate] = db_library.templates
         return [Template.load(t.id) for t in templates]
 
     def get_shape_collection(self) -> ShapeCollection:
-        """get Library's shape collection
+        """Get Shape Collection from Library.
 
         :return: library's shape collection
         :rtype: ShapeCollection
         """
-        db_template_library = self._bm.table_connection.get_db_template_library(
-            self._id
-        )
+        db_library = self._bm.table_connection.get_db_library_by_id(self._id)
 
-        return ShapeCollection.load(db_template_library.shape_collection.id)
+        return ShapeCollection.load(db_library.shape_collection.id)
 
     def get_template_by_name(self, name: str) -> Template:
         """
-        Return template within this library with the given name, if any
+        Get Template by name from Library.
         """
         dbt = self._bm.table_connection.get_db_template_by_name(name)
-        if dbt.template_library_id != self._id:
+        if dbt.library_id != self._id:
             raise ValueError(f"Template {name} not in library {self._name}")
         return Template.load(dbt.id)

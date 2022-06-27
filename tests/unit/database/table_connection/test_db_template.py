@@ -8,19 +8,17 @@ from buildingmotif.database.tables import DBTemplate
 
 
 def create_dependacy_test_fixtures(bm: BuildingMOTIF):
-    db_template_library = bm.table_connection.create_db_template_library(
-        name="my_db_template_library"
-    )
+    db_library = bm.table_connection.create_db_library(name="my_db_library")
     dependant_template = bm.table_connection.create_db_template(
-        name="dependant_template", template_library_id=db_template_library.id
+        name="dependant_template", library_id=db_library.id
     )
     dependee_template = bm.table_connection.create_db_template(
         name="dependee_template",
-        template_library_id=db_template_library.id,
+        library_id=db_library.id,
     )
 
     return (
-        db_template_library,
+        db_library,
         dependant_template,
         dependee_template,
     )
@@ -34,20 +32,18 @@ def test_create_db_template(bm: BuildingMOTIF, monkeypatch):
 
     monkeypatch.setattr(uuid, "uuid4", mockreturn)
 
-    db_template_library = bm.table_connection.create_db_template_library(
-        name="my_db_template_library"
-    )
+    db_library = bm.table_connection.create_db_library(name="my_db_library")
     db_template = bm.table_connection.create_db_template(
         name="my_db_template",
-        template_library_id=db_template_library.id,
+        library_id=db_library.id,
     )
 
     assert db_template.name == "my_db_template"
     assert db_template.body_id == str(mocked_uuid)
-    assert db_template.template_library == db_template_library
+    assert db_template.library == db_library
 
 
-def test_create_db_template_bad_template_library(bm: BuildingMOTIF, monkeypatch):
+def test_create_db_template_bad_library(bm: BuildingMOTIF, monkeypatch):
     mocked_uuid = uuid.uuid4()
 
     def mockreturn():
@@ -58,40 +54,34 @@ def test_create_db_template_bad_template_library(bm: BuildingMOTIF, monkeypatch)
     with pytest.raises(NoResultFound):
         bm.table_connection.create_db_template(
             name="my_db_template",
-            template_library_id=-999,  # id does not exist
+            library_id=-999,  # id does not exist
         )
 
 
 def test_create_template_bad_name(bm: BuildingMOTIF):
-    db_template_library = bm.table_connection.create_db_template_library(
-        name="my_db_template_library"
-    )
+    db_library = bm.table_connection.create_db_library(name="my_db_library")
     bm.table_connection.create_db_template(
-        name="my_db_template", template_library_id=db_template_library.id
+        name="my_db_template", library_id=db_library.id
     )
 
     with pytest.raises(Exception):
         bm.table_connection.create_db_template(
-            name="my_db_template", template_library_id=db_template_library.id
+            name="my_db_template", library_id=db_library.id
         )
 
     bm.table_connection.bm.session.rollback()
 
 
 def test_get_db_templates(bm: BuildingMOTIF):
-    my_db_template_library = bm.table_connection.create_db_template_library(
-        name="my_db_template_library"
-    )
+    my_db_library = bm.table_connection.create_db_library(name="my_db_library")
     bm.table_connection.create_db_template(
-        name="my_db_template", template_library_id=my_db_template_library.id
+        name="my_db_template", library_id=my_db_library.id
     )
 
-    your_db_template_library = bm.table_connection.create_db_template_library(
-        name="your_db_template_library"
-    )
+    your_db_library = bm.table_connection.create_db_library(name="your_db_library")
     bm.table_connection.create_db_template(
         name="your_db_template",
-        template_library_id=your_db_template_library.id,
+        library_id=your_db_library.id,
     )
 
     db_templates = bm.table_connection.get_all_db_templates()
@@ -109,53 +99,51 @@ def test_get_db_template(bm: BuildingMOTIF, monkeypatch):
 
     monkeypatch.setattr(uuid, "uuid4", mockreturn)
 
-    db_template_library = bm.table_connection.create_db_template_library(
-        name="my_db_template_library"
-    )
+    db_library = bm.table_connection.create_db_library(name="my_db_library")
     db_template = bm.table_connection.create_db_template(
         name="my_db_template",
-        template_library_id=db_template_library.id,
+        library_id=db_library.id,
     )
 
-    db_template = bm.table_connection.get_db_template(id=db_template.id)
+    db_template = bm.table_connection.get_db_template_by_id(id=db_template.id)
 
     assert db_template.name == "my_db_template"
     assert db_template.body_id == str(mocked_uuid)
-    assert db_template.template_library == db_template_library
+    assert db_template.library == db_library
 
 
 def test_get_db_template_does_not_exist(bm: BuildingMOTIF):
     with pytest.raises(NoResultFound):
-        bm.table_connection.get_db_template(-999)
+        bm.table_connection.get_db_template_by_id(-999)
 
 
 def test_update_db_template_name(bm: BuildingMOTIF):
-    db_template_library = bm.table_connection.create_db_template_library(
-        name="my_db_template_library"
-    )
+    db_library = bm.table_connection.create_db_library(name="my_db_library")
     db_template = bm.table_connection.create_db_template(
-        name="my_db_template", template_library_id=db_template_library.id
+        name="my_db_template", library_id=db_library.id
     )
 
-    assert bm.table_connection.get_db_template(db_template.id).name == "my_db_template"
+    assert (
+        bm.table_connection.get_db_template_by_id(db_template.id).name
+        == "my_db_template"
+    )
 
     bm.table_connection.update_db_template_name(db_template.id, "your_db_template")
 
     assert (
-        bm.table_connection.get_db_template(db_template.id).name == "your_db_template"
+        bm.table_connection.get_db_template_by_id(db_template.id).name
+        == "your_db_template"
     )
 
 
 def test_update_db_template_name_bad_name(bm: BuildingMOTIF):
-    db_template_library = bm.table_connection.create_db_template_library(
-        name="my_db_template_library"
-    )
+    db_library = bm.table_connection.create_db_library(name="my_db_library")
     bm.table_connection.create_db_template(
-        name="my_db_template", template_library_id=db_template_library.id
+        name="my_db_template", library_id=db_library.id
     )
 
     bad_t = bm.table_connection.create_db_template(
-        name="a fine name", template_library_id=db_template_library.id
+        name="a fine name", library_id=db_library.id
     )
     bm.table_connection.update_db_template_name(bad_t.id, "my_db_template")
 
@@ -171,11 +159,9 @@ def test_update_db_template_name_does_not_exist(bm: BuildingMOTIF):
 
 
 def test_delete_db_template(bm: BuildingMOTIF):
-    db_template_library = bm.table_connection.create_db_template_library(
-        name="my_db_template_library"
-    )
+    db_library = bm.table_connection.create_db_library(name="my_db_library")
     db_template = bm.table_connection.create_db_template(
-        name="my_db_template", template_library_id=db_template_library.id
+        name="my_db_template", library_id=db_library.id
     )
 
     bm.table_connection.delete_db_template(db_template.id)
@@ -302,19 +288,17 @@ def test_remove_dependencies_does_not_exist(bm: BuildingMOTIF):
 
 
 def test_update_optional_args(bm: BuildingMOTIF):
-    db_template_library = bm.table_connection.create_db_template_library(
-        name="my_db_template_library"
-    )
+    db_library = bm.table_connection.create_db_library(name="my_db_library")
     db_template = bm.table_connection.create_db_template(
         name="my_db_template",
-        template_library_id=db_template_library.id,
+        library_id=db_library.id,
     )
 
-    assert bm.table_connection.get_db_template(db_template.id).optional_args == []
+    assert bm.table_connection.get_db_template_by_id(db_template.id).optional_args == []
 
     bm.table_connection.update_db_template_optional_args(db_template.id, ["a", "b"])
 
-    assert bm.table_connection.get_db_template(db_template.id).optional_args == [
+    assert bm.table_connection.get_db_template_by_id(db_template.id).optional_args == [
         "a",
         "b",
     ]

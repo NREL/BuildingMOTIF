@@ -1,7 +1,7 @@
 from rdflib import Graph, Namespace
 
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Template, TemplateLibrary
+from buildingmotif.dataclasses import Library, Template
 from buildingmotif.namespaces import BRICK, PARAM, A
 from buildingmotif.utils import graph_size
 
@@ -12,7 +12,7 @@ def test_template_evaluate(bm: BuildingMOTIF):
     """
     Test the Template.evaluate() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"name", "cav"}
 
@@ -30,9 +30,9 @@ def test_template_evaluate(bm: BuildingMOTIF):
 
 def test_template_fill(bm: BuildingMOTIF):
     """
-    Test the Template.evaluate() method.
+    Test the Template.fill() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"name", "cav"}
 
@@ -48,7 +48,7 @@ def test_template_copy(bm: BuildingMOTIF):
     """
     Test the Template.copy() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"name", "cav"}
 
@@ -62,9 +62,9 @@ def test_template_copy(bm: BuildingMOTIF):
 
 def test_template_to_inline(bm: BuildingMOTIF):
     """
-    Test the Template.to_inline() method
+    Test the Template.to_inline() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"name", "cav"}
 
@@ -84,9 +84,9 @@ def test_template_to_inline(bm: BuildingMOTIF):
 
 def test_template_inline_dependencies(bm: BuildingMOTIF):
     """
-    Test the Template.inline_dependencies() method
+    Test the Template.inline_dependencies() method.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     templ = lib.get_template_by_name("single-zone-vav-ahu")
     assert len(templ.get_dependencies()) == 2
     inlined = templ.inline_dependencies()
@@ -114,9 +114,9 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
 
 def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     """
-    Test that template evaluation works with optional params
+    Test that template evaluation works with optional parameters.
     """
-    lib = TemplateLibrary.load(directory="tests/unit/fixtures/templates")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
     templ = lib.get_template_by_name("opt-vav")
     assert templ.parameters == {"name", "occ", "zone"}
     assert templ.optional_args == ["occ"]
