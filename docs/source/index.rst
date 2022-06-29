@@ -11,7 +11,7 @@ Welcome to BuildingMOTIF's documentation!
    :caption: Contents:
 
    buildingmotif
-   template_matcher
+   developer_faq
 
 
 Indices and tables
