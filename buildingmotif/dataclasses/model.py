@@ -30,7 +30,9 @@ class Model:
         """
         bm = get_building_motif()
         db_model = bm.table_connection.create_db_model(name)
-        graph = bm.graph_connection.create_graph(db_model.graph_id, rdflib.Graph())
+        g = rdflib.Graph()
+        g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
+        graph = bm.graph_connection.create_graph(db_model.graph_id, g)
 
         return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
 

@@ -11,6 +11,7 @@ from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
+from buildingmotif.namespaces import PARAM
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import get_template_parts_from_shape
 
@@ -278,6 +279,8 @@ class Library:
         body = self._bm.graph_connection.create_graph(
             db_template.body_id, body if body else rdflib.Graph()
         )
+        # ensure the "param" namespace is bound to the graph
+        body.bind("P", PARAM)
         if optional_args is None:
             optional_args = []
         self._bm.table_connection.update_db_template_optional_args(

@@ -1,3 +1,4 @@
+from collections import Counter
 from dataclasses import dataclass
 from itertools import chain
 from secrets import token_hex
@@ -96,18 +97,41 @@ class Template:
         self._bm.table_connection.remove_template_dependency(self.id, dependency.id)
 
     @property
-    def parameters(self) -> Set[str]:
+    def all_parameters(self) -> Set[str]:
         """
         The set of all parameters used in this template, including its dependencies
         """
         # handle local parameters first
-        nodes = chain.from_iterable(self.body.triples((None, None, None)))
-        params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
+        params = set(self.parameters)
 
         # then handle dependencies
         for dep in self.get_dependencies():
             params.update(dep.template.parameters)
         return params
+
+    @property
+    def parameters(self) -> Set[str]:
+        """
+        The set of all parameters used in this template, *not* including its dependencies
+        """
+        # handle local parameters first
+        nodes = chain.from_iterable(self.body.triples((None, None, None)))
+        params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
+        return params
+
+    @property
+    def parameter_counts(self) -> Counter:
+        """
+        An addressable histogram of the parameter name counts in this template +
+        all of its transitive dependencies.
+        """
+        counts: Counter = Counter()
+        counts.update(self.parameters)
+        for dep in self.get_dependencies():
+            counts.update(dep.template.parameter_counts)
+        return counts
+
+    # TODO: method to get the 'types' of the parameters
 
     def dependency_for_parameter(self, param: str) -> Optional["Template"]:
         """
@@ -136,7 +160,7 @@ class Template:
         :rtype: "Template"
         """
         templ = self.in_memory_copy()
-        suffix = f"{self.name}{token_hex(4)}-inlined"
+        suffix = f"{token_hex(4)}-inlined"
         # the lookup table of old to new parameter names
         to_replace = {}
         for param in templ.parameters:
@@ -152,26 +176,47 @@ class Template:
 
     def inline_dependencies(self) -> "Template":
         """
-        Returns a copy of this template with all dependencies recursively inlined
+        Returns a copy of this template with all dependencies recursively inlined.
+        Parameters of dependencies will be renamed to avoid confusion..
 
         :return: copy of this template with all dependencies inlined
         :rtype: "Template"
         """
         templ = self.in_memory_copy()
+        # if this template has no dependencies, then return unaltered
         if not self.get_dependencies():
             return templ
 
+        # count of parameters in this template + all dependencies
+        counts = self.parameter_counts
+        # start with this template's parameters; if there is
         for dep in self.get_dependencies():
-            inlined_dep = dep.template.inline_dependencies()
-            to_replace: Dict[rdflib.URIRef, Term] = {
-                PARAM[theirs]: PARAM[ours] for ours, theirs in dep.args.items()
+            # get the inlined version of the dependency
+            deptempl = dep.template.inline_dependencies()
+            # replace dependency parameters with the names they inherit
+            # through the provided bindings
+            rename_args: Dict[rdflib.URIRef, Term] = {
+                PARAM[ours]: PARAM[theirs] for ours, theirs in dep.args.items()
             }
-            replace_nodes(inlined_dep.body, to_replace)
-            # rewrite the names of all parameters in the dependency that aren't
-            # mentioned in the dependent template
-            preserved_params = list(dep.args.values())
-            # concat bodies
-            templ.body += inlined_dep.to_inline(preserved_params).body
+            replace_nodes(deptempl.body, rename_args)
+            # find the parameters in the dependency that also appear in other templates:
+            # the conflicted parameters are those that appear in the 'rest' of the parameters
+            # (gien by params_without_dep) *and* don't have their conflicting name as a result
+            # of the parameter bindings (dep.args.values())
+            dep_counts = deptempl.parameter_counts
+            params_without_dep = set(counts - dep_counts)
+            conflicted = params_without_dep.intersection(dep_counts.keys()) - set(
+                dep.args.values()
+            )
+            # replace conflicted parameters
+            conflicted_params: Dict[rdflib.URIRef, Term] = {
+                PARAM[conflicted_param]: PARAM[f"{deptempl.name}-{conflicted_param}"]
+                for conflicted_param in conflicted
+            }
+            # update the template's body w/ the new renamed parameters
+            replace_nodes(deptempl.body, conflicted_params)
+            # concatenate the dependency's body with this template's body
+            templ.body += deptempl.body
 
         return templ
 

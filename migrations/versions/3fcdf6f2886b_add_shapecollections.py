@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.orm import sessionmaker
 
-from buildingmotif.database.tables import DBShapeCollection, DBTemplateLibrary
+from buildingmotif.database.tables import DBLibrary, DBShapeCollection
 
 # revision identifiers, used by Alembic.
 revision = "3fcdf6f2886b"
@@ -43,7 +43,7 @@ def upgrade():
     Session = sessionmaker()
 
     with Session(bind=conn) as session:
-        template_libraries = session.query(DBTemplateLibrary).all()
+        template_libraries = session.query(DBLibrary).all()
 
         for tl in template_libraries:
             shape_collection = DBShapeCollection(graph_id=str(uuid.uuid4()))

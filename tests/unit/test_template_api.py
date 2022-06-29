@@ -104,9 +104,12 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
         "sat",
         "oat",
         "zone",
+        "spd",
+        "ss",
+        "st",
+        "pos",
     }
-    inlined_params = {x for x in inlined.parameters if x.endswith("-inlined")}
-    assert inlined.parameters == preserved_params.union(inlined_params)
+    assert inlined.parameters == preserved_params
 
 
 def test_template_evaluate_with_optional(bm: BuildingMOTIF):
