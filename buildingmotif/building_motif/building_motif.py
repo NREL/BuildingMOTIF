@@ -32,6 +32,12 @@ class BuildingMOTIF(metaclass=Singleton):
         Session = sessionmaker(bind=self.engine, autoflush=True)
         self.session = Session()
 
+        self.setup_logging(log_level)
+
+        # done with initialization: rest of this code is specific
+        # to detecting in-memory sqlite databases
+        if self.engine.dialect.name != "sqlite":
+            return
         # detect if this is a sqlite3 in-memory database.
         # Do this by getting the 'filename' of the database; if this is empty, the db is in-memory
         raw_conn = self.engine.raw_connection()
@@ -48,8 +54,6 @@ class BuildingMOTIF(metaclass=Singleton):
         self.graph_connection = GraphConnection(
             BuildingMotifEngine(self.engine, self.session)
         )
-
-        self.setup_logging(log_level)
 
     def setup_logging(self, log_level):
         """Create log file with DEBUG level and stdout handler with specified log_level"""
