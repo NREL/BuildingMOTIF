@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from buildingmotif import BuildingMOTIF, get_building_motif
+from buildingmotif.database.tables import Base as BuildingMotif_tables_base
 from buildingmotif.dataclasses.library import Library
 from buildingmotif.dataclasses.template import Template
 
@@ -21,6 +22,9 @@ class MockBuildingMotif:
         self.engine = create_engine("sqlite://", echo=False)
         Session = sessionmaker(bind=self.engine, autoflush=True)
         self.session = Session()
+
+        # add tables to db
+        BuildingMotif_tables_base.metadata.create_all(self.engine)
 
     def close(self) -> None:
         """Close session and engine."""
@@ -56,6 +60,9 @@ def bm():
     BuildingMotif instance for tests involving dataclasses and API calls
     """
     bm = BuildingMOTIF("sqlite://")
+    # add tables to db
+    BuildingMotif_tables_base.metadata.create_all(bm.engine)
+
     yield bm
     bm.close()
     # clean up the singleton so that tables are re-created correctly later
