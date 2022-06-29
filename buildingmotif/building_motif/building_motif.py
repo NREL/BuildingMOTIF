@@ -11,6 +11,7 @@ from buildingmotif.building_motif.singleton import (
 )
 from buildingmotif.database.graph_connection import GraphConnection
 from buildingmotif.database.table_connection import TableConnection
+from buildingmotif.database.tables import Base as BuildingMOTIFBase
 
 
 class BuildingMOTIF(metaclass=Singleton):
@@ -30,6 +31,18 @@ class BuildingMOTIF(metaclass=Singleton):
         self.engine = create_engine(db_uri, echo=False)
         Session = sessionmaker(bind=self.engine, autoflush=True)
         self.session = Session()
+
+        # detect if this is a sqlite3 in-memory database.
+        # Do this by getting the 'filename' of the database; if this is empty, the db is in-memory
+        raw_conn = self.engine.raw_connection()
+        filename = (
+            raw_conn.cursor()
+            .execute("select file from pragma_database_list where name='main';", ())
+            .fetchone()
+        )
+        in_memory = not len(filename[0])
+        if in_memory:
+            BuildingMOTIFBase.metadata.create_all(self.engine)
 
         self.table_connection = TableConnection(self.engine, self)
         self.graph_connection = GraphConnection(
