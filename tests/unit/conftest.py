@@ -5,8 +5,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from buildingmotif import BuildingMOTIF, get_building_motif
+from buildingmotif.database.tables import Base as BuildingMotif_tables_base
+from buildingmotif.dataclasses.library import Library
 from buildingmotif.dataclasses.template import Template
-from buildingmotif.dataclasses.template_library import TemplateLibrary
 
 
 class MockBuildingMotif:
@@ -22,22 +23,25 @@ class MockBuildingMotif:
         Session = sessionmaker(bind=self.engine, autoflush=True)
         self.session = Session()
 
+        # add tables to db
+        BuildingMotif_tables_base.metadata.create_all(self.engine)
+
     def close(self) -> None:
         """Close session and engine."""
         self.session.close()
         self.engine.dispose()
 
 
-class MockTemplateLibrary(TemplateLibrary):
+class MockLibrary(Library):
     """
-    Mock template library which always returns the requested template
+    Mock library that always returns the requested template.
     """
 
     @classmethod
-    def create(cls, name: str) -> "MockTemplateLibrary":
+    def create(cls, name: str) -> "MockLibrary":
         bm = get_building_motif()
-        db_template_library = bm.table_connection.create_db_template_library(name)
-        return cls(_id=db_template_library.id, _name=db_template_library.name, _bm=bm)
+        db_library = bm.table_connection.create_db_library(name)
+        return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
     def get_template_by_name(self, name: str) -> Template:
         """
@@ -56,6 +60,9 @@ def bm():
     BuildingMotif instance for tests involving dataclasses and API calls
     """
     bm = BuildingMOTIF("sqlite://")
+    # add tables to db
+    BuildingMotif_tables_base.metadata.create_all(bm.engine)
+
     yield bm
     bm.close()
     # clean up the singleton so that tables are re-created correctly later
