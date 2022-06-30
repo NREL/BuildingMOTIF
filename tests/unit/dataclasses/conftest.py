@@ -4,7 +4,6 @@ import tempfile
 import pytest
 
 from buildingmotif import BuildingMOTIF
-from buildingmotif.database.tables import Base as BuildingMotif_tables_base
 
 
 @pytest.fixture
@@ -15,7 +14,7 @@ def clean_building_motif():
         uri = f"sqlite:///{temp_db_path}"
         building_motif = BuildingMOTIF(uri)
         # add tables to db
-        BuildingMotif_tables_base.metadata.create_all(building_motif.engine)
+        building_motif.setup_tables()
 
         yield building_motif
 
