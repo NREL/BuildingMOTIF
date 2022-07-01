@@ -94,7 +94,7 @@ class Model:
         Validates this model against the given shape collections. Loads all of the shape_collections
         into a single graph.
 
-        TODO: determien the return types; At least a bool for valid/invalid, but also want
+        TODO: determine the return types; At least a bool for valid/invalid, but also want
          a report. Is this the base pySHACL report? Or a useful transformation, like a list
          of deltas for potential fixes?
 
