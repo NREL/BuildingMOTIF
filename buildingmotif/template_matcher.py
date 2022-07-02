@@ -5,7 +5,7 @@ input is required to fully populate the template.
 """
 from collections import defaultdict
 from itertools import combinations, permutations
-from typing import Callable, Dict, Generator, List, Set, Tuple, Union
+from typing import Callable, Dict, Generator, List, Optional, Set, Tuple
 
 import networkx as nx  # type: ignore
 from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
@@ -124,7 +124,7 @@ def generate_all_subgraphs(T: Graph) -> Generator[Graph, None, None]:
     """
     Generates all node-induced subgraphs of T in order of decreasing size.
     """
-    for nodecount in reversed(range(len(T.all_nodes()))):
+    for nodecount in reversed(range(len(T.all_nodes()) - 1, len(T.all_nodes()))):
         for nodelist in combinations(T.all_nodes(), nodecount):
             yield digraph_to_rdflib(rdflib_to_networkx_digraph(T).subgraph(nodelist))
 
@@ -229,20 +229,21 @@ class TemplateMatcher:
         sg = self.template_subgraph_from_mapping(mapping)
         return self.template_graph - sg
 
-    def remaining_template(self, mapping: Mapping) -> Union[Graph, Template]:
+    def remaining_template(self, mapping: Mapping) -> Optional[Template]:
         """
         Returns the part of the template that is remaining to be filled out given
         a mapping.
         """
-        # if all parameters are fulfilled by the mapping, then return the graph
-        if all([p in mapping.keys() for p in self.template.parameters]):
-            return self.building_subgraph_from_mapping(mapping)
-        reverse_template_mapping = {v: k for k, v in self.template_bindings.items()}
+        # if all parameters are fulfilled by the mapping, then return None
+        mapping = {k: v for k, v in mapping.items() if v in PARAM}
+        mapped_params: Set[URIRef] = {URIRef(v) for v in mapping.values()}
+        if not self.template_parameters - mapped_params:
+            # return self.building_subgraph_from_mapping(mapping)
+            return None
         bindings = {}
-        for building_node, template_node in mapping.items():
-            param = reverse_template_mapping.get(template_node)
+        for building_node, param in mapping.items():
             if param is not None:
-                bindings[param] = building_node
+                bindings[param[len(PARAM) :]] = building_node
         # this *should* be a template because we don't have bindings for all of
         # the template's parameters
         res = self.template.evaluate(bindings)
