@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 
 from rdflib import BNode, Graph, Literal, URIRef
+from rdflib.paths import ZeroOrOne
 
 from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
 
@@ -135,21 +136,29 @@ def get_template_parts_from_shape(
 
     deps = []
 
-    property_shape_query = f"""SELECT ?path ?otype ?mincount WHERE {{
-        {shape_name.n3()} sh:property ?prop .
-        ?prop sh:path ?path .
-        {{ ?prop sh:minCount ?mincount }}
-        UNION
-        {{ ?prop sh:qualifiedMinCount ?mincount }}
+    pshapes = shape_graph.objects(subject=shape_name, predicate=SH["property"])
+    for pshape in pshapes:
+        property_path = shape_graph.value(pshape, SH["path"])
+        otypes = list(
+            shape_graph.objects(
+                subject=pshape,
+                predicate=SH["qualifiedValueShape"]
+                * ZeroOrOne
+                / (SH["class"] | SH["node"]),
+            )
+        )
+        mincounts = list(
+            shape_graph.objects(
+                subject=pshape, predicate=SH["minCount"] | SH["qualifiedMinCount"]
+            )
+        )
+        if len(otypes) > 1:
+            raise Exception(f"more than one object type detected on {shape_name}")
+        if len(mincounts) > 1:
+            raise Exception(f"more than one min count detected on {shape_name}")
+        (path, otype, mincount) = property_path, otypes[0], mincounts[0]
+        assert isinstance(mincount, Literal)
 
-        {{ ?prop sh:qualifiedValueShape?/sh:class ?otype }}
-        UNION
-        {{ ?prop sh:qualifiedValueShape?/sh:node ?otype }}
-    }}"""
-    for row in shape_graph.query(property_shape_query):
-        # for the type checker; graph.query can return boolean for ASK queries
-        assert isinstance(row, tuple)
-        (path, otype, mincount) = row
         for _ in range(int(mincount)):
             param = _gensym()
             body.add((root_param, path, param))
