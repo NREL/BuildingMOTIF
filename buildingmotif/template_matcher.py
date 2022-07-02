@@ -12,24 +12,44 @@ from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
 from rdflib import Graph, Namespace, URIRef
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_digraph
 
-from buildingmotif.namespaces import OWL, RDF, RDFS
-from buildingmotif.template import Template, Term
+from buildingmotif.dataclasses import Template
+from buildingmotif.namespaces import OWL, PARAM, RDF, RDFS
+from buildingmotif.utils import Term, copy_graph
 
 Mapping = Dict[Term, Term]
-_MARK = Namespace("urn:__mark__#")
+_MARK = Namespace("urn:__MARK__/")
 
 
 def _get_types(n: Term, g: Graph) -> Set[URIRef]:
     """
     Types for a node should only be URIRefs, so the
     type filtering here should be safe.
+    Defaults to owl:NamedIndividual as a "root" type
     """
-    return set(x for x in g.objects(n, RDF.type) if isinstance(x, URIRef))
+    return set(x for x in g.objects(n, RDF.type) if isinstance(x, URIRef)) or {
+        OWL.NamedIndividual
+    }
 
 
 def _compatible_types(
     n1: Term, g1: Graph, n2: Term, g2: Graph, ontology: Graph
 ) -> bool:
+    """
+    Returns true if the two terms have covariant types.
+
+    :param n1: First node
+    :type n1: Term
+    :param g1: The graph containing the first node's types
+    :type g1: Graph
+    :param n2: Second node
+    :type n2: Term
+    :param g2: The graph containing the second node's types
+    :type g2: Graph
+    :param ontology: The ontology graph that defines the class hierarchy
+    :type ontology: Graph
+    :return: True if the nodes are semantically compatible, false otherwise
+    :rtype: bool
+    """
     for n1type in _get_types(n1, g1):
         for n2type in _get_types(n2, g2):
             if n2type in ontology.transitive_objects(
@@ -96,7 +116,8 @@ class _VF2SemanticMatcher(DiGraphMatcher):
         """
         Returns true if the two nodes are semantically feasible to be matched.
         """
-        return self._semantic_feasibility(g1, g2)
+        val = self._semantic_feasibility(g1, g2)
+        return val
 
 
 def generate_all_subgraphs(T: Graph) -> Generator[Graph, None, None]:
@@ -105,7 +126,6 @@ def generate_all_subgraphs(T: Graph) -> Generator[Graph, None, None]:
     """
     for nodecount in reversed(range(len(T.all_nodes()))):
         for nodelist in combinations(T.all_nodes(), nodecount):
-            # print(nodelist)
             yield digraph_to_rdflib(rdflib_to_networkx_digraph(T).subgraph(nodelist))
 
 
@@ -139,12 +159,14 @@ class TemplateMatcher:
 
         # create an RDF graph from the template that we can use to compute
         # monomorphisms
-        self.template_bindings, self.template_graph = template.fill_in(_MARK)
-        head_nodes = [
-            node
-            for param, node in self.template_bindings.items()
-            if param in template.head
-        ]
+        # self.template_bindings, self.template_graph = template.fill(_MARK)
+        # head_nodes = [
+        #    node
+        #    for param, node in self.template_bindings.items()
+        #    if param in template.head
+        # ]
+        self.template_graph = copy_graph(template.body)
+        self.template_parameters = {PARAM[p] for p in self.template.parameters}
 
         for template_subgraph in generate_all_subgraphs(self.template_graph):
             matching = _VF2SemanticMatcher(
@@ -152,8 +174,16 @@ class TemplateMatcher:
             )
             if matching.subgraph_is_monomorphic():
                 for sg in matching.subgraph_monomorphisms_iter():
-                    # limit mappings to those that include all of the head params
-                    if all([n in sg.values() for n in head_nodes]):
+                    # sg is a mapping from building graph nodes to template nodes
+                    # that constitutes a monomorphism.
+                    if len(sg) == 0:
+                        continue
+                    # TODO: Limit mappings to those that include all of the params?
+                    # TODO: ignore optional parameters?
+                    # TODO: require that 'name' is in the parameters?
+
+                    # if there is an overlap, yield the subgraph
+                    if set(sg.values()).intersection(self.template_parameters):
                         self.add_mapping(sg)
 
     def add_mapping(self, mapping: Mapping):
