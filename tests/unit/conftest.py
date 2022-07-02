@@ -61,7 +61,7 @@ def bm():
     """
     bm = BuildingMOTIF("sqlite://")
     # add tables to db
-    BuildingMotif_tables_base.metadata.create_all(bm.engine)
+    bm.setup_tables()
 
     yield bm
     bm.close()

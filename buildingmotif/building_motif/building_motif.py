@@ -11,6 +11,7 @@ from buildingmotif.building_motif.singleton import (
 )
 from buildingmotif.database.graph_connection import GraphConnection
 from buildingmotif.database.table_connection import TableConnection
+from buildingmotif.database.tables import Base as BuildingMOTIFBase
 
 
 class BuildingMOTIF(metaclass=Singleton):
@@ -31,12 +32,38 @@ class BuildingMOTIF(metaclass=Singleton):
         Session = sessionmaker(bind=self.engine, autoflush=True)
         self.session = Session()
 
+        self.setup_logging(log_level)
+
+        # setup tables automatically if using a in-memory sqlite database
+        if self._is_in_memory_sqlite():
+            self.setup_tables()
+
         self.table_connection = TableConnection(self.engine, self)
         self.graph_connection = GraphConnection(
             BuildingMotifEngine(self.engine, self.session)
         )
 
-        self.setup_logging(log_level)
+    def setup_tables(self):
+        """
+        Creates the tables in the underlying database
+        """
+        BuildingMOTIFBase.metadata.create_all(self.engine)
+
+    def _is_in_memory_sqlite(self) -> bool:
+        """
+        Returns true if the BuildingMOTIF instance uses an in-memory sqlite database
+        """
+        if self.engine.dialect.name != "sqlite":
+            return False
+        # get the 'filename' of the database; if this is empty, the db is in-memory
+        raw_conn = self.engine.raw_connection()
+        filename = (
+            raw_conn.cursor()
+            .execute("select file from pragma_database_list where name='main';", ())
+            .fetchone()
+        )
+        # length is 0 if the db is in-memory
+        return not len(filename[0])
 
     def setup_logging(self, log_level):
         """Create log file with DEBUG level and stdout handler with specified log_level"""
