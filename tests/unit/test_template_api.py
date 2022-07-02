@@ -140,7 +140,7 @@ def test_template_matching(bm: BuildingMOTIF):
     damper = lib.get_template_by_name("outside-air-damper")
 
     bldg = Model.create("my-building")
-    bldg.add_graph(Graph().parse("tests/unit/fixtures/matching.ttl"))
+    bldg.add_graph(Graph().parse("tests/unit/fixtures/matching/matching.ttl"))
 
     matcher = TemplateMatcher(bldg.graph, damper, brick.get_shape_collection().graph)
     assert matcher is not None
