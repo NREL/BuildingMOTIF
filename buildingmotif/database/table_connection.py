@@ -278,6 +278,12 @@ class TableConnection:
         )
         return db_template
 
+    def get_library_defining_db_template(self, id: int) -> DBLibrary:
+        """
+        Returns the library defining the given template
+        """
+        return self.get_db_template_by_id(id).library
+
     def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
         """Get a template's dependencies and its arguments.
         If you don't need the arguments, consider using `template.dependencies`.

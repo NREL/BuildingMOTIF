@@ -5,16 +5,18 @@ input is required to fully populate the template.
 """
 from collections import defaultdict
 from itertools import combinations, permutations
-from typing import Callable, Dict, Generator, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Callable, Dict, Generator, List, Optional, Set, Tuple
 
 import networkx as nx  # type: ignore
 from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
 from rdflib import Graph, URIRef
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_digraph
 
-from buildingmotif.dataclasses import Template
 from buildingmotif.namespaces import OWL, PARAM, RDF, RDFS
 from buildingmotif.utils import Term, copy_graph
+
+if TYPE_CHECKING:
+    from buildingmotif.dataclasses.template import Template
 
 Mapping = Dict[Term, Term]
 
@@ -192,12 +194,12 @@ class TemplateMatcher:
     """
 
     mappings: Dict[int, List[Mapping]] = defaultdict(list)
-    template: Template
+    template: "Template"
     building: Graph
     template_bindings: Dict[str, Term] = {}
     template_graph: Graph
 
-    def __init__(self, building: Graph, template: Template, ontology: Graph):
+    def __init__(self, building: Graph, template: "Template", ontology: Graph):
         self.template = template
         self.building = building
         self.ontology = ontology
@@ -269,7 +271,7 @@ class TemplateMatcher:
         sg = self.template_subgraph_from_mapping(mapping)
         return self.template_graph - sg
 
-    def remaining_template(self, mapping: Mapping) -> Optional[Template]:
+    def remaining_template(self, mapping: Mapping) -> Optional["Template"]:
         """
         Returns the part of the template that is remaining to be filled out given
         a mapping.
@@ -287,7 +289,7 @@ class TemplateMatcher:
         # this *should* be a template because we don't have bindings for all of
         # the template's parameters
         res = self.template.evaluate(bindings)
-        assert isinstance(res, Template)
+        assert not isinstance(res, Graph)
         return res
 
     def mappings_iter(self, size=None) -> Generator[Mapping, None, None]:

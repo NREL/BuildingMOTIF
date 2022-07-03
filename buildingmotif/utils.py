@@ -43,6 +43,16 @@ def copy_graph(g: Graph) -> Graph:
     return c
 
 
+def combine_graphs(*graphs: Graph) -> Graph:
+    """
+    Combine all of the graphs into a new graph
+    """
+    newg = Graph()
+    for graph in graphs:
+        newg += graph
+    return newg
+
+
 def graph_size(g: Graph) -> int:
     """
     Returns the number of triples in a graph
