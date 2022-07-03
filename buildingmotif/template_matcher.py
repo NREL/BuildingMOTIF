@@ -9,7 +9,7 @@ from typing import Callable, Dict, Generator, List, Optional, Set, Tuple
 
 import networkx as nx  # type: ignore
 from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
-from rdflib import Graph, Namespace, URIRef
+from rdflib import Graph, URIRef
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_digraph
 
 from buildingmotif.dataclasses import Template
@@ -17,7 +17,52 @@ from buildingmotif.namespaces import OWL, PARAM, RDF, RDFS
 from buildingmotif.utils import Term, copy_graph
 
 Mapping = Dict[Term, Term]
-_MARK = Namespace("urn:__MARK__/")
+
+
+# used to accelerate monomorphism search
+# outer key is the address of the ontology graph
+# inner map is from a class to its parent classes
+class _ontology_lookup_cache:
+    sc_cache: Dict[int, Dict[Term, Set[Term]]]
+    t_cache: Dict[int, Dict[Term, Set[Term]]]
+    in_cache: Dict[int, Dict[Term, bool]]
+
+    def __init__(self):
+        self.sc_cache = {}
+        self.t_cache = {}
+        self.in_cache = {}
+
+    def parents(self, ntype: Term, ontology: Graph) -> Set[Term]:
+        if id(ontology) not in self.sc_cache:
+            self.sc_cache[id(ontology)] = {}
+        cache = self.sc_cache[id(ontology)]
+        # populate cache if necessary
+        if ntype not in cache:
+            cache[ntype] = set(ontology.transitive_objects(ntype, RDFS.subClassOf))
+        return cache[ntype]
+
+    def types(self, node: Term, graph: Graph) -> Set[URIRef]:
+        if id(graph) not in self.t_cache:
+            self.t_cache[id(graph)] = {}
+        cache = self.t_cache[id(graph)]
+        # populate cache if necessary
+        if node not in cache:
+            cache[node] = set(graph.objects(node, RDF.type))  # type: ignore
+        if len(cache[node]) == 0:
+            cache[node] = {OWL.NamedIndividual}
+        return cache[node]  # type: ignore
+
+    def defined_in(self, node: Term, graph: Graph) -> bool:
+        if id(graph) not in self.in_cache:
+            self.in_cache[id(graph)] = {}
+        cache = self.in_cache[id(graph)]
+        # populate cache if necessary
+        if node not in cache:
+            cache[node] = (node, RDF.type, OWL.Class) in graph
+        return cache[node]
+
+
+_cache = _ontology_lookup_cache()
 
 
 def _get_types(n: Term, g: Graph) -> Set[URIRef]:
@@ -26,9 +71,7 @@ def _get_types(n: Term, g: Graph) -> Set[URIRef]:
     type filtering here should be safe.
     Defaults to owl:NamedIndividual as a "root" type
     """
-    return set(x for x in g.objects(n, RDF.type) if isinstance(x, URIRef)) or {
-        OWL.NamedIndividual
-    }
+    return _cache.types(n, g)
 
 
 def _compatible_types(
@@ -52,9 +95,10 @@ def _compatible_types(
     """
     for n1type in _get_types(n1, g1):
         for n2type in _get_types(n2, g2):
-            if n2type in ontology.transitive_objects(
-                n1type, RDFS.subClassOf
-            ) or n1type in ontology.transitive_objects(n2type, RDFS.subClassOf):
+            # check if types are covariant
+            if n2type in _cache.parents(n1type, ontology) or n1type in _cache.parents(
+                n2type, ontology
+            ):
                 return True
     return False
 
@@ -78,14 +122,10 @@ def get_semantic_feasibility(
         if n1 == n2:
             return True
         # case 1: both are classes
-        if (n1, RDF.type, OWL.Class) in ontology and (
-            n2,
-            RDF.type,
-            OWL.Class,
-        ) in ontology:
-            if n2 in ontology.transitive_objects(n1, RDFS.subClassOf):
+        if _cache.defined_in(n1, ontology) and _cache.defined_in(n2, ontology):
+            if n2 in _cache.parents(n1, ontology):
                 return True
-            elif n1 in ontology.transitive_objects(n2, RDFS.subClassOf):
+            elif n1 in _cache.parents(n2, ontology):
                 return True
             else:
                 return False
@@ -123,8 +163,13 @@ class _VF2SemanticMatcher(DiGraphMatcher):
 def generate_all_subgraphs(T: Graph) -> Generator[Graph, None, None]:
     """
     Generates all node-induced subgraphs of T in order of decreasing size.
+
+    We generate subgraphs in decreasing order of size because we want to find the
+    largest subgraph as part of the monomorphism search process.
     """
-    for nodecount in reversed(range(len(T.all_nodes()) - 1, len(T.all_nodes()))):
+    # no monomorphism will be larger than the number of distinct nodes in the graph
+    largest_sg_size = len(T.all_nodes())
+    for nodecount in range(largest_sg_size, 1, -1):
         for nodelist in combinations(T.all_nodes(), nodecount):
             yield digraph_to_rdflib(rdflib_to_networkx_digraph(T).subgraph(nodelist))
 
@@ -157,17 +202,12 @@ class TemplateMatcher:
         self.building = building
         self.ontology = ontology
 
-        # create an RDF graph from the template that we can use to compute
-        # monomorphisms
-        # self.template_bindings, self.template_graph = template.fill(_MARK)
-        # head_nodes = [
-        #    node
-        #    for param, node in self.template_bindings.items()
-        #    if param in template.head
-        # ]
         self.template_graph = copy_graph(template.body)
         self.template_parameters = {PARAM[p] for p in self.template.parameters}
 
+        self._generate_mappings()
+
+    def _generate_mappings(self):
         for template_subgraph in generate_all_subgraphs(self.template_graph):
             matching = _VF2SemanticMatcher(
                 self.building, template_subgraph, self.ontology
