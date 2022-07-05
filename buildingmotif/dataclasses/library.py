@@ -13,7 +13,7 @@ from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.namespaces import PARAM
 from buildingmotif.template_compilation import compile_template_spec
-from buildingmotif.utils import get_template_parts_from_shape
+from buildingmotif.utils import get_ontology_files, get_template_parts_from_shape
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -92,6 +92,7 @@ class Library:
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
     # TODO: load library from URI? Does the URI identify the library uniquely?
+    # TODO: can we deduplicate shape graphs? use hash of graph?
     @classmethod
     def load(
         cls,
@@ -156,8 +157,6 @@ class Library:
         For each candidate, use the utility function to parse the NodeShape and turn
         it into a Template.
         """
-        # TODO: handle shapes (eventually)
-
         # get the name of the ontology; this will be the name of the library
         # any=False will raise an error if there is more than one ontology defined  in the graph
         ontology_name = ontology.value(
@@ -192,7 +191,25 @@ class Library:
                     template.add_dependency(dependee, dep["args"])
                 else:
                     logging.warn(f"Warning: could not find dependee {dep['template']}")
+
+        # load the ontology graph as a shape_collection
+        shape_col_id = lib.get_shape_collection().id
+        assert shape_col_id is not None  # should always pass
+        shape_col = ShapeCollection.load(shape_col_id)
+        shape_col.add_graph(ontology)
+
         return lib
+
+    def _load_shapes_from_directory(self, directory: pathlib.Path):
+        """
+        Helper method to read all graphs in the given directory into
+        this library
+        """
+        shape_col_id = self.get_shape_collection().id
+        assert shape_col_id is not None  # this should always pass
+        shape_col = ShapeCollection.load(shape_col_id)
+        for filename in get_ontology_files(directory):
+            shape_col.graph.parse(filename, format=guess_format(filename))
 
     @classmethod
     def _load_from_directory(cls, directory: pathlib.Path) -> "Library":
@@ -200,8 +217,6 @@ class Library:
         Load a library from a directory. Templates are read from .yml files
         in the directory. The name of the library is given by the name of the directory.
         """
-        # TODO: handle shapes (eventually)
-
         lib = cls.create(directory.name)
         template_id_lookup: Dict[str, int] = {}
         dependency_cache: Dict[int, List[_template_dependency]] = {}
@@ -239,6 +254,10 @@ class Library:
                 except Exception as e:
                     logging.warn(f"Warning: could not resolve dependency {dep}")
                     raise e
+
+        # load shape collections from all ontology files in the directory
+        lib._load_shapes_from_directory(directory)
+
         return lib
 
     @property
