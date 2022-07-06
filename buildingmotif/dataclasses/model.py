@@ -109,7 +109,8 @@ class Model:
             shapeg += sc.graph
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
-        valid, _, _ = pyshacl.validate(
+        valid, _, report = pyshacl.validate(
             data_graph, shacl_graph=shapeg, advanced=True, js=True, allow_warnings=True
         )
+        print(report)
         return valid
