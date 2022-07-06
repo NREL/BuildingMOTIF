@@ -1,0 +1,41 @@
+@prefix g36: <https://data.ashrae.org/shapes/g36> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix ph: <https://project-haystack.org/schema/3.9.9.9.9/Haystack#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix : <urn:medium-office-brick-constraints/> .
+
+:test a sh:NodeShape ;
+    sh:targetClass owl:Ontology ;
+    :exactCount 1 ;
+    :class brick:VAV ;
+.
+
+:countConstraintComponent a sh:ConstraintComponent ;
+    sh:parameter [
+        sh:path :exactCount ;
+        sh:datatype xsd:integer ;
+        sh:description "the minimum required number of instances" ;
+    ] ;
+    sh:parameter [
+        sh:path :class ;
+        sh:datatype rdf:Resource ;
+        sh:description "the class to count" ;
+    ] ;
+    sh:validator :hasExactCount ;
+.
+
+:hasExactCount a sh:SPARQLAskValidator ;
+    sh:message "Not the right number {$exactCount} of instances of {$class}" ;
+    sh:ask """
+        ASK WHERE {
+            {
+                SELECT * 
+                WHERE { ?i a $class . }
+                HAVING (COUNT(DISTINCT ?i) = $exactCount)
+            }
+        }""" ;
+.
