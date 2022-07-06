@@ -133,6 +133,7 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
 
 
 def test_template_matching(bm: BuildingMOTIF):
+    EX = Namespace("urn:ex/")
     brick = Library.load(ontology_graph="tests/unit/fixtures/matching/brick.ttl")
     lib = Library.load(directory="tests/unit/fixtures/templates")
     damper = lib.get_template_by_name("outside-air-damper")
@@ -142,3 +143,12 @@ def test_template_matching(bm: BuildingMOTIF):
 
     matcher = TemplateMatcher(bldg.graph, damper, brick.get_shape_collection().graph)
     assert matcher is not None
+    mapping, _ = next(matcher.building_mapping_subgraphs_iter())
+    assert mapping == {
+        EX["damper1"]: PARAM["name"],
+        BRICK["Outside_Air_Damper"]: BRICK["Outside_Air_Damper"],
+    }
+
+    remaining_template = matcher.remaining_template(mapping)
+    assert isinstance(remaining_template, Template)
+    assert remaining_template.parameters == {"pos"}
