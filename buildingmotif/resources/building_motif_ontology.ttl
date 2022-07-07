@@ -8,39 +8,44 @@ bmotif:Definition_Type a owl:Class, sh:NodeShape ;
         sh:path rdfs:label ;
         sh:minCount 1 ;
     ] ;
+    sh:property [
+        sh:path bmotif:domain ;
+        sh:minCount 1 ;
+    ]
 .
 
 bmotif:Domain_Type a owl:Class .
 
-bmotif:Mechanical a owl:Class ;
-    rdfs:subClassOf bmotif:Domain_Type ;
+
+bmotif:HVAC a bmotif:Domain_Type ;
 .
 
-bmotif:Electrical a owl:Class ;
-    rdfs:subClassOf bmotif:Domain_Type ;
+bmotif:Electrical a bmotif:Domain_Type ;
 .
 
-bmotif:Plumbing a owl:Class ;
-    rdfs:subClassOf bmotif:Domain_Type ;
+bmotif:Plumbing a bmotif:Domain_Type ;
 .
 
-bmotif:Spatial a owl:Class ;
-    rdfs:subClassOf bmotif:Domain_Type ;
+bmotif:Architecture a bmotif:Domain_Type ;
 .
 
-bmotif:HVAC a owl:Class ;
-    rdfs:subClassOf bmotif:Mechanical, bmotif:Plumbing ;
+bmotif:Lighting a bmotif:Domain_Type ;
+    bmotif:includes bmotif:Electrical
 .
 
-bmotif:Lighting a owl:Class ;
-    rdfs:subClassOf bmotif:Electrical;
+bmotif:Analytics a bmotif:Domain_Type ;
 .
 
-bmotif:Telemetry a owl:Class ;
-    rdfs:subClassOf bmotif:Domain_Type ;
+bmotif:EMIS a bmotif:Domain_Type ;
+    bmotif:includes bmotif:Analytics ;
 .
+
 
 bmotif:domain a owl:ObjectProperty, sh:PropertyShape ;
+    sh:class bmotif:Domain_Type ;
+.
+
+bmotif:includes a owl:ObjectProperty, sh:PropertyShape ;
     sh:class bmotif:Domain_Type ;
 .
 
@@ -48,22 +53,12 @@ bmotif:Sequence_Of_Operations a owl:Class ;
     rdfs:subClassOf bmotif:Definition_Type ;
     skos:definition "Shape defining a sequence of operations" .
 
-bmotif:Telemetry_Specification a owl:Class ;
+bmotif:Analytics_Application a owl:Class ;
     rdfs:subClassOf bmotif:Definition_Type ;
     skos:definition "Shape defining an analytics application" ;
-    sh:property [
-        sh:path bmotif:domain ;
-        sh:qualifiedValueShape [ sh:class bmotif:Telemetry ] ;
-        sh:qualifiedMinCount 1 ;
-    ] ;
 .
 
 bmotif:System_Specification a owl:Class, sh:NodeShape ;
     rdfs:subClassOf bmotif:Definition_Type ;
     skos:definition "Shape defining an system specification" ;
-    sh:property [
-        sh:path bmotif:domain ;
-        sh:qualifiedValueShape [ sh:class [ sh:or (bmotif:Mechanical bmotif:Electrical bmotif:Plumbing bmotif:Spatial) ] ] ;
-        sh:qualifiedMinCount 1 ;
-    ] ;
 .
