@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Generator, Optional
+from typing import TYPE_CHECKING, Generator, Optional, Set
 
 import rdflib
 
 from buildingmotif import get_building_motif
-from buildingmotif.utils import Triple
+from buildingmotif.utils import Triple, copy_graph
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -89,9 +89,7 @@ class ShapeCollection:
             cbd = new_cbd
         return cbd
 
-    def get_shapes(
-        self, self_contained: bool = True
-    ) -> Generator[rdflib.Graph, None, None]:
+    def get_shapes(self, self_contained: bool = True) -> Generator["Shape", None, None]:
         """
         Yields a sequence of the Concise Bounded Description of the shapes in this shape
         collection. The CBD may refer to other definitions in the enclosing shape graph. If
@@ -113,11 +111,13 @@ class ShapeCollection:
             FILTER (!isBlank(?shape)) }"""
         )
         for (shape_name,) in shapes:  # type: ignore
-            yield self._cbd(shape_name, self_contained=self_contained)
+            yield Shape(
+                shape_name, self._cbd(shape_name, self_contained=self_contained)
+            )
 
     def get_class_shapes(
         self, self_contained: bool = True
-    ) -> Generator[rdflib.Graph, None, None]:
+    ) -> Generator["Shape", None, None]:
         """
         Yields a sequence of all named (not blank node) shapes in this
         shape collection that are ALSO owl:Class. See ::ShapeCollection.get_shapes:: for
@@ -134,4 +134,41 @@ class ShapeCollection:
             FILTER (!isBlank(?shape)) }"""
         )
         for (shape_name,) in shapes:  # type: ignore
-            yield self._cbd(shape_name, self_contained=self_contained)
+            yield Shape(
+                shape_name, self._cbd(shape_name, self_contained=self_contained)
+            )
+
+    def resolve_imports(self, recursive_limit: int = -1) -> "ShapeCollection":
+        """
+        Returns a new ShapeCollection with `owl:imports` resolved to as many levels
+        as requested. By default, all `owl:imports` are recursively resolved. This limit
+        can be changed to 0 to suppress resolving imports, or to 1..n to handle recursion
+        up to that limit
+
+        :param recursive_limit: How many levels of owl:imports to resolve, defaults to -1 (all)
+        :type recursive_limit: int, optional
+        :return: a new ShapeCollection with the types resolved
+        :rtype: "ShapeCollection"
+        """
+        resolved_namespaces: Set[rdflib.URIRef] = set()
+        assert resolved_namespaces
+        resolved = copy_graph(self.graph)
+        new_sc = ShapeCollection.create()
+        new_sc.add_graph(resolved)
+        if recursive_limit == 0:
+            return new_sc
+        return new_sc
+
+
+@dataclass
+class Shape:
+    """Holds application requirements, etc"""
+
+    name: rdflib.URIRef
+    graph: rdflib.Graph
+
+    def __repr__(self) -> str:
+        return f"Shape<{self.name}, {len(self.graph)} triples>"
+
+    def dump(self) -> str:
+        return self.graph.serialize()
