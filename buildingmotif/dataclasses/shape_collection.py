@@ -90,7 +90,7 @@ class ShapeCollection:
         return cbd
 
     def get_shapes(
-        self, self_contained: bool = False
+        self, self_contained: bool = True
     ) -> Generator[rdflib.Graph, None, None]:
         """
         Yields a sequence of the Concise Bounded Description of the shapes in this shape
@@ -102,7 +102,7 @@ class ShapeCollection:
         self-contained.
 
 
-        :param self_contained: produce CBDs that are fully self-contained, defaults to False
+        :param self_contained: produce CBDs that are fully self-contained, defaults to True
         :type self_contained: bool, optional
         :return: sequence of shapes
         :rtype: Generator[rdflib.Graph, None, None]
@@ -116,14 +116,14 @@ class ShapeCollection:
             yield self._cbd(shape_name, self_contained=self_contained)
 
     def get_class_shapes(
-        self, self_contained: bool = False
+        self, self_contained: bool = True
     ) -> Generator[rdflib.Graph, None, None]:
         """
         Yields a sequence of all named (not blank node) shapes in this
         shape collection that are ALSO owl:Class. See ::ShapeCollection.get_shapes:: for
         more information on computing the CBD.
 
-        :param self_contained: produce CBDs that are fully self-contained, defaults to False
+        :param self_contained: produce CBDs that are fully self-contained, defaults to True
         :type self_contained: bool, optional
         :return: sequence of shapes
         :rtype: Generator[rdflib.Graph, None, None]
