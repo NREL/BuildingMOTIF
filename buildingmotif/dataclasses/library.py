@@ -124,7 +124,7 @@ class Library:
                 ontology_graph_path = ontology_graph
                 ontology_graph = rdflib.Graph()
                 ontology_graph.parse(
-                    ontology_graph_path, format=guess_format(ontology_graph)
+                    ontology_graph_path, format=guess_format(ontology_graph_path)
                 )
             return cls._load_from_ontology_graph(ontology_graph)
         elif directory is not None:
