@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Generator, Optional
 
 import rdflib
 
@@ -74,3 +74,64 @@ class ShapeCollection:
         :type graph: rdflib.Graph
         """
         self.graph += graph
+
+    def _cbd(self, shape_name, self_contained=True):
+        cbd = self.graph.cbd(shape_name)
+        # if computing self-contained, do the fixed-point computation produced by unioning
+        # the CBDs of all nodes in the current CBD until the graph does not change
+        changed = True
+        while self_contained and changed:
+            new_g = rdflib.Graph()
+            for node in cbd.all_nodes():
+                new_g += self.graph.cbd(node)
+            new_cbd = new_g + cbd
+            changed = len(new_cbd) > cbd
+            cbd = new_cbd
+        return cbd
+
+    def get_shapes(
+        self, self_contained: bool = False
+    ) -> Generator[rdflib.Graph, None, None]:
+        """
+        Yields a sequence of the Concise Bounded Description of the shapes in this shape
+        collection. The CBD may refer to other definitions in the enclosing shape graph. If
+        we are planning on using a shape somewhere else (for instance, to create a Library of
+        requirements for a particular site), then we will want the CBDs to be *self-contained*.
+
+        The self_contained flag uses a fixed-point computation to produce CBDs that are fully
+        self-contained.
+
+
+        :param self_contained: produce CBDs that are fully self-contained, defaults to False
+        :type self_contained: bool, optional
+        :return: sequence of shapes
+        :rtype: Generator[rdflib.Graph, None, None]
+        """
+        shapes = self.graph.query(
+            """SELECT DISTINCT ?shape WHERE {
+            ?shape a sh:NodeShape .
+            FILTER (!isBlank(?shape)) }"""
+        )
+        for (shape_name,) in shapes:  # type: ignore
+            yield self._cbd(shape_name, self_contained=self_contained)
+
+    def get_class_shapes(
+        self, self_contained: bool = False
+    ) -> Generator[rdflib.Graph, None, None]:
+        """
+        Yields a sequence of all named (not blank node) shapes in this
+        shape collection that are ALSO owl:Class. See ::ShapeCollection.get_shapes:: for
+        more information on computing the CBD.
+
+        :param self_contained: produce CBDs that are fully self-contained, defaults to False
+        :type self_contained: bool, optional
+        :return: sequence of shapes
+        :rtype: Generator[rdflib.Graph, None, None]
+        """
+        shapes = self.graph.query(
+            """SELECT DISTINCT ?shape WHERE {
+            ?shape a sh:NodeShape, owl:Class .
+            FILTER (!isBlank(?shape)) }"""
+        )
+        for (shape_name,) in shapes:  # type: ignore
+            yield self._cbd(shape_name, self_contained=self_contained)
