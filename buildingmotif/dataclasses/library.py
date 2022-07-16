@@ -1,7 +1,7 @@
 import logging
 import pathlib
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import rdflib
 import yaml
@@ -97,7 +97,7 @@ class Library:
     def load(
         cls,
         db_id: Optional[int] = None,
-        ontology_graph: Optional[str] = None,
+        ontology_graph: Optional[Union[str, rdflib.Graph]] = None,
         directory: Optional[str] = None,
         name: Optional[str] = None,
     ) -> "Library":
@@ -107,8 +107,9 @@ class Library:
         :param db_id: the unique id of the library in the database, defaults to None
         :type db_id: Optional[int], optional
         :param ontology_graph: a path to a serialized RDF graph, defaults to None
-        :type ontology_graph: Optional[str], optional
-        :param directory: a path to a directory containing a library, defaults to None
+        :type ontology_graph: Optional[str|rdflib.Grap], optional
+        :param directory: a path to a directory containing a library,
+                         OR an rdflib Graph, defaults to None
         :type directory: Optional[str], optional
         :param name: the name of the library inside the database, defaults to None
         :type name: Optional[str], optional
@@ -119,9 +120,13 @@ class Library:
         if db_id is not None:
             return cls._load_from_db(db_id)
         elif ontology_graph is not None:
-            ontology = rdflib.Graph()
-            ontology.parse(ontology_graph, format=guess_format(ontology_graph))
-            return cls._load_from_ontology_graph(ontology)
+            if isinstance(ontology_graph, str):
+                ontology_graph_path = ontology_graph
+                ontology_graph = rdflib.Graph()
+                ontology_graph.parse(
+                    ontology_graph_path, format=guess_format(ontology_graph)
+                )
+            return cls._load_from_ontology_graph(ontology_graph)
         elif directory is not None:
             src = pathlib.Path(directory)
             if not src.exists():
