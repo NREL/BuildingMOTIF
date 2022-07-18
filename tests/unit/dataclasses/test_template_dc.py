@@ -19,11 +19,13 @@ def test_create(clean_building_motif):
     assert isinstance(t.id, int)
     assert t.name == "my_template"
     assert isinstance(t.body, rdflib.Graph)
+    assert t.defining_library == lib
 
     also_t = lib.get_templates()[0]
     assert also_t.id == t.id
     assert also_t.name == t.name
     assert isomorphic(also_t.body, t.body)
+    assert also_t.defining_library == lib
 
 
 def test_load(clean_building_motif):
