@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 import pyshacl
 import rdflib
@@ -39,7 +39,7 @@ class Model:
         return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
 
     @classmethod
-    def load(cls, id: int) -> "Model":
+    def load(cls, id: Optional[int] = None, name: Optional[str] = None) -> "Model":
         """Get Model from db by id
 
         :param id: model id
@@ -48,7 +48,12 @@ class Model:
         :rtype: Model
         """
         bm = get_building_motif()
-        db_model = bm.table_connection.get_db_model(id)
+        if id is not None:
+            db_model = bm.table_connection.get_db_model(id)
+        elif name is not None:
+            db_model = bm.table_connection.get_db_model_by_name(name)
+        else:
+            raise Exception("Neither id nor name provided to load Model")
         graph = bm.graph_connection.get_graph(db_model.graph_id)
 
         return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
@@ -89,7 +94,9 @@ class Model:
         """
         self.graph += graph
 
-    def validate(self, shape_collections: List[ShapeCollection]) -> bool:
+    def validate(
+        self, shape_collections: List[ShapeCollection]
+    ) -> Tuple[bool, rdflib.Graph, str]:
         """
         Validates this model against the given shape collections. Loads all of the shape_collections
         into a single graph.
@@ -109,8 +116,12 @@ class Model:
             shapeg += sc.graph
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
-        valid, _, report = pyshacl.validate(
-            data_graph, shacl_graph=shapeg, advanced=True, js=True, allow_warnings=True
+        return pyshacl.validate(
+            data_graph,
+            shacl_graph=shapeg,
+            ont_graph=shapeg,
+            advanced=True,
+            js=True,
+            allow_warnings=True,
+            # inplace=True,
         )
-        print(report)
-        return valid

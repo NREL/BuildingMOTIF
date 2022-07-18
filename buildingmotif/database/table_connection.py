@@ -67,6 +67,17 @@ class TableConnection:
         db_model = self.bm.session.query(DBModel).filter(DBModel.id == id).one()
         return db_model
 
+    def get_db_model_by_name(self, name: str) -> DBModel:
+        """Get database model from name.
+
+        :param name: name of DBModel
+        :type name: str
+        :return: DBModel
+        :rtype: DBModel
+        """
+        db_model = self.bm.session.query(DBModel).filter(DBModel.name == name).one()
+        return db_model
+
     def update_db_model_name(self, id: int, name: str) -> None:
         """Update database model.
 

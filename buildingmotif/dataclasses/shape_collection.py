@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generator, Optional, Set
 
+import pyshacl
 import rdflib
 
 from buildingmotif import get_building_motif
-from buildingmotif.utils import Triple, copy_graph
+from buildingmotif.namespaces import OWL, SH, A
+from buildingmotif.utils import Triple, copy_graph, replace_nodes
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -89,6 +91,9 @@ class ShapeCollection:
             cbd = new_cbd
         return cbd
 
+    def get_shape(self, name: rdflib.URIRef) -> "Shape":
+        return Shape(name, self._cbd(name, self_contained=True))
+
     def get_shapes(self, self_contained: bool = True) -> Generator["Shape", None, None]:
         """
         Yields a sequence of the Concise Bounded Description of the shapes in this shape
@@ -151,12 +156,9 @@ class ShapeCollection:
         :rtype: "ShapeCollection"
         """
         resolved_namespaces: Set[rdflib.URIRef] = set()
-        assert resolved_namespaces
-        resolved = copy_graph(self.graph)
+        resolved = _resolve_imports(self.graph, recursive_limit, resolved_namespaces)
         new_sc = ShapeCollection.create()
         new_sc.add_graph(resolved)
-        if recursive_limit == 0:
-            return new_sc
         return new_sc
 
 
@@ -172,3 +174,79 @@ class Shape:
 
     def dump(self) -> str:
         return self.graph.serialize()
+
+    def get_satisfying_templates(self):
+        """
+        Searches BuildingMOTIF for any templates that satisfy this shape
+        TODO: does not work
+        """
+        from buildingmotif.dataclasses import Template
+
+        bm = get_building_motif()
+        TMP = rdflib.Namespace("urn:tmp/")
+        for _templ in bm.table_connection.get_all_db_templates():
+            templ = Template.load(_templ.id)
+            bindings, body = templ.fill(TMP)
+            g = body + self.graph
+            g.add((bindings["name"], A, self.name))
+            valid, _, _ = pyshacl.validate(data_graph=g, advanced=True)
+            if valid:
+                print(f"Satisfied by {templ.name}")
+            print(g.serialize())
+            break
+
+    def copy(self, new_name: rdflib.URIRef) -> "Shape":
+        """
+        Creates a new copy of this Shape with a new name
+        """
+        new_g = copy_graph(self.graph)
+        replace_nodes(new_g, {self.name: new_name})
+        return Shape(new_name, new_g)
+
+    def with_cardinality(self, cardinality: int) -> "Shape":
+        """
+        Returns a new shape that requires 'cardinality' instances
+        of this shape/class in a given graph.
+
+        Requires the https://nrel.gov/BuildingMOTIF/constraints ontology
+        """
+        new_name = self.name + f"_constraint_{cardinality}"
+        NS = rdflib.Namespace("https://nrel.gov/BuildingMOTIF/constraints#")
+        shape = self.copy(new_name)
+        shape.graph.add((shape.name, A, SH.NodeShape))
+        shape.graph.add((shape.name, SH.targetClass, OWL.Ontology))
+        shape.graph.add((shape.name, NS["exactCount"], rdflib.Literal(cardinality)))
+        shape.graph.add((shape.name, NS["node"], self.name))
+        # TODO: need shape to assert as instance?
+        rule = rdflib.BNode()
+        shape.graph.add((shape.name, SH.rule, rule))
+        shape.graph.add((rule, SH.condition, self.name))
+        shape.graph.add((rule, A, SH.TripleRule))
+        shape.graph.add((rule, SH.subject, SH.this))
+        shape.graph.add((rule, SH.predicate, A))
+        shape.graph.add((rule, SH.object, self.name))
+
+        return shape
+
+
+def _resolve_imports(
+    graph: rdflib.Graph, recursive_limit: int, seen: Set[rdflib.URIRef]
+) -> rdflib.Graph:
+    from buildingmotif.dataclasses.library import Library
+
+    if recursive_limit == 0:
+        return graph
+    new_g = copy_graph(graph)
+    for ontology in graph.objects(predicate=OWL.imports):
+        if ontology in seen:
+            continue
+        seen.add(ontology)
+
+        # go find the graph definition from our libraries
+        lib = Library.load(name=ontology)
+        dependency = _resolve_imports(
+            lib.get_shape_collection().graph, recursive_limit - 1, seen
+        )
+        new_g += dependency
+        print(f"graph size now {len(new_g)}")
+    return new_g

@@ -124,6 +124,16 @@ class Template:
         return params
 
     @property
+    def dependency_parameters(self) -> Set[str]:
+        """
+        The set of all parameters used in this template's dependencies
+        """
+        params: Set[str] = set()
+        for dep in self.get_dependencies():
+            params = params.union(dep.template.parameters)
+        return params
+
+    @property
     def parameter_counts(self) -> Counter:
         """
         An addressable histogram of the parameter name counts in this template +
