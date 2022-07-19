@@ -5,6 +5,7 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix vav41: <urn:ashrae/g36/4.1/vav-cooling-only/> .
 @prefix : <urn:ashrae/g36/4.2/vav-with-reheat/> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 
 <urn:ashrae/g36/4.2/vav-with-reheat> a owl:Ontology ;
     owl:imports <urn:ashrae/g36/4.1/vav-cooling-only> ;
@@ -13,6 +14,7 @@
 :vav-with-reheat a sh:NodeShape, owl:Class ;
     rdfs:subClassOf vav41:vav-cooling-only ;
     sh:or ( :heating-signal1 :heating-signal2 ) ;
+    bmotif:Domain bmotif:HVAC ;
 .
 
 :heating-signal1 a sh:PropertyShape ;
