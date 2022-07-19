@@ -82,7 +82,7 @@ class GraphClassCardinality(GraphDiff):
         return lib.create_template(f"resolve{token_hex(4)}", template_body)
 
 
-def process_shacl_validation_report(report: Graph, aux: Graph) -> List["Template"]:
+def process_shacl_validation_report(report: Graph, aux: Graph) -> List[Template]:
     """
     Interpret a SHACL validation report and say what is missing.
 
@@ -91,6 +91,8 @@ def process_shacl_validation_report(report: Graph, aux: Graph) -> List["Template
     - (path, class, mincount, maxcount)
     - (path, shape, mincount, maxcount)
     """
+    classpath = SH["class"] | (SH.qualifiedValueShape / SH["class"])  # type: ignore
+    shapepath = SH["node"] | (SH.qualifiedValueShape / SH["node"])  # type: ignore
 
     g = report + aux
     diffs: Set[GraphDiff] = set()
@@ -102,21 +104,21 @@ def process_shacl_validation_report(report: Graph, aux: Graph) -> List["Template
             g.value(result, SH.sourceConstraintComponent)
             == CONSTRAINT.countConstraintComponent
         ):
-            expected_count = g.value(result, SH.sourceShape / CONSTRAINT.exactCount)
-            of_class = g.value(result, SH.sourceShape / CONSTRAINT["class"])
+            expected_count = g.value(result, SH.sourceShape / CONSTRAINT.exactCount)  # type: ignore
+            of_class = g.value(result, SH.sourceShape / CONSTRAINT["class"])  # type: ignore
             diffs.add(GraphClassCardinality(focus, g, of_class, int(expected_count)))
         # check if property shape
         elif g.value(result, SH.resultPath):
             path = g.value(result, SH.resultPath)
             min_count = g.value(
-                result, SH.sourceShape / (SH.minCount | SH.qualifiedMinCount)
+                result, SH.sourceShape / (SH.minCount | SH.qualifiedMinCount)  # type: ignore
             )
             max_count = g.value(
-                result, SH.sourceShape / (SH.maxCount | SH.qualifiedMaxCount)
+                result, SH.sourceShape / (SH.maxCount | SH.qualifiedMaxCount)  # type: ignore
             )
             classname = g.value(
                 result,
-                SH.sourceShape / (SH["class"] | (SH.qualifiedValueShape / SH["class"])),
+                SH.sourceShape / classpath,
             )
             if focus and (min_count or max_count) and classname:
                 diffs.add(
@@ -129,9 +131,7 @@ def process_shacl_validation_report(report: Graph, aux: Graph) -> List["Template
                         classname,
                     )
                 )
-            shapename = g.value(
-                result, SH.sourceShape / (SH.node | (SH.qualifiedValueShape / SH.node))
-            )
+            shapename = g.value(result, SH.sourceShape / shapepath)  # type: ignore
             if focus and (min_count or max_count) and shapename:
                 diffs.add(
                     PathShapeCount(
@@ -143,20 +143,8 @@ def process_shacl_validation_report(report: Graph, aux: Graph) -> List["Template
                         shapename,
                     )
                 )
-    # for diff in diffs:
-    #    print("---")
-    #    print(diff.focus)
-    #    print(diff.reason())
 
-    templs = diffset_to_templates(diffs)
-    # for t in templs:
-    #    print('*'*80)
-    #    print(t.name)
-    #    print(t.body.serialize())
-    return templs
-    #    templ = diff.resolve(lib)
-    #    if templ:
-    #        print(templ.body.serialize())
+    return diffset_to_templates(diffs)
 
 
 def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
