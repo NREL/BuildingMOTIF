@@ -295,15 +295,19 @@ class Template:
 
     @property
     def defining_library(self) -> "Library":
+        from buildingmotif.dataclasses.library import Library
+
         return Library.load(
             self._bm.table_connection.get_library_defining_db_template(self.id).id
         )
 
     def library_dependencies(self) -> List["Library"]:
-        libs = {self.defining_library}
+        from buildingmotif.dataclasses.library import Library
+
+        libs = {self.defining_library.id}
         for dep in self.get_dependencies():
-            libs.add(dep.template.defining_library)
-        return list(libs)
+            libs.add(dep.template.defining_library.id)
+        return [Library.load(id) for id in libs]
 
     def find_subgraphs(
         self, model: Model, *ontologies: rdflib.Graph
