@@ -31,6 +31,7 @@ class _ontology_lookup_cache:
 
     def __init__(self):
         self.sc_cache = {}
+        self.sp_cache = {}
         self.t_cache = {}
         self.in_cache = {}
 
@@ -41,6 +42,15 @@ class _ontology_lookup_cache:
         # populate cache if necessary
         if ntype not in cache:
             cache[ntype] = set(ontology.transitive_objects(ntype, RDFS.subClassOf))
+        return cache[ntype]
+
+    def superproperties(self, ntype: Term, ontology: Graph) -> Set[Term]:
+        if id(ontology) not in self.sp_cache:
+            self.sp_cache[id(ontology)] = {}
+        cache = self.sp_cache[id(ontology)]
+        # populate cache if necessary
+        if ntype not in cache:
+            cache[ntype] = set(ontology.transitive_objects(ntype, RDFS.subPropertyOf))
         return cache[ntype]
 
     def types(self, node: Term, graph: Graph) -> Set[URIRef]:
@@ -97,13 +107,28 @@ def _compatible_types(
     :return: True if the nodes are semantically compatible, false otherwise
     :rtype: bool
     """
-    for n1type in _get_types(n1, g1, _cache):
-        for n2type in _get_types(n2, g2, _cache):
-            # check if types are covariant
-            if n2type in _cache.parents(n1type, ontology) or n1type in _cache.parents(
-                n2type, ontology
-            ):
-                return True
+    n1types = _get_types(n1, g1, _cache)
+    n2types = _get_types(n2, g2, _cache)
+    # check if these are properties; if so, use subPropertyOf, not subClassOf
+    property_types = {OWL.ObjectProperty, OWL.DatatypeProperty}
+    if property_types.intersection(n1types) and property_types.intersection(n2types):
+        for n1type in _get_types(n1, g1, _cache):
+            for n2type in _get_types(n2, g2, _cache):
+
+                # check if types are covariant
+                if n2type in _cache.superproperties(
+                    n1type, ontology
+                ) or n1type in _cache.superproperties(n2type, ontology):
+                    return True
+    else:
+        for n1type in _get_types(n1, g1, _cache):
+            for n2type in _get_types(n2, g2, _cache):
+
+                # check if types are covariant
+                if n2type in _cache.parents(
+                    n1type, ontology
+                ) or n1type in _cache.parents(n2type, ontology):
+                    return True
     return False
 
 
