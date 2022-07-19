@@ -64,10 +64,7 @@ class _ontology_lookup_cache:
         return cache[node]
 
 
-_cache = _ontology_lookup_cache()
-
-
-def _get_types(n: Term, g: Graph) -> Set[URIRef]:
+def _get_types(n: Term, g: Graph, _cache: _ontology_lookup_cache) -> Set[URIRef]:
     """
     Types for a node should only be URIRefs, so the
     type filtering here should be safe.
@@ -77,7 +74,12 @@ def _get_types(n: Term, g: Graph) -> Set[URIRef]:
 
 
 def _compatible_types(
-    n1: Term, g1: Graph, n2: Term, g2: Graph, ontology: Graph
+    n1: Term,
+    g1: Graph,
+    n2: Term,
+    g2: Graph,
+    ontology: Graph,
+    _cache: _ontology_lookup_cache,
 ) -> bool:
     """
     Returns true if the two terms have covariant types.
@@ -95,8 +97,8 @@ def _compatible_types(
     :return: True if the nodes are semantically compatible, false otherwise
     :rtype: bool
     """
-    for n1type in _get_types(n1, g1):
-        for n2type in _get_types(n2, g2):
+    for n1type in _get_types(n1, g1, _cache):
+        for n2type in _get_types(n2, g2, _cache):
             # check if types are covariant
             if n2type in _cache.parents(n1type, ontology) or n1type in _cache.parents(
                 n2type, ontology
@@ -106,7 +108,7 @@ def _compatible_types(
 
 
 def get_semantic_feasibility(
-    G1: Graph, G2: Graph, ontology: Graph
+    G1: Graph, G2: Graph, ontology: Graph, _cache: _ontology_lookup_cache
 ) -> Callable[[Term, Term], bool]:
     """
     Returns a function that checks if two nodes are semantically feasible to be
@@ -132,7 +134,7 @@ def get_semantic_feasibility(
             else:
                 return False
         # case 2: both are instances
-        if _compatible_types(n1, G1, n2, G2, ontology):
+        if _compatible_types(n1, G1, n2, G2, ontology, _cache):
             return True
         return False
 
@@ -152,7 +154,10 @@ class _VF2SemanticMatcher(DiGraphMatcher):
     def __init__(self, T: Graph, G: Graph, ontology: Graph):
         super().__init__(rdflib_to_networkx_digraph(T), rdflib_to_networkx_digraph(G))
         self.ontology = ontology
-        self._semantic_feasibility = get_semantic_feasibility(T, G, ontology)
+        self._cache = _ontology_lookup_cache()
+        self._semantic_feasibility = get_semantic_feasibility(
+            T, G, ontology, self._cache
+        )
 
     def semantic_feasibility(self, g1: Term, g2: Term) -> bool:
         """
@@ -193,13 +198,15 @@ class TemplateMatcher:
     by how "complete" the monomorphism is.
     """
 
-    mappings: Dict[int, List[Mapping]] = defaultdict(list)
+    mappings: Dict[int, List[Mapping]]
     template: "Template"
     building: Graph
-    template_bindings: Dict[str, Term] = {}
+    template_bindings: Dict[str, Term]
     template_graph: Graph
 
     def __init__(self, building: Graph, template: "Template", ontology: Graph):
+        self.mappings = defaultdict(list)
+        self.template_bindings = {}
         self.template = template
         self.building = building
         self.ontology = ontology
