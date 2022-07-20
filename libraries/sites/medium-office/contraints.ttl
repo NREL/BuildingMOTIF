@@ -38,14 +38,23 @@
 :floor1-room-count a sh:NodeShape ;
     sh:message "Floor1 has 10 rooms" ;
     sh:targetNode bldg:floor1 ;
-    constraint:exactCount 10 ;
-    constraint:class brick:Room ;
+    sh:class brick:Floor ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:class brick:Room ] ;
+        sh:qualifiedMinCount 10 ;
+        sh:qualifiedValueShape 10 ;
+    ];
 .
 :floor2-room-count a sh:NodeShape ;
     sh:message "Floor2 has 5 rooms" ;
-    sh:targetNode bldg:floor1 ;
-    constraint:exactCount 5 ;
-    constraint:class brick:Room ;
+    sh:targetNode bldg:floor2 ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:class brick:Room ] ;
+        sh:qualifiedMinCount 5 ;
+        sh:qualifiedValueShape 5 ;
+    ];
 .
 :room-area a sh:NodeShape ;
     sh:message "all rooms must have areas" ;
