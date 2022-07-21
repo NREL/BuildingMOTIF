@@ -1,10 +1,11 @@
 from typing import Dict
 
-from rdflib import Namespace, URIRef
+from rdflib import Namespace
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library, Model, Template
 from buildingmotif.progressive_creation import progressive_plan
+from buildingmotif.utils import Term
 
 
 def test_generate_valid_progression(bm: BuildingMOTIF):
@@ -18,7 +19,7 @@ def test_generate_valid_progression(bm: BuildingMOTIF):
         templates.get_templates(), brick.get_shape_collection().graph
     )
 
-    bindings: Dict[str, URIRef] = {}
+    bindings: Dict[str, Term] = {}
     for templ in template_sequence:
         templ = templ.evaluate(bindings)
         if isinstance(templ, Template):
