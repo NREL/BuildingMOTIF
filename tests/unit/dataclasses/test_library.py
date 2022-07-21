@@ -87,7 +87,7 @@ def test_load_library_from_directory(bm: BuildingMOTIF):
 
 
 def test_load_library_from_directory_with_shapes(bm: BuildingMOTIF):
-    lib = Library.load(directory="tests/unit/fixtures")
+    lib = Library.load(directory="tests/unit/fixtures/matching")
     assert lib is not None
     shapeg = lib.get_shape_collection()
     assert shapeg is not None
