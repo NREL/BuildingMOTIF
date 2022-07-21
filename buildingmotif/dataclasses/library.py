@@ -34,7 +34,7 @@ class _template_dependency:
     def __repr__(self):
         return (
             f"dep<name={self.template_name} bindings={self.bindings} "
-            "library={self.library} id={self.template_id}>"
+            f"library={self.library} id={self.template_id}>"
         )
 
     @classmethod

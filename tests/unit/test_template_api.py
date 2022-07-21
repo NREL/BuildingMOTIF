@@ -1,8 +1,9 @@
 from rdflib import Graph, Namespace
 
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Library, Template
+from buildingmotif.dataclasses import Library, Model, Template
 from buildingmotif.namespaces import BRICK, PARAM, A
+from buildingmotif.template_matcher import TemplateMatcher
 from buildingmotif.utils import graph_size
 
 BLDG = Namespace("urn:building/")
@@ -129,3 +130,25 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     )
     assert isinstance(t, Template)
     assert t.parameters == {"occ"}
+
+
+def test_template_matching(bm: BuildingMOTIF):
+    EX = Namespace("urn:ex/")
+    brick = Library.load(ontology_graph="tests/unit/fixtures/matching/brick.ttl")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    damper = lib.get_template_by_name("outside-air-damper")
+
+    bldg = Model.create("my-building")
+    bldg.add_graph(Graph().parse("tests/unit/fixtures/matching/model.ttl"))
+
+    matcher = TemplateMatcher(bldg.graph, damper, brick.get_shape_collection().graph)
+    assert matcher is not None
+    mapping, _ = next(matcher.building_mapping_subgraphs_iter())
+    assert mapping == {
+        EX["damper1"]: PARAM["name"],
+        BRICK["Outside_Air_Damper"]: BRICK["Outside_Air_Damper"],
+    }
+
+    remaining_template = matcher.remaining_template(mapping)
+    assert isinstance(remaining_template, Template)
+    assert remaining_template.parameters == {"pos"}
