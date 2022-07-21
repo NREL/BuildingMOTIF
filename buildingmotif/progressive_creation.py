@@ -1,9 +1,11 @@
 from collections import Counter
+from secrets import token_hex
 from typing import Callable, Dict, List
 
 from rdflib import Graph
 
-from buildingmotif.dataclasses import Template
+from buildingmotif.dataclasses import Library, Template
+from buildingmotif.namespaces import PARAM
 from buildingmotif.template_matcher import (
     _ontology_lookup_cache,
     get_semantic_feasibility,
@@ -11,6 +13,24 @@ from buildingmotif.template_matcher import (
 from buildingmotif.utils import Term, Triple
 
 # from rdflib.compare import graph_diff
+
+
+def _is_parameterized_triple(triple: Triple) -> bool:
+    """
+    Returns true if a parameter appears in the triple
+    """
+    return (
+        triple[0].startswith(PARAM)
+        or triple[1].startswith(PARAM)
+        or triple[2].startswith(PARAM)
+    )
+
+
+def _template_from_triples(lib: Library, triples: List[Triple]) -> Template:
+    g = Graph()
+    for t in triples:
+        g.add(t)
+    return lib.create_template(token_hex(4), g)
 
 
 def compatible_triples(
@@ -70,26 +90,30 @@ def progressive_plan(templates: List[Template], context: Graph) -> List[Template
                 histogram[body_triple] = 1
                 inv[body_triple] = templ
 
-    from pprint import pprint
-
-    pprint(histogram)
-
-    most_common = histogram.most_common()
-    # start with most common triple
-    seed = most_common.pop(0)
-    print(seed[0])
-
-    # now to search outwards. We want to generate a sequence of triples
+    # Start with the most common triple. We want to generate a sequence of triples
     # that maximizes the number of templates that are included in the resulting graph.
     # This is analogous to creating a left-biased CDF of (original) templates included
 
     # idea 1: just iterate through most common histogram
     # This has no guarantee that the sequence is optimal *or* connected.
     # We probably want to prioritize creating a connected sequence..
-    for triple in most_common:
-        print(triple[0])
+    most_common = histogram.most_common()
+    triples = [triple[0] for triple in most_common]
+
+    template_sequence: List[Template] = []
+
+    lib = Library.create("temporary")
+    buffer: List[Triple] = []
+    for triple in triples:
+        buffer.append(triple)
+        if _is_parameterized_triple(triple):
+            template_sequence.append(_template_from_triples(lib, buffer))
+            buffer.clear()
+    if len(buffer) > 0:
+        template_sequence.append(_template_from_triples(lib, buffer))
 
     # TODO: need to mark when a new template is satisfied
+
     # can look at the CDF for a site specification as part of paper evaluation
 
     # stub of an alternative approach...
@@ -112,4 +136,4 @@ def progressive_plan(templates: List[Template], context: Graph) -> List[Template
     #    print("*" * 100)
     #    print("*" * 100)
 
-    return []
+    return template_sequence
