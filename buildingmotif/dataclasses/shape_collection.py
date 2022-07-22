@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Optional
 
 import rdflib
+from rdflib import URIRef
 
 from buildingmotif import get_building_motif
 from buildingmotif.utils import Triple
@@ -74,3 +75,29 @@ class ShapeCollection:
         :type graph: rdflib.Graph
         """
         self.graph += graph
+
+    def get_shapes_of_definition_type(self, definition_type: URIRef) -> list[URIRef]:
+        """get subjects present in shape of definition_type
+
+        :param definition_type: desired definition_type
+        :type definition_type: URIRef
+        :return: subjects
+        :rtype: list[URIRef]
+        """
+        defintion_type_URIRef = URIRef("https://nrel.gov/BuildingMOTIF#Definition_Type")
+        subjects = self.graph.subjects(defintion_type_URIRef, definition_type)
+
+        return list(subjects)
+
+    def get_shapes_of_domain(self, domain: URIRef) -> list[URIRef]:
+        """get subjects present in shape of domain type
+
+        :param domain: desired domain
+        :type domain: URIRef
+        :return: subjects
+        :rtype: list[URIRef]
+        """
+        type_URIRef = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+        subjects = self.graph.subjects(type_URIRef, domain)
+
+        return list(subjects)
