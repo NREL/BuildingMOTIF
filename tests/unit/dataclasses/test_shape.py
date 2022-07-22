@@ -33,18 +33,32 @@ def test_get_shapes_of_definition_type(clean_building_motif):
     @prefix : <urn:model#> .
     @prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 
-    :shape1 a owl:Class, sh:NodeShape ;
-        bmotif:Definition_Type bmotif:System_Specification ;
+    :shape1 a owl:Class, bmotif:Definition_Type ;
     .
 
-    :shape2 a owl:Class, sh:NodeShape ;
+    :shape2 a owl:Class, bmotif:Sequence_Of_Operations ;
+    .
+
+    :shape3 a owl:Class, bmotif:Analytics_Application ;
     .
     """
     )
 
     assert shape_collection.get_shapes_of_definition_type(
-        URIRef("https://nrel.gov/BuildingMOTIF#System_Specification")
-    ) == [URIRef("urn:model#shape1")]
+        URIRef("https://nrel.gov/BuildingMOTIF#Definition_Type")
+    ) == [
+        URIRef("urn:model#shape1"),
+        URIRef("urn:model#shape2"),
+        URIRef("urn:model#shape3"),
+    ]
+
+    assert shape_collection.get_shapes_of_definition_type(
+        URIRef("https://nrel.gov/BuildingMOTIF#Sequence_Of_Operations")
+    ) == [URIRef("urn:model#shape2")]
+
+    assert shape_collection.get_shapes_of_definition_type(
+        URIRef("https://nrel.gov/BuildingMOTIF#Analytics_Application")
+    ) == [URIRef("urn:model#shape3")]
 
 
 def test_get_shapes_of_domain(clean_building_motif):
@@ -59,7 +73,10 @@ def test_get_shapes_of_domain(clean_building_motif):
     :shape1 a bmotif:HVAC ;
     .
 
-    :shape2 a owl:Class, sh:NodeShape ;
+    :shape2 a bmotif:Lighting ;
+    .
+
+    :shape3 a bmotif:Electrical ;
     .
     """
     )
@@ -67,3 +84,11 @@ def test_get_shapes_of_domain(clean_building_motif):
     assert shape_collection.get_shapes_of_domain(
         URIRef("https://nrel.gov/BuildingMOTIF#HVAC")
     ) == [URIRef("urn:model#shape1")]
+
+    assert shape_collection.get_shapes_of_domain(
+        URIRef("https://nrel.gov/BuildingMOTIF#Lighting")
+    ) == [URIRef("urn:model#shape2")]
+
+    assert shape_collection.get_shapes_of_domain(
+        URIRef("https://nrel.gov/BuildingMOTIF#Electrical")
+    ) == [URIRef("urn:model#shape3"), URIRef("urn:model#shape2")]
