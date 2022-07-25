@@ -4,6 +4,7 @@ from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
+from buildingmotif.namespaces import BMOTIF
 
 
 def test_create_shape_collection(clean_building_motif):
@@ -44,20 +45,20 @@ def test_get_shapes_of_definition_type(clean_building_motif):
     """
     )
 
-    assert shape_collection.get_shapes_of_definition_type(
-        URIRef("https://nrel.gov/BuildingMOTIF#Definition_Type")
-    ) == [
+    assert set(
+        shape_collection.get_shapes_of_definition_type(BMOTIF.Definition_Type)
+    ) == {
         URIRef("urn:model#shape1"),
         URIRef("urn:model#shape2"),
         URIRef("urn:model#shape3"),
-    ]
+    }
 
     assert shape_collection.get_shapes_of_definition_type(
-        URIRef("https://nrel.gov/BuildingMOTIF#Sequence_Of_Operations")
+        BMOTIF.Sequence_Of_Operations
     ) == [URIRef("urn:model#shape2")]
 
     assert shape_collection.get_shapes_of_definition_type(
-        URIRef("https://nrel.gov/BuildingMOTIF#Analytics_Application")
+        BMOTIF.Analytics_Application
     ) == [URIRef("urn:model#shape3")]
 
 
@@ -81,14 +82,15 @@ def test_get_shapes_of_domain(clean_building_motif):
     """
     )
 
-    assert shape_collection.get_shapes_of_domain(
-        URIRef("https://nrel.gov/BuildingMOTIF#HVAC")
-    ) == [URIRef("urn:model#shape1")]
+    assert shape_collection.get_shapes_of_domain(BMOTIF.HVAC) == [
+        URIRef("urn:model#shape1")
+    ]
 
-    assert shape_collection.get_shapes_of_domain(
-        URIRef("https://nrel.gov/BuildingMOTIF#Lighting")
-    ) == [URIRef("urn:model#shape2")]
+    assert shape_collection.get_shapes_of_domain(BMOTIF.Lighting) == [
+        URIRef("urn:model#shape2")
+    ]
 
-    assert shape_collection.get_shapes_of_domain(
-        URIRef("https://nrel.gov/BuildingMOTIF#Electrical")
-    ) == [URIRef("urn:model#shape3"), URIRef("urn:model#shape2")]
+    assert set(shape_collection.get_shapes_of_domain(BMOTIF.Electrical)) == {
+        URIRef("urn:model#shape3"),
+        URIRef("urn:model#shape2"),
+    }

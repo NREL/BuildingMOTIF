@@ -3,9 +3,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional
 
 import rdflib
-from rdflib import URIRef
+from rdflib import RDF, RDFS, URIRef
 
 from buildingmotif import get_building_motif
+from buildingmotif.namespaces import BMOTIF
 from buildingmotif.utils import Triple
 
 if TYPE_CHECKING:
@@ -94,9 +95,7 @@ class ShapeCollection:
         :return: list of includes definition_types
         :rtype: list[URIRef]
         """
-        children = ontology.subjects(
-            URIRef("http://www.w3.org/2000/01/rdf-schema#subClassOf"), definition_type
-        )
+        children = ontology.subjects(RDFS.subClassOf, definition_type)
 
         results = [definition_type]
         for child in children:
@@ -113,9 +112,7 @@ class ShapeCollection:
         :return: list of includes domains
         :rtype: list[URIRef]
         """
-        children = ontology.subjects(
-            URIRef("https://nrel.gov/BuildingMOTIF#includes"), domain
-        )
+        children = ontology.subjects(BMOTIF.includes, domain)
 
         results = [domain]
         for child in children:
@@ -131,12 +128,11 @@ class ShapeCollection:
         :return: subjects
         :rtype: list[URIRef]
         """
-        type_URIRef = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
         definition_types = self._get_subclasses_of_definition_type(definition_type)
 
         results = []
         for definition_type in definition_types:
-            results += self.graph.subjects(type_URIRef, definition_type)
+            results += self.graph.subjects(RDF.type, definition_type)
 
         return results
 
@@ -148,11 +144,10 @@ class ShapeCollection:
         :return: subjects
         :rtype: list[URIRef]
         """
-        type_URIRef = URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
         included_domains = self._get_included_domains(domain)
 
         results = []
         for domain in included_domains:
-            results += self.graph.subjects(type_URIRef, domain)
+            results += self.graph.subjects(RDF.type, domain)
 
         return results
