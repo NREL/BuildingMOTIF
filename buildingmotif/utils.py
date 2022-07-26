@@ -166,6 +166,8 @@ def get_template_parts_from_shape(
             raise Exception(f"more than one object type detected on {shape_name}")
         if len(mincounts) > 1:
             raise Exception(f"more than one min count detected on {shape_name}")
+        if len(mincounts) == 0 or len(otypes) == 0:
+            continue
         (path, otype, mincount) = property_path, otypes[0], mincounts[0]
         assert isinstance(mincount, Literal)
 
