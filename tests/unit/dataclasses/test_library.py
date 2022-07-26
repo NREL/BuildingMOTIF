@@ -65,7 +65,7 @@ def test_get_shape_collection(clean_building_motif):
 def test_load_library_from_ontology(bm: BuildingMOTIF):
     lib = Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
     assert lib is not None
-    assert len(lib.get_templates()) == 2
+    assert len(lib.get_templates()) == 3
     # spot check a certain template
     templ = lib.get_template_by_name("https://brickschema.org/schema/Brick#AHU")
     assert templ is not None
