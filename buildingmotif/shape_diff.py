@@ -174,5 +174,6 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
             base.add_dependency(templ, {"name": "name"})
         unified = base.inline_dependencies()
         unified = unified.evaluate({"name": focus})
+        assert isinstance(unified, Template)
         templates.append(unified)
     return templates
