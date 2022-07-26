@@ -15,8 +15,12 @@ def test_generate_valid_progression(bm: BuildingMOTIF):
         ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl"
     )
     templates = Library.load(directory="tests/unit/fixtures/progressive/templates")
+    tstat_templs = [
+        templates.get_template_by_name("tstat"),
+        templates.get_template_by_name("tstat-location"),
+    ]
     template_sequence = progressive_plan(
-        templates.get_templates(), brick.get_shape_collection().graph
+        tstat_templs, brick.get_shape_collection().graph
     )
 
     bindings: Dict[str, Term] = {}
@@ -46,10 +50,3 @@ def test_generate_valid_progression(bm: BuildingMOTIF):
         ?room a brick:Room .
     }"""
     assert len(list(model.graph.query(q2))) == 1
-
-    q3 = """SELECT ?zone ?room WHERE {
-        ?room a brick:Room ;
-            brick:isPartOf ?zone .
-        ?zone a brick:HVAC_Zone .
-    }"""
-    assert len(list(model.graph.query(q3))) == 1
