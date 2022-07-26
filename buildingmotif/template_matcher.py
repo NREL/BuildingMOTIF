@@ -229,12 +229,19 @@ class TemplateMatcher:
     template_bindings: Dict[str, Term]
     template_graph: Graph
 
-    def __init__(self, building: Graph, template: "Template", ontology: Graph):
+    def __init__(
+        self,
+        building: Graph,
+        template: "Template",
+        ontology: Graph,
+        graph_target: Optional[Term] = None,
+    ):
         self.mappings = defaultdict(list)
         self.template_bindings = {}
         self.template = template
         self.building = building
         self.ontology = ontology
+        self.graph_target = graph_target
 
         self.template_graph = copy_graph(template.body)
         self.template_parameters = {PARAM[p] for p in self.template.parameters}
@@ -248,6 +255,9 @@ class TemplateMatcher:
             )
             if matching.subgraph_is_monomorphic():
                 for sg in matching.subgraph_monomorphisms_iter():
+                    # skip if the subgraph does not contain the graph node we care about
+                    if self.graph_target and self.graph_target not in sg.keys():
+                        continue
                     # sg is a mapping from building graph nodes to template nodes
                     # that constitutes a monomorphism.
                     if len(sg) == 0:

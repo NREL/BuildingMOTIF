@@ -66,3 +66,27 @@ brick:Fan a owl:Class,
             sh:subject sh:this ] ;
     brick:hasAssociatedTag tag:Equipment,
         tag:Fan .
+
+brick:Supply_Fan a owl:Class,
+        sh:NodeShape ;
+    rdfs:label "Supply Fan" ;
+    rdfs:subClassOf brick:Fan ;
+    owl:equivalentClass brick:Discharge_Fan ;
+    skos:definition "Fan moving supply air -- air that is supplied from the HVAC system into the building"@en ;
+    sh:rule [ a sh:TripleRule ;
+            sh:object tag:Equipment ;
+            sh:predicate brick:hasTag ;
+            sh:subject sh:this ],
+        [ a sh:TripleRule ;
+            sh:object tag:Fan ;
+            sh:predicate brick:hasTag ;
+            sh:subject sh:this ],
+        [ a sh:TripleRule ;
+            sh:object tag:Supply ;
+            sh:predicate brick:hasTag ;
+            sh:subject sh:this ] ;
+    brick:hasAssociatedTag tag:Equipment,
+        tag:Fan,
+        tag:Supply .
+
+
