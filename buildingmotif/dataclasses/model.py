@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Any, List, Optional, Tuple
 
 import pyshacl
 import rdflib
@@ -89,7 +89,9 @@ class Model:
         """
         self.graph += graph
 
-    def validate(self, shape_collections: List[ShapeCollection]) -> bool:
+    def validate(
+        self, shape_collections: List[ShapeCollection]
+    ) -> Tuple[Any, Any, Any]:
         """
         Validates this model against the given shape collections. Loads all of the shape_collections
         into a single graph.
@@ -109,7 +111,12 @@ class Model:
             shapeg += sc.graph
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
-        valid, _, _ = pyshacl.validate(
-            data_graph, shacl_graph=shapeg, advanced=True, js=True, allow_warnings=True
+        valid, _, report_text = pyshacl.validate(
+            data_graph,
+            shacl_graph=shapeg,
+            advanced=True,
+            js=True,
+            allow_warnings=True,
+            inplace=True,
         )
-        return valid
+        return valid, report_text, data_graph

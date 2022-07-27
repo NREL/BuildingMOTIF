@@ -1,0 +1,49 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix constraint: <https://nrel.gov/BuildingMOTIF/constraints#> .
+@prefix : <urn:medium-office-brick-constraints/> .
+@prefix bldg: <http://example.org/building/> .
+
+: a owl:Ontology ;
+    owl:imports <https://brickschema.org/schema/1.3/Brick> ;
+    owl:imports <https://nrel.gov/BuildingMOTIF/constraints> ;
+    owl:imports <urn:ashrae/g36> ;
+.
+
+:ahu-count a sh:NodeShape ;
+    sh:message "Need 3 AHUs" ;
+    sh:targetNode : ; # target *this* graph
+    constraint:exactCount 3 ;
+    constraint:class brick:AHU ;
+.
+
+:reheat-vav a sh:NodeShape ;
+    sh:targetClass brick:RVAV ;
+    sh:node <urn:ashrae/g36/4.2/vav-with-reheat/vav-with-reheat> ;
+.
+
+# required relationships
+:ahu-vav a sh:NodeShape ;
+    sh:message "AHU feeds VAVs" ;
+    sh:targetClass brick:AHU ;
+    sh:property [
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:class brick:RVAV ] ;
+        sh:qualifiedMinCount 5 ;
+    ] ;
+.
+
+:vav-zone a sh:NodeShape ;
+    sh:message "Each vav feeds exactly 1 zone" ;
+    sh:targetClass brick:RVAV ;
+    sh:property [
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:class brick:HVAC_Zone ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+.
