@@ -1,13 +1,21 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Optional
+from pathlib import Path
+from typing import TYPE_CHECKING, List, Optional
 
 import rdflib
+from rdflib import RDF, RDFS, URIRef
 
 from buildingmotif import get_building_motif
+from buildingmotif.namespaces import BMOTIF
 from buildingmotif.utils import Triple
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
+
+ONTOLOGY_FILE = (
+    Path(__file__).resolve().parents[1] / "resources" / "building_motif_ontology.ttl"
+)
+ontology = rdflib.Graph().parse(ONTOLOGY_FILE)
 
 
 @dataclass
@@ -74,3 +82,72 @@ class ShapeCollection:
         :type graph: rdflib.Graph
         """
         self.graph += graph
+
+    @classmethod
+    def _get_subclasses_of_definition_type(
+        cls, definition_type: URIRef
+    ) -> List[URIRef]:
+        """get all the definition_types in the ontology that are subclasses
+             in the given definition_types.
+
+        :param definition_type: the given definition_type
+        :type definition_type: URIRef
+        :return: list of includes definition_types
+        :rtype: list[URIRef]
+        """
+        children = ontology.subjects(RDFS.subClassOf, definition_type)
+
+        results = [definition_type]
+        for child in children:
+            results += cls._get_subclasses_of_definition_type(child)
+
+        return results
+
+    @classmethod
+    def _get_included_domains(cls, domain: URIRef) -> List[URIRef]:
+        """get all the domains in the ontology that are included in the given domains.
+
+        :param domain: the given domain
+        :type domain: URIRef
+        :return: list of includes domains
+        :rtype: list[URIRef]
+        """
+        children = ontology.subjects(BMOTIF.includes, domain)
+
+        results = [domain]
+        for child in children:
+            results += cls._get_included_domains(child)
+
+        return results
+
+    def get_shapes_of_definition_type(self, definition_type: URIRef) -> List[URIRef]:
+        """get subjects present in shape of definition_type
+
+        :param definition_type: desired definition_type
+        :type definition_type: URIRef
+        :return: subjects
+        :rtype: list[URIRef]
+        """
+        definition_types = self._get_subclasses_of_definition_type(definition_type)
+
+        results = []
+        for definition_type in definition_types:
+            results += self.graph.subjects(RDF.type, definition_type)
+
+        return results
+
+    def get_shapes_of_domain(self, domain: URIRef) -> List[URIRef]:
+        """get subjects present in shape of domain type
+
+        :param domain: desired domain
+        :type domain: URIRef
+        :return: subjects
+        :rtype: list[URIRef]
+        """
+        included_domains = self._get_included_domains(domain)
+
+        results = []
+        for domain in included_domains:
+            results += self.graph.subjects(RDF.type, domain)
+
+        return results
