@@ -6,12 +6,15 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 
+import pyshacl
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
 
-from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
+from buildingmotif.namespaces import OWL, PARAM, RDF, SH, A, bind_prefixes
 
 if TYPE_CHECKING:
+    from buildingmotif.dataclasses.model import Model
+    from buildingmotif.dataclasses.shape_collection import ShapeCollection
     from buildingmotif.template import Template
 
 Term = Union[URIRef, Literal, BNode]
@@ -125,6 +128,38 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
     else:
         searches = (directory.glob(f"{pat}") for pat in patterns)
     return list(chain.from_iterable(searches))
+
+
+def test_model_against_shapes(
+    model: "Model",
+    shape_collections: List["ShapeCollection"],
+    shapes_to_test: List[URIRef],
+    target_class: URIRef,
+):
+    model_graph = copy_graph(model.graph)
+    ontology_graph = Graph()
+    for shape_collection in shape_collections:
+        ontology_graph += shape_collection.graph
+
+    results = {}
+
+    for shape_uri in shapes_to_test:
+        targets = model_graph.triples((None, A, target_class))
+        temp_model_graph = copy_graph(model_graph)
+        for s, _, _ in targets:
+            temp_model_graph.add((s, A, shape_uri))
+
+        temp_model_graph += ontology_graph.cbd(shape_uri)
+
+        conforms, report_graph, report_text = pyshacl.validate(
+            data_graph=temp_model_graph,
+            ont_graph=ontology_graph,
+            advanced=True,
+            js=True,
+        )
+        results[shape_uri] = (conforms, report_graph, report_text)
+
+    return results
 
 
 def get_template_parts_from_shape(

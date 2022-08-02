@@ -114,9 +114,9 @@ class Model:
         valid, _, report_text = pyshacl.validate(
             data_graph,
             shacl_graph=shapeg,
+            ont_graph=shapeg,
             advanced=True,
             js=True,
             allow_warnings=True,
-            inplace=True,
         )
         return valid, report_text, data_graph
