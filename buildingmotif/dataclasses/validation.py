@@ -1,6 +1,7 @@
 from collections import defaultdict
 from dataclasses import dataclass
 from functools import cached_property
+from itertools import chain
 from secrets import token_hex
 from typing import TYPE_CHECKING, ClassVar, Dict, List, Optional, Set
 
@@ -17,11 +18,11 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class GraphDiff:
-    focus: URIRef
+    focus: Optional[URIRef]
     graph: Graph
     counter: ClassVar[int] = 0
 
-    def resolve(self, lib: "Library") -> "Template":
+    def resolve(self, lib: "Library") -> List["Template"]:
         raise NotImplementedError
 
     def reason(self) -> str:
@@ -42,13 +43,14 @@ class PathClassCount(GraphDiff):
         return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
 {self.classname} on path {self.path}"
 
-    def resolve(self, lib: "Library") -> "Template":
+    def resolve(self, lib: "Library") -> List["Template"]:
+        assert self.focus is not None
         body = Graph()
         for i in range(self.minc or 0):
             inst = _gensym()
-            body.add((PARAM["name"], self.path, inst))
+            body.add((self.focus, self.path, inst))
             body.add((inst, A, self.classname))
-        return lib.create_template(f"resolve_{token_hex(4)}", body)
+        return [lib.create_template(f"resolve_{token_hex(4)}", body)]
 
 
 @dataclass(frozen=True)
@@ -62,13 +64,14 @@ class PathShapeCount(GraphDiff):
         return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
 {self.shapename} on path {self.path}"
 
-    def resolve(self, lib: "Library") -> "Template":
+    def resolve(self, lib: "Library") -> List["Template"]:
+        assert self.focus is not None
         body = Graph()
         for _ in range(self.minc or 0):
             inst = _gensym()
-            body.add((PARAM["name"], self.path, inst))
+            body.add((self.focus, self.path, inst))
             body.add((inst, A, self.shapename))
-        return lib.create_template(f"resolve{token_hex(4)}", body)
+        return [lib.create_template(f"resolve{token_hex(4)}", body)]
 
 
 @dataclass(frozen=True)
@@ -81,12 +84,13 @@ class RequiredPath(GraphDiff):
         return f"{self.focus} needs between {self.minc} and {self.maxc} uses \
 of path {self.path}"
 
-    def resolve(self, lib: "Library") -> "Template":
+    def resolve(self, lib: "Library") -> List["Template"]:
+        assert self.focus is not None
         body = Graph()
         for _ in range(self.minc or 0):
             inst = _gensym()
-            body.add((PARAM["name"], self.path, inst))
-        return lib.create_template(f"resolve{token_hex(4)}", body)
+            body.add((self.focus, self.path, inst))
+        return [lib.create_template(f"resolve{token_hex(4)}", body)]
 
 
 @dataclass(frozen=True)
@@ -97,12 +101,13 @@ class GraphClassCardinality(GraphDiff):
     def reason(self) -> str:
         return f"Graph did not have {self.expectedCount} instances of {self.classname}"
 
-    def resolve(self, lib: "Library") -> "Template":
-        template_body = Graph()
+    def resolve(self, lib: "Library") -> List["Template"]:
+        templs = []
         for i in range(self.expectedCount):
-            template_body.add((PARAM[f"inst_{i}"], A, self.classname))
-
-        return lib.create_template(f"resolve{token_hex(4)}", template_body)
+            template_body = Graph()
+            template_body.add((PARAM["name"], A, self.classname))
+            templs.append(lib.create_template(f"resolve{token_hex(4)}", template_body))
+        return templs
 
 
 @dataclass
@@ -151,9 +156,10 @@ class ValidationContext:
                     result, SH.sourceShape / CONSTRAINT.exactCount  # type: ignore
                 )
                 of_class = g.value(result, SH.sourceShape / CONSTRAINT["class"])  # type: ignore
-                diffs.add(
-                    GraphClassCardinality(focus, g, of_class, int(expected_count))
-                )
+                # here, our 'self.focus' is the graph itself, which we don't want to have bound
+                # to the templates during evaluation (for this specific kind of diff).
+                # For this reason we override focus to be None
+                diffs.add(GraphClassCardinality(None, g, of_class, int(expected_count)))
             # check if property shape
             elif g.value(result, SH.resultPath):
                 path = g.value(result, SH.resultPath)
@@ -218,14 +224,22 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
     from buildingmotif.dataclasses import Library, Template
 
     related: Dict[URIRef, Set[GraphDiff]] = defaultdict(set)
+    unfocused: List[Template] = []
     lib = Library.create("resolve")
     # compute the GROUP BY GraphDiff.focus
     for diff in diffset:
-        related[diff.focus].add(diff)
+        if diff.focus is None:
+            unfocused.extend(diff.resolve(lib))
+        else:
+            related[diff.focus].add(diff)
 
     templates = []
+    # add all templates that don't have a focus node
+    templates.extend(unfocused)
+    # now merge all tempaltes together for each focus node
     for focus, diffset in related.items():
-        templs = [t for t in (diff.resolve(lib) for diff in diffset) if t]
+        templ_lists = (diff.resolve(lib) for diff in diffset)
+        templs = list(filter(None, chain.from_iterable(templ_lists)))
         if len(templs) <= 1:
             templates.extend(templs)
             continue
@@ -233,6 +247,8 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
         for templ in templs[1:]:
             base.add_dependency(templ, {"name": "name"})
         unified = base.inline_dependencies()
+        # if focus is None, then there is no existing work in the graph
+        # that we want to associate this template with.
         unified_evaluated = unified.evaluate({"name": focus})
         assert isinstance(unified_evaluated, Template)
         templates.append(unified_evaluated)
