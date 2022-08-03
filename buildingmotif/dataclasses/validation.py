@@ -1,5 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass
+from functools import reduce
 from secrets import token_hex
 from typing import TYPE_CHECKING, ClassVar, Dict, List, Optional, Set
 
@@ -100,77 +101,78 @@ class ValidationContext:
 
     @property
     def diffset(self) -> Set[GraphDiff]:
-        return report_to_diffset(
-            self.report, *(sc.graph for sc in self.shape_collections)
-        )
+        return self._report_to_diffset()
+
+    @property
+    def _context(self) -> Graph:
+        return reduce(sum, (sc.graph for sc in self.shape_collections))
 
     def as_templates(self) -> List["Template"]:
         return diffset_to_templates(self.diffset)
 
+    def _report_to_diffset(self) -> Set[GraphDiff]:
+        """
+        Interpret a SHACL validation report and say what is missing.
 
-def report_to_diffset(report: Graph, aux: Graph) -> Set[GraphDiff]:
-    """
-    Interpret a SHACL validation report and say what is missing.
+        :return: A set of 'GraphDiff's that each abstract a SHACL shape violation
+        :rtype: Set[GraphDiff]
+        """
+        classpath = SH["class"] | (SH.qualifiedValueShape / SH["class"])  # type: ignore
+        shapepath = SH["node"] | (SH.qualifiedValueShape / SH["node"])  # type: ignore
 
-    :param report: the SHACL validation report
-    :type report: Graph
-    :param aux: the shape collections that produced the SHACL validation report
-    :type aux: Graph
-    :return: A set of 'GraphDiff's that each abstract a SHACL shape violation
-    :rtype: Set[GraphDiff]
-    """
-    classpath = SH["class"] | (SH.qualifiedValueShape / SH["class"])  # type: ignore
-    shapepath = SH["node"] | (SH.qualifiedValueShape / SH["node"])  # type: ignore
-
-    g = report + aux
-    diffs: Set[GraphDiff] = set()
-    for result in g.objects(predicate=SH.result):
-        # check if the failure is due to our count constraint component
-        focus = g.value(result, SH.focusNode)
-        if (
-            g.value(result, SH.sourceConstraintComponent)
-            == CONSTRAINT.countConstraintComponent
-        ):
-            expected_count = g.value(result, SH.sourceShape / CONSTRAINT.exactCount)  # type: ignore
-            of_class = g.value(result, SH.sourceShape / CONSTRAINT["class"])  # type: ignore
-            diffs.add(GraphClassCardinality(focus, g, of_class, int(expected_count)))
-        # check if property shape
-        elif g.value(result, SH.resultPath):
-            path = g.value(result, SH.resultPath)
-            min_count = g.value(
-                result, SH.sourceShape / (SH.minCount | SH.qualifiedMinCount)  # type: ignore
-            )
-            max_count = g.value(
-                result, SH.sourceShape / (SH.maxCount | SH.qualifiedMaxCount)  # type: ignore
-            )
-            classname = g.value(
-                result,
-                SH.sourceShape / classpath,
-            )
-            if focus and (min_count or max_count) and classname:
+        g = self.report + self._context
+        diffs: Set[GraphDiff] = set()
+        for result in g.objects(predicate=SH.result):
+            # check if the failure is due to our count constraint component
+            focus = g.value(result, SH.focusNode)
+            if (
+                g.value(result, SH.sourceConstraintComponent)
+                == CONSTRAINT.countConstraintComponent
+            ):
+                expected_count = g.value(
+                    result, SH.sourceShape / CONSTRAINT.exactCount
+                )  # type: ignore
+                of_class = g.value(result, SH.sourceShape / CONSTRAINT["class"])  # type: ignore
                 diffs.add(
-                    PathClassCount(
-                        focus,
-                        g,
-                        path,
-                        int(min_count) if min_count else None,
-                        int(max_count) if max_count else None,
-                        classname,
-                    )
+                    GraphClassCardinality(focus, g, of_class, int(expected_count))
                 )
-            shapename = g.value(result, SH.sourceShape / shapepath)  # type: ignore
-            if focus and (min_count or max_count) and shapename:
-                diffs.add(
-                    PathShapeCount(
-                        focus,
-                        g,
-                        path,
-                        int(min_count) if min_count else None,
-                        int(max_count) if max_count else None,
-                        shapename,
-                    )
+            # check if property shape
+            elif g.value(result, SH.resultPath):
+                path = g.value(result, SH.resultPath)
+                min_count = g.value(
+                    result, SH.sourceShape / (SH.minCount | SH.qualifiedMinCount)  # type: ignore
                 )
-    return diffs
+                max_count = g.value(
+                    result, SH.sourceShape / (SH.maxCount | SH.qualifiedMaxCount)  # type: ignore
+                )
+                classname = g.value(
+                    result,
+                    SH.sourceShape / classpath,
+                )
+                if focus and (min_count or max_count) and classname:
+                    diffs.add(
+                        PathClassCount(
+                            focus,
+                            g,
+                            path,
+                            int(min_count) if min_count else None,
+                            int(max_count) if max_count else None,
+                            classname,
+                        )
+                    )
+                shapename = g.value(result, SH.sourceShape / shapepath)  # type: ignore
+                if focus and (min_count or max_count) and shapename:
+                    diffs.add(
+                        PathShapeCount(
+                            focus,
+                            g,
+                            path,
+                            int(min_count) if min_count else None,
+                            int(max_count) if max_count else None,
+                            shapename,
+                        )
+                    )
+        return diffs
 
 
 def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
@@ -205,26 +207,3 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
         assert isinstance(unified_evaluated, Template)
         templates.append(unified_evaluated)
     return templates
-
-
-def process_shacl_validation_report(report: Graph, *aux: Graph) -> List["Template"]:
-    """
-    Interpret a SHACL validation report and produce a list of templates that
-    reconcile what is missing
-    TODO: handle recommending removal of information
-
-    Standard 'report' or 'diff' object:
-    - focus node (could be the graph itself e.g. for cardinality constraints or an instance)
-    - (path, class, mincount, maxcount)
-    - (path, shape, mincount, maxcount)
-
-    :param report: the SHACL validation report
-    :type report: Graph
-    :param aux: the shape collections that produced the SHACL validation report
-    :type aux: Graph
-    :return: List of templates that when populated should resolve the SHACL violations
-    :rtype: List[Template]
-
-    """
-    diffs = report_to_diffset(report, aux)
-    return diffset_to_templates(diffs)
