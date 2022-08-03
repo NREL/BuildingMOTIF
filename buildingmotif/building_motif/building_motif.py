@@ -2,6 +2,8 @@ import logging
 import os
 from contextlib import contextmanager
 
+from rdflib import Graph
+from rdflib.namespace import NamespaceManager
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -12,6 +14,7 @@ from buildingmotif.building_motif.singleton import (
 from buildingmotif.database.graph_connection import GraphConnection
 from buildingmotif.database.table_connection import TableConnection
 from buildingmotif.database.tables import Base as BuildingMOTIFBase
+from buildingmotif.namespaces import bind_prefixes
 
 
 class BuildingMOTIF(metaclass=Singleton):
@@ -42,6 +45,10 @@ class BuildingMOTIF(metaclass=Singleton):
         self.graph_connection = GraphConnection(
             BuildingMotifEngine(self.engine, self.session)
         )
+
+        g = Graph()
+        bind_prefixes(g)
+        self.ns_mgr: NamespaceManager = NamespaceManager(g)
 
     def setup_tables(self):
         """
