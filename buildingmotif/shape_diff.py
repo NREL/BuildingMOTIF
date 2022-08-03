@@ -82,14 +82,16 @@ class GraphClassCardinality(GraphDiff):
         return lib.create_template(f"resolve{token_hex(4)}", template_body)
 
 
-def process_shacl_validation_report(report: Graph, aux: Graph) -> List[Template]:
+def report_to_diffset(report: Graph, aux: Graph) -> Set[GraphDiff]:
     """
     Interpret a SHACL validation report and say what is missing.
 
-    Standard 'report' or 'diff' object:
-    - focus node (could be the graph itself e.g. for cardinality constraints or an instance)
-    - (path, class, mincount, maxcount)
-    - (path, shape, mincount, maxcount)
+    :param report: the SHACL validation report
+    :type report: Graph
+    :param aux: the shape collections that produced the SHACL validation report
+    :type aux: Graph
+    :return: A set of 'GraphDiff's that each abstract a SHACL shape violation
+    :rtype: Set[GraphDiff]
     """
     classpath = SH["class"] | (SH.qualifiedValueShape / SH["class"])  # type: ignore
     shapepath = SH["node"] | (SH.qualifiedValueShape / SH["node"])  # type: ignore
@@ -97,7 +99,6 @@ def process_shacl_validation_report(report: Graph, aux: Graph) -> List[Template]
     g = report + aux
     diffs: Set[GraphDiff] = set()
     for result in g.objects(predicate=SH.result):
-        print("result")
         # check if the failure is due to our count constraint component
         focus = g.value(result, SH.focusNode)
         if (
@@ -143,13 +144,18 @@ def process_shacl_validation_report(report: Graph, aux: Graph) -> List[Template]
                         shapename,
                     )
                 )
-
-    return diffset_to_templates(diffs)
+    return diffs
 
 
 def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
     """
-    Combine GraphDiff by focus node to generate
+    Combine GraphDiff by focus node to generate a list of templates that
+    reconcile what is "wrong" with the graph with respect to the graph diffs
+
+    :param diffset: A set of diffs produced by report_to_diffset
+    :type diffset: Set[GraphDiff]
+    :return: List of templates that when populated should resolve the SHACL violations
+    :rtype: List[Template]
     """
     from buildingmotif.dataclasses import Library
 
@@ -158,10 +164,6 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
     # compute the GROUP BY GraphDiff.focus
     for diff in diffset:
         related[diff.focus].add(diff)
-
-    from pprint import pprint
-
-    pprint(related)
 
     templates = []
     for focus, diffset in related.items():
@@ -177,3 +179,26 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
         assert isinstance(unified_evaluated, Template)
         templates.append(unified_evaluated)
     return templates
+
+
+def process_shacl_validation_report(report: Graph, *aux: Graph) -> List[Template]:
+    """
+    Interpret a SHACL validation report and produce a list of templates that
+    reconcile what is missing
+    TODO: handle recommending removal of information
+
+    Standard 'report' or 'diff' object:
+    - focus node (could be the graph itself e.g. for cardinality constraints or an instance)
+    - (path, class, mincount, maxcount)
+    - (path, shape, mincount, maxcount)
+
+    :param report: the SHACL validation report
+    :type report: Graph
+    :param aux: the shape collections that produced the SHACL validation report
+    :type aux: Graph
+    :return: List of templates that when populated should resolve the SHACL violations
+    :rtype: List[Template]
+
+    """
+    diffs = report_to_diffset(report, aux)
+    return diffset_to_templates(diffs)
