@@ -1,5 +1,7 @@
 from rdflib import XSD, Namespace
 
+BMOTIF = Namespace("https://nrel.gov/BuildingMOTIF#")
+
 # special namespace to denote template parameters inside RDF graphs
 PARAM = Namespace("urn:___param___#")
 

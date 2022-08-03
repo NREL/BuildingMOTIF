@@ -1,0 +1,98 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix constraint: <https://nrel.gov/BuildingMOTIF/constraints#> .
+@prefix : <urn:medium-office-brick-constraints/> .
+@prefix bldg: <urn:medium-office/> .
+
+: a owl:Ontology ;
+    owl:imports <https://brickschema.org/schema/1.3/Brick> ;
+    owl:imports <https://nrel.gov/BuildingMOTIF/constraints> ;
+    owl:imports <urn:ashrae/g36> ;
+.
+
+:vav-count a sh:NodeShape ;
+    sh:message "Need 2 VAVs" ;
+    sh:targetNode : ; # target *this* graph
+    constraint:exactCount 2 ;
+    constraint:class <urn:ashrae/g36/4.2/vav-with-reheat/vav-with-reheat> ;
+.
+
+:ahu-count a sh:NodeShape ;
+    sh:message "Need 1 AHU" ;
+    sh:targetNode : ; # target *this* graph
+    constraint:exactCount 1 ;
+    constraint:class brick:AHU ;
+.
+
+# spatial attributes of the building
+:floor-count a sh:NodeShape ;
+    sh:message "Need 2 floors" ;
+    sh:targetNode : ; # target *this* graph
+    constraint:exactCount 2 ;
+    constraint:class brick:Floor ;
+.
+:floor1-room-count a sh:NodeShape ;
+    sh:message "Floor1 has 10 rooms" ;
+    sh:targetNode bldg:floor1 ;
+    sh:class brick:Floor ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:class brick:Room ] ;
+        sh:qualifiedMinCount 10 ;
+        sh:qualifiedValueShape 10 ;
+    ];
+.
+:floor2-room-count a sh:NodeShape ;
+    sh:message "Floor2 has 5 rooms" ;
+    sh:targetNode bldg:floor2 ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:class brick:Room ] ;
+        sh:qualifiedMinCount 5 ;
+        sh:qualifiedValueShape 5 ;
+    ];
+.
+:room-area a sh:NodeShape ;
+    sh:message "all rooms must have areas" ;
+    sh:targetClass brick:Room ;
+    sh:property [
+        sh:path brick:area ;
+        sh:minCount 1 ;
+    ] ;
+
+
+# required relationships
+:ahu-vav a sh:NodeShape ;
+    sh:message "AHU feeds VAVs" ;
+    sh:targetClass brick:AHU ;
+    sh:property [
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:class brick:VAV ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
+
+:vav-zone a sh:NodeShape ;
+    sh:message "Each vav feeds exactly 1 zone" ;
+    sh:targetClass brick:VAV ;
+    sh:property [
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:class brick:HVAC_Zone ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+.
+
+:zone-room a sh:NodeShape ;
+    sh:message "Each zone contains at least 1 room"
+    sh:targetClass brick:HVAC_Zone ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:class brick:Space ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
