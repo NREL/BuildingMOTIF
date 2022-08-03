@@ -3,7 +3,7 @@ import os
 from contextlib import contextmanager
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 from buildingmotif.building_motif.singleton import (
     Singleton,
@@ -29,8 +29,8 @@ class BuildingMOTIF(metaclass=Singleton):
         """
         self.db_uri = db_uri
         self.engine = create_engine(db_uri, echo=False)
-        Session = sessionmaker(bind=self.engine, autoflush=True)
-        self.session = Session()
+        self.session_factory = sessionmaker(bind=self.engine, autoflush=True)
+        self.Session = scoped_session(self.session_factory)
 
         self.setup_logging(log_level)
 
@@ -42,6 +42,10 @@ class BuildingMOTIF(metaclass=Singleton):
         self.graph_connection = GraphConnection(
             BuildingMotifEngine(self.engine, self.session)
         )
+
+    @property
+    def session(self):
+        return self.Session()
 
     def setup_tables(self):
         """
