@@ -1,13 +1,15 @@
 from collections import defaultdict
 from dataclasses import dataclass
 from secrets import token_hex
-from typing import ClassVar, Dict, List, Optional, Set
+from typing import TYPE_CHECKING, ClassVar, Dict, List, Optional, Set
 
 from rdflib import Graph, URIRef
 
-from buildingmotif.dataclasses import Library, Template
 from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A
 from buildingmotif.utils import _gensym
+
+if TYPE_CHECKING:
+    from buildingmotif.dataclasses import Library, Template
 
 
 @dataclass(frozen=True)
@@ -157,7 +159,7 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
     :return: List of templates that when populated should resolve the SHACL violations
     :rtype: List[Template]
     """
-    from buildingmotif.dataclasses import Library
+    from buildingmotif.dataclasses import Library, Template
 
     related: Dict[URIRef, Set[GraphDiff]] = defaultdict(set)
     lib = Library.create("resolve")
@@ -181,7 +183,7 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
     return templates
 
 
-def process_shacl_validation_report(report: Graph, *aux: Graph) -> List[Template]:
+def process_shacl_validation_report(report: Graph, *aux: Graph) -> List["Template"]:
     """
     Interpret a SHACL validation report and produce a list of templates that
     reconcile what is missing

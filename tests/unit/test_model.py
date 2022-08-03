@@ -1,7 +1,7 @@
 from rdflib import Graph, Literal, Namespace
 
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Library, Model
+from buildingmotif.dataclasses import Library, Model, ValidationContext
 from buildingmotif.namespaces import RDFS
 
 BLDG = Namespace("urn:building/")
@@ -39,16 +39,12 @@ def test_model_validate(bm: BuildingMOTIF):
     model.add_graph(hvac_zone_instance)
 
     # validate the graph (should fail because there are no labels)
-    valid, report_g, report_txt = model.validate([shape_lib.get_shape_collection()])
-    assert isinstance(report_g, Graph)
-    assert isinstance(report_txt, str)
-    assert isinstance(valid, bool)
-    assert not valid
+    ctx = model.validate([shape_lib.get_shape_collection()])
+    assert isinstance(ctx, ValidationContext)
+    assert not ctx.valid
 
     model.add_triples((bindings["name"], RDFS.label, Literal("hvac zone 1")))
     # validate the graph (should now be valid)
-    valid, report_g, report_txt = model.validate([shape_lib.get_shape_collection()])
-    assert isinstance(report_g, Graph)
-    assert isinstance(report_txt, str)
-    assert isinstance(valid, bool)
-    assert valid
+    ctx = model.validate([shape_lib.get_shape_collection()])
+    assert isinstance(ctx, ValidationContext)
+    assert ctx.valid

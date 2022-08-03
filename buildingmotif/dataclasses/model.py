@@ -1,15 +1,17 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional, Tuple
+from typing import TYPE_CHECKING, List, Optional, Set
 
 import pyshacl
 import rdflib
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
+from buildingmotif.shape_diff import GraphDiff, diffset_to_templates, report_to_diffset
 from buildingmotif.utils import Triple, copy_graph
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
+    from buildingmotif.dataclasses.template import Template
 
 
 @dataclass
@@ -94,9 +96,7 @@ class Model:
         """
         self.graph += graph
 
-    def validate(
-        self, shape_collections: List[ShapeCollection]
-    ) -> Tuple[bool, rdflib.Graph, str]:
+    def validate(self, shape_collections: List[ShapeCollection]) -> "ValidationContext":
         """
         Validates this model against the given shape collections. Loads all of the shape_collections
         into a single graph.
@@ -116,7 +116,7 @@ class Model:
             shapeg += sc.graph
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
-        return pyshacl.validate(
+        valid, report_g, report_str = pyshacl.validate(
             data_graph,
             shacl_graph=shapeg,
             ont_graph=shapeg,
@@ -125,3 +125,33 @@ class Model:
             allow_warnings=True,
             # inplace=True,
         )
+        assert isinstance(report_g, rdflib.Graph)
+        return ValidationContext(
+            shape_collections,
+            valid,
+            report_g,
+            report_str,
+            self,
+        )
+
+
+@dataclass
+class ValidationContext:
+    """
+    Holds the necessary information for processing the results of SHACL validation
+    """
+
+    shape_collections: List[ShapeCollection]
+    valid: bool
+    report: rdflib.Graph
+    report_string: str
+    model: Model
+
+    @property
+    def diffset(self) -> Set[GraphDiff]:
+        return report_to_diffset(
+            self.report, *(sc.graph for sc in self.shape_collections)
+        )
+
+    def as_templates(self) -> List["Template"]:
+        return diffset_to_templates(self.diffset)
