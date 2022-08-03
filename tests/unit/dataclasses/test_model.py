@@ -26,6 +26,12 @@ def test_load_model(clean_building_motif):
     assert result.name == m.name
     assert isomorphic(result.graph, m.graph)
 
+    # test model_load_by_name
+    result = Model.load(name="my_model")
+    assert result.id == m.id
+    assert result.name == m.name
+    assert isomorphic(result.graph, m.graph)
+
 
 def test_validate_model(clean_building_motif):
     # load library

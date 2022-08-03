@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Generator, List, Optional, Set
@@ -330,6 +331,8 @@ def _resolve_imports(
 ) -> rdflib.Graph:
     from buildingmotif.dataclasses.library import Library
 
+    logger = logging.getLogger(__name__)
+
     if recursive_limit == 0:
         return graph
     new_g = copy_graph(graph)
@@ -339,7 +342,13 @@ def _resolve_imports(
         seen.add(ontology)
 
         # go find the graph definition from our libraries
-        lib = Library.load(name=ontology)
+        try:
+            lib = Library.load(name=ontology)
+        except Exception as e:
+            logger.error(
+                "Could not resolve import of library/shape collection: %s", ontology
+            )
+            raise e
         dependency = _resolve_imports(
             lib.get_shape_collection().graph, recursive_limit - 1, seen
         )

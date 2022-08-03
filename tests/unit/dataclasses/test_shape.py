@@ -3,6 +3,7 @@ from rdflib import RDF, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
+from buildingmotif.dataclasses.library import Library
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.namespaces import BMOTIF
 
@@ -94,3 +95,13 @@ def test_get_shapes_of_domain(clean_building_motif):
         URIRef("urn:model#shape3"),
         URIRef("urn:model#shape2"),
     }
+
+
+def test_shape_collection_resolve_imports(clean_building_motif):
+    Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
+    Library.load(ontology_graph="buildingmotif/resources/constraints.ttl")
+    lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shapes.ttl")
+    sc = lib.get_shape_collection()
+    new_graph = sc.resolve_imports()
+    assert new_graph is not None
+    assert len(new_graph) > len(sc.graph)
