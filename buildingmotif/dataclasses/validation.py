@@ -94,6 +94,20 @@ of path {self.path}"
 
 
 @dataclass(frozen=True)
+class RequiredClass(GraphDiff):
+    classname: URIRef
+
+    def reason(self) -> str:
+        return f"{self.focus} needs to be a {self.classname}"
+
+    def resolve(self, lib: "Library") -> List["Template"]:
+        assert self.focus is not None
+        body = Graph()
+        body.add((self.focus, A, self.classname))
+        return [lib.create_template(f"resolve{token_hex(4)}", body)]
+
+
+@dataclass(frozen=True)
 class GraphClassCardinality(GraphDiff):
     classname: URIRef
     expectedCount: int
@@ -160,6 +174,13 @@ class ValidationContext:
                 # to the templates during evaluation (for this specific kind of diff).
                 # For this reason we override focus to be None
                 diffs.add(GraphClassCardinality(None, g, of_class, int(expected_count)))
+            elif (
+                g.value(result, SH.sourceConstraintComponent)
+                == SH.ClassConstraintComponent
+            ):
+                requiring_shape = g.value(result, SH.sourceShape)
+                expected_class = g.value(requiring_shape, SH["class"])
+                diffs.add(RequiredClass(focus, g, expected_class))
             # check if property shape
             elif g.value(result, SH.resultPath):
                 path = g.value(result, SH.resultPath)
@@ -225,7 +246,7 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
 
     related: Dict[URIRef, Set[GraphDiff]] = defaultdict(set)
     unfocused: List[Template] = []
-    lib = Library.create("resolve")
+    lib = Library.create(f"resolve_{token_hex(4)}")
     # compute the GROUP BY GraphDiff.focus
     for diff in diffset:
         if diff.focus is None:
