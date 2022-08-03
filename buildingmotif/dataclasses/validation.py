@@ -105,7 +105,7 @@ class ValidationContext:
 
     @property
     def _context(self) -> Graph:
-        return reduce(sum, (sc.graph for sc in self.shape_collections))
+        return reduce(sum, (sc.graph for sc in self.shape_collections))  # type: ignore
 
     def as_templates(self) -> List["Template"]:
         return diffset_to_templates(self.diffset)
@@ -130,8 +130,8 @@ class ValidationContext:
                 == CONSTRAINT.countConstraintComponent
             ):
                 expected_count = g.value(
-                    result, SH.sourceShape / CONSTRAINT.exactCount
-                )  # type: ignore
+                    result, SH.sourceShape / CONSTRAINT.exactCount  # type: ignore
+                )
                 of_class = g.value(result, SH.sourceShape / CONSTRAINT["class"])  # type: ignore
                 diffs.add(
                     GraphClassCardinality(focus, g, of_class, int(expected_count))
