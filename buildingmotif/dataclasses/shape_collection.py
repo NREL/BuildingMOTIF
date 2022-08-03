@@ -240,8 +240,8 @@ class ShapeCollection:
 
     def get_shapes_about_class(self, rdf_type: URIRef) -> List[URIRef]:
         """
-        Returns a list of shapes that either target the given class, or otherwise only
-        apply to URIs of the given type
+        Returns a list of shapes that either target the given class
+        (or subclasses of it), or otherwise only apply to URIs of the given type
 
         :param rdf_type: an OWL class
         :type rdf_type: URIRef
@@ -251,9 +251,10 @@ class ShapeCollection:
         rows = self.graph.query(
             f"""SELECT ?shape WHERE {{
             ?shape a sh:NodeShape .
-            {{ ?shape sh:targetClass {rdf_type.n3()} }}
+            ?class rdfs:subClassOf* {rdf_type.n3()} .
+            {{ ?shape sh:targetClass ?class }}
             UNION
-            {{ ?shape sh:class {rdf_type.n3()} }}
+            {{ ?shape sh:class ?class }}
         }}"""
         )
         return [row[0] for row in rows]  # type: ignore
