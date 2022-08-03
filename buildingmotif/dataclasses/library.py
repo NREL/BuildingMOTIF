@@ -303,7 +303,7 @@ class Library:
             db_template.body_id, body if body else rdflib.Graph()
         )
         # ensure the "param" namespace is bound to the graph
-        body.namespace_manager = self._bm.ns_mgr
+        body.namespace_manager = self._bm.template_ns_mgr
         if optional_args is None:
             optional_args = []
         self._bm.table_connection.update_db_template_optional_args(

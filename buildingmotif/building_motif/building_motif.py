@@ -48,7 +48,7 @@ class BuildingMOTIF(metaclass=Singleton):
 
         g = Graph()
         bind_prefixes(g)
-        self.ns_mgr: NamespaceManager = NamespaceManager(g)
+        self.template_ns_mgr: NamespaceManager = NamespaceManager(g)
 
     def setup_tables(self):
         """
