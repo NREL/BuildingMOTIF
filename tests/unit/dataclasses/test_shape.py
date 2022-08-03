@@ -100,7 +100,7 @@ def test_get_shapes_of_domain(clean_building_motif):
 def test_shape_collection_resolve_imports(clean_building_motif):
     Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
     Library.load(ontology_graph="buildingmotif/resources/constraints.ttl")
-    lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shapes.ttl")
+    lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/import_test.ttl")
     sc = lib.get_shape_collection()
     new_graph = sc.resolve_imports()
     assert new_graph is not None
