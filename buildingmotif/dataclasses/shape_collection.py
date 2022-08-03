@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Generator, List, Optional, Set
@@ -239,8 +240,8 @@ class ShapeCollection:
 
     def get_shapes_about_class(self, rdf_type: URIRef) -> List[URIRef]:
         """
-        Returns a list of shapes that either target the given class, or otherwise only
-        apply to URIs of the given type
+        Returns a list of shapes that either target the given class
+        (or subclasses of it), or otherwise only apply to URIs of the given type
 
         :param rdf_type: an OWL class
         :type rdf_type: URIRef
@@ -250,9 +251,10 @@ class ShapeCollection:
         rows = self.graph.query(
             f"""SELECT ?shape WHERE {{
             ?shape a sh:NodeShape .
-            {{ ?shape sh:targetClass {rdf_type.n3()} }}
+            ?class rdfs:subClassOf* {rdf_type.n3()} .
+            {{ ?shape sh:targetClass ?class }}
             UNION
-            {{ ?shape sh:class {rdf_type.n3()} }}
+            {{ ?shape sh:class ?class }}
         }}"""
         )
         return [row[0] for row in rows]  # type: ignore
@@ -330,6 +332,8 @@ def _resolve_imports(
 ) -> rdflib.Graph:
     from buildingmotif.dataclasses.library import Library
 
+    logger = logging.getLogger(__name__)
+
     if recursive_limit == 0:
         return graph
     new_g = copy_graph(graph)
@@ -339,7 +343,13 @@ def _resolve_imports(
         seen.add(ontology)
 
         # go find the graph definition from our libraries
-        lib = Library.load(name=ontology)
+        try:
+            lib = Library.load(name=ontology)
+        except Exception as e:
+            logger.error(
+                "Could not resolve import of library/shape collection: %s", ontology
+            )
+            raise e
         dependency = _resolve_imports(
             lib.get_shape_collection().graph, recursive_limit - 1, seen
         )

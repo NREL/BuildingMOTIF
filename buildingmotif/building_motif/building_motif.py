@@ -75,7 +75,7 @@ class BuildingMOTIF(metaclass=Singleton):
     def setup_logging(self, log_level):
         """Create log file with DEBUG level and stdout handler with specified log_level"""
         root_logger = logging.getLogger()
-        root_logger.setLevel(logging.INFO)
+        root_logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
             "%(asctime)s | %(name)s |  %(levelname)s: %(message)s"
         )
