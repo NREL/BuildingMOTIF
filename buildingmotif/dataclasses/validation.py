@@ -3,13 +3,15 @@ from dataclasses import dataclass
 from secrets import token_hex
 from typing import TYPE_CHECKING, ClassVar, Dict, List, Optional, Set
 
+import rdflib
 from rdflib import Graph, URIRef
 
+from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A
 from buildingmotif.utils import _gensym
 
 if TYPE_CHECKING:
-    from buildingmotif.dataclasses import Library, Template
+    from buildingmotif.dataclasses import Library, Model, Template
 
 
 @dataclass(frozen=True)
@@ -82,6 +84,28 @@ class GraphClassCardinality(GraphDiff):
             template_body.add((PARAM[f"inst_{i}"], A, self.classname))
 
         return lib.create_template(f"resolve{token_hex(4)}", template_body)
+
+
+@dataclass
+class ValidationContext:
+    """
+    Holds the necessary information for processing the results of SHACL validation
+    """
+
+    shape_collections: List[ShapeCollection]
+    valid: bool
+    report: rdflib.Graph
+    report_string: str
+    model: "Model"
+
+    @property
+    def diffset(self) -> Set[GraphDiff]:
+        return report_to_diffset(
+            self.report, *(sc.graph for sc in self.shape_collections)
+        )
+
+    def as_templates(self) -> List["Template"]:
+        return diffset_to_templates(self.diffset)
 
 
 def report_to_diffset(report: Graph, aux: Graph) -> Set[GraphDiff]:

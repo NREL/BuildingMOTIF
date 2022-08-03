@@ -1,17 +1,16 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional, Set
+from typing import TYPE_CHECKING, List, Optional
 
 import pyshacl
 import rdflib
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
-from buildingmotif.shape_diff import GraphDiff, diffset_to_templates, report_to_diffset
+from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.utils import Triple, copy_graph
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
-    from buildingmotif.dataclasses.template import Template
 
 
 @dataclass
@@ -133,25 +132,3 @@ class Model:
             report_str,
             self,
         )
-
-
-@dataclass
-class ValidationContext:
-    """
-    Holds the necessary information for processing the results of SHACL validation
-    """
-
-    shape_collections: List[ShapeCollection]
-    valid: bool
-    report: rdflib.Graph
-    report_string: str
-    model: Model
-
-    @property
-    def diffset(self) -> Set[GraphDiff]:
-        return report_to_diffset(
-            self.report, *(sc.graph for sc in self.shape_collections)
-        )
-
-    def as_templates(self) -> List["Template"]:
-        return diffset_to_templates(self.diffset)
