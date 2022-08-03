@@ -108,8 +108,8 @@ class Model:
         :param shape_collections: a list of shape_collections against which the
                                   graph should be validated
         :type shape_collections: List[ShapeCollection]
-        :return: True if the model passes validation, false otherwise
-        :rtype: bool
+        :return: An object containing useful properties/methods to deal with the validation results
+        :rtype: "ValidationContext"
         """
         shapeg = rdflib.Graph()
         for sc in shape_collections:
