@@ -105,7 +105,7 @@ class ValidationContext:
 
     @property
     def _context(self) -> Graph:
-        return reduce(sum, (sc.graph for sc in self.shape_collections))  # type: ignore
+        return reduce(sum, *(sc.graph for sc in self.shape_collections))  # type: ignore
 
     def as_templates(self) -> List["Template"]:
         return diffset_to_templates(self.diffset)
