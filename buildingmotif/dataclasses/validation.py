@@ -1,6 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass
-from functools import reduce
+from functools import cached_property, reduce
 from secrets import token_hex
 from typing import TYPE_CHECKING, ClassVar, Dict, List, Optional, Set
 
@@ -39,8 +39,8 @@ class PathClassCount(GraphDiff):
     classname: URIRef
 
     def reason(self) -> str:
-        return f"Needed between {self.minc} and {self.maxc} instances of {self.classname} \
-on path {self.path}"
+        return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
+{self.classname} on path {self.path}"
 
     def resolve(self, lib: "Library") -> "Template":
         body = Graph()
@@ -59,8 +59,8 @@ class PathShapeCount(GraphDiff):
     shapename: URIRef
 
     def reason(self) -> str:
-        return f"Needed between {self.minc} and {self.maxc} instances of {self.shapename} \
-on path {self.path}"
+        return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
+{self.shapename} on path {self.path}"
 
     def resolve(self, lib: "Library") -> "Template":
         body = Graph()
@@ -68,6 +68,24 @@ on path {self.path}"
             inst = _gensym()
             body.add((PARAM["name"], self.path, inst))
             body.add((inst, A, self.shapename))
+        return lib.create_template(f"resolve{token_hex(4)}", body)
+
+
+@dataclass(frozen=True)
+class RequiredPath(GraphDiff):
+    path: URIRef
+    minc: Optional[int]
+    maxc: Optional[int]
+
+    def reason(self) -> str:
+        return f"{self.focus} needs between {self.minc} and {self.maxc} uses \
+of path {self.path}"
+
+    def resolve(self, lib: "Library") -> "Template":
+        body = Graph()
+        for _ in range(self.minc or 0):
+            inst = _gensym()
+            body.add((PARAM["name"], self.path, inst))
         return lib.create_template(f"resolve{token_hex(4)}", body)
 
 
@@ -99,13 +117,13 @@ class ValidationContext:
     report_string: str
     model: "Model"
 
-    @property
+    @cached_property
     def diffset(self) -> Set[GraphDiff]:
         return self._report_to_diffset()
 
-    @property
+    @cached_property
     def _context(self) -> Graph:
-        return reduce(sum, *(sc.graph for sc in self.shape_collections))  # type: ignore
+        return reduce(sum, (sc.graph for sc in self.shape_collections))  # type: ignore
 
     def as_templates(self) -> List["Template"]:
         return diffset_to_templates(self.diffset)
@@ -160,6 +178,7 @@ class ValidationContext:
                             classname,
                         )
                     )
+                    continue
                 shapename = g.value(result, SH.sourceShape / shapepath)  # type: ignore
                 if focus and (min_count or max_count) and shapename:
                     diffs.add(
@@ -170,6 +189,17 @@ class ValidationContext:
                             int(min_count) if min_count else None,
                             int(max_count) if max_count else None,
                             shapename,
+                        )
+                    )
+                    continue
+                if focus and (min_count or max_count):
+                    diffs.add(
+                        RequiredPath(
+                            focus,
+                            g,
+                            path,
+                            int(min_count) if min_count else None,
+                            int(max_count) if max_count else None,
                         )
                     )
         return diffs

@@ -52,8 +52,10 @@ def test_validate_model(clean_building_motif):
     ctx = m.validate([lib.get_shape_collection()])
     assert ctx.valid
 
+    assert len(ctx.diffset) == 0
 
-def test_model_validate(bm: BuildingMOTIF):
+
+def test_validate_model_with_failure(bm: BuildingMOTIF):
     """
     Test that a model correctly validates
     """
@@ -88,6 +90,7 @@ def test_model_validate(bm: BuildingMOTIF):
     ctx = model.validate([shape_lib.get_shape_collection()])
     assert isinstance(ctx, ValidationContext)
     assert not ctx.valid
+    assert len(ctx.diffset) == 1
 
     model.add_triples((bindings["name"], RDFS.label, Literal("hvac zone 1")))
     # validate the graph (should now be valid)
