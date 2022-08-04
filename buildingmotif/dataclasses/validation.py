@@ -117,7 +117,7 @@ class GraphClassCardinality(GraphDiff):
 
     def resolve(self, lib: "Library") -> List["Template"]:
         templs = []
-        for i in range(self.expectedCount):
+        for _ in range(self.expectedCount):
             template_body = Graph()
             template_body.add((PARAM["name"], A, self.classname))
             templs.append(lib.create_template(f"resolve{token_hex(4)}", template_body))
@@ -265,12 +265,26 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
             templates.extend(templs)
             continue
         base = templs[0]
+        # treat all the other templates as dependencies of the first one.
+        # This allows us to do a "join" with inline_dependencies() which
+        # will ensure that there are no unintended overlaps in the choice
+        # of parameter name
         for templ in templs[1:]:
-            base.add_dependency(templ, {"name": "name"})
+            # if there is a 'name' in the parameter list, join on that name.
+            # otherwise, just append the body (use to_inline() to ensure
+            # uniqueness of parameters)
+            if "name" in templ.parameters:
+                base.add_dependency(templ, {"name": "name"})
+            else:
+                base.body += templ.to_inline().body
         unified = base.inline_dependencies()
-        # if focus is None, then there is no existing work in the graph
-        # that we want to associate this template with.
-        unified_evaluated = unified.evaluate({"name": focus})
+        # only try to evaluate if there are parameters, else this will fail.
+        # We may not have parameters if the GraphDiffs have all the information
+        # they need to patch the graph and don't need user input
+        if len(unified.parameters) > 0:
+            unified_evaluated = unified.evaluate({"name": focus})
+        else:
+            unified_evaluated = unified
         assert isinstance(unified_evaluated, Template)
         templates.append(unified_evaluated)
     return templates
