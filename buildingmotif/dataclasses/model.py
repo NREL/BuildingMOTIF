@@ -112,7 +112,8 @@ class Model:
         """
         shapeg = rdflib.Graph()
         for sc in shape_collections:
-            shapeg += sc.graph
+            # inline sh:node for interpretability
+            shapeg += sc._inline_sh_node()
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
         valid, report_g, report_str = pyshacl.validate(

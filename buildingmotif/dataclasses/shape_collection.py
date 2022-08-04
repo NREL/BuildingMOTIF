@@ -85,6 +85,25 @@ class ShapeCollection:
         """
         self.graph += graph
 
+    def _inline_sh_node(self) -> rdflib.Graph:
+        """
+        This detects the use of 'sh:node' on SHACL NodeShapes and inlines
+        the shape they point to.
+        """
+        q = """SELECT ?parent ?child WHERE {
+            ?parent a sh:NodeShape ;
+                    sh:node ?child .
+            }"""
+        graph = copy_graph(self.graph)
+        for row in graph.query(q):
+            parent, child = row
+            graph.remove((parent, SH.node, child))
+            pos = self.graph.predicate_objects(child)
+            for (p, o) in pos:
+                graph.remove((child, p, o))
+                graph.add((parent, p, o))
+        return graph
+
     def _cbd(self, shape_name, self_contained=True):
         cbd = self.graph.cbd(shape_name)
         # if computing self-contained, do the fixed-point computation produced by unioning
