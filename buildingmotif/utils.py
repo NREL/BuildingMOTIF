@@ -130,16 +130,43 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
     return list(chain.from_iterable(searches))
 
 
+def compile_model(model: "Model", shape_collections: List["ShapeCollection"]):
+    """
+    Processess the graph of a model against a set of shape collections
+    """
+    ontology_graph = Graph()
+    for shape_collection in shape_collections:
+        ontology_graph += shape_collection.graph
+    pyshacl.validate(
+        data_graph=model.graph,
+        shacl_graph=ontology_graph,
+        ont_graph=ontology_graph,
+        advanced=True,
+        inplace=True,
+        js=True,
+    )
+    model.graph -= ontology_graph
+
+
 def test_model_against_shapes(
     model: "Model",
     shape_collections: List["ShapeCollection"],
     shapes_to_test: List[URIRef],
     target_class: URIRef,
 ):
-    model_graph = copy_graph(model.graph)
     ontology_graph = Graph()
     for shape_collection in shape_collections:
         ontology_graph += shape_collection.graph
+
+    model_graph = copy_graph(model.graph)
+    pyshacl.validate(
+        data_graph=model_graph,
+        shacl_graph=ontology_graph,
+        ont_graph=ontology_graph,
+        advanced=True,
+        inplace=True,
+        js=True,
+    )
 
     results = {}
 
@@ -154,6 +181,7 @@ def test_model_against_shapes(
         conforms, report_graph, report_text = pyshacl.validate(
             data_graph=temp_model_graph,
             ont_graph=ontology_graph,
+            allow_warnings=True,
             advanced=True,
             js=True,
         )
