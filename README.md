@@ -77,5 +77,8 @@ poetry publish --build --dry-run
 poetry publish --build
 ```
 
+# Developing the Web app
+see [buildingmotif-app/README.md](buildingmotif-app/README.md)
+
 # Visualizing
 ![repo-vis](./diagram.svg)

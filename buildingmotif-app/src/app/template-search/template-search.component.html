@@ -1,0 +1,21 @@
+<div class="container">
+    <!-- In progress -->
+    <div *ngIf="templates.length === 0 && error === undefined">
+        <mat-progress-bar  mode="buffer"></mat-progress-bar>
+    </div>
+
+    <!-- error  -->
+    <div *ngIf="!!error">
+        <div>error</div>
+    </div>
+
+    <!-- success -->
+    <mat-list *ngFor="let template of templates">
+            <mat-list-item >
+                <a routerLink="/templates/{{template.id}}">
+                    {{template.name}}
+                </a>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+    </mat-list>      
+</div>
