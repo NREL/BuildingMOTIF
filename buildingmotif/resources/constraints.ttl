@@ -1,0 +1,49 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix : <https://nrel.gov/BuildingMOTIF/constraints#> .
+
+<https://nrel.gov/BuildingMOTIF/constraints> a owl:Ontology .
+
+:countConstraintComponent a sh:ConstraintComponent ;
+    sh:parameter [
+        sh:path :exactCount ;
+        sh:datatype xsd:integer ;
+        sh:description "the minimum required number of instances" ;
+    ] ;
+    sh:parameter [
+        sh:path :class ;
+        sh:datatype rdf:Resource ;
+        sh:description "the class to count" ;
+    ] ;
+    sh:validator :hasExactCount ;
+.
+
+:hasExactCount a sh:SPARQLAskValidator ;
+    sh:message "Not the right number {$exactCount} of instances of {$class}" ;
+    sh:ask """
+        ASK WHERE {
+            {
+                SELECT * 
+                WHERE { ?i a $class . }
+                HAVING (COUNT(DISTINCT ?i) = $exactCount)
+            }
+        }""" ;
+.
+
+# :assertInstanceRule a sh:NodeShape ;
+#     sh:targetClass sh:NodeShape ;
+#     sh:rule [
+#         a sh:SPARQLRule ;
+#         sh:prefixes rdf: ;
+#         sh:construct """
+#             CONSTRUCT {
+#                 $this a $sourceShape 
+#             }
+#         """ ;
+#         sh:condition 
+#     ] ;
+# .

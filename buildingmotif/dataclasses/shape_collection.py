@@ -1,13 +1,15 @@
+import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Generator, List, Optional, Set
 
+import pyshacl
 import rdflib
 from rdflib import RDF, RDFS, URIRef
 
 from buildingmotif import get_building_motif
-from buildingmotif.namespaces import BMOTIF
-from buildingmotif.utils import Triple
+from buildingmotif.namespaces import BMOTIF, OWL, SH, A
+from buildingmotif.utils import Triple, copy_graph, replace_nodes
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -83,6 +85,109 @@ class ShapeCollection:
         """
         self.graph += graph
 
+    def _inline_sh_node(self) -> rdflib.Graph:
+        """
+        This detects the use of 'sh:node' on SHACL NodeShapes and inlines
+        the shape they point to.
+        """
+        q = """SELECT ?parent ?child WHERE {
+            ?parent a sh:NodeShape ;
+                    sh:node ?child .
+            }"""
+        graph = copy_graph(self.graph)
+        for row in graph.query(q):
+            parent, child = row
+            graph.remove((parent, SH.node, child))
+            pos = self.graph.predicate_objects(child)
+            for (p, o) in pos:
+                graph.remove((child, p, o))
+                graph.add((parent, p, o))
+        return graph
+
+    def _cbd(self, shape_name, self_contained=True):
+        cbd = self.graph.cbd(shape_name)
+        # if computing self-contained, do the fixed-point computation produced by unioning
+        # the CBDs of all nodes in the current CBD until the graph does not change
+        changed = True
+        while self_contained and changed:
+            new_g = rdflib.Graph()
+            for node in cbd.all_nodes():
+                new_g += self.graph.cbd(node)
+            new_cbd = new_g + cbd
+            changed = len(new_cbd) > cbd
+            cbd = new_cbd
+        return cbd
+
+    def get_shape(self, name: rdflib.URIRef) -> "Shape":
+        return Shape(name, self._cbd(name, self_contained=True))
+
+    def get_shapes(self, self_contained: bool = True) -> Generator["Shape", None, None]:
+        """
+        Yields a sequence of the Concise Bounded Description of the shapes in this shape
+        collection. The CBD may refer to other definitions in the enclosing shape graph. If
+        we are planning on using a shape somewhere else (for instance, to create a Library of
+        requirements for a particular site), then we will want the CBDs to be *self-contained*.
+
+        The self_contained flag uses a fixed-point computation to produce CBDs that are fully
+        self-contained.
+
+
+        :param self_contained: produce CBDs that are fully self-contained, defaults to True
+        :type self_contained: bool, optional
+        :return: sequence of shapes
+        :rtype: Generator[rdflib.Graph, None, None]
+        """
+        shapes = self.graph.query(
+            """SELECT DISTINCT ?shape WHERE {
+            ?shape a sh:NodeShape .
+            FILTER (!isBlank(?shape)) }"""
+        )
+        for (shape_name,) in shapes:  # type: ignore
+            yield Shape(
+                shape_name, self._cbd(shape_name, self_contained=self_contained)
+            )
+
+    def get_class_shapes(
+        self, self_contained: bool = True
+    ) -> Generator["Shape", None, None]:
+        """
+        Yields a sequence of all named (not blank node) shapes in this
+        shape collection that are ALSO owl:Class. See ::ShapeCollection.get_shapes:: for
+        more information on computing the CBD.
+
+        :param self_contained: produce CBDs that are fully self-contained, defaults to True
+        :type self_contained: bool, optional
+        :return: sequence of shapes
+        :rtype: Generator[rdflib.Graph, None, None]
+        """
+        shapes = self.graph.query(
+            """SELECT DISTINCT ?shape WHERE {
+            ?shape a sh:NodeShape, owl:Class .
+            FILTER (!isBlank(?shape)) }"""
+        )
+        for (shape_name,) in shapes:  # type: ignore
+            yield Shape(
+                shape_name, self._cbd(shape_name, self_contained=self_contained)
+            )
+
+    def resolve_imports(self, recursive_limit: int = -1) -> "ShapeCollection":
+        """
+        Returns a new ShapeCollection with `owl:imports` resolved to as many levels
+        as requested. By default, all `owl:imports` are recursively resolved. This limit
+        can be changed to 0 to suppress resolving imports, or to 1..n to handle recursion
+        up to that limit
+
+        :param recursive_limit: How many levels of owl:imports to resolve, defaults to -1 (all)
+        :type recursive_limit: int, optional
+        :return: a new ShapeCollection with the types resolved
+        :rtype: "ShapeCollection"
+        """
+        resolved_namespaces: Set[rdflib.URIRef] = set()
+        resolved = _resolve_imports(self.graph, recursive_limit, resolved_namespaces)
+        new_sc = ShapeCollection.create()
+        new_sc.add_graph(resolved)
+        return new_sc
+
     @classmethod
     def _get_subclasses_of_definition_type(
         cls, definition_type: URIRef
@@ -151,3 +256,122 @@ class ShapeCollection:
             results += self.graph.subjects(RDF.type, domain)
 
         return results
+
+    def get_shapes_about_class(self, rdf_type: URIRef) -> List[URIRef]:
+        """
+        Returns a list of shapes that either target the given class
+        (or subclasses of it), or otherwise only apply to URIs of the given type
+
+        :param rdf_type: an OWL class
+        :type rdf_type: URIRef
+        :return: A list of shapes in this collection that concern that class
+        :rtype: List[URIRef]
+        """
+        rows = self.graph.query(
+            f"""SELECT ?shape WHERE {{
+            ?shape a sh:NodeShape .
+            ?class rdfs:subClassOf* {rdf_type.n3()} .
+            {{ ?shape sh:targetClass ?class }}
+            UNION
+            {{ ?shape sh:class ?class }}
+        }}"""
+        )
+        return [row[0] for row in rows]  # type: ignore
+
+
+@dataclass
+class Shape:
+    """Holds application requirements, etc"""
+
+    name: rdflib.URIRef
+    graph: rdflib.Graph
+
+    def __repr__(self) -> str:
+        return f"Shape<{self.name}, {len(self.graph)} triples>"
+
+    def dump(self) -> str:
+        return self.graph.serialize()
+
+    def get_satisfying_templates(self):
+        """
+        Searches BuildingMOTIF for any templates that satisfy this shape
+        TODO: does not work
+        """
+        from buildingmotif.dataclasses import Template
+
+        bm = get_building_motif()
+        TMP = rdflib.Namespace("urn:tmp/")
+        for _templ in bm.table_connection.get_all_db_templates():
+            templ = Template.load(_templ.id)
+            bindings, body = templ.fill(TMP)
+            g = body + self.graph
+            g.add((bindings["name"], A, self.name))
+            valid, _, _ = pyshacl.validate(data_graph=g, advanced=True)
+            if valid:
+                print(f"Satisfied by {templ.name}")
+            print(g.serialize())
+            break
+
+    def copy(self, new_name: rdflib.URIRef) -> "Shape":
+        """
+        Creates a new copy of this Shape with a new name
+        """
+        new_g = copy_graph(self.graph)
+        replace_nodes(new_g, {self.name: new_name})
+        return Shape(new_name, new_g)
+
+    def with_cardinality(self, cardinality: int) -> "Shape":
+        """
+        Returns a new shape that requires 'cardinality' instances
+        of this shape/class in a given graph.
+
+        Requires the https://nrel.gov/BuildingMOTIF/constraints ontology
+        """
+        new_name = self.name + f"_constraint_{cardinality}"
+        NS = rdflib.Namespace("https://nrel.gov/BuildingMOTIF/constraints#")
+        shape = self.copy(new_name)
+        shape.graph.add((shape.name, A, SH.NodeShape))
+        shape.graph.add((shape.name, SH.targetClass, OWL.Ontology))
+        shape.graph.add((shape.name, NS["exactCount"], rdflib.Literal(cardinality)))
+        shape.graph.add((shape.name, NS["node"], self.name))
+        # TODO: need shape to assert as instance?
+        rule = rdflib.BNode()
+        shape.graph.add((shape.name, SH.rule, rule))
+        shape.graph.add((rule, SH.condition, self.name))
+        shape.graph.add((rule, A, SH.TripleRule))
+        shape.graph.add((rule, SH.subject, SH.this))
+        shape.graph.add((rule, SH.predicate, A))
+        shape.graph.add((rule, SH.object, self.name))
+
+        return shape
+
+
+def _resolve_imports(
+    graph: rdflib.Graph, recursive_limit: int, seen: Set[rdflib.URIRef]
+) -> rdflib.Graph:
+    from buildingmotif.dataclasses.library import Library
+
+    logger = logging.getLogger(__name__)
+
+    if recursive_limit == 0:
+        return graph
+    new_g = copy_graph(graph)
+    for ontology in graph.objects(predicate=OWL.imports):
+        if ontology in seen:
+            continue
+        seen.add(ontology)
+
+        # go find the graph definition from our libraries
+        try:
+            lib = Library.load(name=ontology)
+        except Exception as e:
+            logger.error(
+                "Could not resolve import of library/shape collection: %s", ontology
+            )
+            raise e
+        dependency = _resolve_imports(
+            lib.get_shape_collection().graph, recursive_limit - 1, seen
+        )
+        new_g += dependency
+        print(f"graph size now {len(new_g)}")
+    return new_g
