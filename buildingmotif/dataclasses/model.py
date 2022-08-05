@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import pyshacl
 import rdflib
@@ -7,6 +7,7 @@ import rdflib
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
+from buildingmotif.namespaces import A
 from buildingmotif.utils import Triple, copy_graph
 
 if TYPE_CHECKING:
@@ -133,3 +134,42 @@ class Model:
             report_str,
             self,
         )
+
+    def test_model_against_shapes(
+        self,
+        shape_collections: List["ShapeCollection"],
+        shapes_to_test: List[rdflib.URIRef],
+        target_class: rdflib.URIRef,
+    ) -> Dict[rdflib.URIRef, "ValidationContext"]:
+        ontology_graph = rdflib.Graph()
+        for shape_collection in shape_collections:
+            ontology_graph += shape_collection.graph
+
+        model_graph = copy_graph(self.graph)
+
+        results = {}
+
+        for shape_uri in shapes_to_test:
+            targets = model_graph.triples((None, A, target_class))
+            temp_model_graph = copy_graph(model_graph)
+            for s, _, _ in targets:
+                temp_model_graph.add((s, A, shape_uri))
+
+            temp_model_graph += ontology_graph.cbd(shape_uri)
+
+            valid, report_g, report_str = pyshacl.validate(
+                data_graph=temp_model_graph,
+                ont_graph=ontology_graph,
+                allow_warnings=True,
+                advanced=True,
+                js=True,
+            )
+            results[shape_uri] = ValidationContext(
+                shape_collections,
+                valid,
+                report_g,
+                report_str,
+                self,
+            )
+
+        return results

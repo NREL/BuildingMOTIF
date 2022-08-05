@@ -10,7 +10,7 @@ import pyshacl
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
 
-from buildingmotif.namespaces import OWL, PARAM, RDF, SH, A, bind_prefixes
+from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Template
@@ -137,28 +137,10 @@ def compile_model(model: "Model", shape_collections: List["ShapeCollection"]):
     ontology_graph = Graph()
     for shape_collection in shape_collections:
         ontology_graph += shape_collection.graph
-    pyshacl.validate(
-        data_graph=model.graph,
-        shacl_graph=ontology_graph,
-        ont_graph=ontology_graph,
-        advanced=True,
-        inplace=True,
-        js=True,
-    )
-    model.graph -= ontology_graph
 
+    ontology_graph = ontology_graph.skolemize()
 
-def test_model_against_shapes(
-    model: "Model",
-    shape_collections: List["ShapeCollection"],
-    shapes_to_test: List[URIRef],
-    target_class: URIRef,
-):
-    ontology_graph = Graph()
-    for shape_collection in shape_collections:
-        ontology_graph += shape_collection.graph
-
-    model_graph = copy_graph(model.graph)
+    model_graph = copy_graph(model.graph).skolemize()
     pyshacl.validate(
         data_graph=model_graph,
         shacl_graph=ontology_graph,
@@ -167,27 +149,8 @@ def test_model_against_shapes(
         inplace=True,
         js=True,
     )
-
-    results = {}
-
-    for shape_uri in shapes_to_test:
-        targets = model_graph.triples((None, A, target_class))
-        temp_model_graph = copy_graph(model_graph)
-        for s, _, _ in targets:
-            temp_model_graph.add((s, A, shape_uri))
-
-        temp_model_graph += ontology_graph.cbd(shape_uri)
-
-        conforms, report_graph, report_text = pyshacl.validate(
-            data_graph=temp_model_graph,
-            ont_graph=ontology_graph,
-            allow_warnings=True,
-            advanced=True,
-            js=True,
-        )
-        results[shape_uri] = (conforms, report_graph, report_text)
-
-    return results
+    model_graph -= ontology_graph
+    return model_graph.de_skolemize()
 
 
 def get_template_parts_from_shape(
