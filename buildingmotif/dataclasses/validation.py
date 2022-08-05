@@ -181,6 +181,12 @@ class ValidationContext:
                 requiring_shape = g.value(result, SH.sourceShape)
                 expected_class = g.value(requiring_shape, SH["class"])
                 diffs.add(RequiredClass(focus, g, expected_class))
+            elif (
+                g.value(result, SH.sourceConstraintComponent)
+                == SH.NodeConstraintComponent
+            ):
+                # TODO: handle node constraint components
+                pass
             # check if property shape
             elif g.value(result, SH.resultPath):
                 path = g.value(result, SH.resultPath)
