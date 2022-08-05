@@ -105,6 +105,9 @@ class ShapeCollection:
         return graph
 
     def _cbd(self, shape_name, self_contained=True):
+        """
+        Retrieves the Concise Bounded Description (CBD) of the given shape
+        """
         cbd = self.graph.cbd(shape_name)
         # if computing self-contained, do the fixed-point computation produced by unioning
         # the CBDs of all nodes in the current CBD until the graph does not change
@@ -123,7 +126,7 @@ class ShapeCollection:
 
     def get_shapes(self, self_contained: bool = True) -> Generator["Shape", None, None]:
         """
-        Yields a sequence of the Concise Bounded Description of the shapes in this shape
+        Yields a sequence of the Concise Bounded Descriptions (CBD) of the shapes in this shape
         collection. The CBD may refer to other definitions in the enclosing shape graph. If
         we are planning on using a shape somewhere else (for instance, to create a Library of
         requirements for a particular site), then we will want the CBDs to be *self-contained*.
@@ -257,20 +260,31 @@ class ShapeCollection:
 
         return results
 
-    def get_shapes_about_class(self, rdf_type: URIRef) -> List[URIRef]:
+    def get_shapes_about_class(
+        self, rdf_type: URIRef, contexts: Optional[List["ShapeCollection"]] = None
+    ) -> List[URIRef]:
         """
         Returns a list of shapes that either target the given class
-        (or subclasses of it), or otherwise only apply to URIs of the given type
+        (or superclasses of it), or otherwise only apply to URIs of the given type
 
         :param rdf_type: an OWL class
         :type rdf_type: URIRef
+        :param contexts: list of ShapeCollections that help determine the class structure
+        :type contexts: List["ShapeCollection"], optional
         :return: A list of shapes in this collection that concern that class
         :rtype: List[URIRef]
         """
-        rows = self.graph.query(
+        # merge the contexts together w/ our graph if they are provided, else
+        # just use the existing shape collection graph
+        if contexts is not None:
+            context = sum(map(lambda x: x.graph, contexts), rdflib.Graph())
+            graph = self.graph + context
+        else:
+            graph = self.graph
+        rows = graph.query(
             f"""SELECT ?shape WHERE {{
             ?shape a sh:NodeShape .
-            ?class rdfs:subClassOf* {rdf_type.n3()} .
+            {rdf_type.n3()} rdfs:subClassOf* ?class .
             {{ ?shape sh:targetClass ?class }}
             UNION
             {{ ?shape sh:class ?class }}
