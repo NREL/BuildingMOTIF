@@ -1,0 +1,270 @@
+makeup-air-unit:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+
+    P:name a s223:MAU ;
+      s223:contains P:oad, P:pre-filter, P:final-filter, P:HRC, P:supply-fan, 
+                    P:cooling-coil, P:heating-coil, P:sa_pressure_sensor;
+      s223:hasProperty P:oa_rh, P:sa_sp ;
+      s223:cnx P:air-supply, P:outside-air ;
+      s223:hasSystemConnectionPoint P:supply-conn, P:outside-conn .
+      # s223:servesVAV P:vav
+      # TODO: building static pressure?
+      # TODO: evaporative cooler?
+      # TODO: outside air dry bulb temp
+      # TODO: outside air differential pressure
+  dependencies:
+    - template: damper
+      args: {"name": "oad"}
+    - template: filter
+      args: {"name": "pre-filter"}
+    - template: filter
+      args: {"name": "final-filter"}
+    - template: heat-recovery-coil
+      args: {"name": "HRC"}
+    - template: fan
+      args: {"name": "supply-fan"}
+    - template: chilled-water-coil
+      args: {"name": "cooling-coil"}
+    - template: hot-water-coil
+      args: {"name": "heating-coil"}
+    - template: sensor
+      args: {"name": "sa_pressure_sensor", "property": "sa_sp", "where": "air-supply"}
+    - template: static-pressure
+      args: {"name": "sa_sp"}
+    - template: air-outlet-cp
+      args: {"name": "air-supply", "mapsto": "supply-conn"}
+    - template: air-inlet-cp
+      args: {"name": "outside-air", "mapsto": "outside-conn"}
+    - template: system-air-inlet-cp
+      args: {"name": "outside-conn"}
+    - template: system-air-outlet-cp
+      args: {"name": "supply-conn"}
+
+damper:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+
+    P:name a s223:Damper ;
+      s223:hasProperty P:command, P:feedback ;
+      s223:cnx P:in, P:out .
+  dependencies:
+    - template: air-inlet-cp
+      args: {"name": "in"}
+    - template: air-outlet-cp
+      args: {"name": "out"}
+    - template: damper-command
+      args: {"name": "command"}
+    - template: damper-feedback
+      args: {"name": "feedback"}
+
+fan:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Fan ;
+      s223:hasProperty P:start-cmd, P:motor-status, P:oa-flow-switch ;
+      s223:cnx P:in, P:out .
+  dependencies:
+    - template: air-inlet-cp
+      args: {"name": "in"}
+    - template: air-outlet-cp
+      args: {"name": "out"}
+    - template: start-command
+      args: {"name": "start-cmd"}
+    - template: run-status
+      args: {"name": "motor-status"}
+    - template: flow-status
+      args: {"name": "oa-flow-switch"}
+
+filter:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Filter ;
+      s223:hasProperty P:differential-pressure ;
+      s223:cnx P:in, P:out .
+  dependencies:
+    - template: air-inlet-cp
+      args: {"name": "in"}
+    - template: air-outlet-cp
+      args: {"name": "out"}
+    - template: differential-pressure
+      args: {"name": "differential-pressure"}
+
+heat-recovery-coil:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:HeatRecoveryCoil ;
+      s223:hasProperty P:entering-air-temp, P:leaving-air-temp, P:supply-water-temp, P:return-water-temp ;
+      s223:cnx P:air-in, P:air-out, P:water-in, P:water-out .
+  dependencies:
+    - template: air-inlet-cp
+      args: {"name": "air-in"}
+    - template: air-outlet-cp
+      args: {"name": "air-out"}
+    - template: water-inlet-cp
+      args: {"name": "water-in"}
+    - template: water-outlet-cp
+      args: {"name": "water-out"}
+    - template: air-temperature
+      args: {"name": "leaving-air-temp"}
+    - template: air-temperature
+      args: {"name": "entering-air-temp"}
+    - template: water-temperature
+      args: {"name": "supply-water-temp"}
+    - template: water-temperature
+      args: {"name": "return-water-temp"}
+
+chilled-water-coil:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:CoolingCoil ;
+      s223:cnx P:air-in, P:air-out, P:water-in, P:water-out ;
+      s223:contains P:pump, P:valve ;
+      s223:hasProperty P:entering-air-temp, P:leaving-air-temp, P:supply-water-temp,
+                       P:return-water-temp, P:leaving-air-wetbulb-temp .
+  dependencies:
+    - template: chw-pump
+      args: {"name": "pump"}
+    - template: chw-valve
+      args: {"name": "valve"}
+    - template: air-inlet-cp
+      args: {"name": "air-in"}
+    - template: air-outlet-cp
+      args: {"name": "air-out"}
+    - template: water-inlet-cp
+      args: {"name": "water-in"}
+    - template: water-outlet-cp
+      args: {"name": "water-out"}
+    - template: air-temperature
+      args: {"name": "leaving-air-temp"}
+    - template: air-temperature
+      args: {"name": "entering-air-temp"}
+    - template: water-temperature
+      args: {"name": "supply-water-temp"}
+    - template: water-temperature
+      args: {"name": "return-water-temp"}
+    - template: air-temperature
+      args: {"name": "leaving-air-wetbulb-temp"} # TODO: different template?
+
+hot-water-coil:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:HeatingCoil ;
+      s223:cnx P:air-in, P:air-out, P:water-in, P:water-out ;
+      s223:contains P:valve, P:supply-water-temp-sensor, P:return-water-temp-sensor ;
+      s223:hasProperty P:supply-water-temp, P:return-water-temp .
+  dependencies:
+    - template: hw-valve
+      args: {"name": "valve"}
+    - template: air-inlet-cp
+      args: {"name": "air-in"}
+    - template: air-outlet-cp
+      args: {"name": "air-out"}
+    - template: water-inlet-cp
+      args: {"name": "water-in"}
+    - template: water-outlet-cp
+      args: {"name": "water-out"}
+    - template: water-temperature
+      args: {"name": "supply-water-temp"}
+    - template: water-temperature
+      args: {"name": "return-water-temp"}
+    - template: sensor
+      args: {"name": "supply-water-temp-sensor", "property": "supply-water-temp"}
+    - template: sensor
+      args: {"name": "return-water-temp-sensor", "property": "return-water-temp"}
+
+chw-pump:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:ChilledWaterPump ;
+      s223:hasProperty P:onoff-cmd, P:onoff-sts .
+  dependencies:
+    - template: start-command
+      args: {"name": "onoff-cmd"}
+    - template: run-status
+      args: {"name": "onoff-sts"}
+
+chw-valve:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:ChilledWaterValve ;
+      s223:hasProperty P:command, P:feedback .
+  dependencies:
+    - template: start-command
+      args: {"name": "command"}
+    - template: run-status
+      args: {"name": "feedback"}
+
+hw-valve:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:HotWaterValve ;
+      s223:hasProperty P:command, P:feedback .
+  dependencies:
+    - template: start-command
+      args: {"name": "command"}
+    - template: run-status
+      args: {"name": "feedback"}
+
+sensor:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Sensor ;
+      P:hasMeasurementLocation P:where ;
+      P:observesProperty P:property .
+  optional: ["where"]
+
+vav-reheat:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:VAV ;
+      s223:contains P:rhc, P:dmp, P:sup-air-flow-sensor, 
+                    P:sup-air-temp-sensor, P:sup-air-pressure-sensor ;
+      s223:hasProperty P:sup-air-temp, P:sup-air-flow, P:sup-air-pressure ;
+      s223:cnx P:air-in, P:air-out ;
+      s223:hasSystemConnectionPoint P:vav-in, P:vav-out .
+  dependencies:
+    - template: hot-water-coil
+      args: {"name": "rhc"}
+    - template: damper
+      args: {"name": "dmp"}
+    - template: system-air-inlet-cp
+      args: {"name": "vav-in"}
+    - template: system-air-outlet-cp
+      args: {"name": "vav-out"}
+    - template: air-inlet-cp
+      args: {"name": "air-in", "mapsto": "vav-in"}
+    - template: air-outlet-cp
+      args: {"name": "air-out", "mapsto": "vav-out"}
+    - template: air-temperature
+      args: {"name": "sup-air-temp"}
+    - template: sensor
+      args: {"name": "sup-air-temp-sensor", "property": "sup-air-temp", "where": "air-out"}
+    - template: air-flow
+      args: {"name": "sup-air-flow"}
+    - template: sensor
+      args: {"name": "sup-air-flow-sensor", "property": "sup-air-flow", "where": "air-out"}
+    - template: static-pressure
+      args: {"name": "sup-air-pressure"}
+    - template: sensor
+      args: {"name": "sup-air-pressure-sensor", "property": "sup-air-pressure", "where": "air-out"}
