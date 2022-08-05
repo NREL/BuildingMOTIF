@@ -85,6 +85,25 @@ def test_add_dependency(clean_building_motif):
     )
 
 
+def test_add_multiple_dependencies(clean_building_motif):
+    lib = Library.create("my_library")
+    dependant = lib.create_template("dependant")
+    dependee = lib.create_template("dependee")
+
+    dependant.add_dependency(dependee, {"name": "1", "param": "2"})
+    dependant.add_dependency(dependee, {"name": "3", "param": "4"})
+
+    assert (
+        Dependency(dependee.id, {"name": "1", "param": "2"})
+        in dependant.get_dependencies()
+    )
+    assert (
+        Dependency(dependee.id, {"name": "3", "param": "4"})
+        in dependant.get_dependencies()
+    )
+    assert len(dependant.get_dependencies()) == 2
+
+
 def test_add_dependency_bad_args(clean_building_motif):
     lib = Library.create("my_library")
     dependant = lib.create_template("dependant")
