@@ -46,8 +46,10 @@ def test_validate_model(clean_building_motif):
     assert not ctx.valid
 
     m.add_triples((BLDG["vav1"], A, BRICK.VAV))
-    m.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["sensor"]))
-    m.add_triples((BLDG["sensor"], A, BRICK.Temperature_Sensor))
+    m.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["temp_sensor"]))
+    m.add_triples((BLDG["temp_sensor"], A, BRICK.Temperature_Sensor))
+    m.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["flow_sensor"]))
+    m.add_triples((BLDG["flow_sensor"], A, BRICK.Air_Flow_Sensor))
 
     ctx = m.validate([lib.get_shape_collection()])
     assert ctx.valid
