@@ -213,8 +213,11 @@ class Template:
                 dep.args.values()
             )
             # replace conflicted parameters
+            # get the name of the entity this dependency will be bound to via the 'name'
+            # parameter, defaulting to the name of the dependee template
+            bound_name = dep.args.get("name", deptempl.name)
             conflicted_params: Dict[rdflib.URIRef, Term] = {
-                PARAM[conflicted_param]: PARAM[f"{deptempl.name}-{conflicted_param}"]
+                PARAM[conflicted_param]: PARAM[f"{bound_name}-{conflicted_param}"]
                 for conflicted_param in conflicted
             }
             # update the template's body w/ the new renamed parameters
