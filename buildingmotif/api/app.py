@@ -1,4 +1,5 @@
 from flask import Flask, current_app
+from flask_api import status
 from sqlalchemy.exc import SQLAlchemyError
 
 from buildingmotif.api.views.library import blueprint as library_blueprint
@@ -36,7 +37,7 @@ def _after_error(error):
     :return: flask error response
     :rtype: Flask.response
     """
-    return str(error), 500
+    return str(error), status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def create_app(DB_URI=building_motif_configs.DB_URI):

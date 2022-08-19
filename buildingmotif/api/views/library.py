@@ -1,5 +1,7 @@
 import flask
 from flask import Blueprint, current_app, jsonify
+from flask_api import status
+from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.library import serialize
 
@@ -15,7 +17,7 @@ def get_all_libraries() -> flask.Response:
     """
     db_libs = current_app.building_motif.table_connection.get_all_db_libraries()
 
-    return jsonify(serialize(db_libs))
+    return jsonify(serialize(db_libs)), status.HTTP_200_OK
 
 
 @blueprint.route("/<library_id>", methods=(["GET"]))
@@ -27,8 +29,13 @@ def get_library(library_id: int) -> flask.Response:
     :return: requested library
     :rtype: flask.Response
     """
-    db_lib = current_app.building_motif.table_connection.get_db_library_by_id(
-        library_id
-    )
+    try:
+        db_lib = current_app.building_motif.table_connection.get_db_library_by_id(
+            library_id
+        )
+    except NoResultFound:
+        return {
+            "message": f"No library with id {library_id}"
+        }, status.HTTP_404_NOT_FOUND
 
-    return jsonify(serialize(db_lib))
+    return jsonify(serialize(db_lib)), status.HTTP_200_OK

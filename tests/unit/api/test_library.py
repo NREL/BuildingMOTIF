@@ -41,3 +41,12 @@ def test_get_library(client, building_motif):
         "template_ids": [t.id for t in db_library.templates],
         "shape_collection_id": db_library.shape_collection_id,
     }
+
+
+def test_get_library_not_found(client):
+    # Act
+    results = client.get("/libraries/-1")
+
+    # Assert
+    assert results.status_code == 404
+    assert results.json == {"message": "No library with id -1"}

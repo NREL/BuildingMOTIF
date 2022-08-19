@@ -47,3 +47,12 @@ def test_get_template(client, building_motif):
         "library_id": db_template.library_id,
         "dependency_ids": [d.id for d in db_template.dependencies],
     }
+
+
+def test_get_template_not_found(client):
+    # Act
+    results = client.get("/templates/-1")
+
+    # Assert
+    assert results.status_code == 404
+    assert results.json == {"message": "No template with id -1"}

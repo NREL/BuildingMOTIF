@@ -1,5 +1,7 @@
 import flask
 from flask import Blueprint, current_app, jsonify
+from flask_api import status
+from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.template import serialize
 
@@ -15,7 +17,7 @@ def get_all_templates() -> flask.Response:
     """
     db_templates = current_app.building_motif.table_connection.get_all_db_templates()
 
-    return jsonify(serialize(db_templates))
+    return jsonify(serialize(db_templates)), status.HTTP_200_OK
 
 
 @blueprint.route("/<templates_id>", methods=(["GET"]))
@@ -27,8 +29,13 @@ def get_template(templates_id: int) -> flask.Response:
     :return: requested id
     :rtype: Template
     """
-    template = current_app.building_motif.table_connection.get_db_template_by_id(
-        templates_id
-    )
+    try:
+        template = current_app.building_motif.table_connection.get_db_template_by_id(
+            templates_id
+        )
+    except NoResultFound:
+        return {
+            "message": f"No template with id {templates_id}"
+        }, status.HTTP_404_NOT_FOUND
 
-    return jsonify(serialize(template))
+    return jsonify(serialize(template)), status.HTTP_200_OK
