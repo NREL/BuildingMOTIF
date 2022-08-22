@@ -1,16 +1,19 @@
 <div class="container">
-    <!-- In progress -->
-    <div *ngIf="templates.length === 0 && error === undefined">
-        <mat-progress-bar  mode="buffer"></mat-progress-bar>
+    <div class="header">
+        <div>Templates</div>
+        <form class="example-form">
+            <mat-form-field class="search-bar" appearance="outline" floatLabel="never">
+                <input type="text"
+                    aria-label="Search templates by name"
+                    placeholder="Search templates by name"
+                    matInput
+                    [formControl]="fitlerStringControl">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+        </form>      
     </div>
 
-    <!-- error  -->
-    <div *ngIf="!!error">
-        <div>error</div>
-    </div>
-
-    <!-- success -->
-    <mat-list *ngFor="let template of templates">
+    <mat-list *ngFor="let template of filteredTemplates | async">
             <mat-list-item >
                 <a routerLink="/templates/{{template.id}}">
                     {{template.name}}

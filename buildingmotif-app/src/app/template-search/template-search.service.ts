@@ -14,7 +14,9 @@ export interface Template {
   dependency_ids: number[];
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class TemplateSearchService {
 
   constructor(private http: HttpClient) { }

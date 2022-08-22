@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { TemplateSearchService, Template } from './template-search.service';
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-template-search',
@@ -8,21 +12,24 @@ import { TemplateSearchService, Template } from './template-search.service';
   providers: [TemplateSearchService],
 })
 export class TemplateSearchComponent implements OnInit{
-  error: any = undefined;
   templates: Template[] = [];
+  fitlerStringControl = new FormControl('');
+  filteredTemplates: Observable<Template[]> = new Observable();
 
-  constructor(private TemplateSearchService: TemplateSearchService) { }
+  constructor(private route: ActivatedRoute) {
+    this.templates = this.route.snapshot.data["templateSearch"];
+  }
 
-  getAllTemplates() {
-    this.TemplateSearchService.getAllTemplates()
-      .subscribe({
-        next: (data: Template[]) => {this.templates = data}, // success path
-        error: (error) => this.error = error // error path  
-      });
+  private _filterTemplatesByName(value: string): Template[] {
+    const filterValue = value.toLowerCase();
+
+    return this.templates.filter(template => template.name.toLocaleLowerCase().includes(filterValue))
   }
 
   ngOnInit() {
-    this.getAllTemplates()
-    console.log("template-search")
+    this.filteredTemplates = this.fitlerStringControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterTemplatesByName(value || '')),
+    );
   }
 }
