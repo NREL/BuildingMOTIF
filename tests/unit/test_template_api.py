@@ -152,3 +152,55 @@ def test_template_matching(bm: BuildingMOTIF):
     remaining_template = matcher.remaining_template(mapping)
     assert isinstance(remaining_template, Template)
     assert remaining_template.parameters == {"pos"}
+
+
+def test_template_matcher_with_graph_target(bm: BuildingMOTIF):
+    BLDG = Namespace("urn:template-match-test/")
+    brick = Library.load(
+        ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl"
+    )
+    templ_lib = Library.load(directory="tests/unit/fixtures/templates")
+    sf_templ = templ_lib.get_template_by_name("supply-fan")
+
+    data = """
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix : <urn:template-match-test/> .
+:sf1 a brick:Fan .
+    """
+    model = Model.create(BLDG + "1")
+    model.add_graph(Graph().parse(data=data))
+    matcher = TemplateMatcher(model.graph, sf_templ, brick.get_shape_collection().graph)
+    mapping, graph = next(matcher.building_mapping_subgraphs_iter())
+    assert len(mapping) == 2
+    print(mapping)
+    assert graph is not None
+    assert mapping[BLDG["sf1"]] == PARAM["name"]
+    assert mapping[BRICK["Fan"]] == BRICK["Supply_Fan"]
+
+    data = """
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix : <urn:template-match-test/> .
+:sf1 a brick:Fan .
+:sf2 a brick:Fan .
+    """
+    model = Model.create(BLDG + "2")
+    model.add_graph(Graph().parse(data=data))
+    matcher = TemplateMatcher(
+        model.graph, sf_templ, brick.get_shape_collection().graph, BLDG["sf2"]
+    )
+    mapping, graph = next(matcher.building_mapping_subgraphs_iter())
+    assert len(mapping) == 2
+    print(mapping)
+    assert graph is not None
+    assert mapping[BLDG["sf2"]] == PARAM["name"]
+    assert mapping[BRICK["Fan"]] == BRICK["Supply_Fan"]
+
+    matcher = TemplateMatcher(
+        model.graph, sf_templ, brick.get_shape_collection().graph, BLDG["sf1"]
+    )
+    mapping, graph = next(matcher.building_mapping_subgraphs_iter())
+    assert len(mapping) == 2
+    print(mapping)
+    assert graph is not None
+    assert mapping[BLDG["sf1"]] == PARAM["name"]
+    assert mapping[BRICK["Fan"]] == BRICK["Supply_Fan"]

@@ -12,7 +12,7 @@ from rdflib.paths import ZeroOrOne
 from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
 
 if TYPE_CHECKING:
-    from buildingmotif.template import Template
+    from buildingmotif.dataclasses import Template
 
 Term = Union[URIRef, Literal, BNode]
 Triple = Tuple[Term, Term, Term]
@@ -149,12 +149,13 @@ def get_template_parts_from_shape(
     pshapes = shape_graph.objects(subject=shape_name, predicate=SH["property"])
     for pshape in pshapes:
         property_path = shape_graph.value(pshape, SH["path"])
+        # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
                 subject=pshape,
                 predicate=SH["qualifiedValueShape"]
                 * ZeroOrOne
-                / (SH["class"] | SH["node"]),
+                / (SH["class"] | SH["node"] | SH["datatype"]),
             )
         )
         mincounts = list(
@@ -167,6 +168,8 @@ def get_template_parts_from_shape(
         if len(mincounts) > 1:
             raise Exception(f"more than one min count detected on {shape_name}")
         if len(mincounts) == 0 or len(otypes) == 0:
+            # print(f"No useful information on {shape_name} - {pshape}")
+            # print(shape_graph.cbd(pshape).serialize())
             continue
         (path, otype, mincount) = property_path, otypes[0], mincounts[0]
         assert isinstance(mincount, Literal)
