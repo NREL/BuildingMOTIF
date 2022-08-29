@@ -3,10 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { TemplateSearchComponent } from '../app/template-search/template-search.component'
 import { TemplateSearchResolver } from '../app/template-search/template-search.resolver'
 import { TemplateDetailComponent } from '../app/template-detail/template-detail.component'
+import { ModelSearchComponent } from '../app/model-search/model-search.component'
+import { ModelSearchResolver } from '../app/model-search/model-search.resolver'
 
 const routes: Routes = [
   { path: 'templates/:id', component: TemplateDetailComponent },
   { path: 'templates', component: TemplateSearchComponent, resolve: {templateSearch:TemplateSearchResolver}},
+  { path: 'models', component: ModelSearchComponent, resolve: {ModelSearchResolver}},
   { path: '',   redirectTo: '/templates', pathMatch: 'full' },
 ];
 

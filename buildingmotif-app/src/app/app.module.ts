@@ -16,7 +16,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatAutocompleteModule} from '@angular/material/autocomplete'; 
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from "@angular/material/form-field";
-import {MatIconModule} from '@angular/material/icon'; 
+import {MatIconModule} from '@angular/material/icon';
+import { ModelSearchComponent } from './model-search/model-search.component'; 
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import {MatIconModule} from '@angular/material/icon';
     LibraryComponent,
     TemplateSearchComponent,
     TemplateDetailComponent,
+    ModelSearchComponent,
   ],
   imports: [
     BrowserModule,
