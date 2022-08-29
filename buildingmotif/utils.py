@@ -7,11 +7,12 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
 
 from rdflib import BNode, Graph, Literal, URIRef
+from rdflib.paths import ZeroOrOne
 
 from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
 
 if TYPE_CHECKING:
-    from buildingmotif.template import Template
+    from buildingmotif.dataclasses import Template
 
 Term = Union[URIRef, Literal, BNode]
 Triple = Tuple[Term, Term, Term]
@@ -40,6 +41,16 @@ def copy_graph(g: Graph) -> Graph:
     for t in g.triples((None, None, None)):
         c.add(t)
     return c
+
+
+def combine_graphs(*graphs: Graph) -> Graph:
+    """
+    Combine all of the graphs into a new graph
+    """
+    newg = Graph()
+    for graph in graphs:
+        newg += graph
+    return newg
 
 
 def graph_size(g: Graph) -> int:
@@ -135,21 +146,34 @@ def get_template_parts_from_shape(
 
     deps = []
 
-    property_shape_query = f"""SELECT ?path ?otype ?mincount WHERE {{
-        {shape_name.n3()} sh:property ?prop .
-        ?prop sh:path ?path .
-        {{ ?prop sh:minCount ?mincount }}
-        UNION
-        {{ ?prop sh:qualifiedMinCount ?mincount }}
+    pshapes = shape_graph.objects(subject=shape_name, predicate=SH["property"])
+    for pshape in pshapes:
+        property_path = shape_graph.value(pshape, SH["path"])
+        # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
+        otypes = list(
+            shape_graph.objects(
+                subject=pshape,
+                predicate=SH["qualifiedValueShape"]
+                * ZeroOrOne
+                / (SH["class"] | SH["node"] | SH["datatype"]),
+            )
+        )
+        mincounts = list(
+            shape_graph.objects(
+                subject=pshape, predicate=SH["minCount"] | SH["qualifiedMinCount"]
+            )
+        )
+        if len(otypes) > 1:
+            raise Exception(f"more than one object type detected on {shape_name}")
+        if len(mincounts) > 1:
+            raise Exception(f"more than one min count detected on {shape_name}")
+        if len(mincounts) == 0 or len(otypes) == 0:
+            # print(f"No useful information on {shape_name} - {pshape}")
+            # print(shape_graph.cbd(pshape).serialize())
+            continue
+        (path, otype, mincount) = property_path, otypes[0], mincounts[0]
+        assert isinstance(mincount, Literal)
 
-        {{ ?prop sh:qualifiedValueShape?/sh:class ?otype }}
-        UNION
-        {{ ?prop sh:qualifiedValueShape?/sh:node ?otype }}
-    }}"""
-    for row in shape_graph.query(property_shape_query):
-        # for the type checker; graph.query can return boolean for ASK queries
-        assert isinstance(row, tuple)
-        (path, otype, mincount) = row
         for _ in range(int(mincount)):
             param = _gensym()
             body.add((root_param, path, param))

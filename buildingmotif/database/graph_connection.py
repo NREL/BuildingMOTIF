@@ -6,7 +6,6 @@ from rdflib.graph import Graph, Store, plugin
 
 if TYPE_CHECKING:
     from buildingmotif.building_motif.building_motif import BuildingMotifEngine
-from buildingmotif.namespaces import bind_prefixes
 
 PROJECT_DIR = Path(__file__).resolve().parent
 
@@ -74,7 +73,8 @@ class GraphConnection:
         :rtype: Graph
         """
         result = Graph(self.store, identifier=identifier)
-        bind_prefixes(result)
+        # we used to bind prefixes here but this is unnecessary because
+        # the graph has prefixes bound when it is saved
 
         return result
 

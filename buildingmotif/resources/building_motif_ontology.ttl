@@ -1,0 +1,76 @@
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+bmotif:Definition_Type a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:path rdfs:label ;
+        sh:minCount 1 ;
+    ] ;
+    sh:property [
+        sh:path bmotif:domain ;
+        sh:minCount 1 ;
+    ]
+.
+
+bmotif:Domain a owl:Class .
+
+
+bmotif:HVAC a bmotif:Domain ;
+.
+
+bmotif:Electrical a bmotif:Domain ;
+.
+
+bmotif:Plumbing a bmotif:Domain ;
+.
+
+bmotif:Commissioning a bmotif:Domain ;
+.
+
+bmotif:Design_Reviews a bmotif:Domain ;
+.
+
+bmotif:Lighting a bmotif:Domain ;
+    bmotif:includes bmotif:Electrical
+.
+
+bmotif:Analytics a bmotif:Domain ;
+.
+
+bmotif:Asset_Management a bmotif:Domain ;
+    bmotif:includes bmotif:Analytics ;
+.
+
+bmotif:Portfolio_Management a bmotif:Domain ;
+    bmotif:includes bmotif:Analytics ;
+.
+
+bmotif:EMIS a bmotif:Domain ;
+    bmotif:includes bmotif:Analytics ;
+.
+
+
+bmotif:domain a owl:ObjectProperty, sh:PropertyShape ;
+    sh:class bmotif:Domain ;
+.
+
+bmotif:includes a owl:ObjectProperty, sh:PropertyShape ;
+    sh:class bmotif:Domain ;
+.
+
+bmotif:Sequence_Of_Operations a owl:Class ;
+    rdfs:subClassOf bmotif:Definition_Type ;
+    skos:definition "Shape defining a sequence of operations" .
+
+bmotif:Analytics_Application a owl:Class ;
+    rdfs:subClassOf bmotif:Definition_Type ;
+    skos:definition "Shape defining an analytics application" ;
+.
+
+bmotif:System_Specification a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf bmotif:Definition_Type ;
+    skos:definition "Shape defining an system specification" ;
+.

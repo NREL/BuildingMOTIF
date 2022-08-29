@@ -1,5 +1,7 @@
 from rdflib import XSD, Namespace
 
+BMOTIF = Namespace("https://nrel.gov/BuildingMOTIF#")
+
 # special namespace to denote template parameters inside RDF graphs
 PARAM = Namespace("urn:___param___#")
 
@@ -24,6 +26,9 @@ UNIT = Namespace("http://qudt.org/vocab/unit/")
 
 BACNET = Namespace("http://data.ashrae.org/bacnet/2020#")
 
+BM = Namespace("https://nrel.gov/BuildingMOTIF#")
+CONSTRAINT = Namespace("https://nrel.gov/BuildingMOTIF/constraints#")
+
 A = RDF.type
 
 
@@ -44,3 +49,5 @@ def bind_prefixes(graph):
     graph.bind("tag", TAG)
     graph.bind("bsh", BSH)
     graph.bind("P", PARAM)
+    graph.bind("constraint", CONSTRAINT)
+    graph.bind("bmotif", BM)

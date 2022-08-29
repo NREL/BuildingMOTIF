@@ -1,0 +1,170 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <urn:ashrae/g36/4.1/vav-cooling-only/> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+
+:vav-cooling-only a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:class brick:VAV ;
+    sh:node :box-damper-position, :zone-temperature, :occupancy-sensor, :zone-co2-level, :window-switch, :discharge-airflow ;
+    bmotif:domain bmotif:HVAC ;
+.
+
+:box-damper-position a sh:NodeShape ;
+    sh:or ( :box-damper-position1 :box-damper-position2 ) .
+
+:box-damper-position1 a sh:NodeShape ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Damper_Position_Command ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
+:box-damper-position2 a sh:NodeShape ;
+    sh:property [
+        sh:path brick:hasPart ;
+          sh:qualifiedValueShape [ sh:node :damper-with-position ] ;
+          sh:qualifiedMinCount 1 ;
+    ] ;
+.
+:damper-with-position a sh:NodeShape, owl:Class ;
+    sh:class brick:Damper ;
+    sh:property [
+          sh:path brick:hasPoint ;
+          sh:class brick:Damper_Position_Command ;
+    ] ;
+.
+
+:discharge-airflow a sh:NodeShape ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Discharge_Air_Flow_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
+
+:zone-temperature a sh:NodeShape ;
+    sh:or ( :zone-temperature1 :zone-temperature2 ) .
+
+:zone-temperature1 a sh:NodeShape ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Zone_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
+:zone-temperature2 a sh:NodeShape ;
+    sh:property [
+        sh:path ( [ sh:oneOrMorePath brick:feeds ] [ sh:zeroOrOnePath brick:hasPart ] ) ;
+        sh:qualifiedValueShape [ sh:or ( :zone-with-temp-sensor :room-with-temp-sensor ) ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
+:zone-with-temp-sensor a sh:NodeShape, owl:Class ;
+    sh:class brick:HVAC_Zone ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Zone_Air_Temperature_Sensor ] ;
+    ] ;
+.
+:room-with-temp-sensor a sh:NodeShape, owl:Class ;
+    sh:class brick:Room ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Temperature_Sensor ] ;
+    ] ;
+.
+
+:occupancy-sensor a sh:NodeShape ;
+    sh:or ( :occupancy-sensor1 :occupancy-sensor2 ) .
+:occupancy-sensor1 a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedValueShape [ sh:class brick:Occupancy_Sensor ] ;
+    sh:qualifiedMinCount 0 ;
+.
+:occupancy-sensor2 a sh:PropertyShape ;
+    sh:path ( [ sh:oneOrMorePath brick:feeds ] [ sh:zeroOrOnePath brick:hasPart ] ) ;
+    sh:qualifiedValueShape [ sh:or ( :zone-with-occ-sensor :room-with-occ-sensor ) ] ;
+    sh:qualifiedMinCount 0 ;
+.
+:zone-with-occ-sensor a sh:NodeShape, owl:Class ;
+    sh:class brick:HVAC_Zone ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Occupancy_Sensor ] ;
+    ] ;
+.
+:room-with-occ-sensor a sh:NodeShape, owl:Class ;
+    sh:class brick:Room ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Occupancy_Sensor ] ;
+    ] ;
+.
+
+:window-switch a sh:NodeShape ;
+    sh:property [
+        sh:qualifiedMinCount 0 ;
+        sh:path [ sh:oneOrMorePath brick:feeds ] ;
+        sh:qualifiedValueShape :zone-with-room ;
+    ]
+.
+
+:zone-with-room a sh:NodeShape ;
+    sh:class brick:HVAC_Zone ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [
+            sh:class brick:Room ;
+            sh:property [
+                sh:path brick:hasPoint ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedValueShape [ sh:class brick:Open_Close_Status ] ;
+            ] ;
+        ] ;
+    ]
+.
+
+
+:zone-co2-level ;
+    sh:or ( :zone-co2-level1 :zone-co2-level2 ) .
+:zone-co2-level1  a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedValueShape [ sh:class brick:CO2_Level_Sensor ] ;
+    sh:qualifiedMinCount 0  ;
+.
+:zone-co2-level2 a sh:PropertyShape ;
+   sh:path (
+     [ sh:oneOrMorePath brick:feeds ]
+     [ sh:zeroOrOnePath brick:hasPart ]
+   ) ;
+   sh:qualifiedValueShape [
+     sh:or ( :zone-with-co2-sensor :space-with-co2-sensor )
+   ] ;
+   sh:qualifiedMinCount 0 ;
+.
+
+:zone-with-co2-sensor a sh:NodeShape, owl:Class ;
+    sh:class brick:HVAC_Zone ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:CO2_Level_Sensor ] ;
+    ] ;
+.
+
+:space-with-co2-sensor a sh:NodeShape, owl:Class ;
+    sh:class brick:Space ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:CO2_Level_Sensor ] ;
+    ] ;
+.

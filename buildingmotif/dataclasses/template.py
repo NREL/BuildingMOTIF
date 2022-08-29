@@ -2,15 +2,18 @@ from collections import Counter
 from dataclasses import dataclass
 from itertools import chain
 from secrets import token_hex
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
+from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rdflib
 
 from buildingmotif import get_building_motif
+from buildingmotif.dataclasses.model import Model
 from buildingmotif.namespaces import bind_prefixes
+from buildingmotif.template_matcher import Mapping, TemplateMatcher
 from buildingmotif.utils import (
     PARAM,
     Term,
+    combine_graphs,
     copy_graph,
     remove_triples_with_node,
     replace_nodes,
@@ -18,6 +21,7 @@ from buildingmotif.utils import (
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
+    from buildingmotif.dataclasses.library import Library
 
 
 @dataclass
@@ -117,6 +121,16 @@ class Template:
         # handle local parameters first
         nodes = chain.from_iterable(self.body.triples((None, None, None)))
         params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
+        return params
+
+    @property
+    def dependency_parameters(self) -> Set[str]:
+        """
+        The set of all parameters used in this template's dependencies
+        """
+        params: Set[str] = set()
+        for dep in self.get_dependencies():
+            params = params.union(dep.template.parameters)
         return params
 
     @property
@@ -278,6 +292,46 @@ class Template:
         res = self.evaluate(bindings)
         assert isinstance(res, rdflib.Graph)
         return bindings, res
+
+    @property
+    def defining_library(self) -> "Library":
+        from buildingmotif.dataclasses.library import Library
+
+        return Library.load(
+            self._bm.table_connection.get_library_defining_db_template(self.id).id
+        )
+
+    def library_dependencies(self) -> List["Library"]:
+        from buildingmotif.dataclasses.library import Library
+
+        libs = {self.defining_library.id}
+        for dep in self.get_dependencies():
+            libs.add(dep.template.defining_library.id)
+        return [Library.load(id) for id in libs]
+
+    def find_subgraphs(
+        self, model: Model, *ontologies: rdflib.Graph
+    ) -> Generator[Tuple[Mapping, rdflib.Graph, Optional["Template"]], None, None]:
+        """
+        Produces an iterable of subgraphs in the model that are partially or entirely
+        covered by the provided template.
+        # TODO: can we figure out what ontology to use automatically?
+        """
+        # if ontology is not specified, pull in all shapes related to this template's library
+        # and all of its dependencies
+        if len(ontologies) == 0:
+            ontology = rdflib.Graph()
+            for lib in self.library_dependencies():
+                ontology += lib.get_shape_collection().graph
+        else:
+            ontology = combine_graphs(*ontologies)
+
+        matcher = TemplateMatcher(model.graph, self, ontology)
+        for mapping, sg in matcher.building_mapping_subgraphs_iter():
+            print(mapping)
+            print(sg.serialize())
+            print("*" * 80)
+            yield mapping, sg, matcher.remaining_template(mapping)
 
 
 @dataclass

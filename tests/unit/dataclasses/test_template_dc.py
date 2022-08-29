@@ -19,11 +19,13 @@ def test_create(clean_building_motif):
     assert isinstance(t.id, int)
     assert t.name == "my_template"
     assert isinstance(t.body, rdflib.Graph)
+    assert t.defining_library == lib
 
     also_t = lib.get_templates()[0]
     assert also_t.id == t.id
     assert also_t.name == t.name
     assert isomorphic(also_t.body, t.body)
+    assert also_t.defining_library == lib
 
 
 def test_load(clean_building_motif):
@@ -140,6 +142,19 @@ def test_remove_depedancy_does_not_exist(clean_building_motif):
         dependant.remove_dependency(dependee)
 
     clean_building_motif.session.rollback()
+
+
+def test_get_library_dependencies(clean_building_motif):
+    Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
+    lib = Library.load(directory="tests/unit/fixtures/sample-lib-1")
+    sf_templ = lib.get_template_by_name("fan")
+    libs = sf_templ.library_dependencies()
+    assert len(libs) == 2
+    assert all(map(lambda x: isinstance(x, Library), libs))
+    assert {str(lib.name) for lib in libs} == {
+        "sample-lib-1",
+        "https://brickschema.org/schema/1.3/Brick",
+    }
 
 
 def test_template_compilation(clean_building_motif):

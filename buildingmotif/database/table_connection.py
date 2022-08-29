@@ -67,6 +67,17 @@ class TableConnection:
         db_model = self.bm.session.query(DBModel).filter(DBModel.id == id).one()
         return db_model
 
+    def get_db_model_by_name(self, name: str) -> DBModel:
+        """Get database model from name.
+
+        :param name: name of DBModel
+        :type name: str
+        :return: DBModel
+        :rtype: DBModel
+        """
+        db_model = self.bm.session.query(DBModel).filter(DBModel.name == name).one()
+        return db_model
+
     def update_db_model_name(self, id: int, name: str) -> None:
         """Update database model.
 
@@ -277,6 +288,12 @@ class TableConnection:
             self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
         )
         return db_template
+
+    def get_library_defining_db_template(self, id: int) -> DBLibrary:
+        """
+        Returns the library defining the given template
+        """
+        return self.get_db_template_by_id(id).library
 
     def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
         """Get a template's dependencies and its arguments.

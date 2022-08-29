@@ -1,0 +1,38 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix vav41: <urn:ashrae/g36/4.1/vav-cooling-only/> .
+@prefix : <urn:ashrae/g36/4.2/vav-with-reheat/> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+
+:vav-with-reheat a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:class brick:RVAV ;
+    rdfs:subClassOf vav41:vav-cooling-only ;
+    sh:or ( :heating-signal1 :heating-signal2 ) ;
+    bmotif:domain bmotif:HVAC ;
+.
+
+:heating-signal1 a sh:NodeShape ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Heating_Command ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
+
+:heating-signal2 a sh:NodeShape ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [
+            sh:class brick:Heating_Coil ;
+            sh:property [
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedValueShape [ sh:class brick:Position_Command ] ;
+                sh:path brick:hasPoint ;
+            ] ;
+        ] ;
+    ] ;
+.
