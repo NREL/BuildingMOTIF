@@ -34,6 +34,11 @@ See the `notebooks` directory.
 
     poetry run alembic upgrade head
     ```
+## Uping the API
+``` 
+poetry run python buildingmotif/api/app.py
+```
+API will run on localhost:5000
 
 ## Testing
 ``` 
