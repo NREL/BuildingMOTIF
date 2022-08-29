@@ -4,18 +4,18 @@ from copy import copy
 from dataclasses import dataclass
 from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
+from rdflib.term import Node
 
 from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Template
 
-Term = Union[URIRef, Literal, BNode]
-Triple = Tuple[Term, Term, Term]
+Triple = Tuple[Node, Node, Node]
 _gensym_counter = 0
 
 
@@ -83,7 +83,7 @@ def remove_triples_with_node(g: Graph, node: URIRef) -> None:
         g.remove(triple)
 
 
-def replace_nodes(g: Graph, replace: Dict[URIRef, Term]) -> None:
+def replace_nodes(g: Graph, replace: Dict[Node, Node]) -> None:
     """
     Replace nodes in a graph.
 
@@ -154,7 +154,7 @@ def get_template_parts_from_shape(
             shape_graph.objects(
                 subject=pshape,
                 predicate=SH["qualifiedValueShape"]
-                * ZeroOrOne
+                * ZeroOrOne  # type:ignore
                 / (SH["class"] | SH["node"] | SH["datatype"]),
             )
         )
@@ -197,10 +197,10 @@ def get_template_parts_from_shape(
 @dataclass
 class _TemplateIndex:
     template: "Template"
-    param_types: Dict[URIRef, List[URIRef]]
-    prop_types: Dict[URIRef, List[URIRef]]
-    prop_values: Dict[URIRef, List[Term]]
-    prop_shapes: Dict[URIRef, List[URIRef]]
+    param_types: Dict[Node, List[Node]]
+    prop_types: Dict[Node, List[Node]]
+    prop_values: Dict[Node, List[Node]]
+    prop_shapes: Dict[Node, List[Node]]
     target: URIRef
 
     @property
@@ -227,32 +227,34 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
     assert isinstance(target, URIRef)
 
     # store the classes for each parameter
-    param_types = defaultdict(list)
+    param_types: Dict[Node, List[Node]] = defaultdict(list)
     for (param, ptype) in templ_graph.subject_objects(RDF.type):
         param_types[param].append(ptype)
 
     # store the properties and their types for the target
-    prop_types = defaultdict(list)
-    prop_values = defaultdict(list)
-    prop_shapes = defaultdict(list)
+    prop_types: Dict[Node, List[Node]] = defaultdict(list)
+    prop_values: Dict[Node, List[Node]] = defaultdict(list)
+    prop_shapes: Dict[Node, List[Node]] = defaultdict(list)
     # TODO: prop_shapes for all properties whose object corresponds to another shape
     for p, o in templ_graph.predicate_objects(target):
         if p == RDF.type:
             continue
-        maybe_param = o.removeprefix(PARAM)
+        maybe_param = str(o).removeprefix(PARAM)
         if maybe_param in templ.dependency_parameters:
-            prop_shapes[p].append(templ.dependency_for_parameter(maybe_param))
+            dep = templ.dependency_for_parameter(maybe_param)
+            if dep is not None:
+                prop_shapes[p].append(URIRef(dep._name))
         elif o in param_types:
             prop_types[p].append(param_types[o][0])
-        elif o not in PARAM:
+        elif str(o) not in PARAM:
             prop_values[p].append(o)
-        elif o in PARAM and o not in param_types:
+        elif str(o) in PARAM and o not in param_types:
             logging.warn(
                 f"{o} is does not have a type and does not seem to be a literal"
             )
     return _TemplateIndex(
         templ,
-        param_types,
+        dict(param_types),
         dict(prop_types),
         dict(prop_values),
         dict(prop_shapes),
@@ -261,7 +263,7 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
 
 
 def _add_property_shape(
-    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Term
+    graph: Graph, name: Node, constraint: Node, path: Node, value: Node
 ):
     pshape = BNode()
     graph.add((name, SH.property, pshape))
@@ -272,7 +274,7 @@ def _add_property_shape(
 
 
 def _add_qualified_property_shape(
-    graph: Graph, name: URIRef, constraint: URIRef, path: URIRef, value: Term
+    graph: Graph, name: Node, constraint: Node, path: Node, value: Node
 ):
     pshape = BNode()
     graph.add((name, SH.property, pshape))
@@ -320,7 +322,12 @@ def template_to_shape(template: "Template") -> Graph:
         else:  # more than one ptype
             for shp in shapes:
                 _add_qualified_property_shape(
-                    shape, PARAM[templ.name], SH.node, prop, PARAM[shp]
+                    # TODO: fix this?
+                    shape,
+                    PARAM[templ.name],
+                    SH.node,
+                    prop,
+                    PARAM[str(shp)],
                 )
 
     return shape
