@@ -89,7 +89,9 @@ class ShapeCollection:
         This detects the use of 'sh:node' on SHACL NodeShapes and inlines
         the shape they point to.
         """
-        q = """SELECT ?parent ?child WHERE {
+        q = """
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        SELECT ?parent ?child WHERE {
             ?parent a sh:NodeShape ;
                     sh:node ?child .
             }"""
@@ -229,7 +231,9 @@ class ShapeCollection:
         else:
             graph = self.graph
         rows = graph.query(
-            f"""SELECT ?shape WHERE {{
+            f"""
+            PREFIX sh: <http://www.w3.org/ns/shacl#>
+            SELECT ?shape WHERE {{
             ?shape a sh:NodeShape .
             {rdf_type.n3()} rdfs:subClassOf* ?class .
             {{ ?shape sh:targetClass ?class }}
