@@ -8,7 +8,7 @@ from buildingmotif.building_motif.building_motif import BuildingMOTIF
 
 
 def _after_request(response):
-    """commit or rollback the session.
+    """Commit or rollback the session.
 
     :param response: response
     :type response: Flask.response
@@ -27,7 +27,7 @@ def _after_request(response):
 
 
 def _after_error(error):
-    """returns request with a 500 and the error message
+    """Returns request with a 500 and the error message.
 
     :param error: python error
     :type error: Error
@@ -38,7 +38,7 @@ def _after_error(error):
 
 
 def create_app(DB_URI):
-    """Creates a Flask api
+    """Creates a Flask api.
 
     :param db_uri: db uri
     :type db_uri: str
@@ -61,7 +61,7 @@ def create_app(DB_URI):
 
 
 if __name__ == "__main__":
-    """run api"""
+    """Run api."""
     # If config doesn't exist, this is considered a third party import and module cant be found.
     import configs as building_motif_configs  # type: ignore # isort:skip
 

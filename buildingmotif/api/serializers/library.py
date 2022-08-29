@@ -18,7 +18,7 @@ LibraryDict = TypedDict(
 def serialize(
     param: Union[DBLibrary, List[DBLibrary]]
 ) -> Union[LibraryDict, List[LibraryDict]]:
-    """serialize one or more library
+    """Serialize one or more library.
 
     :param param: one library or a list of libraries
     :type param: Union[DBLibrary, List[DBLibrary]]
@@ -35,7 +35,7 @@ def serialize(
 
 
 def _serialize(library: DBLibrary) -> LibraryDict:
-    """serialize library
+    """Serialize library.
 
     :param library: library
     :type library: DBTemplate

@@ -20,7 +20,7 @@ TemplateDict = TypedDict(
 def serialize(
     param: Union[DBTemplate, List[DBTemplate]]
 ) -> Union[TemplateDict, List[TemplateDict]]:
-    """serialize one or more templates
+    """Serialize one or more templates.
 
     :param param: one template or a list of templates
     :type param: Union[DBTemplate, List[DBTemplate]]
@@ -37,7 +37,7 @@ def serialize(
 
 
 def _serialize(template: DBTemplate) -> TemplateDict:
-    """serialize template
+    """Serialize template.
 
     :param template: template
     :type template: DBTemplate

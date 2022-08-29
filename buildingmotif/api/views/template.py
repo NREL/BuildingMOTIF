@@ -10,7 +10,7 @@ blueprint = Blueprint("templates", __name__)
 
 @blueprint.route("", methods=(["GET"]))
 def get_all_templates() -> flask.Response:
-    """get all templates
+    """Get all templates.
 
     :return: all templates
     :rtype: List[Template]
@@ -22,7 +22,7 @@ def get_all_templates() -> flask.Response:
 
 @blueprint.route("/<templates_id>", methods=(["GET"]))
 def get_template(templates_id: int) -> flask.Response:
-    """get Template with id
+    """Get Template with id.
 
     :param templates_id: template id
     :type templates_id: int
