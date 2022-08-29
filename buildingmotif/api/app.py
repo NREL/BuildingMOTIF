@@ -6,9 +6,6 @@ from buildingmotif.api.views.library import blueprint as library_blueprint
 from buildingmotif.api.views.template import blueprint as template_blueprint
 from buildingmotif.building_motif.building_motif import BuildingMOTIF
 
-# If config doesn't exist, this is considered a third party import and module cant be found.
-import configs as building_motif_configs  # type: ignore # isort:skip
-
 
 def _after_request(response):
     """commit or rollback the session.
@@ -40,7 +37,7 @@ def _after_error(error):
     return str(error), status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
-def create_app(DB_URI=building_motif_configs.DB_URI):
+def create_app(DB_URI):
     """Creates a Flask api
 
     :param db_uri: db uri
@@ -65,5 +62,8 @@ def create_app(DB_URI=building_motif_configs.DB_URI):
 
 if __name__ == "__main__":
     """run api"""
-    app = create_app()
+    # If config doesn't exist, this is considered a third party import and module cant be found.
+    import configs as building_motif_configs  # type: ignore # isort:skip
+
+    app = create_app(building_motif_configs.DB_URI)
     app.run(debug=True)
