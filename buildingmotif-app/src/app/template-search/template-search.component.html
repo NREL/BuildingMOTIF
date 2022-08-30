@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="header">
+        <div>Templates</div>
+        <form class="example-form">
+            <mat-form-field class="search-bar" appearance="outline" floatLabel="never">
+                <input type="text"
+                    aria-label="Search templates by name"
+                    placeholder="Search templates by name"
+                    matInput
+                    [formControl]="fitlerStringControl">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+        </form>      
+    </div>
+
+    <mat-list *ngFor="let template of filteredTemplates | async">
+            <mat-list-item >
+                <a routerLink="/templates/{{template.id}}">
+                    {{template.name}}
+                </a>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+    </mat-list>      
+</div>
