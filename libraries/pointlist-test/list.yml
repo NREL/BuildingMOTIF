@@ -1,0 +1,23 @@
+tstat:
+  type: https://brickschema.org/schema/Brick#Thermostat
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name brick:hasLocation P:zone .
+  bacnet: ['sp', 'sen', 'occ', 'status', 'command']
+  hasPoint:
+    sp: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Setpoint
+    sen: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+    occ: https://brickschema.org/schema/Brick#Occupancy_Sensor
+    status: https://brickschema.org/schema/Brick#Mode_Status
+    command: https://brickschema.org/schema/Brick#Mode_Command
+  optional: ['occ']
+  dependencies:
+    - template: hvac-zone
+      args: {"name": "zone"}
+
+hvac-zone:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name brick:hasPart p:room .
