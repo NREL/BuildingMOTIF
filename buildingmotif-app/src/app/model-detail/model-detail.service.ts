@@ -5,15 +5,13 @@ import { Model } from '../types'
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class ModelSearchService {
+@Injectable()
+export class ModelDetailService {
 
   constructor(private http: HttpClient) { }
 
-  getAllModels() {
-    return this.http.get<Model[]>("http://localhost:5000/models")
+  getModel(id: number) {
+    return this.http.get<Model>(`http://localhost:5000/models/${id}`)
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error

@@ -5,7 +5,8 @@ import {
   ActivatedRouteSnapshot
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { Model, ModelSearchService } from './model-search.service';
+import { ModelSearchService } from './model-search.service';
+import { Model } from '../types'
 
 @Injectable({
   providedIn: 'root'

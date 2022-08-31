@@ -20,7 +20,8 @@ import {MatIconModule} from '@angular/material/icon';
 import { ModelSearchComponent } from './model-search/model-search.component';
 import { MenuComponent } from './menu/menu.component'; 
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatButtonModule} from '@angular/material/button'; 
+import {MatButtonModule} from '@angular/material/button';
+import { ModelDetailComponent } from './model-detail/model-detail.component'; 
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import {MatButtonModule} from '@angular/material/button';
     TemplateDetailComponent,
     ModelSearchComponent,
     MenuComponent,
+    ModelDetailComponent,
   ],
   imports: [
     BrowserModule,

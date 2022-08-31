@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Model } from './model-search.service';
+import { Model } from '../types';
 
 @Component({
   selector: 'app-model-search',
