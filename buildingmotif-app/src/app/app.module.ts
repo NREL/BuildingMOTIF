@@ -17,7 +17,10 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import {MatIconModule} from '@angular/material/icon';
-import { ModelSearchComponent } from './model-search/model-search.component'; 
+import { ModelSearchComponent } from './model-search/model-search.component';
+import { MenuComponent } from './menu/menu.component'; 
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatButtonModule} from '@angular/material/button'; 
 
 @NgModule({
   declarations: [
@@ -26,6 +29,7 @@ import { ModelSearchComponent } from './model-search/model-search.component';
     TemplateSearchComponent,
     TemplateDetailComponent,
     ModelSearchComponent,
+    MenuComponent,
   ],
   imports: [
     BrowserModule,
@@ -41,7 +45,9 @@ import { ModelSearchComponent } from './model-search/model-search.component';
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule
+    MatIconModule,
+    MatToolbarModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
