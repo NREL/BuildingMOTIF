@@ -373,6 +373,7 @@ class TableConnection:
                 f"'name' was bound to {args['name']} but available params are {params}"
             )
 
+        # find any existing dependencies on the same template with the same arguments
         existing_deps = (
             self.bm.session.query(DepsAssociation)
             .filter(
