@@ -1,0 +1,38 @@
+<div>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Library</mat-label>
+    <mat-select [(ngModel)]="selectedLibrary" (selectionChange)="onSelectedLibraryChange($event)">
+      <mat-option *ngFor="let library of libraries" [value]="library.value">
+        {{library.viewValue}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+
+  <span *ngIf="selectedLibrary">
+      <div>id: {{selectedLibrary.id}}</div>
+      <div>name: {{selectedLibrary.name}}</div>
+      <div>shape collection id: {{selectedLibrary.shape_collection_id}}</div>
+      <!-- <div>template ids: {{selectedLibrary.template_ids}}</div> -->
+      <ul *ngIf="selectedLibrary.templates">
+        <li *ngFor="let template of selectedLibrary.templates">
+          <div>id: {{template.id}}</div>
+          <div>name: {{template.name}}</div>
+          <div>body_id: {{template.body_id}}</div>
+          <div>optional_args: {{template.optional_args}}</div>
+          <div>library_id: {{template.library_id}}</div>
+          <div>dependency_ids: {{template.dependency_ids}}</div>
+        </li>
+      </ul>
+  </span>
+
+</div>
+<p *ngIf="error" class="error">{{error.message | json}}</p>
+
+
+<!-- 
+Copyright Google LLC. All Rights Reserved.
+Use of this source code is governed by an MIT-style license that
+can be found in the LICENSE file at https://angular.io/license
+-->

@@ -70,16 +70,16 @@ class DBTemplate(Base):
     body_id: Mapped[str] = Column(String())
     optional_args: Mapped[List[str]] = Column(JSON)
 
-    library_id = Column(Integer, ForeignKey("library.id"), nullable=False)
-    library: DBLibrary = relationship("DBLibrary", back_populates="templates")
-    dependencies: Mapped["DBTemplate"] = relationship(
+    library_id: Mapped[int] = Column(Integer, ForeignKey("library.id"), nullable=False)
+    library: Mapped[DBLibrary] = relationship("DBLibrary", back_populates="templates")
+    dependencies: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",
         secondary="deps_association_table",
         primaryjoin=id == DepsAssociation.dependant_id,
         secondaryjoin=id == DepsAssociation.dependee_id,
         back_populates="dependants",
     )
-    dependants: Mapped["DBTemplate"] = relationship(
+    dependants: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",
         secondary="deps_association_table",
         primaryjoin=id == DepsAssociation.dependee_id,
