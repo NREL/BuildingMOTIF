@@ -10,6 +10,26 @@ from buildingmotif.dataclasses.template import Dependency
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import graph_size
 
+dependant_template_body = rdflib.Graph()
+dependant_template_body.parse(
+    data="""
+@prefix P: <urn:___param___#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+P:name a brick:VAV ;
+    brick:hasPoint P:1, P:2, P:3, P:4 .
+"""
+)
+
+dependency_template_body = rdflib.Graph()
+dependency_template_body.parse(
+    data="""
+@prefix P: <urn:___param___#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+P:name a brick:Temperature_Sensor ;
+    brick:hasUnit P:param .
+"""
+)
+
 
 def test_create(clean_building_motif):
     lib = Library.create("my_library")
@@ -75,8 +95,8 @@ def test_save_body(clean_building_motif):
 
 def test_add_dependency(clean_building_motif):
     lib = Library.create("my_library")
-    dependant = lib.create_template("dependant")
-    dependee = lib.create_template("dependee")
+    dependant = lib.create_template("dependant", dependant_template_body)
+    dependee = lib.create_template("dependee", dependency_template_body)
 
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
 
@@ -87,8 +107,8 @@ def test_add_dependency(clean_building_motif):
 
 def test_add_multiple_dependencies(clean_building_motif):
     lib = Library.create("my_library")
-    dependant = lib.create_template("dependant")
-    dependee = lib.create_template("dependee")
+    dependant = lib.create_template("dependant", dependant_template_body)
+    dependee = lib.create_template("dependee", dependency_template_body)
 
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
     dependant.add_dependency(dependee, {"name": "3", "param": "4"})
@@ -106,8 +126,8 @@ def test_add_multiple_dependencies(clean_building_motif):
 
 def test_add_dependency_bad_args(clean_building_motif):
     lib = Library.create("my_library")
-    dependant = lib.create_template("dependant")
-    dependee = lib.create_template("dependee")
+    dependant = lib.create_template("dependant", dependant_template_body)
+    dependee = lib.create_template("dependee", dependency_template_body)
 
     with pytest.raises(ValueError):
         dependant.add_dependency(dependee, {"bad": "xyz"})
@@ -115,8 +135,8 @@ def test_add_dependency_bad_args(clean_building_motif):
 
 def test_add_dependency_already_exist(clean_building_motif):
     lib = Library.create("my_library")
-    dependant = lib.create_template("dependant")
-    dependee = lib.create_template("dependee")
+    dependant = lib.create_template("dependant", dependant_template_body)
+    dependee = lib.create_template("dependee", dependency_template_body)
 
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
 
@@ -128,8 +148,8 @@ def test_add_dependency_already_exist(clean_building_motif):
 
 def test_get_dependencies(clean_building_motif):
     lib = Library.create("my_library")
-    dependant = lib.create_template("dependant")
-    dependee = lib.create_template("dependee")
+    dependant = lib.create_template("dependant", dependant_template_body)
+    dependee = lib.create_template("dependee", dependency_template_body)
 
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
 
@@ -140,8 +160,8 @@ def test_get_dependencies(clean_building_motif):
 
 def test_remove_dependency(clean_building_motif):
     lib = Library.create("my_library")
-    dependant = lib.create_template("dependant")
-    dependee = lib.create_template("dependee")
+    dependant = lib.create_template("dependant", dependant_template_body)
+    dependee = lib.create_template("dependee", dependency_template_body)
 
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
     assert dependant.get_dependencies() == (
@@ -154,8 +174,8 @@ def test_remove_dependency(clean_building_motif):
 
 def test_remove_depedancy_does_not_exist(clean_building_motif):
     lib = Library.create("my_library")
-    dependant = lib.create_template("dependant")
-    dependee = lib.create_template("dependee")
+    dependant = lib.create_template("dependant", dependant_template_body)
+    dependee = lib.create_template("dependee", dependency_template_body)
 
     with pytest.raises(NoResultFound):
         dependant.remove_dependency(dependee)
