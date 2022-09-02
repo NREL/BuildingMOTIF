@@ -373,6 +373,20 @@ class TableConnection:
                 f"'name' was bound to {args['name']} but available params are {params}"
             )
 
+        # find any existing dependencies on the same template with the same arguments
+        existing_deps = (
+            self.bm.session.query(DepsAssociation)
+            .filter(
+                DepsAssociation.dependant_id == template_id,
+                DepsAssociation.dependee_id == dependency_id,
+            )
+            .all()
+        )
+        if any(map(lambda x: x.args == args, existing_deps)):
+            raise ValueError(
+                f"{templ.name} already depends on {dependency_id} with args {args}"
+            )
+
         # In the past we had a check here to make sure the two templates were in the same library.
         # This has been removed because it wasn't actually necessary, but we may add it back in
         # in the future.
