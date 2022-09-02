@@ -202,34 +202,29 @@ class Template:
             return templ
 
         # count of parameters in this template + all dependencies
-        counts = self.parameter_counts
+        # counts = self.parameter_counts
         # start with this template's parameters; if there is
         for dep in self.get_dependencies():
             # get the inlined version of the dependency
             deptempl = dep.template.inline_dependencies()
+
             # replace dependency parameters with the names they inherit
             # through the provided bindings
-            rename_args: Dict[rdflib.URIRef, Node] = {
+            rename_params: Dict[Node, Node] = {
                 PARAM[ours]: PARAM[theirs] for ours, theirs in dep.args.items()
             }
-            replace_nodes(deptempl.body, rename_args)
-            # find the parameters in the dependency that also appear in other templates:
-            # the conflicted parameters are those that appear in the 'rest' of the parameters
-            # (gien by params_without_dep) *and* don't have their conflicting name as a result
-            # of the parameter bindings (dep.args.values())
-            dep_counts = deptempl.parameter_counts
-            params_without_dep = set(counts - dep_counts)
-            conflicted = params_without_dep.intersection(dep_counts.keys()) - set(
-                dep.args.values()
-            )
-            # replace conflicted parameters
-            conflicted_params: Dict[rdflib.URIRef, Node] = {
-                PARAM[conflicted_param]: PARAM[f"{deptempl.name}-{conflicted_param}"]
-                for conflicted_param in conflicted
-            }
-            # update the template's body w/ the new renamed parameters
-            replace_nodes(deptempl.body, conflicted_params)
-            # concatenate the dependency's body with this template's body
+            # replace all parameters *not* mentioned in the args by prefixing
+            # them with the 'name' parameter binding; this is guaranteed
+            # to exist
+            name_prefix = dep.args.get("name")
+            for param in deptempl.parameters:
+                if param not in dep.args:
+                    rename_params[PARAM[param]] = PARAM[f"{name_prefix}-{param}"]
+
+            # replace the parameters in the dependency template
+            replace_nodes(deptempl.body, rename_params)
+
+            # append into the dependant body
             templ.body += deptempl.body
 
         return templ
