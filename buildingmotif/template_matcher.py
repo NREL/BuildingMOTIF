@@ -11,30 +11,32 @@ import networkx as nx  # type: ignore
 from networkx.algorithms.isomorphism import DiGraphMatcher  # type: ignore
 from rdflib import Graph, URIRef
 from rdflib.extras.external_graph_libs import rdflib_to_networkx_digraph
+from rdflib.term import Node
 
 from buildingmotif.namespaces import OWL, PARAM, RDF, RDFS
-from buildingmotif.utils import Term, copy_graph
+from buildingmotif.utils import copy_graph
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses.template import Template
 
-Mapping = Dict[Term, Term]
+Mapping = Dict[Node, Node]
 
 
 # used to accelerate monomorphism search
 # outer key is the address of the ontology graph
 # inner map is from a class to its parent classes
 class _ontology_lookup_cache:
-    sc_cache: Dict[int, Dict[Term, Set[Term]]]
-    t_cache: Dict[int, Dict[Term, Set[Term]]]
-    in_cache: Dict[int, Dict[Term, bool]]
+    sc_cache: Dict[int, Dict[Node, Set[Node]]]
+    t_cache: Dict[int, Dict[Node, Set[Node]]]
+    in_cache: Dict[int, Dict[Node, bool]]
 
     def __init__(self):
         self.sc_cache = {}
+        self.sp_cache = {}
         self.t_cache = {}
         self.in_cache = {}
 
-    def parents(self, ntype: Term, ontology: Graph) -> Set[Term]:
+    def parents(self, ntype: Node, ontology: Graph) -> Set[Node]:
         if id(ontology) not in self.sc_cache:
             self.sc_cache[id(ontology)] = {}
         cache = self.sc_cache[id(ontology)]
@@ -43,7 +45,16 @@ class _ontology_lookup_cache:
             cache[ntype] = set(ontology.transitive_objects(ntype, RDFS.subClassOf))
         return cache[ntype]
 
-    def types(self, node: Term, graph: Graph) -> Set[URIRef]:
+    def superproperties(self, ntype: Node, ontology: Graph) -> Set[Node]:
+        if id(ontology) not in self.sp_cache:
+            self.sp_cache[id(ontology)] = {}
+        cache = self.sp_cache[id(ontology)]
+        # populate cache if necessary
+        if ntype not in cache:
+            cache[ntype] = set(ontology.transitive_objects(ntype, RDFS.subPropertyOf))
+        return cache[ntype]
+
+    def types(self, node: Node, graph: Graph) -> Set[URIRef]:
         if id(graph) not in self.t_cache:
             self.t_cache[id(graph)] = {}
         cache = self.t_cache[id(graph)]
@@ -54,7 +65,7 @@ class _ontology_lookup_cache:
             cache[node] = {OWL.NamedIndividual}
         return cache[node]  # type: ignore
 
-    def defined_in(self, node: Term, graph: Graph) -> bool:
+    def defined_in(self, node: Node, graph: Graph) -> bool:
         if id(graph) not in self.in_cache:
             self.in_cache[id(graph)] = {}
         cache = self.in_cache[id(graph)]
@@ -64,10 +75,7 @@ class _ontology_lookup_cache:
         return cache[node]
 
 
-_cache = _ontology_lookup_cache()
-
-
-def _get_types(n: Term, g: Graph) -> Set[URIRef]:
+def _get_types(n: Node, g: Graph, _cache: _ontology_lookup_cache) -> Set[URIRef]:
     """
     Types for a node should only be URIRefs, so the
     type filtering here should be safe.
@@ -77,17 +85,22 @@ def _get_types(n: Term, g: Graph) -> Set[URIRef]:
 
 
 def _compatible_types(
-    n1: Term, g1: Graph, n2: Term, g2: Graph, ontology: Graph
+    n1: Node,
+    g1: Graph,
+    n2: Node,
+    g2: Graph,
+    ontology: Graph,
+    _cache: _ontology_lookup_cache,
 ) -> bool:
     """
     Returns true if the two terms have covariant types.
 
     :param n1: First node
-    :type n1: Term
+    :type n1: Node
     :param g1: The graph containing the first node's types
     :type g1: Graph
     :param n2: Second node
-    :type n2: Term
+    :type n2: Node
     :param g2: The graph containing the second node's types
     :type g2: Graph
     :param ontology: The ontology graph that defines the class hierarchy
@@ -95,19 +108,34 @@ def _compatible_types(
     :return: True if the nodes are semantically compatible, false otherwise
     :rtype: bool
     """
-    for n1type in _get_types(n1, g1):
-        for n2type in _get_types(n2, g2):
-            # check if types are covariant
-            if n2type in _cache.parents(n1type, ontology) or n1type in _cache.parents(
-                n2type, ontology
-            ):
-                return True
+    n1types = _get_types(n1, g1, _cache)
+    n2types = _get_types(n2, g2, _cache)
+    # check if these are properties; if so, use subPropertyOf, not subClassOf
+    property_types = {OWL.ObjectProperty, OWL.DatatypeProperty}
+    if property_types.intersection(n1types) and property_types.intersection(n2types):
+        for n1type in _get_types(n1, g1, _cache):
+            for n2type in _get_types(n2, g2, _cache):
+
+                # check if types are covariant
+                if n2type in _cache.superproperties(
+                    n1type, ontology
+                ) or n1type in _cache.superproperties(n2type, ontology):
+                    return True
+    else:
+        for n1type in _get_types(n1, g1, _cache):
+            for n2type in _get_types(n2, g2, _cache):
+
+                # check if types are covariant
+                if n2type in _cache.parents(
+                    n1type, ontology
+                ) or n1type in _cache.parents(n2type, ontology):
+                    return True
     return False
 
 
 def get_semantic_feasibility(
-    G1: Graph, G2: Graph, ontology: Graph
-) -> Callable[[Term, Term], bool]:
+    G1: Graph, G2: Graph, ontology: Graph, _cache: _ontology_lookup_cache
+) -> Callable[[Node, Node], bool]:
     """
     Returns a function that checks if two nodes are semantically feasible to be
     matched given the information in the provided ontology.
@@ -119,7 +147,7 @@ def get_semantic_feasibility(
     TODO: other checks?
     """
 
-    def semantic_feasibility(n1: Term, n2: Term) -> bool:
+    def semantic_feasibility(n1: Node, n2: Node) -> bool:
         # case 0: same node
         if n1 == n2:
             return True
@@ -132,7 +160,7 @@ def get_semantic_feasibility(
             else:
                 return False
         # case 2: both are instances
-        if _compatible_types(n1, G1, n2, G2, ontology):
+        if _compatible_types(n1, G1, n2, G2, ontology, _cache):
             return True
         return False
 
@@ -152,9 +180,12 @@ class _VF2SemanticMatcher(DiGraphMatcher):
     def __init__(self, T: Graph, G: Graph, ontology: Graph):
         super().__init__(rdflib_to_networkx_digraph(T), rdflib_to_networkx_digraph(G))
         self.ontology = ontology
-        self._semantic_feasibility = get_semantic_feasibility(T, G, ontology)
+        self._cache = _ontology_lookup_cache()
+        self._semantic_feasibility = get_semantic_feasibility(
+            T, G, ontology, self._cache
+        )
 
-    def semantic_feasibility(self, g1: Term, g2: Term) -> bool:
+    def semantic_feasibility(self, g1: Node, g2: Node) -> bool:
         """
         Returns true if the two nodes are semantically feasible to be matched.
         """
@@ -193,19 +224,30 @@ class TemplateMatcher:
     by how "complete" the monomorphism is.
     """
 
-    mappings: Dict[int, List[Mapping]] = defaultdict(list)
+    mappings: Dict[int, List[Mapping]]
     template: "Template"
     building: Graph
-    template_bindings: Dict[str, Term] = {}
+    template_bindings: Dict[str, Node]
     template_graph: Graph
 
-    def __init__(self, building: Graph, template: "Template", ontology: Graph):
+    def __init__(
+        self,
+        building: Graph,
+        template: "Template",
+        ontology: Graph,
+        graph_target: Optional[Node] = None,
+    ):
+        self.mappings = defaultdict(list)
+        self.template_bindings = {}
         self.template = template
         self.building = building
         self.ontology = ontology
+        self.graph_target = graph_target
 
         self.template_graph = copy_graph(template.body)
-        self.template_parameters = {PARAM[p] for p in self.template.parameters}
+        self.template_parameters: Set[Node] = {
+            PARAM[p] for p in self.template.parameters
+        }
 
         self._generate_mappings()
 
@@ -216,6 +258,9 @@ class TemplateMatcher:
             )
             if matching.subgraph_is_monomorphic():
                 for sg in matching.subgraph_monomorphisms_iter():
+                    # skip if the subgraph does not contain the graph node we care about
+                    if self.graph_target and self.graph_target not in sg.keys():
+                        continue
                     # sg is a mapping from building graph nodes to template nodes
                     # that constitutes a monomorphism.
                     if len(sg) == 0:
@@ -277,15 +322,15 @@ class TemplateMatcher:
         a mapping.
         """
         # if all parameters are fulfilled by the mapping, then return None
-        mapping = {k: v for k, v in mapping.items() if v in PARAM}
-        mapped_params: Set[URIRef] = {URIRef(v) for v in mapping.values()}
+        mapping = {k: v for k, v in mapping.items() if str(v) in PARAM}
+        mapped_params: Set[Node] = {v for v in mapping.values()}
         if not self.template_parameters - mapped_params:
             # return self.building_subgraph_from_mapping(mapping)
             return None
         bindings = {}
         for building_node, param in mapping.items():
             if param is not None:
-                bindings[param[len(PARAM) :]] = building_node
+                bindings[str(param)[len(PARAM) :]] = building_node
         # this *should* be a template because we don't have bindings for all of
         # the template's parameters
         res = self.template.evaluate(bindings)

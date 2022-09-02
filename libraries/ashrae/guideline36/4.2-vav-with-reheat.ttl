@@ -14,17 +14,19 @@
     bmotif:domain bmotif:HVAC ;
 .
 
-:heating-signal1 a sh:PropertyShape ;
-    sh:path brick:hasPoint ;
-    sh:qualifiedValueShape [ sh:class brick:Heating_Command ] ;
-    sh:qualifiedMinCount 1 ;
+:heating-signal1 a sh:NodeShape ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Heating_Command ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
 .
 
-:heating-signal2 a sh:PropertyShape ;
-    sh:path brick:hasPart ;
-    sh:qualifiedMinCount 1 ;
-    sh:qualifiedValueShape [ 
-        sh:node [
+:heating-signal2 a sh:NodeShape ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [
             sh:class brick:Heating_Coil ;
             sh:property [
                 sh:qualifiedMinCount 1 ;

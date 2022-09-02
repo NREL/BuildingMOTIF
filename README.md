@@ -34,6 +34,11 @@ See the `notebooks` directory.
 
     poetry run alembic upgrade head
     ```
+## Uping the API
+``` 
+poetry run python buildingmotif/api/app.py
+```
+API will run on localhost:5000
 
 ## Testing
 ``` 
@@ -71,6 +76,9 @@ poetry publish --build --dry-run
 # build and publish
 poetry publish --build
 ```
+
+# Developing the Web app
+see [buildingmotif-app/README.md](buildingmotif-app/README.md)
 
 # Visualizing
 ![repo-vis](./diagram.svg)
