@@ -135,7 +135,7 @@ class Model:
             self,
         )
 
-    def compile_model(self, shape_collections: List["ShapeCollection"]):
+    def compile(self, shape_collections: List["ShapeCollection"]):
         """
         Compile the graph of a model against a set of shape collections.
 
