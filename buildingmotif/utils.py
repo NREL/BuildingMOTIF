@@ -6,7 +6,6 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
 
-import pyshacl
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
@@ -15,8 +14,6 @@ from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Template
-    from buildingmotif.dataclasses.model import Model
-    from buildingmotif.dataclasses.shape_collection import ShapeCollection
 
 Triple = Tuple[Node, Node, Node]
 _gensym_counter = 0
@@ -128,29 +125,6 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
     else:
         searches = (directory.glob(f"{pat}") for pat in patterns)
     return list(chain.from_iterable(searches))
-
-
-def compile_model(model: "Model", shape_collections: List["ShapeCollection"]):
-    """
-    Processess the graph of a model against a set of shape collections
-    """
-    ontology_graph = Graph()
-    for shape_collection in shape_collections:
-        ontology_graph += shape_collection.graph
-
-    ontology_graph = ontology_graph.skolemize()
-
-    model_graph = copy_graph(model.graph).skolemize()
-    pyshacl.validate(
-        data_graph=model_graph,
-        shacl_graph=ontology_graph,
-        ont_graph=ontology_graph,
-        advanced=True,
-        inplace=True,
-        js=True,
-    )
-    model_graph -= ontology_graph
-    return model_graph.de_skolemize()
 
 
 def get_template_parts_from_shape(

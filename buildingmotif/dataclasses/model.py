@@ -135,12 +135,56 @@ class Model:
             self,
         )
 
+    def compile_model(self, shape_collections: List["ShapeCollection"]):
+        """
+        Compile the graph of a model against a set of shape collections.
+
+        :param shape_collections: List of shape collections to compile the model against
+        :type shape_collections: List[ShapeCollection]
+
+        :return: Copy of model's graph which has been compiled against the shape collections
+        :rtype: Graph
+        """
+        ontology_graph = rdflib.Graph()
+        for shape_collection in shape_collections:
+            ontology_graph += shape_collection.graph
+
+        ontology_graph = ontology_graph.skolemize()
+
+        model_graph = copy_graph(self.graph).skolemize()
+        pyshacl.validate(
+            data_graph=model_graph,
+            shacl_graph=ontology_graph,
+            ont_graph=ontology_graph,
+            advanced=True,
+            inplace=True,
+            js=True,
+        )
+        model_graph -= ontology_graph
+        return model_graph.de_skolemize()
+
     def test_model_against_shapes(
         self,
         shape_collections: List["ShapeCollection"],
         shapes_to_test: List[rdflib.URIRef],
         target_class: rdflib.URIRef,
     ) -> Dict[rdflib.URIRef, "ValidationContext"]:
+        """
+        Validates the model against a list of shapes and generates a validation report
+        for each shape.
+
+        :param shape_collections: List of shape collections needed to run shapes
+        :type shape_collection: List[ShapeCollection]
+
+        :param shapes_to_test: List of Shape URIs to validate the model against
+        :type shapes_to_test: List[URIRef]
+
+        :param target_class: The class upon which to run the selected shapes
+        :type target_class: URIRef
+
+        :return: A dictionary which relates each shape_to_test URIRef to a ValidationContext
+        :rtype: Dict[URIRef, ValidationContext]
+        """
         ontology_graph = rdflib.Graph()
         for shape_collection in shape_collections:
             ontology_graph += shape_collection.graph
