@@ -361,20 +361,22 @@ class TableConnection:
         graph = self.bm.graph_connection.get_graph(templ.body_id)
         nodes = chain.from_iterable(graph.triples((None, None, None)))
         params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
+        dep = self.get_db_template_by_id(dependency_id)
 
+        # check parameters are valid
         if not set(args.values()).issubset(params):
             raise ValueError(
-                "The values of the bindings must correspond to the parameters "
-                "in the dependant template"
+                f"In {templ.name} the values of the bindings to {dep.name} must correspond to the "
+                "parameters in the dependant template"
             )
-        dep = self.get_db_template_by_id(dependency_id)
+        # do the same for the dependency
         graph = self.bm.graph_connection.get_graph(dep.body_id)
         nodes = chain.from_iterable(graph.triples((None, None, None)))
         dep_params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
         if not set(args.keys()).issubset(dep_params):
             raise ValueError(
-                "The keys of the bindings must correspond to the parameters "
-                "in the template dependency"
+                f"In {templ.name} the keys of the bindings to {dep.name} must correspond to the "
+                "parameters in the template dependency"
             )
 
         # TODO: do we need this kind of check?

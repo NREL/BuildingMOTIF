@@ -1,21 +1,47 @@
 import uuid
 
 import pytest
+import rdflib
 from sqlalchemy.exc import NoResultFound
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.database.tables import DBTemplate
 
 
-def create_dependacy_test_fixtures(bm: BuildingMOTIF):
+def create_dependency_test_fixtures(bm: BuildingMOTIF):
+    dependant_template_body = rdflib.Graph()
+    dependant_template_body.parse(
+        data="""@prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:VAV ;
+        brick:nothing P:ding ;
+        brick:nothing2  P:dong .
+    """,
+        format="turtle",
+    )
+
+    dependency_template_body = rdflib.Graph()
+    dependency_template_body.parse(
+        data="""@prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Temperature_Sensor ;
+        brick:hasUnit P:h2 .
+    """,
+        format="turtle",
+    )
     db_library = bm.table_connection.create_db_library(name="my_db_library")
     dependant_template = bm.table_connection.create_db_template(
         name="dependant_template", library_id=db_library.id
     )
+    body = bm.graph_connection.get_graph(dependant_template.body_id)
+    body += dependant_template_body
+
     dependee_template = bm.table_connection.create_db_template(
         name="dependee_template",
         library_id=db_library.id,
     )
+    body = bm.graph_connection.get_graph(dependee_template.body_id)
+    body += dependency_template_body
 
     return (
         db_library,
@@ -180,7 +206,7 @@ def test_add_template_dependency(bm: BuildingMOTIF):
         _,
         dependant_template,
         dependee_template,
-    ) = create_dependacy_test_fixtures(bm)
+    ) = create_dependency_test_fixtures(bm)
 
     bm.table_connection.add_template_dependency(
         dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
@@ -201,7 +227,7 @@ def test_add_template_dependency_bad_args(bm: BuildingMOTIF):
         _,
         dependant_template,
         dependee_template,
-    ) = create_dependacy_test_fixtures(bm)
+    ) = create_dependency_test_fixtures(bm)
 
     with pytest.raises(ValueError):
         bm.table_connection.add_template_dependency(
@@ -214,7 +240,7 @@ def test_add_template_dependency_already_exist(bm: BuildingMOTIF):
         _,
         dependant_template,
         dependee_template,
-    ) = create_dependacy_test_fixtures(bm)
+    ) = create_dependency_test_fixtures(bm)
 
     bm.table_connection.add_template_dependency(
         dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
@@ -233,7 +259,7 @@ def test_get_dependencies(bm: BuildingMOTIF):
         _,
         dependant_template,
         dependee_template,
-    ) = create_dependacy_test_fixtures(bm)
+    ) = create_dependency_test_fixtures(bm)
 
     bm.table_connection.add_template_dependency(
         dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
@@ -252,7 +278,7 @@ def test_remove_dependencies(bm: BuildingMOTIF):
         _,
         dependant_template,
         dependee_template,
-    ) = create_dependacy_test_fixtures(bm)
+    ) = create_dependency_test_fixtures(bm)
 
     bm.table_connection.add_template_dependency(
         dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
@@ -277,7 +303,7 @@ def test_remove_dependencies_does_not_exist(bm: BuildingMOTIF):
         _,
         dependant_template,
         dependee_template,
-    ) = create_dependacy_test_fixtures(bm)
+    ) = create_dependency_test_fixtures(bm)
 
     with pytest.raises(NoResultFound):
         bm.table_connection.remove_template_dependency(
