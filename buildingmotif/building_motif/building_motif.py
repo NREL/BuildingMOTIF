@@ -33,7 +33,7 @@ def _custom_json_serializer(obj):
     return json.dumps(obj)
 
 
-def _custom_json_deserislizer(inp):
+def _custom_json_deserializer(inp):
     """
     Handles deserializing the objects serialied by _custom_json_serializer
     """
@@ -67,7 +67,7 @@ class BuildingMOTIF(metaclass=Singleton):
             db_uri,
             echo=False,
             json_serializer=_custom_json_serializer,
-            json_deserializer=_custom_json_deserislizer,
+            json_deserializer=_custom_json_deserializer,
         )
         self.session_factory = sessionmaker(bind=self.engine, autoflush=True)
         self.Session = scoped_session(self.session_factory)
