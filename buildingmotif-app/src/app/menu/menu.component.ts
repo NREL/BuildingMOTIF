@@ -12,7 +12,7 @@ interface NavItem {
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.css']
 })
-export class MenuComponent implements OnInit {
+export class MenuComponent {
   readonly navItems: NavItem[];
 
   constructor(
@@ -27,8 +27,5 @@ export class MenuComponent implements OnInit {
         route: '/models',
       }
     ]
-  }
-
-  ngOnInit(){
   }
 }

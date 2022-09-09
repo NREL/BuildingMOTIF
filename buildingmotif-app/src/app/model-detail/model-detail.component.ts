@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
 import { Model } from '../types'
-import {ModelDetailService} from './model-detail.service'
+import { ModelDetailService } from './model-detail.service'
+import {FormControl} from '@angular/forms';
+import {
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-model-detail',
@@ -10,28 +15,39 @@ import {ModelDetailService} from './model-detail.service'
   providers: [ModelDetailService],
   styleUrls: ['./model-detail.component.css']
 })
-export class ModelDetailComponent implements OnInit {
-  error: any
-  id: number | undefined;
-  model: Model | undefined;
+export class ModelDetailComponent{
+  model: Model;
+  graph: string; // graph as in DB
+  graphFormControl: FormControl = new FormControl(''); // graph as in UI
 
   constructor(
     private route: ActivatedRoute,
-    private location: Location,
     private ModelDetailService: ModelDetailService,
-  ) {}
+    private _snackBar: MatSnackBar,
+  ) {
+    [this.model, this.graph] = route.snapshot.data["ModelDetailResolver"]
+    this.graphFormControl.setValue(this.graph)
+  }
 
-  getModel(id: number) {
-    this.ModelDetailService.getModel(id)
+  onSave(): void{
+    this.ModelDetailService.updateModelGraph(this.model.id, this.graphFormControl.value)
       .subscribe({
-        next: (data: Model) => {this.model = data}, // success path
-        error: (error) => this.error = error // error path  
+        next: (data: string) => {
+          this.graph = data
+          this.openSnackBar("success")
+        }, // success path
+        error: (error) => {
+          this.openSnackBar("error")
+          console.log(error)
+        } // error path  
       });
   }
 
-  ngOnInit(): void {
-    this.id = parseInt(this.route.snapshot.paramMap.get('id')!, 10);
-    this.getModel(this.id);
+  openSnackBar(message: string) {
+    this._snackBar.open(message, "oh", {});
   }
 
+  undoChangesToGraph(): void {
+    this.graphFormControl.setValue(this.graph)
+  }
 }

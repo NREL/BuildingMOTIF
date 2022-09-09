@@ -23,6 +23,8 @@ def _after_request(response):
 
     current_app.building_motif.Session.remove()
     response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
 
     return response
 
@@ -68,4 +70,4 @@ if __name__ == "__main__":
     import configs as building_motif_configs  # type: ignore # isort:skip
 
     app = create_app(building_motif_configs.DB_URI)
-    app.run(debug=True)
+    app.run(debug=True, threaded=False)

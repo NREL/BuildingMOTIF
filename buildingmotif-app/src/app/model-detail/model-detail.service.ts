@@ -1,17 +1,37 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Model } from '../types'
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ModelDetailService {
 
   constructor(private http: HttpClient) { }
 
   getModel(id: number) {
     return this.http.get<Model>(`http://localhost:5000/models/${id}`)
+      .pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError) // then handle the error
+      );
+  }
+
+  getModelGraph(id: number) {
+    return this.http.get(`http://localhost:5000/models/${id}/graph`, {responseType: 'text'})
+      .pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError) // then handle the error
+      );
+  }
+
+  updateModelGraph(id: number, newGraph: string) {
+    const headers = {'Content-Type': "application/xml"}
+
+    return this.http.patch(`http://localhost:5000/models/${id}/graph`, newGraph, {headers, responseType: 'text'})
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error
