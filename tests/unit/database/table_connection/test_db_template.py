@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 import rdflib
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.database.tables import DBTemplate
@@ -246,7 +246,7 @@ def test_add_template_dependency_already_exist(bm: BuildingMOTIF):
         dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
     )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(IntegrityError):
         bm.table_connection.add_template_dependency(
             dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
         )
