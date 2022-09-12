@@ -1,9 +1,5 @@
 from rdflib import Graph, Namespace
 
-from buildingmotif.building_motif.building_motif import (
-    _custom_json_deserializer,
-    _custom_json_serializer,
-)
 from buildingmotif.namespaces import BRICK, A
 from buildingmotif.utils import (
     PARAM,
@@ -77,28 +73,6 @@ def test_replace_nodes():
     assert (MODEL["a1"], MODEL["b1"], MODEL["c"]) in g
     assert (MODEL["d"], MODEL["e"], MODEL["f1"]) in g
     assert len(list(g.triples((None, None, None)))) == 2
-
-
-def test_custom_json_serde():
-    def roundtrip(inp):
-        return _custom_json_deserializer(_custom_json_serializer(inp))
-
-    x = []
-    assert x == roundtrip(x)
-    x = [1]
-    assert x == roundtrip(x)
-    x = [1, 2]
-    assert x == roundtrip(x)
-    x = {"a": "b"}
-    assert x == roundtrip(x)
-    x = {"a": "b", "c": "d"}
-    assert x == roundtrip(x)
-    x = ["a", "b", "c", "d"]
-    assert x == roundtrip(x)
-    x = ["ab", "cd"]
-    assert x == roundtrip(x)
-    x = ["abc", "def"]
-    assert x == roundtrip(x)
 
 
 def test_get_parameters():
