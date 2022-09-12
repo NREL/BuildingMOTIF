@@ -210,22 +210,33 @@ class Template:
 
             # replace dependency parameters with the names they inherit
             # through the provided bindings
-            rename_params: Dict[Node, Node] = {
-                PARAM[ours]: PARAM[theirs] for ours, theirs in dep.args.items()
+            rename_params: Dict[str, str] = {
+                ours: theirs for ours, theirs in dep.args.items()
             }
             # replace all parameters *not* mentioned in the args by prefixing
             # them with the 'name' parameter binding; this is guaranteed
             # to exist
             name_prefix = dep.args.get("name")
+            # for each parameter in the dependency...
             for param in deptempl.parameters:
-                if param not in dep.args:
-                    rename_params[PARAM[param]] = PARAM[f"{name_prefix}-{param}"]
+                # if it does *not* have a mapping in the dependency, then
+                # prefix the parameter with the value of the 'name' binding
+                # to scope it properly
+                if param not in dep.args and param != "name":
+                    rename_params[param] = f"{name_prefix}-{param}"
 
             # replace the parameters in the dependency template
-            replace_nodes(deptempl.body, rename_params)
+            replace_nodes(
+                deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
+            )
+            # be sure to rename optional arguments too
+            dep_optional_args = [
+                rename_params.get(arg, arg) for arg in deptempl.optional_args
+            ]
 
             # append into the dependant body
             templ.body += deptempl.body
+            templ.optional_args += dep_optional_args
 
         return templ
 
@@ -254,7 +265,7 @@ class Template:
         :rtype: Union["Template", rdflib.Graph]
         """
         templ = self.in_memory_copy()
-        uri_bindings = {PARAM[k]: v for k, v in bindings.items()}
+        uri_bindings: Dict[Node, Node] = {PARAM[k]: v for k, v in bindings.items()}
         replace_nodes(templ.body, uri_bindings)
         # true if all parameters are now bound or only optional args are unbound
         if len(templ.parameters) == 0 or (
@@ -283,7 +294,11 @@ class Template:
         :return: a tuple of the bindings used and the resulting graph
         :rtype: Tuple[Dict[str, Node], rdflib.Graph]
         """
-        bindings = {param: ns[f"{param}_{token_hex(4)}"] for param in self.parameters}
+        bindings: Dict[str, Node] = {
+            param: ns[f"{param}_{token_hex(4)}"]
+            for param in self.parameters
+            if param not in self.optional_args
+        }
         res = self.evaluate(bindings)
         assert isinstance(res, rdflib.Graph)
         return bindings, res
