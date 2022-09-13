@@ -52,10 +52,20 @@ class DepsAssociation(Base):
 
     __tablename__ = "deps_association_table"
 
-    dependant_id: Mapped[int] = Column(ForeignKey("template.id"), primary_key=True)
-    dependee_id: Mapped[int] = Column(ForeignKey("template.id"), primary_key=True)
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    dependant_id: Mapped[int] = Column(ForeignKey("template.id"))
+    dependee_id: Mapped[int] = Column(ForeignKey("template.id"))
     # args are a mapping of dependee args to dependant args
     args: Mapped[Dict[str, str]] = Column(JSON)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "dependant_id",
+            "dependee_id",
+            "args",
+            name="deps_association_unique_constraint",
+        ),
+    )
 
 
 class DBTemplate(Base):
@@ -70,16 +80,16 @@ class DBTemplate(Base):
     body_id: Mapped[str] = Column(String())
     optional_args: Mapped[List[str]] = Column(JSON)
 
-    library_id = Column(Integer, ForeignKey("library.id"), nullable=False)
-    library: DBLibrary = relationship("DBLibrary", back_populates="templates")
-    dependencies: Mapped["DBTemplate"] = relationship(
+    library_id: Mapped[int] = Column(Integer, ForeignKey("library.id"), nullable=False)
+    library: Mapped[DBLibrary] = relationship("DBLibrary", back_populates="templates")
+    dependencies: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",
         secondary="deps_association_table",
         primaryjoin=id == DepsAssociation.dependant_id,
         secondaryjoin=id == DepsAssociation.dependee_id,
         back_populates="dependants",
     )
-    dependants: Mapped["DBTemplate"] = relationship(
+    dependants: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",
         secondary="deps_association_table",
         primaryjoin=id == DepsAssociation.dependee_id,

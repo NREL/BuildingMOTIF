@@ -1,0 +1,26 @@
+tstat:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Thermostat ;
+      brick:hasPoint p:temp, p:sp .
+    p:temp a brick:Temperature_Sensor .
+    p:sp a brick:Temperature_Setpoint .
+
+tstat-location:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Thermostat ;
+      brick:hasLocation p:room ;
+      brick:hasPoint p:temp .
+    p:temp a brick:Temperature_Sensor .
+    p:room a brick:Room .
+
+room:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Room ;
+      brick:isPartOf p:zone .
+    p:zone a brick:HVAC_Zone .

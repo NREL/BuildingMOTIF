@@ -6,6 +6,7 @@ import rdflib
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
+from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.utils import Triple, copy_graph
 
 if TYPE_CHECKING:
@@ -39,7 +40,7 @@ class Model:
         return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
 
     @classmethod
-    def load(cls, id: int) -> "Model":
+    def load(cls, id: Optional[int] = None, name: Optional[str] = None) -> "Model":
         """Get Model from db by id
 
         :param id: model id
@@ -48,7 +49,12 @@ class Model:
         :rtype: Model
         """
         bm = get_building_motif()
-        db_model = bm.table_connection.get_db_model(id)
+        if id is not None:
+            db_model = bm.table_connection.get_db_model(id)
+        elif name is not None:
+            db_model = bm.table_connection.get_db_model_by_name(name)
+        else:
+            raise Exception("Neither id nor name provided to load Model")
         graph = bm.graph_connection.get_graph(db_model.graph_id)
 
         return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
@@ -89,7 +95,7 @@ class Model:
         """
         self.graph += graph
 
-    def validate(self, shape_collections: List[ShapeCollection]) -> bool:
+    def validate(self, shape_collections: List[ShapeCollection]) -> "ValidationContext":
         """
         Validates this model against the given shape collections. Loads all of the shape_collections
         into a single graph.
@@ -101,15 +107,29 @@ class Model:
         :param shape_collections: a list of shape_collections against which the
                                   graph should be validated
         :type shape_collections: List[ShapeCollection]
-        :return: True if the model passes validation, false otherwise
-        :rtype: bool
+        :return: An object containing useful properties/methods to deal with the validation results
+        :rtype: "ValidationContext"
         """
         shapeg = rdflib.Graph()
         for sc in shape_collections:
-            shapeg += sc.graph
+            # inline sh:node for interpretability
+            shapeg += sc._inline_sh_node()
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
-        valid, _, _ = pyshacl.validate(
-            data_graph, shacl_graph=shapeg, advanced=True, js=True, allow_warnings=True
+        valid, report_g, report_str = pyshacl.validate(
+            data_graph,
+            shacl_graph=shapeg,
+            ont_graph=shapeg,
+            advanced=True,
+            js=True,
+            allow_warnings=True,
+            # inplace=True,
         )
-        return valid
+        assert isinstance(report_g, rdflib.Graph)
+        return ValidationContext(
+            shape_collections,
+            valid,
+            report_g,
+            report_str,
+            self,
+        )

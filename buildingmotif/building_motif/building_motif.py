@@ -2,8 +2,10 @@ import logging
 import os
 from contextlib import contextmanager
 
+from rdflib import Graph
+from rdflib.namespace import NamespaceManager
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 from buildingmotif.building_motif.singleton import (
     Singleton,
@@ -12,6 +14,11 @@ from buildingmotif.building_motif.singleton import (
 from buildingmotif.database.graph_connection import GraphConnection
 from buildingmotif.database.table_connection import TableConnection
 from buildingmotif.database.tables import Base as BuildingMOTIFBase
+from buildingmotif.database.utils import (
+    _custom_json_deserializer,
+    _custom_json_serializer,
+)
+from buildingmotif.namespaces import bind_prefixes
 
 
 class BuildingMOTIF(metaclass=Singleton):
@@ -28,9 +35,14 @@ class BuildingMOTIF(metaclass=Singleton):
         :default log_level: INFO
         """
         self.db_uri = db_uri
-        self.engine = create_engine(db_uri, echo=False)
-        Session = sessionmaker(bind=self.engine, autoflush=True)
-        self.session = Session()
+        self.engine = create_engine(
+            db_uri,
+            echo=False,
+            json_serializer=_custom_json_serializer,
+            json_deserializer=_custom_json_deserializer,
+        )
+        self.session_factory = sessionmaker(bind=self.engine, autoflush=True)
+        self.Session = scoped_session(self.session_factory)
 
         self.setup_logging(log_level)
 
@@ -42,6 +54,14 @@ class BuildingMOTIF(metaclass=Singleton):
         self.graph_connection = GraphConnection(
             BuildingMotifEngine(self.engine, self.session)
         )
+
+        g = Graph()
+        bind_prefixes(g)
+        self.template_ns_mgr: NamespaceManager = NamespaceManager(g)
+
+    @property
+    def session(self):
+        return self.Session()
 
     def setup_tables(self):
         """

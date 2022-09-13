@@ -6,7 +6,7 @@ vav-with-reheat:
   dependencies:
    - template: vav-cooling-only
      args: {"name": "name"}
-   - template: reheat-coil
+   - template: heating-coil
      args: {"name": "rhc"}
 
 heating-coil:
@@ -16,17 +16,6 @@ heating-coil:
     p:name a brick:Heating_Coil ;
       brick:hasPoint p:cmd .
   dependencies:
-  - template: https://brickschema.org/schema/Brick#Valve_Command
-    library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "cmd"}
-
-reheat-coil:
-  body: >
-    @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a brick:Reheat_Coil ;
-      brick:hasPoint p:cmd .
-  dependencies:
-  - template: https://brickschema.org/schema/Brick#Valve_Command
+  - template: https://brickschema.org/schema/Brick#Position_Command
     library: https://brickschema.org/schema/1.3/Brick
     args: {"name": "cmd"}
