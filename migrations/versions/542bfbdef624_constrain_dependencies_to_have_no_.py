@@ -1,15 +1,15 @@
 """Constrain dependencies to have no duplicates. Uses new JSON serde
 
-Revision ID: c69f87d3994b
+Revision ID: 542bfbdef624
 Revises: 66121a0432bc
-Create Date: 2022-09-13 10:56:37.472803
+Create Date: 2022-09-13 10:57:44.977492
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "c69f87d3994b"
+revision = "542bfbdef624"
 down_revision = "66121a0432bc"
 branch_labels = None
 depends_on = None
@@ -21,6 +21,10 @@ def upgrade():
         batch_op.add_column(sa.Column("id", sa.Integer(), nullable=False))
         batch_op.alter_column("dependant_id", existing_type=sa.INTEGER(), nullable=True)
         batch_op.alter_column("dependee_id", existing_type=sa.INTEGER(), nullable=True)
+        batch_op.create_unique_constraint(
+            "deps_association_unique_constraint",
+            ["dependant_id", "dependee_id", "args"],
+        )
 
     with op.batch_alter_table("template", schema=None) as batch_op:
         batch_op.drop_index("ix_template_name")
@@ -34,6 +38,7 @@ def downgrade():
         batch_op.create_index("ix_template_name", ["name"], unique=False)
 
     with op.batch_alter_table("deps_association_table", schema=None) as batch_op:
+        batch_op.drop_constraint("deps_association_unique_constraint", type_="unique")
         batch_op.alter_column("dependee_id", existing_type=sa.INTEGER(), nullable=False)
         batch_op.alter_column(
             "dependant_id", existing_type=sa.INTEGER(), nullable=False
