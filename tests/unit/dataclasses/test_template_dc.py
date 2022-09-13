@@ -3,7 +3,7 @@ import rdflib
 from rdflib import RDF, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from buildingmotif.dataclasses import Library, Template
 from buildingmotif.dataclasses.template import Dependency
@@ -140,7 +140,7 @@ def test_add_dependency_already_exist(clean_building_motif):
 
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
 
-    with pytest.raises(ValueError):
+    with pytest.raises(IntegrityError):
         dependant.add_dependency(dependee, {"name": "1", "param": "2"})
 
     clean_building_motif.session.rollback()

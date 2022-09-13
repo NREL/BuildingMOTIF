@@ -58,6 +58,15 @@ class DepsAssociation(Base):
     # args are a mapping of dependee args to dependant args
     args: Mapped[Dict[str, str]] = Column(JSON)
 
+    __table_args__ = (
+        UniqueConstraint(
+            "dependant_id",
+            "dependee_id",
+            "args",
+            name="deps_association_unique_constraint",
+        ),
+    )
+
 
 class DBTemplate(Base):
     """Template.
