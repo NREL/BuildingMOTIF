@@ -87,7 +87,7 @@ def run_migrations_online() -> None:
 
     """
     connectable = create_engine(
-        config.get_section(config.config_ini_section)["sqlalchemy.url"],
+        config.get_section(config.config_ini_section)["sqlalchemy.url"],  # type: ignore
         poolclass=pool.NullPool,
         json_serializer=_custom_json_serializer,
         json_deserializer=_custom_json_deserializer,
