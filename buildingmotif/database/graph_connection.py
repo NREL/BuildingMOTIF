@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional
 
 from rdflib.graph import Graph, Store, URIRef, plugin
+from rdflib.namespace import NamespaceManager
 
 if TYPE_CHECKING:
     from buildingmotif.building_motif.building_motif import BuildingMotifEngine
@@ -38,7 +39,7 @@ class GraphConnection:
         def fixed_bind(self, prefix: str, namespace: URIRef, override: bool):
             self.store.bind(prefix, namespace)
 
-        setattr(self.store, "bind", fixed_bind)
+        setattr(NamespaceManager, "_store_bind", fixed_bind)
 
         self.logger.debug("Creating tables for graph storage")
         self.store.create_all()

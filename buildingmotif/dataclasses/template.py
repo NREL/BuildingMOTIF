@@ -230,8 +230,9 @@ class Template:
                 deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
             )
             # be sure to rename optional arguments too
+            unused_optional_args = set(deptempl.optional_args) - set(dep.args.keys())
             dep_optional_args = [
-                rename_params.get(arg, arg) for arg in deptempl.optional_args
+                rename_params.get(arg, arg) for arg in unused_optional_args
             ]
 
             # append into the dependant body
