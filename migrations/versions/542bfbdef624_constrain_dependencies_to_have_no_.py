@@ -1,4 +1,5 @@
-"""Constrain dependencies to have no duplicates. Uses new JSON serde
+"""Constrain dependencies to have no duplicates. Uses new JSON serialization/deserialization
+(serde) to consistently store the dependency bindings.
 
 Revision ID: 542bfbdef624
 Revises: 66121a0432bc
