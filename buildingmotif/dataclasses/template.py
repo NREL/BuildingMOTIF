@@ -201,8 +201,6 @@ class Template:
         if not self.get_dependencies():
             return templ
 
-        # count of parameters in this template + all dependencies
-        # counts = self.parameter_counts
         # start with this template's parameters; if there is
         for dep in self.get_dependencies():
             # get the inlined version of the dependency
@@ -230,8 +228,9 @@ class Template:
                 deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
             )
             # be sure to rename optional arguments too
+            unused_optional_args = set(deptempl.optional_args) - set(dep.args.keys())
             dep_optional_args = [
-                rename_params.get(arg, arg) for arg in deptempl.optional_args
+                rename_params.get(arg, arg) for arg in unused_optional_args
             ]
 
             # append into the dependant body
@@ -277,9 +276,7 @@ class Template:
                     templ.body.bind(prefix, namespace)
             if not require_optional_args:
                 # remove all triples that touch unbound optional_args
-                unbound_optional_args = set(templ.optional_args) - set(
-                    uri_bindings.keys()
-                )
+                unbound_optional_args = set(templ.optional_args) - set(bindings.keys())
                 for arg in unbound_optional_args:
                     remove_triples_with_node(templ.body, PARAM[arg])
             return templ.body

@@ -1,12 +1,7 @@
 from rdflib import Graph, Namespace
 
 from buildingmotif.namespaces import BRICK, A
-from buildingmotif.utils import (
-    PARAM,
-    get_parameters,
-    get_template_parts_from_shape,
-    replace_nodes,
-)
+from buildingmotif.utils import PARAM, get_template_parts_from_shape, replace_nodes
 
 PREAMBLE = """@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -74,15 +69,19 @@ def test_replace_nodes():
     assert (MODEL["d"], MODEL["e"], MODEL["f1"]) in g
     assert len(list(g.triples((None, None, None)))) == 2
 
-
-def test_get_parameters():
-    body = Graph()
-    body.parse(
-        data="""
-    @prefix P: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    P:name a brick:VAV ;
-        brick:hasPoint P:1, P:2, P:3, P:4 .
+    g = Graph()
+    g.parse(
+        data=PREAMBLE
+        + """
+    :a :ab :ac .
     """
     )
-    assert get_parameters(body) == {"name", "1", "2", "3", "4"}
+    replace_nodes(
+        g,
+        {
+            MODEL["a"]: MODEL["a1"],
+        },
+    )
+
+    assert (MODEL["a1"], MODEL["ab"], MODEL["ac"]) in g
+    assert len(list(g.triples((None, None, None)))) == 1
