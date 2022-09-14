@@ -39,7 +39,6 @@ system-air-outlet-cp:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:OutletSystemConnectionPoint ;
-      s223:mapsTo P:mapsto ;
       s223:hasMedium s223:Medium-Air .
 
 system-air-inlet-cp:
@@ -47,5 +46,12 @@ system-air-inlet-cp:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:InletSystemConnectionPoint ;
-      s223:mapsTo P:mapsto ;
       s223:hasMedium s223:Medium-Air .
+
+
+duct:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Duct ;
+      s223:cnx P:a, P:b .
