@@ -14,6 +14,14 @@ makeup-air-unit:
       s223:hasProperty P:oa_rh, P:sa_sp ;
       s223:cnx P:air-supply, P:outside-air ;
       s223:hasSystemConnectionPoint P:supply-conn, P:outside-conn .
+    P:oad-in s223:mapsTo P:outside-conn .
+    P:oad-out s223:cnx P:pre-filter-in .
+    P:pre-filter-out s223:cnx P:final-filter-in .
+    P:final-filter-out s223:cnx P:HRC-air-in .
+    P:HRC-air-out s223:cnx P:supply-fan-in .
+    P:supply-fan-out s223:cnx P:cooling-coil-air-in .
+    P:cooling-coil-air-out s223:cnx P:heating-coil-air-in .
+    P:heating-coil-air-out s223:mapsTo P:supply-conn .
       # s223:servesVAV P:vav
       # TODO: building static pressure?
       # TODO: evaporative cooler?
@@ -243,6 +251,9 @@ vav-reheat:
       s223:hasProperty P:sup-air-temp, P:sup-air-flow, P:sup-air-pressure ;
       s223:cnx P:air-in, P:air-out ;
       s223:hasSystemConnectionPoint P:vav-in, P:vav-out .
+    P:rhc-in s223:mapsTo P:vav-in .
+    P:rhc-out s223:cnx P:dmp-in .
+    P:dmp-out s223:mapsTo P:vav-out .
   dependencies:
     - template: hot-water-coil
       args: {"name": "rhc"}
