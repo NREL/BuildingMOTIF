@@ -55,3 +55,21 @@ duct:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Duct ;
       s223:cnx P:a, P:b .
+
+zone-air-inlet-cp:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:InletZoneConnectionPoint ;
+      s223:mapsTo P:mapsto ;
+      s223:hasMedium s223:Medium-Air .
+  optional: ["mapsto"]
+
+zone-air-outlet-cp:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:OutletZoneConnectionPoint ;
+      s223:mapsTo P:mapsto ;
+      s223:hasMedium s223:Medium-Air .
+  optional: ["mapsto"]

@@ -10,6 +10,7 @@ makeup-air-unit:
 
     P:name a s223:MAU ;
       s223:contains P:oad, P:pre-filter, P:final-filter, P:HRC, P:supply-fan, 
+                    P:evaporative-cooler,
                     P:cooling-coil, P:heating-coil, P:sa_pressure_sensor;
       s223:hasProperty P:oa_rh, P:sa_sp ;
       s223:cnx P:air-supply, P:outside-air ;
@@ -44,15 +45,20 @@ makeup-air-unit:
 
     P:c7 a s223:Duct .
     P:heating-coil-air-out s223:cnx P:c7 .
-    P:air-supply s223:cnx P:c7 .
+    P:evaporative-cooler-in s223:cnx P:c7 .
+
+    P:c8 a s223:Duct .
+    P:evaporative-cooler-out s223:cnx P:c8 .
+    P:air-supply s223:cnx P:c8 .
       # s223:servesVAV P:vav
       # TODO: building static pressure?
-      # TODO: evaporative cooler?
       # TODO: outside air dry bulb temp
       # TODO: outside air differential pressure
   dependencies:
     - template: damper
       args: {"name": "oad"}
+    - template: evaporative-cooler
+      args: {"name": "evaporative-cooler"}
     - template: filter
       args: {"name": "pre-filter"}
     - template: filter
@@ -125,3 +131,25 @@ vav-reheat:
       args: {"name": "sup-air-pressure"}
     - template: sensor
       args: {"name": "sup-air-pressure-sensor", "property": "sup-air-pressure", "where": "air-out"}
+
+fcu:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:FCU ;
+      s223:contains P:fan, P:cooling-coil ;
+      s223:cnx P:in, P:out ;
+      s223:hasSystemConnectionPoint P:fcu-in, P:fcu-out .
+  dependencies:
+    - template: chilled-water-coil
+      args: {"name": "cooling-coil"}
+    - template: fan
+      args: {"name": "fan"}
+    - template: air-outlet-cp
+      args: {"name": "out", "mapsto": "fcu-out"}
+    - template: air-inlet-cp
+      args: {"name": "in", "mapsto": "fcu-in"}
+    - template: system-air-inlet-cp
+      args: {"name": "fcu-in"}
+    - template: system-air-outlet-cp
+      args: {"name": "fcu-out"}
