@@ -136,7 +136,7 @@ fcu:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
-    P:name a s223:FCU ;
+    P:name a s223:FCU, s223:System ;
       s223:contains P:fan, P:cooling-coil ;
       s223:cnx P:in, P:out ;
       s223:hasSystemConnectionPoint P:fcu-in, P:fcu-out .
@@ -153,3 +153,25 @@ fcu:
       args: {"name": "fcu-in"}
     - template: system-air-outlet-cp
       args: {"name": "fcu-out"}
+
+unit-heater:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:UnitHeater, s223:System ;
+      s223:contains P:fan, P:heating-coil ;
+      s223:cnx P:in, P:out ;
+      s223:hasSystemConnectionPoint P:uh-in, P:uh-out .
+  dependencies:
+    - template: hot-water-coil
+      args: {"name": "heating-coil"}
+    - template: fan
+      args: {"name": "fan"}
+    - template: air-outlet-cp
+      args: {"name": "out", "mapsto": "uh-out"}
+    - template: air-inlet-cp
+      args: {"name": "in", "mapsto": "uh-in"}
+    - template: system-air-inlet-cp
+      args: {"name": "uh-in"}
+    - template: system-air-outlet-cp
+      args: {"name": "uh-out"}
