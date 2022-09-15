@@ -1,4 +1,5 @@
-"""Constrain dependencies to have no duplicates. Uses new JSON serde
+"""Constrain dependencies to have no duplicates. Uses new JSON serialization/deserialization
+(serde) to consistently store the dependency bindings.
 
 Revision ID: 542bfbdef624
 Revises: 66121a0432bc
@@ -39,9 +40,6 @@ def upgrade():
             "deps_association_unique_constraint",
             ["dependant_id", "dependee_id", "args"],
         )
-
-    with op.batch_alter_table("template", schema=None) as batch_op:
-        batch_op.drop_index("ix_template_name")
 
     # now that 'id' exists, update the serde of the deps field by copying all the deps
     # out and then putting them back in
