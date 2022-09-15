@@ -9,7 +9,7 @@ makeup-air-unit:
     @prefix s223: <http://data.ashrae.org/standard223#> .
 
     P:name a s223:MAU ;
-      s223:contains P:oad, P:pre-filter, P:final-filter, P:HRC, P:supply-fan, 
+      s223:contains P:oad, P:pre-filter, P:final-filter, P:HRC, P:supply-fan,
                     P:evaporative-cooler,
                     P:cooling-coil, P:heating-coil, P:sa_pressure_sensor;
       s223:hasProperty P:oa_rh, P:sa_sp ;
@@ -89,7 +89,7 @@ vav-reheat:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:VAV ;
-      s223:contains P:rhc, P:dmp, P:sup-air-flow-sensor, 
+      s223:contains P:rhc, P:dmp, P:sup-air-flow-sensor,
                     P:sup-air-temp-sensor, P:sup-air-pressure-sensor ;
       s223:hasProperty P:sup-air-temp, P:sup-air-flow, P:sup-air-pressure ;
       s223:cnx P:air-in, P:air-out ;
@@ -159,6 +159,7 @@ unit-heater:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:UnitHeater, s223:System ;
+      rdfs:label "Unit Heater" ;
       s223:contains P:fan, P:heating-coil ;
       s223:cnx P:in, P:out ;
       s223:hasSystemConnectionPoint P:uh-in, P:uh-out .
@@ -175,3 +176,51 @@ unit-heater:
       args: {"name": "uh-in"}
     - template: system-air-outlet-cp
       args: {"name": "uh-out"}
+
+chilled-water-system:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    P:name a s223:System ;
+      rdfs:label "Chilled Water System" ;
+      s223:contains P:bypass-valve, P:lead-chw-pump, P:standby-chw-pump,
+                    P:lead-chw-booster-pump, P:standby-chw-booster-pump,
+                    P:chw-hx . # TODO:, P:chw-btu-meter .
+  dependencies:
+    - template: chw-valve
+      args: {"name": "bypass-valve"}
+    - template: chw-pump
+      args: {"name": "lead-chw-pump"}
+    - template: chw-pump
+      args: {"name": "standby-chw-pump"}
+    - template: chw-pump
+      args: {"name": "lead-chw-booster-pump"}
+    - template: chw-pump
+      args: {"name": "standby-chw-booster-pump"}
+    - template: heat-exchanger
+      args: {"name": "chw-hx"}
+
+hot-water-system:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    P:name a s223:System ;
+      rdfs:label "Hot Water System" ;
+      s223:contains P:bypass-valve, P:lead-hw-pump, P:standby-hw-pump,
+                    P:lead-hw-booster-pump, P:standby-hw-booster-pump,
+                    P:hw-hx . # TODO:, P:hw-btu-meter .
+  dependencies:
+    - template: hw-valve
+      args: {"name": "bypass-valve"}
+    - template: hw-pump
+      args: {"name": "lead-hw-pump"}
+    - template: hw-pump
+      args: {"name": "standby-hw-pump"}
+    - template: hw-pump
+      args: {"name": "lead-hw-booster-pump"}
+    - template: hw-pump
+      args: {"name": "standby-hw-booster-pump"}
+    - template: heat-exchanger
+      args: {"name": "hw-hx"}
