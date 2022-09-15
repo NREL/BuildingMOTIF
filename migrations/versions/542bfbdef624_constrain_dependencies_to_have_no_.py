@@ -41,9 +41,6 @@ def upgrade():
             ["dependant_id", "dependee_id", "args"],
         )
 
-    with op.batch_alter_table("template", schema=None) as batch_op:
-        batch_op.drop_index("ix_template_name")
-
     # now that 'id' exists, update the serde of the deps field by copying all the deps
     # out and then putting them back in
     conn = op.get_bind()
