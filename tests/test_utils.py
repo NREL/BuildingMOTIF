@@ -91,6 +91,7 @@ def test_replace_nodes():
     assert (MODEL["a1"], MODEL["ab"], MODEL["ac"]) in g
     assert len(list(g.triples((None, None, None)))) == 1
 
+
 def test_get_parameters():
     body = Graph()
     body.parse(
