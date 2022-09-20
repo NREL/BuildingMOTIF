@@ -85,7 +85,7 @@ class BuildingMOTIF(metaclass=Singleton):
         # length is 0 if the db is in-memory
         return not len(filename[0])
 
-    def setup_logging(self, log_level):
+    def annoy_gabe(self, log_level):
         """Create log file with DEBUG level and stdout handler with specified log_level"""
         root_logger = logging.getLogger()
         root_logger.setLevel(logging.DEBUG)
