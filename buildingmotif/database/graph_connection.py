@@ -2,7 +2,8 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, List, Optional
 
-from rdflib.graph import Graph, Store, plugin
+from rdflib.graph import Graph, Store, URIRef, plugin
+from rdflib.namespace import NamespaceManager
 
 if TYPE_CHECKING:
     from buildingmotif.building_motif.building_motif import BuildingMotifEngine
@@ -32,6 +33,13 @@ class GraphConnection:
         self.store = plugin.get("SQLAlchemy", Store)(
             identifier=db_identifier, engine=engine
         )
+
+        # avoids the warnings raised by the issue in https://github.com/RDFLib/rdflib/issues/1880
+        # Eventually will require rdflib-sqlalchemy to support the 'override' keyword
+        def fixed_bind(self, prefix: str, namespace: URIRef, override: bool):
+            self.store.bind(prefix, namespace)
+
+        setattr(NamespaceManager, "_store_bind", fixed_bind)
 
         self.logger.debug("Creating tables for graph storage")
         self.store.create_all()

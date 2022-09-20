@@ -370,12 +370,13 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
         # of parameter name
         for templ in templs[1:]:
             # if there is a 'name' in the parameter list, join on that name.
-            # otherwise, just append the body (use to_inline() to ensure
-            # uniqueness of parameters)
+            # otherwise, just append the body
+            # (we don't need to use use to_inline() to ensure uniqueness of parameters
+            # because all params are created with _gensym() which ensures uniqueness)
             if "name" in templ.parameters:
                 base.add_dependency(templ, {"name": "name"})
             else:
-                base.body += templ.to_inline().body
+                base.body += templ.body
         unified = base.inline_dependencies()
         # only try to evaluate if there are parameters, else this will fail.
         # We may not have parameters if the GraphDiffs have all the information

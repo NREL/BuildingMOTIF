@@ -105,10 +105,10 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
         "sat",
         "oat",
         "zone",
-        "spd",
-        "ss",
-        "st",
-        "pos",
+        "sf-spd",
+        "sf-ss",
+        "sf-st",
+        "oad-pos",
     }
     assert inlined.parameters == preserved_params
 
