@@ -163,7 +163,9 @@ class Library:
         it into a Template.
         """
 
-        # expand the ontology graph
+        # expand the ontology graph before we insert it into the database. This will ensure
+        # that the output of compiled models will not contain triples that really belong to
+        # the ontology
         pyshacl.validate(
             data_graph=ontology,
             shacl_graph=ontology,
