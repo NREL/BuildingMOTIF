@@ -161,6 +161,7 @@ class Library:
         For each candidate, use the utility function to parse the NodeShape and turn
         it into a Template.
         """
+
         # get the name of the ontology; this will be the name of the library
         # any=False will raise an error if there is more than one ontology defined  in the graph
         ontology_name = ontology.value(

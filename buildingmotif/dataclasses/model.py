@@ -152,6 +152,13 @@ class Model:
         ontology_graph = ontology_graph.skolemize()
 
         model_graph = copy_graph(self.graph).skolemize()
+
+        # We use a fixed-point computation approach to 'compiling' RDF models.
+        # We accomlish this by keeping track of the size of the graph before and after
+        # the inference step. If the size of the graph changes, then we know that the
+        # inference has had some effect. We do this at most 3 times to avoid looping
+        # forever.
+        pre_compile_length = len(model_graph)  # type: ignore
         pyshacl.validate(
             data_graph=model_graph,
             shacl_graph=ontology_graph,
@@ -160,6 +167,21 @@ class Model:
             inplace=True,
             js=True,
         )
+        post_compile_length = len(model_graph)  # type: ignore
+
+        attempts = 3
+        while attempts > 0 and post_compile_length != pre_compile_length:
+            pre_compile_length = len(model_graph)  # type: ignore
+            pyshacl.validate(
+                data_graph=model_graph,
+                shacl_graph=ontology_graph,
+                ont_graph=ontology_graph,
+                advanced=True,
+                inplace=True,
+                js=True,
+            )
+            post_compile_length = len(model_graph)  # type: ignore
+            attempts -= 1
         model_graph -= ontology_graph
         return model_graph.de_skolemize()
 
