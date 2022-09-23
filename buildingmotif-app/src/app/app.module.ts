@@ -23,6 +23,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatButtonModule} from '@angular/material/button';
 import { ModelDetailComponent } from './model-detail/model-detail.component'; 
 import {MatSnackBarModule} from '@angular/material/snack-bar'; 
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatIconModule,
     MatToolbarModule,
     MatButtonModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    CodemirrorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

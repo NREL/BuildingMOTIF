@@ -1,10 +1,11 @@
 <div class="container">
     <div class="title">{{model.name}}</div>
 
-    <mat-form-field class="graph" appearance="outline">
-        <mat-label>Graph</mat-label>
-        <textarea class="graph" cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="10" cdkAutosizeMaxRows="10" matInput  [formControl]="graphFormControl"></textarea>
-    </mat-form-field>
+    <ngx-codemirror #codemirror
+        class="graph"
+        [options]="codeMirrorOptions"
+        [formControl]="graphFormControl">
+    </ngx-codemirror>
 
     <div class="buttons">
         <button mat-raised-button (click)="onSave()" color="primary">Save</button>

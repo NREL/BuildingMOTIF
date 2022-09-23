@@ -19,6 +19,17 @@ export class ModelDetailComponent{
   model: Model;
   graph: string; // graph as in DB
   graphFormControl: FormControl = new FormControl(''); // graph as in UI
+  codeMirrorOptions: any = {
+    theme: 'material',
+    mode: 'application/xml',
+    lineNumbers: true,
+    lineWrapping: true,
+    foldGutter: true,
+    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    lint: true
+  };
 
   constructor(
     private route: ActivatedRoute,
