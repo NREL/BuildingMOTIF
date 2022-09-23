@@ -1,0 +1,53 @@
+hvac-zone:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Zone ;
+      s223:hasZoneConnectionPoint P:in, P:out ;
+      s223:hasDomain s223:Domain-HVAC .
+  dependencies:
+    - template: zone-air-inlet-cp
+      args: {"name": "in"}
+    - template: zone-air-outlet-cp
+      args: {"name": "out"}
+
+hvac-space:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:DomainSpace ;
+      s223:hasProperty P:temp, P:supply-air-flow, P:exhaust-air-flow, 
+                       P:humidity ;
+     # TODO: , P:occupancy, P:occupancy-override  ;
+      s223:cnx P:in, P:out ;
+      s223:contains P:temp-sensor, P:exh-flow-sensor, P:sup-flow-sensor, P:humidity-sensor ;
+      s223:hasDomain s223:Domain-HVAC .
+    P:zone s223:contains P:name .
+  dependencies:
+    - template: hvac-zone
+      args: {"name": "zone"}
+    - template: air-outlet-cp
+      args: {"name": "in"}
+    - template: air-inlet-cp
+      args: {"name": "out"}
+    - template: air-temperature
+      args: {"name": "temp"}
+    - template: air-flow
+      args: {"name": "supply-air-flow"}
+    - template: air-flow
+      args: {"name": "exhaust-air-flow"}
+    - template: relative-humidity
+      args: {"name": "humidity"}
+    - template: sensor
+      args: {"name": "temp-sensor", "property": "temp", "where": "name"}
+    - template: sensor
+      args: {"name": "exh-flow-sensor", "property": "exhaust-air-flow", "where": "out"}
+    - template: sensor
+      args: {"name": "sup-flow-sensor", "property": "supply-air-flow", "where": "in"}
+    - template: sensor
+      args: {"name": "humidity-sensor", "property": "humidity", "where": "name"}
