@@ -43,7 +43,7 @@ class BuildingMOTIF(metaclass=Singleton):
 
         self.table_connection = TableConnection(self.engine, self)
         self.graph_connection = GraphConnection(
-            BuildingMotifEngine(self.engine, self.session)
+            BuildingMotifEngine(self.engine, self.Session)
         )
 
         g = Graph()
@@ -123,19 +123,19 @@ class BuildingMotifEngine:
     This enables the use of sessioned transactions in rdflib-sqlalchemy.
     If we are experiencing weird graph database issues this may be the root"""
 
-    def __init__(self, engine, session) -> None:
+    def __init__(self, engine, Session) -> None:
         self.engine = engine
-        self.session = session
+        self.Session = Session
 
     # begin and connect attributes are queried from the wrapped session.
 
     @contextmanager
     def begin(self):
-        yield self.session
+        yield self.Session()
 
     @contextmanager
     def connect(self):
-        yield self.session
+        yield self.Session()
 
     def __getattr__(self, attr):
         # When an attribute is requested, see if we have overriden it
