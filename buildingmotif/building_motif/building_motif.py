@@ -88,7 +88,7 @@ class BuildingMOTIF(metaclass=Singleton):
     def setup_logging(self, log_level):
         """Create log file with DEBUG level and stdout handler with specified log_level"""
         root_logger = logging.getLogger()
-        root_logger.setLevel(logging.DEBUG)
+        root_logger.setLevel(logging.INFO)
         formatter = logging.Formatter(
             "%(asctime)s | %(name)s |  %(levelname)s: %(message)s"
         )
@@ -102,8 +102,8 @@ class BuildingMOTIF(metaclass=Singleton):
         engine_logger = logging.getLogger("sqlalchemy.engine")
         pool_logger = logging.getLogger("sqlalchemy.pool")
 
-        engine_logger.setLevel(logging.DEBUG)
-        pool_logger.setLevel(logging.DEBUG)
+        engine_logger.setLevel(log_level)
+        pool_logger.setLevel(log_level)
 
         stream_handler = logging.StreamHandler()
         stream_handler.setLevel(log_level)
