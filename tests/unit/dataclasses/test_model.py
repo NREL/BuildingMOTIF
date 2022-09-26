@@ -102,6 +102,7 @@ def test_validate_model_with_failure(bm: BuildingMOTIF):
 
 
 def test_model_compile(bm: BuildingMOTIF):
+    """Test that model compilation gives expected results"""
     small_office_model = Model.create("http://example.org/building/")
     small_office_model.graph.parse(
         "tests/unit/fixtures/smallOffice_brick.ttl", format="ttl"
@@ -110,11 +111,9 @@ def test_model_compile(bm: BuildingMOTIF):
     brick = Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
 
     compiled_model = small_office_model.compile([brick.get_shape_collection()])
-    precompiled_model = Graph().parse(
-        "tests/unit/fixtures/smallOffice_brick_compiled.ttl"
-    )
-    # precompiled_model = Graph().parse(data=compiled_model.serialize(format="ttl"))
-    # g = precompiled_model - compiled_model
-    # g.serialize(format="ttl", destination="model_difference.ttl")
+
+    precompiled_model = Graph().parse(data=compiled_model.serialize(format="ttl"))
+    g = precompiled_model - compiled_model
+    g.serialize(format="ttl", destination="model_difference.ttl")
 
     assert isomorphic(compiled_model, precompiled_model)
