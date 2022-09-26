@@ -1432,7 +1432,7 @@ test = ["pytest-qt", "pytest-cov (>=3.0.0)", "pytest (>=6,!=7.0.0,!=7.0.1)"]
 
 [[package]]
 name = "rdflib"
-version = "6.2.0"
+version = "6.1.1"
 description = "RDFLib is a Python library for working with RDF, a simple yet powerful language for representing information."
 category = "main"
 optional = false
@@ -1443,12 +1443,9 @@ isodate = "*"
 pyparsing = "*"
 
 [package.extras]
-berkeleydb = ["berkeleydb"]
-dev = ["black (==22.6.0)", "flake8", "isort", "mypy", "pep8-naming", "types-setuptools", "flakeheaven"]
-docs = ["myst-parser", "sphinx (<6)", "sphinxcontrib-apidoc", "sphinxcontrib-kroki", "sphinx-autodoc-typehints"]
+docs = ["sphinx (<5)", "sphinxcontrib-apidoc"]
 html = ["html5lib"]
-networkx = ["networkx"]
-tests = ["html5lib", "pytest", "pytest-cov"]
+tests = ["berkeleydb", "html5lib", "networkx", "pytest", "pytest-cov", "pytest-subtests"]
 
 [[package]]
 name = "rdflib-sqlalchemy"
@@ -1872,7 +1869,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "e202d7c929b74a500186b6eba467ec7466ce39455747ed39ee0ef0f238f759da"
+content-hash = "7a056eea496ebccb9b50437ccb6e4381b87384470e2dcfa30ea4cf176d66072e"
 
 [metadata.files]
 alabaster = [
@@ -2287,7 +2284,10 @@ pyyaml = [
 pyzmq = []
 qtconsole = []
 qtpy = []
-rdflib = []
+rdflib = [
+    {file = "rdflib-6.1.1-py3-none-any.whl", hash = "sha256:fc81cef513cd552d471f2926141396b633207109d0154c8e77926222c70367fe"},
+    {file = "rdflib-6.1.1.tar.gz", hash = "sha256:8dbfa0af2990b98471dacbc936d6494c997ede92fd8ed693fb84ee700ef6f754"},
+]
 rdflib-sqlalchemy = [
     {file = "rdflib-sqlalchemy-0.5.3.tar.gz", hash = "sha256:a7a2e83d113db8e879477074ffac10b589d96c84007ad6ed067d1b8762d61e74"},
     {file = "rdflib_sqlalchemy-0.5.3-py3-none-any.whl", hash = "sha256:6f69419bc4b999a8e77d1839d7074d4af1342e16144b898b1589b6009d8c6e40"},
