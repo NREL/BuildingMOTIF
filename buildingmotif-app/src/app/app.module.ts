@@ -16,7 +16,14 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatAutocompleteModule} from '@angular/material/autocomplete'; 
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from "@angular/material/form-field";
-import {MatIconModule} from '@angular/material/icon'; 
+import {MatIconModule} from '@angular/material/icon';
+import { ModelSearchComponent } from './model-search/model-search.component';
+import { MenuComponent } from './menu/menu.component'; 
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatButtonModule} from '@angular/material/button';
+import { ModelDetailComponent } from './model-detail/model-detail.component'; 
+import {MatSnackBarModule} from '@angular/material/snack-bar'; 
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 @NgModule({
   declarations: [
@@ -24,6 +31,9 @@ import {MatIconModule} from '@angular/material/icon';
     LibraryComponent,
     TemplateSearchComponent,
     TemplateDetailComponent,
+    ModelSearchComponent,
+    MenuComponent,
+    ModelDetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,7 +49,11 @@ import {MatIconModule} from '@angular/material/icon';
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIconModule
+    MatIconModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    CodemirrorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

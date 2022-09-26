@@ -18,7 +18,7 @@ DB_FILE = FIXTURES_DIR / "smallOffice.db"
 def graph_connection():
     bm = MockBuildingMotif()
 
-    graph_connection = GraphConnection(BuildingMotifEngine(bm.engine, bm.session))
+    graph_connection = GraphConnection(BuildingMotifEngine(bm.engine, bm.Session))
     yield graph_connection
 
     bm.session.commit()
@@ -32,7 +32,7 @@ def test_create_graph(graph_connection):
 
     res = graph_connection.create_graph("my_graph", g)
 
-    isomorphic(res, g)
+    assert isomorphic(res, g)
     assert graph_connection.get_all_graph_identifiers() == ["my_graph"]
 
 

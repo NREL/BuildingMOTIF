@@ -3,7 +3,7 @@ import pathlib
 import pytest
 import rdflib
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 from buildingmotif import BuildingMOTIF, get_building_motif
 from buildingmotif.database.tables import Base as BuildingMotif_tables_base
@@ -21,8 +21,9 @@ class MockBuildingMotif:
     def __init__(self) -> None:
         """Class constructor."""
         self.engine = create_engine("sqlite://", echo=False)
-        Session = sessionmaker(bind=self.engine, autoflush=True)
-        self.session = Session()
+        self.session_factory = sessionmaker(bind=self.engine, autoflush=True)
+        self.Session = scoped_session(self.session_factory)
+        self.session = self.Session()
 
         # add tables to db
         BuildingMotif_tables_base.metadata.create_all(self.engine)

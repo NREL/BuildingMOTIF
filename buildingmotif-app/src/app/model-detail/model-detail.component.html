@@ -1,0 +1,14 @@
+<div class="container">
+    <div class="title">{{model.name}}</div>
+
+    <ngx-codemirror #codemirror
+        class="graph"
+        [options]="codeMirrorOptions"
+        [formControl]="graphFormControl">
+    </ngx-codemirror>
+
+    <div class="buttons">
+        <button mat-raised-button (click)="onSave()" color="primary">Save</button>
+        <button mat-raised-button (click)="undoChangesToGraph()" color="primary">Undo</button>
+    </div>
+</div>

@@ -77,8 +77,11 @@ poetry publish --build --dry-run
 poetry publish --build
 ```
 
-# Developing the Web app
-see [buildingmotif-app/README.md](buildingmotif-app/README.md)
+## Web App
+
+1. [Download Node.js](https://nodejs.org/en/download/)
+2. [Install Angular](https://angular.io/guide/setup-local)
+3. See [buildingmotif-app/README.md](buildingmotif-app/README.md)
 
 # Visualizing
 ![repo-vis](./diagram.svg)

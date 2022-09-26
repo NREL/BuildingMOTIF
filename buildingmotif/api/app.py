@@ -3,6 +3,7 @@ from flask_api import status
 from sqlalchemy.exc import SQLAlchemyError
 
 from buildingmotif.api.views.library import blueprint as library_blueprint
+from buildingmotif.api.views.model import blueprint as model_blueprint
 from buildingmotif.api.views.template import blueprint as template_blueprint
 from buildingmotif.building_motif.building_motif import BuildingMOTIF
 
@@ -22,6 +23,8 @@ def _after_request(response):
 
     current_app.building_motif.Session.remove()
     response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
 
     return response
 
@@ -56,6 +59,7 @@ def create_app(DB_URI):
 
     app.register_blueprint(library_blueprint, url_prefix="/libraries")
     app.register_blueprint(template_blueprint, url_prefix="/templates")
+    app.register_blueprint(model_blueprint, url_prefix="/models")
 
     return app
 
@@ -66,4 +70,4 @@ if __name__ == "__main__":
     import configs as building_motif_configs  # type: ignore # isort:skip
 
     app = create_app(building_motif_configs.DB_URI)
-    app.run(debug=True)
+    app.run(debug=True, threaded=False)
