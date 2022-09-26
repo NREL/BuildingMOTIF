@@ -1,9 +1,13 @@
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import create_engine, pool
 
 from buildingmotif.database.tables import Base
+from buildingmotif.database.utils import (
+    _custom_json_deserializer,
+    _custom_json_serializer,
+)
 
 # If config doesn't exist, this is considered a third party import and module cant be found.
 import configs as building_motif_configs  # type: ignore # isort:skip
@@ -82,10 +86,11 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
+    connectable = create_engine(
+        config.get_section(config.config_ini_section)["sqlalchemy.url"],  # type: ignore
         poolclass=pool.NullPool,
+        json_serializer=_custom_json_serializer,
+        json_deserializer=_custom_json_deserializer,
     )
 
     with connectable.connect() as connection:
