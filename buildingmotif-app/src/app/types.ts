@@ -11,4 +11,5 @@ export interface Model {
   name: string;
   id: number;
   graph_id: number;
+  description: string;
 }

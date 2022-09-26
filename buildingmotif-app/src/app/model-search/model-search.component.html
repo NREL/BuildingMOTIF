@@ -1,16 +1,22 @@
 <div class="container">
         <div class="header">
                 <div>Models</div>
+                <form class="search-form">
+                        <mat-form-field class="search-bar" appearance="outline" floatLabel="never">
+                                <input type="text"
+                                        aria-label="Search model by description"
+                                        placeholder="Search model by dscription"
+                                        matInput
+                                        [formControl]="fitlerStringControl">
+                                <mat-icon matSuffix>search</mat-icon>
+                        </mat-form-field>
+                </form>      
         </div>
-</div>
 
-<div class="container">
-    <mat-list *ngFor="let model of models">
-            <mat-list-item>
-                <a routerLink="/models/{{model.id}}">
-                        {{model.name}}
-                </a>
-            </mat-list-item>
-            <mat-divider></mat-divider>
-    </mat-list>      
+        <mat-list *ngFor="let model of filteredModels | async">
+                <mat-card class="model" routerLink="/models/{{model.id}}">
+                <mat-card-title>{{model.name}}</mat-card-title>
+                <mat-card-subtitle>{{model.description}}</mat-card-subtitle>
+                </mat-card>
+        </mat-list>      
 </div>

@@ -10,26 +10,29 @@ BLDG = Namespace("urn:building/")
 
 
 def test_create_model(clean_building_motif):
-    model = Model.create(name="my_model")
+    model = Model.create(name="my_model", description="a very good model")
 
     assert isinstance(model, Model)
     assert model.name == "my_model"
+    assert model.description == "a very good model"
     assert isinstance(model.graph, Graph)
 
 
 def test_load_model(clean_building_motif):
-    m = Model.create(name="my_model")
+    m = Model.create(name="my_model", description="a very good model")
     m.graph.add((URIRef("http://example.org/alex"), RDF.type, FOAF.Person))
 
     result = Model.load(m.id)
     assert result.id == m.id
     assert result.name == m.name
+    assert result.description == m.description
     assert isomorphic(result.graph, m.graph)
 
     # test model_load_by_name
     result = Model.load(name="my_model")
     assert result.id == m.id
     assert result.name == m.name
+    assert result.description == m.description
     assert isomorphic(result.graph, m.graph)
 
 

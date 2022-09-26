@@ -9,6 +9,7 @@ ModelDict = TypedDict(
     {
         "id": int,
         "name": str,
+        "description": str,
         "graph_id": str,
     },
 )
@@ -44,5 +45,6 @@ def _serialize(model: DBModel) -> ModelDict:
     return {
         "id": model.id,
         "name": model.name,
+        "description": model.description,
         "graph_id": model.graph_id,
     }

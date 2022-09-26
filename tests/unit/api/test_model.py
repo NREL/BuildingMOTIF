@@ -27,7 +27,7 @@ default_graph = [
 
 def test_get_all_models(client, building_motif):
     # Setup
-    Model.create(name="my_model")
+    Model.create(name="my_model", description="the best model")
     Model.create(name="your_model")
 
     # Act
@@ -41,6 +41,7 @@ def test_get_all_models(client, building_motif):
         {
             "id": m.id,
             "name": m.name,
+            "description": m.description,
             "graph_id": m.graph_id,
         }
         for m in db_models
@@ -62,6 +63,7 @@ def test_get_model(client, building_motif):
         "id": db_model.id,
         "name": db_model.name,
         "graph_id": db_model.graph_id,
+        "description": db_model.description,
     }
 
 

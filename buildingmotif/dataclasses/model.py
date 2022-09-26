@@ -19,25 +19,34 @@ class Model:
 
     _id: int
     _name: str
+    _description: str
     graph: rdflib.Graph
     _bm: "BuildingMOTIF"
 
     @classmethod
-    def create(cls, name: str) -> "Model":
+    def create(cls, name: str, description: str = "") -> "Model":
         """create new Model
 
         :param name: new model name
         :type name: str
+        :param description: new model description
+        :type description: str
         :return: new Model
         :rtype: Model
         """
         bm = get_building_motif()
-        db_model = bm.table_connection.create_db_model(name)
+        db_model = bm.table_connection.create_db_model(name, description)
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
         graph = bm.graph_connection.create_graph(db_model.graph_id, g)
 
-        return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
+        return cls(
+            _id=db_model.id,
+            _name=db_model.name,
+            _description=db_model.description,
+            graph=graph,
+            _bm=bm,
+        )
 
     @classmethod
     def load(cls, id: Optional[int] = None, name: Optional[str] = None) -> "Model":
@@ -57,7 +66,13 @@ class Model:
             raise Exception("Neither id nor name provided to load Model")
         graph = bm.graph_connection.get_graph(db_model.graph_id)
 
-        return cls(_id=db_model.id, _name=db_model.name, graph=graph, _bm=bm)
+        return cls(
+            _id=db_model.id,
+            _name=db_model.name,
+            _description=db_model.description,
+            graph=graph,
+            _bm=bm,
+        )
 
     @property
     def id(self) -> Optional[int]:
@@ -75,6 +90,15 @@ class Model:
     def name(self, new_name: str):
         self._bm.table_connection.update_db_model_name(self._id, new_name)
         self._name = new_name
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, new_description: str):
+        self._bm.table_connection.update_db_model_description(self._id, new_description)
+        self._description = new_description
 
     def add_triples(self, *triples: Triple) -> None:
         """

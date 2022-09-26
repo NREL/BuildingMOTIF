@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from sqlalchemy import JSON, Column, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import JSON, Column, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, declarative_base, relationship
 
 Base = declarative_base()
@@ -12,6 +12,7 @@ class DBModel(Base):
     __tablename__ = "models"
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String())
+    description: Mapped[str] = Column(Text(), default="", nullable=False)
     graph_id: Mapped[str] = Column(String())
 
 
