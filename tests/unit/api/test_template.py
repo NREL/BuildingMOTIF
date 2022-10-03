@@ -1,4 +1,10 @@
+from flask_api import status
+from rdflib import Graph, Namespace
+
 from buildingmotif.dataclasses import Library
+from buildingmotif.namespaces import BRICK, A
+
+BLDG = Namespace("urn:building/")
 
 
 def test_get_all_templates(client, building_motif):
@@ -56,3 +62,22 @@ def test_get_template_not_found(client):
     # Assert
     assert results.status_code == 404
     assert results.json == {"message": "No template with id -1"}
+
+
+def test_evaluate_template(client, building_motif):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    zone = lib.get_template_by_name("zone")
+    zone.inline_dependencies()
+    assert zone.parameters == {"name", "cav"}
+
+    results = client.post(
+        f"/templates/{zone.id}/evaluate",
+        json={"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
+    )
+
+    assert results.status_code == status.HTTP_200_OK
+    graph = Graph().parse(data=results.data, format="ttl")
+    assert (BLDG["cav1"], A, BRICK.CAV) in graph
+    assert (BLDG["zone1"], A, BRICK.HVAC_Zone) in graph
+    assert (BLDG["zone1"], BRICK.isFedBy, BLDG["cav1"]) in graph
+    assert len(list(graph.triples((None, None, None)))) == 3
