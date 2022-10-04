@@ -99,3 +99,21 @@ def test_validate_model_with_failure(bm: BuildingMOTIF):
     ctx = model.validate([shape_lib.get_shape_collection()])
     assert isinstance(ctx, ValidationContext)
     assert ctx.valid
+
+
+def test_model_compile(bm: BuildingMOTIF):
+    """Test that model compilation gives expected results"""
+    small_office_model = Model.create("http://example.org/building/")
+    small_office_model.graph.parse(
+        "tests/unit/fixtures/smallOffice_brick.ttl", format="ttl"
+    )
+
+    brick = Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
+
+    compiled_model = small_office_model.compile([brick.get_shape_collection()])
+
+    precompiled_model = Graph().parse(
+        "tests/unit/fixtures/smallOffice_brick_compiled.ttl", format="ttl"
+    )
+
+    assert isomorphic(compiled_model, precompiled_model)

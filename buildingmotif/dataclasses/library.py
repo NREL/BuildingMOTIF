@@ -3,6 +3,7 @@ import pathlib
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+import pyshacl
 import rdflib
 import yaml
 from rdflib.util import guess_format
@@ -161,6 +162,19 @@ class Library:
         For each candidate, use the utility function to parse the NodeShape and turn
         it into a Template.
         """
+
+        # expand the ontology graph before we insert it into the database. This will ensure
+        # that the output of compiled models will not contain triples that really belong to
+        # the ontology
+        pyshacl.validate(
+            data_graph=ontology,
+            shacl_graph=ontology,
+            ont_graph=ontology,
+            advanced=True,
+            inplace=True,
+            js=True,
+        )
+
         # get the name of the ontology; this will be the name of the library
         # any=False will raise an error if there is more than one ontology defined  in the graph
         ontology_name = ontology.value(
