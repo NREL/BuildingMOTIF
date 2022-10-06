@@ -30,7 +30,7 @@ class TableConnection:
 
     # model functions
 
-    def create_db_model(self, name: str) -> DBModel:
+    def create_db_model(self, name: str, description: str = "") -> DBModel:
         """Create a database model.
 
         :param name: name of dbmodel
@@ -40,7 +40,7 @@ class TableConnection:
         """
         graph_id = str(uuid.uuid4())
         self.logger.debug(f"Creating model: '{name}', with graph: '{graph_id}'")
-        db_model = DBModel(name=name, graph_id=graph_id)
+        db_model = DBModel(name=name, graph_id=graph_id, description=description)
 
         self.bm.session.add(db_model)
         self.bm.session.flush()
@@ -88,6 +88,20 @@ class TableConnection:
         db_model = self.get_db_model(id)
         self.logger.debug(f"Updating model name from: '{db_model.name}' to: '{name}'")
         db_model.name = name
+
+    def update_db_model_description(self, id: int, description: str) -> None:
+        """Update database model.
+
+        :param id: id of DBModel
+        :type id: str
+        :param description: new description
+        :type description: str
+        """
+        db_model = self.get_db_model(id)
+        self.logger.debug(
+            f"Updating model description from: '{db_model.description}' to: '{description}'"
+        )
+        db_model.description = description
 
     def delete_db_model(self, id: int) -> None:
         """Delete database model.
