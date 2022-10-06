@@ -34,6 +34,8 @@ def get_template(templates_id: int) -> flask.Response:
     :return: requested id
     :rtype: Template
     """
+    include_parameters = request.args.get("parameters", False)
+
     try:
         template = current_app.building_motif.table_connection.get_db_template_by_id(
             templates_id
@@ -43,7 +45,7 @@ def get_template(templates_id: int) -> flask.Response:
             "message": f"No template with id {templates_id}"
         }, status.HTTP_404_NOT_FOUND
 
-    return jsonify(serialize(template)), status.HTTP_200_OK
+    return jsonify(serialize(template, include_parameters)), status.HTTP_200_OK
 
 
 @blueprint.route("/<template_id>/evaluate", methods=(["POST"]))

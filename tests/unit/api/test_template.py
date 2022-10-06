@@ -55,6 +55,19 @@ def test_get_template(client, building_motif):
     }
 
 
+def test_get_template_with_parameters(client, building_motif):
+    # Setup
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    zone = lib.get_template_by_name("zone")
+
+    # Act
+    results = client.get(f"/templates/{zone.id}?parameters=True")
+
+    # Assert
+    assert results.status_code == 200
+    assert results.json["parameters"] == ["cav", "name"]
+
+
 def test_get_template_not_found(client):
     # Act
     results = client.get("/templates/-1")
