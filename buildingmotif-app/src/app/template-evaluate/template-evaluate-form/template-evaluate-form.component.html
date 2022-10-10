@@ -1,0 +1,30 @@
+<div *ngIf="!!template">
+    <table mat-table [dataSource]="dataSource" class="table">
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="parameterName">
+            <td mat-cell *matCellDef="let element"> {{element.parameterName}} </td>
+        </ng-container>
+    
+        <!-- Value Column -->
+        <ng-container matColumnDef="parametersValueControl">
+            <mat-form-field mat-cell *matCellDef="let element" appearance="outline">
+                <input type="text"
+                    matInput
+                    [formControl]="element.parametersValueControl">
+                <mat-error *ngIf="element.parametersValueControl.hasError('required')">
+                    {{element.parameterName}} is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </ng-container>
+
+    </table>
+
+    <button 
+        mat-raised-button
+        color="primary"
+        (click)="evaluateClicked()"
+        [disabled]="parametersForm.invalid">Evaluate
+    </button>
+</div>

@@ -14,11 +14,12 @@
     </div>
 
     <mat-list *ngFor="let template of filteredTemplates | async">
-            <mat-list-item >
-                <a routerLink="/templates/{{template.id}}">
-                    {{template.name}}
-                </a>
-            </mat-list-item>
-            <mat-divider></mat-divider>
+        <mat-card class="template">
+        <mat-card-title>{{template.name}}</mat-card-title>
+        <mat-card-actions align="end">
+            <button mat-button routerLink="/templates/{{template.id}}/evaluate">Evaluate</button>
+            <button mat-button routerLink="/templates/{{template.id}}">Details</button>
+        </mat-card-actions>
+        </mat-card>
     </mat-list>      
 </div>

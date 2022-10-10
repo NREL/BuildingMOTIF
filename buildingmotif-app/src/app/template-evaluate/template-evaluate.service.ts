@@ -1,41 +1,39 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Model } from '../types'
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class ModelDetailService {
+export interface Template {
+  name: string;
+  id: number;
+  body_id: number;
+  optional_args: string[];
+  library_id: string;
+  dependency_ids: number[];
+}
+
+@Injectable()
+export class TemplateEvaluateService {
 
   constructor(private http: HttpClient) { }
 
-  getModel(id: number) {
-    return this.http.get<Model>(`http://localhost:5000/models/${id}`)
+  evaluateTemplate(id: number, parameters: {[name: string]: string}) {
+    const body = Object.entries(parameters).reduce((acc, [name, value]) => {
+      return {...acc, [name]: {"@id": value}}
+    }, {})
+
+    return this.http.post(
+      `http://localhost:5000/templates/${id}/evaluate`,
+      body,
+      {responseType: 'text'}
+      )
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error
       );
-  }
 
-  getModelGraph(id: number) {
-    return this.http.get(`http://localhost:5000/models/${id}/graph`, {responseType: 'text'})
-      .pipe(
-        retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
-      );
-  }
-
-  updateModelGraph(id: number, newGraph: string, append: boolean = false) {
-    const headers = {'Content-Type': "application/xml"}
-
-    return this.http[append? "patch": "put"](`http://localhost:5000/models/${id}/graph`, newGraph, {headers, responseType: 'text'})
-      .pipe(
-        retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
-      );
   }
 
   private handleError(error: HttpErrorResponse) {

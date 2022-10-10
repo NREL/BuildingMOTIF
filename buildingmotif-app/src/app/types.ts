@@ -5,6 +5,7 @@ export interface Template {
     optional_args: string[];
     library_id: string;
     dependency_ids: number[];
+    parameters?: string[];
 }
 
 export interface Model {
