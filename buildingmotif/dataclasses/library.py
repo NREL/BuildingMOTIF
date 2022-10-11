@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 import pyshacl
 import rdflib
 import yaml
+from pkg_resources import resource_exists, resource_filename
 from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
@@ -122,13 +123,26 @@ class Library:
         elif ontology_graph is not None:
             if isinstance(ontology_graph, str):
                 ontology_graph_path = ontology_graph
+                if resource_exists(
+                    "buildingmotif.builtin_libraries", ontology_graph_path
+                ):
+                    print(f"Loading builtin library: {ontology_graph_path}")
+                    ontology_graph_path = resource_filename(
+                        "buildingmotif.builtin_libraries", ontology_graph_path
+                    )
                 ontology_graph = rdflib.Graph()
                 ontology_graph.parse(
                     ontology_graph_path, format=guess_format(ontology_graph_path)
                 )
             return cls._load_from_ontology_graph(ontology_graph)
         elif directory is not None:
-            src = pathlib.Path(directory)
+            if resource_exists("buildingmotif.builtin_libraries", directory):
+                print(f"Loading builtin library: {directory}")
+                src = pathlib.Path(
+                    resource_filename("buildingmotif.builtin_libraries", directory)
+                )
+            else:
+                src = pathlib.Path(directory)
             if not src.exists():
                 raise Exception(f"Directory {src} does not exist")
             return cls._load_from_directory(src)
