@@ -120,3 +120,8 @@ def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
     MockLibrary.create("https://brickschema.org/schema/1.3/Brick")
     lib = Library._load_from_directory(Path(library))
     assert lib is not None
+
+
+def test_builtin_ontologies(bm: BuildingMOTIF, builtin_ontology):
+    lib = Library.load(ontology_graph=builtin_ontology)
+    assert lib is not None
