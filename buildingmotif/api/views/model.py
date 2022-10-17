@@ -57,6 +57,33 @@ def get_model_graph(models_id: int) -> flask.Response:
     return model.graph.serialize(format="ttl"), status.HTTP_200_OK
 
 
+@blueprint.route("", methods=(["POST"]))
+def create_model() -> flask.Response:
+    """Create model
+
+    :return: new model
+    :rtype: Model
+    """
+    if request.content_type != "application/json":
+        return {
+            "message": "request content type must be json"
+        }, status.HTTP_400_BAD_REQUEST
+
+    name = request.json.get("name")
+    description = request.json.get("description")
+
+    if name is None:
+        return {"message": "must give name"}, status.HTTP_400_BAD_REQUEST
+
+    model = Model.create(name, description)
+
+    current_app.building_motif.session.commit()
+
+    model = current_app.building_motif.table_connection.get_db_model(model.id)
+
+    return jsonify(serialize(model)), status.HTTP_201_CREATED
+
+
 @blueprint.route("/<models_id>/graph", methods=(["PATCH", "PUT"]))
 def update_model_graph(models_id: int) -> flask.Response:
     """update model graph
