@@ -9,8 +9,10 @@ import { ModelDetailComponent } from '../app/model-detail/model-detail.component
 import { ModelDetailResolver } from '../app/model-detail/model-detail.resolver'
 import { TemplateEvaluateComponent} from './template-evaluate/template-evaluate.component'
 import { TemplateEvaluateResolver} from './template-evaluate/template-evaluate.resolver'
+import { ModelNewComponent } from '../app/model-new/model-new.component'
 
 const routes: Routes = [
+  { path: 'models/new', component: ModelNewComponent},
   { path: 'templates/:id', component: TemplateDetailComponent },
   { path: 'templates/:id/evaluate', component: TemplateEvaluateComponent, resolve: {TemplateEvaluateResolver}},
   { path: 'models/:id', component: ModelDetailComponent, resolve: {ModelDetailResolver} },

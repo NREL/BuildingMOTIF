@@ -1,0 +1,21 @@
+<div class="container">
+    <div> New Model </div>
+    <form class="new-model-form" [formGroup]="newModelForm">
+        <mat-form-field appearance="outline" floatLabel="never">
+                <input type="text"
+                        aria-label="model name"
+                        placeholder="model name"
+                        matInput
+                        formControlName="nameControl">
+        </mat-form-field>
+        <mat-form-field appearance="outline" floatLabel="never">
+                <textarea type="text"
+                        aria-label="model description"
+                        placeholder="model description"
+                        matInput
+                        formControlName="descriptionControl">
+                </textarea>
+        </mat-form-field>
+    </form>
+    <button mat-raised-button color="primary" (click)="createModel()" [disabled]="newModelForm.invalid"> New Model </button> 
+</div>

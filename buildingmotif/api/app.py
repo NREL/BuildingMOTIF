@@ -37,9 +37,6 @@ def _after_error(error):
     :return: flask error response
     :rtype: Flask.response
     """
-    print("++++")
-    print(error)
-    print("++++")
     return str(error), status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
