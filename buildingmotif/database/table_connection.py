@@ -1,6 +1,5 @@
 import logging
 import uuid
-from itertools import chain
 from typing import Dict, List, Tuple
 
 from sqlalchemy.engine import Engine
@@ -12,7 +11,7 @@ from buildingmotif.database.tables import (
     DBTemplate,
     DepsAssociation,
 )
-from buildingmotif.namespaces import PARAM
+from buildingmotif.utils import get_parameters
 
 
 class TableConnection:
@@ -373,8 +372,23 @@ class TableConnection:
         )
         templ = self.get_db_template_by_id(template_id)
         graph = self.bm.graph_connection.get_graph(templ.body_id)
-        nodes = chain.from_iterable(graph.triples((None, None, None)))
-        params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
+        params = get_parameters(graph)
+        dep = self.get_db_template_by_id(dependency_id)
+
+        # check parameters are valid
+        if not set(args.values()).issubset(params):
+            raise ValueError(
+                f"In {templ.name} the values of the bindings to {dep.name} must correspond to the "
+                "parameters in the dependant template"
+            )
+        # do the same for the dependency
+        graph = self.bm.graph_connection.get_graph(dep.body_id)
+        dep_params = get_parameters(graph)
+        if not set(args.keys()).issubset(dep_params):
+            raise ValueError(
+                f"In {templ.name} the keys of the bindings to {dep.name} must correspond to the "
+                "parameters in the template dependency"
+            )
 
         # TODO: do we need this kind of check?
         if "name" not in args.keys():

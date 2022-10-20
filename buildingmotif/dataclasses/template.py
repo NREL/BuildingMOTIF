@@ -201,36 +201,41 @@ class Template:
         if not self.get_dependencies():
             return templ
 
-        # count of parameters in this template + all dependencies
-        counts = self.parameter_counts
         # start with this template's parameters; if there is
         for dep in self.get_dependencies():
             # get the inlined version of the dependency
             deptempl = dep.template.inline_dependencies()
+
             # replace dependency parameters with the names they inherit
             # through the provided bindings
-            rename_args: Dict[rdflib.URIRef, Node] = {
-                PARAM[ours]: PARAM[theirs] for ours, theirs in dep.args.items()
+            rename_params: Dict[str, str] = {
+                ours: theirs for ours, theirs in dep.args.items()
             }
-            replace_nodes(deptempl.body, rename_args)
-            # find the parameters in the dependency that also appear in other templates:
-            # the conflicted parameters are those that appear in the 'rest' of the parameters
-            # (gien by params_without_dep) *and* don't have their conflicting name as a result
-            # of the parameter bindings (dep.args.values())
-            dep_counts = deptempl.parameter_counts
-            params_without_dep = set(counts - dep_counts)
-            conflicted = params_without_dep.intersection(dep_counts.keys()) - set(
-                dep.args.values()
+            # replace all parameters *not* mentioned in the args by prefixing
+            # them with the 'name' parameter binding; this is guaranteed
+            # to exist
+            name_prefix = dep.args.get("name")
+            # for each parameter in the dependency...
+            for param in deptempl.parameters:
+                # if it does *not* have a mapping in the dependency, then
+                # prefix the parameter with the value of the 'name' binding
+                # to scope it properly
+                if param not in dep.args and param != "name":
+                    rename_params[param] = f"{name_prefix}-{param}"
+
+            # replace the parameters in the dependency template
+            replace_nodes(
+                deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
             )
-            # replace conflicted parameters
-            conflicted_params: Dict[rdflib.URIRef, Node] = {
-                PARAM[conflicted_param]: PARAM[f"{deptempl.name}-{conflicted_param}"]
-                for conflicted_param in conflicted
-            }
-            # update the template's body w/ the new renamed parameters
-            replace_nodes(deptempl.body, conflicted_params)
-            # concatenate the dependency's body with this template's body
+            # be sure to rename optional arguments too
+            unused_optional_args = set(deptempl.optional_args) - set(dep.args.keys())
+            dep_optional_args = [
+                rename_params.get(arg, arg) for arg in unused_optional_args
+            ]
+
+            # append into the dependant body
             templ.body += deptempl.body
+            templ.optional_args += dep_optional_args
 
         return templ
 
@@ -259,7 +264,7 @@ class Template:
         :rtype: Union["Template", rdflib.Graph]
         """
         templ = self.in_memory_copy()
-        uri_bindings = {PARAM[k]: v for k, v in bindings.items()}
+        uri_bindings: Dict[Node, Node] = {PARAM[k]: v for k, v in bindings.items()}
         replace_nodes(templ.body, uri_bindings)
         # true if all parameters are now bound or only optional args are unbound
         if len(templ.parameters) == 0 or (
@@ -271,9 +276,7 @@ class Template:
                     templ.body.bind(prefix, namespace)
             if not require_optional_args:
                 # remove all triples that touch unbound optional_args
-                unbound_optional_args = set(templ.optional_args) - set(
-                    uri_bindings.keys()
-                )
+                unbound_optional_args = set(templ.optional_args) - set(bindings.keys())
                 for arg in unbound_optional_args:
                     remove_triples_with_node(templ.body, PARAM[arg])
             return templ.body
@@ -288,7 +291,11 @@ class Template:
         :return: a tuple of the bindings used and the resulting graph
         :rtype: Tuple[Dict[str, Node], rdflib.Graph]
         """
-        bindings = {param: ns[f"{param}_{token_hex(4)}"] for param in self.parameters}
+        bindings: Dict[str, Node] = {
+            param: ns[f"{param}_{token_hex(4)}"]
+            for param in self.parameters
+            if param not in self.optional_args
+        }
         res = self.evaluate(bindings)
         assert isinstance(res, rdflib.Graph)
         return bindings, res

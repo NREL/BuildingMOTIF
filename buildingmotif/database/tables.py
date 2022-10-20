@@ -53,10 +53,20 @@ class DepsAssociation(Base):
 
     __tablename__ = "deps_association_table"
 
-    dependant_id: Mapped[int] = Column(ForeignKey("template.id"), primary_key=True)
-    dependee_id: Mapped[int] = Column(ForeignKey("template.id"), primary_key=True)
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    dependant_id: Mapped[int] = Column(ForeignKey("template.id"))
+    dependee_id: Mapped[int] = Column(ForeignKey("template.id"))
     # args are a mapping of dependee args to dependant args
     args: Mapped[Dict[str, str]] = Column(JSON)
+
+    __table_args__ = (
+        UniqueConstraint(
+            "dependant_id",
+            "dependee_id",
+            "args",
+            name="deps_association_unique_constraint",
+        ),
+    )
 
 
 class DBTemplate(Base):

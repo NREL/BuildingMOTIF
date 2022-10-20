@@ -14,6 +14,10 @@ from buildingmotif.building_motif.singleton import (
 from buildingmotif.database.graph_connection import GraphConnection
 from buildingmotif.database.table_connection import TableConnection
 from buildingmotif.database.tables import Base as BuildingMOTIFBase
+from buildingmotif.database.utils import (
+    _custom_json_deserializer,
+    _custom_json_serializer,
+)
 from buildingmotif.namespaces import bind_prefixes
 
 
@@ -31,7 +35,12 @@ class BuildingMOTIF(metaclass=Singleton):
         :default log_level: INFO
         """
         self.db_uri = db_uri
-        self.engine = create_engine(db_uri, echo=False)
+        self.engine = create_engine(
+            db_uri,
+            echo=False,
+            json_serializer=_custom_json_serializer,
+            json_deserializer=_custom_json_deserializer,
+        )
         self.session_factory = sessionmaker(bind=self.engine, autoflush=True)
         self.Session = scoped_session(self.session_factory)
 

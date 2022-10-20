@@ -4,7 +4,7 @@ from copy import copy
 from dataclasses import dataclass
 from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
@@ -343,3 +343,23 @@ def new_temporary_graph(more_namespaces: Optional[dict] = None) -> Graph:
         for prefix, uri in more_namespaces.items():
             g.bind(prefix, uri)
     return g
+
+
+def get_parameters(graph: Graph) -> Set[str]:
+    """
+    Returns the set of parameter names in the given graph. Parameters
+    are identified by the PARAM namespace (urn:___param___#). This method
+    returns the names of the parameters, not the full URIs. For example,
+    the parameter 'urn:___param___#abc' in a graph would be returned as 'abc'
+
+    :param graph: a graph containing parameters
+    :type graph: Graph
+    :return: a set of the parameter names in the graph
+    :rtype: Set[str]
+    """
+    # get an iterable of all nodes in the graph
+    all_nodes = chain.from_iterable(graph.triples((None, None, None)))
+    # get all nodes in the PARAM namespace
+    params = {str(node) for node in all_nodes if str(node).startswith(PARAM)}
+    # extract the 'value' part of the param, which is the name of the parameter
+    return {node[len(PARAM) :] for node in params}

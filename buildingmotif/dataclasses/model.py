@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import pyshacl
 import rdflib
@@ -7,6 +7,7 @@ import rdflib
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
+from buildingmotif.namespaces import A
 from buildingmotif.utils import Triple, copy_graph
 
 if TYPE_CHECKING:
@@ -157,3 +158,108 @@ class Model:
             report_str,
             self,
         )
+
+    def compile(self, shape_collections: List["ShapeCollection"]):
+        """
+        Compile the graph of a model against a set of shape collections.
+
+        :param shape_collections: List of shape collections to compile the model against
+        :type shape_collections: List[ShapeCollection]
+
+        :return: Copy of model's graph which has been compiled against the shape collections
+        :rtype: Graph
+        """
+        ontology_graph = rdflib.Graph()
+        for shape_collection in shape_collections:
+            ontology_graph += shape_collection.graph
+
+        ontology_graph = ontology_graph.skolemize()
+
+        model_graph = copy_graph(self.graph).skolemize()
+
+        # We use a fixed-point computation approach to 'compiling' RDF models.
+        # We accomlish this by keeping track of the size of the graph before and after
+        # the inference step. If the size of the graph changes, then we know that the
+        # inference has had some effect. We do this at most 3 times to avoid looping
+        # forever.
+        pre_compile_length = len(model_graph)  # type: ignore
+        pyshacl.validate(
+            data_graph=model_graph,
+            shacl_graph=ontology_graph,
+            ont_graph=ontology_graph,
+            advanced=True,
+            inplace=True,
+            js=True,
+        )
+        post_compile_length = len(model_graph)  # type: ignore
+
+        attempts = 3
+        while attempts > 0 and post_compile_length != pre_compile_length:
+            pre_compile_length = len(model_graph)  # type: ignore
+            pyshacl.validate(
+                data_graph=model_graph,
+                shacl_graph=ontology_graph,
+                ont_graph=ontology_graph,
+                advanced=True,
+                inplace=True,
+                js=True,
+            )
+            post_compile_length = len(model_graph)  # type: ignore
+            attempts -= 1
+        model_graph -= ontology_graph
+        return model_graph.de_skolemize()
+
+    def test_model_against_shapes(
+        self,
+        shape_collections: List["ShapeCollection"],
+        shapes_to_test: List[rdflib.URIRef],
+        target_class: rdflib.URIRef,
+    ) -> Dict[rdflib.URIRef, "ValidationContext"]:
+        """
+        Validates the model against a list of shapes and generates a validation report
+        for each shape.
+
+        :param shape_collections: List of shape collections needed to run shapes
+        :type shape_collection: List[ShapeCollection]
+
+        :param shapes_to_test: List of Shape URIs to validate the model against
+        :type shapes_to_test: List[URIRef]
+
+        :param target_class: The class upon which to run the selected shapes
+        :type target_class: URIRef
+
+        :return: A dictionary which relates each shape_to_test URIRef to a ValidationContext
+        :rtype: Dict[URIRef, ValidationContext]
+        """
+        ontology_graph = rdflib.Graph()
+        for shape_collection in shape_collections:
+            ontology_graph += shape_collection.graph
+
+        model_graph = copy_graph(self.graph)
+
+        results = {}
+
+        for shape_uri in shapes_to_test:
+            targets = model_graph.triples((None, A, target_class))
+            temp_model_graph = copy_graph(model_graph)
+            for s, _, _ in targets:
+                temp_model_graph.add((s, A, shape_uri))
+
+            temp_model_graph += ontology_graph.cbd(shape_uri)
+
+            valid, report_g, report_str = pyshacl.validate(
+                data_graph=temp_model_graph,
+                ont_graph=ontology_graph,
+                allow_warnings=True,
+                advanced=True,
+                js=True,
+            )
+            results[shape_uri] = ValidationContext(
+                shape_collections,
+                valid,
+                report_g,
+                report_str,
+                self,
+            )
+
+        return results
