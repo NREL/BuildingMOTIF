@@ -77,7 +77,7 @@ def test_get_template_not_found(client):
     assert results.json == {"message": "No template with id -1"}
 
 
-def test_evaluate_template(client, building_motif):
+def test_evaluate(client, building_motif):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     zone.inline_dependencies()

@@ -50,6 +50,13 @@ def get_template(templates_id: int) -> flask.Response:
 
 @blueprint.route("/<template_id>/evaluate", methods=(["POST"]))
 def evaluate(template_id: int) -> flask.Response:
+    """evaluate template with giving binding
+
+    :param template_id: id of template
+    :type template_id: int
+    :return: evaluated Group
+    :rtype: flask.Response
+    """
     try:
         template = Template.load(template_id)
     except NoResultFound:
@@ -74,6 +81,19 @@ def evaluate(template_id: int) -> flask.Response:
 
 
 def get_bindings(binding_dict) -> Dict[str, Node]:
+    """type binding_dict values to nodes
+
+    given:
+        {name: {@id or @literal: value}}
+
+    return:
+        {name: typed value}
+
+    :param binding_dict: untyped bindings
+    :type binding_dict: dict
+    :return: typed dict
+    :rtype: Dict[str, Node]
+    """
     bindings = {}
     for param, definition in binding_dict.items():
         if "@id" in definition:
