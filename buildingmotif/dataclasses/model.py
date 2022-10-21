@@ -14,6 +14,13 @@ if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
 
 
+def _is_valid_uri(uri: str) -> bool:
+    for c in '<>" {}|\\^`':
+        if c in uri:
+            return False
+    return True
+
+
 @dataclass
 class Model:
     """Model. This class mirrors DBModel."""
@@ -37,6 +44,12 @@ class Model:
         """
         bm = get_building_motif()
         db_model = bm.table_connection.create_db_model(name, description)
+
+        if not _is_valid_uri(name):
+            raise ValueError(
+                f"{name} does not look like a valid URI, trying to serialize this will break."
+            )
+
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
         graph = bm.graph_connection.create_graph(db_model.graph_id, g)

@@ -1,3 +1,4 @@
+import pytest
 from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF, RDF
@@ -16,6 +17,11 @@ def test_create_model(clean_building_motif):
     assert model.name == "my_model"
     assert model.description == "a very good model"
     assert isinstance(model.graph, Graph)
+
+
+def test_create_model_bad_name(clean_building_motif):
+    with pytest.raises(ValueError):
+        Model.create(name="I have spaces")
 
 
 def test_load_model(clean_building_motif):
