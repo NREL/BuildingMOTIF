@@ -24,8 +24,12 @@ import {MatButtonModule} from '@angular/material/button';
 import { ModelDetailComponent } from './model-detail/model-detail.component'; 
 import {MatSnackBarModule} from '@angular/material/snack-bar'; 
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import {MatCardModule} from '@angular/material/card'; 
-
+import {MatCardModule} from '@angular/material/card';
+import { TemplateEvaluateFormComponent } from './template-evaluate/template-evaluate-form/template-evaluate-form.component'; 
+import { TemplateDetailService } from './template-detail/template-detail.service';
+import {MatTableModule} from '@angular/material/table';
+import { TemplateEvaluateResultComponent } from './template-evaluate/template-evaluate-result/template-evaluate-result.component'; 
+import { TemplateEvaluateComponent} from './template-evaluate/template-evaluate.component'
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,6 +39,9 @@ import {MatCardModule} from '@angular/material/card';
     ModelSearchComponent,
     MenuComponent,
     ModelDetailComponent,
+    TemplateEvaluateComponent,
+    TemplateEvaluateFormComponent,
+    TemplateEvaluateResultComponent,
   ],
   imports: [
     BrowserModule,
@@ -55,9 +62,10 @@ import {MatCardModule} from '@angular/material/card';
     MatButtonModule,
     MatSnackBarModule,
     CodemirrorModule,
-    MatCardModule
+    MatCardModule,
+    MatTableModule
   ],
-  providers: [],
+  providers: [TemplateDetailService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
