@@ -33,7 +33,7 @@ export class ModelNewService {
         `Backend returned code ${error.status}, body was: `, error.error);
     }
     // Return an observable with a user-facing error message.
-    return throwError(() => new Error(`${error.status}: ${error.error}`));
+    return throwError(() => new Error(`${error.status}: ${error.error.message}`));
   }
 
 }

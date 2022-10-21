@@ -189,7 +189,7 @@ def test_update_model_graph_bad_graph_value(client, building_motif):
 def test_create_model(client, building_motif):
     results = client.post(
         "/models",
-        json={"name": "a new model"},
+        json={"name": "a_new_model"},
     )
 
     assert results.status_code == 201
@@ -197,7 +197,7 @@ def test_create_model(client, building_motif):
     assert isinstance(results.json["id"], int)
     assert isinstance(results.json["graph_id"], str)
 
-    assert results.json["name"] == "a new model"
+    assert results.json["name"] == "a_new_model"
     assert results.json["description"] == ""
 
     assert isinstance(Model.load(results.json["id"]), Model)
@@ -206,7 +206,7 @@ def test_create_model(client, building_motif):
 def test_create_model_with_description(client, building_motif):
     results = client.post(
         "/models",
-        json={"name": "a new model", "description": "it's so cool"},
+        json={"name": "a_new_model", "description": "it's so cool"},
     )
 
     assert results.status_code == 201
@@ -214,7 +214,7 @@ def test_create_model_with_description(client, building_motif):
     assert isinstance(results.json["id"], int)
     assert isinstance(results.json["graph_id"], str)
 
-    assert results.json["name"] == "a new model"
+    assert results.json["name"] == "a_new_model"
     assert results.json["description"] == "it's so cool"
 
     assert isinstance(Model.load(results.json["id"]), Model)
@@ -232,6 +232,15 @@ def test_create_model_no_name(client, building_motif):
     results = client.post(
         "/models",
         json={},
+    )
+
+    assert results.status_code == 400
+
+
+def test_create_model_bad_name(client, building_motif):
+    results = client.post(
+        "/models",
+        json={"name": "I have spaces."},
     )
 
     assert results.status_code == 400

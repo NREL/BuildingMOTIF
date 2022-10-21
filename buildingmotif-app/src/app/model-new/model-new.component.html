@@ -7,6 +7,9 @@
                         placeholder="model name"
                         matInput
                         formControlName="nameControl">
+                <mat-error *ngIf="newModelForm.get('nameControl')?.hasError('invalidCharacter')">
+                        cannot contain &lt;, >, ", ^, &#123;, }, &vert;, \, ^, or spaces
+                </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline" floatLabel="never">
                 <textarea type="text"

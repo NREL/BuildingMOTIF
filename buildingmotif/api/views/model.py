@@ -75,7 +75,13 @@ def create_model() -> flask.Response:
     if name is None:
         return {"message": "must give name"}, status.HTTP_400_BAD_REQUEST
 
-    model = Model.create(name, description)
+    try:
+        model = Model.create(name, description)
+    except ValueError:
+        return {
+            "message": f"{name} does not look like a valid URI, "
+            "trying to serialize this will break."
+        }, status.HTTP_400_BAD_REQUEST
 
     current_app.building_motif.session.commit()
 
