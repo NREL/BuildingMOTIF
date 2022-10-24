@@ -200,7 +200,11 @@ class Library:
             dependency_cache[templ.id] = deps
             template_id_lookup[str(candidate)] = templ.id
 
-        # now that we have all the templates, we can populate the dependencies
+        # Now that we have all the templates, we can populate the dependencies.
+        # IGNORES missing XSD imports --- there is really no reason to import the XSD
+        # ontology because the handling is baked into the software processing the RDF
+        # graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we
+        # suppress them.
         for template in lib.get_templates():
             if template.id not in dependency_cache:
                 continue
