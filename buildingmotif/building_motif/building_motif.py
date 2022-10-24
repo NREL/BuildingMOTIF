@@ -102,8 +102,8 @@ class BuildingMOTIF(metaclass=Singleton):
         engine_logger = logging.getLogger("sqlalchemy.engine")
         pool_logger = logging.getLogger("sqlalchemy.pool")
 
-        engine_logger.setLevel(log_level)
-        pool_logger.setLevel(log_level)
+        engine_logger.setLevel(logging.DEBUG)
+        pool_logger.setLevel(logging.DEBUG)
 
         stream_handler = logging.StreamHandler()
         stream_handler.setLevel(log_level)
