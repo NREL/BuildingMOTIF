@@ -18,6 +18,10 @@ class IngressHandler:
         self.bm = bm
 
 
+# TODO: add a regex module for assigning brick classes
+# TODO: add rule-based thing tool?
+
+
 class BrickBACnetIngressHandler(IngressHandler):
     BNS = Namespace("urn:brick_bacnet_scan/")
 
