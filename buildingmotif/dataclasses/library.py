@@ -12,6 +12,7 @@ from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
+from buildingmotif.namespaces import XSD
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import get_ontology_files, get_template_parts_from_shape
 
@@ -207,7 +208,7 @@ class Library:
                 if dep["template"] in template_id_lookup:
                     dependee = Template.load(template_id_lookup[dep["template"]])
                     template.add_dependency(dependee, dep["args"])
-                else:
+                elif not dep["template"].startswith(XSD):
                     logging.warn(f"Warning: could not find dependee {dep['template']}")
 
         # load the ontology graph as a shape_collection
