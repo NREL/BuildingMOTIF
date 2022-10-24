@@ -1,0 +1,25 @@
+brick-point:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix ref: <https://brickschema.org/schema/ref#> .
+    @prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
+    P:name a brick:Point ;
+      ref:hasExternalReference [
+        a ref:BACnetReference ;
+        bacnet:object-identifier P:identifier ;
+        bacnet:object-name P:obj-name ;
+        bacnet:objectOf P:device ;
+      ] .
+  dependencies:
+    - template: brick-device
+      args: {"name": "device"}
+
+brick-device:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix ref: <https://brickschema.org/schema/ref#> .
+    @prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
+    P:name a bacnet:BACnetDevice ;
+      bacnet:device-instance P:instance-number .
