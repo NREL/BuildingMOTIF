@@ -29,7 +29,7 @@ default_graph.add(
 def test_get_all_models(client, building_motif):
     # Setup
     Model.create(name="urn:my_model", description="the best model")
-    Model.create(name="your_model")
+    Model.create(name="https://example.com")
 
     # Act
     results = client.get("/models")

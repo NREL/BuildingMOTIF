@@ -138,7 +138,7 @@ def test_template_matching(bm: BuildingMOTIF):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     damper = lib.get_template_by_name("outside-air-damper")
 
-    bldg = Model.create("my-building")
+    bldg = Model.create("https://example.com")
     bldg.add_graph(Graph().parse("tests/unit/fixtures/matching/model.ttl"))
 
     matcher = TemplateMatcher(bldg.graph, damper, brick.get_shape_collection().graph)
