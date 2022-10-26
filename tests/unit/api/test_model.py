@@ -7,7 +7,7 @@ from buildingmotif.dataclasses import Model
 graph_data = """
     @prefix owl: <http://www.w3.org/2002/07/owl#> .
     @prefix sh: <http://www.w3.org/ns/shacl#> .
-    @prefix : <urn:model#> .
+    @prefix : <urn:my_model#> .
     @prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 
     :shape1 a bmotif:HVAC ;
@@ -20,14 +20,15 @@ graph_data = """
     .
 """
 
-default_graph = [
-    (URIRef("my_model"), RDF.type, URIRef("http://www.w3.org/2002/07/owl#Ontology"))
-]
+default_graph = Graph()
+default_graph.add(
+    (URIRef("urn:my_model"), RDF.type, URIRef("http://www.w3.org/2002/07/owl#Ontology"))
+)
 
 
 def test_get_all_models(client, building_motif):
     # Setup
-    Model.create(name="my_model", description="the best model")
+    Model.create(name="urn:my_model", description="the best model")
     Model.create(name="your_model")
 
     # Act
@@ -50,7 +51,7 @@ def test_get_all_models(client, building_motif):
 
 def test_get_model(client, building_motif):
     # Setup
-    model = Model.create(name="my_model")
+    model = Model.create(name="urn:my_model")
 
     # Act
     results = client.get(f"/models/{model.id}")
@@ -101,9 +102,30 @@ def test_get_model_graph_not_found(client):
     assert results.json == {"message": "No model with id -1"}
 
 
-def test_update_model_graph(client, building_motif):
+def test_update_model_graph_overwrite(client, building_motif):
     # Set up
-    model = Model.create(name="my_model")
+    model = Model.create(name="urn:my_model")
+    assert isomorphic(model.graph, default_graph)
+
+    # Action
+    results = client.put(
+        f"/models/{model.id}/graph",
+        data=graph_data,
+        headers={"Content-Type": "application/xml"},
+    )
+    model = Model.load(model.id)
+
+    # Assert
+    assert results.status_code == 200
+    results_graph = Graph().parse(data=results.data, format="ttl")
+    expected_graph = Graph().parse(data=graph_data, format="ttl")
+    assert isomorphic(results_graph, expected_graph)
+    assert isomorphic(model.graph, expected_graph)
+
+
+def test_update_model_graph_append(client, building_motif):
+    # Set up
+    model = Model.create(name="urn:my_model")
     assert isomorphic(model.graph, default_graph)
 
     # Action
@@ -118,8 +140,11 @@ def test_update_model_graph(client, building_motif):
     assert results.status_code == 200
     results_graph = Graph().parse(data=results.data, format="ttl")
     expected_graph = Graph().parse(data=graph_data, format="ttl")
-    assert isomorphic(results_graph, expected_graph)
-    assert isomorphic(model.graph, expected_graph)
+    print(results_graph.serialize(format="ttl"))
+    print("++++")
+    print((expected_graph + default_graph).serialize(format="ttl"))
+    assert isomorphic(results_graph, expected_graph + default_graph)
+    assert isomorphic(model.graph, expected_graph + default_graph)
 
 
 def test_update_model_graph_not_found(client, building_motif):
@@ -135,7 +160,7 @@ def test_update_model_graph_not_found(client, building_motif):
 
 def test_update_model_graph_no_header(client, building_motif):
     # Set up
-    model = Model.create(name="my_model")
+    model = Model.create(name="urn:my_model")
     assert isomorphic(model.graph, default_graph)
 
     # Action
@@ -147,7 +172,7 @@ def test_update_model_graph_no_header(client, building_motif):
 
 def test_update_model_graph_bad_graph_value(client, building_motif):
     # Set up
-    model = Model.create(name="my_model")
+    model = Model.create(name="urn:my_model")
     assert isomorphic(model.graph, default_graph)
 
     # Action

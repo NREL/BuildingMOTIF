@@ -19,8 +19,8 @@ export class TemplateDetailService {
 
   constructor(private http: HttpClient) { }
 
-  getTemplate(id: number) {
-    return this.http.get<Template>(`http://localhost:5000/templates/${id}`)
+  getTemplate(id: number, includeParameters: boolean =false) {
+    return this.http.get<Template>(`http://localhost:5000/templates/${id}?parameters=${includeParameters}`)
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error
