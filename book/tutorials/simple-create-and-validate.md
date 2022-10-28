@@ -140,8 +140,7 @@ print("The fan template has the following dependencies:")
 for dependency in fan_template.get_dependencies():
     print(f"  {dependency.template.name}")
     for (theirs, ours) in dependency.args.items():
-        print(f"  {dependency.template.name}'s {theirs} parameter corresponds to fan_template's {ours} parameter")
-    print(f"  {dependency.template.name}")
+        print(f"    {dependency.template.name}'s {theirs} parameter corresponds to fan_template's {ours} parameter")
 ```
 
 ### Evaluating a Template
@@ -221,7 +220,7 @@ for fan_name in ["fan1", "fan2"]:
 Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes`. 
 
 ```{note}
-A **shape** is a set of constraints, restrictions and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
+A **shape** is a set of constraints, requirements and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
 - the minimum points on an equipment required to execute a certain sequence of operations,
 - the internal details of an equipment: what parts it contains, etc
 ```
