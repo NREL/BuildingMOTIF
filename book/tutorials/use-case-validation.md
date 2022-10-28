@@ -194,7 +194,7 @@ vav1 = vav_template.evaluate({"name": BLDG["vav1"]})
 model.add_graph(vav1)
 vav2 = vav_template.evaluate({"name": BLDG["vav2"]})
 model.add_graph(vav2)
-ahuA = vav_template.evaluate({"name": BLDG["ahuA"]})
+ahuA = ahu_template.evaluate({"name": BLDG["ahuA"]})
 model.add_graph(ahuA)
 ```
 
