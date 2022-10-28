@@ -11,9 +11,11 @@ kernelspec:
   name: python3
 ---
 
-# Quick Tutorial
+# Model Creation with Templates and Simple Validation
 
-The purpose of this tutorial is to cover a few of the basic features of BuildingMOTIF. To this end, the tutorial will walk the reader through building a Brick model for a simple HVAC system. The resulting Brick model will contain sufficient metadata to execute a couple fault detection rules defined by ASHRAE Guideline 36.
+The purpose of this tutorial is to cover a few of the basic features of
+BuildingMOTIF. To this end, the tutorial will walk the reader through building
+a Brick model containing a few simple Fan equipment entities.
 
 Specifically, the tutorial has the following learning objectives:
 - readers will be able to create a BuildingMOTIF "instance"
@@ -21,7 +23,6 @@ Specifically, the tutorial has the following learning objectives:
 - readers will be able to load `Libraries` into a BuildingMOTIF instance
 - readers will be able to create a Brick model by *evaluating* `Templates`
 - readers will be able to use *validation* to ensure that the resulting model is a valid Brick model
-- readers will be able to use BuildingMOTIF to discover which fault detection rules can run on the resulting Brick model
 
 The tutorial assumes that `BuildingMOTIF` has already been installed in the local environment.
 
@@ -96,7 +97,7 @@ for template in g36.get_templates():
     print(f"  - {template.name}")
 ```
 
-## Creating a Model by Evaluating Templates
+## Creating a Model with Templates
 
 
 ### Exploring Your First Template
@@ -194,4 +195,51 @@ print(model.graph.serialize())
 
 ```{note}
 If using a persistent (disk-backed) instnace of BuildingMOTIF instead of an in-memory instance, be sure to use `bm.session.commit()` to save your work after calling `add_graph`.
+```
+
+---
+
+If you want some additional practice, try writing some Python code that adds 2 more fans to the model.
+
+```{admonition} Click to reveal an answer...
+:class: dropdown
+
+```python
+for fan_name in ["fan1", "fan2"]:
+    bindings = {
+        "name": BLDG[fan_name],
+        "speed": BLDG[fan_name+"_speed"],
+        "start_stop": BLDG[fan_name+"_start_stop"],
+        "status": BLDG[fan_name+"_status"],
+    }
+    fan_entity_graph = fan_template.evaluate(bindings)
+    model.add_graph(fan_entity_graph)
+```
+
+## Validating a Model
+
+Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes`. 
+
+```{note}
+A **shape** is a set of constraints, restrictions and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
+- the minimum points on an equipment required to execute a certain sequence of operations,
+- the internal details of an equipment: what parts it contains, etc
+```
+
+BuildingMOTIF organizes `Shapes` into `Shape Collections`. The shape collection associated with a library (if there is one) can be retrieved with the `get_shape_collection` property.
+Below, we use Brick's shape collection to ensure that our model is using Brick correctly:
+
+```{code-cell}
+# pass a list of shape collections to .validate()
+validation_result = model.validate([brick.get_shape_collection()]) 
+print(f"Model is valid? {validation_result.valid}")
+```
+
+In other tutorials, we will work with models that do **not** validate for various reasons, and explore how BuildingMOTIF helps us repair these models.
+
+If the model was **not** valid, then we could ask the `validation_result` object to tell us why:
+
+```python
+for diff in validation_result.diffset:
+    print(" -" + diff.reason())
 ```
