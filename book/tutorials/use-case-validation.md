@@ -206,6 +206,10 @@ print(model.graph.serialize())
 
 ## Validating our Model, Round 2
 
+```{warning}
+TODO: this isn't working yet!!
+```
+
 We can now borrow the same code from before and re-run it to re-validate our new and improved model:
 
 ```{code-cell}
