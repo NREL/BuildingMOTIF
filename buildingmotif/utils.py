@@ -1,4 +1,5 @@
 import logging
+import secrets
 from collections import defaultdict
 from copy import copy
 from dataclasses import dataclass
@@ -28,18 +29,30 @@ def _gensym(prefix: str = "p") -> URIRef:
     return PARAM[f"{prefix}{_gensym_counter}"]
 
 
-def copy_graph(g: Graph) -> Graph:
+def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     """
-    Copy a graph.
+    Copy a graph. Creates new blank nodes so that these remain unique to each Graph
 
     :param g: the graph to copy
     :type g: Graph
+    :param preserve_blank_nodes: if true, keep blank nodes the same when copying the graph
+    :type preserve_blank_nodes: boolean, defaults to True
     :return: a copy of the input graph
     :rtype: Graph
     """
     c = Graph()
+    new_prefix = secrets.token_hex(4)
     for t in g.triples((None, None, None)):
-        c.add(t)
+        assert isinstance(t, tuple)
+        (s, p, o) = t
+        if not preserve_blank_nodes:
+            if isinstance(s, BNode):
+                s = BNode(value=new_prefix + s.toPython())
+            if isinstance(p, BNode):
+                p = BNode(value=new_prefix + p.toPython())
+            if isinstance(o, BNode):
+                o = BNode(value=new_prefix + o.toPython())
+        c.add((s, p, o))
     return c
 
 
