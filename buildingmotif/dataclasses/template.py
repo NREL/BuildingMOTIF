@@ -62,7 +62,7 @@ class Template:
         return Template(
             _id=-1,
             _name=self._name,
-            body=copy_graph(self.body),
+            body=copy_graph(self.body, preserve_blank_nodes=False),
             optional_args=self.optional_args[:],
             _bm=self._bm,
         )
