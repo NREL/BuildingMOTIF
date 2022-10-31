@@ -57,7 +57,7 @@ def get_model_graph(models_id: int) -> flask.Response:
     return model.graph.serialize(format="ttl"), status.HTTP_200_OK
 
 
-@blueprint.route("/<models_id>/graph", methods=(["PATCH"]))
+@blueprint.route("/<models_id>/graph", methods=(["PATCH", "PUT"]))
 def update_model_graph(models_id: int) -> flask.Response:
     """update model graph
 
@@ -83,7 +83,9 @@ def update_model_graph(models_id: int) -> flask.Response:
     except BadSyntax as e:
         return {"message": f"data is unreadable: {e}"}, status.HTTP_400_BAD_REQUEST
 
-    model.graph.remove((None, None, None))
+    if request.method == "PUT":
+        model.graph.remove((None, None, None))
+
     model.add_graph(graph)
 
     current_app.building_motif.session.commit()
