@@ -2,6 +2,8 @@
 [![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) 
 [![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF) 
 
+**BuildingMOTIF is in rapid early development and is NOT recommended for production applications at this point. Curious users are encouraged to use BuildingMOTIF and report bugs, workflow improvement suggestions, and features requests to this repository.**
+
 The Building Metadata OnTology Interoperability Framework (BuildingMOTIF) is a tool for working with the following semantic data models.
 
 - [ASHRAE 223P](https://www.ashrae.org/about/news/2018/ashrae-s-bacnet-committee-project-haystack-and-brick-schema-collaborating-to-provide-unified-data-semantic-modeling-solution)
