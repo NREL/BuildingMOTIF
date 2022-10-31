@@ -7,7 +7,7 @@ COPY ./libraries ./libraries
 
 # Install Dependices
 RUN pip install poetry && poetry config virtualenvs.create false
-COPY ./poetry.lock /buildingmotif
-COPY ./pyproject.toml /buildingmotif
-COPY ./README.md /buildingmotif
-RUN cd /buildingmotif && poetry install --no-dev
+COPY ./poetry.lock .
+COPY ./pyproject.toml .
+COPY ./README.md .
+RUN poetry install --no-dev
