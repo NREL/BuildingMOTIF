@@ -129,7 +129,6 @@ with open("my_manifest.ttl", "w") as f:
     constraint:class brick:VAV .
 
 :vav-control-sequences a sh:NodeShape ;
-    sh:message "VAVs must match the cooling only shape" ;
     sh:targetClass brick:VAV ;
     sh:node <urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only> .
 """)
@@ -146,6 +145,7 @@ manifest = Library.load(ontology_graph="my_manifest.ttl")
 We can now ask BuildingMOTIF to validate our model against our manifest. We also have to be sure to include the supporting shape collections containing the definitions used in our manifest.
 
 ```{code-cell}
+
 # gather these into a list for ease of use
 shape_collections = [
     brick.get_shape_collection(),
@@ -207,14 +207,18 @@ print(model.graph.serialize())
 ## Validating our Model, Round 2
 
 ```{warning}
-TODO: this isn't working yet!!
+Waiting on https://github.com/RDFLib/pySHACL/pull/165 before this can be fixed
 ```
 
 We can now borrow the same code from before and re-run it to re-validate our new and improved model:
 
 ```{code-cell}
 validation_result = model.validate(shape_collections) 
+print(validation_result.report_string)
+
 print(f"Model is valid? {validation_result.valid}")
 for diff in validation_result.diffset:
     print(f" - {diff.reason()}")
 ```
+
+Both VAV's fail validation because they don't match the `vav-cooling-only` requirements.
