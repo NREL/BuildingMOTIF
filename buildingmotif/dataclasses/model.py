@@ -148,9 +148,10 @@ class Model:
         :rtype: "ValidationContext"
         """
         shapeg = rdflib.Graph()
+        # aggregate shape graphs
         for sc in shape_collections:
-            # inline sh:node for interpretability
-            shapeg += sc._inline_sh_node()
+            shapeg += copy_graph(sc.graph)
+
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
         valid, report_g, report_str = pyshacl.validate(

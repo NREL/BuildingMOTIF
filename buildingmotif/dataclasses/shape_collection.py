@@ -91,17 +91,23 @@ class ShapeCollection:
         """
         q = """
         PREFIX sh: <http://www.w3.org/ns/shacl#>
-        SELECT ?parent ?child WHERE {
-            ?parent a sh:NodeShape ;
-                    sh:node ?child .
-            }"""
+        CONSTRUCT {
+            ?parent ?p ?o .
+        }
+        WHERE {
+            ?parent sh:node ?child .
+            ?child ?p ?o
+        }"""
         graph = copy_graph(self.graph)
+        for row in graph.query(q):
+            print(row)
+        # TODO: iterate on this (fixed poitn)
         for row in graph.query(q):
             parent, child = row
             graph.remove((parent, SH.node, child))
             pos = self.graph.predicate_objects(child)
             for (p, o) in pos:
-                graph.remove((child, p, o))
+                # graph.remove((child, p, o))
                 graph.add((parent, p, o))
         return graph
 
