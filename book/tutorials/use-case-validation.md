@@ -207,18 +207,21 @@ print(model.graph.serialize())
 ## Validating our Model, Round 2
 
 ```{warning}
-Waiting on https://github.com/RDFLib/pySHACL/pull/165 before this can be fixed
+Waiting on https://github.com/RDFLib/pySHACL/pull/165 before this can be fixed...
 ```
 
 We can now borrow the same code from before and re-run it to re-validate our new and improved model:
 
 ```{code-cell}
 validation_result = model.validate(shape_collections) 
-print(validation_result.report_string)
-
 print(f"Model is valid? {validation_result.valid}")
+print(validation_result.report_string)
+```
+
+Both VAV's fail validation because they don't match the `vav-cooling-only` requirements. Take a look at the first bit of output which is the official SHACL validation report text format.
+
+```{code-cell}
+print("Model is invalid for these reasons:")
 for diff in validation_result.diffset:
     print(f" - {diff.reason()}")
 ```
-
-Both VAV's fail validation because they don't match the `vav-cooling-only` requirements.
