@@ -41,6 +41,8 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     :rtype: Graph
     """
     c = Graph()
+    for pfx, ns in g.namespaces():
+        c.bind(pfx, ns)
     new_prefix = secrets.token_hex(4)
     for t in g.triples((None, None, None)):
         assert isinstance(t, tuple)
