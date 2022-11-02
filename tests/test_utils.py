@@ -1,3 +1,4 @@
+import pyshacl
 from rdflib import Graph, Namespace, URIRef
 
 from buildingmotif.namespaces import BRICK, A
@@ -123,14 +124,29 @@ def test_inline_sh_nodes():
     .
     :shape3 a sh:NodeShape ;
         sh:class :class2 ;
+        sh:property [
+            sh:path :path1 ;
+            sh:node :shape4 ;
+        ] ;
+    .
+
+    :shape4 a sh:NodeShape ;
+        sh:property [
+            sh:path :path2 ;
+            sh:minCount 1 ;
+        ] ;
     .
     """
     )
+    # should not raise an exception
+    pyshacl.validate(shape_g)
 
     shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
     assert len(shape1_cbd) == 3
 
     inline_sh_nodes(shape_g)
+    # should not raise an exception
+    pyshacl.validate(shape_g)
 
     shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
-    assert len(shape1_cbd) == 7
+    assert len(shape1_cbd) == 13

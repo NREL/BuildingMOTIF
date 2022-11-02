@@ -77,8 +77,11 @@ def inline_sh_nodes(g: Graph):
     original_size = 0
     while original_size != len(g):  # type: ignore
         original_size = len(g)  # type: ignore
-        for row in g.query(q):
-            g.add(row)  # type: ignore
+        for (s, p, o) in g.query(q):  # type: ignore
+            if p == RDF.type and o == SH.NodeShape:
+                continue
+            g.add((s, p, o))
+        break
 
 
 def combine_graphs(*graphs: Graph) -> Graph:
