@@ -58,6 +58,29 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     return c
 
 
+def inline_sh_nodes(g: Graph):
+    """
+    Recursively inlines all sh:node properties and objects on the graph
+
+    :param g: graph to be edited
+    :type g: Graph
+    """
+    q = """
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+        ?parent ?p ?o .
+    }
+    WHERE {
+        ?parent sh:node ?child .
+        ?child ?p ?o
+    }"""
+    original_size = 0
+    while original_size != len(g):  # type: ignore
+        original_size = len(g)  # type: ignore
+        for row in g.query(q):
+            g.add(row)  # type: ignore
+
+
 def combine_graphs(*graphs: Graph) -> Graph:
     """
     Combine all of the graphs into a new graph

@@ -9,7 +9,7 @@ from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.namespaces import A
-from buildingmotif.utils import Triple, copy_graph
+from buildingmotif.utils import Triple, copy_graph, inline_sh_nodes
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -151,6 +151,8 @@ class Model:
         # aggregate shape graphs
         for sc in shape_collections:
             shapeg += copy_graph(sc.graph)
+
+        inline_sh_nodes(shapeg)
 
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)

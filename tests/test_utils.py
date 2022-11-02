@@ -1,10 +1,11 @@
-from rdflib import Graph, Namespace
+from rdflib import Graph, Namespace, URIRef
 
 from buildingmotif.namespaces import BRICK, A
 from buildingmotif.utils import (
     PARAM,
     get_parameters,
     get_template_parts_from_shape,
+    inline_sh_nodes,
     replace_nodes,
 )
 
@@ -103,3 +104,33 @@ def test_get_parameters():
     """
     )
     assert get_parameters(body) == {"name", "1", "2", "3", "4"}
+
+
+def test_inline_sh_nodes():
+    shape_g = Graph()
+    shape_g.parse(
+        data="""@prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix : <urn:ex/> .
+
+    :shape1 a sh:NodeShape;
+        sh:node :shape2, :shape3 .
+
+    :shape2 a sh:NodeShape ;
+        sh:property [
+            sh:path :path1 ;
+            sh:class :class1 ;
+        ] ;
+    .
+    :shape3 a sh:NodeShape ;
+        sh:class :class2 ;
+    .
+    """
+    )
+
+    shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
+    assert len(shape1_cbd) == 3
+
+    inline_sh_nodes(shape_g)
+
+    shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
+    assert len(shape1_cbd) == 7

@@ -7,7 +7,7 @@ import rdflib
 from rdflib import RDF, RDFS, URIRef
 
 from buildingmotif import get_building_motif
-from buildingmotif.namespaces import BMOTIF, OWL, SH
+from buildingmotif.namespaces import BMOTIF, OWL
 from buildingmotif.utils import Triple, copy_graph
 
 if TYPE_CHECKING:
@@ -83,33 +83,6 @@ class ShapeCollection:
         :type graph: rdflib.Graph
         """
         self.graph += graph
-
-    def _inline_sh_node(self) -> rdflib.Graph:
-        """
-        This detects the use of 'sh:node' on SHACL NodeShapes and inlines
-        the shape they point to.
-        """
-        q = """
-        PREFIX sh: <http://www.w3.org/ns/shacl#>
-        CONSTRUCT {
-            ?parent ?p ?o .
-        }
-        WHERE {
-            ?parent sh:node ?child .
-            ?child ?p ?o
-        }"""
-        graph = copy_graph(self.graph)
-        for row in graph.query(q):
-            print(row)
-        # TODO: iterate on this (fixed poitn)
-        for row in graph.query(q):
-            parent, child = row
-            graph.remove((parent, SH.node, child))
-            pos = self.graph.predicate_objects(child)
-            for (p, o) in pos:
-                # graph.remove((child, p, o))
-                graph.add((parent, p, o))
-        return graph
 
     def _cbd(self, shape_name, self_contained=True):
         """
