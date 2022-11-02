@@ -1,4 +1,4 @@
-import pyshacl
+import pyshacl  # type: ignore
 from rdflib import Graph, Namespace, URIRef
 
 from buildingmotif.namespaces import BRICK, A
