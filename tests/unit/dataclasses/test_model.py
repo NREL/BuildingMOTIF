@@ -23,6 +23,8 @@ def test_create_model_bad_name(clean_building_motif):
     with pytest.raises(ValueError):
         Model.create(name="I have spaces")
 
+    assert len(clean_building_motif.table_connection.get_all_db_models()) == 0
+
 
 def test_load_model(clean_building_motif):
     m = Model.create(name="https://example.com", description="a very good model")

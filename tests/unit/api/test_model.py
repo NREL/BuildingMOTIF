@@ -244,3 +244,5 @@ def test_create_model_bad_name(client, building_motif):
     )
 
     assert results.status_code == 400
+
+    assert len(building_motif.table_connection.get_all_db_models()) == 0
