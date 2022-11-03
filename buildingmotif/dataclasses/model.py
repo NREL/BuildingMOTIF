@@ -45,9 +45,9 @@ class Model:
         :rtype: Model
         """
         bm = get_building_motif()
-        db_model = bm.table_connection.create_db_model(name, description)
 
         _validate_uri(name)
+        db_model = bm.table_connection.create_db_model(name, description)
 
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
