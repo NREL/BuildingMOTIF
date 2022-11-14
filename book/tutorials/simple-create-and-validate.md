@@ -55,7 +55,7 @@ from rdflib import Namespace
 BLDG = Namespace('urn:bldg/')
 
 # Create the model!
-model = Model.create(BLDG, description="This is a test model for a simpel building")
+model = Model.create(BLDG, description="This is a test model for a simple building")
 
 # This will raise an exception if the namespace
 # is not syntactically valid
@@ -120,7 +120,7 @@ for param in fan_template.parameters:
     print(f"  {param}")
 ```
 
-All parameters have a mandatory `name` parameter. This template also defines three other parameters: 
+All templates have a mandatory `name` parameter. This template also defines three other parameters: 
 - `speed`: a point holding the current speed of the fan
 - `start_stop`: a command point to start or stop the fan
 - `status`: the current fan status
@@ -193,7 +193,7 @@ print(model.graph.serialize())
 ```
 
 ```{note}
-If using a persistent (disk-backed) instnace of BuildingMOTIF instead of an in-memory instance, be sure to use `bm.session.commit()` to save your work after calling `add_graph`.
+If using a persistent (disk-backed) instance of BuildingMOTIF instead of an in-memory instance, be sure to use `bm.session.commit()` to save your work after calling `add_graph`.
 ```
 
 ---
