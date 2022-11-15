@@ -1,7 +1,7 @@
 import logging
 import pathlib
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 import pyshacl
 import rdflib
@@ -121,6 +121,7 @@ class Library:
         directory: Optional[str] = None,
         name: Optional[str] = None,
         override: Optional[bool] = False,
+        load_if_not_exist: Optional[bool] = False,
     ) -> "Library":
         """
         Loads a Library from the database or an external source.
@@ -137,6 +138,9 @@ class Library:
         :param override: if true, replace any existing copy of the
                         library, defaults to False
         :type override: Optional[true], optional
+        :param load_if_not_exist: if true, load the library *only* if it does not exist,
+                        otherwise just return the existing library, defaults to False
+        :type load_if_not_exist: Optional[true], optional
         :return: the loaded library
         :rtype: "Library"
         :raises Exception: if the library cannot be loaded
@@ -150,7 +154,9 @@ class Library:
                 ontology_graph.parse(
                     ontology_graph_path, format=guess_format(ontology_graph_path)
                 )
-            return cls._load_from_ontology_graph(ontology_graph, override=override)
+            return cls._load_from_ontology_graph(
+                ontology_graph, override=override, load_if_not_exist=load_if_not_exist
+            )
         elif directory is not None:
             src = pathlib.Path(directory)
             if not src.exists():
@@ -179,7 +185,10 @@ class Library:
 
     @classmethod
     def _load_from_ontology_graph(
-        cls, ontology: rdflib.Graph, override: Optional[bool] = False
+        cls,
+        ontology: rdflib.Graph,
+        override: Optional[bool] = False,
+        load_if_not_exist: Optional[bool] = False,
     ) -> "Library":
         """
         Load a library from an ontology graph. This proceeds as follows.
@@ -193,9 +202,25 @@ class Library:
         :type ontology: rdflib.Graph
         :param override: if true, override the existing copy of the Library
         :type override: bool
+        :param load_if_not_exist: if true, only load the library if it does not exist
+        :type load_if_not_exist: bool
         :return: the loaded Library
         :rtype: "Library"
         """
+        # get the name of the ontology; this will be the name of the library
+        # any=False will raise an error if there is more than one ontology defined  in the graph
+        ontology_name = ontology.value(
+            predicate=rdflib.RDF.type, object=rdflib.OWL.Ontology, any=False
+        )
+
+        # short circuit if user asks for it
+        if load_if_not_exist:
+            try:
+                return Library.load(name=ontology_name)
+            except sqlalchemy.exc.NoResultFound:
+                logging.info(
+                    f"Library {ontology_name} does not already exist. Loading from graph"
+                )
 
         # expand the ontology graph before we insert it into the database. This will ensure
         # that the output of compiled models will not contain triples that really belong to
@@ -209,11 +234,6 @@ class Library:
             js=True,
         )
 
-        # get the name of the ontology; this will be the name of the library
-        # any=False will raise an error if there is more than one ontology defined  in the graph
-        ontology_name = ontology.value(
-            predicate=rdflib.RDF.type, object=rdflib.OWL.Ontology, any=False
-        )
         # create the library
         if override:
             lib = cls.create_or_load(ontology_name)
@@ -236,20 +256,7 @@ class Library:
             dependency_cache[templ.id] = deps
             template_id_lookup[str(candidate)] = templ.id
 
-        # Now that we have all the templates, we can populate the dependencies.
-        # IGNORES missing XSD imports --- there is really no reason to import the XSD
-        # ontology because the handling is baked into the software processing the RDF
-        # graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we
-        # suppress them.
-        for template in lib.get_templates():
-            if template.id not in dependency_cache:
-                continue
-            for dep in dependency_cache[template.id]:
-                if dep["template"] in template_id_lookup:
-                    dependee = Template.load(template_id_lookup[dep["template"]])
-                    template.add_dependency(dependee, dep["args"])
-                elif not dep["template"].startswith(XSD):
-                    logging.warn(f"Warning: could not find dependee {dep['template']}")
+        lib._resolve_template_dependencies(template_id_lookup, dependency_cache)
 
         # load the ontology graph as a shape_collection
         shape_col_id = lib.get_shape_collection().id
@@ -272,7 +279,10 @@ class Library:
 
     @classmethod
     def _load_from_directory(
-        cls, directory: pathlib.Path, override: Optional[bool] = False
+        cls,
+        directory: pathlib.Path,
+        override: Optional[bool] = False,
+        load_if_not_exist: Optional[bool] = False,
     ) -> "Library":
         """
         Load a library from a directory. Templates are read from .yml files
@@ -282,6 +292,18 @@ class Library:
             lib = cls.create_or_load(directory.name)
         else:
             lib = cls.create(directory.name)
+
+        # short circuit if user asks for it
+        if load_if_not_exist:
+            try:
+                return Library.load(name=directory.name)
+            except sqlalchemy.exc.NoResultFound:
+                logging.info(
+                    f"Library {directory.name} does not already exist. "
+                    f"Loading from directory {directory}"
+                )
+
+        # setup caches for reading templates
         template_id_lookup: Dict[str, int] = {}
         dependency_cache: Dict[int, List[_template_dependency]] = {}
 
@@ -289,21 +311,37 @@ class Library:
         for file in directory.rglob("*.yml"):
             lib._read_yml_file(file, template_id_lookup, dependency_cache)
         # now that we have all the templates, we can populate the dependencies
-        for template in lib.get_templates():
+        lib._resolve_template_dependencies(template_id_lookup, dependency_cache)
+        # load shape collections from all ontology files in the directory
+        lib._load_shapes_from_directory(directory)
+
+        return lib
+
+    def _resolve_template_dependencies(
+        self,
+        template_id_lookup: Dict[str, int],
+        dependency_cache: Mapping[int, List[_template_dependency] | List[dict]],
+    ):
+        for template in self.get_templates():
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
+                if isinstance(dep, dict):
+                    dep = _template_dependency.from_dict(dep, dep["template"])
+
+                # Now that we have all the templates, we can populate the dependencies.
+                # IGNORES missing XSD imports --- there is really no reason to import the XSD
+                # ontology because the handling is baked into the software processing the RDF
+                # graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we
+                # suppress them.
+                if dep.template_name.startswith(XSD):
+                    continue
                 try:
                     dependee = dep.to_template(template_id_lookup)
                     template.add_dependency(dependee, dep.bindings)
                 except Exception as e:
                     logging.warn(f"Warning: could not resolve dependency {dep}")
                     raise e
-
-        # load shape collections from all ontology files in the directory
-        lib._load_shapes_from_directory(directory)
-
-        return lib
 
     def _read_yml_file(
         self,

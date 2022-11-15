@@ -143,15 +143,15 @@ def test_load_library_override_directory(bm: BuildingMOTIF):
 
     lib = Library.load(directory=first)
     assert lib is not None
-    assert len(lib.get_templates()) == 2
+    assert len(lib.get_templates()) == 1
 
     with pytest.raises(Exception):
         lib = Library.load(directory=second, override=False)
     bm.session.rollback()
 
-    lib = Library.load(ontology_graph=second, override=True)
+    lib = Library.load(directory=second, override=True)
     assert lib is not None
-    assert len(lib.get_templates()) == 3
+    assert len(lib.get_templates()) == 2
 
 
 def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
