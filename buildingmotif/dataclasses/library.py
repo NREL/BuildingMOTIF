@@ -322,7 +322,7 @@ class Library:
     def _resolve_template_dependencies(
         self,
         template_id_lookup: Dict[str, int],
-        dependency_cache: Mapping[int, List[_template_dependency] | List[dict]],
+        dependency_cache: Mapping[int, Union[List[_template_dependency], List[dict]]],
     ):
         for template in self.get_templates():
             if template.id not in dependency_cache:
