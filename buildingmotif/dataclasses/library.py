@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import pyshacl
 import rdflib
+import sqlalchemy
 import yaml
 from rdflib.util import guess_format
 
@@ -92,6 +93,24 @@ class Library:
 
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
+    @classmethod
+    def create_or_load(cls, name: str) -> "Library":
+        """
+        Creates a new library if one with teh given name does not exist,
+        or returns the library with that name
+
+        :param name: library name
+        :type name: str
+        :return: new or existing Library
+        :rtype: "Library"
+        """
+        bm = get_building_motif()
+        try:
+            lib = bm.table_connection.get_db_library_by_name(name)
+        except sqlalchemy.exc.NoResultFound:
+            return Library.create(name)
+        return cls(_id=lib.id, _name=lib.name, _bm=bm)
+
     # TODO: load library from URI? Does the URI identify the library uniquely?
     # TODO: can we deduplicate shape graphs? use hash of graph?
     @classmethod
@@ -101,6 +120,7 @@ class Library:
         ontology_graph: Optional[Union[str, rdflib.Graph]] = None,
         directory: Optional[str] = None,
         name: Optional[str] = None,
+        override: Optional[bool] = False,
     ) -> "Library":
         """
         Loads a Library from the database or an external source.
@@ -114,6 +134,9 @@ class Library:
         :type directory: Optional[str], optional
         :param name: the name of the library inside the database, defaults to None
         :type name: Optional[str], optional
+        :param override: if true, replace any existing copy of the
+                        library, defaults to False
+        :type override: Optional[true], optional
         :return: the loaded library
         :rtype: "Library"
         :raises Exception: if the library cannot be loaded
@@ -127,12 +150,12 @@ class Library:
                 ontology_graph.parse(
                     ontology_graph_path, format=guess_format(ontology_graph_path)
                 )
-            return cls._load_from_ontology_graph(ontology_graph)
+            return cls._load_from_ontology_graph(ontology_graph, override=override)
         elif directory is not None:
             src = pathlib.Path(directory)
             if not src.exists():
                 raise Exception(f"Directory {src} does not exist")
-            return cls._load_from_directory(src)
+            return cls._load_from_directory(src, override=override)
         elif name is not None:
             bm = get_building_motif()
             db_library = bm.table_connection.get_db_library_by_name(name)
@@ -155,13 +178,23 @@ class Library:
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
     @classmethod
-    def _load_from_ontology_graph(cls, ontology: rdflib.Graph) -> "Library":
-        """Load a library from an ontology graph. This proceeds as follows.
+    def _load_from_ontology_graph(
+        cls, ontology: rdflib.Graph, override: Optional[bool] = False
+    ) -> "Library":
+        """
+        Load a library from an ontology graph. This proceeds as follows.
         First, get all entities in the graph that are instances of *both* owl:Class
         and sh:NodeShape. (this is "candidates")
 
         For each candidate, use the utility function to parse the NodeShape and turn
         it into a Template.
+
+        :param ontology: the graph to load into BuildingMOTIF and interpret as a Library
+        :type ontology: rdflib.Graph
+        :param override: if true, override the existing copy of the Library
+        :type override: bool
+        :return: the loaded Library
+        :rtype: "Library"
         """
 
         # expand the ontology graph before we insert it into the database. This will ensure
@@ -182,7 +215,10 @@ class Library:
             predicate=rdflib.RDF.type, object=rdflib.OWL.Ontology, any=False
         )
         # create the library
-        lib = cls.create(ontology_name)
+        if override:
+            lib = cls.create_or_load(ontology_name)
+        else:
+            lib = cls.create(ontology_name)
         class_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.OWL.Class))
         shape_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
         candidates = class_candidates.intersection(shape_candidates)
@@ -235,37 +271,23 @@ class Library:
             shape_col.graph.parse(filename, format=guess_format(filename))
 
     @classmethod
-    def _load_from_directory(cls, directory: pathlib.Path) -> "Library":
+    def _load_from_directory(
+        cls, directory: pathlib.Path, override: Optional[bool] = False
+    ) -> "Library":
         """
         Load a library from a directory. Templates are read from .yml files
         in the directory. The name of the library is given by the name of the directory.
         """
-        lib = cls.create(directory.name)
+        if override:
+            lib = cls.create_or_load(directory.name)
+        else:
+            lib = cls.create(directory.name)
         template_id_lookup: Dict[str, int] = {}
         dependency_cache: Dict[int, List[_template_dependency]] = {}
+
         # read all .yml files
         for file in directory.rglob("*.yml"):
-            contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
-            for templ_name, templ_spec in contents.items():
-                # compile the template body using its rules
-                templ_spec = compile_template_spec(templ_spec)
-                # input name of template
-                templ_spec.update({"name": templ_name})
-                # remove dependencies so we can resolve them to their IDs later
-                deps = [
-                    _template_dependency.from_dict(d, lib.name)
-                    for d in templ_spec.pop("dependencies", [])
-                ]
-                templ_spec["optional_args"] = templ_spec.pop("optional", [])
-                try:
-                    templ = lib.create_template(**templ_spec)
-                except Exception as e:
-                    logging.error(
-                        f"Error creating template {templ_name} from file {file}: {e}"
-                    )
-                    raise e
-                dependency_cache[templ.id] = deps
-                template_id_lookup[templ.name] = templ.id
+            lib._read_yml_file(file, template_id_lookup, dependency_cache)
         # now that we have all the templates, we can populate the dependencies
         for template in lib.get_templates():
             if template.id not in dependency_cache:
@@ -282,6 +304,37 @@ class Library:
         lib._load_shapes_from_directory(directory)
 
         return lib
+
+    def _read_yml_file(
+        self,
+        file: pathlib.Path,
+        template_id_lookup: Dict[str, int],
+        dependency_cache: Dict[int, List[_template_dependency]],
+    ):
+        """
+        Read a YML file into this library. Utility function for _load_from_directory
+        """
+        contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
+        for templ_name, templ_spec in contents.items():
+            # compile the template body using its rules
+            templ_spec = compile_template_spec(templ_spec)
+            # input name of template
+            templ_spec.update({"name": templ_name})
+            # remove dependencies so we can resolve them to their IDs later
+            deps = [
+                _template_dependency.from_dict(d, self.name)
+                for d in templ_spec.pop("dependencies", [])
+            ]
+            templ_spec["optional_args"] = templ_spec.pop("optional", [])
+            try:
+                templ = self.create_template(**templ_spec)
+            except Exception as e:
+                logging.error(
+                    f"Error creating template {templ_name} from file {file}: {e}"
+                )
+                raise e
+            dependency_cache[templ.id] = deps
+            template_id_lookup[templ.name] = templ.id
 
     @property
     def id(self) -> Optional[int]:

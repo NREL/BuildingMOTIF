@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Optional
 
 import pytest
-from rdflib import RDF, URIRef
+from rdflib import RDF, Graph, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
@@ -21,6 +21,18 @@ def test_create(clean_building_motif):
 
     assert also_lib.name == "my_library"
     assert also_lib.id == lib.id
+
+
+def test_create_or_load(clean_building_motif):
+    lib = Library.create("my_library")
+
+    assert lib.name == "my_library"
+    assert isinstance(lib.id, int)
+
+    lib = Library.create_or_load("my_library")
+
+    assert lib.name == "my_library"
+    assert isinstance(lib.id, int)
 
 
 def test_update_name(clean_building_motif):
@@ -94,6 +106,54 @@ def test_load_library_from_directory_with_shapes(bm: BuildingMOTIF):
     assert len(shapeg.graph) > 1
 
 
+def test_load_library_override_graph(bm: BuildingMOTIF):
+    g1 = """@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <urn:shape/> .
+: a owl:Ontology .
+:abc a sh:NodeShape, owl:Class .
+    """
+    g = Graph()
+    g.parse(data=g1, format="ttl")
+    lib = Library.load(ontology_graph=g)
+    assert lib is not None
+    assert len(lib.get_templates()) == 1
+
+    g1 = """@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <urn:shape/> .
+: a owl:Ontology .
+:abc a sh:NodeShape, owl:Class .
+:def a sh:NodeShape, owl:Class .
+    """
+    g = Graph()
+    g.parse(data=g1, format="ttl")
+    with pytest.raises(Exception):
+        lib = Library.load(ontology_graph=g, override=False)
+    bm.session.rollback()
+
+    lib = Library.load(ontology_graph=g, override=True)
+    assert lib is not None
+    assert len(lib.get_templates()) == 2
+
+
+def test_load_library_override_directory(bm: BuildingMOTIF):
+    first = "tests/unit/fixtures/override-test/1/A"
+    second = "tests/unit/fixtures/override-test/2/A"
+
+    lib = Library.load(directory=first)
+    assert lib is not None
+    assert len(lib.get_templates()) == 2
+
+    with pytest.raises(Exception):
+        lib = Library.load(directory=second, override=False)
+    bm.session.rollback()
+
+    lib = Library.load(ontology_graph=second, override=True)
+    assert lib is not None
+    assert len(lib.get_templates()) == 3
+
+
 def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
     """
     Test that the libraries can be loaded and used.
@@ -118,5 +178,5 @@ def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
     monkeypatch.setattr(Library, "load", mock_load)
     # Brick dependencies always resolve for the test library
     MockLibrary.create("https://brickschema.org/schema/1.3/Brick")
-    lib = Library._load_from_directory(Path(library))
+    lib = Library._load_from_directory(Path(library), override=False)
     assert lib is not None
