@@ -260,3 +260,31 @@ zone_entity_graph = zone_template.evaluate(bindings)
 model.add_graph(zone_entity_graph)
 print(model.graph.serialize())
 ```
+
+## Validating a Model with Shapes
+
+Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes`. 
+
+```{note}
+A **shape** is a set of constraints, requirements and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
+- the minimum points on an equipment required to execute a certain sequence of operations,
+- the internal details of an equipment: what parts it contains, etc
+```
+
+BuildingMOTIF organizes `Shapes` into `Shape Collections`. The shape collection associated with a library (if there is one) can be retrieved with the `get_shape_collection` property.
+Below, we use Brick's shape collection to ensure that our model is using Brick correctly:
+
+```{code-cell}
+# pass a list of shape collections to .validate()
+validation_result = model.validate([brick.get_shape_collection()]) 
+print(f"Model is valid? {validation_result.valid}")
+```
+
+In other tutorials, we will work with models that do **not** validate for various reasons, and explore how BuildingMOTIF helps us repair these models.
+
+If the model was **not** valid, then we could ask the `validation_result` object to tell us why:
+
+```python
+for diff in validation_result.diffset:
+    print(" -" + diff.reason())
+```

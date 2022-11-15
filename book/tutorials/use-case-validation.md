@@ -11,34 +11,6 @@ kernelspec:
   name: python3
 ---
 
-# Validating a Model
-
-Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes`. 
-
-```{note}
-A **shape** is a set of constraints, requirements and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
-- the minimum points on an equipment required to execute a certain sequence of operations,
-- the internal details of an equipment: what parts it contains, etc
-```
-
-BuildingMOTIF organizes `Shapes` into `Shape Collections`. The shape collection associated with a library (if there is one) can be retrieved with the `get_shape_collection` property.
-Below, we use Brick's shape collection to ensure that our model is using Brick correctly:
-
-```{code-cell}
-# pass a list of shape collections to .validate()
-validation_result = model.validate([brick.get_shape_collection()]) 
-print(f"Model is valid? {validation_result.valid}")
-```
-
-In other tutorials, we will work with models that do **not** validate for various reasons, and explore how BuildingMOTIF helps us repair these models.
-
-If the model was **not** valid, then we could ask the `validation_result` object to tell us why:
-
-```python
-for diff in validation_result.diffset:
-    print(" -" + diff.reason())
-```
-
 # Use Case Validation
 
 The purpose of this tutorial is to walk a user through creating a `Manifest` which contains the metadata requirements for a given model. Specifically, the user will create a manifest for a simple HVAC system containing one AHU and two VAVs, where the two VAVs each implement a control sequence from ASHRAE Guideline 36. The tutorial will also demonstrate how BuildingMOTIF can validate a model against the manifest and then give useful feedback for fixing up the model.
@@ -173,7 +145,6 @@ manifest = Library.load(ontology_graph="my_manifest.ttl")
 We can now ask BuildingMOTIF to validate our model against our manifest. We also have to be sure to include the supporting shape collections containing the definitions used in our manifest.
 
 ```{code-cell}
-
 # gather these into a list for ease of use
 shape_collections = [
     brick.get_shape_collection(),
