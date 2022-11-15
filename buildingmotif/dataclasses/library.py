@@ -329,21 +329,25 @@ class Library:
                 continue
             for dep in dependency_cache[template.id]:
                 if isinstance(dep, dict):
-                    dep = _template_dependency.from_dict(dep, dep["template"])
-
-                # Now that we have all the templates, we can populate the dependencies.
-                # IGNORES missing XSD imports --- there is really no reason to import the XSD
-                # ontology because the handling is baked into the software processing the RDF
-                # graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we
-                # suppress them.
-                if dep.template_name.startswith(XSD):
-                    continue
-                try:
-                    dependee = dep.to_template(template_id_lookup)
-                    template.add_dependency(dependee, dep.bindings)
-                except Exception as e:
-                    logging.warn(f"Warning: could not resolve dependency {dep}")
-                    raise e
+                    if dep["template"] in template_id_lookup:
+                        dependee = Template.load(template_id_lookup[dep["template"]])
+                        template.add_dependency(dependee, dep["args"])
+                    # Now that we have all the templates, we can populate the dependencies.
+                    # IGNORES missing XSD imports --- there is really no reason to import the XSD
+                    # ontology because the handling is baked into the software processing the RDF
+                    # graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we
+                    # suppress them.
+                    elif not dep["template"].startswith(XSD):
+                        logging.warn(
+                            f"Warning: could not find dependee {dep['template']}"
+                        )
+                elif isinstance(dep, _template_dependency):
+                    try:
+                        dependee = dep.to_template(template_id_lookup)
+                        template.add_dependency(dependee, dep.bindings)
+                    except Exception as e:
+                        logging.warn(f"Warning: could not resolve dependency {dep}")
+                        raise e
 
     def _read_yml_file(
         self,
