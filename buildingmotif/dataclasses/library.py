@@ -161,7 +161,9 @@ class Library:
             src = pathlib.Path(directory)
             if not src.exists():
                 raise Exception(f"Directory {src} does not exist")
-            return cls._load_from_directory(src, override=override)
+            return cls._load_from_directory(
+                src, override=override, load_if_not_exist=load_if_not_exist
+            )
         elif name is not None:
             bm = get_building_motif()
             db_library = bm.table_connection.get_db_library_by_name(name)
@@ -216,7 +218,7 @@ class Library:
         # short circuit if user asks for it
         if load_if_not_exist:
             try:
-                return Library.load(name=ontology_name)
+                return cls.load(name=ontology_name)
             except sqlalchemy.exc.NoResultFound:
                 logging.info(
                     f"Library {ontology_name} does not already exist. Loading from graph"
@@ -288,11 +290,6 @@ class Library:
         Load a library from a directory. Templates are read from .yml files
         in the directory. The name of the library is given by the name of the directory.
         """
-        if override:
-            lib = cls.create_or_load(directory.name)
-        else:
-            lib = cls.create(directory.name)
-
         # short circuit if user asks for it
         if load_if_not_exist:
             try:
@@ -302,6 +299,11 @@ class Library:
                     f"Library {directory.name} does not already exist. "
                     f"Loading from directory {directory}"
                 )
+
+        if override:
+            lib = cls.create_or_load(directory.name)
+        else:
+            lib = cls.create(directory.name)
 
         # setup caches for reading templates
         template_id_lookup: Dict[str, int] = {}

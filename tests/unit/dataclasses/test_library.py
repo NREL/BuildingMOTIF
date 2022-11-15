@@ -137,6 +137,38 @@ def test_load_library_override_graph(bm: BuildingMOTIF):
     assert len(lib.get_templates()) == 2
 
 
+def test_load_library_load_if_not_exist_ontology(bm: BuildingMOTIF):
+    g1 = """@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <urn:shape/> .
+: a owl:Ontology .
+:abc a sh:NodeShape, owl:Class .
+    """
+    g = Graph()
+    g.parse(data=g1, format="ttl")
+    lib = Library.load(ontology_graph=g, load_if_not_exist=True)
+    assert lib is not None
+    assert len(lib.get_templates()) == 1
+    bm.session.commit()
+
+    g1 = """@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <urn:shape/> .
+: a owl:Ontology .
+:abc a sh:NodeShape, owl:Class .
+:def a sh:NodeShape, owl:Class .
+    """
+    g = Graph()
+    g.parse(data=g1, format="ttl")
+    with pytest.raises(Exception):
+        lib = Library.load(ontology_graph=g)
+    bm.session.rollback()
+
+    lib = Library.load(ontology_graph=g, load_if_not_exist=True)
+    assert lib is not None
+    assert len(lib.get_templates()) == 1
+
+
 def test_load_library_override_directory(bm: BuildingMOTIF):
     first = "tests/unit/fixtures/override-test/1/A"
     second = "tests/unit/fixtures/override-test/2/A"
@@ -152,6 +184,24 @@ def test_load_library_override_directory(bm: BuildingMOTIF):
     lib = Library.load(directory=second, override=True)
     assert lib is not None
     assert len(lib.get_templates()) == 2
+
+
+def test_load_library_load_if_not_exist_directory(bm: BuildingMOTIF):
+    first = "tests/unit/fixtures/override-test/1/A"
+    second = "tests/unit/fixtures/override-test/2/A"
+
+    lib = Library.load(directory=first, load_if_not_exist=True)
+    assert lib is not None
+    assert len(lib.get_templates()) == 1, "no templ"
+    bm.session.commit()
+
+    with pytest.raises(Exception):
+        lib = Library.load(directory=second)
+    bm.session.rollback()
+
+    lib = Library.load(directory=second, load_if_not_exist=True)
+    assert lib is not None
+    assert len(lib.get_templates()) == 1, "here"
 
 
 def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
