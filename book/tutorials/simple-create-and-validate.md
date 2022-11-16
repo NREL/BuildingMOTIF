@@ -172,26 +172,23 @@ print(model.graph.serialize())
 If using a persistent (disk-backed) instance of BuildingMOTIF instead of an in-memory instance, be sure to use `bm.session.commit()` to save your work after calling `add_graph`.
 ```
 
-Next, we'll add a simple HVAC system of AHUs, fans, and CAV terminals to the model using the list of zone names we created above by creating a dictionary of entity names.
+Next, we'll add a simple HVAC system of AHUs with fans to the model using the list of zone names we created above by creating a dictionary of entity names.
 
 ```{code-cell}
 # create lists for names
 ahu_names = []
 fan_names = []
-cav_names = []
 
 # add names to lists
 for idx, zone_name in enumerate(zone_names):
     ahu_name = f"{zone_name}-PSZ_AC_{idx + 1}"
     ahu_names.append(ahu_name)
     fan_names.append(f"{ahu_name}-Fan")
-    cav_names.append(f"{ahu_name}-Diffuser")
 
 # add lists to dictionary
 hvac_dict = {}
 hvac_dict['ahu_names'] = ahu_names
 hvac_dict['fan_names'] = fan_names
-hvac_dict['cav_names'] = cav_names
 ```
 
 Now that we have all the entity names stored in a dictionary, we can start adding entities (evaluated templates) to the model, but first we'll need the templates.
@@ -199,7 +196,6 @@ Now that we have all the entity names stored in a dictionary, we can start addin
 ```{code-cell}
 ahu_template = brick.get_template_by_name(BRICK.AHU)
 fan_template = brick.get_template_by_name(BRICK.Supply_Fan)
-cav_template = brick.get_template_by_name(BRICK.CAV)
 ```
 
 Let's see what parameters theses templates need.
@@ -210,12 +206,9 @@ for param in ahu_template.parameters:
 
 for param in fan_template.parameters:
     print(f"Fan needs: {param}")
-
-for param in cav_template.parameters:
-    print(f"CAV needs: {param}")
 ```
 
-We'll add the AHUs first, followed by the Fans, then the CAV terminals and print the graph after each step.
+We'll add the AHUs first, followed by the Fans, and print the graph after each step.
 
 ```{code-cell}
 # add AHUs
@@ -233,16 +226,6 @@ for name in hvac_dict['fan_names']:
     param_dict = {'name': BLDG[name]}
     fan = fan_template.evaluate(param_dict)
     model.add_graph(fan)
-
-print(model.graph.serialize())
-```
-
-```{code-cell}
-# add CAVs
-for name in hvac_dict['cav_names']:
-    param_dict = {'name': BLDG[name]}
-    cav = cav_template.evaluate(param_dict)
-    model.add_graph(cav)
 
 print(model.graph.serialize())
 ```
