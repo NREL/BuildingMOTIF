@@ -13,7 +13,7 @@ kernelspec:
 
 # Use Case Validation
 
-The purpose of this tutorial is to walk a user through creating a `Manifest` which contains the metadata requirements for a given model. Specifically, the user will create a manifest for a simple HVAC system containing one AHU and two VAVs, where the two VAVs each implement a control sequence from ASHRAE Guideline 36. The tutorial will also demonstrate how BuildingMOTIF can validate a model against the manifest and then give useful feedback for fixing up the model.
+The purpose of this tutorial is to walk a user through creating a `Manifest`, which contains the metadata requirements for a given model. Specifically, the user will create a manifest for the HVAC system created in the previous tutorial, which has five AHUs and fans. The tutorial will also demonstrate how BuildingMOTIF can validate a model against the manifest and then give useful feedback for fixing up the model.
 
 The tutorial assumes that `BuildingMOTIF` has already been installed in the local environment.
 
@@ -35,6 +35,9 @@ BLDG = Namespace('urn:bldg/')
 
 # Create the building model
 model = Model.create(BLDG, description="This is a test model for a simpel building")
+
+# load tutorial 1 model
+model.graph.parse(tutorial1_model.ttl'), format="ttl")
 
 # load in some libraries
 brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
@@ -71,37 +74,43 @@ Here is the header of our manifest file. This should also suffice for most of yo
 : a owl:Ontology .
 ```
 
-We will now add a constraint stating that our model should contain exactly 1 Brick Air Handling Unit:
+We will now add a constraint stating that our model should contain exactly 5 Brick Air Handling Units:
 
 ```ttl
 :ahu-count a sh:NodeShape ;
-    sh:message "Need 1 AHU" ;
+    sh:message "Need 5 AHU" ;
     sh:targetNode : ;
-    constraint:exactCount 1 ;
+    constraint:exactCount 5 ;
     constraint:class brick:AHU .
 ```
 
 This basic structure can be changed to require different numbers of different Brick classes. Just don't forget to change the name of the shape (`:ahu-count`, above) when you copy-paste!
 
-As an exercise, try writing a shape that requires the model to have exactly two Brick VAV instances.
+As an exercise, try writing a shape that requires the model to have exactly five Brick Supply_Fan instances and exactly five Brick CAV instances.
 ```{admonition} Click to reveal an answer...
 :class: dropdown
 
 ```ttl
-:vav-count a sh:NodeShape ;
-    sh:message "Need 2 VAVs" ;
+:fan-count a sh:NodeShape ;
+    sh:message "Need 5 Supply Fans" ;
     sh:targetNode : ;
-    constraint:exactCount 2 ;
-    constraint:class brick:VAV .
+    constraint:exactCount 5 ;
+    constraint:class brick:Supply_Fan .
+
+:cav-count a sh:NodeShape ;
+    sh:message "Need 5 CAVs" ;
+    sh:targetNode : ;
+    constraint:exactCount 5 ;
+    constraint:class brick:CAV .
 ```
 
-We can now add a shape that requires *all* VAVs in the model to match the `vav-cooling-only` system specification we find above:
+We can now add a shape that requires *all* AHUs in the model to match the `sz-vav-ahu` system specification we find above:
 
 ```ttl
-:vav-control-sequences a sh:NodeShape ;
-    sh:message "VAVs must match the cooling only shape" ;
-    sh:targetClass brick:VAV ;
-    sh:node <urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only> .
+:sz-vav-ahu-control-sequences a sh:NodeShape ;
+    sh:message "AHUs must match the single-zone VAV AHU shape" ;
+    sh:targetClass brick:AHU ;
+    sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .
 ```
 
 Put all of the above in a new file called `my_manifest.ttl`...
@@ -117,20 +126,27 @@ with open("my_manifest.ttl", "w") as f:
 : a owl:Ontology .
 
 :ahu-count a sh:NodeShape ;
-    sh:message "Need 1 AHU" ;
+    sh:message "Need 5 AHU" ;
     sh:targetNode : ;
-    constraint:exactCount 1 ;
+    constraint:exactCount 5 ;
     constraint:class brick:AHU .
 
-:vav-count a sh:NodeShape ;
-    sh:message "Need 2 VAVs" ;
+:fan-count a sh:NodeShape ;
+    sh:message "Need 5 Supply Fans" ;
     sh:targetNode : ;
-    constraint:exactCount 2 ;
-    constraint:class brick:VAV .
+    constraint:exactCount 5 ;
+    constraint:class brick:Supply_Fan .
 
-:vav-control-sequences a sh:NodeShape ;
-    sh:targetClass brick:VAV ;
-    sh:node <urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only> .
+:cav-count a sh:NodeShape ;
+    sh:message "Need 5 CAVs" ;
+    sh:targetNode : ;
+    constraint:exactCount 5 ;
+    constraint:class brick:CAV .
+
+:sz-vav-ahu-control-sequences a sh:NodeShape ;
+    sh:message "AHUs must match the single-zone VAV AHU shape" ;
+    sh:targetClass brick:AHU ;
+    sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .
 """)
 ```
 
@@ -157,7 +173,7 @@ validation_result = model.validate(shape_collections)
 print(f"Model is valid? {validation_result.valid}")
 ```
 
-To no big surprise, our empty model is indeed invalid. Let's ask BuildingMOTIF for some details:
+Our model is invalid so let's ask BuildingMOTIF for some details:
 
 ```{code-cell}
 for diff in validation_result.diffset:
@@ -166,35 +182,33 @@ for diff in validation_result.diffset:
 
 ## Fixing our Model, Round 1
 
-We are failing because we don't have the exact numbers of VAVs and AHUs required by the manifest.
-To fix this, use the equipment templates in the Brick library to create 2 VAVs and 1 AHU and add them to the model.
+We are failing because we don't have the exact numbers of CAVs required by the manifest, which we forgot to add in the previous tutorial.
+To fix this, use the equipment templates in the Brick library to create five CAVs and add them to the model.
 
 Get the templates first:
 
 ```{code-cell}
 from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
-vav_template = brick.get_template_by_name(BRICK.VAV)
-ahu_template = brick.get_template_by_name(BRICK.AHU)
+cav_template = brick.get_template_by_name(BRICK.CAV)
 ```
 
-Then check what parameters they need
+Then check what parameters they need:
 
 ```{code-cell}
 for param in vav_template.parameters:
-    print(f"VAV needs '{param}'")
-for param in ahu_template.parameters:
-    print(f"AHU needs '{param}'")
+    print(f"CAV needs '{param}'")
 ```
 
 Then evaluate the templates with the chosen names of the equipment (the only parameter for the above templates) and add the resulting graphs to the model:
 
 ```{code-cell}
-vav1 = vav_template.evaluate({"name": BLDG["vav1"]})
-model.add_graph(vav1)
-vav2 = vav_template.evaluate({"name": BLDG["vav2"]})
-model.add_graph(vav2)
-ahuA = ahu_template.evaluate({"name": BLDG["ahuA"]})
-model.add_graph(ahuA)
+zone_names = ['Core_ZN', 'Perimeter_ZN_1', 'Perimeter_ZN_2', 'Perimeter_ZN_3', 'Perimeter_ZN_4']
+for idx, zone_name in enumerate(zone_names):
+    ahu_name = f"{zone_name}-PSZ_AC_{idx + 1}"
+    cav_name = f"{ahu_name}-Diffuser"  
+    bindings = {'name': BLDG[cav_name]}
+    cav = cav_template.evaluate(bindings)
+    model.add_graph(cav)
 ```
 
 Let's check that our model contains the new entities:
