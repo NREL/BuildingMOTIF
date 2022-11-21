@@ -60,7 +60,7 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
 
 def inline_sh_nodes(g: Graph):
     """
-    Recursively inlines all sh:node properties and objects on the graph
+    Recursively inlines all sh:node properties and objects on the graph.
 
     :param g: graph to be edited
     :type g: Graph
