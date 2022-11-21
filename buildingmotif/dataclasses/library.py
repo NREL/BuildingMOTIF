@@ -96,8 +96,8 @@ class Library:
     @classmethod
     def create_or_load(cls, name: str) -> "Library":
         """
-        Creates a new library if one with teh given name does not exist,
-        or returns the library with that name
+        Creates a new library if one with the given name does not exist,
+        or returns the library with that name.
 
         :param name: library name
         :type name: str
