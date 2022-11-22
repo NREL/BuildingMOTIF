@@ -20,11 +20,11 @@ TemplateDict = TypedDict(
 def serialize(
     param: Union[DBTemplate, List[DBTemplate]]
 ) -> Union[TemplateDict, List[TemplateDict]]:
-    """Serialize one or more templates.
+    """Serialize one or more Templates into a TypedDict.
 
-    :param param: one template or a list of templates
+    :param param: One Template or a List of Templates.
     :type param: Union[DBTemplate, List[DBTemplate]]
-    :return: one json per serialized template
+    :return: One JSON per serialized Template.
     :rtype: Union[TemplateDict, List[TemplateDict]]
     """
     if isinstance(param, DBTemplate):
@@ -37,11 +37,11 @@ def serialize(
 
 
 def _serialize(template: DBTemplate) -> TemplateDict:
-    """Serialize template.
+    """Serialize a Template into a TypedDict.
 
-    :param template: template
+    :param template: A Template.
     :type template: DBTemplate
-    :return: serialized template
+    :return: A serialized Template.
     :rtype: TemplateDict
     """
     return {

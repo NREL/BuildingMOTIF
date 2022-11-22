@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Optional, Union
 
 from typing_extensions import TypedDict
 
@@ -10,7 +10,7 @@ LibraryDict = TypedDict(
         "id": int,
         "name": str,
         "template_ids": List[int],
-        "shape_collection_id": int,
+        "shape_collection_id": Optional[int],
     },
 )
 
@@ -18,11 +18,11 @@ LibraryDict = TypedDict(
 def serialize(
     param: Union[DBLibrary, List[DBLibrary]]
 ) -> Union[LibraryDict, List[LibraryDict]]:
-    """Serialize one or more library.
+    """Serialize one or more Libraries into a TypedDict.
 
-    :param param: one library or a list of libraries
+    :param param: One Library or a List of Libraries.
     :type param: Union[DBLibrary, List[DBLibrary]]
-    :return: one json per serialized library
+    :return: One JSON per serialized Library.
     :rtype: Union[DBLibrary, List[DBLibrary]]
     """
     if isinstance(param, DBLibrary):
@@ -35,16 +35,16 @@ def serialize(
 
 
 def _serialize(library: DBLibrary) -> LibraryDict:
-    """Serialize library.
+    """Serialize a Library into a TypedDict.
 
-    :param library: library
-    :type library: DBTemplate
-    :return: serialized library
+    :param library: A Library.
+    :type library: DBLibrary
+    :return: A serialized Library.
     :rtype: LibraryDict
     """
     return {
         "id": library.id,
         "name": library.name,
-        "template_ids": [t.id for t in library.templates],
+        "template_ids": library.templates,
         "shape_collection_id": library.shape_collection_id,
     }

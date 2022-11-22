@@ -13,10 +13,10 @@ blueprint = Blueprint("models", __name__)
 
 @blueprint.route("", methods=(["GET"]))
 def get_all_models() -> flask.Response:
-    """Get all models.
+    """Get all Models.
 
     :return: All models.
-    :rtype: List[Model]
+    :rtype: flask.Response
     """
     db_models = current_app.building_motif.table_connection.get_all_db_models()
 
@@ -25,12 +25,12 @@ def get_all_models() -> flask.Response:
 
 @blueprint.route("/<models_id>", methods=(["GET"]))
 def get_model(models_id: int) -> flask.Response:
-    """get model with id
+    """Get Model by id.
 
-    :param models_id: model id
+    :param models_id: The Model id.
     :type models_id: int
-    :return: requested id
-    :rtype: Model
+    :return: The requested Model.
+    :rtype: flask.Response
     """
     try:
         model = current_app.building_motif.table_connection.get_db_model(models_id)
@@ -41,13 +41,13 @@ def get_model(models_id: int) -> flask.Response:
 
 
 @blueprint.route("/<models_id>/graph", methods=(["GET"]))
-def get_model_graph(models_id: int) -> flask.Response:
-    """get model with id
+def get_model_graph(models_id: int) -> Graph:
+    """Get Model Graph by id.
 
-    :param models_id: model id
+    :param models_id: The Model id.
     :type models_id: int
-    :return: requested id
-    :rtype: Model
+    :return: The requested Model Graph.
+    :rtype: rdflib.Graph
     """
     try:
         model = Model.load(models_id)
@@ -58,15 +58,15 @@ def get_model_graph(models_id: int) -> flask.Response:
 
 
 @blueprint.route("/<models_id>/graph", methods=(["PATCH"]))
-def update_model_graph(models_id: int) -> flask.Response:
-    """update model graph
+def update_model_graph(models_id: int) -> Graph:
+    """Update Model graph.
 
     Takes xml body of ttl formated graph.
 
-    :param models_id: model id
+    :param models_id: The Model id.
     :type models_id: int
-    :return: Updated model
-    :rtype: Model
+    :return: The requested updated Model Graph.
+    :rtype: rdflib.Graph
     """
     try:
         model = Model.load(models_id)

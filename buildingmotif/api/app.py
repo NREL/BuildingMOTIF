@@ -11,9 +11,9 @@ from buildingmotif.building_motif.building_motif import BuildingMOTIF
 def _after_request(response):
     """Commit or rollback the session.
 
-    :param response: response
+    :param response: Flask response.
     :type response: Flask.response
-    :return: response
+    :return: The response.
     :rtype: Flask.response
     """
     try:
@@ -30,22 +30,22 @@ def _after_request(response):
 
 
 def _after_error(error):
-    """Returns request with a 500 and the error message.
+    """Returns the error message and a 500 error request.
 
-    :param error: python error
+    :param error: Python Error.
     :type error: Error
-    :return: flask error response
+    :return: The Python Error string and a Flask response.
     :rtype: Flask.response
     """
     return str(error), status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def create_app(DB_URI):
-    """Creates a Flask api.
+    """Creates a Flask API.
 
-    :param db_uri: db uri
+    :param db_uri: Database URI.
     :type db_uri: str
-    :return: Flask app
+    :return: A Flask app.
     :rtype: Flask.app
     """
     app = Flask(__name__, instance_relative_config=True)
@@ -65,7 +65,7 @@ def create_app(DB_URI):
 
 
 if __name__ == "__main__":
-    """Run api."""
+    """Run API."""
     # If config doesn't exist, this is considered a third party import and module cant be found.
     import configs as building_motif_configs  # type: ignore # isort:skip
 
