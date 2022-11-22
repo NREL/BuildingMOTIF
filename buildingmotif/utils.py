@@ -239,7 +239,8 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
     for p, o in templ_graph.predicate_objects(target):
         if p == RDF.type:
             continue
-        maybe_param = str(o).removeprefix(PARAM)
+        # maybe_param = str(o).removeprefix(PARAM) Python >=3.9
+        maybe_param = str(o)[len(PARAM) :]
         if maybe_param in templ.dependency_parameters:
             dep = templ.dependency_for_parameter(maybe_param)
             if dep is not None:
