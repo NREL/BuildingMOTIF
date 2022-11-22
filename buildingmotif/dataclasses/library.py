@@ -10,6 +10,7 @@ import yaml
 from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
+from buildingmotif.building_motif.exceptions import LibraryAlreadyExistsException
 from buildingmotif.database.tables import DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
@@ -240,7 +241,20 @@ class Library:
         if override:
             lib = cls.create_or_load(ontology_name)
         else:
+            library_exists = True
+            bm = get_building_motif()
+            try:
+                bm.table_connection.get_db_library_by_name(ontology_name)
+            except sqlalchemy.exc.NoResultFound:
+                library_exists = False
+
+            if library_exists:
+                raise LibraryAlreadyExistsException(
+                    f'Library {ontology_name} already exists in database. To ovewrite load library with "overwrite=True" or "load_if_not_exist=True"'  # noqa
+                )
+
             lib = cls.create(ontology_name)
+
         class_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.OWL.Class))
         shape_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
         candidates = class_candidates.intersection(shape_candidates)
@@ -303,6 +317,18 @@ class Library:
         if override:
             lib = cls.create_or_load(directory.name)
         else:
+            library_exists = True
+            bm = get_building_motif()
+            try:
+                bm.table_connection.get_db_library_by_name(directory.name)
+            except sqlalchemy.exc.NoResultFound:
+                library_exists = False
+
+            if library_exists:
+                raise LibraryAlreadyExistsException(
+                    f'Library {directory.name} already exists in database. To ovewrite load library with "overwrite=True" or "load_if_not_exist=True"'  # noqa
+                )
+
             lib = cls.create(directory.name)
 
         # setup caches for reading templates

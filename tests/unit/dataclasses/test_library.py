@@ -7,6 +7,7 @@ from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
 from buildingmotif import BuildingMOTIF
+from buildingmotif.building_motif.exceptions import LibraryAlreadyExistsException
 from buildingmotif.dataclasses import Library
 from tests.unit.conftest import MockLibrary
 
@@ -177,7 +178,7 @@ def test_load_library_override_directory(bm: BuildingMOTIF):
     assert lib is not None
     assert len(lib.get_templates()) == 1
 
-    with pytest.raises(Exception):
+    with pytest.raises(LibraryAlreadyExistsException):
         lib = Library.load(directory=second, override=False)
     bm.session.rollback()
 
@@ -195,7 +196,7 @@ def test_load_library_load_if_not_exist_directory(bm: BuildingMOTIF):
     assert len(lib.get_templates()) == 1, "no templ"
     bm.session.commit()
 
-    with pytest.raises(Exception):
+    with pytest.raises(LibraryAlreadyExistsException):
         lib = Library.load(directory=second)
     bm.session.rollback()
 
