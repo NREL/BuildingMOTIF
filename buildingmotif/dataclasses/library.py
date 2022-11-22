@@ -121,7 +121,7 @@ class Library:
         ontology_graph: Optional[Union[str, rdflib.Graph]] = None,
         directory: Optional[str] = None,
         name: Optional[str] = None,
-        override: Optional[bool] = False,
+        overwrite: Optional[bool] = False,
         load_if_not_exist: Optional[bool] = False,
     ) -> "Library":
         """
@@ -136,9 +136,9 @@ class Library:
         :type directory: Optional[str], optional
         :param name: the name of the library inside the database, defaults to None
         :type name: Optional[str], optional
-        :param override: if true, replace any existing copy of the
+        :param overwrite: if true, replace any existing copy of the
                         library, defaults to False
-        :type override: Optional[true], optional
+        :type overwrite: Optional[true], optional
         :param load_if_not_exist: if true, load the library *only* if it does not exist,
                         otherwise just return the existing library, defaults to False
         :type load_if_not_exist: Optional[true], optional
@@ -156,14 +156,14 @@ class Library:
                     ontology_graph_path, format=guess_format(ontology_graph_path)
                 )
             return cls._load_from_ontology_graph(
-                ontology_graph, override=override, load_if_not_exist=load_if_not_exist
+                ontology_graph, overwrite=overwrite, load_if_not_exist=load_if_not_exist
             )
         elif directory is not None:
             src = pathlib.Path(directory)
             if not src.exists():
                 raise Exception(f"Directory {src} does not exist")
             return cls._load_from_directory(
-                src, override=override, load_if_not_exist=load_if_not_exist
+                src, overwrite=overwrite, load_if_not_exist=load_if_not_exist
             )
         elif name is not None:
             bm = get_building_motif()
@@ -190,7 +190,7 @@ class Library:
     def _load_from_ontology_graph(
         cls,
         ontology: rdflib.Graph,
-        override: Optional[bool] = False,
+        overwrite: Optional[bool] = False,
         load_if_not_exist: Optional[bool] = False,
     ) -> "Library":
         """
@@ -203,8 +203,8 @@ class Library:
 
         :param ontology: the graph to load into BuildingMOTIF and interpret as a Library
         :type ontology: rdflib.Graph
-        :param override: if true, override the existing copy of the Library
-        :type override: bool
+        :param overwrite: if true, overwrite the existing copy of the Library
+        :type overwrite: bool
         :param load_if_not_exist: if true, only load the library if it does not exist
         :type load_if_not_exist: bool
         :return: the loaded Library
@@ -238,7 +238,7 @@ class Library:
         )
 
         # create the library
-        if override:
+        if overwrite:
             lib = cls.create_or_load(ontology_name)
         else:
             library_exists = True
@@ -297,7 +297,7 @@ class Library:
     def _load_from_directory(
         cls,
         directory: pathlib.Path,
-        override: Optional[bool] = False,
+        overwrite: Optional[bool] = False,
         load_if_not_exist: Optional[bool] = False,
     ) -> "Library":
         """
@@ -314,7 +314,7 @@ class Library:
                     f"Loading from directory {directory}"
                 )
 
-        if override:
+        if overwrite:
             lib = cls.create_or_load(directory.name)
         else:
             library_exists = True

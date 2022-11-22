@@ -107,7 +107,7 @@ def test_load_library_from_directory_with_shapes(bm: BuildingMOTIF):
     assert len(shapeg.graph) > 1
 
 
-def test_load_library_override_graph(bm: BuildingMOTIF):
+def test_load_library_overwrite_graph(bm: BuildingMOTIF):
     g1 = """@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix : <urn:shape/> .
@@ -130,10 +130,10 @@ def test_load_library_override_graph(bm: BuildingMOTIF):
     g = Graph()
     g.parse(data=g1, format="ttl")
     with pytest.raises(Exception):
-        lib = Library.load(ontology_graph=g, override=False)
+        lib = Library.load(ontology_graph=g, overwrite=False)
     bm.session.rollback()
 
-    lib = Library.load(ontology_graph=g, override=True)
+    lib = Library.load(ontology_graph=g, overwrite=True)
     assert lib is not None
     assert len(lib.get_templates()) == 2
 
@@ -170,26 +170,26 @@ def test_load_library_load_if_not_exist_ontology(bm: BuildingMOTIF):
     assert len(lib.get_templates()) == 1
 
 
-def test_load_library_override_directory(bm: BuildingMOTIF):
-    first = "tests/unit/fixtures/override-test/1/A"
-    second = "tests/unit/fixtures/override-test/2/A"
+def test_load_library_overwrite_directory(bm: BuildingMOTIF):
+    first = "tests/unit/fixtures/overwrite-test/1/A"
+    second = "tests/unit/fixtures/overwrite-test/2/A"
 
     lib = Library.load(directory=first)
     assert lib is not None
     assert len(lib.get_templates()) == 1
 
     with pytest.raises(LibraryAlreadyExistsException):
-        lib = Library.load(directory=second, override=False)
+        lib = Library.load(directory=second, overwrite=False)
     bm.session.rollback()
 
-    lib = Library.load(directory=second, override=True)
+    lib = Library.load(directory=second, overwrite=True)
     assert lib is not None
     assert len(lib.get_templates()) == 2
 
 
 def test_load_library_load_if_not_exist_directory(bm: BuildingMOTIF):
-    first = "tests/unit/fixtures/override-test/1/A"
-    second = "tests/unit/fixtures/override-test/2/A"
+    first = "tests/unit/fixtures/overwrite-test/1/A"
+    second = "tests/unit/fixtures/overwrite-test/2/A"
 
     lib = Library.load(directory=first, load_if_not_exist=True)
     assert lib is not None
@@ -229,5 +229,5 @@ def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
     monkeypatch.setattr(Library, "load", mock_load)
     # Brick dependencies always resolve for the test library
     MockLibrary.create("https://brickschema.org/schema/1.3/Brick")
-    lib = Library._load_from_directory(Path(library), override=False)
+    lib = Library._load_from_directory(Path(library), overwrite=False)
     assert lib is not None
