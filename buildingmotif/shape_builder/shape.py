@@ -73,15 +73,13 @@ class NodeShape(Shape):
         self.add((self, A, SH["NodeShape"]))
 
     def of_class(self, class_: Node, target=False):
-        predicate = SH["class"]
-        if target:
-            predicate = SH["target_class"]
+        predicate = predicate = SH["target_class"] if target else SH["class"]
 
         self.add((self, predicate, class_))
 
         return self
 
-    def has_property(self, property: Node = None):
+    def has_property(self, property: Node):
         if isinstance(property, URIRef):
             property = PropertyShape().has_path(property)
 
