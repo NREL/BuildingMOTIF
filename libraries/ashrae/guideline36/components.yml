@@ -7,6 +7,15 @@ relief-fan:
   - template: fan
     args: {"name": "name"}
 
+return-fan:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Return_Fan .
+  dependencies:
+  - template: fan
+    args: {"name": "name"}
+
 # TODO: can I "compose" templates, for instance to require
 # that the frequency command point has an external reference?
 # I don't want to have to duplicate a template for each point as a result
