@@ -1,0 +1,49 @@
+multiple-zone-ahu:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:AHU ;
+      brick:hasPart p:sa_fan, p:ra_damper, p:clg_coil, p:htg_coil ;
+      brick:hasPoint p:sa_temp, p:oa_temp, p:ma_temp, p:ra_temp, p:filter_pd .
+  optional: ['ma_temp', 'ra_temp', 'filter_pd']
+  dependencies:
+    - template: sa_fan
+      args: {"name": "sa_fan"}
+    - template: ra_damper
+      args: {"name": "damper"}
+    - template: clg_coil
+      args: {"name": "clg_coil"}
+    - template: htg_coil
+      args: {"name": "htg_coil"}
+    - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "sa_temp"}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "oa_temp"}
+    - template: https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "ma_temp"}
+    - template: https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "ra_temp"}
+    - template: https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "filter_pd"}
+
+# compose on the ahu's 'name' 
+with-relief-damper:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name brick:hasPart p:relief-fan, p:relief-damper ;
+           brick:hasPoint p:sp-sensor .
+    p:relief-damper a brick:Exhaust_Damper .
+  dependencies:
+  - template: relief-fan
+    args: {"name": "relief-fan"}
+  - template: damper
+    args: {"name": "damper"}
+  - template: https://brickschema.org/schema/Brick#Static_Pressure_Sensor
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "sp-sensor"}

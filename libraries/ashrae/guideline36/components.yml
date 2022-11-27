@@ -1,0 +1,51 @@
+relief-fan:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Exhaust_Fan .
+  dependencies:
+  - template: fan
+    args: {"name": "name"}
+
+# TODO: can I "compose" templates, for instance to require
+# that the frequency command point has an external reference?
+# I don't want to have to duplicate a template for each point as a result
+# Much easier to just "join" my template w/ another. Kind of like a mix-in?
+fan:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Fan ;
+       brick:hasPoint p:speed, p:start_stop, p:status .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Frequency_Command
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "speed"}
+    - template: https://brickschema.org/schema/Brick#Start_Stop_Command
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "start_stop"}
+    - template: https://brickschema.org/schema/Brick#Fan_Status
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "status"}
+
+damper:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Damper ;
+      brick:hasPoint p:dmppos .
+  dependencies:
+  - template: https://brickschema.org/schema/Brick#Damper_Position_Command
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "dmppos"}
+
+heating-coil:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Heating_Coil ;
+      brick:hasPoint p:cmd .
+  dependencies:
+  - template: https://brickschema.org/schema/Brick#Position_Command
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "cmd"}
