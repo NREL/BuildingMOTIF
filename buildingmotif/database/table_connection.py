@@ -302,9 +302,8 @@ class TableConnection:
             db_template = (
                 self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
             )
-        except NoResultFound as e:
-            self.logger.error(f"No template found with name {name}")
-            raise e
+        except NoResultFound:
+            raise NoResultFound(f"No tempalte found with name {name}")
         return db_template
 
     def get_library_defining_db_template(self, id: int) -> DBLibrary:
