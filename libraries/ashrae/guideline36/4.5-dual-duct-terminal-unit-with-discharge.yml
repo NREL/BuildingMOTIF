@@ -3,18 +3,12 @@ dual-duct-terminal-unit-discharge:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Terminal_Unit ;
-      brick:hasPart p:cooling_damper, p:heating_damper ;
+      brick:hasPart p:hot_deck, p:cold_deck ;
       brick:hasPoint p:discharge_airflow, p:local_override, p:occupancy ;
       brick:feeds p:zone .
     p:zone brick:hasPoint p:zone_temp_sensor, p:zone_temp_adjust, p:zone_co2_sensor .
-    p:cooling_damper brick:hasPoint p:cooling_damper_position .
-    p:heating_damper brick:hasPoint p:heating_damper_position .
   optional: ["zone_co2_sensor", "occupancy", "local_override"]
   dependencies:
-    - template: damper
-      args: {"name": "cooling_damper", "dmppos": "cooling_damper_position"}
-    - template: damper
-      args: {"name": "heating_damper", "dmppos": "heating_damper_position"}
     - template: https://brickschema.org/schema/Brick#Discharge_Air_Flow_Sensor
       library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "discharge_airflow"}
@@ -36,3 +30,27 @@ dual-duct-terminal-unit-discharge:
     - template: https://brickschema.org/schema/Brick#Temperature_Adjust_Sensor
       library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "zone_temp_adjust"}
+    - template: hot-deck-with-damper-no-sensor
+      args: {"name": "hot_deck"}
+    - template: cold-deck-with-damper-no-sensor
+      args: {"name": "cold_deck"}
+
+hot-deck-with-damper-no-sensor:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Hot_Deck ;
+      brick:hasPart p:damper .
+  dependencies:
+    - template: damper
+      args: {"name": "damper"}
+
+cold-deck-with-damper-no-sensor:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Cold_Deck ;
+      brick:hasPart p:damper .
+  dependencies:
+    - template: damper
+      args: {"name": "damper"}
