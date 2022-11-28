@@ -241,14 +241,7 @@ class Library:
         if overwrite:
             lib = cls.create_or_load(ontology_name)
         else:
-            library_exists = True
-            bm = get_building_motif()
-            try:
-                bm.table_connection.get_db_library_by_name(ontology_name)
-            except sqlalchemy.exc.NoResultFound:
-                library_exists = False
-
-            if library_exists:
+            if cls._library_exists(ontology_name):
                 raise LibraryAlreadyExistsException(
                     f'Library {ontology_name} already exists in database. To ovewrite load library with "overwrite=True" or "load_if_not_exist=True"'  # noqa
                 )
@@ -317,14 +310,7 @@ class Library:
         if overwrite:
             lib = cls.create_or_load(directory.name)
         else:
-            library_exists = True
-            bm = get_building_motif()
-            try:
-                bm.table_connection.get_db_library_by_name(directory.name)
-            except sqlalchemy.exc.NoResultFound:
-                library_exists = False
-
-            if library_exists:
+            if cls._library_exists(directory.name):
                 raise LibraryAlreadyExistsException(
                     f'Library {directory.name} already exists in database. To ovewrite load library with "overwrite=True" or "load_if_not_exist=True"'  # noqa
                 )
@@ -344,6 +330,18 @@ class Library:
         lib._load_shapes_from_directory(directory)
 
         return lib
+
+    @staticmethod
+    def _library_exists(library_name: str) -> bool:
+        """
+        Checks whether a library with the given name exists in the database.
+        """
+        bm = get_building_motif()
+        try:
+            bm.table_connection.get_db_library_by_name(library_name)
+            return True
+        except sqlalchemy.exc.NoResultFound:
+            return False
 
     def _resolve_template_dependencies(
         self,
