@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 import pyshacl
 import rdflib
 import yaml
+from rdflib.exceptions import ParserError
+from rdflib.plugins.parsers.notation3 import BadSyntax
 from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
@@ -232,7 +234,13 @@ class Library:
         assert shape_col_id is not None  # this should always pass
         shape_col = ShapeCollection.load(shape_col_id)
         for filename in get_ontology_files(directory):
-            shape_col.graph.parse(filename, format=guess_format(filename))
+            try:
+                shape_col.graph.parse(filename, format=guess_format(filename))
+            except (ParserError, BadSyntax) as e:
+                logging.getLogger(__name__).error(
+                    f"Could not parse file {filename}: {e}"
+                )
+                raise e
 
     @classmethod
     def _load_from_directory(cls, directory: pathlib.Path) -> "Library":
