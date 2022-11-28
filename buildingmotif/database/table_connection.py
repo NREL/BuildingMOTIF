@@ -3,6 +3,7 @@ import uuid
 from typing import Dict, List, Tuple
 
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import NoResultFound
 
 from buildingmotif.database.tables import (
     DBLibrary,
@@ -297,9 +298,13 @@ class TableConnection:
         :return: DBTemplate
         :rtype: DBTemplate
         """
-        db_template = (
-            self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
-        )
+        try:
+            db_template = (
+                self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
+            )
+        except NoResultFound as e:
+            logging.error(f"No template found with name {name}")
+            raise e
         return db_template
 
     def get_library_defining_db_template(self, id: int) -> DBLibrary:
