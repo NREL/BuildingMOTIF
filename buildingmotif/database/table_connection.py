@@ -303,7 +303,7 @@ class TableConnection:
                 self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
             )
         except NoResultFound as e:
-            logging.error(f"No template found with name {name}")
+            self.logger.error(f"No template found with name {name}")
             raise e
         return db_template
 
