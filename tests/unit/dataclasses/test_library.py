@@ -24,18 +24,6 @@ def test_create(clean_building_motif):
     assert also_lib.id == lib.id
 
 
-def test_create_or_load(clean_building_motif):
-    lib = Library.create("my_library")
-
-    assert lib.name == "my_library"
-    assert isinstance(lib.id, int)
-
-    lib = Library.create_or_load("my_library")
-
-    assert lib.name == "my_library"
-    assert isinstance(lib.id, int)
-
-
 def test_update_name(clean_building_motif):
     lib = Library.create("my_library")
 
@@ -193,7 +181,7 @@ def test_load_library_load_if_not_exist_directory(bm: BuildingMOTIF):
 
     lib = Library.load(directory=first, load_if_not_exist=True)
     assert lib is not None
-    assert len(lib.get_templates()) == 1, "no templ"
+    assert len(lib.get_templates()) == 1, "Templates not loaded into library"
     bm.session.commit()
 
     with pytest.raises(LibraryAlreadyExistsException):
@@ -202,7 +190,9 @@ def test_load_library_load_if_not_exist_directory(bm: BuildingMOTIF):
 
     lib = Library.load(directory=second, load_if_not_exist=True)
     assert lib is not None
-    assert len(lib.get_templates()) == 1, "here"
+    assert (
+        len(lib.get_templates()) == 1
+    ), "Loaded library lacks templates present in database"
 
 
 def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):

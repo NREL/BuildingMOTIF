@@ -81,7 +81,7 @@ class Library:
     _bm: "BuildingMOTIF"
 
     @classmethod
-    def create(cls, name: str) -> "Library":
+    def create(cls, name: str, overwrite: Optional[bool] = False) -> "Library":
         """Create new Library.
 
         :param name: library name
@@ -90,27 +90,17 @@ class Library:
         :rtype: "Library"
         """
         bm = get_building_motif()
-        db_library = bm.table_connection.create_db_library(name)
+        try:
+            db_library = bm.table_connection.get_db_library_by_name(name)
+            # Should we be doing more to overwrite a library? We're relying on the caller to clear the templates and shapes # noqa
+            if not overwrite:
+                raise LibraryAlreadyExistsException(
+                    f'Library {name} already exists in database. To ovewrite load library with "overwrite=True"'  # noqa
+                )
+        except sqlalchemy.exc.NoResultFound:
+            db_library = bm.table_connection.create_db_library(name)
 
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
-
-    @classmethod
-    def create_or_load(cls, name: str) -> "Library":
-        """
-        Creates a new library if one with the given name does not exist,
-        or returns the library with that name.
-
-        :param name: library name
-        :type name: str
-        :return: new or existing Library
-        :rtype: "Library"
-        """
-        bm = get_building_motif()
-        try:
-            lib = bm.table_connection.get_db_library_by_name(name)
-        except sqlalchemy.exc.NoResultFound:
-            return Library.create(name)
-        return cls(_id=lib.id, _name=lib.name, _bm=bm)
 
     # TODO: load library from URI? Does the URI identify the library uniquely?
     # TODO: can we deduplicate shape graphs? use hash of graph?
@@ -218,9 +208,9 @@ class Library:
 
         # short circuit if user asks for it
         if load_if_not_exist:
-            try:
+            if cls._library_exists(ontology_name):
                 return cls.load(name=ontology_name)
-            except sqlalchemy.exc.NoResultFound:
+            else:
                 logging.info(
                     f"Library {ontology_name} does not already exist. Loading from graph"
                 )
@@ -237,16 +227,7 @@ class Library:
             js=True,
         )
 
-        # create the library
-        if overwrite:
-            lib = cls.create_or_load(ontology_name)
-        else:
-            if cls._library_exists(ontology_name):
-                raise LibraryAlreadyExistsException(
-                    f'Library {ontology_name} already exists in database. To ovewrite load library with "overwrite=True" or "load_if_not_exist=True"'  # noqa
-                )
-
-            lib = cls.create(ontology_name)
+        lib = cls.create(ontology_name, overwrite=overwrite)
 
         class_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.OWL.Class))
         shape_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
@@ -299,23 +280,15 @@ class Library:
         """
         # short circuit if user asks for it
         if load_if_not_exist:
-            try:
+            if cls._library_exists(directory.name):
                 return Library.load(name=directory.name)
-            except sqlalchemy.exc.NoResultFound:
+            else:
                 logging.info(
                     f"Library {directory.name} does not already exist. "
                     f"Loading from directory {directory}"
                 )
 
-        if overwrite:
-            lib = cls.create_or_load(directory.name)
-        else:
-            if cls._library_exists(directory.name):
-                raise LibraryAlreadyExistsException(
-                    f'Library {directory.name} already exists in database. To ovewrite load library with "overwrite=True" or "load_if_not_exist=True"'  # noqa
-                )
-
-            lib = cls.create(directory.name)
+        lib = cls.create(directory.name, overwrite=overwrite)
 
         # setup caches for reading templates
         template_id_lookup: Dict[str, int] = {}
