@@ -1619,15 +1619,15 @@ s223:Sensor a s223:Class,
     rdfs:label "Sensor" ;
     rdfs:comment "A Sensor observes an ObservableProperty (see `s223:ObservableProperty`) which may be quantifiable (see `s223:QuantifiableObservableProperty`), such as a temperature, flowrate, or concentration, or Enumerable (see `s223:EnumeratedObservableProperty)`, such as an alarm state or occupancy state." ;
     rdfs:subClassOf s223:AbstractSensor ;
+    sh:xone (
+    [ sh:minCount 1 ;
+                        sh:path ( s223:observesProperty qudt:hasQuantityKind ) ] [  sh:minCount 1 ;
+                        sh:path ( s223:observesProperty s223:hasEnumerationKind ) ] 
+    ) ;
     sh:property [ rdfs:comment "A sensor shall indicate its measurement location by the hasMeasurementLocation relation. Possible locations are a Connection, ConnectionPoint, Segment, DomainSpace, or Equipment." ;
             sh:minCount 1 ;
             sh:path s223:hasMeasurementLocation ;
-            sh:xone ( [ sh:class s223:Connectable ] [ sh:class s223:Connection ] [ sh:class s223:Segment ] [ sh:class s223:ConnectionPoint ] ) ],
-        [ rdfs:comment "A Sensor must observe a Property that has either a QuantityKind (for numerical measurements) or an EnumerationKind (for enumerated measurements)." ;
-            sh:message "A Sensor must observe a Property that has either a QuantityKind (for numerical measurements) or an EnumerationKind (for enumerated measurements)." ;
-            sh:xone ( [ sh:minCount 1 ;
-                        sh:path ( s223:observesProperty qudt:hasQuantityKind ) ] [ sh:minCount 1 ;
-                        sh:path ( s223:observesProperty s223:hasEnumerationKind ) ] ) ] ;
+            sh:xone ( [ sh:class s223:Connectable ] [ sh:class s223:Connection ] [ sh:class s223:Segment ] [ sh:class s223:ConnectionPoint ] ) ] ;
     sh:rule [ a sh:SPARQLRule ;
             rdfs:comment "Infer the hasMeasurementLocation relationship for a Sensor from the Property that it is observing" ;
             sh:construct """
