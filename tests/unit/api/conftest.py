@@ -1,7 +1,5 @@
-import os
-import tempfile
-
 import pytest
+import testing.postgresql
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.api.app import create_app
@@ -10,10 +8,8 @@ from buildingmotif.api.app import create_app
 @pytest.fixture
 def building_motif():
     BuildingMOTIF.clean()
-    with tempfile.TemporaryDirectory() as tempdir:
-        temp_db_path = os.path.join(tempdir, "temp.db")
-        uri = f"sqlite:///{temp_db_path}"
-        building_motif = BuildingMOTIF(uri)
+    with testing.postgresql.Postgresql() as postgresql:
+        building_motif = BuildingMOTIF(postgresql.url())
         # add tables to db
         building_motif.setup_tables()
 
