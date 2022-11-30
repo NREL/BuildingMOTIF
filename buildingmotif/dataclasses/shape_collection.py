@@ -21,7 +21,7 @@ ontology = rdflib.Graph().parse(ONTOLOGY_FILE)
 
 @dataclass
 class ShapeCollection:
-    """ShapeCollection. This class mirrors DBShapeCollection."""
+    """This class mirrors :py:class:`database.tables.DBShapeCollection`."""
 
     _id: int
     graph: rdflib.Graph
@@ -29,7 +29,7 @@ class ShapeCollection:
 
     @classmethod
     def create(cls) -> "ShapeCollection":
-        """create new ShapeCollection
+        """Create a new ShapeCollection.
 
         :return: new ShapeCollection
         :rtype: ShapeCollection
@@ -44,9 +44,9 @@ class ShapeCollection:
 
     @classmethod
     def load(cls, id: int) -> "ShapeCollection":
-        """Get ShapeCollection from db by id
+        """Get ShapeCollection from database by id.
 
-        :param id: shape collection id
+        :param id: ShapeCollection id
         :type id: int
         :return: ShapeCollection
         :rtype: ShapeCollection
@@ -66,28 +66,25 @@ class ShapeCollection:
         raise AttributeError("Cannot modify db id")
 
     def add_triples(self, *triples: Triple) -> None:
-        """
-        Add the given triples to the graph
+        """Add the given Triples to the Graph.
 
-        :param triples: a sequence of triples to add to the graph
+        :param triples: a sequence of Triples to add to the Graph
         :type triples: Triple
         """
         for triple in triples:
             self.graph.add(triple)
 
     def add_graph(self, graph: rdflib.Graph) -> None:
-        """
-        Add the given graph to the shape collection
+        """Add the given Graph to the ShapeCollection.
 
-        :param graph: the graph to add to the shape collection
+        :param graph: the Graph to add to the ShapeCollection
         :type graph: rdflib.Graph
         """
         self.graph += graph
 
     def _inline_sh_node(self) -> rdflib.Graph:
-        """
-        This detects the use of 'sh:node' on SHACL NodeShapes and inlines
-        the shape they point to.
+        """Detects the use of `sh:node` on SHACL NodeShapes and inlines the
+        shape they point to.
         """
         q = """
         PREFIX sh: <http://www.w3.org/ns/shacl#>
@@ -106,9 +103,7 @@ class ShapeCollection:
         return graph
 
     def _cbd(self, shape_name, self_contained=True):
-        """
-        Retrieves the Concise Bounded Description (CBD) of the given shape
-        """
+        """Retrieves the Concise Bounded Description (CBD) of the shape."""
         cbd = self.graph.cbd(shape_name)
         # if computing self-contained, do the fixed-point computation produced by unioning
         # the CBDs of all nodes in the current CBD until the graph does not change
@@ -123,16 +118,17 @@ class ShapeCollection:
         return cbd
 
     def resolve_imports(self, recursive_limit: int = -1) -> "ShapeCollection":
-        """
-        Returns a new ShapeCollection with `owl:imports` resolved to as many levels
-        as requested. By default, all `owl:imports` are recursively resolved. This limit
-        can be changed to 0 to suppress resolving imports, or to 1..n to handle recursion
-        up to that limit
+        """Resolves `owl:imports` to as many levels as requested.
 
-        :param recursive_limit: How many levels of owl:imports to resolve, defaults to -1 (all)
+        By default, all `owl:imports` are recursively resolved. This limit can
+        be changed to 0 to suppress resolving imports, or to 1..n to handle
+        recursion up to that limit.
+
+        :param recursive_limit: how many levels of `owl:imports` to resolve,
+                                defaults to -1 (all)
         :type recursive_limit: int, optional
         :return: a new ShapeCollection with the types resolved
-        :rtype: "ShapeCollection"
+        :rtype: ShapeCollection
         """
         resolved_namespaces: Set[rdflib.URIRef] = set()
         resolved = _resolve_imports(self.graph, recursive_limit, resolved_namespaces)
@@ -144,13 +140,13 @@ class ShapeCollection:
     def _get_subclasses_of_definition_type(
         cls, definition_type: URIRef
     ) -> List[URIRef]:
-        """get all the definition_types in the ontology that are subclasses
-             in the given definition_types.
+        """Get all the definition types in the ontology that are subclasses in
+        the given definition types.
 
-        :param definition_type: the given definition_type
+        :param definition_type: the given definition type
         :type definition_type: URIRef
-        :return: list of includes definition_types
-        :rtype: list[URIRef]
+        :return: List of included definition types
+        :rtype: List[URIRef]
         """
         children = ontology.subjects(RDFS.subClassOf, definition_type)
 
@@ -162,12 +158,13 @@ class ShapeCollection:
 
     @classmethod
     def _get_included_domains(cls, domain: URIRef) -> List[URIRef]:
-        """get all the domains in the ontology that are included in the given domains.
+        """Get all the domains in the ontology that are included in the given
+        domains.
 
         :param domain: the given domain
         :type domain: URIRef
-        :return: list of includes domains
-        :rtype: list[URIRef]
+        :return: List of includes domains
+        :rtype: List[URIRef]
         """
         children = ontology.subjects(BMOTIF.includes, domain)
 
@@ -178,12 +175,12 @@ class ShapeCollection:
         return results
 
     def get_shapes_of_definition_type(self, definition_type: URIRef) -> List[URIRef]:
-        """get subjects present in shape of definition_type
+        """Get subjects present in Shape of the definition type.
 
-        :param definition_type: desired definition_type
+        :param definition_type: desired definition type
         :type definition_type: URIRef
         :return: subjects
-        :rtype: list[URIRef]
+        :rtype: List[URIRef]
         """
         definition_types = self._get_subclasses_of_definition_type(definition_type)
 
@@ -194,12 +191,12 @@ class ShapeCollection:
         return results
 
     def get_shapes_of_domain(self, domain: URIRef) -> List[URIRef]:
-        """get subjects present in shape of domain type
+        """Get subjects present in Shape of domain type.
 
         :param domain: desired domain
         :type domain: URIRef
         :return: subjects
-        :rtype: list[URIRef]
+        :rtype: List[URIRef]
         """
         included_domains = self._get_included_domains(domain)
 
@@ -212,15 +209,16 @@ class ShapeCollection:
     def get_shapes_about_class(
         self, rdf_type: URIRef, contexts: Optional[List["ShapeCollection"]] = None
     ) -> List[URIRef]:
-        """
-        Returns a list of shapes that either target the given class
-        (or superclasses of it), or otherwise only apply to URIs of the given type
+        """Returns a List of Shapes that either target the given class (or
+        superclasses of it), or otherwise only apply to URIs of the given type.
 
         :param rdf_type: an OWL class
         :type rdf_type: URIRef
-        :param contexts: list of ShapeCollections that help determine the class structure
+        :param contexts: List of ShapeCollections that help determine the class
+                         structure
         :type contexts: List["ShapeCollection"], optional
-        :return: A list of shapes in this collection that concern that class
+        :return: a List of Shapes in this ShapeCollection that concern that
+                 class
         :rtype: List[URIRef]
         """
         # merge the contexts together w/ our graph if they are provided, else

@@ -18,31 +18,29 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class GraphDiff:
-    """
-    An abstraction of a SHACL Validation Result that can produce a Template
-    which resolves the difference between the expected and actual graph.
+    """An abstraction of a SHACL Validation Result that can produce a Template
+    that resolves the difference between the expected and actual Graph.
 
-    Each GraphDiff has a 'focus' which is the node in the model that the
+    Each GraphDiff has a 'focus' that is the node in the Model that the
     GraphDiff is about. If 'focus' is None, then the GraphDiff is about the
-    model itself rather than a specific node
+    Model itself rather than a specific node
     """
 
     focus: Optional[URIRef]
     graph: Graph
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """
-        Produces a list of templates to resolve this GraphDiff
+        """Produces a List of Templates to resolve this GraphDiff.
 
-        :param lib: The library to hold the templates
-        :type lib: "Library"
+        :param lib: the Library to hold the Templates
+        :type lib: Library
         :return: Templates that reconcile the GraphDiff
-        :rtype: List["Template"]
+        :rtype: List[Template]
         """
         raise NotImplementedError
 
     def reason(self) -> str:
-        """Human-readable explanation of this GraphDiff"""
+        """Human-readable explanation of this GraphDiff."""
         raise NotImplementedError
 
     def __hash__(self):
@@ -51,11 +49,9 @@ class GraphDiff:
 
 @dataclass(frozen=True)
 class PathClassCount(GraphDiff):
-    """
-    Represents an entity missing paths to objects of a given type:
-
-        $this <path> <object> .
-        <object> a <classname> .
+    """Represents an entity missing paths to objects of a given type:
+    $this <path> <object> .
+    <object> a <classname> .
     """
 
     path: URIRef
@@ -64,18 +60,17 @@ class PathClassCount(GraphDiff):
     classname: URIRef
 
     def reason(self) -> str:
-        """Human-readable explanation of this GraphDiff"""
+        """Human-readable explanation of this GraphDiff."""
         return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
 {self.classname} on path {self.path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """
-        Produces a list of templates to resolve this GraphDiff
+        """Produces a list of Templates to resolve this GraphDiff.
 
-        :param lib: The library to hold the templates
-        :type lib: "Library"
+        :param lib: the Library to hold the Templates
+        :type lib: Library
         :return: Templates that reconcile the GraphDiff
-        :rtype: List["Template"]
+        :rtype: List[Template]
         """
         assert self.focus is not None
         body = Graph()
@@ -88,11 +83,9 @@ class PathClassCount(GraphDiff):
 
 @dataclass(frozen=True)
 class PathShapeCount(GraphDiff):
-    """
-    Represents an entity missing paths to objects that match a given shape
-
-        $this <path> <object> .
-        <object> a <shapename> .
+    """Represents an entity missing paths to objects that match a given Shape.
+    $this <path> <object> .
+    <object> a <shapename> .
     """
 
     path: URIRef
@@ -101,12 +94,12 @@ class PathShapeCount(GraphDiff):
     shapename: URIRef
 
     def reason(self) -> str:
-        """Human-readable explanation of this GraphDiff"""
+        """Human-readable explanation of this GraphDiff."""
         return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
 {self.shapename} on path {self.path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """Produces a list of templates to resolve this GraphDiff"""
+        """Produces a list of Templates to resolve this GraphDiff."""
         assert self.focus is not None
         body = Graph()
         for _ in range(self.minc or 0):
@@ -118,27 +111,24 @@ class PathShapeCount(GraphDiff):
 
 @dataclass(frozen=True)
 class RequiredPath(GraphDiff):
-    """
-    Represents an entity missing a required property
-    """
+    """Represents an entity missing a required property."""
 
     path: URIRef
     minc: Optional[int]
     maxc: Optional[int]
 
     def reason(self) -> str:
-        """Human-readable explanation of this GraphDiff"""
+        """Human-readable explanation of this GraphDiff."""
         return f"{self.focus} needs between {self.minc} and {self.maxc} uses \
 of path {self.path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """
-        Produces a list of templates to resolve this GraphDiff
+        """Produces a list of Templates to resolve this GraphDiff.
 
-        :param lib: The library to hold the templates
-        :type lib: "Library"
+        :param lib: the Library to hold the Templates
+        :type lib: Library
         :return: Templates that reconcile the GraphDiff
-        :rtype: List["Template"]
+        :rtype: List[Template]
         """
         assert self.focus is not None
         body = Graph()
@@ -150,24 +140,21 @@ of path {self.path}"
 
 @dataclass(frozen=True)
 class RequiredClass(GraphDiff):
-    """
-    Represents an entity that should be an instance of the indicated class
-    """
+    """Represents an entity that should be an instance of the class."""
 
     classname: URIRef
 
     def reason(self) -> str:
-        """Human-readable explanation of this GraphDiff"""
+        """Human-readable explanation of this GraphDiff."""
         return f"{self.focus} needs to be a {self.classname}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """
-        Produces a list of templates to resolve this GraphDiff
+        """Produces a List of Templates to resolve this GraphDiff.
 
-        :param lib: The library to hold the templates
-        :type lib: "Library"
+        :param lib: the Library to hold the Templates
+        :type lib: Library
         :return: Templates that reconcile the GraphDiff
-        :rtype: List["Template"]
+        :rtype: List[Template]
         """
         assert self.focus is not None
         body = Graph()
@@ -177,26 +164,24 @@ class RequiredClass(GraphDiff):
 
 @dataclass(frozen=True)
 class GraphClassCardinality(GraphDiff):
-    """
-    Represents a graph that is missing an expected number of instances
-    of the given class
+    """Represents a Graph that is missing an expected number of instances of
+    the given class.
     """
 
     classname: URIRef
     expectedCount: int
 
     def reason(self) -> str:
-        """Human-readable explanation of this GraphDiff"""
+        """Human-readable explanation of this GraphDiff."""
         return f"Graph did not have {self.expectedCount} instances of {self.classname}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """
-        Produces a list of templates to resolve this GraphDiff
+        """Produces a List of Templates to resolve this GraphDiff.
 
-        :param lib: The library to hold the templates
-        :type lib: "Library"
+        :param lib: the Library to hold the Templates
+        :type lib: Library
         :return: Templates that reconcile the GraphDiff
-        :rtype: List["Template"]
+        :rtype: List[Template]
         """
         templs = []
         for _ in range(self.expectedCount):
@@ -208,8 +193,8 @@ class GraphClassCardinality(GraphDiff):
 
 @dataclass
 class ValidationContext:
-    """
-    Holds the necessary information for processing the results of SHACL validation.
+    """Holds the necessary information for processing the results of SHACL
+    validation.
     """
 
     shape_collections: List[ShapeCollection]
@@ -220,9 +205,8 @@ class ValidationContext:
 
     @cached_property
     def diffset(self) -> Set[GraphDiff]:
-        """
-        The unordered set of GraphDiffs produced from interpreting the
-        input SHACL validation report
+        """The unordered set of GraphDiffs produced from interpreting the input
+        SHACL validation report.
         """
         return self._report_to_diffset()
 
@@ -231,20 +215,18 @@ class ValidationContext:
         return sum((sc.graph for sc in self.shape_collections), start=Graph())  # type: ignore
 
     def as_templates(self) -> List["Template"]:
-        """
-        Produces the set of templates that reconcile the GraphDiffs from
-        the SHACL validation report
+        """Produces the set of Templates that reconcile the GraphDiffs from the
+        SHACL validation report.
 
         :return: Reconciling templates
-        :rtype: List["Template"]
+        :rtype: List[Template]
         """
         return diffset_to_templates(self.diffset)
 
     def _report_to_diffset(self) -> Set[GraphDiff]:
-        """
-        Interpret a SHACL validation report and say what is missing.
+        """Interpret a SHACL validation report and say what is missing.
 
-        :return: A set of 'GraphDiff's that each abstract a SHACL shape violation
+        :return: a set of GraphDiffs that each abstract a SHACL shape violation
         :rtype: Set[GraphDiff]
         """
         classpath = SH["class"] | (SH.qualifiedValueShape / SH["class"])  # type: ignore
@@ -332,13 +314,13 @@ class ValidationContext:
 
 
 def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
-    """
-    Combine GraphDiff by focus node to generate a list of templates that
-    reconcile what is "wrong" with the graph with respect to the graph diffs
+    """Combine GraphDiff by focus node to generate a List of Templates that
+    reconcile what is "wrong" with the Graph with respect to the GraphDiffs.
 
-    :param diffset: A set of diffs produced by report_to_diffset
+    :param diffset: a Set of diffs produced by `_report_to_diffset`
     :type diffset: Set[GraphDiff]
-    :return: List of templates that when populated should resolve the SHACL violations
+    :return: List of Templates that should resolve the SHACL violations when
+             populated
     :rtype: List[Template]
     """
     from buildingmotif.dataclasses import Library, Template
