@@ -83,5 +83,22 @@ poetry publish --build
 2. [Install Angular](https://angular.io/guide/setup-local)
 3. See [buildingmotif-app/README.md](buildingmotif-app/README.md)
 
+# Running on Docker
+1. Set config file.
+    ```
+    cp configs.py.dist configs.py
+
+    echo "DB_URI = 'postgresql://buildingmotif:password@buildingmotif-db'" > configs.py
+    ```
+2. Up containers with docker-compose.
+    ```
+    docker-compose -f docker-compose.yml up --build
+    ```
+3. Inside `buildingmotif-api`, migrate db.
+    ```
+    docker exec -it buildingmotif-api alembic upgrade head
+    ```
+4. The api can now be reached at http://127.0.0.1:5000 and the app can be reached but http://localhost:4200.
+
 # Visualizing
 ![repo-vis](./diagram.svg)
