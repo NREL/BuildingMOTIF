@@ -1,8 +1,10 @@
 from typing import Dict, List
 
 from sqlalchemy import Column, ForeignKey, Integer, String, Text, UniqueConstraint
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, declarative_base, relationship
+
+# from sqlalchemy.dialects.postgresql import JSON
+from buildingmotif.database.utils import JSONType
 
 Base = declarative_base()
 
@@ -60,7 +62,7 @@ class DepsAssociation(Base):
     dependant_id: Mapped[int] = Column(ForeignKey("template.id"))
     dependee_id: Mapped[int] = Column(ForeignKey("template.id"))
     # args are a mapping of dependee args to dependant args
-    args: Mapped[Dict[str, str]] = Column(JSONB)
+    args: Mapped[Dict[str, str]] = Column(JSONType)  # type: ignore
 
     __table_args__ = (
         UniqueConstraint(
@@ -80,7 +82,7 @@ class DBTemplate(Base):
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False)
     body_id: Mapped[str] = Column(String())
-    optional_args: Mapped[List[str]] = Column(JSONB)
+    optional_args: Mapped[List[str]] = Column(JSONType)  # type: ignore
 
     library_id: Mapped[int] = Column(Integer, ForeignKey("library.id"), nullable=False)
     library: Mapped[DBLibrary] = relationship("DBLibrary", back_populates="templates")
