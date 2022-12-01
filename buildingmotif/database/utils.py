@@ -1,5 +1,30 @@
 import json
 
+import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import JSONB
+
+
+class JSONType(sa.types.TypeDecorator):
+    """
+    Custom JSON type that uses JSONB on Postgres and JSON on other dialects.
+    This allows us to use our custom JSON serialization below *and* have the
+    database enforce uniqueness on JSON-encoded dictionaries
+    """
+
+    impl = sa.JSON
+    hashable = False
+    cache_ok = True
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def load_dialect_impl(self, dialect):
+        if dialect.name == "postgresql":
+            # Use the native JSON type.
+            return dialect.type_descriptor(JSONB())
+        else:
+            return dialect.type_descriptor(sa.JSON())
+
 
 # the custom ser/de handlers are to allow the database to ensure
 # uniqueness of dependency bindings (see https://github.com/NREL/BuildingMOTIF/pull/113)

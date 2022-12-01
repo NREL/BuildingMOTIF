@@ -7,7 +7,10 @@ Create Date: 2022-06-17 15:36:46.968440
 """
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects.postgresql import JSONB
+
+from buildingmotif.database.utils import JSONType
+
+# from sqlalchemy.dialects.postgresql import JSON
 
 # revision identifiers, used by Alembic.
 revision = "ee47e252795d"
@@ -54,7 +57,7 @@ def upgrade():
         "deps_association_table",
         sa.Column("dependant_id", sa.Integer(), nullable=False),
         sa.Column("dependee_id", sa.Integer(), nullable=False),
-        sa.Column("args", JSONB(), nullable=True),
+        sa.Column("args", JSONType(), nullable=True),
         sa.ForeignKeyConstraint(
             ["dependant_id"],
             ["template.id"],
