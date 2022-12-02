@@ -59,7 +59,7 @@ def test_get_graph(graph_connection):
 @pytest.mark.skip(reason="a non-existant graph will just come back empty")
 def test_get_graph_does_not_exist(graph_connection):
     with pytest.raises(ValueError):
-        graph_connection.get_graph(-1)
+        graph_connection.get_graph("I don't exist")
 
 
 def test_delete_graph(graph_connection):

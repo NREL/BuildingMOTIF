@@ -58,7 +58,7 @@ def test_get_db_model(table_connection, monkeypatch):
 
 def test_get_db_model_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.get_db_model(-1)
+        table_connection.get_db_model("I don't exist")
 
 
 def test_update_db_model_name(table_connection):
@@ -73,7 +73,7 @@ def test_update_db_model_name(table_connection):
 
 def test_update_db_model_name_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.update_db_model_name(-1, "new_name")
+        table_connection.update_db_model_name("I don't exist", "new_name")
 
 
 def test_update_db_model_description(table_connection):
@@ -90,7 +90,7 @@ def test_update_db_model_description(table_connection):
 
 def test_update_db_model_description_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.update_db_model_description(-1, "new_description")
+        table_connection.update_db_model_description("I don't exist", "new_description")
 
 
 def test_delete_db_model(table_connection):
@@ -103,4 +103,4 @@ def test_delete_db_model(table_connection):
 
 def tests_delete_db_model_does_does_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.delete_db_model(-1)
+        table_connection.delete_db_model("does not exist")

@@ -49,7 +49,7 @@ def test_get_db_library(table_connection):
 
 def test_get_db_library_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.get_db_library_by_id(-1)
+        table_connection.get_db_library_by_id("I don't exist")
 
 
 def test_get_db_library_by_name(table_connection):
@@ -66,7 +66,7 @@ def test_get_db_library_by_name(table_connection):
 
 def test_get_db_library_by_name_not_found(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.get_db_library_by_name(-1)
+        table_connection.get_db_library_by_name("I don't exist")
 
 
 def test_update_db_library_name(table_connection):
@@ -83,7 +83,7 @@ def test_update_db_library_name(table_connection):
 
 def test_update_db_library_name_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.update_db_library_name(-1, "new_name")
+        table_connection.update_db_library_name("I don't exist", "new_name")
 
 
 def test_delete_db_library(table_connection):
@@ -107,4 +107,4 @@ def test_delete_db_library(table_connection):
 
 def tests_delete_db_library_does_does_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.delete_db_library(-1)
+        table_connection.delete_db_library("does not exist")

@@ -48,7 +48,7 @@ def test_get_db_shape_collection(table_connection, monkeypatch):
 
 def test_get_db_shape_collection_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.get_db_shape_collection(-1)
+        table_connection.get_db_shape_collection("I don't exist")
 
 
 def test_delete_db_shape_collection(table_connection):
@@ -61,4 +61,4 @@ def test_delete_db_shape_collection(table_connection):
 
 def tests_delete_db_shape_collection_does_does_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.delete_db_shape_collection(-1)
+        table_connection.delete_db_shape_collection("does not exist")
