@@ -10,9 +10,9 @@ blueprint = Blueprint("libraries", __name__)
 
 @blueprint.route("", methods=(["GET"]))
 def get_all_libraries() -> flask.Response:
-    """Get all Libraries.
+    """Get all libraries.
 
-    :return: All Libraries.
+    :return: all libraries
     :rtype: flask.Response
     """
     db_libs = current_app.building_motif.table_connection.get_all_db_libraries()
@@ -22,11 +22,11 @@ def get_all_libraries() -> flask.Response:
 
 @blueprint.route("/<library_id>", methods=(["GET"]))
 def get_library(library_id: int) -> flask.Response:
-    """Get Library by id.
+    """Get library by id.
 
-    :param library_id: The Library id.
+    :param library_id: library id
     :type library_id: int
-    :return: The requested Library.
+    :return: requested library
     :rtype: flask.Response
     """
     try:

@@ -18,11 +18,12 @@ LibraryDict = TypedDict(
 def serialize(
     param: Union[DBLibrary, List[DBLibrary]]
 ) -> Union[LibraryDict, List[LibraryDict]]:
-    """Serialize one or more Libraries into a TypedDict.
+    """Serialize one or more libraries into a TypedDict.
 
-    :param param: One Library or a List of Libraries.
+    :param param: one library or a list of libraries
     :type param: Union[DBLibrary, List[DBLibrary]]
-    :return: One JSON per serialized Library.
+    :raises ValueError: if invalid input
+    :return: one JSON per serialized library
     :rtype: Union[DBLibrary, List[DBLibrary]]
     """
     if isinstance(param, DBLibrary):
@@ -35,11 +36,11 @@ def serialize(
 
 
 def _serialize(library: DBLibrary) -> LibraryDict:
-    """Serialize a Library into a TypedDict.
+    """Serialize a library into a TypedDict.
 
-    :param library: A Library.
+    :param library: library
     :type library: DBLibrary
-    :return: A serialized Library.
+    :return: serialized library
     :rtype: LibraryDict
     """
     return {

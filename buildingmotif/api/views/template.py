@@ -10,9 +10,9 @@ blueprint = Blueprint("templates", __name__)
 
 @blueprint.route("", methods=(["GET"]))
 def get_all_templates() -> flask.Response:
-    """Get all Templates.
+    """Get all templates.
 
-    :return: All Templates.
+    :return: all templates
     :rtype: flask.Response
     """
     db_templates = current_app.building_motif.table_connection.get_all_db_templates()
@@ -22,11 +22,11 @@ def get_all_templates() -> flask.Response:
 
 @blueprint.route("/<templates_id>", methods=(["GET"]))
 def get_template(templates_id: int) -> flask.Response:
-    """Get Template by id.
+    """Get template by id.
 
-    :param templates_id: The Template id.
+    :param templates_id: template id
     :type templates_id: int
-    :return: The requested Template.
+    :return: requested template
     :rtype: flask.Response
     """
     try:

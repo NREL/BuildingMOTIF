@@ -13,9 +13,9 @@ blueprint = Blueprint("models", __name__)
 
 @blueprint.route("", methods=(["GET"]))
 def get_all_models() -> flask.Response:
-    """Get all Models.
+    """Get all models.
 
-    :return: All models.
+    :return: all models
     :rtype: flask.Response
     """
     db_models = current_app.building_motif.table_connection.get_all_db_models()
@@ -27,9 +27,9 @@ def get_all_models() -> flask.Response:
 def get_model(models_id: int) -> flask.Response:
     """Get Model by id.
 
-    :param models_id: The Model id.
+    :param models_id: model id
     :type models_id: int
-    :return: The requested Model.
+    :return: requested model
     :rtype: flask.Response
     """
     try:
@@ -42,11 +42,11 @@ def get_model(models_id: int) -> flask.Response:
 
 @blueprint.route("/<models_id>/graph", methods=(["GET"]))
 def get_model_graph(models_id: int) -> Graph:
-    """Get Model Graph by id.
+    """Get model graph by id.
 
-    :param models_id: The Model id.
+    :param models_id: model id
     :type models_id: int
-    :return: The requested Model Graph.
+    :return: requested model graph
     :rtype: rdflib.Graph
     """
     try:
@@ -59,13 +59,13 @@ def get_model_graph(models_id: int) -> Graph:
 
 @blueprint.route("/<models_id>/graph", methods=(["PATCH"]))
 def update_model_graph(models_id: int) -> Graph:
-    """Update Model graph.
+    """Update model graph.
 
     Takes xml body of ttl formated graph.
 
-    :param models_id: The Model id.
+    :param models_id: model id
     :type models_id: int
-    :return: The requested updated Model Graph.
+    :return: updated model graph
     :rtype: rdflib.Graph
     """
     try:

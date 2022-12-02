@@ -11,9 +11,9 @@ from buildingmotif.building_motif.building_motif import BuildingMOTIF
 def _after_request(response):
     """Commit or rollback the session.
 
-    :param response: Flask response.
+    :param response: response
     :type response: Flask.response
-    :return: The response.
+    :return: response
     :rtype: Flask.response
     """
     try:
@@ -30,11 +30,11 @@ def _after_request(response):
 
 
 def _after_error(error):
-    """Returns the error message and a 500 error request.
+    """Returns request with a 500 and the error message.
 
-    :param error: Python Error.
+    :param error: python error
     :type error: Error
-    :return: The Python Error string and a Flask response.
+    :return: flask error response
     :rtype: Flask.response
     """
     return str(error), status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -43,9 +43,9 @@ def _after_error(error):
 def create_app(DB_URI):
     """Creates a Flask API.
 
-    :param db_uri: Database URI.
+    :param db_uri: database URI
     :type db_uri: str
-    :return: A Flask app.
+    :return: flask app
     :rtype: Flask.app
     """
     app = Flask(__name__, instance_relative_config=True)
