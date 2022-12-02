@@ -70,11 +70,9 @@ class DepsAssociation(Base):
 
 
 class DBTemplate(Base):
-    """A Template is used to generate content for a model.
+    """A Template is used to generate content for a model."""
 
     # TODO: doc table properties better.
-    """
-
     __tablename__ = "template"
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False)

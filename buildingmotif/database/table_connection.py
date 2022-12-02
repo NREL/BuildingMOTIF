@@ -318,11 +318,13 @@ class TableConnection:
     def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
         """Get a template's dependencies and its arguments.
 
-        If you don't need the arguments, consider using `template.dependencies`.
+        If you don't need the arguments, consider using
+        :py:method:`dataclasses.template.get_dependencies`.
 
         :param id: template id
         :type id: int
-        :return: tuple of tuple, where each tuple has 1. the dependant_id, and 2. it's args
+        :return: tuple of tuple, where each tuple has the dependant_id
+            and it's args
         :rtype: tuple[tuple[int, list[str]]]
         """
         db_template_dependencies = tuple(
@@ -373,7 +375,8 @@ class TableConnection:
         :param args: mapping of dependency params to dependant params
         :type args: Dict[str, str]
         :raises ValueError: if all dependee required_params not in args
-        :raises ValueError: if dependant and dependency template don't share a library
+        :raises ValueError: if dependant and dependency template don't share a
+            library
         """
         self.logger.debug(
             f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
