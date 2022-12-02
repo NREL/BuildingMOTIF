@@ -18,23 +18,23 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class GraphDiff:
-    """An abstraction of a SHACL Validation Result that can produce a Template
-    that resolves the difference between the expected and actual Graph.
+    """An abstraction of a SHACL Validation Result that can produce a template
+    that resolves the difference between the expected and actual graph.
 
-    Each GraphDiff has a 'focus' that is the node in the Model that the
+    Each GraphDiff has a 'focus' that is the node in the model that the
     GraphDiff is about. If 'focus' is None, then the GraphDiff is about the
-    Model itself rather than a specific node
+    model itself rather than a specific node
     """
 
     focus: Optional[URIRef]
     graph: Graph
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """Produces a List of Templates to resolve this GraphDiff.
+        """Produces a list of templates to resolve this GraphDiff.
 
-        :param lib: the Library to hold the Templates
+        :param lib: the library to hold the templates
         :type lib: Library
-        :return: Templates that reconcile the GraphDiff
+        :return: templates that reconcile the GraphDiff
         :rtype: List[Template]
         """
         raise NotImplementedError
@@ -65,11 +65,11 @@ class PathClassCount(GraphDiff):
 {self.classname} on path {self.path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """Produces a list of Templates to resolve this GraphDiff.
+        """Produces a list of templates to resolve this GraphDiff.
 
-        :param lib: the Library to hold the Templates
+        :param lib: the library to hold the templates
         :type lib: Library
-        :return: Templates that reconcile the GraphDiff
+        :return: templates that reconcile the GraphDiff
         :rtype: List[Template]
         """
         assert self.focus is not None
@@ -83,7 +83,7 @@ class PathClassCount(GraphDiff):
 
 @dataclass(frozen=True)
 class PathShapeCount(GraphDiff):
-    """Represents an entity missing paths to objects that match a given Shape.
+    """Represents an entity missing paths to objects that match a given shape.
     $this <path> <object> .
     <object> a <shapename> .
     """
@@ -99,7 +99,7 @@ class PathShapeCount(GraphDiff):
 {self.shapename} on path {self.path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """Produces a list of Templates to resolve this GraphDiff."""
+        """Produces a list of templates to resolve this GraphDiff."""
         assert self.focus is not None
         body = Graph()
         for _ in range(self.minc or 0):
@@ -123,11 +123,11 @@ class RequiredPath(GraphDiff):
 of path {self.path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """Produces a list of Templates to resolve this GraphDiff.
+        """Produces a list of templates to resolve this GraphDiff.
 
-        :param lib: the Library to hold the Templates
+        :param lib: the library to hold the templates
         :type lib: Library
-        :return: Templates that reconcile the GraphDiff
+        :return: templates that reconcile the GraphDiff
         :rtype: List[Template]
         """
         assert self.focus is not None
@@ -149,11 +149,11 @@ class RequiredClass(GraphDiff):
         return f"{self.focus} needs to be a {self.classname}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """Produces a List of Templates to resolve this GraphDiff.
+        """Produces a list of templates to resolve this GraphDiff.
 
-        :param lib: the Library to hold the Templates
+        :param lib: the library to hold the templates
         :type lib: Library
-        :return: Templates that reconcile the GraphDiff
+        :return: templates that reconcile the GraphDiff
         :rtype: List[Template]
         """
         assert self.focus is not None
@@ -164,7 +164,7 @@ class RequiredClass(GraphDiff):
 
 @dataclass(frozen=True)
 class GraphClassCardinality(GraphDiff):
-    """Represents a Graph that is missing an expected number of instances of
+    """Represents a graph that is missing an expected number of instances of
     the given class.
     """
 
@@ -176,11 +176,11 @@ class GraphClassCardinality(GraphDiff):
         return f"Graph did not have {self.expectedCount} instances of {self.classname}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
-        """Produces a List of Templates to resolve this GraphDiff.
+        """Produces a list of templates to resolve this GraphDiff.
 
-        :param lib: the Library to hold the Templates
+        :param lib: the library to hold the templates
         :type lib: Library
-        :return: Templates that reconcile the GraphDiff
+        :return: templates that reconcile the GraphDiff
         :rtype: List[Template]
         """
         templs = []
@@ -215,10 +215,10 @@ class ValidationContext:
         return sum((sc.graph for sc in self.shape_collections), start=Graph())  # type: ignore
 
     def as_templates(self) -> List["Template"]:
-        """Produces the set of Templates that reconcile the GraphDiffs from the
+        """Produces the set of templates that reconcile the GraphDiffs from the
         SHACL validation report.
 
-        :return: Reconciling templates
+        :return: reconciling templates
         :rtype: List[Template]
         """
         return diffset_to_templates(self.diffset)
@@ -314,13 +314,13 @@ class ValidationContext:
 
 
 def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
-    """Combine GraphDiff by focus node to generate a List of Templates that
+    """Combine GraphDiff by focus node to generate a list of templates that
     reconcile what is "wrong" with the Graph with respect to the GraphDiffs.
 
-    :param diffset: a Set of diffs produced by `_report_to_diffset`
+    :param diffset: a set of diffs produced by `_report_to_diffset`
     :type diffset: Set[GraphDiff]
-    :return: List of Templates that should resolve the SHACL violations when
-             populated
+    :return: list of templates that should resolve the SHACL violations when
+        populated
     :rtype: List[Template]
     """
     from buildingmotif.dataclasses import Library, Template

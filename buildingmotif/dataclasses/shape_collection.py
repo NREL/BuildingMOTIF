@@ -66,18 +66,18 @@ class ShapeCollection:
         raise AttributeError("Cannot modify db id")
 
     def add_triples(self, *triples: Triple) -> None:
-        """Add the given Triples to the Graph.
+        """Add the given triples to the graph.
 
-        :param triples: a sequence of Triples to add to the Graph
+        :param triples: a sequence of triples to add to the graph
         :type triples: Triple
         """
         for triple in triples:
             self.graph.add(triple)
 
     def add_graph(self, graph: rdflib.Graph) -> None:
-        """Add the given Graph to the ShapeCollection.
+        """Add the given graph to the ShapeCollection.
 
-        :param graph: the Graph to add to the ShapeCollection
+        :param graph: the graph to add to the ShapeCollection
         :type graph: rdflib.Graph
         """
         self.graph += graph
@@ -125,7 +125,7 @@ class ShapeCollection:
         recursion up to that limit.
 
         :param recursive_limit: how many levels of `owl:imports` to resolve,
-                                defaults to -1 (all)
+            defaults to -1 (all)
         :type recursive_limit: int, optional
         :return: a new ShapeCollection with the types resolved
         :rtype: ShapeCollection
@@ -145,7 +145,7 @@ class ShapeCollection:
 
         :param definition_type: the given definition type
         :type definition_type: URIRef
-        :return: List of included definition types
+        :return: list of included definition types
         :rtype: List[URIRef]
         """
         children = ontology.subjects(RDFS.subClassOf, definition_type)
@@ -163,7 +163,7 @@ class ShapeCollection:
 
         :param domain: the given domain
         :type domain: URIRef
-        :return: List of includes domains
+        :return: list of included domains
         :rtype: List[URIRef]
         """
         children = ontology.subjects(BMOTIF.includes, domain)
@@ -175,7 +175,7 @@ class ShapeCollection:
         return results
 
     def get_shapes_of_definition_type(self, definition_type: URIRef) -> List[URIRef]:
-        """Get subjects present in Shape of the definition type.
+        """Get subjects present in shape of the definition type.
 
         :param definition_type: desired definition type
         :type definition_type: URIRef
@@ -191,7 +191,7 @@ class ShapeCollection:
         return results
 
     def get_shapes_of_domain(self, domain: URIRef) -> List[URIRef]:
-        """Get subjects present in Shape of domain type.
+        """Get subjects present in shape of domain type.
 
         :param domain: desired domain
         :type domain: URIRef
@@ -209,16 +209,16 @@ class ShapeCollection:
     def get_shapes_about_class(
         self, rdf_type: URIRef, contexts: Optional[List["ShapeCollection"]] = None
     ) -> List[URIRef]:
-        """Returns a List of Shapes that either target the given class (or
+        """Returns a list of shapes that either target the given class (or
         superclasses of it), or otherwise only apply to URIs of the given type.
 
         :param rdf_type: an OWL class
         :type rdf_type: URIRef
-        :param contexts: List of ShapeCollections that help determine the class
-                         structure
+        :param contexts: list of ShapeCollections that help determine the class
+            structure
         :type contexts: List["ShapeCollection"], optional
-        :return: a List of Shapes in this ShapeCollection that concern that
-                 class
+        :return: a list of shapes in this ShapeCollection that concern that
+            class
         :rtype: List[URIRef]
         """
         # merge the contexts together w/ our graph if they are provided, else

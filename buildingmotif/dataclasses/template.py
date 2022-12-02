@@ -36,11 +36,11 @@ class Template:
 
     @classmethod
     def load(cls, id: int) -> "Template":
-        """Load Template from database.
+        """Load template from database.
 
-        :param id: id of Template
+        :param id: id of template
         :type id: int
-        :return: loaded Template
+        :return: loaded template
         :rtype: Template
         """
         bm = get_building_motif()
@@ -56,9 +56,9 @@ class Template:
         )
 
     def in_memory_copy(self) -> "Template":
-        """Copy the Template.
+        """Copy the template.
 
-        :return: copy of this Template
+        :return: copy of this template
         :rtype: Template
         """
         return Template(
@@ -87,9 +87,9 @@ class Template:
         self._name = new_name
 
     def get_dependencies(self) -> Tuple["Dependency", ...]:
-        """Get the Template's dependencies.
+        """Get the template's dependencies.
 
-        :return: a Tuple of dependencies
+        :return: a tuple of dependencies
         :rtype: Tuple
         """
         return tuple(
@@ -102,17 +102,17 @@ class Template:
         )
 
     def add_dependency(self, dependency: "Template", args: Dict[str, str]) -> None:
-        """Add dependency to Template.
+        """Add dependency to template.
 
         :param dependency: dependency to add
         :type dependency: Template
-        :param args: Dictionary of dependency arguments
+        :param args: dictionary of dependency arguments
         :type args: Dict[str, str]
         """
         self._bm.table_connection.add_template_dependency(self.id, dependency.id, args)
 
     def remove_dependency(self, dependency: "Template") -> None:
-        """Remove dependency from Template.
+        """Remove dependency from template.
 
         :param dependency: dependency to remove
         :type dependency: Template
@@ -121,10 +121,10 @@ class Template:
 
     @property
     def all_parameters(self) -> Set[str]:
-        """The set of all parameters used in this Template *including* its
+        """The set of all parameters used in this template *including* its
         dependencies.
 
-        :return: Set of parameters *with* dependencies
+        :return: set of parameters *with* dependencies
         :rtype: Set[str]
         """
         # handle local parameters first
@@ -137,10 +137,10 @@ class Template:
 
     @property
     def parameters(self) -> Set[str]:
-        """The set of all parameters used in this Template *excluding* its
+        """The set of all parameters used in this template *excluding* its
         dependencies.
 
-        :return: Set of parameters without dependencies
+        :return: set of parameters *without* dependencies
         :rtype: Set[str]
         """
         # handle local parameters first
@@ -150,9 +150,9 @@ class Template:
 
     @property
     def dependency_parameters(self) -> Set[str]:
-        """The set of all parameters used in this Template's dependencies.
+        """The set of all parameters used in this demplate's dependencies.
 
-        :return: Set of parameters used in dependencies
+        :return: set of parameters used in dependencies
         :rtype: Set[str]
         """
         params: Set[str] = set()
@@ -190,16 +190,16 @@ class Template:
         return None
 
     def to_inline(self, preserve_args: Optional[List[str]] = None) -> "Template":
-        """Makes an inline-able copy of this Template.
+        """Makes an inline-able copy of this template.
 
         Suffixes all parameters with a unique identifier that will avoid
         parameter name collisions when templates are combined with one another.
         Any argument names in the `preserve_args` list will not be adjusted.
 
         :param preserve_args: parameters whose names will be preserved,
-                              defaults to None
+            defaults to None
         :type preserve_args: Optional[List[str]], optional
-        :return: a Template with globally unique parameters
+        :return: a template with globally unique parameters
         :rtype: Template
         """
         templ = self.in_memory_copy()
@@ -222,7 +222,7 @@ class Template:
 
         Parameters of dependencies will be renamed to avoid confusion.
 
-        :return: copy of this Template with all dependencies inlined
+        :return: copy of this template with all dependencies inlined
         :rtype: Template
         """
         templ = self.in_memory_copy()
@@ -276,24 +276,24 @@ class Template:
     ) -> Union["Template", rdflib.Graph]:
         """Evaluate the template with the provided bindings.
 
-        If all parameters in the Template have a provided binding, then a Graph
+        If all parameters in the template have a provided binding, then a graph
         will be returned. Otherwise, a new Template will be returned that
         incorporates the provided bindings and preserves unbound parameters. If
-        `require_optional_args` is True, then the Template evaluation will not
-        return a Graph unless all optional arguments are bound. If
-        `require_optional_args` is False, then the Template evaluation will
-        return a Graph even if some optional arguments are unbound.
+        `require_optional_args` is True, then the template evaluation will not
+        return a graph unless all optional arguments are bound. If
+        `require_optional_args` is False, then the template evaluation will
+        return a graph even if some optional arguments are unbound.
 
-        :param bindings: map of parameter name -> RDF term to substitute
+        :param bindings: map of parameter {name: RDF term} to substitute
         :type bindings: Dict[str, Node]
         :param namespaces: namespace bindings to add to the graph,
-                           defaults to None
+            defaults to None
         :type namespaces: Optional[Dict[str, rdflib.Namespace]], optional
         :param require_optional_args: whether to require all optional arguments
-                                      to be bound, defaults to False
+            to be bound, defaults to False
         :type require_optional_args: bool
-        :return: either a Template or a Graph, depending on whether all
-                 parameters were provided
+        :return: either a template or a graph, depending on whether all
+            parameters were provided
         :rtype: Union[Template, rdflib.Graph]
         """
         templ = self.in_memory_copy()
@@ -316,12 +316,12 @@ class Template:
         return templ
 
     def fill(self, ns: rdflib.Namespace) -> Tuple[Dict[str, Node], rdflib.Graph]:
-        """Evaluates the Template with autogenerated bindings within the given
+        """Evaluates the template with autogenerated bindings within the given
         namespace.
 
         :param ns: namespace to contain the autogenerated entities
         :type ns: rdflib.Namespace
-        :return: a Tuple of the bindings used and the resulting Graph
+        :return: a tuple of the bindings used and the resulting graph
         :rtype: Tuple[Dict[str, Node], rdflib.Graph]
         """
         bindings: Dict[str, Node] = {
@@ -335,9 +335,9 @@ class Template:
 
     @property
     def defining_library(self) -> "Library":
-        """The Library defining this Template.
+        """The library defining this template.
 
-        :return: Library
+        :return: library
         :rtype: Library
         """
         from buildingmotif.dataclasses.library import Library
@@ -347,9 +347,9 @@ class Template:
         )
 
     def library_dependencies(self) -> List["Library"]:
-        """Get Library dependencies for this Template.
+        """Get library dependencies for this template.
 
-        :return: List of Libraries
+        :return: list of libraries
         :rtype: List[Library]
         """
         from buildingmotif.dataclasses.library import Library
@@ -362,10 +362,10 @@ class Template:
     def find_subgraphs(
         self, model: Model, *ontologies: rdflib.Graph
     ) -> Generator[Tuple[Mapping, rdflib.Graph, Optional["Template"]], None, None]:
-        """Produces an iterable of subgraphs in the Model that are partially or
-        entirely covered by the provided Template.
+        """Produces an iterable of subgraphs in the model that are partially or
+        entirely covered by the provided template.
 
-        :yield:
+        :yield: iterable of subgraphs in the model
         :rtype: Generator[Tuple[Mapping, rdflib.Graph, Optional[Template]], None, None]
         """
         # TODO: can we figure out what ontology to use automatically?
