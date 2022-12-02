@@ -2,7 +2,6 @@ import pathlib
 
 import pytest
 import rdflib
-import testing.postgresql
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
@@ -21,8 +20,7 @@ class MockBuildingMotif:
 
     def __init__(self) -> None:
         """Class constructor."""
-        self.postgresql = testing.postgresql.Postgresql()
-        self.engine = create_engine(self.postgresql.url(), echo=False)
+        self.engine = create_engine("sqlite://", echo=False)
         self.session_factory = sessionmaker(bind=self.engine, autoflush=True)
         self.Session = scoped_session(self.session_factory)
         self.session = self.Session()
@@ -34,7 +32,6 @@ class MockBuildingMotif:
         """Close session and engine."""
         self.session.close()
         self.engine.dispose()
-        self.postgresql.stop()
 
 
 class MockLibrary(Library):
@@ -72,8 +69,7 @@ def bm():
     """
     BuildingMotif instance for tests involving dataclasses and API calls
     """
-    postgresql = testing.postgresql.Postgresql()
-    bm = BuildingMOTIF(postgresql.url())
+    bm = BuildingMOTIF("sqlite://")
     # add tables to db
     bm.setup_tables()
 
@@ -81,7 +77,6 @@ def bm():
     bm.close()
     # clean up the singleton so that tables are re-created correctly later
     BuildingMOTIF.clean()
-    postgresql.stop()
 
 
 def pytest_generate_tests(metafunc):

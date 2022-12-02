@@ -1,0 +1,1147 @@
+@prefix bldg: <urn:ex/> .
+@prefix ns1: <http://data.ashrae.org/standard223#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix qudtqk: <http://qudt.org/vocab/quantitykind/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+
+bldg: a owl:Ontology .
+
+bldg:CHWS a ns1:System ;
+    rdfs:label "Chilled Water System" ;
+    ns1:contains bldg:bypass-valve_5875496c,
+        bldg:chw-hx_d55bc4ea,
+        bldg:lead-chw-booster-pump_c603ce5b,
+        bldg:lead-chw-pump_a88a7715,
+        bldg:standby-chw-booster-pump_ba9ee89d,
+        bldg:standby-chw-pump_c5183591 .
+
+bldg:HWS a ns1:System ;
+    rdfs:label "Hot Water System" ;
+    ns1:contains bldg:bypass-valve_ce07cced,
+        bldg:hw-hx_ae59e8b6,
+        bldg:lead-hw-booster-pump_c1bd4e47,
+        bldg:lead-hw-pump_2e86feea,
+        bldg:standby-hw-booster-pump_5819c230,
+        bldg:standby-hw-pump_753a052f .
+
+bldg:MAU a ns1:MAU ;
+    ns1:cnx bldg:MAU_Supply,
+        bldg:outside-air_a1d025b0 ;
+    ns1:contains bldg:HRC_4f666c9e,
+        bldg:cooling-coil_17b68665,
+        bldg:evaporative-cooler_e5932584,
+        bldg:final-filter_ee6a677a,
+        bldg:heating-coil_9741077e,
+        bldg:oad_9558c053,
+        bldg:pre-filter_bd34207d,
+        bldg:sa_pressure_sensor_350b98f1,
+        bldg:supply-fan_5336901d ;
+    ns1:hasProperty bldg:oa_rh_bd64f28d,
+        bldg:sa_sp_264d3ed3 ;
+    ns1:hasSystemConnectionPoint bldg:outside-conn_c4903eea,
+        bldg:supply-conn_266ff5bf .
+
+bldg:VAV-1 a ns1:VAV ;
+    ns1:cnx bldg:VAV-1-in,
+        bldg:air-out_bc5f3b7c ;
+    ns1:contains bldg:dmp_5490fc0f,
+        bldg:rhc_a2128bb3,
+        bldg:sup-air-flow-sensor_653d824a,
+        bldg:sup-air-pressure-sensor_a48a8f6d,
+        bldg:sup-air-temp-sensor_c4f9c25b ;
+    ns1:hasProperty bldg:sup-air-flow_36993017,
+        bldg:sup-air-pressure_789ff1cf,
+        bldg:sup-air-temp_a8dc5532 ;
+    ns1:hasSystemConnectionPoint bldg:vav-in_c3293d81,
+        bldg:vav-out_78b406fd .
+
+bldg:VAV-2 a ns1:VAV ;
+    ns1:cnx bldg:VAV-2-in,
+        bldg:air-out_575a9e8a ;
+    ns1:contains bldg:dmp_35e25c7b,
+        bldg:rhc_b6bd5bdd,
+        bldg:sup-air-flow-sensor_9f3edf9a,
+        bldg:sup-air-pressure-sensor_f6c3eb53,
+        bldg:sup-air-temp-sensor_715564bb ;
+    ns1:hasProperty bldg:sup-air-flow_99352aef,
+        bldg:sup-air-pressure_6f936eee,
+        bldg:sup-air-temp_9642ac8e ;
+    ns1:hasSystemConnectionPoint bldg:vav-in_0d159152,
+        bldg:vav-out_7beee055 .
+
+bldg:fcu1 a ns1:FCU,
+        ns1:System ;
+    ns1:cnx bldg:in_0f5f75b2,
+        bldg:out_fd3ddef4 ;
+    ns1:contains bldg:cooling-coil_e958bad8,
+        bldg:fan_51049ce6 ;
+    ns1:hasSystemConnectionPoint bldg:fcu-in_6c846016,
+        bldg:fcu-out_6e05c213 .
+
+bldg:name_1fcb60a5 a ns1:Duct ;
+    ns1:cnx bldg:MAU_Supply,
+        bldg:VAV-1-in .
+
+bldg:name_29d0281f a ns1:Duct ;
+    ns1:cnx bldg:VAV-2-out,
+        bldg:fcu1-in .
+
+bldg:name_7625f7c8 a ns1:Duct ;
+    ns1:cnx bldg:fcu1-out,
+        bldg:zone2-in .
+
+bldg:name_7b8ca8a6 a ns1:Duct ;
+    ns1:cnx bldg:VAV-1-out,
+        bldg:zone1-in .
+
+bldg:name_d646a522 a ns1:Duct ;
+    ns1:cnx bldg:MAU_Supply,
+        bldg:VAV-2-in .
+
+bldg:zone1 a ns1:Zone ;
+    ns1:contains bldg:zone1space1 ;
+    ns1:hasDomain ns1:Domain-HVAC ;
+    ns1:hasZoneConnectionPoint bldg:in_6f99e30b,
+        bldg:out_6b20291d,
+        bldg:zone-in_47ebbc97,
+        bldg:zone-out_41593250 .
+
+bldg:zone2 a ns1:Zone ;
+    ns1:contains bldg:zone2space1 ;
+    ns1:hasDomain ns1:Domain-HVAC ;
+    ns1:hasZoneConnectionPoint bldg:in_5055d9d7,
+        bldg:out_5b591cb6,
+        bldg:zone-in_5cdc02c5,
+        bldg:zone-out_92cc423c .
+
+bldg:HRC-air-in_4a147571 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c3_5a9e30c6 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:HRC-air-out_3035a921 a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c4_662d12f6 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:HRC-entering-air-temp_3d3ae196 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:HRC-leaving-air-temp_8d28026b a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:HRC-return-water-temp_3b423113 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:HRC-supply-water-temp_190a7a65 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:HRC-water-in_5bdd937a a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:HRC-water-out_fd8f7a00 a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:HRC_4f666c9e a ns1:HeatRecoveryCoil ;
+    ns1:cnx bldg:HRC-air-in_4a147571,
+        bldg:HRC-air-out_3035a921,
+        bldg:HRC-water-in_5bdd937a,
+        bldg:HRC-water-out_fd8f7a00 ;
+    ns1:hasProperty bldg:HRC-entering-air-temp_3d3ae196,
+        bldg:HRC-leaving-air-temp_8d28026b,
+        bldg:HRC-return-water-temp_3b423113,
+        bldg:HRC-supply-water-temp_190a7a65 .
+
+bldg:bypass-valve-command_a57c9400 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:bypass-valve-command_d997f370 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:bypass-valve-feedback_30426f87 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:bypass-valve-feedback_fa884ab9 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:bypass-valve_5875496c a ns1:Valve ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:bypass-valve-command_d997f370,
+        bldg:bypass-valve-feedback_fa884ab9 .
+
+bldg:bypass-valve_ce07cced a ns1:Valve ;
+    ns1:hasMedium ns1:Water-HotWater ;
+    ns1:hasProperty bldg:bypass-valve-command_a57c9400,
+        bldg:bypass-valve-feedback_30426f87 .
+
+bldg:chw-hx-A-chw-diff-press-sensor_cd0deb4e a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:chw-hx-A-in_057ee3ce,
+        bldg:chw-hx-A-out_8d220814 ;
+    ns1:observesProperty bldg:chw-hx-A-chw-diff-press_c519b39e .
+
+bldg:chw-hx-B-chw-diff-press-sensor_b964144c a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:chw-hx-B-in_9e3dc1a6,
+        bldg:chw-hx-B-out_efacccca ;
+    ns1:observesProperty bldg:chw-hx-B-chw-diff-press_bf398dcb .
+
+bldg:chw-hx-chw-flow-sensor_01b2e0fb a ns1:Sensor ;
+    ns1:observesProperty bldg:chw-hx-chw-flow_0922a88e .
+
+bldg:chw-hx-chw-supply-temperature_907ffa35 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:chw-hx_d55bc4ea a ns1:HeatExchanger ;
+    ns1:cnx bldg:chw-hx-A-in_057ee3ce,
+        bldg:chw-hx-A-out_8d220814,
+        bldg:chw-hx-B-in_9e3dc1a6,
+        bldg:chw-hx-B-out_efacccca ;
+    ns1:contains bldg:chw-hx-A-chw-diff-press-sensor_cd0deb4e,
+        bldg:chw-hx-B-chw-diff-press-sensor_b964144c,
+        bldg:chw-hx-chw-flow-sensor_01b2e0fb ;
+    ns1:hasProperty bldg:chw-hx-A-chw-diff-press_c519b39e,
+        bldg:chw-hx-B-chw-diff-press_bf398dcb,
+        bldg:chw-hx-chw-flow_0922a88e,
+        bldg:chw-hx-chw-return-temperature_01dcba00,
+        bldg:chw-hx-chw-supply-temperature_907ffa35 .
+
+bldg:cooling-coil-air-in_2efd6112 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c5_638302f4 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:cooling-coil-air-in_a0e6530c a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:cooling-coil-air-out_8cedd03a a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:cooling-coil-air-out_d0470b6e a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c6_11beecc6 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:cooling-coil-entering-air-temp_190ce26a a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-entering-air-temp_3399bc98 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-leaving-air-temp_2fabc53d a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-leaving-air-temp_8e818cd0 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-leaving-air-wetbulb-temp_a9ec655c a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-leaving-air-wetbulb-temp_fb3f6ec2 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-pump-onoff-cmd_0c32544c a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:cooling-coil-pump-onoff-cmd_5b8ae839 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:cooling-coil-pump-onoff-sts_3189e10a a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:cooling-coil-pump-onoff-sts_deb8cc18 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:cooling-coil-pump_36942641 a ns1:Pump ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:cooling-coil-pump-onoff-cmd_5b8ae839,
+        bldg:cooling-coil-pump-onoff-sts_3189e10a .
+
+bldg:cooling-coil-pump_6713cd08 a ns1:Pump ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:cooling-coil-pump-onoff-cmd_0c32544c,
+        bldg:cooling-coil-pump-onoff-sts_deb8cc18 .
+
+bldg:cooling-coil-return-water-temp_03376c02 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-return-water-temp_bc1f8646 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-supply-water-temp_0f44e76d a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-supply-water-temp_604409d5 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:cooling-coil-valve-command_350ddd15 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:cooling-coil-valve-command_fcce5d58 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:cooling-coil-valve-feedback_910d34f7 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:cooling-coil-valve-feedback_d66d26b9 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:cooling-coil-valve_3d77c136 a ns1:Valve ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:cooling-coil-valve-command_350ddd15,
+        bldg:cooling-coil-valve-feedback_910d34f7 .
+
+bldg:cooling-coil-valve_a28c6c3d a ns1:Valve ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:cooling-coil-valve-command_fcce5d58,
+        bldg:cooling-coil-valve-feedback_d66d26b9 .
+
+bldg:cooling-coil-water-in_4bac9c46 a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:cooling-coil-water-in_5d194be7 a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:cooling-coil-water-out_25cb1d8d a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:cooling-coil-water-out_eb6ed72b a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:cooling-coil_17b68665 a ns1:CoolingCoil ;
+    ns1:cnx bldg:cooling-coil-air-in_2efd6112,
+        bldg:cooling-coil-air-out_d0470b6e,
+        bldg:cooling-coil-water-in_5d194be7,
+        bldg:cooling-coil-water-out_25cb1d8d ;
+    ns1:contains bldg:cooling-coil-pump_6713cd08,
+        bldg:cooling-coil-valve_3d77c136 ;
+    ns1:hasProperty bldg:cooling-coil-entering-air-temp_190ce26a,
+        bldg:cooling-coil-leaving-air-temp_2fabc53d,
+        bldg:cooling-coil-leaving-air-wetbulb-temp_a9ec655c,
+        bldg:cooling-coil-return-water-temp_bc1f8646,
+        bldg:cooling-coil-supply-water-temp_604409d5 .
+
+bldg:cooling-coil_e958bad8 a ns1:CoolingCoil ;
+    ns1:cnx bldg:cooling-coil-air-in_a0e6530c,
+        bldg:cooling-coil-air-out_8cedd03a,
+        bldg:cooling-coil-water-in_4bac9c46,
+        bldg:cooling-coil-water-out_eb6ed72b ;
+    ns1:contains bldg:cooling-coil-pump_36942641,
+        bldg:cooling-coil-valve_a28c6c3d ;
+    ns1:hasProperty bldg:cooling-coil-entering-air-temp_3399bc98,
+        bldg:cooling-coil-leaving-air-temp_8e818cd0,
+        bldg:cooling-coil-leaving-air-wetbulb-temp_fb3f6ec2,
+        bldg:cooling-coil-return-water-temp_03376c02,
+        bldg:cooling-coil-supply-water-temp_0f44e76d .
+
+bldg:dmp-command_28e219c3 a ns1:QuantifiableActuatableProperty ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:unit unit:PERCENT .
+
+bldg:dmp-command_3a2dbdc6 a ns1:QuantifiableActuatableProperty ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:unit unit:PERCENT .
+
+bldg:dmp-feedback_4ea9e80d a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:unit unit:PERCENT .
+
+bldg:dmp-feedback_bca1ad29 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:unit unit:PERCENT .
+
+bldg:dmp-in_d0ed5794 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c1_900aa136 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:dmp-in_d9cc64d2 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c1_3aa0fd5e ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:dmp-out_17b2b9db a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c2_19fc33db ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:dmp-out_eb4a4cf4 a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c2_78a2c072 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:dmp_35e25c7b a ns1:Damper ;
+    ns1:cnx bldg:dmp-in_d0ed5794,
+        bldg:dmp-out_eb4a4cf4 ;
+    ns1:hasProperty bldg:dmp-command_28e219c3,
+        bldg:dmp-feedback_4ea9e80d .
+
+bldg:dmp_5490fc0f a ns1:Damper ;
+    ns1:cnx bldg:dmp-in_d9cc64d2,
+        bldg:dmp-out_17b2b9db ;
+    ns1:hasProperty bldg:dmp-command_3a2dbdc6,
+        bldg:dmp-feedback_bca1ad29 .
+
+bldg:evaporative-cooler-evap-cool-fill-valve-command_36af358a a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:evaporative-cooler-evap-cool-fill-valve-feedback_44858e40 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:evaporative-cooler-evap-cool-fill-valve_59f663b2 a ns1:Valve ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:evaporative-cooler-evap-cool-fill-valve-command_36af358a,
+        bldg:evaporative-cooler-evap-cool-fill-valve-feedback_44858e40 .
+
+bldg:evaporative-cooler-evap-cool-pump-2stage-onoff-cmd_76049aa6 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:evaporative-cooler-evap-cool-pump-2stage-onoff-sts_f1aa7878 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:evaporative-cooler-evap-cool-pump-2stage_5e863ff7 a ns1:Pump ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:evaporative-cooler-evap-cool-pump-2stage-onoff-cmd_76049aa6,
+        bldg:evaporative-cooler-evap-cool-pump-2stage-onoff-sts_f1aa7878 .
+
+bldg:evaporative-cooler-evap-cool-sump-tank_97f7bcbc a ns1:Device ;
+    rdfs:label "Tank" .
+
+bldg:evaporative-cooler-in_a692a783 a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c7_af930656 ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:hasProperty bldg:evaporative-cooler-entering-air-temp_fdb11fd2 .
+
+bldg:evaporative-cooler-out_01827123 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c8_e4e5e6b7 ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:hasProperty bldg:evaporative-cooler-leaving-air-humidity_72112ef0,
+        bldg:evaporative-cooler-leaving-air-temp_e8ecf025 .
+
+bldg:evaporative-cooler_e5932584 a ns1:HeatExchanger ;
+    ns1:cnx bldg:evaporative-cooler-in_a692a783,
+        bldg:evaporative-cooler-out_01827123 ;
+    ns1:contains bldg:evaporative-cooler-evap-cool-fill-valve_59f663b2,
+        bldg:evaporative-cooler-evap-cool-pump-2stage_5e863ff7,
+        bldg:evaporative-cooler-evap-cool-sump-tank_97f7bcbc ;
+    ns1:hasProperty bldg:evaporative-cooler-entering-air-temp_fdb11fd2,
+        bldg:evaporative-cooler-leaving-air-humidity_72112ef0,
+        bldg:evaporative-cooler-leaving-air-temp_e8ecf025 ;
+    ns1:hasRole ns1:HeatExchanger-Evaporator .
+
+bldg:exh-flow-sensor_71218d72 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:out_6d5f536e ;
+    ns1:observesProperty bldg:exhaust-air-flow_797148b5 .
+
+bldg:exh-flow-sensor_ff12d42b a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:out_4aa51d28 ;
+    ns1:observesProperty bldg:exhaust-air-flow_445bd762 .
+
+bldg:fan-in_4b08db1b a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:fan-motor-status_71402697 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:fan-oa-flow-switch_06a414e9 a ns1:EnumeratedObservableProperty .
+
+bldg:fan-out_5b783777 a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:fan-start-cmd_b80bd318 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:fan_51049ce6 a ns1:Fan ;
+    ns1:cnx bldg:fan-in_4b08db1b,
+        bldg:fan-out_5b783777 ;
+    ns1:hasProperty bldg:fan-motor-status_71402697,
+        bldg:fan-oa-flow-switch_06a414e9,
+        bldg:fan-start-cmd_b80bd318 .
+
+bldg:final-filter-differential-pressure_0bb582c3 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:unit unit:INH2O .
+
+bldg:final-filter-in_8731a2bf a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c2_76790726 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:final-filter-out_91874c76 a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c3_5a9e30c6 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:final-filter_ee6a677a a ns1:Filter ;
+    ns1:cnx bldg:final-filter-in_8731a2bf,
+        bldg:final-filter-out_91874c76 ;
+    ns1:hasProperty bldg:final-filter-differential-pressure_0bb582c3 .
+
+bldg:heating-coil-air-in_277866d8 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c6_11beecc6 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:heating-coil-air-out_93a31284 a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c7_af930656 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:heating-coil-return-water-temp-sensor_c1501116 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:heating-coil-water-out_b598bd66 ;
+    ns1:observesProperty bldg:heating-coil-return-water-temp_da69d882 .
+
+bldg:heating-coil-supply-water-temp-sensor_c2bbe2eb a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:heating-coil-water-in_f2c96e51 ;
+    ns1:observesProperty bldg:heating-coil-supply-water-temp_a1b0b011 .
+
+bldg:heating-coil-valve-command_2a2b7ea5 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:heating-coil-valve-feedback_b5b31191 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:heating-coil-valve_f70bcc4b a ns1:Valve ;
+    ns1:hasMedium ns1:Water-HotWater ;
+    ns1:hasProperty bldg:heating-coil-valve-command_2a2b7ea5,
+        bldg:heating-coil-valve-feedback_b5b31191 .
+
+bldg:heating-coil_9741077e a ns1:HeatingCoil ;
+    ns1:cnx bldg:heating-coil-air-in_277866d8,
+        bldg:heating-coil-air-out_93a31284,
+        bldg:heating-coil-water-in_f2c96e51,
+        bldg:heating-coil-water-out_b598bd66 ;
+    ns1:contains bldg:heating-coil-return-water-temp-sensor_c1501116,
+        bldg:heating-coil-supply-water-temp-sensor_c2bbe2eb,
+        bldg:heating-coil-valve_f70bcc4b ;
+    ns1:hasProperty bldg:heating-coil-return-water-temp_da69d882,
+        bldg:heating-coil-supply-water-temp_a1b0b011 .
+
+bldg:humidity-sensor_0be3adf5 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:zone2space1 ;
+    ns1:observesProperty bldg:humidity_5c3ce5a3 .
+
+bldg:humidity-sensor_96c3ba6b a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:zone1space1 ;
+    ns1:observesProperty bldg:humidity_1bfdd6a7 .
+
+bldg:hw-hx-A-chw-diff-press-sensor_4d78d4e5 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:hw-hx-A-in_174d9820,
+        bldg:hw-hx-A-out_f682f34f ;
+    ns1:observesProperty bldg:hw-hx-A-chw-diff-press_b9b70fcd .
+
+bldg:hw-hx-B-chw-diff-press-sensor_90c26159 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:hw-hx-B-in_15b9cc95,
+        bldg:hw-hx-B-out_56a45690 ;
+    ns1:observesProperty bldg:hw-hx-B-chw-diff-press_c13700f3 .
+
+bldg:hw-hx-chw-flow-sensor_7caa6c34 a ns1:Sensor ;
+    ns1:observesProperty bldg:hw-hx-chw-flow_a7806bf9 .
+
+bldg:hw-hx-chw-supply-temperature_0b519564 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:hw-hx_ae59e8b6 a ns1:HeatExchanger ;
+    ns1:cnx bldg:hw-hx-A-in_174d9820,
+        bldg:hw-hx-A-out_f682f34f,
+        bldg:hw-hx-B-in_15b9cc95,
+        bldg:hw-hx-B-out_56a45690 ;
+    ns1:contains bldg:hw-hx-A-chw-diff-press-sensor_4d78d4e5,
+        bldg:hw-hx-B-chw-diff-press-sensor_90c26159,
+        bldg:hw-hx-chw-flow-sensor_7caa6c34 ;
+    ns1:hasProperty bldg:hw-hx-A-chw-diff-press_b9b70fcd,
+        bldg:hw-hx-B-chw-diff-press_c13700f3,
+        bldg:hw-hx-chw-flow_a7806bf9,
+        bldg:hw-hx-chw-return-temperature_dd85075c,
+        bldg:hw-hx-chw-supply-temperature_0b519564 .
+
+bldg:in_0f5f75b2 a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:mapsTo bldg:fcu-in_6c846016 .
+
+bldg:in_5055d9d7 a ns1:InletZoneConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:in_6f99e30b a ns1:InletZoneConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:lead-chw-booster-pump-onoff-cmd_d8f27fa2 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:lead-chw-booster-pump-onoff-sts_f6944e84 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:lead-chw-booster-pump_c603ce5b a ns1:Pump ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:lead-chw-booster-pump-onoff-cmd_d8f27fa2,
+        bldg:lead-chw-booster-pump-onoff-sts_f6944e84 .
+
+bldg:lead-chw-pump-onoff-cmd_7a618c17 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:lead-chw-pump-onoff-sts_ce6e5042 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:lead-chw-pump_a88a7715 a ns1:Pump ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:lead-chw-pump-onoff-cmd_7a618c17,
+        bldg:lead-chw-pump-onoff-sts_ce6e5042 .
+
+bldg:lead-hw-booster-pump-onoff-cmd_034d052e a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:lead-hw-booster-pump-onoff-sts_92a9d0a6 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:lead-hw-booster-pump_c1bd4e47 a ns1:Pump ;
+    ns1:hasMedium ns1:Water-HotWater ;
+    ns1:hasProperty bldg:lead-hw-booster-pump-onoff-cmd_034d052e,
+        bldg:lead-hw-booster-pump-onoff-sts_92a9d0a6 .
+
+bldg:lead-hw-pump-onoff-cmd_2cbdcd84 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:lead-hw-pump-onoff-sts_bf8b0bf8 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:lead-hw-pump_2e86feea a ns1:Pump ;
+    ns1:hasMedium ns1:Water-HotWater ;
+    ns1:hasProperty bldg:lead-hw-pump-onoff-cmd_2cbdcd84,
+        bldg:lead-hw-pump-onoff-sts_bf8b0bf8 .
+
+bldg:oad-command_9c3a75ec a ns1:QuantifiableActuatableProperty ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:unit unit:PERCENT .
+
+bldg:oad-feedback_ec4a00f8 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:DimensionlessRatio ;
+    qudt:unit unit:PERCENT .
+
+bldg:oad-in_6f305512 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c0_099553be ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:oad-out_2f51c1db a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c1_e2280493 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:oad_9558c053 a ns1:Damper ;
+    ns1:cnx bldg:oad-in_6f305512,
+        bldg:oad-out_2f51c1db ;
+    ns1:hasProperty bldg:oad-command_9c3a75ec,
+        bldg:oad-feedback_ec4a00f8 .
+
+bldg:out_5b591cb6 a ns1:OutletZoneConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:out_6b20291d a ns1:OutletZoneConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:out_fd3ddef4 a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:mapsTo bldg:fcu-out_6e05c213 .
+
+bldg:outside-air_a1d025b0 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c0_099553be ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:mapsTo bldg:outside-conn_c4903eea .
+
+bldg:pre-filter-differential-pressure_630d5c6a a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:unit unit:INH2O .
+
+bldg:pre-filter-in_05c552e9 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c1_e2280493 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:pre-filter-out_0652aaf7 a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c2_76790726 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:pre-filter_bd34207d a ns1:Filter ;
+    ns1:cnx bldg:pre-filter-in_05c552e9,
+        bldg:pre-filter-out_0652aaf7 ;
+    ns1:hasProperty bldg:pre-filter-differential-pressure_630d5c6a .
+
+bldg:rhc-air-in_a0963537 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c0_5517d9c1 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:rhc-air-in_a2c5cd82 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c0_32fb7525 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:rhc-air-out_46261ad9 a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c1_900aa136 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:rhc-air-out_da31fb9d a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c1_3aa0fd5e ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:rhc-return-water-temp-sensor_5a701db6 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:rhc-water-out_0423b70a ;
+    ns1:observesProperty bldg:rhc-return-water-temp_aaa8d472 .
+
+bldg:rhc-return-water-temp-sensor_f41249d7 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:rhc-water-out_9ca9b112 ;
+    ns1:observesProperty bldg:rhc-return-water-temp_6986e13c .
+
+bldg:rhc-supply-water-temp-sensor_5b8358e1 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:rhc-water-in_3688bd3a ;
+    ns1:observesProperty bldg:rhc-supply-water-temp_d866550f .
+
+bldg:rhc-supply-water-temp-sensor_820e1461 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:rhc-water-in_069f7f1c ;
+    ns1:observesProperty bldg:rhc-supply-water-temp_cd613cfe .
+
+bldg:rhc-valve-command_82d0b69e a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:rhc-valve-command_fb917d80 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:rhc-valve-feedback_0cd0a8e6 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:rhc-valve-feedback_1be244ca a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:rhc-valve_0b2ec14e a ns1:Valve ;
+    ns1:hasMedium ns1:Water-HotWater ;
+    ns1:hasProperty bldg:rhc-valve-command_fb917d80,
+        bldg:rhc-valve-feedback_0cd0a8e6 .
+
+bldg:rhc-valve_fdeba77e a ns1:Valve ;
+    ns1:hasMedium ns1:Water-HotWater ;
+    ns1:hasProperty bldg:rhc-valve-command_82d0b69e,
+        bldg:rhc-valve-feedback_1be244ca .
+
+bldg:rhc_a2128bb3 a ns1:HeatingCoil ;
+    ns1:cnx bldg:rhc-air-in_a0963537,
+        bldg:rhc-air-out_da31fb9d,
+        bldg:rhc-water-in_3688bd3a,
+        bldg:rhc-water-out_9ca9b112 ;
+    ns1:contains bldg:rhc-return-water-temp-sensor_f41249d7,
+        bldg:rhc-supply-water-temp-sensor_5b8358e1,
+        bldg:rhc-valve_0b2ec14e ;
+    ns1:hasProperty bldg:rhc-return-water-temp_6986e13c,
+        bldg:rhc-supply-water-temp_d866550f .
+
+bldg:rhc_b6bd5bdd a ns1:HeatingCoil ;
+    ns1:cnx bldg:rhc-air-in_a2c5cd82,
+        bldg:rhc-air-out_46261ad9,
+        bldg:rhc-water-in_069f7f1c,
+        bldg:rhc-water-out_0423b70a ;
+    ns1:contains bldg:rhc-return-water-temp-sensor_5a701db6,
+        bldg:rhc-supply-water-temp-sensor_820e1461,
+        bldg:rhc-valve_fdeba77e ;
+    ns1:hasProperty bldg:rhc-return-water-temp_aaa8d472,
+        bldg:rhc-supply-water-temp_cd613cfe .
+
+bldg:sa_pressure_sensor_350b98f1 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:MAU_Supply ;
+    ns1:observesProperty bldg:sa_sp_264d3ed3 .
+
+bldg:standby-chw-booster-pump-onoff-cmd_87bf0dab a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:standby-chw-booster-pump-onoff-sts_43f572d1 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:standby-chw-booster-pump_ba9ee89d a ns1:Pump ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:standby-chw-booster-pump-onoff-cmd_87bf0dab,
+        bldg:standby-chw-booster-pump-onoff-sts_43f572d1 .
+
+bldg:standby-chw-pump-onoff-cmd_7aa6cbfe a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:standby-chw-pump-onoff-sts_892665ae a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:standby-chw-pump_c5183591 a ns1:Pump ;
+    ns1:hasMedium ns1:Water-ChilledWater ;
+    ns1:hasProperty bldg:standby-chw-pump-onoff-cmd_7aa6cbfe,
+        bldg:standby-chw-pump-onoff-sts_892665ae .
+
+bldg:standby-hw-booster-pump-onoff-cmd_46147c42 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:standby-hw-booster-pump-onoff-sts_0ccab981 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:standby-hw-booster-pump_5819c230 a ns1:Pump ;
+    ns1:hasMedium ns1:Water-HotWater ;
+    ns1:hasProperty bldg:standby-hw-booster-pump-onoff-cmd_46147c42,
+        bldg:standby-hw-booster-pump-onoff-sts_0ccab981 .
+
+bldg:standby-hw-pump-onoff-cmd_8489b714 a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:standby-hw-pump-onoff-sts_b88dee16 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:standby-hw-pump_753a052f a ns1:Pump ;
+    ns1:hasMedium ns1:Water-HotWater ;
+    ns1:hasProperty bldg:standby-hw-pump-onoff-cmd_8489b714,
+        bldg:standby-hw-pump-onoff-sts_b88dee16 .
+
+bldg:sup-air-flow-sensor_653d824a a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:air-out_bc5f3b7c ;
+    ns1:observesProperty bldg:sup-air-flow_36993017 .
+
+bldg:sup-air-flow-sensor_9f3edf9a a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:air-out_575a9e8a ;
+    ns1:observesProperty bldg:sup-air-flow_99352aef .
+
+bldg:sup-air-pressure-sensor_a48a8f6d a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:air-out_bc5f3b7c ;
+    ns1:observesProperty bldg:sup-air-pressure_789ff1cf .
+
+bldg:sup-air-pressure-sensor_f6c3eb53 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:air-out_575a9e8a ;
+    ns1:observesProperty bldg:sup-air-pressure_6f936eee .
+
+bldg:sup-air-temp-sensor_715564bb a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:air-out_575a9e8a ;
+    ns1:observesProperty bldg:sup-air-temp_9642ac8e .
+
+bldg:sup-air-temp-sensor_c4f9c25b a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:air-out_bc5f3b7c ;
+    ns1:observesProperty bldg:sup-air-temp_a8dc5532 .
+
+bldg:sup-flow-sensor_010a1539 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:in_3add4d55 ;
+    ns1:observesProperty bldg:supply-air-flow_c42ee147 .
+
+bldg:sup-flow-sensor_bdf8ff6c a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:in_fc9ffe2b ;
+    ns1:observesProperty bldg:supply-air-flow_f80613f9 .
+
+bldg:supply-fan-in_f63a80f3 a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c4_662d12f6 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:supply-fan-motor-status_693bb944 a ns1:EnumeratedObservableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:supply-fan-oa-flow-switch_09bfb3d2 a ns1:EnumeratedObservableProperty .
+
+bldg:supply-fan-out_dbf8950d a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c5_638302f4 ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:supply-fan-start-cmd_4c99560c a ns1:EnumeratedActuatableProperty ;
+    ns1:hasEnumerationKind ns1:EnumerationKind-RunStatus .
+
+bldg:supply-fan_5336901d a ns1:Fan ;
+    ns1:cnx bldg:supply-fan-in_f63a80f3,
+        bldg:supply-fan-out_dbf8950d ;
+    ns1:hasProperty bldg:supply-fan-motor-status_693bb944,
+        bldg:supply-fan-oa-flow-switch_09bfb3d2,
+        bldg:supply-fan-start-cmd_4c99560c .
+
+bldg:temp-sensor_86983ce6 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:zone2space1 ;
+    ns1:observesProperty bldg:temp_b331b3eb .
+
+bldg:temp-sensor_8b8575f1 a ns1:Sensor ;
+    ns1:hasMeasurementLocation bldg:zone1space1 ;
+    ns1:observesProperty bldg:temp_d1bd0feb .
+
+bldg:zone-in_47ebbc97 a ns1:InletZoneConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:zone-in_5cdc02c5 a ns1:InletZoneConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:zone-out_41593250 a ns1:OutletZoneConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:zone-out_92cc423c a ns1:OutletZoneConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:VAV-1-in a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c0_5517d9c1 ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:mapsTo bldg:vav-in_c3293d81 .
+
+bldg:VAV-2-in a ns1:InletConnectionPoint ;
+    ns1:cnx bldg:c0_32fb7525 ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:mapsTo bldg:vav-in_0d159152 .
+
+bldg:c0_099553be a ns1:Duct .
+
+bldg:c0_32fb7525 a ns1:Duct .
+
+bldg:c0_5517d9c1 a ns1:Duct .
+
+bldg:c1_3aa0fd5e a ns1:Duct .
+
+bldg:c1_900aa136 a ns1:Duct .
+
+bldg:c1_e2280493 a ns1:Duct .
+
+bldg:c2_19fc33db a ns1:Duct .
+
+bldg:c2_76790726 a ns1:Duct .
+
+bldg:c2_78a2c072 a ns1:Duct .
+
+bldg:c3_5a9e30c6 a ns1:Duct .
+
+bldg:c4_662d12f6 a ns1:Duct .
+
+bldg:c5_638302f4 a ns1:Duct .
+
+bldg:c6_11beecc6 a ns1:Duct .
+
+bldg:c7_af930656 a ns1:Duct .
+
+bldg:c8_e4e5e6b7 a ns1:Duct .
+
+bldg:chw-hx-A-chw-diff-press_c519b39e a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:unit unit:INH2O .
+
+bldg:chw-hx-A-in_057ee3ce a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:chw-hx-A-out_8d220814 a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:chw-hx-B-chw-diff-press_bf398dcb a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:unit unit:INH2O .
+
+bldg:chw-hx-B-in_9e3dc1a6 a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:chw-hx-B-out_efacccca a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:chw-hx-chw-flow_0922a88e a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:unit unit:FT3-PER-MIN .
+
+bldg:evaporative-cooler-entering-air-temp_fdb11fd2 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:evaporative-cooler-leaving-air-humidity_72112ef0 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:RelativeHumiditiy ;
+    qudt:unit unit:PERCENT_RH .
+
+bldg:evaporative-cooler-leaving-air-temp_e8ecf025 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:exhaust-air-flow_445bd762 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:unit unit:FT3-PER-MIN .
+
+bldg:exhaust-air-flow_797148b5 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:unit unit:FT3-PER-MIN .
+
+bldg:fcu-in_6c846016 a ns1:InletSystemConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:fcu-out_6e05c213 a ns1:OutletSystemConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:heating-coil-return-water-temp_da69d882 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:heating-coil-supply-water-temp_a1b0b011 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:heating-coil-water-in_f2c96e51 a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:heating-coil-water-out_b598bd66 a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:humidity_1bfdd6a7 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:RelativeHumiditiy ;
+    qudt:unit unit:PERCENT_RH .
+
+bldg:humidity_5c3ce5a3 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:RelativeHumiditiy ;
+    qudt:unit unit:PERCENT_RH .
+
+bldg:hw-hx-A-chw-diff-press_b9b70fcd a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:unit unit:INH2O .
+
+bldg:hw-hx-A-in_174d9820 a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:hw-hx-A-out_f682f34f a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:hw-hx-B-chw-diff-press_c13700f3 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:unit unit:INH2O .
+
+bldg:hw-hx-B-in_15b9cc95 a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:hw-hx-B-out_56a45690 a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:hw-hx-chw-flow_a7806bf9 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:unit unit:FT3-PER-MIN .
+
+bldg:in_3add4d55 a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:in_fc9ffe2b a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:out_4aa51d28 a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:out_6d5f536e a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:outside-conn_c4903eea a ns1:InletSystemConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:rhc-return-water-temp_6986e13c a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:rhc-return-water-temp_aaa8d472 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:rhc-supply-water-temp_cd613cfe a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:rhc-supply-water-temp_d866550f a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:rhc-water-in_069f7f1c a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:rhc-water-in_3688bd3a a ns1:InletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:rhc-water-out_0423b70a a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:rhc-water-out_9ca9b112 a ns1:OutletConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Water .
+
+bldg:sa_sp_264d3ed3 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:unit unit:INH2O .
+
+bldg:sup-air-flow_36993017 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:unit unit:FT3-PER-MIN .
+
+bldg:sup-air-flow_99352aef a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:unit unit:FT3-PER-MIN .
+
+bldg:sup-air-pressure_6f936eee a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:unit unit:INH2O .
+
+bldg:sup-air-pressure_789ff1cf a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Pressure ;
+    qudt:unit unit:INH2O .
+
+bldg:sup-air-temp_9642ac8e a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:sup-air-temp_a8dc5532 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:supply-air-flow_c42ee147 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:unit unit:FT3-PER-MIN .
+
+bldg:supply-air-flow_f80613f9 a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:VolumeFlowRate ;
+    qudt:unit unit:FT3-PER-MIN .
+
+bldg:supply-conn_266ff5bf a ns1:OutletSystemConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:temp_b331b3eb a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:temp_d1bd0feb a ns1:QuantifiableObservableProperty ;
+    qudt:hasQuantityKind qudtqk:Temperature ;
+    qudt:unit unit:DEG_C .
+
+bldg:vav-in_0d159152 a ns1:InletSystemConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:vav-in_c3293d81 a ns1:InletSystemConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:vav-out_78b406fd a ns1:OutletSystemConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:vav-out_7beee055 a ns1:OutletSystemConnectionPoint ;
+    ns1:hasMedium ns1:Medium-Air .
+
+bldg:zone1space1 a ns1:DomainSpace ;
+    ns1:cnx bldg:in_3add4d55,
+        bldg:out_6d5f536e ;
+    ns1:contains bldg:exh-flow-sensor_71218d72,
+        bldg:humidity-sensor_96c3ba6b,
+        bldg:sup-flow-sensor_010a1539,
+        bldg:temp-sensor_8b8575f1 ;
+    ns1:hasDomain ns1:Domain-HVAC ;
+    ns1:hasProperty bldg:exhaust-air-flow_797148b5,
+        bldg:humidity_1bfdd6a7,
+        bldg:supply-air-flow_c42ee147,
+        bldg:temp_d1bd0feb .
+
+bldg:zone2space1 a ns1:DomainSpace ;
+    ns1:cnx bldg:in_fc9ffe2b,
+        bldg:out_4aa51d28 ;
+    ns1:contains bldg:exh-flow-sensor_ff12d42b,
+        bldg:humidity-sensor_0be3adf5,
+        bldg:sup-flow-sensor_bdf8ff6c,
+        bldg:temp-sensor_86983ce6 ;
+    ns1:hasDomain ns1:Domain-HVAC ;
+    ns1:hasProperty bldg:exhaust-air-flow_445bd762,
+        bldg:humidity_5c3ce5a3,
+        bldg:supply-air-flow_f80613f9,
+        bldg:temp_b331b3eb .
+
+bldg:MAU_Supply a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c8_e4e5e6b7 ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:mapsTo bldg:supply-conn_266ff5bf .
+
+bldg:air-out_575a9e8a a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c2_78a2c072 ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:mapsTo bldg:vav-out_7beee055 .
+
+bldg:air-out_bc5f3b7c a ns1:OutletConnectionPoint ;
+    ns1:cnx bldg:c2_19fc33db ;
+    ns1:hasMedium ns1:Medium-Air ;
+    ns1:mapsTo bldg:vav-out_78b406fd .
+
