@@ -27,10 +27,9 @@ class BuildingMOTIF(metaclass=Singleton):
     def __init__(self, db_uri: str, log_level=logging.WARNING) -> None:
         """Class constructor.
 
-        :param db_uri: Database URI.
+        :param db_uri: database URI
         :type db_uri: str
-
-        :param log_level: The logging level of detail.
+        :param log_level: logging level of detail
         :type log_level: int
         :default log_level: INFO
         """
@@ -68,7 +67,9 @@ class BuildingMOTIF(metaclass=Singleton):
         BuildingMOTIFBase.metadata.create_all(self.engine)
 
     def _is_in_memory_sqlite(self) -> bool:
-        """Returns true if the BuildingMOTIF instance uses an in-memory SQLite database."""
+        """Returns true if the BuildingMOTIF instance uses an in-memory SQLite
+        database.
+        """
         if self.engine.dialect.name != "sqlite":
             return False
         # get the 'filename' of the database; if this is empty, the db is in-memory
@@ -82,7 +83,12 @@ class BuildingMOTIF(metaclass=Singleton):
         return not len(filename[0])
 
     def setup_logging(self, log_level):
-        """Create log file with DEBUG level and stdout handler with specified logging level."""
+        """Create log file with DEBUG level and stdout handler with specified
+        logging level.
+
+        :param log_level: logging level of detail
+        :type log_level: int
+        """
         root_logger = logging.getLogger()
         root_logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter(
@@ -119,6 +125,11 @@ def get_building_motif() -> "BuildingMOTIF":
 
     Requires that BuildingMOTIF has been instantiated before,
     otherwise raises an exception.
+
+    :raises SingletonNotInstantiatedException: if buildingmotif hasn't been
+        instantiated
+    :return: singleton instance of buildingmotif
+    :rtype: BuildingMOTIF
     """
     if hasattr(BuildingMOTIF, "instance"):
         return BuildingMOTIF.instance  # type: ignore
@@ -126,7 +137,8 @@ def get_building_motif() -> "BuildingMOTIF":
 
 
 class BuildingMotifEngine:
-    """BuildingMotifEngine is a class that wraps a SQLAlchemy Engine and Session.
+    """BuildingMotifEngine is a class that wraps a SQLAlchemy Engine and
+    Session.
 
     This enables the use of sessioned transactions in rdflib-sqlalchemy.
     If we are experiencing weird graph database issues this may be the cause.
