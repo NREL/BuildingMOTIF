@@ -33,8 +33,10 @@ A = RDF.type
 
 
 def bind_prefixes(graph):
-    """
-    Associate common prefixes with the graph.
+    """Associate common prefixes with the graph.
+
+    :param graph: graph
+    :type graph: rdflib.Graph
     """
     graph.bind("xsd", XSD)
     graph.bind("rdf", RDF)
