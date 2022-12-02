@@ -40,7 +40,7 @@ class _template_dependency:
     def from_dict(
         cls, d: Dict[str, Any], dependent_library_name: str
     ) -> "_template_dependency":
-        """Creates a py:class:`_template_dependency` from a Dict.
+        """Creates a py:class:`_template_dependency` from a dictionary.
 
         :param d: dictionary
         :type d: Dict[str, Any]
@@ -56,7 +56,7 @@ class _template_dependency:
         return cls(template_name, bindings, library, template_id)
 
     def to_template(self, id_lookup: Dict[str, int]) -> Template:
-        """Resolve this dependency to a Template.
+        """Resolve this dependency to a template.
 
         :param id_lookup: a local cache of {name: id} for uncommitted templates
         :type id_lookup: Dict[str, int]
@@ -117,7 +117,7 @@ class Library:
             defaults to None
         :type ontology_graph: Optional[str|rdflib.Graph], optional
         :param directory: a path to a directory containing a library,
-            or an rdflib Graph, defaults to None
+            or an rdflib graph, defaults to None
         :type directory: Optional[str], optional
         :param name: the name of the library inside the database,
             defaults to None
@@ -366,7 +366,7 @@ class Library:
         return [Template.load(t.id) for t in templates]
 
     def get_shape_collection(self) -> ShapeCollection:
-        """Get shape collection from library.
+        """Get ShapeCollection from library.
 
         :return: library's shape collection
         :rtype: ShapeCollection
@@ -376,12 +376,12 @@ class Library:
         return ShapeCollection.load(db_library.shape_collection.id)
 
     def get_template_by_name(self, name: str) -> Template:
-        """get template by name from library.
+        """Get template by name from library.
 
         :param name: template name
         :type name: str
         :raises ValueError: if template not in library
-        :return: Template
+        :return: template
         :rtype: Template
         """
         dbt = self._bm.table_connection.get_db_template_by_name(name)

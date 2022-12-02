@@ -53,8 +53,11 @@ class Model:
     def load(cls, id: Optional[int] = None, name: Optional[str] = None) -> "Model":
         """Get model from database by id or name.
 
-        :param id: model id
-        :type id: int
+        :param id: model id, defaults to None
+        :type id: Optional[int], optional
+        :param name: model name, defaults to None
+        :type name: Optional[str], optional
+        :raises Exception: if neither id nor name provided
         :return: model
         :rtype: Model
         """

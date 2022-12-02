@@ -56,7 +56,7 @@ class Template:
         )
 
     def in_memory_copy(self) -> "Template":
-        """Copy the template.
+        """Copy this template.
 
         :return: copy of this template
         :rtype: Template
@@ -177,7 +177,7 @@ class Template:
     # TODO: method to get the 'types' of the parameters
 
     def dependency_for_parameter(self, param: str) -> Optional["Template"]:
-        """Get dependency that uses the given parameter if one exists.
+        """Returns the dependency that uses the given parameter if one exists.
 
         :param param: parameter to search for
         :type param: str
@@ -190,7 +190,7 @@ class Template:
         return None
 
     def to_inline(self, preserve_args: Optional[List[str]] = None) -> "Template":
-        """Makes an inline-able copy of this template.
+        """Return an inline-able copy of this template.
 
         Suffixes all parameters with a unique identifier that will avoid
         parameter name collisions when templates are combined with one another.

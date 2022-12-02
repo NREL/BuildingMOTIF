@@ -123,8 +123,8 @@ class BuildingMOTIF(metaclass=Singleton):
 def get_building_motif() -> "BuildingMOTIF":
     """Returns singleton instance of BuildingMOTIF.
 
-    Requires that BuildingMOTIF has been instantiated before,
-    otherwise raises an exception.
+    Requires that BuildingMOTIF has been instantiated before, otherwise raises
+    an exception.
 
     :raises SingletonNotInstantiatedException: if buildingmotif hasn't been
         instantiated

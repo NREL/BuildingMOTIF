@@ -17,7 +17,9 @@ class DBModel(Base):
 
 
 class DBShapeCollection(Base):
-    """A ShapeCollection is a collection of Shapes, which are used to validate parts of a model."""
+    """A ShapeCollection is a collection of shapes, which are used to validate
+    parts of a model.
+    """
 
     __tablename__ = "shape_collection"
     id: Mapped[int] = Column(Integer, primary_key=True)

@@ -22,10 +22,10 @@ def serialize(
 ) -> Union[TemplateDict, List[TemplateDict]]:
     """Serialize one or more templates into a TypedDict.
 
-    :param param: One Template or a List of Templates.
+    :param param: one template or a list of templates.
     :type param: Union[DBTemplate, List[DBTemplate]]
     :raises ValueError: if invalid input
-    :return: One JSON per serialized Template.
+    :return: one JSON per serialized template.
     :rtype: Union[TemplateDict, List[TemplateDict]]
     """
     if isinstance(param, DBTemplate):
