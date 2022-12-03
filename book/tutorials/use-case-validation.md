@@ -37,7 +37,7 @@ BLDG = Namespace('urn:bldg/')
 model = Model.create(BLDG, description="This is a test model for a simpel building")
 
 # load tutorial 1 model
-model.graph.parse(tutorial1_model.ttl'), format="ttl")
+model.graph.parse("tutorial1_model.ttl", format="ttl")
 
 # load in some libraries
 brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
@@ -46,6 +46,34 @@ constraints = Library.load(ontology_graph="../../buildingmotif/resources/constra
 ```
 
 The `constraints.ttl` library we load in above is a special library with some custom constraints defined that are helpful for writing manifests.
+
+## Validating a Model with Shapes
+
+Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes`. 
+
+```{note}
+A **shape** is a set of constraints, requirements and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
+- the minimum points on an equipment required to execute a certain sequence of operations,
+- the internal details of an equipment: what parts it contains, etc
+```
+
+BuildingMOTIF organizes `Shapes` into `Shape Collections`. The shape collection associated with a library (if there is one) can be retrieved with the `get_shape_collection` property.
+Below, we use Brick's shape collection to ensure that our model is using Brick correctly:
+
+```{code-cell}
+# pass a list of shape collections to .validate()
+validation_result = model.validate([brick.get_shape_collection()]) 
+print(f"Model is valid? {validation_result.valid}")
+```
+
+In other tutorials, we will work with models that do **not** validate for various reasons, and explore how BuildingMOTIF helps us repair these models.
+
+If the model was **not** valid, then we could ask the `validation_result` object to tell us why:
+
+```python
+for diff in validation_result.diffset:
+    print(" -" + diff.reason())
+```
 
 ## Finding Use Case Shapes
 
@@ -87,6 +115,7 @@ We will now add a constraint stating that our model should contain exactly 5 Bri
 This basic structure can be changed to require different numbers of different Brick classes. Just don't forget to change the name of the shape (`:ahu-count`, above) when you copy-paste!
 
 As an exercise, try writing a shape that requires the model to have exactly five Brick Supply_Fan instances and exactly five Brick CAV instances.
+
 ```{admonition} Click to reveal an answer...
 :class: dropdown
 
@@ -195,7 +224,7 @@ cav_template = brick.get_template_by_name(BRICK.CAV)
 Then check what parameters they need:
 
 ```{code-cell}
-for param in vav_template.parameters:
+for param in cav_template.parameters:
     print(f"CAV needs '{param}'")
 ```
 
