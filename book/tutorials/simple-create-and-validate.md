@@ -11,36 +11,28 @@ kernelspec:
   name: python3
 ---
 
-# Model Creation and Validation
+# Model Creation
 
-The purpose of this tutorial is to cover a few of the basic features of
-BuildingMOTIF. To this end, the tutorial will walk the reader through building
-a Brick model similar to the DOE Small Office Commercial Reference Building model.
+The purpose of this tutorial is to cover a few of the basic features of BuildingMOTIF and it assumes that `BuildingMOTIF` has already been installed in the local environment and that the reader has some familiarity with the Turtle syntax[^1] for Resource Description Framework (RDF) graphs[^2].
 
-Specifically, the tutorial has the following learning objectives:
-- readers will be able to create a BuildingMOTIF "instance"
-- readers will gain basic familiarity with `Libraries`, which contain `Templates` (for generating RDF models) and `Shapes` (for validating RDF models)
-- readers will be able to load `Libraries` into a BuildingMOTIF instance
-- readers will be able to create a Brick model by *evaluating* `Templates`
-- readers will be able to use *validation* to ensure that the resulting model is a valid Brick model
+To this end, the tutorial will walk the reader through building a Brick model similar to the Small Office Commercial Prototype Building model[^3]. Specifically, the tutorial has the following learning objectives:
+1. creating a BuildingMOTIF model "instance" and `Model`
+2. gaining basic familiarity with `Libraries`, which contain `Templates` (for generating RDF models) and `Shapes` (for validating RDF models), by importing `Libraries` into a BuildingMOTIF instance
+3. adding to a Brick model by *evaluating* `Templates`
 
-The tutorial assumes that `BuildingMOTIF` has already been installed in the local environment.
-
-## Creating a BuildingMOTIF Instance
+## Creating a BuildingMOTIF Model
 
 BuildingMOTIF needs a database to store models, libraries, templates, ontologies and other pieces of data. This database can be *in-memory* (which will be deleted when the process ends) or *persistent*. For simplicity, we will start with an in-memory database where `bm` represents our BuildingMOTIF instance.
 
 ```{code-cell}
 from buildingmotif import BuildingMOTIF
-bm = BuildingMOTIF("sqlite://") # in-memory
+bm = BuildingMOTIF("sqlite://") # in-memory instance
 ```
-
-## Creating Your First Model
 
 Now that we have a BuildingMOTIF instance, we can create our first `Model`.
 
 ```{note}
-A **Model** is an RDF graph representing a building
+A `Model` is an RDF graph representing part or all of a building.
 ```
 
 Creating a model requires importing the `Model` class, creating an RDF namespace to hold all of the entities in our model, and telling BuildingMOTIF to create a new model with that namespace. The namespace is a URL used to uniquely identify a building.
@@ -62,14 +54,14 @@ We can print out the content of the model by accessing the `.graph` property of 
 print(model.graph.serialize())
 ```
 
-The `model.graph` object is just the RDFlib Graph that stores the model. You can interact with the graph --- e.g. by adding triples with `model.graph.add((subject, predicate, object))` --- but as we will soon see, BuildingMOTIF can automate some of that!
+The `model.graph` object is just the RDFLib Graph[^4] that stores the model. You can interact with the graph --- e.g. by adding triples with `model.graph.add((subject, predicate, object))` --- but as we will soon see, BuildingMOTIF can automate some of that!
 
 ## Importing Libraries
 
 Before we can add semantic building metadata to our model, we need to import some `Libraries`.
 
 ```{note}
-A **Library** is a collection of Templates and Shapes. **Templates** are functions that generate parts of an RDF model. **Shapes** are functions that validate part of an RDF model.
+A `Library` is a collection of Templates and Shapes. `Templates` are functions that generate parts of an RDF model. `Shapes` are functions that validate part of an RDF model.
 ```
 
 We import libraries by calling `Library.load` in BuildingMOTIF. Libraries can be loaded from directories containing `.yml` and `.ttl` files (for Templates and Shapes, respectively), or from ontology files directly. The code below contains an example of importing the `brick` library, which is simply the Brick ontology. This allows BuildingMOTIF to take advantage of the classes and relationships defined by Brick when validating our model. Loading in these definitions also allows other libraries (such as ASHRAE Guideline 36) to refer to Brick definitions.
@@ -87,7 +79,7 @@ for template in brick.get_templates()[:10]:
     print(f"  - {template.name}")
 ```
 
-## Creating a Model with Templates
+## Adding to a Model with Templates
 
 
 ### Exploring Your First Template
@@ -243,3 +235,8 @@ zone_entity_graph = zone_template.evaluate(bindings)
 model.add_graph(zone_entity_graph)
 print(model.graph.serialize())
 ```
+
+[^1]: https://www.w3.org/TR/turtle/
+[^2]: https://www.w3.org/RDF/
+[^3]: https://www.energycodes.gov/prototype-building-models#Commercial
+[^4]: https://rdflib.readthedocs.io/
