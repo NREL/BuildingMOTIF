@@ -50,7 +50,7 @@ The `constraints.ttl` library we load in above is a special library with some cu
 
 ## Validating a Model with Shapes
 
-Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes` using the Shapes Constraint Language (SHACL)[^2].
+Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes` using the Shapes Constraint Language (SHACL)[^1].
 
 ```{note}
 A `Shape` is a set of constraints, requirements and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
@@ -78,7 +78,7 @@ for diff in validation_result.diffset:
 
 ## Finding Use Case Shapes
 
-We can use a couple methods to search our libraries for shapes we might want to use. Let's start by asking the `g36` library for any system specifications it knows about, which represents *ASHRAE Guideline 36 High-Performance Sequences of Operation for HVAC Systems*[^1]. A system specification will specify all of the metadata required for an entity to run control sequences associated with that system type. 
+We can use a couple methods to search our libraries for shapes we might want to use. Let's start by asking the `g36` library for any system specifications it knows about, which represents *ASHRAE Guideline 36 High-Performance Sequences of Operation for HVAC Systems*[^2]. A system specification will specify all of the metadata required for an entity to run control sequences associated with that system type. 
 
 ```{code-cell}
 from buildingmotif.namespaces import BMOTIF
@@ -269,5 +269,5 @@ for diff in validation_result.diffset:
     print(f" - {diff.reason()}")
 ```
 
-[^1]: https://www.ashrae.org/technical-resources/ashrae-standards-and-guidelines
-[^2]: https://www.w3.org/TR/shacl/
+[^1]: https://www.w3.org/TR/shacl/
+[^2]: https://www.ashrae.org/technical-resources/ashrae-standards-and-guidelines
