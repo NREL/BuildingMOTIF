@@ -36,6 +36,13 @@ The documentation uses [Diataxis](https://diataxis.fr/) as a framework for its s
 
 🏗️ under construction
 
+# Bibliography
+
+```{bibliography}
+:all:
+:list: enumerated
+```
+
 # Table of Contents
 
 ```{tableofcontents}
