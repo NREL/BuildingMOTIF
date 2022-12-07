@@ -149,6 +149,7 @@ class Model:
         :rtype: "ValidationContext"
         """
         shapeg = rdflib.Graph()
+        # aggregate shape graphs
         for sc in shape_collections:
             # inline sh:node for interpretability
             shapeg += sc.graph

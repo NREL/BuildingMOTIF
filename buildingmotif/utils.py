@@ -41,6 +41,8 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     :rtype: Graph
     """
     c = Graph()
+    for pfx, ns in g.namespaces():
+        c.bind(pfx, ns)
     new_prefix = secrets.token_hex(4)
     for t in g.triples((None, None, None)):
         assert isinstance(t, tuple)
@@ -54,6 +56,32 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
                 o = BNode(value=new_prefix + o.toPython())
         c.add((s, p, o))
     return c
+
+
+def inline_sh_nodes(g: Graph):
+    """
+    Recursively inlines all sh:node properties and objects on the graph.
+
+    :param g: graph to be edited
+    :type g: Graph
+    """
+    q = """
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+        ?parent ?p ?o .
+    }
+    WHERE {
+        ?parent sh:node ?child .
+        ?child ?p ?o
+    }"""
+    original_size = 0
+    while original_size != len(g):  # type: ignore
+        original_size = len(g)  # type: ignore
+        for (s, p, o) in g.query(q):  # type: ignore
+            if p == RDF.type and o == SH.NodeShape:
+                continue
+            g.add((s, p, o))
+        break
 
 
 def combine_graphs(*graphs: Graph) -> Graph:
