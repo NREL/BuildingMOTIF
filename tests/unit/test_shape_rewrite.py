@@ -115,6 +115,8 @@ def test_inline_sh_node(bm: BuildingMOTIF):
     assert (
         "Value class is not in classes (brick:Class2, brick:Class3)"
         in ctx.report_string
+        or "Value class is not in classes (brick:Class3, brick:Class2)"
+        in ctx.report_string
     )
     assert (
         "Less than 1 values on <urn:model#x>->brick:relationship" in ctx.report_string
