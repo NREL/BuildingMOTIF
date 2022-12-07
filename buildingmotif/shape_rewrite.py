@@ -43,10 +43,6 @@ def _inline_sh_and(sg: Graph):
             sg.add((parent, p, o))
 
 
-def _iterate_branches(sg: Graph):
-    pass
-
-
 def rewrite_shape_graph(g: Graph) -> Graph:
     """
     Rewrites the input graph to make the resulting validation report more useful.
