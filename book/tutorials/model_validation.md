@@ -11,17 +11,18 @@ kernelspec:
   name: python3
 ---
 
-# Use Case Validation
+# Model Validation
 
-The purpose of this tutorial is to walk a user through creating a `Manifest`, which contains the metadata requirements for a given model. Specifically, the user will create a manifest for the HVAC system created in the previous tutorial, which has five AHUs and fans. The tutorial will also demonstrate how BuildingMOTIF can validate a model against the manifest and then give useful feedback for fixing up the model.
+The purpose of this tutorial is to walk a user through model *validation* and demonstrate how BuildingMOTIF can give useful feedback for fixing a model that has failed validation. It assumes that `BuildingMOTIF` has already been installed in the local environment.
 
-The tutorial assumes that `BuildingMOTIF` has already been installed in the local environment.
-
-The tutorial also assumes that the reader has some familiarity with the Turtle serialization format for RDF graphs.
+The following are the learning objectives for this tutorial:
+1. validating the model against an ***ontology*** to ensure that the model is a valid Brick model
+2. validating the model against a ***manifest***, which contains the metadata requirements for a specific model
+3. validating the model against a ***use case*** for a specific application
 
 ## Preliminaries and Setup
 
-We create an in-memory BuildingMOTIF instance and load in some libraries to create the manifest with:
+We create an in-memory BuildingMOTIF instance, create a model using the model from the previous tutoria, and load in some libraries to create the manifest with:
 
 ```{code-cell}
 from rdflib import Namespace
@@ -47,9 +48,37 @@ constraints = Library.load(ontology_graph="../../buildingmotif/resources/constra
 
 The `constraints.ttl` library we load in above is a special library with some custom constraints defined that are helpful for writing manifests.
 
+## Validating a Model with Shapes
+
+Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes` using the Shapes Constraint Language (SHACL)[^1].
+
+```{note}
+A `Shape` is a set of constraints, requirements and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
+- the minimum points on an equipment required to execute a certain sequence of operations,
+- the internal details of an equipment: what parts it contains, etc
+```
+
+BuildingMOTIF organizes `Shapes` into `Shape Collections`. The shape collection associated with a library (if there is one) can be retrieved with the `get_shape_collection` property.
+Below, we use Brick's shape collection to ensure that our model is using Brick correctly:
+
+```{code-cell}
+# pass a list of shape collections to .validate()
+validation_result = model.validate([brick.get_shape_collection()]) 
+print(f"Model is valid? {validation_result.valid}")
+```
+
+In other tutorials, we will work with models that do **not** validate for various reasons, and explore how BuildingMOTIF helps us repair these models.
+
+If the model was **not** valid, then we could ask the `validation_result` object to tell us why:
+
+```python
+for diff in validation_result.diffset:
+    print(" -" + diff.reason())
+```
+
 ## Finding Use Case Shapes
 
-We can use a couple methods to search our libraries for shapes we might want to use. Let's start by asking the `g36` library for any system specifications it knows about; a system specification will specify all of the metadata required for an entity to run control sequences associated with that system type.
+We can use a couple methods to search our libraries for shapes we might want to use. Let's start by asking the `g36` library for any system specifications it knows about, which represents *ASHRAE Guideline 36 High-Performance Sequences of Operation for HVAC Systems*[^2]. A system specification will specify all of the metadata required for an entity to run control sequences associated with that system type. 
 
 ```{code-cell}
 from buildingmotif.namespaces import BMOTIF
@@ -87,6 +116,7 @@ We will now add a constraint stating that our model should contain exactly 5 Bri
 This basic structure can be changed to require different numbers of different Brick classes. Just don't forget to change the name of the shape (`:ahu-count`, above) when you copy-paste!
 
 As an exercise, try writing a shape that requires the model to have exactly five Brick Supply_Fan instances and exactly five Brick CAV instances.
+
 ```{admonition} Click to reveal an answer...
 :class: dropdown
 
@@ -195,7 +225,7 @@ cav_template = brick.get_template_by_name(BRICK.CAV)
 Then check what parameters they need:
 
 ```{code-cell}
-for param in vav_template.parameters:
+for param in cav_template.parameters:
     print(f"CAV needs '{param}'")
 ```
 
@@ -231,10 +261,13 @@ print(f"Model is valid? {validation_result.valid}")
 print(validation_result.report_string)
 ```
 
-Both VAV's fail validation because they don't match the `vav-cooling-only` requirements. Take a look at the first bit of output which is the official SHACL validation report text format.
+Both AHUs fail validation because they don't match the `sz-vav-ahu` requirements. Take a look at the first bit of output which is the official SHACL validation report text format.
 
 ```{code-cell}
 print("Model is invalid for these reasons:")
 for diff in validation_result.diffset:
     print(f" - {diff.reason()}")
 ```
+
+[^1]: https://www.w3.org/TR/shacl/
+[^2]: https://www.ashrae.org/technical-resources/ashrae-standards-and-guidelines
