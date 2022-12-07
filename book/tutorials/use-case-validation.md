@@ -34,10 +34,10 @@ bm = BuildingMOTIF("sqlite://") # in-memory
 BLDG = Namespace('urn:bldg/')
 
 # Create the building model
-model = Model.create(BLDG, description="This is a test model for a simpel building")
+model = Model.create(BLDG, description="This is a test model for a simple building")
 
 # load tutorial 1 model
-model.graph.parse(tutorial1_model.ttl'), format="ttl")
+model.graph.parse('tutorial1_model.ttl', format="ttl")
 
 # load in some libraries
 brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
