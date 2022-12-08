@@ -9,8 +9,7 @@ from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.namespaces import A
-from buildingmotif.shape_rewrite import rewrite_shape_graph
-from buildingmotif.utils import Triple, copy_graph
+from buildingmotif.utils import Triple, copy_graph, rewrite_shape_graph
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
