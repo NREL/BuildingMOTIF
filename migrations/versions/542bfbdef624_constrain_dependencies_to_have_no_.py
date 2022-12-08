@@ -2,7 +2,7 @@
 (serde) to consistently store the dependency bindings.
 
 Revision ID: 542bfbdef624
-Revises: 66121a0432bc
+Revises: 99fd5e88689c
 Create Date: 2022-09-13 10:57:44.977492
 
 """
@@ -14,7 +14,7 @@ from buildingmotif.database.tables import DepsAssociation
 
 # revision identifiers, used by Alembic.
 revision = "542bfbdef624"
-down_revision = "66121a0432bc"
+down_revision = "99fd5e88689c"
 branch_labels = None
 depends_on = None
 

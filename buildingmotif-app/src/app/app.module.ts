@@ -30,6 +30,8 @@ import { TemplateDetailService } from './template-detail/template-detail.service
 import {MatTableModule} from '@angular/material/table';
 import { TemplateEvaluateResultComponent } from './template-evaluate/template-evaluate-result/template-evaluate-result.component'; 
 import { TemplateEvaluateComponent} from './template-evaluate/template-evaluate.component'
+import { ModelNewComponent } from './model-new/model-new.component'; 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,6 +44,7 @@ import { TemplateEvaluateComponent} from './template-evaluate/template-evaluate.
     TemplateEvaluateComponent,
     TemplateEvaluateFormComponent,
     TemplateEvaluateResultComponent,
+    ModelNewComponent,
   ],
   imports: [
     BrowserModule,
