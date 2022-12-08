@@ -8,38 +8,35 @@
 
 :sz-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
     sh:class brick:AHU ;
-    sh:node :sa-fan-start-stop, :sa-fan-speed, :sa-fan-status, :sa-temp,
-            :oa-ra-damper, :oa-temp, :ma-temp, :ra-temp, :filter-pd,
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :sa-fan ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:node :sa-temp, :oa-ra-damper, :oa-temp, :ma-temp, :ra-temp, :filter-pd,
             :clg-signal, :htg-signal, :zone-temperature, :occupancy-sensor, :zone-co2-level ;
     bmotif:domain bmotif:HVAC ;
 .
 
-:sa-fan-start-stop a sh:NodeShape ;
+:sa-fan a sh:NodeShape ;
+    sh:class brick:Supply_Fan ;
     sh:property [
-        sh:path brick:hasPart ;
         sh:qualifiedMinCount 1 ;
-        sh:qualifiedValueShape [
-            sh:class brick:Supply_Fan ;
-            sh:property [
-                sh:qualifiedMinCount 1 ;
-                sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
-                sh:path brick:hasPoint ;
-            ] ;
-        ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Frequency_Command ] ;
+        sh:path brick:hasPoint ;
     ] ;
-.    
-
-:sa-fan-speed a sh:NodeShape ;
     sh:property [
-        sh:path brick:hasPart ;
         sh:qualifiedMinCount 1 ;
-        sh:qualifiedValueShape [
-            sh:class brick:Supply_Fan ;
-            sh:property [
-                sh:qualifiedMinCount 1 ;
-                sh:qualifiedValueShape [ sh:class brick:Frequency_Command ] ;
-                sh:path brick:hasPoint ;
-            ] ;
-        ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
+        sh:path brick:hasPoint ;
     ] ;
-.    
+    sh:property [
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Fan_Status ] ;
+        sh:path brick:hasPoint ;
+    ] ;
+.
