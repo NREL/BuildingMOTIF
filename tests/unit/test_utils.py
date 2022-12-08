@@ -151,7 +151,7 @@ def test_inline_sh_nodes():
     pyshacl.validate(shape_g)
 
     shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
-    assert len(shape1_cbd) == 13
+    assert len(shape1_cbd) == 8
 
 
 def test_inline_sh_and(bm: BuildingMOTIF):
