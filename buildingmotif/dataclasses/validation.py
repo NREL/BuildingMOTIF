@@ -65,7 +65,18 @@ class PathClassCount(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff"""
-        return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
+
+        if self.minc == self.maxc:
+            return f"{self.focus} needs at exactly {self.minc} instances of \
+{self.classname} on path {self.path}"
+        elif (self.minc is None or self.minc == 0) and self.maxc is not None:
+            return f"{self.focus} needs at most {self.maxc} instances of \
+{self.classname} on path {self.path}"
+        elif self.maxc is None and self.minc is not None:
+            return f"{self.focus} needs at least {self.minc} instances of \
+{self.classname} on path {self.path}"
+        else:
+            return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
 {self.classname} on path {self.path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
