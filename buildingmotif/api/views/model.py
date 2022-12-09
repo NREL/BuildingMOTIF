@@ -57,7 +57,40 @@ def get_model_graph(models_id: int) -> flask.Response:
     return model.graph.serialize(format="ttl"), status.HTTP_200_OK
 
 
-@blueprint.route("/<models_id>/graph", methods=(["PATCH"]))
+@blueprint.route("", methods=(["POST"]))
+def create_model() -> flask.Response:
+    """Create model
+
+    :return: new model
+    :rtype: Model
+    """
+    if request.content_type != "application/json":
+        return {
+            "message": "request content type must be json"
+        }, status.HTTP_400_BAD_REQUEST
+
+    name = request.json.get("name")
+    description = request.json.get("description")
+
+    if name is None:
+        return {"message": "must give name"}, status.HTTP_400_BAD_REQUEST
+
+    try:
+        model = Model.create(name, description)
+    except ValueError:
+        return {
+            "message": f"{name} does not look like a valid URI, "
+            "trying to serialize this will break."
+        }, status.HTTP_400_BAD_REQUEST
+
+    current_app.building_motif.session.commit()
+
+    model = current_app.building_motif.table_connection.get_db_model(model.id)
+
+    return jsonify(serialize(model)), status.HTTP_201_CREATED
+
+
+@blueprint.route("/<models_id>/graph", methods=(["PATCH", "PUT"]))
 def update_model_graph(models_id: int) -> flask.Response:
     """update model graph
 
@@ -83,7 +116,9 @@ def update_model_graph(models_id: int) -> flask.Response:
     except BadSyntax as e:
         return {"message": f"data is unreadable: {e}"}, status.HTTP_400_BAD_REQUEST
 
-    model.graph.remove((None, None, None))
+    if request.method == "PUT":
+        model.graph.remove((None, None, None))
+
     model.add_graph(graph)
 
     current_app.building_motif.session.commit()

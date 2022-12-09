@@ -41,6 +41,8 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     :rtype: Graph
     """
     c = Graph()
+    for pfx, ns in g.namespaces():
+        c.bind(pfx, ns)
     new_prefix = secrets.token_hex(4)
     for t in g.triples((None, None, None)):
         assert isinstance(t, tuple)
@@ -54,6 +56,32 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
                 o = BNode(value=new_prefix + o.toPython())
         c.add((s, p, o))
     return c
+
+
+def inline_sh_nodes(g: Graph):
+    """
+    Recursively inlines all sh:node properties and objects on the graph.
+
+    :param g: graph to be edited
+    :type g: Graph
+    """
+    q = """
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    CONSTRUCT {
+        ?parent ?p ?o .
+    }
+    WHERE {
+        ?parent sh:node ?child .
+        ?child ?p ?o
+    }"""
+    original_size = 0
+    while original_size != len(g):  # type: ignore
+        original_size = len(g)  # type: ignore
+        for (s, p, o) in g.query(q):  # type: ignore
+            if p == RDF.type and o == SH.NodeShape:
+                continue
+            g.add((s, p, o))
+        break
 
 
 def combine_graphs(*graphs: Graph) -> Graph:
@@ -376,3 +404,62 @@ def get_parameters(graph: Graph) -> Set[str]:
     params = {str(node) for node in all_nodes if str(node).startswith(PARAM)}
     # extract the 'value' part of the param, which is the name of the parameter
     return {node[len(PARAM) :] for node in params}
+
+
+def _inline_sh_node(sg: Graph):
+    """
+    This detects the use of 'sh:node' on SHACL NodeShapes and inlines
+    the shape they point to.
+    """
+    q = """
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    SELECT ?parent ?child WHERE {
+        ?parent a sh:NodeShape ;
+                sh:node ?child .
+        }"""
+    for row in sg.query(q):
+        parent, child = row
+        sg.remove((parent, SH.node, child))
+        pos = sg.predicate_objects(child)
+        for (p, o) in pos:
+            sg.add((parent, p, o))
+
+
+def _inline_sh_and(sg: Graph):
+    """
+    This detects the use of 'sh:and' on SHACL NodeShapes and inlines
+    all of the included shapes
+    """
+    q = """
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    SELECT ?parent ?child ?andnode WHERE {
+        ?parent a sh:NodeShape ;
+                sh:and ?andnode .
+        ?andnode rdf:rest*/rdf:first ?child .
+        }"""
+    for row in sg.query(q):
+        parent, child, to_remove = row
+        sg.remove((parent, SH["and"], to_remove))
+        pos = sg.predicate_objects(child)
+        for (p, o) in pos:
+            sg.add((parent, p, o))
+
+
+def rewrite_shape_graph(g: Graph) -> Graph:
+    """
+    Rewrites the input graph to make the resulting validation report more useful.
+
+    :param g: the shape graph to rewrite
+    :type g: Graph
+    :return: a *copy* of the original shape graph w/ rewritten shapes
+    :rtype: Graph
+    """
+    sg = copy_graph(g)
+
+    previous_size = -1
+    while len(sg) != previous_size:  # type: ignore
+        previous_size = len(sg)  # type: ignore
+        _inline_sh_and(sg)
+        # make sure to handle sh:node *after* sh:and
+        _inline_sh_node(sg)
+    return sg
