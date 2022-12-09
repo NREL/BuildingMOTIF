@@ -17,8 +17,8 @@ The purpose of this tutorial is to cover a few of the basic features of Building
 
 To this end, the tutorial will walk the reader through building a Brick model similar to the Small Office Commercial Prototype Building model[^3]. Specifically, the tutorial has the following learning objectives:
 1. creating a BuildingMOTIF model "instance" and `Model`
-2. gaining basic familiarity with `Libraries`, which contain `Templates` (for generating RDF models) and `Shapes` (for validating RDF models), by importing `Libraries` into a BuildingMOTIF instance
-3. adding to a Brick model by *evaluating* `Templates`
+2. gaining basic familiarity with `Libraries`, which contain `Templates` and `Shapes`, by importing Libraries into a BuildingMOTIF instance
+3. adding to a Brick model by *evaluating* Templates
 
 ## Creating a BuildingMOTIF Model
 
@@ -29,13 +29,12 @@ from buildingmotif import BuildingMOTIF
 bm = BuildingMOTIF("sqlite://") # in-memory instance
 ```
 
-Now that we have a BuildingMOTIF instance, we can create our first `Model`.
-
+```{margin}
 ```{note}
 A `Model` is an RDF graph representing part or all of a building.
 ```
 
-Creating a model requires importing the `Model` class, creating an RDF namespace to hold all of the entities in our model, and telling BuildingMOTIF to create a new model with that namespace. The namespace is a URL used to uniquely identify a building.
+Now that we have a BuildingMOTIF instance, we can create our first `Model`. Creating a model requires importing the `Model` class, creating an RDF namespace to hold all of the entities in our model, and telling BuildingMOTIF to create a new model with that namespace. The namespace is a URL used to uniquely identify a building.
 
 ```{code-cell}
 from rdflib import Namespace
@@ -58,13 +57,12 @@ The `model.graph` object is just the RDFLib Graph[^4] that stores the model. You
 
 ## Importing Libraries
 
-Before we can add semantic building metadata to our model, we need to import some `Libraries`.
-
+```{margin}
 ```{note}
-A `Library` is a collection of Templates and Shapes. `Templates` are functions that generate parts of an RDF model. `Shapes` are functions that validate part of an RDF model.
+A `Library` is a collection of Templates and Shapes.
 ```
 
-We import libraries by calling `Library.load` in BuildingMOTIF. Libraries can be loaded from directories containing `.yml` and `.ttl` files (for Templates and Shapes, respectively), or from ontology files directly. The code below contains an example of importing the `brick` library, which is simply the Brick ontology. This allows BuildingMOTIF to take advantage of the classes and relationships defined by Brick when validating our model. Loading in these definitions also allows other libraries (such as ASHRAE Guideline 36) to refer to Brick definitions.
+Before we can add semantic building metadata to our model, we need to import some `Libraries`. We import libraries by calling `Library.load` in BuildingMOTIF. Libraries can be loaded from directories containing `.yml` and `.ttl` files (for Templates and Shapes, respectively), or from ontology files directly. The code below contains an example of importing the `brick` library, which is simply the Brick ontology. This allows BuildingMOTIF to take advantage of the classes and relationships defined by Brick when validating our model. Loading in these definitions also allows other libraries (such as ASHRAE Guideline 36) to refer to Brick definitions.
 
 ```{code-cell}
 from buildingmotif.dataclasses import Library
@@ -84,9 +82,12 @@ for template in brick.get_templates()[:10]:
 
 ### Exploring Your First Template
 
-`Templates` make it easy to add metadata to a model without having to touch any RDF at all. Templates are functions that generate an RDF graph. This graph may represent a packaged unit like a VAV, a simple device like a Fan, a complex entity like a Chilled Water System, or anything else you may need.
+```{margin}
+```{note}
+`Templates` are functions that generate parts of an RDF model.
+```
 
-The *body* of a template contains the basic structure of the graph representing that entity. Typically, a template defines several *parameters* that represent user-provided input necessary to create that entity in the model.
+`Templates` make it easy to add metadata to a model without having to touch any RDF at all by generating parts of an RDF graph. This graph may represent a packaged unit like a VAV, a simple device like a Fan, a complex entity like a Chilled Water System, or anything else you may need. The *body* of a template contains the basic structure of the graph representing that entity. Typically, a template defines several *parameters* that represent user-provided input necessary to create that entity in the model.
 
 Let's start with the `brick` library's `HVAC Zone` template. We can fetch this out of the library by referring to it by name:
 
