@@ -3,6 +3,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import Callable, List, Optional
 
+from openpyxl import load_workbook
 from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.term import Node
 
@@ -36,7 +37,29 @@ class CSVIngress(IngressHandler):
         return None
 
 
-# TODO: excel reader
+class XLSXIngress(IngressHandler):
+    def __init__(self, filename: Path):
+        self.filename = filename
+
+    @cached_property
+    def records(self) -> Optional[List[Record]]:
+        records = []
+        wb = load_workbook(self.filename)
+        for sheetname in wb.sheetnames:
+            sheet = wb[sheetname]
+            columns = [sheet[f"A{c}"].value for c in sheet.max_column]
+            for row in range(2, sheet.max_row):
+                fields = {columns[c]: sheet.cell(row, c) for c in sheet.max_column}
+                records.append(
+                    Record(
+                        rtype=sheetname,
+                        fields=fields,
+                    )
+                )
+        return records
+
+    def graph(self, _ns: Namespace) -> Optional[Graph]:
+        return None
 
 
 def get_term(field_value: str, ns: Namespace) -> Node:
