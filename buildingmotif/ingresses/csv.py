@@ -47,9 +47,12 @@ class XLSXIngress(IngressHandler):
         wb = load_workbook(self.filename)
         for sheetname in wb.sheetnames:
             sheet = wb[sheetname]
-            columns = [sheet[f"A{c}"].value for c in sheet.max_column]
-            for row in range(2, sheet.max_row):
-                fields = {columns[c]: sheet.cell(row, c) for c in sheet.max_column}
+            columns = [sheet.cell(1, c + 1).value for c in range(sheet.max_column)]
+            for row in range(2, sheet.max_row + 1):
+                fields = {
+                    columns[c]: sheet.cell(row, c + 1).value
+                    for c in range(sheet.max_column)
+                }
                 records.append(
                     Record(
                         rtype=sheetname,
@@ -79,7 +82,14 @@ class TemplateIngress(IngressHandler):
     If 'inline' is True, inlines all templates when they are instantiated.
     """
 
-    def __init__(self, template: Template, upstream: IngressHandler, inline=False):
+    def __init__(
+        self,
+        template: Template,
+        mapper: Optional[Callable[[str], str]],
+        upstream: IngressHandler,
+        inline=False,
+    ):
+        self.mapper = mapper if mapper else lambda x: x
         self.upstream = upstream
         if inline:
             self.template = template.inline_dependencies()
@@ -96,7 +106,7 @@ class TemplateIngress(IngressHandler):
         records = self.upstream.records
         assert records is not None
         for rec in records:
-            bindings = {k: get_term(v, ns) for k, v in rec.fields.items()}
+            bindings = {self.mapper(k): get_term(v, ns) for k, v in rec.fields.items()}
             graph = self.template.evaluate(bindings)
             assert isinstance(graph, Graph)
             g += graph
@@ -114,10 +124,12 @@ class TemplateIngressWithChooser(IngressHandler):
     def __init__(
         self,
         chooser: Callable[[Record], Template],
+        mapper: Optional[Callable[[str], str]],
         upstream: IngressHandler,
         inline=False,
     ):
         self.chooser = chooser
+        self.mapper = mapper if mapper else lambda x: x
         self.upstream = upstream
         self.inline = inline
 
@@ -134,7 +146,7 @@ class TemplateIngressWithChooser(IngressHandler):
             template = self.chooser(rec)
             if self.inline:
                 template = template.inline_dependencies()
-            bindings = {k: get_term(v, ns) for k, v in rec.fields.items()}
+            bindings = {self.mapper(k): get_term(v, ns) for k, v in rec.fields.items()}
             graph = template.evaluate(bindings)
             assert isinstance(graph, Graph)
             g += graph
