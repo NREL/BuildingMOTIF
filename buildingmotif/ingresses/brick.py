@@ -1,3 +1,4 @@
+from functools import cached_property
 from typing import List, Optional
 
 from rdflib import Graph, Literal, Namespace
@@ -24,12 +25,13 @@ class BACnetToBrickIngress(IngressHandler):
         self.device_template = self.bacnet_lib.get_template_by_name("brick-device")
         self.object_template = self.bacnet_lib.get_template_by_name("brick-point")
 
+    @cached_property
     def records(self) -> Optional[List[Record]]:
         return None
 
     def graph(self, ns: Namespace) -> Optional[Graph]:
         g = Graph()
-        records = self.upstream.records()
+        records = self.upstream.records
         assert records is not None
         for record in records:
             if record.rtype == "Device":

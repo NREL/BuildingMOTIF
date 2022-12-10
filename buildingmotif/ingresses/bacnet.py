@@ -1,3 +1,4 @@
+from functools import cached_property
 from typing import Any, Dict, List, Optional, Tuple
 
 import BAC0
@@ -47,6 +48,7 @@ class BACnetNetwork(IngressHandler):
             # remove trailing/leading whitespace from names
             obj["name"] = obj["name"].strip()
 
+    @cached_property
     def records(self) -> Optional[List[Record]]:
         """
         Returns a list of the BACnet devices and objects discovered
