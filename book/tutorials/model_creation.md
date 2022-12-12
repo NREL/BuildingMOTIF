@@ -20,10 +20,12 @@ This tutorial assumes that `BuildingMOTIF` has already been installed in the loc
 
 The purpose of this tutorial is to learn about a few of the basic features of BuildingMOTIF by creating a Brick model similar to the Small Office Commercial Prototype Building model[^1]. It assumes that the reader has some familiarity with the Turtle syntax[^2] for Resource Description Framework (RDF) graphs[^3].
 
-Specifically, the tutorial has the following learning objectives:
+```{note}
+This tutorial has the following learning objectives:
 1. creating a BuildingMOTIF model *instance* and `Model`
 2. loading `Libraries` into a BuildingMOTIF instance
 3. adding to a model by *evaluating* `Templates`
+```
 
 [^1]: https://www.energycodes.gov/prototype-building-models#Commercial
 [^2]: https://www.w3.org/TR/turtle/
