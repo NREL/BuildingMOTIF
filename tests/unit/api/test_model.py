@@ -1,8 +1,9 @@
-from rdflib import Graph, URIRef
+from rdflib import Graph, Namespace, URIRef
 from rdflib.compare import isomorphic, to_isomorphic
 from rdflib.namespace import RDF
 
-from buildingmotif.dataclasses import Model
+from buildingmotif.dataclasses import Library, Model
+from buildingmotif.namespaces import BRICK, A
 
 graph_data = """
     @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -159,3 +160,89 @@ def test_update_model_graph_bad_graph_value(client, building_motif):
 
     # Assert
     assert results.status_code == 400
+
+
+def test_validate_model(client, building_motif):
+    # Set up
+    library = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    assert library is not None
+
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+    model.add_triples((BLDG["vav1"], A, BRICK.VAV))
+
+    # Action
+    results = client.get(
+        f"/models/{model.id}/validate",
+        json={"library_id": library.id},
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Assert
+    assert results.status_code == 200
+    assert not results.get_json()["valid"]
+
+    # Set up
+    model.add_triples((BLDG["vav1"], A, BRICK.VAV))
+    model.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["temp_sensor"]))
+    model.add_triples((BLDG["temp_sensor"], A, BRICK.Temperature_Sensor))
+    model.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["flow_sensor"]))
+    model.add_triples((BLDG["flow_sensor"], A, BRICK.Air_Flow_Sensor))
+
+    # Action
+    results = client.get(
+        f"/models/{model.id}/validate",
+        json={"library_id": library.id},
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Assert
+    assert results.status_code == 200
+    assert results.get_json() == {
+        "message": "Validation Report\nConforms: True\n",
+        "valid": True,
+    }
+
+
+def test_validate_model_bad_model_id(client, building_motif):
+    # Action
+    results = client.get(
+        f"/models/{-1}/validate",
+        json={"library_id": -1},
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Assert
+    assert results.status_code == 404
+
+
+def test_validate_model_bad_content_type(client, building_motif):
+    # Set up
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+
+    # Action
+    results = client.get(
+        f"/models/{model.id}/validate",
+        data=graph_data,
+        headers={"Content-Type": "application/xml"},
+    )
+
+    # Assert
+    assert results.status_code == 400
+
+
+def test_validate_model_bad_library_id(client, building_motif):
+    # Set up
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+
+    # Action
+    results = client.get(
+        f"/models/{model.id}/validate",
+        json={"library_id": -1},
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Assert
+    assert results.status_code == 404
