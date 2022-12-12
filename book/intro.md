@@ -1,4 +1,4 @@
-# BuildingMOTIF (README)
+# BuildingMOTIF
 
 [![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) 
 [![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF) 
@@ -15,7 +15,7 @@ The ***Building Metadata OnTology Interoperability Framework (BuildingMOTIF)*** 
 
 # Documentation
 
-The documentation uses [Diataxis](https://diataxis.fr/) as a framework for its structure, which is organized into the following sections.
+The documentation uses Diataxis[^1] as a framework for its structure, which is organized into the following sections.
 
 ## Tutorials
 
@@ -36,14 +36,4 @@ The documentation uses [Diataxis](https://diataxis.fr/) as a framework for its s
 
 🏗️ under construction
 
-# Bibliography
-
-```{bibliography}
-:all:
-:list: enumerated
-```
-
-# Table of Contents
-
-```{tableofcontents}
-```
+[^1]: https://diataxis.fr/
