@@ -13,53 +13,62 @@ kernelspec:
 
 # Model Validation
 
-The purpose of this tutorial is to walk a user through model *validation* and demonstrate how BuildingMOTIF can give useful feedback for fixing a model that has failed validation. It assumes that `BuildingMOTIF` has already been installed in the local environment.
+```{margin}
+```{important}
+This tutorial assumes that `BuildingMOTIF` has already been installed in the local environment.
+```
 
-The following are the learning objectives for this tutorial:
+The purpose of this tutorial is to learn about model *validation* and how BuildingMOTIF can give useful feedback for fixing a model that has failed validation. 
+
+```{note}
+This tutorial has the following learning objectives:
 1. validating the model against an ***ontology*** to ensure that the model is a valid Brick model
 2. validating the model against a ***manifest***, which contains the metadata requirements for a specific model
 3. validating the model against a ***use case*** for a specific application
+```
 
-## Preliminaries and Setup
+```{margin}
+```{note}
+ `Shapes` are functions that validate part of an RDF model. A `Shape` is a set of constraints, requirements, and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
+- the minimum points on an equipment required to execute a certain sequence of operations,
+- the internal details of an equipment: what parts it contains, etc
+```
 
-We create an in-memory BuildingMOTIF instance, create a model using the model from the previous tutoria, and load in some libraries to create the manifest with:
+Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes` using the Shapes Constraint Language (SHACL)[^1].
+
+[^1]: https://www.w3.org/TR/shacl/
+
+## Setup
+
+We create an in-memory BuildingMOTIF instance, load the model from the previous tutorial, and load some libraries to create the manifest with. The `constraints.ttl` library we load is a special library with some custom constraints defined that are helpful for writing manifests.
 
 ```{code-cell}
 from rdflib import Namespace
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Model, Library
+from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
 
-bm = BuildingMOTIF("sqlite://") # in-memory
+# in-memory instance
+bm = BuildingMOTIF("sqlite://")
 
 # create the namespace for the building
 BLDG = Namespace('urn:bldg/')
 
-# Create the building model
+# create the building model
 model = Model.create(BLDG, description="This is a test model for a simple building")
 
 # load tutorial 1 model
-model.graph.parse('tutorial1_model.ttl', format="ttl")
+model.graph.parse("tutorial1_model.ttl", format="ttl")
 
 # load in some libraries
 brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
-g36 = Library.load(directory="../../libraries/ashrae/guideline36")
 constraints = Library.load(ontology_graph="../../buildingmotif/resources/constraints.ttl")
+g36 = Library.load(directory="../../libraries/ashrae/guideline36")
 ```
 
-The `constraints.ttl` library we load in above is a special library with some custom constraints defined that are helpful for writing manifests.
+## Model Validation - Ontology
 
-## Validating a Model with Shapes
-
-Validating a model is the process of ensuring that the model is both *correct* (uses the ontologies correctly) and *semantically sufficient* (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of `Shapes` using the Shapes Constraint Language (SHACL)[^1].
-
-```{note}
-A `Shape` is a set of constraints, requirements and/or rules that apply to entities in an RDF graph. A shape may represent many things, including:
-- the minimum points on an equipment required to execute a certain sequence of operations,
-- the internal details of an equipment: what parts it contains, etc
-```
-
-BuildingMOTIF organizes `Shapes` into `Shape Collections`. The shape collection associated with a library (if there is one) can be retrieved with the `get_shape_collection` property.
-Below, we use Brick's shape collection to ensure that our model is using Brick correctly:
+BuildingMOTIF organizes Shapes into `Shape Collections`. The shape collection associated with a library (if there is one) can be retrieved with the `get_shape_collection` property. Below, we use Brick's shape collection to ensure that the model is using Brick correctly:
 
 ```{code-cell}
 # pass a list of shape collections to .validate()
@@ -67,31 +76,18 @@ validation_result = model.validate([brick.get_shape_collection()])
 print(f"Model is valid? {validation_result.valid}")
 ```
 
-In other tutorials, we will work with models that do **not** validate for various reasons, and explore how BuildingMOTIF helps us repair these models.
+Success! The model is valid according to the Brick ontology.
 
-If the model was **not** valid, then we could ask the `validation_result` object to tell us why:
+## Model Validation - Manifest
 
-```python
-for diff in validation_result.diffset:
-    print(" -" + diff.reason())
+### Writing a Manifest
+
+```{margin}
+```{note}
+A `manifest` is an RDF graph with a set of `Shapes` inside, which place constraints and requirements on what metadata must be contained within a metadata model. 
 ```
 
-## Finding Use Case Shapes
-
-We can use a couple methods to search our libraries for shapes we might want to use. Let's start by asking the `g36` library for any system specifications it knows about, which represents *ASHRAE Guideline 36 High-Performance Sequences of Operation for HVAC Systems*[^2]. A system specification will specify all of the metadata required for an entity to run control sequences associated with that system type.
-
-```{code-cell}
-from buildingmotif.namespaces import BMOTIF
-shapes = g36.get_shape_collection()
-for shape in shapes.get_shapes_of_definition_type(BMOTIF["System_Specification"]):
-    print(shape)
-```
-
-## Writing Your First Manifest
-
-A manifest is an RDF graph with a set of `Shapes` inside. These shapes place constraints and requirements on what metadata must be contained within our metadata model. For now, we will write the manifest file directly; in the future, BuildingMOTIF will contain features that make manifests easier to write.
-
-Here is the header of our manifest file. This should also suffice for most of your own manifests:
+For now, we will write a `manifest` file directly; in the future, BuildingMOTIF will contain features that make manifests easier to write. Here is the header of a manifest file. This should also suffice for most of your own manifests.
 
 ```ttl
 @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -103,51 +99,70 @@ Here is the header of our manifest file. This should also suffice for most of yo
 : a owl:Ontology .
 ```
 
-We will now add a constraint stating that our model should contain exactly 5 Brick Air Handling Units:
+We will now add a constraint stating that the model should contain exactly 1 Brick AHU.
 
 ```ttl
 :ahu-count a sh:NodeShape ;
-    sh:message "Need 5 AHU" ;
+    sh:message "need 1 AHU" ;
     sh:targetNode : ;
-    constraint:exactCount 5 ;
+    constraint:exactCount 1 ;
     constraint:class brick:AHU .
 ```
 
 This basic structure can be changed to require different numbers of different Brick classes. Just don't forget to change the name of the shape (`:ahu-count`, above) when you copy-paste!
 
-As an exercise, try writing a shape that requires the model to have exactly five Brick Supply_Fan instances and exactly five Brick CAV instances.
+```{attention}
+As an exercise, try writing shapes that require the model to have the following.
+- (1) Brick Supply_Fan
+- (1) Brick Damper
+- (1) Brick Cooling_Coil
+- (1) Brick Heating_Coil
+```
 
-```{admonition} Click to reveal an answer...
+```{hint}
 :class: dropdown
 
 ```ttl
 :fan-count a sh:NodeShape ;
-    sh:message "Need 5 Supply Fans" ;
+    sh:message "need 1 supply fan" ;
     sh:targetNode : ;
-    constraint:exactCount 5 ;
+    constraint:exactCount 1 ;
     constraint:class brick:Supply_Fan .
 
-:cav-count a sh:NodeShape ;
-    sh:message "Need 5 CAVs" ;
+:damper-count a sh:NodeShape ;
+    sh:message "need 1 damper" ;
     sh:targetNode : ;
-    constraint:exactCount 5 ;
-    constraint:class brick:CAV .
+    constraint:exactCount 1 ;
+    constraint:class brick:Damper .
+
+:clg-coil-count a sh:NodeShape ;
+    sh:message "need 1 cooling coil" ;
+    sh:targetNode : ;
+    constraint:exactCount 1 ;
+    constraint:class brick:Cooling_Coil .
+
+:htg-coil-count a sh:NodeShape ;
+    sh:message "need 1 heating coil" ;
+    sh:targetNode : ;
+    constraint:exactCount 1 ;
+    constraint:class brick:Heating_Coil .
 ```
 
-We can now add a shape that requires *all* AHUs in the model to match the `sz-vav-ahu` system specification we find above:
+<!-- We can now add a shape that requires *all* AHUs in the model to match the `sz-vav-ahu` system specification we find above:
 
 ```ttl
 :sz-vav-ahu-control-sequences a sh:NodeShape ;
     sh:message "AHUs must match the single-zone VAV AHU shape" ;
     sh:targetClass brick:AHU ;
     sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .
-```
+``` -->
 
-Put all of the above in a new file called `my_manifest.ttl`...
+Put all of the above in a new file called `tutorial2_manifest.ttl`. We'll also add a shape called `sz-vav-ahu-control-sequences`, which is a use case shape to validate the model against in the next section.
 
 ```{code-cell}
-with open("my_manifest.ttl", "w") as f:
-    f.write("""@prefix brick: <https://brickschema.org/schema/Brick#> .
+with open("tutorial2_manifest.ttl", "w") as f:
+    f.write("""
+@prefix brick: <https://brickschema.org/schema/Brick#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix constraint: <https://nrel.gov/BuildingMOTIF/constraints#> .
@@ -156,22 +171,34 @@ with open("my_manifest.ttl", "w") as f:
 : a owl:Ontology .
 
 :ahu-count a sh:NodeShape ;
-    sh:message "Need 5 AHU" ;
+    sh:message "need 1 AHU" ;
     sh:targetNode : ;
-    constraint:exactCount 5 ;
+    constraint:exactCount 1 ;
     constraint:class brick:AHU .
 
 :fan-count a sh:NodeShape ;
-    sh:message "Need 5 Supply Fans" ;
+    sh:message "need 1 supply fan" ;
     sh:targetNode : ;
-    constraint:exactCount 5 ;
+    constraint:exactCount 1 ;
     constraint:class brick:Supply_Fan .
 
-:cav-count a sh:NodeShape ;
-    sh:message "Need 5 CAVs" ;
+:damper-count a sh:NodeShape ;
+    sh:message "need 1 damper" ;
     sh:targetNode : ;
-    constraint:exactCount 5 ;
-    constraint:class brick:CAV .
+    constraint:exactCount 1 ;
+    constraint:class brick:Damper .
+
+:clg-coil-count a sh:NodeShape ;
+    sh:message "need 1 cooling coil" ;
+    sh:targetNode : ;
+    constraint:exactCount 1 ;
+    constraint:class brick:Cooling_Coil .
+
+:htg-coil-count a sh:NodeShape ;
+    sh:message "need 1 heating coil" ;
+    sh:targetNode : ;
+    constraint:exactCount 1 ;
+    constraint:class brick:Heating_Coil .
 
 :sz-vav-ahu-control-sequences a sh:NodeShape ;
     sh:message "AHUs must match the single-zone VAV AHU shape" ;
@@ -180,167 +207,135 @@ with open("my_manifest.ttl", "w") as f:
 """)
 ```
 
-...and then load that manifest into BuildingMOTIF as its own library!
+### Validating the Model
+
+We can now ask BuildingMOTIF to validate the model against the manifest and ask BuildingMOTIF for some details if it fails. We also have to be sure to include the supporting shape collections containing the definitions used in the manifest.
 
 ```{code-cell}
-manifest = Library.load(ontology_graph="my_manifest.ttl")
-```
+# load manifest into BuildingMOTIF as its own library!
+manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
 
-## Validating our Model, Round 1
-
-We can now ask BuildingMOTIF to validate our model against our manifest. We also have to be sure to include the supporting shape collections containing the definitions used in our manifest.
-
-```{code-cell}
-# gather these into a list for ease of use
+# gather shape collections into a list for ease of use
 shape_collections = [
     brick.get_shape_collection(),
-    g36.get_shape_collection(),
     constraints.get_shape_collection(),
     manifest.get_shape_collection(),
+    g36.get_shape_collection(),
 ]
+
 # pass a list of shape collections to .validate()
 validation_result = model.validate(shape_collections)
 print(f"Model is valid? {validation_result.valid}")
-```
 
-Our model is invalid so let's ask BuildingMOTIF for some details:
-
-```{code-cell}
+# print reasons
 for diff in validation_result.diffset:
     print(f" - {diff.reason()}")
 ```
 
-## Fixing our Model, Round 1
+### Fixing the Model
 
-We are failing because we don't have the exact numbers of CAVs required by the manifest, which we forgot to add in the previous tutorial.
-To fix this, use the equipment templates in the Brick library to create five CAVs and add them to the model.
-
-Get the templates first:
+The model is failing because we don't have a heating coil required by the manifest, which we forgot to add in the previous tutorial. It's also failing the use case validation, which we'll cover in the next section. To fix the manifest validation, use the equipment templates in the Brick library to create a heating coil, add it to the model, and connect it to the AHU using RDFLib's `graph.add()` method.
 
 ```{code-cell}
-from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
-cav_template = brick.get_template_by_name(BRICK.CAV)
-```
+# ahu name
+ahu_name = "Core_ZN-PSC_AC"
 
-Then check what parameters they need:
+# get template
+htg_coil_template = brick.get_template_by_name(BRICK.Heating_Coil)
 
-```{code-cell}
-for param in cav_template.parameters:
-    print(f"CAV needs '{param}'")
-```
+# add htg coil
+htg_coil_name = f"{ahu_name}-Htg_Coil"
+htg_coil_binding = {"name": BLDG[htg_coil_name]}
+htg_coil_graph = htg_coil_template.evaluate(htg_coil_binding)
+model.add_graph(htg_coil_graph)
 
-Then evaluate the templates with the chosen names of the equipment (the only parameter for the above templates) and add the resulting graphs to the model:
+# connect htg coil
+model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[htg_coil_name]))
 
-```{code-cell}
-zone_names = ['Core_ZN', 'Perimeter_ZN_1', 'Perimeter_ZN_2', 'Perimeter_ZN_3', 'Perimeter_ZN_4']
-for idx, zone_name in enumerate(zone_names):
-    ahu_name = f"{zone_name}-PSZ_AC_{idx + 1}"
-    cav_name = f"{ahu_name}-Diffuser"
-    bindings = {'name': BLDG[cav_name]}
-    cav = cav_template.evaluate(bindings)
-    model.add_graph(cav)
-```
-
-Let's check that our model contains the new entities:
-
-```{code-cell}
+# print model to confirm component was added and connected
 print(model.graph.serialize())
 ```
 
-## Validating our Model, Round 2
-
-
-We can now borrow the same code from before and re-run it to re-validate our new and improved model:
+We can see that the heating coil was added to the model and connected to the AHU so let's check if the manifest validation failure was fixed.
 
 ```{code-cell}
+# pass a list of shape collections to .validate()
 validation_result = model.validate(shape_collections)
 print(f"Model is valid? {validation_result.valid}")
+
+# print reasons
+for diff in validation_result.diffset:
+    print(f" - {diff.reason()}")
 ```
 
-All AHUs fail validation because they don't match the `sz-vav-ahu` requirements. Take a look at the first bit of output which is the official SHACL validation report text format.
+Success! The model is no longer failing the manifest validation.
+
+## Model Validation - Use Case 
+
+### Finding Use Case Shapes
+
+We can use a couple methods to search the libraries for shapes we might want to use. Let's start by asking the `g36` library for any system specifications it knows about. This library represents *ASHRAE Guideline 36 High-Performance Sequences of Operation for HVAC Systems*[^2]. A system specification will specify all of the metadata required for an entity to run control sequences associated with that system type.
+
+[^2]: https://www.ashrae.org/technical-resources/ashrae-standards-and-guidelines
 
 ```{code-cell}
+from buildingmotif.namespaces import BMOTIF
+shapes = g36.get_shape_collection()
+for shape in shapes.get_shapes_of_definition_type(BMOTIF["System_Specification"]):
+    print(shape)
+```
+
+The model represents the Small Office Commercial Prototype Building model, which has single zone packaged AHUs, so we're interested in validating it against Section 4.8 of Guideline 36 for single zone variable air volume (VAV) AHUs. 
+
+<!-- Let's append a reference to that shape in the manifest file.
+```{code-cell}
+with open("tutorial2_manifest.ttl", "a") as f:
+    f.write("""
+:sz-vav-ahu-control-sequences a sh:NodeShape ;
+    sh:message "AHUs must match the single-zone VAV AHU shape" ;
+    sh:targetClass brick:AHU ;
+    sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .
+""")
+``` -->
+
+### Validating the Model
+
+<!-- We can now borrow the same code from before and re-run it to re-validate the model:
+
+```{code-cell}
+# load manifest into BuildingMOTIF as its own library!
+manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
+
+# gather these into a list for ease of use
+shape_collections = [
+    brick.get_shape_collection(),
+    constraints.get_shape_collection(),
+    manifest.get_shape_collection(),
+    g36.get_shape_collection(),
+]
+
+# pass a list of shape collections to .validate()
+validation_result = model.validate(shape_collections)
+print(f"Model is valid? {validation_result.valid}")
+``` -->
+As shown in the previous section, the AHU fails validation because it doesn't match the `sz-vav-ahu-control-sequences` requirements. Take a look at the first bit of output, which is the official SHACL validation report text format. These aren't very understandable but BuildingMOTIF can make this output more interpretable!
+
+```{code-cell}
+# SHACL validation report
 print(validation_result.report_string)
-```
 
-BuildingMOTIF can make this output more interpretable:
+# separator
+print("-"*79)
 
-```{code-cell}
+# BuildingMOTIF output
 print("Model is invalid for these reasons:")
 for diff in validation_result.diffset:
     print(f" - {diff.reason()}")
 ```
 
-## Fixing our Model, Round 2
-
-Specifically, our model is failing because the AHUs don't have the minimum number of supply fans associated with them. We *could* add thse fans explicitly by adding those triples to the model, but we can also
-ask BuildingMOTIF to generate new templates that explicitly prompt us for the missing information.
+Specifically, the model is failing because the AHUs don't have the minimum number of supply fans associated with them. We *could* add the fan explicitly by adding those triples to the model like we've done previously, but we can also
+ask BuildingMOTIF to generate new templates that explicitly prompt us for the missing information. We'll cover this feature in the next tutorial so let's save the model.
 
 ```{code-cell}
-# create a new library to hold these generated templates
-generated_templates = Library.create("my-autogenerated-templates")
-for diff in validation_result.diffset:
-    diff.resolve(generated_templates)
-```
-
-We can take a closer look at the first autogenerated template:
-
-```{code-cell}
-for templ in generated_templates.get_templates():
-    templ = templ.inline_dependencies()
-    print(f"Name (autogenerated): {templ.name}")
-    print(f"Parameters (autogenerated): {templ.parameters}")
-    print("Template body (autogenerated):")
-    print(templ.body.serialize())
-    print('-' * 50)
-    break # just to demonstrate the first piece of output
-```
-
-In this case, the generated templates are fairly simple. They require an input which is the name of the supply fan, but also the names of several missing points.
-
-We can loop through each of these generated templates and create the names. Here, we are creating arbitrary names for the points but in a real setting you would
-likely pull the equipment/point names from an external source like a BACnet network or BIM (see future tutorials for how to do this!)
-
-Another challenge is the fact that we already have some supply fans in our model. Here, we can take advantage of the fact that the names of the fans in the existing
-model are just the name of the AHU w/ the suffix `-Fan` added on the end. The name of the AHU is in the generated templates (see above) so we can just pull out the name
-of the AHU, add the suffix, and use that as the value for the `name` parameter.
-
-
-
-```{code-cell}
-from buildingmotif.namespaces import BRICK
-for templ in generated_templates.get_templates():
-    templ = templ.inline_dependencies()
-    # get name of AHU from template body
-    ahu_name = next(templ.body.subjects(predicate=BRICK.hasPart))
-    # generate the name of the supply fan
-    supply_fan_name = ahu_name + '-Fan'
-
-    # we know from our exploration above that each template has
-    # 1 parameter called 'name', which we assign to the name of the supply fan
-    bindings = {
-        "name": supply_fan_name,
-    }
-    # the rest of the parameters have random names, so let's generate
-    # random URIs for those by putting the name of the parameter at the end
-    # of the fan's name
-    for p in templ.parameters - {'name'}:
-        bindings[p] = supply_fan_name + p
-    supply_fan = templ.evaluate(bindings)
-    model.add_graph(supply_fan)
-    print(f"Added supply fan {supply_fan_name}")
-```
-
-## Validating our Model, Round 3
-
-We use the same code as before to ask BuildingMOTIF if the model is now valid:
-
-```{code-cell}
-validation_result = model.validate(shape_collections)
-print(f"Model is valid? {validation_result.valid}")
-```
-
-It is valid, so we are "done" with our model with respect to the manifest.
-
-[^1]: https://www.w3.org/TR/shacl/
-[^2]: https://www.ashrae.org/technical-resources/ashrae-standards-and-guidelines
+#save model
+model.graph.serialize(destination="tutorial2_model.ttl")
