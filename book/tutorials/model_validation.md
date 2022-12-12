@@ -333,9 +333,9 @@ for diff in validation_result.diffset:
     print(f" - {diff.reason()}")
 ```
 
-Specifically, the model is failing because the AHUs don't have the minimum number of supply fans associated with them. We *could* add the fan explicitly by adding those triples to the model like we've done previously, but we can also
-ask BuildingMOTIF to generate new templates that explicitly prompt us for the missing information. We'll cover this feature in the next tutorial so let's save the model.
+The model is failing because the AHU doesn't have the minimum number of supply fans associated with it. We *could* add the fan explicitly by adding those triples to the model like we've done previously, but we can also ask BuildingMOTIF to generate new templates that explicitly prompt us for the missing information. We'll cover this feature in the next tutorial so let's save the model.
 
 ```{code-cell}
 #save model
 model.graph.serialize(destination="tutorial2_model.ttl")
+```
