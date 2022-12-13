@@ -41,11 +41,11 @@ def _after_error(error):
 
 
 def create_app(DB_URI):
-    """Creates a Flask api.
+    """Creates a Flask API.
 
-    :param db_uri: db uri
+    :param db_uri: database URI
     :type db_uri: str
-    :return: Flask app
+    :return: flask app
     :rtype: Flask.app
     """
     app = Flask(__name__, instance_relative_config=True)
@@ -65,7 +65,7 @@ def create_app(DB_URI):
 
 
 if __name__ == "__main__":
-    """Run api."""
+    """Run API."""
     # If config doesn't exist, this is considered a third party import and module cant be found.
     import configs as building_motif_configs  # type: ignore # isort:skip
 

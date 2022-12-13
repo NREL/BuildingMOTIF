@@ -3,20 +3,29 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 
 import pyshacl
 import rdflib
+import rfc3987
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.namespaces import A
-from buildingmotif.utils import Triple, copy_graph
+from buildingmotif.utils import Triple, copy_graph, rewrite_shape_graph
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
 
 
+def _validate_uri(uri: str):
+    parsed = rfc3987.parse(uri)
+    if not parsed["scheme"]:
+        raise ValueError(
+            f"{uri} does not look like a valid URI, trying to serialize this will break."
+        )
+
+
 @dataclass
 class Model:
-    """Model. This class mirrors DBModel."""
+    """This class mirrors :py:class:`database.tables.DBModel`."""
 
     _id: int
     _name: str
@@ -26,17 +35,20 @@ class Model:
 
     @classmethod
     def create(cls, name: str, description: str = "") -> "Model":
-        """create new Model
+        """Create a new model.
 
         :param name: new model name
         :type name: str
         :param description: new model description
         :type description: str
-        :return: new Model
+        :return: new model
         :rtype: Model
         """
         bm = get_building_motif()
+
+        _validate_uri(name)
         db_model = bm.table_connection.create_db_model(name, description)
+
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
         graph = bm.graph_connection.create_graph(db_model.graph_id, g)
@@ -51,11 +63,14 @@ class Model:
 
     @classmethod
     def load(cls, id: Optional[int] = None, name: Optional[str] = None) -> "Model":
-        """Get Model from db by id
+        """Get model from database by id or name.
 
-        :param id: model id
-        :type id: int
-        :return: Model
+        :param id: model id, defaults to None
+        :type id: Optional[int], optional
+        :param name: model name, defaults to None
+        :type name: Optional[str], optional
+        :raises Exception: if neither id nor name provided
+        :return: model
         :rtype: Model
         """
         bm = get_building_motif()
@@ -102,8 +117,7 @@ class Model:
         self._description = new_description
 
     def add_triples(self, *triples: Triple) -> None:
-        """
-        Add the given triples to the graph
+        """Add the given triples to the model.
 
         :param triples: a sequence of triples to add to the graph
         :type triples: Triple
@@ -112,8 +126,7 @@ class Model:
             self.graph.add(triple)
 
     def add_graph(self, graph: rdflib.Graph) -> None:
-        """
-        Add the given graph to the model
+        """Add the given graph to the model.
 
         :param graph: the graph to add to the model
         :type graph: rdflib.Graph
@@ -121,24 +134,26 @@ class Model:
         self.graph += graph
 
     def validate(self, shape_collections: List[ShapeCollection]) -> "ValidationContext":
-        """
-        Validates this model against the given shape collections. Loads all of the shape_collections
-        into a single graph.
+        """Validates this model against the given ShapeCollections.
 
-        TODO: determine the return types; At least a bool for valid/invalid, but also want
-         a report. Is this the base pySHACL report? Or a useful transformation, like a list
-         of deltas for potential fixes?
+        Loads all of the ShapeCollections into a single graph.
 
-        :param shape_collections: a list of shape_collections against which the
-                                  graph should be validated
+        :param shape_collections: a list of ShapeCollections against which the
+            graph should be validated
         :type shape_collections: List[ShapeCollection]
-        :return: An object containing useful properties/methods to deal with the validation results
-        :rtype: "ValidationContext"
+        :return: An object containing useful properties/methods to deal with
+            the validation results
+        :rtype: ValidationContext
         """
+        # TODO: determine the return types; At least a bool for valid/invalid,
+        # but also want a report. Is this the base pySHACL report? Or a useful
+        # transformation, like a list of deltas for potential fixes?
         shapeg = rdflib.Graph()
+        # aggregate shape graphs
         for sc in shape_collections:
             # inline sh:node for interpretability
-            shapeg += sc._inline_sh_node()
+            shapeg += sc.graph
+        shapeg = rewrite_shape_graph(shapeg)
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
         valid, report_g, report_str = pyshacl.validate(
@@ -160,13 +175,13 @@ class Model:
         )
 
     def compile(self, shape_collections: List["ShapeCollection"]):
-        """
-        Compile the graph of a model against a set of shape collections.
+        """Compile the graph of a model against a set of ShapeCollections.
 
-        :param shape_collections: List of shape collections to compile the model against
+        :param shape_collections: list of ShapeCollections to compile the model
+            against
         :type shape_collections: List[ShapeCollection]
-
-        :return: Copy of model's graph which has been compiled against the shape collections
+        :return: copy of model's graph that has been compiled against the
+            ShapeCollections
         :rtype: Graph
         """
         ontology_graph = rdflib.Graph()
@@ -215,20 +230,17 @@ class Model:
         shapes_to_test: List[rdflib.URIRef],
         target_class: rdflib.URIRef,
     ) -> Dict[rdflib.URIRef, "ValidationContext"]:
-        """
-        Validates the model against a list of shapes and generates a validation report
-        for each shape.
+        """Validates the model against a list of shapes and generates a
+        validation report for each.
 
-        :param shape_collections: List of shape collections needed to run shapes
+        :param shape_collections: list of ShapeCollections needed to run shapes
         :type shape_collection: List[ShapeCollection]
-
-        :param shapes_to_test: List of Shape URIs to validate the model against
+        :param shapes_to_test: list of shape URIs to validate the model against
         :type shapes_to_test: List[URIRef]
-
-        :param target_class: The class upon which to run the selected shapes
+        :param target_class: the class upon which to run the selected shapes
         :type target_class: URIRef
-
-        :return: A dictionary which relates each shape_to_test URIRef to a ValidationContext
+        :return: a dictionary that relates each shape to test URIRef to a
+                 ValidationContext
         :rtype: Dict[URIRef, ValidationContext]
         """
         ontology_graph = rdflib.Graph()

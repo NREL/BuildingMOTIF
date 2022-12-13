@@ -1,3 +1,4 @@
+import pytest
 from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF, RDF
@@ -10,16 +11,23 @@ BLDG = Namespace("urn:building/")
 
 
 def test_create_model(clean_building_motif):
-    model = Model.create(name="my_model", description="a very good model")
+    model = Model.create(name="https://example.com", description="a very good model")
 
     assert isinstance(model, Model)
-    assert model.name == "my_model"
+    assert model.name == "https://example.com"
     assert model.description == "a very good model"
     assert isinstance(model.graph, Graph)
 
 
+def test_create_model_bad_name(clean_building_motif):
+    with pytest.raises(ValueError):
+        Model.create(name="I have spaces")
+
+    assert len(clean_building_motif.table_connection.get_all_db_models()) == 0
+
+
 def test_load_model(clean_building_motif):
-    m = Model.create(name="my_model", description="a very good model")
+    m = Model.create(name="https://example.com", description="a very good model")
     m.graph.add((URIRef("http://example.org/alex"), RDF.type, FOAF.Person))
 
     result = Model.load(m.id)
@@ -29,7 +37,7 @@ def test_load_model(clean_building_motif):
     assert isomorphic(result.graph, m.graph)
 
     # test model_load_by_name
-    result = Model.load(name="my_model")
+    result = Model.load(name="https://example.com")
     assert result.id == m.id
     assert result.name == m.name
     assert result.description == m.description

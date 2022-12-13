@@ -7,7 +7,7 @@ Base = declarative_base()
 
 
 class DBModel(Base):
-    """Model containing all building information."""
+    """A Model is a metadata model of all or part of a building."""
 
     __tablename__ = "models"
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -17,7 +17,9 @@ class DBModel(Base):
 
 
 class DBShapeCollection(Base):
-    """ShapeCollection containing all building rules."""
+    """A ShapeCollection is a collection of shapes, which are used to validate
+    parts of a model.
+    """
 
     __tablename__ = "shape_collection"
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -27,7 +29,7 @@ class DBShapeCollection(Base):
 
 
 class DBLibrary(Base):
-    """Collection of Shapes and Templates"""
+    """A Library is a distributable collection of Templates and Shapes."""
 
     __tablename__ = "library"
     id: Mapped[int] = Column(Integer, primary_key=True)
@@ -70,11 +72,9 @@ class DepsAssociation(Base):
 
 
 class DBTemplate(Base):
-    """Template.
+    """A Template is used to generate content for a model."""
 
     # TODO: doc table properties better.
-    """
-
     __tablename__ = "template"
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False)
