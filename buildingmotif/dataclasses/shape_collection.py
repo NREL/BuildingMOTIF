@@ -82,7 +82,6 @@ class ShapeCollection:
         """
         self.graph += graph
 
-
     def _cbd(self, shape_name, self_contained=True):
         """Retrieves the Concise Bounded Description (CBD) of the shape."""
         cbd = self.graph.cbd(shape_name)
