@@ -15,7 +15,7 @@ pip install buildingmotif
     ```
 2. Up containers with docker-compose.
     ```
-    docker-compose -f docker-compose.yml up --build
+    docker-compose up --build
     ```
 3. Inside `buildingmotif-api`, migrate db.
     ```
