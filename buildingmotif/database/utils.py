@@ -5,8 +5,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 
 
 class JSONType(sa.types.TypeDecorator):
-    """
-    Custom JSON type that uses JSONB on Postgres and JSON on other dialects.
+    """Custom JSON type that uses JSONB on Postgres and JSON on other dialects.
     This allows us to use our custom JSON serialization below *and* have the
     database enforce uniqueness on JSON-encoded dictionaries
     """

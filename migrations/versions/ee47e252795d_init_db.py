@@ -10,8 +10,6 @@ from alembic import op
 
 from buildingmotif.database.utils import JSONType
 
-# from sqlalchemy.dialects.postgresql import JSON
-
 # revision identifiers, used by Alembic.
 revision = "ee47e252795d"
 down_revision = None
