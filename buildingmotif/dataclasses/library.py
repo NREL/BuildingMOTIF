@@ -10,8 +10,7 @@ import yaml
 from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
-from buildingmotif.building_motif.exceptions import LibraryAlreadyExistsException
-from buildingmotif.database.tables import DBTemplate
+from buildingmotif.database.tables import DBLibrary, DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.namespaces import XSD
@@ -81,7 +80,7 @@ class Library:
     _bm: "BuildingMOTIF"
 
     @classmethod
-    def create(cls, name: str, overwrite: Optional[bool] = False) -> "Library":
+    def create(cls, name: str, overwrite: Optional[bool] = True) -> "Library":
         """Create new Library.
 
         :param name: library name
@@ -92,15 +91,27 @@ class Library:
         bm = get_building_motif()
         try:
             db_library = bm.table_connection.get_db_library_by_name(name)
-            # Should we be doing more to overwrite a library? We're relying on the caller to clear the templates and shapes # noqa
-            if not overwrite:
-                raise LibraryAlreadyExistsException(
+            if overwrite:
+                cls._clear_library(db_library)
+            else:
+                logging.warn(
                     f'Library {name} already exists in database. To ovewrite load library with "overwrite=True"'  # noqa
                 )
         except sqlalchemy.exc.NoResultFound:
             db_library = bm.table_connection.create_db_library(name)
 
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
+
+    @classmethod
+    def _clear_library(cls, library: DBLibrary) -> None:
+        """Clear contents of a library
+
+        :param library: library to clear
+        :type library: DBLibrary
+        """
+        bm = get_building_motif()
+        for template in library.templates:  # type: ignore
+            bm.session.delete(template)
 
     # TODO: load library from URI? Does the URI identify the library uniquely?
     # TODO: can we deduplicate shape graphs? use hash of graph?
@@ -111,8 +122,7 @@ class Library:
         ontology_graph: Optional[Union[str, rdflib.Graph]] = None,
         directory: Optional[str] = None,
         name: Optional[str] = None,
-        overwrite: Optional[bool] = False,
-        load_if_not_exist: Optional[bool] = False,
+        overwrite: Optional[bool] = True,
     ) -> "Library":
         """
         Loads a Library from the database or an external source.
@@ -145,16 +155,12 @@ class Library:
                 ontology_graph.parse(
                     ontology_graph_path, format=guess_format(ontology_graph_path)
                 )
-            return cls._load_from_ontology_graph(
-                ontology_graph, overwrite=overwrite, load_if_not_exist=load_if_not_exist
-            )
+            return cls._load_from_ontology_graph(ontology_graph, overwrite=overwrite)
         elif directory is not None:
             src = pathlib.Path(directory)
             if not src.exists():
                 raise Exception(f"Directory {src} does not exist")
-            return cls._load_from_directory(
-                src, overwrite=overwrite, load_if_not_exist=load_if_not_exist
-            )
+            return cls._load_from_directory(src, overwrite=overwrite)
         elif name is not None:
             bm = get_building_motif()
             db_library = bm.table_connection.get_db_library_by_name(name)
@@ -178,10 +184,7 @@ class Library:
 
     @classmethod
     def _load_from_ontology_graph(
-        cls,
-        ontology: rdflib.Graph,
-        overwrite: Optional[bool] = False,
-        load_if_not_exist: Optional[bool] = False,
+        cls, ontology: rdflib.Graph, overwrite: Optional[bool] = True
     ) -> "Library":
         """
         Load a library from an ontology graph. This proceeds as follows.
@@ -206,14 +209,12 @@ class Library:
             predicate=rdflib.RDF.type, object=rdflib.OWL.Ontology, any=False
         )
 
-        # short circuit if user asks for it
-        if load_if_not_exist:
+        if not overwrite:
             if cls._library_exists(ontology_name):
-                return cls.load(name=ontology_name)
-            else:
-                logging.info(
-                    f"Library {ontology_name} does not already exist. Loading from graph"
+                logging.warning(
+                    f'Library "{ontology_name}" already exists in database and "overwrite=False". Returning existing library.'  # noqa
                 )
+                return Library.load(name=ontology_name)
 
         # expand the ontology graph before we insert it into the database. This will ensure
         # that the output of compiled models will not contain triples that really belong to
@@ -269,24 +270,19 @@ class Library:
 
     @classmethod
     def _load_from_directory(
-        cls,
-        directory: pathlib.Path,
-        overwrite: Optional[bool] = False,
-        load_if_not_exist: Optional[bool] = False,
+        cls, directory: pathlib.Path, overwrite: Optional[bool] = True
     ) -> "Library":
         """
         Load a library from a directory. Templates are read from .yml files
         in the directory. The name of the library is given by the name of the directory.
         """
-        # short circuit if user asks for it
-        if load_if_not_exist:
+
+        if not overwrite:
             if cls._library_exists(directory.name):
-                return Library.load(name=directory.name)
-            else:
-                logging.info(
-                    f"Library {directory.name} does not already exist. "
-                    f"Loading from directory {directory}"
+                logging.warn(
+                    f'Library "{directory.name}" already exists in database and "overwrite=False". Returning existing library.'  # noqa
                 )
+                return Library.load(name=directory.name)
 
         lib = cls.create(directory.name, overwrite=overwrite)
 

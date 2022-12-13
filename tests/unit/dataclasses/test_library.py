@@ -7,7 +7,6 @@ from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
 from buildingmotif import BuildingMOTIF
-from buildingmotif.building_motif.exceptions import LibraryAlreadyExistsException
 from buildingmotif.dataclasses import Library
 from tests.unit.conftest import MockLibrary
 
@@ -117,45 +116,15 @@ def test_load_library_overwrite_graph(bm: BuildingMOTIF):
     """
     g = Graph()
     g.parse(data=g1, format="ttl")
-    with pytest.raises(Exception):
-        lib = Library.load(ontology_graph=g, overwrite=False)
-    bm.session.rollback()
+    lib = Library.load(ontology_graph=g, overwrite=False)
+    assert (
+        len(lib.get_templates()) == 1
+    ), "Library is overwritten when it shouldn't have been"
 
     lib = Library.load(ontology_graph=g, overwrite=True)
-    assert lib is not None
-    assert len(lib.get_templates()) == 2
-
-
-def test_load_library_load_if_not_exist_ontology(bm: BuildingMOTIF):
-    g1 = """@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix : <urn:shape/> .
-: a owl:Ontology .
-:abc a sh:NodeShape, owl:Class .
-    """
-    g = Graph()
-    g.parse(data=g1, format="ttl")
-    lib = Library.load(ontology_graph=g, load_if_not_exist=True)
-    assert lib is not None
-    assert len(lib.get_templates()) == 1
     bm.session.commit()
-
-    g1 = """@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix : <urn:shape/> .
-: a owl:Ontology .
-:abc a sh:NodeShape, owl:Class .
-:def a sh:NodeShape, owl:Class .
-    """
-    g = Graph()
-    g.parse(data=g1, format="ttl")
-    with pytest.raises(Exception):
-        lib = Library.load(ontology_graph=g)
-    bm.session.rollback()
-
-    lib = Library.load(ontology_graph=g, load_if_not_exist=True)
     assert lib is not None
-    assert len(lib.get_templates()) == 1
+    assert len(lib.get_templates()) == 2, "Library is overwritten improperly"
 
 
 def test_load_library_overwrite_directory(bm: BuildingMOTIF):
@@ -166,33 +135,14 @@ def test_load_library_overwrite_directory(bm: BuildingMOTIF):
     assert lib is not None
     assert len(lib.get_templates()) == 1
 
-    with pytest.raises(LibraryAlreadyExistsException):
-        lib = Library.load(directory=second, overwrite=False)
-    bm.session.rollback()
+    lib = Library.load(directory=second, overwrite=False)
+    assert lib is not None
+    assert len(lib.get_templates()) == 1, "Library overwritten when overwrite=False"
 
     lib = Library.load(directory=second, overwrite=True)
-    assert lib is not None
-    assert len(lib.get_templates()) == 2
-
-
-def test_load_library_load_if_not_exist_directory(bm: BuildingMOTIF):
-    first = "tests/unit/fixtures/overwrite-test/1/A"
-    second = "tests/unit/fixtures/overwrite-test/2/A"
-
-    lib = Library.load(directory=first, load_if_not_exist=True)
-    assert lib is not None
-    assert len(lib.get_templates()) == 1, "Templates not loaded into library"
     bm.session.commit()
-
-    with pytest.raises(LibraryAlreadyExistsException):
-        lib = Library.load(directory=second)
-    bm.session.rollback()
-
-    lib = Library.load(directory=second, load_if_not_exist=True)
     assert lib is not None
-    assert (
-        len(lib.get_templates()) == 1
-    ), "Loaded library lacks templates present in database"
+    assert len(lib.get_templates()) == 2, "Library overwritten improperly"
 
 
 def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
