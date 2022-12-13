@@ -1,0 +1,42 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <urn:ashrae/g36/4.8/sz-vav-ahu/> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+
+:sz-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:class brick:AHU ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :sa-fan ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:node :sa-temp, :oa-ra-damper, :oa-temp, :ma-temp, :ra-temp, :filter-pd,
+            :clg-signal, :htg-signal, :zone-temperature, :occupancy-sensor, :zone-co2-level ;
+    bmotif:domain bmotif:HVAC ;
+.
+
+:sa-fan a sh:NodeShape ;
+    sh:class brick:Supply_Fan ;
+    sh:property [
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Frequency_Command ] ;
+        sh:path brick:hasPoint ;
+    ] ;
+    sh:property [
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
+        sh:path brick:hasPoint ;
+    ] ;
+    sh:property [
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Fan_Status ] ;
+        sh:path brick:hasPoint ;
+    ] ;
+.

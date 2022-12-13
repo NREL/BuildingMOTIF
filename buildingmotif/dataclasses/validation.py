@@ -1,16 +1,17 @@
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import chain
 from secrets import token_hex
-from typing import TYPE_CHECKING, Dict, List, Optional, Set
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
 import rdflib
 from rdflib import Graph, URIRef
 
+from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A
-from buildingmotif.utils import _gensym
+from buildingmotif.utils import _gensym, get_template_parts_from_shape, replace_nodes
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Library, Model, Template
@@ -81,17 +82,19 @@ class PathClassCount(GraphDiff):
         return [lib.create_template(f"resolve_{token_hex(4)}", body)]
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, unsafe_hash=True)
 class PathShapeCount(GraphDiff):
     """Represents an entity missing paths to objects that match a given shape.
     $this <path> <object> .
     <object> a <shapename> .
     """
 
-    path: URIRef
-    minc: Optional[int]
-    maxc: Optional[int]
-    shapename: URIRef
+    path: URIRef = field(hash=True)
+    minc: Optional[int] = field(hash=True)
+    maxc: Optional[int] = field(hash=True)
+    shapename: URIRef = field(hash=True)
+    extra_body: Optional[Graph] = field(hash=False)
+    extra_deps: Optional[Tuple] = field(hash=False)
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
@@ -101,12 +104,29 @@ class PathShapeCount(GraphDiff):
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff."""
         assert self.focus is not None
-        body = Graph()
+        generated = []
+        if self.extra_deps:
+            for dep in self.extra_deps:
+                dep["args"] = {k: str(v)[len(PARAM) :] for k, v in dep["args"].items()}
         for _ in range(self.minc or 0):
-            inst = _gensym()
+            body = Graph()
+            inst = PARAM["name"]
             body.add((self.focus, self.path, inst))
             body.add((inst, A, self.shapename))
-        return [lib.create_template(f"resolve{token_hex(4)}", body)]
+            if self.extra_body:
+                replace_nodes(self.extra_body, {PARAM.name: inst})
+                body += self.extra_body
+            templ = lib.create_template(f"resolve{token_hex(4)}", body)
+            if self.extra_deps:
+                from buildingmotif.dataclasses.template import Template
+
+                bm = get_building_motif()
+                for dep in self.extra_deps:
+                    dbt = bm.table_connection.get_db_template_by_name(dep["template"])
+                    t = Template.load(dbt.id)
+                    templ.add_dependency(t, dep["args"])
+            generated.append(templ)
+        return generated
 
 
 @dataclass(frozen=True)
@@ -231,6 +251,8 @@ class ValidationContext:
         """
         classpath = SH["class"] | (SH.qualifiedValueShape / SH["class"])  # type: ignore
         shapepath = SH["node"] | (SH.qualifiedValueShape / SH["node"])  # type: ignore
+        # TODO: for future use
+        # proppath = SH["property"] | (SH.qualifiedValueShape / SH["property"])  # type: ignore
 
         g = self.report + self._context
         diffs: Set[GraphDiff] = set()
@@ -275,6 +297,14 @@ class ValidationContext:
                     result,
                     SH.sourceShape / classpath,
                 )
+
+                # TODO: finish this for some shapes
+                # shapes_of_object = g.value(result, SH.sourceShape / SH.qualifiedValueShape)
+                # for soo in shapes_of_object:
+                #     soo_graph = g.cbd(soo)
+                # handle properties (on qualifiedValueShapes?)
+                # extra = g.value(result, SH.sourceShape / proppath)  # type: ignore
+
                 if focus and (min_count or max_count) and classname:
                     diffs.add(
                         PathClassCount(
@@ -289,6 +319,7 @@ class ValidationContext:
                     continue
                 shapename = g.value(result, SH.sourceShape / shapepath)  # type: ignore
                 if focus and (min_count or max_count) and shapename:
+                    extra_body, deps = get_template_parts_from_shape(shapename, g)
                     diffs.add(
                         PathShapeCount(
                             focus,
@@ -297,6 +328,8 @@ class ValidationContext:
                             int(min_count) if min_count else None,
                             int(max_count) if max_count else None,
                             shapename,
+                            extra_body,
+                            tuple(deps),
                         )
                     )
                     continue
