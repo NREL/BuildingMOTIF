@@ -20,10 +20,10 @@ class TableConnection:
     def __init__(self, engine: Engine, bm) -> None:
         """Class constructor.
 
-        :param engine: db engine
+        :param engine: database engine
         :type engine: Engine
         :param bm: contains the session to use
-        :type bm: BuildingMotif
+        :type bm: BuildingMOTIF
         """
         self.logger = logging.getLogger(__name__)
         self.bm = bm
@@ -33,8 +33,10 @@ class TableConnection:
     def create_db_model(self, name: str, description: str = "") -> DBModel:
         """Create a database model.
 
-        :param name: name of dbmodel
+        :param name: name of DBModel
         :type name: str
+        :param description: description of the model
+        :type description: str
         :return: DBModel
         :rtype: DBModel
         """
@@ -51,15 +53,15 @@ class TableConnection:
         """Get all database models.
 
         :return: all DBModels
-        :rtype: DBModel
+        :rtype: List[DBModel]
         """
         return self.bm.session.query(DBModel).all()
 
     def get_db_model(self, id: int) -> DBModel:
-        """Get database model from id.
+        """Get database model by id.
 
         :param id: id of DBModel
-        :type id: str
+        :type id: int
         :return: DBModel
         :rtype: DBModel
         """
@@ -67,7 +69,7 @@ class TableConnection:
         return db_model
 
     def get_db_model_by_name(self, name: str) -> DBModel:
-        """Get database model from name.
+        """Get database model by name.
 
         :param name: name of DBModel
         :type name: str
@@ -78,10 +80,10 @@ class TableConnection:
         return db_model
 
     def update_db_model_name(self, id: int, name: str) -> None:
-        """Update database model.
+        """Update database model name.
 
         :param id: id of DBModel
-        :type id: str
+        :type id: int
         :param name: new name
         :type name: str
         """
@@ -90,10 +92,10 @@ class TableConnection:
         db_model.name = name
 
     def update_db_model_description(self, id: int, description: str) -> None:
-        """Update database model.
+        """Update database model description.
 
         :param id: id of DBModel
-        :type id: str
+        :type id: int
         :param description: new description
         :type description: str
         """
@@ -107,7 +109,7 @@ class TableConnection:
         """Delete database model.
 
         :param id: id of deleted DBModel
-        :type id: str
+        :type id: int
         """
 
         db_model = self.get_db_model(id)
@@ -132,15 +134,15 @@ class TableConnection:
         """Get all database shape collections.
 
         :return: all DBShapeCollections
-        :rtype: DBShapeCollection
+        :rtype: List[DBShapeCollection]
         """
         return self.bm.session.query(DBShapeCollection).all()
 
     def get_db_shape_collection(self, id: int) -> DBShapeCollection:
-        """Get database shape collection from id.
+        """Get database shape collection by id.
 
         :param id: id of DBShapeCollection
-        :type id: str
+        :type id: int
         :return: DBShapeCollection
         :rtype: DBShapeCollection
         """
@@ -154,7 +156,7 @@ class TableConnection:
         """Delete database shape collection.
 
         :param id: id of deleted DBShapeCollection
-        :type id: str
+        :type id: int
         """
         db_shape_collection = (
             self.bm.session.query(DBShapeCollection)
@@ -190,7 +192,7 @@ class TableConnection:
         """Get all database libraries.
 
         :return: all DBLibrary
-        :rtype: DBLibrary
+        :rtype: List[DBLibrary]
         """
         db_libraries = self.bm.session.query(DBLibrary).all()
         return db_libraries
@@ -199,7 +201,7 @@ class TableConnection:
         """Get database library by id.
 
         :param id: id of DBLibrary
-        :type id: str
+        :type id: int
         :return: DBLibrary
         :rtype: DBLibrary
         """
@@ -220,7 +222,7 @@ class TableConnection:
         """Update database library name.
 
         :param id: id of DBLibrary
-        :type id: str
+        :type id: int
         :param name: new name
         :type name: str
         """
@@ -234,7 +236,7 @@ class TableConnection:
         """Delete database library.
 
         :param id: id of deleted DBLibrary
-        :type id: str
+        :type id: int
         """
 
         db_library = self.get_db_library_by_id(id)
@@ -250,6 +252,7 @@ class TableConnection:
         :param name: name of DBTemplate
         :type name: str
         :param library_id: id of the template's library
+        :type library_id: int
         :return: DBTemplate
         :rtype: DBTemplate
         """
@@ -268,10 +271,10 @@ class TableConnection:
         return template
 
     def get_all_db_templates(self) -> List[DBTemplate]:
-        """Get all database template.
+        """Get all database templates.
 
         :return: all DBTemplate
-        :rtype: DBTemplate
+        :rtype: List[DBTemplate]
         """
         db_templates = self.bm.session.query(DBTemplate).all()
         return db_templates
@@ -280,7 +283,7 @@ class TableConnection:
         """Get database template by id.
 
         :param id: id of DBTemplate
-        :type id: str
+        :type id: int
         :return: DBTemplate
         :rtype: DBTemplate
         """
@@ -290,7 +293,7 @@ class TableConnection:
         return db_template
 
     def get_db_template_by_name(self, name: str) -> DBTemplate:
-        """Get database template from id.
+        """Get database template by name.
 
         :param name: name of DBTemplate
         :type name: str
@@ -303,18 +306,25 @@ class TableConnection:
         return db_template
 
     def get_library_defining_db_template(self, id: int) -> DBLibrary:
-        """
-        Returns the library defining the given template
+        """Returns the library defining the given template.
+
+        :param id: id of template
+        :type id: int
+        :return: DBLibrary
+        :rtype: DBLibrary
         """
         return self.get_db_template_by_id(id).library
 
     def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
         """Get a template's dependencies and its arguments.
-        If you don't need the arguments, consider using `template.dependencies`.
+
+        If you don't need the arguments, consider using
+        :py:method:`dataclasses.template.get_dependencies`.
 
         :param id: template id
         :type id: int
-        :return: tuple of tuple, where each tuple has 1. the dependant_id, and 2. it's args
+        :return: tuple of tuple, where each tuple has the dependant_id
+            and it's args
         :rtype: tuple[tuple[int, list[str]]]
         """
         db_template_dependencies = tuple(
@@ -328,7 +338,7 @@ class TableConnection:
         """Update database template name.
 
         :param id: id of DBTemplate
-        :type id: str
+        :type id: int
         :param name: new name
         :type name: str
         """
@@ -341,10 +351,10 @@ class TableConnection:
     def update_db_template_optional_args(
         self, id: int, optional_args: List[str]
     ) -> None:
-        """Update database template.
+        """Update database template optional arguments.
 
         :param id: id of DBTemplate
-        :type id: str
+        :type id: int
         :param optional_args: new list of optional_args
         :type name: List[str]
         """
@@ -365,7 +375,8 @@ class TableConnection:
         :param args: mapping of dependency params to dependant params
         :type args: Dict[str, str]
         :raises ValueError: if all dependee required_params not in args
-        :raises ValueError: if dependant and dependency template don't share a library
+        :raises ValueError: if dependant and dependency template don't share a
+            library
         """
         self.logger.debug(
             f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
@@ -439,9 +450,9 @@ class TableConnection:
         """Update database template library.
 
         :param id: id of DBTemplate
-        :type id: str
-        :param name: id of the new library
-        :type name: int
+        :type id: int
+        :param library_id: id of the new library
+        :type library_id: int
         """
         db_template = self.get_db_template_by_id(id)
         self.logger.debug(
@@ -453,7 +464,7 @@ class TableConnection:
         """Delete database template.
 
         :param id: id of deleted DBTemplate
-        :type id: str
+        :type id: int
         """
         db_template = self.get_db_template_by_id(id)
         self.logger.debug(f"Deleting template: '{db_template.name}'")
