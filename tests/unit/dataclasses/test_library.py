@@ -174,5 +174,5 @@ def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
 
 
 def test_builtin_ontologies(bm: BuildingMOTIF, builtin_ontology):
-    lib = Library.load(ontology_graph=builtin_ontology)
+    lib = Library.load(directory=builtin_ontology)
     assert lib is not None

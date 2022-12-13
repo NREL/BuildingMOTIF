@@ -161,12 +161,10 @@ class Library:
         elif ontology_graph is not None:
             if isinstance(ontology_graph, str):
                 ontology_graph_path = ontology_graph
-                if resource_exists(
-                    "buildingmotif.builtin_libraries", ontology_graph_path
-                ):
-                    print(f"Loading builtin library: {ontology_graph_path}")
+                if resource_exists("buildingmotif.builtin", ontology_graph_path):
+                    logging.debug(f"Loading builtin library: {ontology_graph_path}")
                     ontology_graph_path = resource_filename(
-                        "buildingmotif.builtin_libraries", ontology_graph_path
+                        "buildingmotif.builtin", ontology_graph_path
                     )
                 ontology_graph = rdflib.Graph()
                 ontology_graph.parse(
@@ -174,10 +172,10 @@ class Library:
                 )
             return cls._load_from_ontology_graph(ontology_graph, overwrite=overwrite)
         elif directory is not None:
-            if resource_exists("buildingmotif.builtin_libraries", directory):
-                print(f"Loading builtin library: {directory}")
+            if resource_exists("buildingmotif.builtin", directory):
+                logging.debug(f"Loading builtin library: {directory}")
                 src = pathlib.Path(
-                    resource_filename("buildingmotif.builtin_libraries", directory)
+                    resource_filename("buildingmotif.builtin", directory)
                 )
             else:
                 src = pathlib.Path(directory)
