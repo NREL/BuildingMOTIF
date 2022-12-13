@@ -41,7 +41,7 @@ def serialize(
     raise ValueError("invalid input. Must be a DBTemplate or list of DBTemplates")
 
 
-def _serialize(template: DBTemplate) -> TemplateDict:
+def _serialize(template: DBTemplate, include_parameters: bool = False) -> TemplateDict:
     """Serialize a template into a TypedDict.
 
     :param template: template
