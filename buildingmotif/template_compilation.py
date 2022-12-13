@@ -21,9 +21,11 @@ Notes:
 
 
 def rule(name: str):
-    """
-    This decorator is applied to a function in order to register that function
-    as a rule that can be executed during template compilation.
+    """This decorator is applied to a function in order to register that
+    function as a rule that can be executed during template compilation.
+
+    :param name: name
+    :type name: str
     """
 
     def wrapper(func: Callable):
@@ -35,8 +37,10 @@ def rule(name: str):
 
 @rule("body")
 def body(*args, **kwargs) -> rdflib.Graph:
-    """
-    Returns the first value of the 'body' argument as the template body
+    """Returns the first value of the `body` argument as the template body.
+
+    :return: graph of first value of `body` argument
+    :rtype: rdflib.Graph
     """
     G = new_temporary_graph()
     G.parse(data=args[0], format="turtle")
@@ -45,8 +49,10 @@ def body(*args, **kwargs) -> rdflib.Graph:
 
 @rule("type")
 def hasType(*args, **kwargs) -> rdflib.Graph:
-    """
-    Returns the first value of the 'body' argument as the template body
+    """_summary_
+
+    :return: _description_
+    :rtype: rdflib.Graph
     """
     G = new_temporary_graph()
     for arg in args:
@@ -57,6 +63,11 @@ def hasType(*args, **kwargs) -> rdflib.Graph:
 
 @rule("hasPoint")
 def points(*args, **kwargs) -> rdflib.Graph:
+    """_summary_
+
+    :return: _description_
+    :rtype: rdflib.Graph
+    """
     G = new_temporary_graph()
     for param, pointtype in kwargs.items():
         pointtype = rdflib.URIRef(pointtype)
@@ -69,6 +80,11 @@ def points(*args, **kwargs) -> rdflib.Graph:
 
 @rule("hasPart")
 def parts(*args, **kwargs) -> rdflib.Graph:
+    """_summary_
+
+    :return: _description_
+    :rtype: rdflib.Graph
+    """
     G = new_temporary_graph()
     for param, pointtype in kwargs.items():
         pointtype = rdflib.URIRef(pointtype)
@@ -81,6 +97,11 @@ def parts(*args, **kwargs) -> rdflib.Graph:
 
 @rule("upstream")
 def isFedBy(*args, **kwargs) -> rdflib.Graph:
+    """_summary_
+
+    :return: _description_
+    :rtype: rdflib.Graph
+    """
     G = new_temporary_graph()
     assert kwargs is not None
     for param, equiptype in kwargs.items():
@@ -92,6 +113,11 @@ def isFedBy(*args, **kwargs) -> rdflib.Graph:
 
 @rule("downstream")
 def feeds(*args, **kwargs) -> rdflib.Graph:
+    """_summary_
+
+    :return: _description_
+    :rtype: rdflib.Graph
+    """
     G = new_temporary_graph()
     assert kwargs is not None
     for param, equiptype in kwargs.items():
@@ -103,9 +129,11 @@ def feeds(*args, **kwargs) -> rdflib.Graph:
 
 @rule("bacnet")
 def bacnet(*args, **kwargs) -> rdflib.Graph:
-    """
-    Adds template fields for each of the param names in 'args' to ensure
-    they have BACnet references
+    """Adds template fields for each of the param names in `args` to ensure
+    they have BACnet references.
+
+    :return: a graph with BACnet references added
+    :rtype: rdflib.Graph
     """
     G = new_temporary_graph()
     G.add((PARAM["BACnet_device"], RDF["type"], BACNET.BACnetDevice))
@@ -119,14 +147,14 @@ def bacnet(*args, **kwargs) -> rdflib.Graph:
 
 
 def compile_template_spec(spec: Dict) -> Dict:
-    """
-    Compiles a template specification into the body of a template by
-    applying rules defined in this file and others
+    """Compiles a template specification into the body of a template by
+    applying rules defined in this file and others.
 
     :param spec: the Python dictionary that is the result of decoding the
         YAML structure (usually a dictionary or list) defining the
         template
     :type spec: Dict
+    :raises ValueError: if unknown rule
     :return: the template spec containing the compiled body
     :rtype: Dict
     """
