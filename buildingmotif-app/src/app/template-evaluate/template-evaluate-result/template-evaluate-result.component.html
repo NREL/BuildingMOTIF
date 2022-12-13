@@ -1,0 +1,25 @@
+<ngx-codemirror #codemirror
+class="graph"
+[options]="codeMirrorOptions"
+[(ngModel)]="evaluateTemplate">
+</ngx-codemirror>
+
+<div class="addToModel">
+    <form>
+        <mat-form-field appearance="outline">
+            <mat-select [formControl]="selectedModel">
+                <mat-option *ngFor="let model of models" [value]="model">
+                {{model.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+    
+    <button 
+    (click)="addToModel()"
+    [disabled]="selectedModel.invalid"
+    mat-raised-button
+    color="primary">
+        Add to Model
+    </button>
+</div>

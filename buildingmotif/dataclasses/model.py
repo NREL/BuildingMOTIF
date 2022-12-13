@@ -3,15 +3,24 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 
 import pyshacl
 import rdflib
+import rfc3987
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.namespaces import A
-from buildingmotif.utils import Triple, copy_graph
+from buildingmotif.utils import Triple, copy_graph, rewrite_shape_graph
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
+
+
+def _validate_uri(uri: str):
+    parsed = rfc3987.parse(uri)
+    if not parsed["scheme"]:
+        raise ValueError(
+            f"{uri} does not look like a valid URI, trying to serialize this will break."
+        )
 
 
 @dataclass
@@ -36,7 +45,10 @@ class Model:
         :rtype: Model
         """
         bm = get_building_motif()
+
+        _validate_uri(name)
         db_model = bm.table_connection.create_db_model(name, description)
+
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
         graph = bm.graph_connection.create_graph(db_model.graph_id, g)
@@ -137,9 +149,11 @@ class Model:
         # but also want a report. Is this the base pySHACL report? Or a useful
         # transformation, like a list of deltas for potential fixes?
         shapeg = rdflib.Graph()
+        # aggregate shape graphs
         for sc in shape_collections:
             # inline sh:node for interpretability
-            shapeg += sc._inline_sh_node()
+            shapeg += sc.graph
+        shapeg = rewrite_shape_graph(shapeg)
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
         valid, report_g, report_str = pyshacl.validate(

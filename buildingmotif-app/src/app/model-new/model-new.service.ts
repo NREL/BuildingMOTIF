@@ -8,30 +8,14 @@ import { catchError, retry } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class ModelDetailService {
+export class ModelNewService {
 
   constructor(private http: HttpClient) { }
 
-  getModel(id: number) {
-    return this.http.get<Model>(`http://localhost:5000/models/${id}`)
-      .pipe(
-        retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
-      );
-  }
+  createModel(name: string, description: string): Observable<Model | any> {
+    const headers = {'Content-Type': "application/json"}
 
-  getModelGraph(id: number) {
-    return this.http.get(`http://localhost:5000/models/${id}/graph`, {responseType: 'text'})
-      .pipe(
-        retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
-      );
-  }
-
-  updateModelGraph(id: number, newGraph: string, append: boolean = false) {
-    const headers = {'Content-Type': "application/xml"}
-
-    return this.http[append? "patch": "put"](`http://localhost:5000/models/${id}/graph`, newGraph, {headers, responseType: 'text'})
+    return this.http.post(`http://localhost:5000/models`, {name: name, description: description}, {headers, responseType: 'json'})
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error
@@ -49,7 +33,7 @@ export class ModelDetailService {
         `Backend returned code ${error.status}, body was: `, error.error);
     }
     // Return an observable with a user-facing error message.
-    return throwError(() => new Error(`${error.status}: ${error.error}`));
+    return throwError(() => new Error(`${error.status}: ${error.error.message}`));
   }
 
 }
