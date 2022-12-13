@@ -284,20 +284,19 @@ class Library:
         cls, directory: pathlib.Path, overwrite: Optional[bool] = True
     ) -> "Library":
         """
-                Load a library from a directory.
+        Load a library from a directory.
 
-                Templates are read from YML files in the directory. The name of the
-                library is given by the name of the directory.
+        Templates are read from YML files in the directory. The name of the
+        library is given by the name of the directory.
 
-                :param directory: directory containing a library
-                :type directory: pathlib.Path
-                :param overwrite: if true, overwrite the existing copy of the Library
-                :type overwrite: bool
-                :raises e: if cannot create template
-                :raises e: if cannot resolve dependencies
-                :return: library
-                :rtype: Library
-        >>>>>>> 7e7906eddaac403f8e27cdd620ea52341b39d677
+        :param directory: directory containing a library
+        :type directory: pathlib.Path
+        :param overwrite: if true, overwrite the existing copy of the Library
+        :type overwrite: bool
+        :raises e: if cannot create template
+        :raises e: if cannot resolve dependencies
+        :return: library
+        :rtype: Library
         """
 
         if not overwrite:
