@@ -18,11 +18,11 @@ ModelDict = TypedDict(
 def serialize(
     param: Union[DBModel, List[DBModel]]
 ) -> Union[ModelDict, List[ModelDict]]:
-    """serialize one or more models
+    """Serialize one or more models into a TypedDict.
 
     :param param: one model or a list of models
     :type param: Union[DBModel, List[DBModel]]
-    :return: one json per serialized model
+    :return: one JSON per serialized model
     :rtype: Union[ModelDict, List[ModelDict]]
     """
     if isinstance(param, DBModel):
@@ -35,7 +35,7 @@ def serialize(
 
 
 def _serialize(model: DBModel) -> ModelDict:
-    """serialize model
+    """Serialize a model into a TypedDict.
 
     :param model: model
     :type model: DBModel

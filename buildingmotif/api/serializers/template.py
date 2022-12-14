@@ -22,13 +22,14 @@ TemplateDict = TypedDict(
 def serialize(
     param: Union[DBTemplate, List[DBTemplate]], include_parameters: bool = False
 ) -> Union[TemplateDict, List[TemplateDict]]:
-    """Serialize one or more templates.
+    """Serialize one or more templates into a TypedDict.
 
-    :param param: one template or a list of templates
+    :param param: one template or a list of templates.
     :type param: Union[DBTemplate, List[DBTemplate]]
     :param include_parameters: to include parameters, default False
     :type include_parameters: bool
-    :return: one json per serialized template
+    :raises ValueError: if invalid input
+    :return: one JSON per serialized template
     :rtype: Union[TemplateDict, List[TemplateDict]]
     """
     if isinstance(param, DBTemplate):
@@ -41,7 +42,7 @@ def serialize(
 
 
 def _serialize(template: DBTemplate, include_parameters: bool = False) -> TemplateDict:
-    """Serialize template.
+    """Serialize a template into a TypedDict.
 
     :param template: template
     :type template: DBTemplate
