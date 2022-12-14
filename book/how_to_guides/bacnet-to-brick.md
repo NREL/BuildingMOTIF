@@ -73,9 +73,9 @@ We use the `buildingmotif.ingresses.brick.BACnetToBrickIngress` ingress module t
 from buildingmotif.ingresses.brick import BACnetToBrickIngress
 
 # create the Brick ingress module and connect to the existing bacnet module
-brick = BACnetToBrickIngress(bm, bacnet)
+brick2bacnet = BACnetToBrickIngress(bm, bacnet)
 # creates the graph from the BACnet records
-bacnet_network_graph = brick.graph(BLDG)
+bacnet_network_graph = brick2bacnet.graph(BLDG)
 # add the graph to our model
 model.add_graph(bacnet_network_graph)
 ```
@@ -88,3 +88,122 @@ print(model.graph.serialize())
 
 We can now see the devices and their objects represented in the model. However, the metadata is not very descriptive. All of the BACnet objects have been inferred to be instances of `brick:Point`.
 In the next step, we will use BuildingMOTIF to incorporate our other knowledge about the building to augment this Brick model with more descriptive metadata.
+
+## Augmenting the Initial Model: Our Strategy
+
+There is [existing documentation](https://docs.brickschema.org/lifecycle/creation.html) on techniques for inferring Brick metadata from point labels. Below, we will show how a simple Python-based point type inference module can be implemented by extending BuildingMOTIF's existing ingress module implementation. Then, we will use BuildingMOTIF's templates to incorporate the inferred points into a bigger model.
+
+## Point Type Inference
+
+For completeness, here are the names of the 5 points in the BACnet network scanned above (these will be different if you are not using the Simulated Digital Twin platform):
+
+- `hvac_oveAhu_yPumHea_u`
+- `hvac_oveZonSupSou_TZonCooSet_u`
+- `hvac_oveZonSupSou_TZonHeaSet_u`
+- `hvac_reaZonSou_TSup_y`
+- `hvac_reaZonSou_TZon_y`
+
+Squinting at these point names, we might see how we can divide each name into sections: `hvac_<equip or zone name>_<point type>_<u or y>`. Let's write Python code to pull out the Brick metadata we can from these labels.
+
+```{code-cell}
+from rdflib import Graph, URIRef
+from buildingmotif.namespaces import RDF, BRICK
+def parse_label(label: str, output: Graph):
+    """Parses the label and puts the resulting triples in the provided graph."""
+    parts = label.split('_')
+    _, equip_or_zone, point_type, _ = parts # throw away the first and last parts
+    if 'Zon' in equip_or_zone:
+        zone_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
+        output.add((BLDG[zone_name], RDF.type, BRICK.HVAC_Zone))
+        output.add((BLDG[label], BRICK.isPointOf, BLDG[zone_name]))
+    else:
+        equip_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
+        output.add((BLDG[equip_name], RDF.type, BRICK.Equipment))  # figure out what this is later
+        output.add((BLDG[label], BRICK.isPointOf, BLDG[equip_name]))
+
+    if point_type == 'TZonCooSet':
+        brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
+    elif point_type == 'TZonHeaSet':
+        brick_class = BRICK.Zone_Air_Heating_Temperature_Setpoint
+    elif point_type == 'TSup':
+        brick_class = BRICK.Supply_Air_Temperature_Sensor
+    elif point_type == 'TZon':
+        brick_class = BRICK.Zone_Air_Temperature_Sensor
+    elif point_type == 'yPumHea':
+        brick_class = BRICK.Heating_Command
+    else:
+        raise Exception("Unknown point type!")
+
+    output.add((BLDG[label], RDF.type, brick_class))
+```
+
+We can wrap this function in an ingress module so it is easy to reuse later. This just requires a little bit of moving some code around
+
+```{code-cell}
+from buildingmotif.ingresses.base import GraphIngressHandler
+
+class MyPointParser(GraphIngressHandler):
+    def __init__(self, bm: BuildingMOTIF, upstream: GraphIngressHandler):
+        self.bm = bm
+        self.upstream = upstream # this will point to our BACnetToBrickIngress handler
+
+    def parse_label(self, label: str, entity: URIRef, output: Graph):
+        """Parses the label and puts the resulting triples in the provided graph.
+        Adds the type to the indicated entity"""
+        parts = label.split('_')
+        _, equip_or_zone, point_type, _ = parts # throw away the first and last parts
+        if 'Zon' in equip_or_zone:
+            zone_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
+            output.add((BLDG[zone_name], RDF.type, BRICK.HVAC_Zone))
+            output.add((entity, BRICK.isPointOf, BLDG[zone_name]))
+        else:
+            equip_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
+            output.add((BLDG[equip_name], RDF.type, BRICK.Equipment))  # figure out what this is later
+            output.add((entity, BRICK.isPointOf, BLDG[equip_name]))
+
+        if point_type == 'TZonCooSet':
+            brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
+        elif point_type == 'TZonHeaSet':
+            brick_class = BRICK.Zone_Air_Heating_Temperature_Setpoint
+        elif point_type == 'TSup':
+            brick_class = BRICK.Supply_Air_Temperature_Sensor
+        elif point_type == 'TZon':
+            brick_class = BRICK.Zone_Air_Temperature_Sensor
+        elif point_type == 'yPumHea':
+            brick_class = BRICK.Heating_Command
+        else:
+            raise Exception(f"Unknown point type! {point_type}")
+
+        output.add((entity, RDF.type, brick_class))
+
+    def graph(self, ns: Namespace) -> Graph:
+        """the method we override to implement a GraphIngressHandler"""
+        bacnet_graph = self.upstream.graph(ns)
+        point_labels = bacnet_graph.query("""
+            SELECT ?entity ?label WHERE {
+                ?entity <https://brickschema.org/schema/ref#hasExternalReference> ?ref .
+                ?ref <http://data.ashrae.org/bacnet/2020#object-name> ?label
+            }""")
+        for entity, label in point_labels:
+            # infer type for each
+            self.parse_label(label, entity, bacnet_graph)
+
+        return bacnet_graph
+```
+
+Now we can invoke our ingress module:
+
+```{code-cell}
+# create the Brick ingress module and connect to the existing bacnet module
+point_ingress = MyPointParser(bm, brick2bacnet)
+# creates the graph from the BACnet records
+augmented_graph = point_ingress.graph(BLDG)
+# add the graph to our model
+model.add_graph(augmented_graph)
+```
+
+and display the resulting model
+
+```{code-cell}
+print(model.graph.serialize())
+```
