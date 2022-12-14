@@ -48,8 +48,9 @@ class TemplateIngress(GraphIngressHandler):
 
 class TemplateIngressWithChooser(GraphIngressHandler):
     """
-    Reads records and attempts to instantiate the given template
-    with each record. Produces a graph.
+    Reads records and attempts to instantiate a template with each record.
+    Uses a 'chooser' function to determine which template should be
+    instantiated for each record. Produces a graph.
 
     If 'inline' is True, inlines all templates when they are instantiated.
     """
