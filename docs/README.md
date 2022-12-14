@@ -30,8 +30,8 @@ The documentation uses Diataxis[^1] as a framework for its structure, which is o
 
 ## Reference
 
+- [Code Documentation](https://nrel.github.io/BuildingMOTIF/reference/apidoc/index.html)
 - [Developer Documentation](https://nrel.github.io/BuildingMOTIF/reference/developer_documentation.html)
-- [API Documentation](https://nrel.github.io/BuildingMOTIF/apidoc/index.html)
 
 ## Explaination
 
