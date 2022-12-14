@@ -1,0 +1,821 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Model Creation &#8212; BuildingMOTIF Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Model Validation" href="model_validation.html" />
+    <link rel="prev" title="BuildingMOTIF" href="../intro.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint">⚠️ This is an ALPHA release, things may break or not work! ⚠️</div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">BuildingMOTIF Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    BuildingMOTIF
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Tutorials
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Model Creation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="model_validation.html">
+   Model Validation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="model_correction.html">
+   Model Correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="template_writing.html">
+   Template Writing
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../reference/developer_documentation.html">
+   Developer Documentation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../apidoc/index.html">
+   API Documentation
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Appendix
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../bibliography.html">
+   Bibliography
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/NREL/BuildingMOTIF/main?urlpath=tree/doc/tutorials/model_creation.md"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/NREL/BuildingMOTIF"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Ftutorials/model_creation.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/tutorials/model_creation.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download notebook file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="../_sources/tutorials/model_creation.md"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.md</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#creating-a-model">
+   Creating a Model
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-libraries">
+   Loading Libraries
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adding-to-a-model-with-templates">
+   Adding to a Model with Templates
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exploring-a-template">
+     Exploring a Template
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#evaluating-a-template">
+     Evaluating a Template
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#adding-evaluated-templates-to-the-model">
+     Adding Evaluated Templates to the Model
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Model Creation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#creating-a-model">
+   Creating a Model
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#loading-libraries">
+   Loading Libraries
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adding-to-a-model-with-templates">
+   Adding to a Model with Templates
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exploring-a-template">
+     Exploring a Template
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#evaluating-a-template">
+     Evaluating a Template
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#adding-evaluated-templates-to-the-model">
+     Adding Evaluated Templates to the Model
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="model-creation">
+<h1>Model Creation<a class="headerlink" href="#model-creation" title="Permalink to this headline">#</a></h1>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This tutorial assumes that <code class="docutils literal notranslate"><span class="pre">BuildingMOTIF</span></code> has already been installed in the local environment.</p>
+</div>
+</aside>
+<p>The purpose of this tutorial is to learn about a few of the basic features of BuildingMOTIF by creating a Brick model similar to the Small Office Commercial Prototype Building model<a class="footnote-reference brackets" href="#id5" id="id1">1</a>. It assumes that the reader has some familiarity with the Turtle syntax<a class="footnote-reference brackets" href="#id6" id="id2">2</a> for Resource Description Framework (RDF) graphs<a class="footnote-reference brackets" href="#id7" id="id3">3</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This tutorial has the following learning objectives:</p>
+<ol class="simple">
+<li><p>creating a BuildingMOTIF model <em>instance</em> and <code class="docutils literal notranslate"><span class="pre">Model</span></code></p></li>
+<li><p>loading <code class="docutils literal notranslate"><span class="pre">Libraries</span></code> into a BuildingMOTIF instance</p></li>
+<li><p>adding to a model by <em>evaluating</em> <code class="docutils literal notranslate"><span class="pre">Templates</span></code></p></li>
+</ol>
+</div>
+<section id="creating-a-model">
+<h2>Creating a Model<a class="headerlink" href="#creating-a-model" title="Permalink to this headline">#</a></h2>
+<p>BuildingMOTIF needs a database to store models, libraries, templates, ontologies, and other data. This database can be <em>in-memory</em> (which will be deleted when the process ends) or <em>persistent</em>. For simplicity, we will start with an in-memory database where <code class="docutils literal notranslate"><span class="pre">bm</span></code> represents a BuildingMOTIF instance.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from buildingmotif import BuildingMOTIF
+bm = BuildingMOTIF(&quot;sqlite://&quot;) # in-memory instance
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span> <span class="c1"># in-memory instance</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;buildingmotif&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">Model</span></code> is an RDF graph representing part or all of a building.</p>
+</div>
+</aside>
+<p>Now that we have a BuildingMOTIF instance, we can create a <code class="docutils literal notranslate"><span class="pre">Model</span></code>. Creating a model requires importing the <code class="docutils literal notranslate"><span class="pre">Model</span></code> class, creating an RDF namespace to hold all of the entities in the model, and telling BuildingMOTIF to create a new model with that namespace. The namespace is a URL used to uniquely identify the model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from rdflib import Namespace
+from buildingmotif.dataclasses import Model
+
+# create the namespace
+BLDG = Namespace(&#39;urn:bldg/&#39;)
+
+# Create the model! This will raise an exception if the namespace is not syntactically valid.
+model = Model.create(BLDG, description=&quot;This is a test model for a simple building&quot;) 
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can print out the contents of the model by accessing the <code class="docutils literal notranslate"><span class="pre">.graph</span></code> property of the model object. Printing this out reveals that BuildingMOTIF has added a couple annotations to the model for us, but there is otherwise no metadata about the building itself:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(model.graph.serialize())
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">model.graph</span></code> object is just the RDFLib Graph<a class="footnote-reference brackets" href="#id8" id="id4">4</a> that stores the model. You can interact with the graph by adding triples with <code class="docutils literal notranslate"><span class="pre">model.graph.add((subject,</span> <span class="pre">predicate,</span> <span class="pre">object))</span></code> but as we will soon see, BuildingMOTIF can automate some of that!</p>
+</section>
+<section id="loading-libraries">
+<h2>Loading Libraries<a class="headerlink" href="#loading-libraries" title="Permalink to this headline">#</a></h2>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">Libraries</span></code> are collections of Templates and Shapes.</p>
+</div>
+</aside>
+<p>Before we can add semantic metadata to the model, we need to import some <code class="docutils literal notranslate"><span class="pre">Libraries</span></code>. We import libraries by calling <code class="docutils literal notranslate"><span class="pre">Library.load</span></code> in BuildingMOTIF. Libraries can be loaded from directories containing <code class="docutils literal notranslate"><span class="pre">.yml</span></code> and <code class="docutils literal notranslate"><span class="pre">.ttl</span></code> files (for Templates and Shapes, respectively), or from ontology files directly. The code below contains an example of importing the <code class="docutils literal notranslate"><span class="pre">brick</span></code> library, which is simply the Brick ontology. This allows BuildingMOTIF to take advantage of the classes and relationships defined by Brick when validating the model. Loading in these definitions also allows other libraries to refer to Brick definitions. You can also ask a library for the names of the templates it defines, which we’ll limit to the first ten below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># load a library
+from buildingmotif.dataclasses import Library
+brick = Library.load(ontology_graph=&quot;../../libraries/brick/Brick-subset.ttl&quot;)
+
+# print the first 10 templates
+print(&quot;The Brick library contains the following templates:&quot;)
+for template in brick.get_templates()[:10]:
+    print(f&quot;  - {template.name}&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="adding-to-a-model-with-templates">
+<h2>Adding to a Model with Templates<a class="headerlink" href="#adding-to-a-model-with-templates" title="Permalink to this headline">#</a></h2>
+<section id="exploring-a-template">
+<h3>Exploring a Template<a class="headerlink" href="#exploring-a-template" title="Permalink to this headline">#</a></h3>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">Templates</span></code> are functions that generate parts of an RDF model.</p>
+</div>
+</aside>
+<p><code class="docutils literal notranslate"><span class="pre">Templates</span></code> make it easy to add metadata to a model without having to touch any RDF at all by generating parts of an RDF graph. This graph may represent a simple device like a fan, a complex entity like a chilled water system, or other parts of a building. The <em>body</em> of a template contains the basic structure of the graph representing that entity. Typically, a template defines several <em>parameters</em> that represent user-provided input necessary to create that entity in the model.</p>
+<p>Let’s start with the template for an air handling unit (AHU) from the <code class="docutils literal notranslate"><span class="pre">brick</span></code> library, which we can fetch out of the library by referring to it by name. Then, let’s ask the template for the parameters it defines.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># import this to make writing URIs easier
+from buildingmotif.namespaces import BRICK
+
+# get template
+ahu_template = brick.get_template_by_name(BRICK.AHU)
+
+# print template parameters
+print(&quot;The template has the following parameters:&quot;)
+for param in ahu_template.parameters:
+    print(f&quot;  {param}&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+<p>All templates have a mandatory <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter. We can also print out the body of the template to see how those parameters will be used. Any URI that starts with a <code class="docutils literal notranslate"><span class="pre">p:</span></code> is a parameter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(ahu_template.body.serialize())
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="evaluating-a-template">
+<h3>Evaluating a Template<a class="headerlink" href="#evaluating-a-template" title="Permalink to this headline">#</a></h3>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For now, provide all of the parameters to the Template when evaluating. BuildingMOTIF does support partial evaluation of Templates but this is not necessary to understand or use when starting out.</p>
+</div>
+</aside>
+<p>Now that we know what the template looks like and what parameters it needs, we can <em>evaluate</em> the Template. <em>Evaluation</em> is the process of turning a template into a graph that can be added to a model. We accomplish this with the <code class="docutils literal notranslate"><span class="pre">evaluate</span></code> function, which takes a dictionary of <em>bindings</em> as an argument. Bindings relate a parameter in the template to a value (typically a URI in your building’s namespace). Put another way, the <em>keys</em> of the dictionary are the names of the parameters and the <em>values</em> of the dictionary are what will replace that parameter in the template’s body.</p>
+<p>Let’s create an AHU named <em>Core_ZN-PSZ_AC</em>, which represents the core zone’s packaged single zone air conditioner in the Small Office model, and take a look at the result of evaluating the template.</p>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When creating a real Brick model, you would use BMS point names, equipment schedules, etc. to determine the correct names of these entities. Other tutorials will cover how to use BuildingMOTIF with these kinds of metadata sources.</p>
+</div>
+</aside>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ahu_name = &quot;Core_ZN-PSC_AC&quot;
+ahu_binding_dict = {&quot;name&quot;: BLDG[ahu_name]}
+ahu_graph = ahu_template.evaluate(ahu_binding_dict)
+
+# ahu_graph is just an instance of rdflib.Graph
+print(ahu_graph.serialize())
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="adding-evaluated-templates-to-the-model">
+<h3>Adding Evaluated Templates to the Model<a class="headerlink" href="#adding-evaluated-templates-to-the-model" title="Permalink to this headline">#</a></h3>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If using a persistent (disk-backed) instance of BuildingMOTIF instead of an in-memory instance, be sure to use <code class="docutils literal notranslate"><span class="pre">bm.session.commit()</span></code> to save your work after calling <code class="docutils literal notranslate"><span class="pre">add_graph</span></code>.</p>
+</div>
+</aside>
+<p>Now that we have an RDF graph representing an AHU, let’s add it to the model using the <code class="docutils literal notranslate"><span class="pre">add_graph</span></code> function.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>model.add_graph(ahu_graph)
+print(model.graph.serialize())
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we’ll add some of the AHU’s components (a fan, a damper, and a cooling coil) to the model using Templates. Then we’ll connect the components to the AHU using RDFLib’s <code class="docutils literal notranslate"><span class="pre">graph.add((subject,</span> <span class="pre">predicate,</span> <span class="pre">object))</span></code> method.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># templates
+oa_ra_damper_template = brick.get_template_by_name(BRICK.Damper)
+fan_template = brick.get_template_by_name(BRICK.Supply_Fan)
+clg_coil_template = brick.get_template_by_name(BRICK.Cooling_Coil)
+
+# add fan
+fan_name = f&quot;{ahu_name}-Fan&quot;
+fan_binding_dict = {&quot;name&quot;: BLDG[fan_name]}
+fan_graph = fan_template.evaluate(fan_binding_dict)
+model.add_graph(fan_graph)
+
+# add outdoor air/return air damper
+oa_ra_damper_name = f&quot;{ahu_name}-Damper&quot;
+oa_ra_damper_binding_dict = {&quot;name&quot;: BLDG[oa_ra_damper_name]}
+oa_ra_damper_graph = oa_ra_damper_template.evaluate(oa_ra_damper_binding_dict)
+model.add_graph(oa_ra_damper_graph)
+
+# add clg coil
+clg_coil_name = f&quot;{ahu_name}-Clg_Coil&quot;
+clg_coil_binding_dict = {&quot;name&quot;: BLDG[clg_coil_name]}
+clg_coil_graph = clg_coil_template.evaluate(clg_coil_binding_dict)
+model.add_graph(clg_coil_graph)
+
+# connect fan, damper, and clg coil to AHU
+model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[oa_ra_damper_name]))
+model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[fan_name]))
+model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[clg_coil_name]))
+
+# print model to confirm components were added and connected
+print(model.graph.serialize())
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If you want some additional practice, try writing some Python code that adds a Brick <code class="docutils literal notranslate"><span class="pre">Heating_Coil</span></code> to the model and connects it to the AHU.</p>
+</div>
+<div class="dropdown admonition hint">
+<p class="admonition-title">Hint</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get template</span>
+<span class="n">htg_coil_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Heating_Coil</span><span class="p">)</span>
+
+<span class="c1"># add htg coil</span>
+<span class="n">htg_coil_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ahu_name</span><span class="si">}</span><span class="s2">-Htg_Coil&quot;</span>
+<span class="n">htg_coil_binding</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">htg_coil_name</span><span class="p">]}</span>
+<span class="n">htg_coil_graph</span> <span class="o">=</span> <span class="n">htg_coil_template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">htg_coil_binding</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">htg_coil_graph</span><span class="p">)</span>
+
+<span class="c1"># connect htg coil to AHU</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">htg_coil_name</span><span class="p">]))</span>
+
+<span class="c1"># print model to confirm component was added and connected</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<p>Finally, let’s save the model to use in the next tutorial.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#save model
+model.graph.serialize(destination=&quot;tutorial1_model.ttl&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="footnotes docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="id5"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p><a class="reference external" href="https://www.energycodes.gov/prototype-building-models#Commercial">https://www.energycodes.gov/prototype-building-models#Commercial</a></p>
+</dd>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p><a class="reference external" href="https://www.w3.org/TR/turtle/">https://www.w3.org/TR/turtle/</a></p>
+</dd>
+<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p><a class="reference external" href="https://www.w3.org/RDF/">https://www.w3.org/RDF/</a></p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id4">4</a></span></dt>
+<dd><p><a class="reference external" href="https://rdflib.readthedocs.io/">https://rdflib.readthedocs.io/</a></p>
+</dd>
+</dl>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./tutorials"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="../intro.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">BuildingMOTIF</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="model_validation.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Model Validation</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By NREL<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
