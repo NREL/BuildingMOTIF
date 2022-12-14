@@ -200,7 +200,7 @@ We can now see that the points in our model have more descriptive Brick types.
 We can now focus on associating these points with real equipment and zones to create a more complete Brick model. The most straightforward way of doing this is to create templates that convey what we think the parts of the building should look like.
 
 ```{margin}
-```{info}
+```{note}
 As BuildingMOTIF gets more mature, there will be a larger ecosystem of Templates and Shapes we can draw from. For this (simple) example, we will create our own Templates that match the limited metadata we have about the sample building.
 ```
 
