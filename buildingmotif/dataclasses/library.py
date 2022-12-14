@@ -133,6 +133,9 @@ class Library:
         overwrite: Optional[bool] = True,
     ) -> "Library":
         """Loads a library from the database or an external source.
+        When specifying a path to load a library or ontology_graph from,
+        paths within the buildingmotif.builtin module will be prioritized
+        if they resolve.
 
         :param db_id: the unique id of the library in the database,
             defaults to None
