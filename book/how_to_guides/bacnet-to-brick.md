@@ -112,14 +112,14 @@ def parse_label(label: str, output: Graph):
     """Parses the label and puts the resulting triples in the provided graph."""
     parts = label.split('_')
     _, equip_or_zone, point_type, _ = parts # throw away the first and last parts
-    if 'Zon' in equip_or_zone:
-        zone_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
-        output.add((BLDG[zone_name], RDF.type, BRICK.HVAC_Zone))
-        output.add((BLDG[label], BRICK.isPointOf, BLDG[zone_name]))
-    else:
+    if 'ZonSup' in equip_or_zone or 'Zon' not in equip_or_zone:
         equip_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
         output.add((BLDG[equip_name], RDF.type, BRICK.Equipment))  # figure out what this is later
         output.add((BLDG[label], BRICK.isPointOf, BLDG[equip_name]))
+    else:
+        zone_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
+        output.add((BLDG[zone_name], RDF.type, BRICK.HVAC_Zone))
+        output.add((BLDG[label], BRICK.isPointOf, BLDG[zone_name]))
 
     if point_type == 'TZonCooSet':
         brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
@@ -152,14 +152,15 @@ class MyPointParser(GraphIngressHandler):
         Adds the type to the indicated entity"""
         parts = label.split('_')
         _, equip_or_zone, point_type, _ = parts # throw away the first and last parts
-        if 'Zon' in equip_or_zone:
-            zone_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
-            output.add((BLDG[zone_name], RDF.type, BRICK.HVAC_Zone))
-            output.add((entity, BRICK.isPointOf, BLDG[zone_name]))
-        else:
+
+        if 'ZonSup' in equip_or_zone or 'Zon' not in equip_or_zone:
             equip_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
             output.add((BLDG[equip_name], RDF.type, BRICK.Equipment))  # figure out what this is later
-            output.add((entity, BRICK.isPointOf, BLDG[equip_name]))
+            output.add((BLDG[label], BRICK.isPointOf, BLDG[equip_name]))
+        else:
+            zone_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
+            output.add((BLDG[zone_name], RDF.type, BRICK.HVAC_Zone))
+            output.add((BLDG[label], BRICK.isPointOf, BLDG[zone_name]))
 
         if point_type == 'TZonCooSet':
             brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
@@ -172,7 +173,7 @@ class MyPointParser(GraphIngressHandler):
         elif point_type == 'yPumHea':
             brick_class = BRICK.Heating_Command
         else:
-            raise Exception(f"Unknown point type! {point_type}")
+            raise Exception("Unknown point type!")
 
         output.add((entity, RDF.type, brick_class))
 
