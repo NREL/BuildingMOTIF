@@ -1,0 +1,809 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>buildingmotif.template_matcher &#8212; BuildingMOTIF Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="buildingmotif.utils" href="buildingmotif.utils.html" />
+    <link rel="prev" title="buildingmotif.template_compilation" href="buildingmotif.template_compilation.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint">⚠️ This is an ALPHA release, things may break or not work! ⚠️</div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">BuildingMOTIF Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    BuildingMOTIF
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Tutorials
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/model_creation.html">
+   Model Creation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/model_validation.html">
+   Model Validation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/model_correction.html">
+   Model Correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/template_writing.html">
+   Template Writing
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Reference
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../reference/developer_documentation.html">
+   Developer Documentation
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../index.html">
+   API Documentation
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active has-children">
+    <a class="reference internal" href="buildingmotif.html">
+     buildingmotif
+    </a>
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul class="current">
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="buildingmotif.api.html">
+       buildingmotif.api
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.api.app.html">
+         buildingmotif.api.app
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.api.views.html">
+         buildingmotif.api.views
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="buildingmotif.building_motif.html">
+       buildingmotif.building_motif
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.building_motif.building_motif.html">
+         buildingmotif.building_motif.building_motif
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.building_motif.singleton.html">
+         buildingmotif.building_motif.singleton
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="buildingmotif.database.html">
+       buildingmotif.database
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.database.graph_connection.html">
+         buildingmotif.database.graph_connection
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.database.table_connection.html">
+         buildingmotif.database.table_connection
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.database.tables.html">
+         buildingmotif.database.tables
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.database.utils.html">
+         buildingmotif.database.utils
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="buildingmotif.dataclasses.html">
+       buildingmotif.dataclasses
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.dataclasses.library.html">
+         buildingmotif.dataclasses.library
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.dataclasses.model.html">
+         buildingmotif.dataclasses.model
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html">
+         buildingmotif.dataclasses.shape_collection
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.dataclasses.template.html">
+         buildingmotif.dataclasses.template
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.dataclasses.validation.html">
+         buildingmotif.dataclasses.validation
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="buildingmotif.namespaces.html">
+       buildingmotif.namespaces
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="buildingmotif.template_compilation.html">
+       buildingmotif.template_compilation
+      </a>
+     </li>
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
+       buildingmotif.template_matcher
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="buildingmotif.utils.html">
+       buildingmotif.utils
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Appendix
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../bibliography.html">
+   Bibliography
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/NREL/BuildingMOTIF"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fapidoc/_autosummary/buildingmotif.template_matcher.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../_sources/apidoc/_autosummary/buildingmotif.template_matcher.rst"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>buildingmotif.template_matcher</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="module-buildingmotif.template_matcher">
+<span id="buildingmotif-template-matcher"></span><h1>buildingmotif.template_matcher<a class="headerlink" href="#module-buildingmotif.template_matcher" title="Permalink to this headline">#</a></h1>
+<p>Using the VF2 algorithm to compute subgraph isomorphisms between a template T and a graph G.
+If the found isomorphism is a subgraph of T, then T is not fully matched and additional
+input is required to fully populate the template.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.template_matcher.digraph_to_rdflib" title="buildingmotif.template_matcher.digraph_to_rdflib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digraph_to_rdflib</span></code></a>(digraph)</p></td>
+<td><p>Turns a <cite>nx.DiGraph</cite> into an <cite>rdflib.Graph</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.template_matcher.generate_all_subgraphs" title="buildingmotif.template_matcher.generate_all_subgraphs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_all_subgraphs</span></code></a>(T)</p></td>
+<td><p>Generates all node-induced subgraphs of T in order of decreasing size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.template_matcher.get_semantic_feasibility" title="buildingmotif.template_matcher.get_semantic_feasibility"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_semantic_feasibility</span></code></a>(G1, G2, ontology, ...)</p></td>
+<td><p>Returns a function that checks if two nodes are semantically feasible to be matched given the information in the provided ontology.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.template_matcher.TemplateMatcher" title="buildingmotif.template_matcher.TemplateMatcher"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemplateMatcher</span></code></a>(building, template, ontology)</p></td>
+<td><p>Computes the set of subgraphs of G that are monomorphic to T; these are organized by how &quot;complete&quot; the monomorphism is.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.get_semantic_feasibility">
+<span class="sig-name descname"><span class="pre">get_semantic_feasibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">G2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">buildingmotif.template_matcher._ontology_lookup_cache</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#get_semantic_feasibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.get_semantic_feasibility" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a function that checks if two nodes are semantically feasible to
+be matched given the information in the provided ontology.</p>
+<p>The function returns true if the two nodes are semantically feasible to be
+matched. We use the following checks:
+1. If the two nodes are both classes, one must be a subclass of the other.
+2. If the two nodes are instances, they must be of the same class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>G1</strong> (<em>Graph</em>) – graph 1</p></li>
+<li><p><strong>G2</strong> (<em>Graph</em>) – graph 2</p></li>
+<li><p><strong>ontology</strong> (<em>Graph</em>) – ontology graph</p></li>
+<li><p><strong>_cache</strong> (<em>_ontology_lookup_cache</em>) – ontology lookup cache</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>function that checks if two nodes are semantically feasible</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Callable[[Node, Node], bool]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.generate_all_subgraphs">
+<span class="sig-name descname"><span class="pre">generate_all_subgraphs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.graph.Graph</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#generate_all_subgraphs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.generate_all_subgraphs" title="Permalink to this definition">#</a></dt>
+<dd><p>Generates all node-induced subgraphs of T in order of decreasing size.</p>
+<p>We generate subgraphs in decreasing order of size because we want to find
+the largest subgraph as part of the monomorphism search process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>T</strong> (<em>Graph</em>) – template graph</p>
+</dd>
+<dt class="field-even">Yield</dt>
+<dd class="field-even"><p>subgraphs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Generator[Graph, None, None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.digraph_to_rdflib">
+<span class="sig-name descname"><span class="pre">digraph_to_rdflib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">digraph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">networkx.classes.digraph.DiGraph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rdflib.graph.Graph</span></span></span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#digraph_to_rdflib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.digraph_to_rdflib" title="Permalink to this definition">#</a></dt>
+<dd><p>Turns a <cite>nx.DiGraph</cite> into an <cite>rdflib.Graph</cite>.</p>
+<p>Expects the nx.DiGraph to have been produced by
+<code class="xref py py-func docutils literal notranslate"><span class="pre">rdflib_to_networkx_digraph()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>digraph</strong> (<em>nx.DiGraph</em>) – directed graph</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>RDF graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.TemplateMatcher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TemplateMatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#TemplateMatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.TemplateMatcher" title="Permalink to this definition">#</a></dt>
+<dd><p>Computes the set of subgraphs of G that are monomorphic to T; these are
+organized by how “complete” the monomorphism is.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.TemplateMatcher.add_mapping">
+<span class="sig-name descname"><span class="pre">add_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#TemplateMatcher.add_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.TemplateMatcher.add_mapping" title="Permalink to this definition">#</a></dt>
+<dd><p>Adds a mapping to the set of mappings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>Mapping</em>) – mapping</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.TemplateMatcher.largest_mapping_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">largest_mapping_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#buildingmotif.template_matcher.TemplateMatcher.largest_mapping_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the size of the largest mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>size of largest mapping</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.TemplateMatcher.building_subgraph_from_mapping">
+<span class="sig-name descname"><span class="pre">building_subgraph_from_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rdflib.graph.Graph</span></span></span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#TemplateMatcher.building_subgraph_from_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.TemplateMatcher.building_subgraph_from_mapping" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the subgraph of the building graph that corresponds to the
+given mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>Mapping</em>) – mapping</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subgraph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.TemplateMatcher.template_subgraph_from_mapping">
+<span class="sig-name descname"><span class="pre">template_subgraph_from_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rdflib.graph.Graph</span></span></span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#TemplateMatcher.template_subgraph_from_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.TemplateMatcher.template_subgraph_from_mapping" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the subgraph of the template graph that corresponds to the
+given mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>Mapping</em>) – mapping</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>subgraph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.TemplateMatcher.remaining_template_graph">
+<span class="sig-name descname"><span class="pre">remaining_template_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">rdflib.graph.Graph</span></span></span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#TemplateMatcher.remaining_template_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.TemplateMatcher.remaining_template_graph" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the remaining template graph to be filled out given a
+mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>Mapping</em>) – mapping</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>remaining template graph to be filled out</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.TemplateMatcher.remaining_template">
+<span class="sig-name descname"><span class="pre">remaining_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#TemplateMatcher.remaining_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.TemplateMatcher.remaining_template" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the remaining template to be filled out given a mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mapping</strong> (<em>Mapping</em>) – mapping</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>remaining template to be filled out</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template">Template</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.TemplateMatcher.mappings_iter">
+<span class="sig-name descname"><span class="pre">mappings_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#TemplateMatcher.mappings_iter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.TemplateMatcher.mappings_iter" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns an iterator over all of the mappings of the given size.</p>
+<p>If size is None, then all mappings are returned in descending order
+of the size of the mapping. This means the most complete mappings
+will be returned first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>size</strong> (<em>int</em><em>, </em><em>optional</em>) – size, defaults to None</p>
+</dd>
+<dt class="field-even">Yield</dt>
+<dd class="field-even"><p>mapping iterator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Generator[Mapping, None, None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.template_matcher.TemplateMatcher.building_mapping_subgraphs_iter">
+<span class="sig-name descname"><span class="pre">building_mapping_subgraphs_iter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">rdflib.term.Node</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">rdflib.graph.Graph</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/buildingmotif/template_matcher.html#TemplateMatcher.building_mapping_subgraphs_iter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.template_matcher.TemplateMatcher.building_mapping_subgraphs_iter" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns an iterator over all of the subgraphs with a mapping of the
+given size.</p>
+<p>If size is None, then all mappings are returned in descending order of
+the size of the mapping. This means the most complete subgraphs will be
+returned first.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>size</strong> (<em>int</em><em>, </em><em>optional</em>) – size, defaults to None</p>
+</dd>
+<dt class="field-even">Yield</dt>
+<dd class="field-even"><p>mapping and subgraph iterator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Generator[Tuple[Mapping, Graph], None, None]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./apidoc/_autosummary"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="buildingmotif.template_compilation.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">buildingmotif.template_compilation</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="buildingmotif.utils.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">buildingmotif.utils</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By NREL<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

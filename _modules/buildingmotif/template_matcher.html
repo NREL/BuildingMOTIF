@@ -1,0 +1,918 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>buildingmotif.template_matcher &#8212; BuildingMOTIF Documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint">⚠️ This is an ALPHA release, things may break or not work! ⚠️</div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">BuildingMOTIF Documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    BuildingMOTIF
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Tutorials
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/model_creation.html">
+   Model Creation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/model_validation.html">
+   Model Validation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/model_correction.html">
+   Model Correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/template_writing.html">
+   Template Writing
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Reference
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../reference/developer_documentation.html">
+   Developer Documentation
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../apidoc/index.html">
+   API Documentation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.html">
+     buildingmotif
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.api.html">
+       buildingmotif.api
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.api.app.html">
+         buildingmotif.api.app
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.api.views.html">
+         buildingmotif.api.views
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.building_motif.html">
+       buildingmotif.building_motif
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.building_motif.building_motif.html">
+         buildingmotif.building_motif.building_motif
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.building_motif.singleton.html">
+         buildingmotif.building_motif.singleton
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.database.html">
+       buildingmotif.database
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.database.graph_connection.html">
+         buildingmotif.database.graph_connection
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.database.table_connection.html">
+         buildingmotif.database.table_connection
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.database.tables.html">
+         buildingmotif.database.tables
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.database.utils.html">
+         buildingmotif.database.utils
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.dataclasses.html">
+       buildingmotif.dataclasses
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.dataclasses.library.html">
+         buildingmotif.dataclasses.library
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.dataclasses.model.html">
+         buildingmotif.dataclasses.model
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html">
+         buildingmotif.dataclasses.shape_collection
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.dataclasses.template.html">
+         buildingmotif.dataclasses.template
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.dataclasses.validation.html">
+         buildingmotif.dataclasses.validation
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.namespaces.html">
+       buildingmotif.namespaces
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.template_compilation.html">
+       buildingmotif.template_compilation
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html">
+       buildingmotif.template_matcher
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../apidoc/_autosummary/buildingmotif.utils.html">
+       buildingmotif.utils
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Appendix
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../bibliography.html">
+   Bibliography
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/NREL/BuildingMOTIF"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/template_matcher.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for buildingmotif.template_matcher</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Using the VF2 algorithm to compute subgraph isomorphisms between a template T and a graph G.</span>
+<span class="sd">If the found isomorphism is a subgraph of T, then T is not fully matched and additional</span>
+<span class="sd">input is required to fully populate the template.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">permutations</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">networkx.algorithms.isomorphism</span> <span class="kn">import</span> <span class="n">DiGraphMatcher</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span> <span class="nn">rdflib.extras.external_graph_libs</span> <span class="kn">import</span> <span class="n">rdflib_to_networkx_digraph</span>
+<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
+
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">RDFS</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">copy_graph</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.template</span> <span class="kn">import</span> <span class="n">Template</span>
+
+<span class="n">Mapping</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span>
+
+
+<span class="c1"># used to accelerate monomorphism search</span>
+<span class="c1"># outer key is the address of the ontology graph</span>
+<span class="c1"># inner map is from a class to its parent classes</span>
+<span class="k">class</span> <span class="nc">_ontology_lookup_cache</span><span class="p">:</span>
+    <span class="n">sc_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]]]</span>
+    <span class="n">t_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]]]</span>
+    <span class="n">in_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sc_cache</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sp_cache</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_cache</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">parents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ntype</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_cache</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sc_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)]</span>
+        <span class="c1"># populate cache if necessary</span>
+        <span class="k">if</span> <span class="n">ntype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="n">cache</span><span class="p">[</span><span class="n">ntype</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ontology</span><span class="o">.</span><span class="n">transitive_objects</span><span class="p">(</span><span class="n">ntype</span><span class="p">,</span> <span class="n">RDFS</span><span class="o">.</span><span class="n">subClassOf</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">ntype</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">superproperties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ntype</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sp_cache</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sp_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sp_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)]</span>
+        <span class="c1"># populate cache if necessary</span>
+        <span class="k">if</span> <span class="n">ntype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="n">cache</span><span class="p">[</span><span class="n">ntype</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ontology</span><span class="o">.</span><span class="n">transitive_objects</span><span class="p">(</span><span class="n">ntype</span><span class="p">,</span> <span class="n">RDFS</span><span class="o">.</span><span class="n">subPropertyOf</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">ntype</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_cache</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">t_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)]</span>
+        <span class="c1"># populate cache if necessary</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="n">cache</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="n">node</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cache</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">OWL</span><span class="o">.</span><span class="n">NamedIndividual</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">def</span> <span class="nf">defined_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_cache</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">in_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)]</span>
+        <span class="c1"># populate cache if necessary</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="n">cache</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">OWL</span><span class="o">.</span><span class="n">Class</span><span class="p">)</span> <span class="ow">in</span> <span class="n">graph</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_get_types</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">_cache</span><span class="p">:</span> <span class="n">_ontology_lookup_cache</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Types for a node should only be URIRefs, so the</span>
+<span class="sd">    type filtering here should be safe.</span>
+<span class="sd">    Defaults to owl:NamedIndividual as a &quot;root&quot; type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_cache</span><span class="o">.</span><span class="n">types</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_compatible_types</span><span class="p">(</span>
+    <span class="n">n1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span>
+    <span class="n">g1</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
+    <span class="n">n2</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span>
+    <span class="n">g2</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
+    <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
+    <span class="n">_cache</span><span class="p">:</span> <span class="n">_ontology_lookup_cache</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns true if the two terms have covariant types.</span>
+
+<span class="sd">    :param n1: First node</span>
+<span class="sd">    :type n1: Node</span>
+<span class="sd">    :param g1: The graph containing the first node&#39;s types</span>
+<span class="sd">    :type g1: Graph</span>
+<span class="sd">    :param n2: Second node</span>
+<span class="sd">    :type n2: Node</span>
+<span class="sd">    :param g2: The graph containing the second node&#39;s types</span>
+<span class="sd">    :type g2: Graph</span>
+<span class="sd">    :param ontology: The ontology graph that defines the class hierarchy</span>
+<span class="sd">    :type ontology: Graph</span>
+<span class="sd">    :return: True if the nodes are semantically compatible, false otherwise</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n1types</span> <span class="o">=</span> <span class="n">_get_types</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">_cache</span><span class="p">)</span>
+    <span class="n">n2types</span> <span class="o">=</span> <span class="n">_get_types</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">_cache</span><span class="p">)</span>
+    <span class="c1"># check if these are properties; if so, use subPropertyOf, not subClassOf</span>
+    <span class="n">property_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">OWL</span><span class="o">.</span><span class="n">ObjectProperty</span><span class="p">,</span> <span class="n">OWL</span><span class="o">.</span><span class="n">DatatypeProperty</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">property_types</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">n1types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">property_types</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">n2types</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n1type</span> <span class="ow">in</span> <span class="n">_get_types</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">_cache</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">n2type</span> <span class="ow">in</span> <span class="n">_get_types</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">_cache</span><span class="p">):</span>
+
+                <span class="c1"># check if types are covariant</span>
+                <span class="k">if</span> <span class="n">n2type</span> <span class="ow">in</span> <span class="n">_cache</span><span class="o">.</span><span class="n">superproperties</span><span class="p">(</span>
+                    <span class="n">n1type</span><span class="p">,</span> <span class="n">ontology</span>
+                <span class="p">)</span> <span class="ow">or</span> <span class="n">n1type</span> <span class="ow">in</span> <span class="n">_cache</span><span class="o">.</span><span class="n">superproperties</span><span class="p">(</span><span class="n">n2type</span><span class="p">,</span> <span class="n">ontology</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">n1type</span> <span class="ow">in</span> <span class="n">_get_types</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">g1</span><span class="p">,</span> <span class="n">_cache</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">n2type</span> <span class="ow">in</span> <span class="n">_get_types</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">_cache</span><span class="p">):</span>
+
+                <span class="c1"># check if types are covariant</span>
+                <span class="k">if</span> <span class="n">n2type</span> <span class="ow">in</span> <span class="n">_cache</span><span class="o">.</span><span class="n">parents</span><span class="p">(</span>
+                    <span class="n">n1type</span><span class="p">,</span> <span class="n">ontology</span>
+                <span class="p">)</span> <span class="ow">or</span> <span class="n">n1type</span> <span class="ow">in</span> <span class="n">_cache</span><span class="o">.</span><span class="n">parents</span><span class="p">(</span><span class="n">n2type</span><span class="p">,</span> <span class="n">ontology</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="get_semantic_feasibility"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.get_semantic_feasibility">[docs]</a><span class="k">def</span> <span class="nf">get_semantic_feasibility</span><span class="p">(</span>
+    <span class="n">G1</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">G2</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">_cache</span><span class="p">:</span> <span class="n">_ontology_lookup_cache</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a function that checks if two nodes are semantically feasible to</span>
+<span class="sd">    be matched given the information in the provided ontology.</span>
+
+<span class="sd">    The function returns true if the two nodes are semantically feasible to be</span>
+<span class="sd">    matched. We use the following checks:</span>
+<span class="sd">    1. If the two nodes are both classes, one must be a subclass of the other.</span>
+<span class="sd">    2. If the two nodes are instances, they must be of the same class.</span>
+
+<span class="sd">    :param G1: graph 1</span>
+<span class="sd">    :type G1: Graph</span>
+<span class="sd">    :param G2: graph 2</span>
+<span class="sd">    :type G2: Graph</span>
+<span class="sd">    :param ontology: ontology graph</span>
+<span class="sd">    :type ontology: Graph</span>
+<span class="sd">    :param _cache: ontology lookup cache</span>
+<span class="sd">    :type _cache: _ontology_lookup_cache</span>
+<span class="sd">    :return: function that checks if two nodes are semantically feasible</span>
+<span class="sd">    :rtype: Callable[[Node, Node], bool]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO: other checks?</span>
+    <span class="k">def</span> <span class="nf">semantic_feasibility</span><span class="p">(</span><span class="n">n1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">n2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Checks if two nodes are semantically feasible to be matched.</span>
+
+<span class="sd">        :param n1: node 1</span>
+<span class="sd">        :type n1: Node</span>
+<span class="sd">        :param n2: node 2</span>
+<span class="sd">        :type n2: Node</span>
+<span class="sd">        :return: true if nodes are feasible, false if not</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># case 0: same node</span>
+        <span class="k">if</span> <span class="n">n1</span> <span class="o">==</span> <span class="n">n2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="c1"># case 1: both are classes</span>
+        <span class="k">if</span> <span class="n">_cache</span><span class="o">.</span><span class="n">defined_in</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_cache</span><span class="o">.</span><span class="n">defined_in</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="n">ontology</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">n2</span> <span class="ow">in</span> <span class="n">_cache</span><span class="o">.</span><span class="n">parents</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">ontology</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">elif</span> <span class="n">n1</span> <span class="ow">in</span> <span class="n">_cache</span><span class="o">.</span><span class="n">parents</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="n">ontology</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># case 2: both are instances</span>
+        <span class="k">if</span> <span class="n">_compatible_types</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">G1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">G2</span><span class="p">,</span> <span class="n">ontology</span><span class="p">,</span> <span class="n">_cache</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">semantic_feasibility</span></div>
+
+
+<span class="k">class</span> <span class="nc">_VF2SemanticMatcher</span><span class="p">(</span><span class="n">DiGraphMatcher</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A subclass of DiGraphMatcher that incorporates semantic feasibility into the matching</span>
+<span class="sd">    process using the provided ontology.</span>
+
+<span class="sd">    :param T: template graph</span>
+<span class="sd">    :param G: building graph</span>
+<span class="sd">    :param ontology: ontology that contains the information about node semantics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">G</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rdflib_to_networkx_digraph</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">rdflib_to_networkx_digraph</span><span class="p">(</span><span class="n">G</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ontology</span> <span class="o">=</span> <span class="n">ontology</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">_ontology_lookup_cache</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_semantic_feasibility</span> <span class="o">=</span> <span class="n">get_semantic_feasibility</span><span class="p">(</span>
+            <span class="n">T</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">ontology</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">semantic_feasibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">g2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns true if the two nodes are semantically feasible to be matched.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_semantic_feasibility</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+
+<div class="viewcode-block" id="generate_all_subgraphs"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.generate_all_subgraphs">[docs]</a><span class="k">def</span> <span class="nf">generate_all_subgraphs</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Graph</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Generates all node-induced subgraphs of T in order of decreasing size.</span>
+
+<span class="sd">    We generate subgraphs in decreasing order of size because we want to find</span>
+<span class="sd">    the largest subgraph as part of the monomorphism search process.</span>
+
+<span class="sd">    :param T: template graph</span>
+<span class="sd">    :type T: Graph</span>
+<span class="sd">    :yield: subgraphs</span>
+<span class="sd">    :rtype: Generator[Graph, None, None]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># no monomorphism will be larger than the number of distinct nodes in the graph</span>
+    <span class="n">largest_sg_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">all_nodes</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">nodecount</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">largest_sg_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">nodelist</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">all_nodes</span><span class="p">(),</span> <span class="n">nodecount</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">digraph_to_rdflib</span><span class="p">(</span><span class="n">rdflib_to_networkx_digraph</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">nodelist</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="digraph_to_rdflib"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.digraph_to_rdflib">[docs]</a><span class="k">def</span> <span class="nf">digraph_to_rdflib</span><span class="p">(</span><span class="n">digraph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Turns a `nx.DiGraph` into an `rdflib.Graph`.</span>
+
+<span class="sd">    Expects the nx.DiGraph to have been produced by</span>
+<span class="sd">    :py:func:`rdflib_to_networkx_digraph`.</span>
+
+<span class="sd">    :param digraph: directed graph</span>
+<span class="sd">    :type digraph: nx.DiGraph</span>
+<span class="sd">    :return: RDF graph</span>
+<span class="sd">    :rtype: Graph</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">pdict</span> <span class="ow">in</span> <span class="n">digraph</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">s</span><span class="p">,</span> <span class="n">pdict</span><span class="p">[</span><span class="s2">&quot;triples&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">o</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">g</span></div>
+
+
+<div class="viewcode-block" id="TemplateMatcher"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher">[docs]</a><span class="k">class</span> <span class="nc">TemplateMatcher</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Computes the set of subgraphs of G that are monomorphic to T; these are</span>
+<span class="sd">    organized by how &quot;complete&quot; the monomorphism is.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">mappings</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Mapping</span><span class="p">]]</span>
+    <span class="n">template</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span>
+    <span class="n">building</span><span class="p">:</span> <span class="n">Graph</span>
+    <span class="n">template_bindings</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span>
+    <span class="n">template_graph</span><span class="p">:</span> <span class="n">Graph</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">building</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
+        <span class="n">template</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">,</span>
+        <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
+        <span class="n">graph_target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mappings</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_bindings</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">building</span> <span class="o">=</span> <span class="n">building</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ontology</span> <span class="o">=</span> <span class="n">ontology</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_target</span> <span class="o">=</span> <span class="n">graph_target</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_parameters</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">PARAM</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_generate_mappings</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_generate_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">template_subgraph</span> <span class="ow">in</span> <span class="n">generate_all_subgraphs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_graph</span><span class="p">):</span>
+            <span class="n">matching</span> <span class="o">=</span> <span class="n">_VF2SemanticMatcher</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">building</span><span class="p">,</span> <span class="n">template_subgraph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ontology</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">matching</span><span class="o">.</span><span class="n">subgraph_is_monomorphic</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">matching</span><span class="o">.</span><span class="n">subgraph_monomorphisms_iter</span><span class="p">():</span>
+                    <span class="c1"># skip if the subgraph does not contain the graph node we care about</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_target</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_target</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="k">continue</span>
+                    <span class="c1"># sg is a mapping from building graph nodes to template nodes</span>
+                    <span class="c1"># that constitutes a monomorphism.</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="c1"># TODO: Limit mappings to those that include all of the params?</span>
+                    <span class="c1"># TODO: ignore optional parameters?</span>
+                    <span class="c1"># TODO: require that &#39;name&#39; is in the parameters?</span>
+
+                    <span class="c1"># if there is an overlap, yield the subgraph</span>
+                    <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_parameters</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">add_mapping</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TemplateMatcher.add_mapping"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.add_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">add_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a mapping to the set of mappings.</span>
+
+<span class="sd">        :param mapping: mapping</span>
+<span class="sd">        :type mapping: Mapping</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mapping</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappings</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">)]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mappings</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">largest_mapping_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the size of the largest mapping.</span>
+
+<span class="sd">        :return: size of largest mapping</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mappings</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<div class="viewcode-block" id="TemplateMatcher.building_subgraph_from_mapping"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.building_subgraph_from_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">building_subgraph_from_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the subgraph of the building graph that corresponds to the</span>
+<span class="sd">        given mapping.</span>
+
+<span class="sd">        :param mapping: mapping</span>
+<span class="sd">        :type mapping: Mapping</span>
+<span class="sd">        :return: subgraph</span>
+<span class="sd">        :rtype: Graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">rdflib_to_networkx_digraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">building</span><span class="p">)</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="n">permutations</span><span class="p">(</span><span class="n">mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sg</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">edge_subgraph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">digraph_to_rdflib</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TemplateMatcher.template_subgraph_from_mapping"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.template_subgraph_from_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">template_subgraph_from_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the subgraph of the template graph that corresponds to the</span>
+<span class="sd">        given mapping.</span>
+
+<span class="sd">        :param mapping: mapping</span>
+<span class="sd">        :type mapping: Mapping</span>
+<span class="sd">        :return: subgraph</span>
+<span class="sd">        :rtype: Graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: need to keep the edges that are more generic than what we have inside the graph.</span>
+        <span class="c1"># For example, if the building has (x a brick:AHU) then we don&#39;t need to remind them to</span>
+        <span class="c1"># add an edge (x a brick:Equipment) because that is redundant</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">rdflib_to_networkx_digraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_graph</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">digraph_to_rdflib</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="TemplateMatcher.remaining_template_graph"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.remaining_template_graph">[docs]</a>    <span class="k">def</span> <span class="nf">remaining_template_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the remaining template graph to be filled out given a</span>
+<span class="sd">        mapping.</span>
+
+<span class="sd">        :param mapping: mapping</span>
+<span class="sd">        :type mapping: Mapping</span>
+<span class="sd">        :return: remaining template graph to be filled out</span>
+<span class="sd">        :rtype: Graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_subgraph_from_mapping</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_graph</span> <span class="o">-</span> <span class="n">sg</span></div>
+
+<div class="viewcode-block" id="TemplateMatcher.remaining_template"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.remaining_template">[docs]</a>    <span class="k">def</span> <span class="nf">remaining_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the remaining template to be filled out given a mapping.</span>
+
+<span class="sd">        :param mapping: mapping</span>
+<span class="sd">        :type mapping: Mapping</span>
+<span class="sd">        :return: remaining template to be filled out</span>
+<span class="sd">        :rtype: Optional[Template]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if all parameters are fulfilled by the mapping, then return None</span>
+        <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mapping</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">PARAM</span><span class="p">}</span>
+        <span class="n">mapped_params</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_parameters</span> <span class="o">-</span> <span class="n">mapped_params</span><span class="p">:</span>
+            <span class="c1"># return self.building_subgraph_from_mapping(mapping)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">bindings</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">building_node</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">bindings</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">param</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="p">:]]</span> <span class="o">=</span> <span class="n">building_node</span>
+        <span class="c1"># this *should* be a template because we don&#39;t have bindings for all of</span>
+        <span class="c1"># the template&#39;s parameters</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">bindings</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">Graph</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="TemplateMatcher.mappings_iter"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.mappings_iter">[docs]</a>    <span class="k">def</span> <span class="nf">mappings_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns an iterator over all of the mappings of the given size.</span>
+
+<span class="sd">        If size is None, then all mappings are returned in descending order</span>
+<span class="sd">        of the size of the mapping. This means the most complete mappings</span>
+<span class="sd">        will be returned first.</span>
+
+<span class="sd">        :param size: size, defaults to None</span>
+<span class="sd">        :type size: int, optional</span>
+<span class="sd">        :yield: mapping iterator</span>
+<span class="sd">        :rtype: Generator[Mapping, None, None]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mappings</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappings</span><span class="p">[</span><span class="n">size</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">mapping</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">yield</span> <span class="n">mapping</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappings</span><span class="p">[</span><span class="n">size</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">mapping</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">yield</span> <span class="n">mapping</span></div>
+
+<div class="viewcode-block" id="TemplateMatcher.building_mapping_subgraphs_iter"><a class="viewcode-back" href="../../apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.building_mapping_subgraphs_iter">[docs]</a>    <span class="k">def</span> <span class="nf">building_mapping_subgraphs_iter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">Graph</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns an iterator over all of the subgraphs with a mapping of the</span>
+<span class="sd">        given size.</span>
+
+<span class="sd">        If size is None, then all mappings are returned in descending order of</span>
+<span class="sd">        the size of the mapping. This means the most complete subgraphs will be</span>
+<span class="sd">        returned first.</span>
+
+<span class="sd">        :param size: size, defaults to None</span>
+<span class="sd">        :type size: int, optional</span>
+<span class="sd">        :yield: mapping and subgraph iterator</span>
+<span class="sd">        :rtype: Generator[Tuple[Mapping, Graph], None, None]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mappings_iter</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+            <span class="n">subgraph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">building_subgraph_from_mapping</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">subgraph</span><span class="o">.</span><span class="n">connected</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">subgraph</span><span class="o">.</span><span class="n">all_nodes</span><span class="p">()))</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">cache</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">subgraph</span></div></div>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By NREL<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
