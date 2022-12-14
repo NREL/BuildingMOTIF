@@ -16,7 +16,7 @@ kernelspec:
 
 ```{margin}
 ```{important}
-This tutorial assumes that `BuildingMOTIF` has already been installed in the local environment with the `bacnet-ingress` option (`pip install buildingmotif[bacnet-ingress]`) **and** that the user has access to a BACnet network with descriptive names. One easy way of *emulating* a BACnet network is to use the [Simulated Digital Twin](https://github.com/gtfierro/simulated-digital-twin) repository.
+This tutorial assumes that `BuildingMOTIF` has already been installed in the local environment with the `bacnet-ingress` option **and** that the user has access to a BACnet network with descriptive names. One easy way of *emulating* a BACnet network is to use the [Simulated Digital Twin](https://github.com/gtfierro/simulated-digital-twin) repository.
 ```
 
 The purpose of this how-to document is to demonstrate the creation of a functional Brick model from a BACnet network. This will be accomplished by using BuildingMOTIF's "ingresses" to import a BACnet network as a basic Brick model, and then using BuildingMOTIF to augment the basic Brick model with more descriptive metadata.
@@ -46,7 +46,7 @@ BLDG = Namespace('urn:bldg/')
 model = Model.create(BLDG, description="This is a test model for a simple building")
 
 # load some libraries we will use later
-brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
+brick = Library.load(ontology_graph="../../libraries/brick/Brick.ttl")
 constraints = Library.load(ontology_graph="../../buildingmotif/resources/constraints.ttl")
 ```
 
@@ -111,15 +111,7 @@ from buildingmotif.namespaces import RDF, BRICK
 def parse_label(label: str, output: Graph):
     """Parses the label and puts the resulting triples in the provided graph."""
     parts = label.split('_')
-    _, equip_or_zone, point_type, _ = parts # throw away the first and last parts
-    if 'ZonSup' in equip_or_zone or 'Zon' not in equip_or_zone:
-        equip_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
-        output.add((BLDG[equip_name], RDF.type, BRICK.Equipment))  # figure out what this is later
-        output.add((BLDG[label], BRICK.isPointOf, BLDG[equip_name]))
-    else:
-        zone_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
-        output.add((BLDG[zone_name], RDF.type, BRICK.HVAC_Zone))
-        output.add((BLDG[label], BRICK.isPointOf, BLDG[zone_name]))
+    _, _, point_type, _ = parts # throw away everything that's not the point type
 
     if point_type == 'TZonCooSet':
         brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
@@ -151,16 +143,7 @@ class MyPointParser(GraphIngressHandler):
         """Parses the label and puts the resulting triples in the provided graph.
         Adds the type to the indicated entity"""
         parts = label.split('_')
-        _, equip_or_zone, point_type, _ = parts # throw away the first and last parts
-
-        if 'ZonSup' in equip_or_zone or 'Zon' not in equip_or_zone:
-            equip_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
-            output.add((BLDG[equip_name], RDF.type, BRICK.Equipment))  # figure out what this is later
-            output.add((BLDG[label], BRICK.isPointOf, BLDG[equip_name]))
-        else:
-            zone_name = equip_or_zone[3:] # trim off the 'ove'/'rea' prefix
-            output.add((BLDG[zone_name], RDF.type, BRICK.HVAC_Zone))
-            output.add((BLDG[label], BRICK.isPointOf, BLDG[zone_name]))
+        _, _, point_type, _ = parts # throw away everything that's not the point type
 
         if point_type == 'TZonCooSet':
             brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
@@ -179,6 +162,7 @@ class MyPointParser(GraphIngressHandler):
 
     def graph(self, ns: Namespace) -> Graph:
         """the method we override to implement a GraphIngressHandler"""
+        output_graph = Graph()
         bacnet_graph = self.upstream.graph(ns)
         point_labels = bacnet_graph.query("""
             SELECT ?entity ?label WHERE {
@@ -187,9 +171,9 @@ class MyPointParser(GraphIngressHandler):
             }""")
         for entity, label in point_labels:
             # infer type for each
-            self.parse_label(label, entity, bacnet_graph)
+            self.parse_label(label, entity, output_graph)
 
-        return bacnet_graph
+        return output_graph
 ```
 
 Now we can invoke our ingress module:
@@ -207,4 +191,55 @@ and display the resulting model
 
 ```{code-cell}
 print(model.graph.serialize())
+```
+
+We can now see that the points in our model have more descriptive Brick types.
+
+## Creating a More Complete Model with Templates
+
+We can now focus on associating these points with real equipment and zones to create a more complete Brick model. The most straightforward way of doing this is to create templates that convey what we think the parts of the building should look like.
+
+```{margin}
+```{info}
+As BuildingMOTIF gets more mature, there will be a larger ecosystem of Templates and Shapes we can draw from. For this (simple) example, we will create our own Templates that match the limited metadata we have about the sample building.
+```
+
+Let's create two templates: one for an HVAC zone and one for a VAV box.
+
+```yml
+sample-hvac-zone:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:HVAC_Zone ;
+        brick:hasPoint p:zone-temp .
+  dependencies:
+  - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "zone-temp"}
+sample-vav:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:VAV ;
+        brick:hasPoint p:sup-temp, p:heat-sp, p:cool-sp ;
+        brick:feeds p:zone .
+  dependencies:
+  - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "sup-temp"}
+  - template: https://brickschema.org/schema/Brick#Zone_Air_Heating_Temperature_Setpoint
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "heat-sp"}
+  - template: https://brickschema.org/schema/Brick#Zone_Air_Cooling_Temperature_Setpoint
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "cool-sp"}
+  - template: sample-hvac-zone
+    args: {"nzme": "zone"}
+```
+
+We load this library into BuildingMOTIF:
+
+```{code-cell}
+templates = Library.load(directory="libraries/bacnet-to-brick-templates")
 ```
