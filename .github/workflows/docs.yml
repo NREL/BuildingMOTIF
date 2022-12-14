@@ -1,4 +1,4 @@
-name: build-docs
+name: docs
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
 
 # This job installs dependencies, builds the book, and pushes it to `gh-pages`
 jobs:
-  build:
+  build-docs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -43,6 +43,10 @@ jobs:
       run: |
         jupyter-book build .
 
+  deploy-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    steps:
     # Push the book's HTML to github-pages
     - name: GitHub Pages action
       uses: peaceiris/actions-gh-pages@v3.6.1
