@@ -1,6 +1,5 @@
-name: deploy-book
+name: build-docs
 
-# Only run this when the master branch changes
 on:
   push:
     branches:
@@ -14,20 +13,20 @@ on:
 
 # This job installs dependencies, builds the book, and pushes it to `gh-pages`
 jobs:
-  deploy-book:
+  build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     # Install dependencies
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: 3.8
 
     - name: Install Poetry 
       run: |
-        python -m pip install --upgrade pip
+        # python -m pip install --upgrade pip
         pip install poetry
         # poetry config virtualenvs.in-project false
         # poetry config virtualenvs.path ~/.virtualenvs
