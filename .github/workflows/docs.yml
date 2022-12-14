@@ -33,16 +33,18 @@ jobs:
         poetry config virtualenvs.path ~/.virtualenvs
 
     - name: Install dependencies
-      run: poetry install
+      run: |
+        poetry install
+        pip install -U jupyter-book
 
     # Build the book
     - name: Build the book
       run: |
-        jupyter-book build docs
+        jupyter-book build ./docs
 
     # Push the book's HTML to github-pages
     - name: GitHub Pages action
       uses: peaceiris/actions-gh-pages@v3.6.1
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/_build/html
+        publish_dir: ./docs/_build/html
