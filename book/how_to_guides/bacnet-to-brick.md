@@ -235,7 +235,7 @@ sample-vav:
     library: https://brickschema.org/schema/1.3/Brick
     args: {"name": "cool-sp"}
   - template: sample-hvac-zone
-    args: {"nzme": "zone"}
+    args: {"name": "zone"}
 ```
 
 We load this library into BuildingMOTIF:
