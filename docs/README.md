@@ -1,7 +1,7 @@
 # BuildingMOTIF
 
-[![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest) 
 [![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF) 
+[![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://nrel.github.io/BuildingMOTIF/)
 
 ---
 
@@ -19,9 +19,10 @@ The documentation uses Diataxis[^1] as a framework for its structure, which is o
 
 ## Tutorials
 
-- Model Creation (https://buildingmotif.github.io/tutorials/model_creation.html)
-- Model Validation (https://buildingmotif.github.io/tutorials/model_validation.html)
-- Templates (https://buildingmotif.github.io/tutorials/TODO.html)
+- [Model Creation](https://nrel.github.io/BuildingMOTIF/tutorials/model_creation.html)
+- [Model Validation](https://nrel.github.io/BuildingMOTIF/tutorials/model_validation.html)
+- [Model Correction](https://nrel.github.io/BuildingMOTIF/tutorials/model_correction.html)
+- [Template Writing](https://nrel.github.io/BuildingMOTIF/tutorials/template_writing.html)
 
 ## How-to Guides
 
@@ -29,8 +30,8 @@ The documentation uses Diataxis[^1] as a framework for its structure, which is o
 
 ## Reference
 
-- Developer Documentation (https://buildingmotif.github.io/reference/developer_documentation.html)
-- API Documentation (https://buildingmotif.github.io/reference/html/apidoc/index.html)
+- [Developer Documentation](https://nrel.github.io/BuildingMOTIF/reference/developer_documentation.html)
+- [API Documentation](https://nrel.github.io/BuildingMOTIF/apidoc/index.html)
 
 ## Explaination
 
