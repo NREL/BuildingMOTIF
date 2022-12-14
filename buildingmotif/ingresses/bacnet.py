@@ -14,8 +14,11 @@ except ImportError:
 
 from buildingmotif.ingresses.base import Record, RecordIngressHandler
 
-logging.getLogger("BAC0").setLevel(logging.ERROR)
-BAC0.log_level(logging.ERROR)
+# We do this little rigamarole to avoid BAC0 spitting out a million
+# logging messages warning us that we changed the log level, which
+# happens when we go through the normal BAC0 log level procedure
+logger = logging.getLogger("BAC0_Root.BAC0.scripts.Base.Base")
+logger.setLevel(logging.ERROR)
 
 
 class BACnetNetwork(RecordIngressHandler):
