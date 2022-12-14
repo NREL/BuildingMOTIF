@@ -1,14 +1,17 @@
-from functools import cached_property
-from typing import Callable, List, Optional
+from typing import Callable, Optional
 
 from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.term import Node
 
 from buildingmotif.dataclasses import Template
-from buildingmotif.ingresses.base import IngressHandler, Record
+from buildingmotif.ingresses.base import (
+    GraphIngressHandler,
+    Record,
+    RecordIngressHandler,
+)
 
 
-class TemplateIngress(IngressHandler):
+class TemplateIngress(GraphIngressHandler):
     """
     Reads records and attempts to instantiate the given template
     with each record. Produces a graph.
@@ -20,7 +23,7 @@ class TemplateIngress(IngressHandler):
         self,
         template: Template,
         mapper: Optional[Callable[[str], str]],
-        upstream: IngressHandler,
+        upstream: RecordIngressHandler,
         inline=False,
     ):
         self.mapper = mapper if mapper else lambda x: x
@@ -30,11 +33,7 @@ class TemplateIngress(IngressHandler):
         else:
             self.template = template
 
-    @cached_property
-    def records(self) -> Optional[List[Record]]:
-        return None
-
-    def graph(self, ns: Namespace) -> Optional[Graph]:
+    def graph(self, ns: Namespace) -> Graph:
         g = Graph()
 
         records = self.upstream.records
@@ -47,7 +46,7 @@ class TemplateIngress(IngressHandler):
         return g
 
 
-class TemplateIngressWithChooser(IngressHandler):
+class TemplateIngressWithChooser(GraphIngressHandler):
     """
     Reads records and attempts to instantiate the given template
     with each record. Produces a graph.
@@ -59,7 +58,7 @@ class TemplateIngressWithChooser(IngressHandler):
         self,
         chooser: Callable[[Record], Template],
         mapper: Optional[Callable[[str], str]],
-        upstream: IngressHandler,
+        upstream: RecordIngressHandler,
         inline=False,
     ):
         self.chooser = chooser
@@ -67,11 +66,7 @@ class TemplateIngressWithChooser(IngressHandler):
         self.upstream = upstream
         self.inline = inline
 
-    @cached_property
-    def records(self) -> Optional[List[Record]]:
-        return None
-
-    def graph(self, ns: Namespace) -> Optional[Graph]:
+    def graph(self, ns: Namespace) -> Graph:
         g = Graph()
 
         records = self.upstream.records

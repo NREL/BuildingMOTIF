@@ -1,22 +1,24 @@
+# configure logging output
+import logging
 from functools import cached_property
 from typing import Any, Dict, List, Optional, Tuple
 
 import BAC0
 from BAC0.core.devices.Device import Device as BACnetDevice
-from rdflib import Graph, Namespace
 
-from buildingmotif.ingresses.base import IngressHandler, Record
+from buildingmotif.ingresses.base import Record, RecordIngressHandler
 
-# configure logging output
-BAC0.log_level("error")
+logging.getLogger("BAC0").setLevel(logging.ERROR)
+BAC0.log_level(logging.ERROR)
 
 
-class BACnetNetwork(IngressHandler):
+class BACnetNetwork(RecordIngressHandler):
     def __init__(self, ip: Optional[str] = None):
         """
         Reads a BACnet network to discover the devices and objects therein
 
-        :param ip: IP/mask for the host which is canning the networks, defaults to None
+        :param ip: IP/mask for the host which is canning the networks,
+                    defaults to None
         :type ip: Optional[str], optional
         """
         # create the network object; this will handle scans
@@ -49,10 +51,16 @@ class BACnetNetwork(IngressHandler):
             obj["name"] = obj["name"].strip()
 
     @cached_property
-    def records(self) -> Optional[List[Record]]:
+    def records(self) -> List[Record]:
         """
-        Returns a list of the BACnet devices and objects discovered
-        in the BACnet network
+        Returns a list of the BACnet devices and objects discovered in the
+        BACnet network. The 'rtype' field of each Record is either "Device"
+        for a BACnet Device or "Object" for a BACnet Object. The 'fields'
+        field contains the key-value BACnet properties associated with that
+        device or object.
+
+        :return: list of BACnet devices and objects, each expressed as a Record
+        :rtype: List[Record]
         """
         records = []
         # make devices
@@ -74,9 +82,3 @@ class BACnetNetwork(IngressHandler):
                     )
                 )
         return records
-
-    def graph(self, _ns: Namespace) -> Optional[Graph]:
-        """
-        Consume the output of .records() to create a graph
-        """
-        return None
