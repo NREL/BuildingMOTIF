@@ -1,9 +1,9 @@
-name: build-docs
+name: build-deploy-docs
 
 on:
   push:
     branches:
-    - reenable-docs
+    - main
     # If your git repository has the Jupyter Book within some-subfolder next to
     # unrelated files, you can make this run only if a file within that specific
     # folder has been modified.
@@ -38,6 +38,7 @@ jobs:
       working-directory: ${{runner.workspace}}/BuildingMOTIF/docs/
       run: jupyter-book build .
 
+    # TODO can we use an official GitHub Action? https://github.com/actions/deploy-pages
     - name: GitHub Pages action
       uses: peaceiris/actions-gh-pages@v3.6.1
       with:
