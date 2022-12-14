@@ -3,8 +3,14 @@ import logging
 from functools import cached_property
 from typing import Any, Dict, List, Optional, Tuple
 
-import BAC0
-from BAC0.core.devices.Device import Device as BACnetDevice
+try:
+    import BAC0
+    from BAC0.core.devices.Device import Device as BACnetDevice
+except ImportError:
+    logging.critical(
+        "Install the 'bacnet-ingress' module, e.g. 'pip install buildingmotif[bacnet-ingress]'"
+    )
+
 
 from buildingmotif.ingresses.base import Record, RecordIngressHandler
 
