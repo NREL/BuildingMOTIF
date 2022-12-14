@@ -148,9 +148,6 @@ class Library:
         :param overwrite: if true, replace any existing copy of the
                         library, defaults to False
         :type overwrite: Optional[true], optional
-        :param load_if_not_exist: if true, load the library *only* if it does not exist,
-                        otherwise just return the existing library, defaults to False
-        :type load_if_not_exist: Optional[true], optional
         :return: the loaded library
         :rtype: Library
         :raises Exception: if the library cannot be loaded
@@ -207,8 +204,6 @@ class Library:
         :type ontology: rdflib.Graph
         :param overwrite: if true, overwrite the existing copy of the Library
         :type overwrite: bool
-        :param load_if_not_exist: if true, only load the library if it does not exist
-        :type load_if_not_exist: bool
         :return: the loaded Library
         :rtype: "Library"
         """
