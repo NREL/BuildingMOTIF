@@ -15,8 +15,8 @@ blueprint = Blueprint("models", __name__)
 def get_all_models() -> flask.Response:
     """Get all models.
 
-    :return: All models.
-    :rtype: List[Model]
+    :return: all models
+    :rtype: flask.Response
     """
     db_models = current_app.building_motif.table_connection.get_all_db_models()
 
@@ -25,12 +25,12 @@ def get_all_models() -> flask.Response:
 
 @blueprint.route("/<models_id>", methods=(["GET"]))
 def get_model(models_id: int) -> flask.Response:
-    """get model with id
+    """Get Model by id.
 
     :param models_id: model id
     :type models_id: int
-    :return: requested id
-    :rtype: Model
+    :return: requested model
+    :rtype: flask.Response
     """
     try:
         model = current_app.building_motif.table_connection.get_db_model(models_id)
@@ -41,13 +41,13 @@ def get_model(models_id: int) -> flask.Response:
 
 
 @blueprint.route("/<models_id>/graph", methods=(["GET"]))
-def get_model_graph(models_id: int) -> flask.Response:
-    """get model with id
+def get_model_graph(models_id: int) -> Graph:
+    """Get model graph by id.
 
     :param models_id: model id
     :type models_id: int
-    :return: requested id
-    :rtype: Model
+    :return: requested model graph
+    :rtype: rdflib.Graph
     """
     try:
         model = Model.load(models_id)
@@ -92,14 +92,14 @@ def create_model() -> flask.Response:
 
 @blueprint.route("/<models_id>/graph", methods=(["PATCH", "PUT"]))
 def update_model_graph(models_id: int) -> flask.Response:
-    """update model graph
+    """Update model graph.
 
     Takes xml body of ttl formated graph.
 
     :param models_id: model id
     :type models_id: int
-    :return: Updated model
-    :rtype: Model
+    :return: updated model graph
+    :rtype: rdflib.Graph
     """
     try:
         model = Model.load(models_id)

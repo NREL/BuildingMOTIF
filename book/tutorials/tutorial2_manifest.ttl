@@ -1,0 +1,43 @@
+
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix constraint: <https://nrel.gov/BuildingMOTIF/constraints#> .
+@prefix : <urn:my_site_constraints/> .
+
+: a owl:Ontology .
+
+:ahu-count a sh:NodeShape ;
+    sh:message "need 1 AHU" ;
+    sh:targetNode : ;
+    constraint:exactCount 1 ;
+    constraint:class brick:AHU .
+
+:fan-count a sh:NodeShape ;
+    sh:message "need 1 supply fan" ;
+    sh:targetNode : ;
+    constraint:exactCount 1 ;
+    constraint:class brick:Supply_Fan .
+
+:damper-count a sh:NodeShape ;
+    sh:message "need 1 damper" ;
+    sh:targetNode : ;
+    constraint:exactCount 1 ;
+    constraint:class brick:Damper .
+
+:clg-coil-count a sh:NodeShape ;
+    sh:message "need 1 cooling coil" ;
+    sh:targetNode : ;
+    constraint:exactCount 1 ;
+    constraint:class brick:Cooling_Coil .
+
+:htg-coil-count a sh:NodeShape ;
+    sh:message "need 1 heating coil" ;
+    sh:targetNode : ;
+    constraint:exactCount 1 ;
+    constraint:class brick:Heating_Coil .
+
+:sz-vav-ahu-control-sequences a sh:NodeShape ;
+    sh:message "AHUs must match the single-zone VAV AHU shape" ;
+    sh:targetClass brick:AHU ;
+    sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .

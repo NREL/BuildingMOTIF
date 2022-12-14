@@ -136,18 +136,36 @@ def _compatible_types(
 def get_semantic_feasibility(
     G1: Graph, G2: Graph, ontology: Graph, _cache: _ontology_lookup_cache
 ) -> Callable[[Node, Node], bool]:
-    """
-    Returns a function that checks if two nodes are semantically feasible to be
-    matched given the information in the provided ontology.
+    """Returns a function that checks if two nodes are semantically feasible to
+    be matched given the information in the provided ontology.
 
-    The function returns true if the two nodes are semantically feasible to be matched.
-    We use the following checks:
-    1. If the two nodes are both classes, then one must be a subclass of the other.
-    2. If the two nodes are instances, then they must be of the same class.
-    TODO: other checks?
-    """
+    The function returns true if the two nodes are semantically feasible to be
+    matched. We use the following checks:
+    1. If the two nodes are both classes, one must be a subclass of the other.
+    2. If the two nodes are instances, they must be of the same class.
 
+    :param G1: graph 1
+    :type G1: Graph
+    :param G2: graph 2
+    :type G2: Graph
+    :param ontology: ontology graph
+    :type ontology: Graph
+    :param _cache: ontology lookup cache
+    :type _cache: _ontology_lookup_cache
+    :return: function that checks if two nodes are semantically feasible
+    :rtype: Callable[[Node, Node], bool]
+    """
+    # TODO: other checks?
     def semantic_feasibility(n1: Node, n2: Node) -> bool:
+        """Checks if two nodes are semantically feasible to be matched.
+
+        :param n1: node 1
+        :type n1: Node
+        :param n2: node 2
+        :type n2: Node
+        :return: true if nodes are feasible, false if not
+        :rtype: bool
+        """
         # case 0: same node
         if n1 == n2:
             return True
@@ -194,11 +212,15 @@ class _VF2SemanticMatcher(DiGraphMatcher):
 
 
 def generate_all_subgraphs(T: Graph) -> Generator[Graph, None, None]:
-    """
-    Generates all node-induced subgraphs of T in order of decreasing size.
+    """Generates all node-induced subgraphs of T in order of decreasing size.
 
-    We generate subgraphs in decreasing order of size because we want to find the
-    largest subgraph as part of the monomorphism search process.
+    We generate subgraphs in decreasing order of size because we want to find
+    the largest subgraph as part of the monomorphism search process.
+
+    :param T: template graph
+    :type T: Graph
+    :yield: subgraphs
+    :rtype: Generator[Graph, None, None]
     """
     # no monomorphism will be larger than the number of distinct nodes in the graph
     largest_sg_size = len(T.all_nodes())
@@ -208,9 +230,15 @@ def generate_all_subgraphs(T: Graph) -> Generator[Graph, None, None]:
 
 
 def digraph_to_rdflib(digraph: nx.DiGraph) -> Graph:
-    """
-    Turns a nx.DiGraph into an rdflib.Graph. Expects the nx.DiGraph to have been
-    produced by rdflib_to_networkx_digraph.
+    """Turns a `nx.DiGraph` into an `rdflib.Graph`.
+
+    Expects the nx.DiGraph to have been produced by
+    :py:func:`rdflib_to_networkx_digraph`.
+
+    :param digraph: directed graph
+    :type digraph: nx.DiGraph
+    :return: RDF graph
+    :rtype: Graph
     """
     g = Graph()
     for s, o, pdict in digraph.edges(data=True):
@@ -219,9 +247,8 @@ def digraph_to_rdflib(digraph: nx.DiGraph) -> Graph:
 
 
 class TemplateMatcher:
-    """
-    Computes the set of subgraphs of G that are monomorphic to T; these are organized
-    by how "complete" the monomorphism is.
+    """Computes the set of subgraphs of G that are monomorphic to T; these are
+    organized by how "complete" the monomorphism is.
     """
 
     mappings: Dict[int, List[Mapping]]
@@ -274,23 +301,31 @@ class TemplateMatcher:
                         self.add_mapping(sg)
 
     def add_mapping(self, mapping: Mapping):
-        """
-        Adds a mapping to the set of mappings.
+        """Adds a mapping to the set of mappings.
+
+        :param mapping: mapping
+        :type mapping: Mapping
         """
         if mapping not in self.mappings[len(mapping)]:
             self.mappings[len(mapping)].append(mapping)
 
     @property
     def largest_mapping_size(self) -> int:
-        """
-        Returns the size of the largest mapping.
+        """Returns the size of the largest mapping.
+
+        :return: size of largest mapping
+        :rtype: int
         """
         return max(self.mappings.keys())
 
     def building_subgraph_from_mapping(self, mapping: Mapping) -> Graph:
-        """
-        Returns the subgraph of the building graph that corresponds to the given
-        mapping.
+        """Returns the subgraph of the building graph that corresponds to the
+        given mapping.
+
+        :param mapping: mapping
+        :type mapping: Mapping
+        :return: subgraph
+        :rtype: Graph
         """
         g = rdflib_to_networkx_digraph(self.building)
         edges = permutations(mapping.keys(), 2)
@@ -298,28 +333,39 @@ class TemplateMatcher:
         return digraph_to_rdflib(sg)
 
     def template_subgraph_from_mapping(self, mapping: Mapping) -> Graph:
+        """Returns the subgraph of the template graph that corresponds to the
+        given mapping.
+
+        :param mapping: mapping
+        :type mapping: Mapping
+        :return: subgraph
+        :rtype: Graph
         """
-        Returns the subgraph of the template graph that corresponds to the given
-        mapping.
-        TODO: need to keep the edges that are more generic than what we have inside the graph.
-        For example, if the building has (x a brick:AHU) then we don't need to remind them to
-        add an edge (x a brick:Equipment) because that is redundant
-        """
+        # TODO: need to keep the edges that are more generic than what we have inside the graph.
+        # For example, if the building has (x a brick:AHU) then we don't need to remind them to
+        # add an edge (x a brick:Equipment) because that is redundant
         g = rdflib_to_networkx_digraph(self.template_graph)
         return digraph_to_rdflib(g.subgraph(mapping.values()))
 
     def remaining_template_graph(self, mapping: Mapping) -> Graph:
-        """
-        Returns the part of the template that is remaining to be filled out given
-        a mapping.
+        """Returns the remaining template graph to be filled out given a
+        mapping.
+
+        :param mapping: mapping
+        :type mapping: Mapping
+        :return: remaining template graph to be filled out
+        :rtype: Graph
         """
         sg = self.template_subgraph_from_mapping(mapping)
         return self.template_graph - sg
 
     def remaining_template(self, mapping: Mapping) -> Optional["Template"]:
-        """
-        Returns the part of the template that is remaining to be filled out given
-        a mapping.
+        """Returns the remaining template to be filled out given a mapping.
+
+        :param mapping: mapping
+        :type mapping: Mapping
+        :return: remaining template to be filled out
+        :rtype: Optional[Template]
         """
         # if all parameters are fulfilled by the mapping, then return None
         mapping = {k: v for k, v in mapping.items() if str(v) in PARAM}
@@ -338,11 +384,16 @@ class TemplateMatcher:
         return res
 
     def mappings_iter(self, size=None) -> Generator[Mapping, None, None]:
-        """
-        Returns an iterator over all of the mappings of the given size.
+        """Returns an iterator over all of the mappings of the given size.
+
         If size is None, then all mappings are returned in descending order
         of the size of the mapping. This means the most complete mappings
         will be returned first.
+
+        :param size: size, defaults to None
+        :type size: int, optional
+        :yield: mapping iterator
+        :rtype: Generator[Mapping, None, None]
         """
         if size is None:
             for size in sorted(self.mappings.keys(), reverse=True):
@@ -360,11 +411,17 @@ class TemplateMatcher:
         self,
         size=None,
     ) -> Generator[Tuple[Mapping, Graph], None, None]:
-        """
-        Returns an iterator over all of the subgraphs with a mapping of the given
-        size. If size is None, then all mappings are returned in descending order
-        of the size of the mapping. This means the most complete subgraphs
-        will be returned first.
+        """Returns an iterator over all of the subgraphs with a mapping of the
+        given size.
+
+        If size is None, then all mappings are returned in descending order of
+        the size of the mapping. This means the most complete subgraphs will be
+        returned first.
+
+        :param size: size, defaults to None
+        :type size: int, optional
+        :yield: mapping and subgraph iterator
+        :rtype: Generator[Tuple[Mapping, Graph], None, None]
         """
         cache = set()
         for mapping in self.mappings_iter(size):
