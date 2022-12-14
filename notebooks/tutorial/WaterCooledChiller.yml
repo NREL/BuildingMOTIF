@@ -11,9 +11,7 @@ WaterCooledChiller-GSA:
     args: {"name": "mech_room"}
   - template: WaterCooledChiller-points
     args: {"name": "name"}
-  - template: PrimaryChilledWaterPump-points
-    args: {"name": "name"}
-  - template: SecondaryChilledWaterPump-points
+  - template: ChilledWaterPump-points
     args: {"name": "name"}
   - template: CondenserWaterPump-points
     args: {"name": "name"}
@@ -25,8 +23,8 @@ WaterCooledChiller-points:
     P:name a brick:Chiller ;
         brick:hasPoint P:MechClgEna, P:MechClgLck, P:MechClgCmd, P:MechClgOATmpSp, P:MechClgRelHumSp, P:MechClgOAWBTmpSp, P:FreeClgEna, P:FreeClgLck, P:FreeClgCmd, P:FreeClgOATmpSp, P:FreeClgRelHumSp, P:FreeClgOAWBTmpSp, P:CHWSysEna, P:ClgDmd,
                        P:ChlrEna, P:ChlrCmd, P:ChlrSts, P:ChlrAlm, P:ChlrPwr, P:ChlrEnrg, P:ChlrCur, P:ChlrLoad, P:ChlrNomCap, P:ChlrActCapPct, P:OATmp, P:ChlrRLA, P:ChlrLeadEna, P:ChlrLagEna, P:ChlrSeq, P:IsoVlvCmd, P:IsoVlvPos, P:CHWDifPrs, P:CHWDifPrsSp, P:CHWDifPrsSpRst, P:ChlrHeadPrs, P:ChlrHeadPrsAlm,
-					   P:CWFlwSw, P:CWFlwRat, P:CWFlw, P:CWRTmp, P:CWRTmpSp, P:CWSTmp, P:CWSTmpSp, P:CWTmpLowAlm, P:CWTmpHighAlm, P:CWLoad, P:CWIsoVlvCmd, P:CWIsoVlvPos,
-					   P:CHWFlwSw, P:CHWFlwRat, P:CHWFlw, P:ChwSTmp, P:ChwSTmpSp, P:ChwSTmpRst, P:ChwRTmp, P:ChwRTmpSp, P:CHWTmpLowAlm, P:CHWTmpHighAlm, P:CHWLoad,
+		       P:CWFlwSw, P:CWFlwRat, P:CWFlw, P:CWRTmp, P:CWRTmpSp, P:CWSTmp, P:CWSTmpSp, P:CWTmpLowAlm, P:CWTmpHighAlm, P:CWLoad, P:CWIsoVlvCmd, P:CWIsoVlvPos,
+		       P:CHWFlwSw, P:CHWFlwRat, P:CHWFlw, P:ChwSTmp, P:ChwSTmpSp, P:ChwSTmpRst, P:ChwRTmp, P:ChwRTmpSp, P:CHWTmpLowAlm, P:CHWTmpHighAlm, P:CHWLoad,
                        P:EvRfgTmp, P:CdRfgTmp, P:EvRfgPrs, P:CdRfgPrs, P:RfgLvl, P:RfgWarn, P:RfgAlm .
   
 
@@ -175,8 +173,7 @@ WaterCooledChiller-points:
       args: {"name": "CWIsoVlvCmd"}
     - template: https://brickschema.org/schema/Brick#Condenser_Water_Isolation_Valve_Status
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "CWIsoVlvPos"}
-      
+      args: {"name": "CWIsoVlvPos"}  
    
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Switch_Status
       library: https://brickschema.org/schema/1.3/Brick
@@ -212,7 +209,6 @@ WaterCooledChiller-points:
       library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "CHWLoad"}
       
-  
     - template: https://brickschema.org/schema/Brick#Evaporator_Refrigerant_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "EvRfgTmp"}
@@ -236,71 +232,38 @@ WaterCooledChiller-points:
       args: {"name": "RfgAlm"}
       
       
-PrimaryChilledWaterPump-points:
+ChilledWaterPump-points:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     P:name a brick:Chilled_Water_Pump ;
-        brick:hasPoint P:PriCHWPmpCmd, P:PriCHWPmpSts, P:PriCHWPmpSpd, P:PriCHWPmpFdbk, P:PriCHWPmpAlm, P:PriCHWPmpPwr, P:PriCHWPmpEnrg, P:PriCHWPmpRntm .         
+        brick:hasPoint P:CHWPmpCmd, P:CHWPmpSts, P:CHWPmpSpd, P:CHWPmpFdbk, P:CHWPmpAlm, P:CHWPmpPwr, P:CHWPmpEnrg, P:CHWPmpRntm .         
   dependencies:     
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Command
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "PriCHWPmpCmd"}
+      args: {"name": "CHWPmpCmd"}
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Status
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "PriCHWPmpSts"}
+      args: {"name": "CHWPmpSts"}
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_VFD_Speed_Command
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "PriCHWPmpSpd"}
+      args: {"name": "CHWPmpSpd"}
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_VFD_Speed_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "PriCHWPmpFdbk"}
+      args: {"name": "CHWPmpFdbk"}
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Alarm
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "PriCHWPmpAlm"}
+      args: {"name": "CHWPmpAlm"}
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Electric_Power_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "PriCHWPmpPwr"}
+      args: {"name": "CHWPmpPwr"}
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Electric_Energy_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "PriCHWPmpEnrg"}  
+      args: {"name": "CHWPmpEnrg"}  
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Run_Time_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "PriCHWPmpRntm"}
-      
-SecondaryChilledWaterPump-points:
-  body: >
-    @prefix P: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    P:name a brick:Chilled_Water_Pump ;
-        brick:hasPoint P:SecCHWPmpCmd, P:SecCHWPmpSts, P:SecCHWPmpSpd, P:SecCHWPmpFdbk, P:SecCHWPmpAlm, P:SecCHWPmpPwr, P:SecCHWPmpEnrg, P:SecCHWPmpRntm .
-        
-  dependencies:       
-    - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Command
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "SecCHWPmpCmd"}
-    - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Status
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "SecCHWPmpSts"}
-    - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_VFD_Speed_Command
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "SecCHWPmpSpd"}
-    - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_VFD_Speed_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "SecCHWPmpFdbk"}
-    - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Alarm
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "SecCHWPmpAlm"}
-    - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Electric_Power_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "SecCHWPmpPwr"}
-    - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Electric_Energy_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "SecCHWPmpEnrg"}
-    - template: https://brickschema.org/schema/Brick#Chilled_Water_Pump_Run_Time_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "SecCHWPmpRntm"}
-      
+      args: {"name": "CHWPmpRntm"}
+            
 CondenserWaterPump-points:
   body: >
     @prefix P: <urn:___param___#> .
