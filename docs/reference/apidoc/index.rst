@@ -6,3 +6,8 @@ Code Documentation
    :recursive:
 
    buildingmotif
+
+Code Visualization
+==================
+
+.. image:: diagram.svg
