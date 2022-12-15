@@ -103,20 +103,29 @@ def validate_model(models_id: int) -> flask.Response:
             "message": "request content type must be json"
         }, status.HTTP_400_BAD_REQUEST
 
-    library_id = request.get_json().get("library_id")
+    library_ids = request.get_json().get("library_ids")
 
-    if library_id is None:
+    if library_ids is None:
         return {"message": "body must contain library_id"}, status.HTTP_400_BAD_REQUEST
 
-    try:
-        library = Library.load(library_id)
-    except NoResultFound:
-        return {
-            "message": f"No library with id {library_id}"
-        }, status.HTTP_404_NOT_FOUND
+    results = []
+    for library_id in library_ids:
+        try:
+            library = Library.load(library_id)
+        except NoResultFound:
+            return {
+                "message": f"No library with id {library_id}"
+            }, status.HTTP_404_NOT_FOUND
 
-    vaildation_context = model.validate([library.get_shape_collection()])
+        vaildation_context = model.validate([library.get_shape_collection()])
 
-    return jsonify(
-        {"valid": vaildation_context.valid, "message": vaildation_context.report_string}
-    )
+        results.append(
+            {
+                "library_id": library_id,
+                "message": vaildation_context.report_string,
+                "valid": vaildation_context.valid,
+                "reasons": [x.reason() for x in vaildation_context.diffset],
+            }
+        )
+
+    return results

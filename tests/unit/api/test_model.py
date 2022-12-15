@@ -174,13 +174,16 @@ def test_validate_model(client, building_motif):
     # Action
     results = client.get(
         f"/models/{model.id}/validate",
-        json={"library_id": library.id},
+        json={"library_ids": [library.id]},
         headers={"Content-Type": "application/json"},
     )
 
     # Assert
     assert results.status_code == 200
-    assert not results.get_json()["valid"]
+    assert results.get_json()[0]["library_id"] == library.id
+    assert isinstance(results.get_json()[0]["message"], str)
+    assert not results.get_json()[0]["valid"]
+    assert isinstance(results.get_json()[0]["reasons"], list)
 
     # Set up
     model.add_triples((BLDG["vav1"], A, BRICK.VAV))
@@ -192,23 +195,23 @@ def test_validate_model(client, building_motif):
     # Action
     results = client.get(
         f"/models/{model.id}/validate",
-        json={"library_id": library.id},
+        json={"library_ids": [library.id]},
         headers={"Content-Type": "application/json"},
     )
 
     # Assert
     assert results.status_code == 200
-    assert results.get_json() == {
-        "message": "Validation Report\nConforms: True\n",
-        "valid": True,
-    }
+    assert results.get_json()[0]["library_id"] == library.id
+    assert isinstance(results.get_json()[0]["message"], str)
+    assert results.get_json()[0]["valid"]
+    assert isinstance(results.get_json()[0]["reasons"], list)
 
 
 def test_validate_model_bad_model_id(client, building_motif):
     # Action
     results = client.get(
         f"/models/{-1}/validate",
-        json={"library_id": -1},
+        json={"library_ids": [-1]},
         headers={"Content-Type": "application/json"},
     )
 
@@ -240,7 +243,7 @@ def test_validate_model_bad_library_id(client, building_motif):
     # Action
     results = client.get(
         f"/models/{model.id}/validate",
-        json={"library_id": -1},
+        json={"library_ids": [-1]},
         headers={"Content-Type": "application/json"},
     )
 
