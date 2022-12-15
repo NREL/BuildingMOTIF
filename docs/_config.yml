@@ -28,7 +28,7 @@ repository:
 # Add GitHub buttons to your book
 # See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
 html:
-  announcement: "⚠️ This is an ALPHA release, things may break or not work! ⚠️"
+  announcement: "⚠️ This is an ALPHA release for testing purposes only ⚠️"
   use_issues_button: true
   use_repository_button: true
 
@@ -41,6 +41,11 @@ sphinx:
   config:
     autosummary_generate: true
     add_module_names: false
+
+    # Autodoc config reference
+    # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#configuration
     autodoc_default_options:
       members: true
       member-order: bysource
+      undoc-members: true
+      private-members: false
