@@ -13,7 +13,7 @@ def get_all_libraries() -> flask.Response:
     """Get all libraries.
 
     :return: all libraries
-    :rtype: List[Libraries]
+    :rtype: flask.Response
     """
     db_libs = current_app.building_motif.table_connection.get_all_db_libraries()
 
