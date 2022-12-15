@@ -52,7 +52,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="buildingmotif.namespaces" href="buildingmotif.namespaces.html" />
+    <link rel="next" title="buildingmotif.ingresses" href="buildingmotif.ingresses.html" />
     <link rel="prev" title="buildingmotif.dataclasses.template" href="buildingmotif.dataclasses.template.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -73,7 +73,7 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="visually-hidden">Toggle in-page Table of Contents</div>
 </label>
 <!-- Headers at the top -->
-<div class="announcement header-item noprint">⚠️ This is an ALPHA release, things may break or not work! ⚠️</div>
+<div class="announcement header-item noprint">⚠️ This is an ALPHA release for testing purposes only ⚠️</div>
 <div class="header header-item noprint"></div>
 
     
@@ -270,6 +270,48 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4 current active">
         <a class="current reference internal" href="#">
          buildingmotif.dataclasses.validation
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="buildingmotif.ingresses.html">
+       buildingmotif.ingresses
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+      <label for="toctree-checkbox-7">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.bacnet.html">
+         buildingmotif.ingresses.bacnet
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.base.html">
+         buildingmotif.ingresses.base
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.brick.html">
+         buildingmotif.ingresses.brick
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.csv.html">
+         buildingmotif.ingresses.csv
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.template.html">
+         buildingmotif.ingresses.template
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.xlsx.html">
+         buildingmotif.ingresses.xlsx
         </a>
        </li>
       </ul>
@@ -546,6 +588,16 @@ that resolves the difference between the expected and actual graph.</p>
 <p>Each GraphDiff has a ‘focus’ that is the node in the model that the
 GraphDiff is about. If ‘focus’ is None, then the GraphDiff is about the
 model itself rather than a specific node</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.GraphDiff.focus">
+<span class="sig-name descname"><span class="pre">focus</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.URIRef</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.GraphDiff.focus" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.GraphDiff.graph">
+<span class="sig-name descname"><span class="pre">graph</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">rdflib.graph.Graph</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.GraphDiff.graph" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.GraphDiff.resolve">
 <span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library" title="buildingmotif.dataclasses.library.Library"><span class="pre">Library</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#GraphDiff.resolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.GraphDiff.resolve" title="Permalink to this definition">#</a></dt>
@@ -577,6 +629,26 @@ model itself rather than a specific node</p>
 <dd><p>Represents an entity missing paths to objects of a given type:
 $this &lt;path&gt; &lt;object&gt; .
 &lt;object&gt; a &lt;classname&gt; .</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathClassCount.path">
+<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">rdflib.term.URIRef</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathClassCount.path" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathClassCount.minc">
+<span class="sig-name descname"><span class="pre">minc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathClassCount.minc" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathClassCount.maxc">
+<span class="sig-name descname"><span class="pre">maxc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathClassCount.maxc" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathClassCount.classname">
+<span class="sig-name descname"><span class="pre">classname</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">rdflib.term.URIRef</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathClassCount.classname" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathClassCount.reason">
 <span class="sig-name descname"><span class="pre">reason</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#PathClassCount.reason"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathClassCount.reason" title="Permalink to this definition">#</a></dt>
@@ -608,6 +680,36 @@ $this &lt;path&gt; &lt;object&gt; .
 <dd><p>Represents an entity missing paths to objects that match a given shape.
 $this &lt;path&gt; &lt;object&gt; .
 &lt;object&gt; a &lt;shapename&gt; .</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathShapeCount.path">
+<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">rdflib.term.URIRef</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathShapeCount.path" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathShapeCount.minc">
+<span class="sig-name descname"><span class="pre">minc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathShapeCount.minc" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathShapeCount.maxc">
+<span class="sig-name descname"><span class="pre">maxc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathShapeCount.maxc" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathShapeCount.shapename">
+<span class="sig-name descname"><span class="pre">shapename</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">rdflib.term.URIRef</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathShapeCount.shapename" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathShapeCount.extra_body">
+<span class="sig-name descname"><span class="pre">extra_body</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.graph.Graph</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathShapeCount.extra_body" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathShapeCount.extra_deps">
+<span class="sig-name descname"><span class="pre">extra_deps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathShapeCount.extra_deps" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.PathShapeCount.reason">
 <span class="sig-name descname"><span class="pre">reason</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#PathShapeCount.reason"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.PathShapeCount.reason" title="Permalink to this definition">#</a></dt>
@@ -626,6 +728,21 @@ $this &lt;path&gt; &lt;object&gt; .
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.RequiredPath">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RequiredPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">focus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.URIRef</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.term.URIRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#RequiredPath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.RequiredPath" title="Permalink to this definition">#</a></dt>
 <dd><p>Represents an entity missing a required property.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.RequiredPath.path">
+<span class="sig-name descname"><span class="pre">path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">rdflib.term.URIRef</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.RequiredPath.path" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.RequiredPath.minc">
+<span class="sig-name descname"><span class="pre">minc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.RequiredPath.minc" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.RequiredPath.maxc">
+<span class="sig-name descname"><span class="pre">maxc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.RequiredPath.maxc" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.RequiredPath.reason">
 <span class="sig-name descname"><span class="pre">reason</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#RequiredPath.reason"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.RequiredPath.reason" title="Permalink to this definition">#</a></dt>
@@ -655,6 +772,11 @@ $this &lt;path&gt; &lt;object&gt; .
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.RequiredClass">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RequiredClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">focus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.URIRef</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.term.URIRef</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#RequiredClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.RequiredClass" title="Permalink to this definition">#</a></dt>
 <dd><p>Represents an entity that should be an instance of the class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.RequiredClass.classname">
+<span class="sig-name descname"><span class="pre">classname</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">rdflib.term.URIRef</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.RequiredClass.classname" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.RequiredClass.reason">
 <span class="sig-name descname"><span class="pre">reason</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#RequiredClass.reason"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.RequiredClass.reason" title="Permalink to this definition">#</a></dt>
@@ -685,6 +807,16 @@ $this &lt;path&gt; &lt;object&gt; .
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GraphClassCardinality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">focus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">rdflib.term.URIRef</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.term.URIRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expectedCount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#GraphClassCardinality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.GraphClassCardinality" title="Permalink to this definition">#</a></dt>
 <dd><p>Represents a graph that is missing an expected number of instances of
 the given class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.GraphClassCardinality.classname">
+<span class="sig-name descname"><span class="pre">classname</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">rdflib.term.URIRef</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.GraphClassCardinality.classname" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.GraphClassCardinality.expectedCount">
+<span class="sig-name descname"><span class="pre">expectedCount</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.GraphClassCardinality.expectedCount" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.GraphClassCardinality.reason">
 <span class="sig-name descname"><span class="pre">reason</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#GraphClassCardinality.reason"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.GraphClassCardinality.reason" title="Permalink to this definition">#</a></dt>
@@ -715,6 +847,31 @@ the given class.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ValidationContext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape_collections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">buildingmotif.dataclasses.shape_collection.ShapeCollection</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">rdflib.graph.Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model" title="buildingmotif.dataclasses.model.Model"><span class="pre">Model</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#ValidationContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext" title="Permalink to this definition">#</a></dt>
 <dd><p>Holds the necessary information for processing the results of SHACL
 validation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext.shape_collections">
+<span class="sig-name descname"><span class="pre">shape_collections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">buildingmotif.dataclasses.shape_collection.ShapeCollection</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext.shape_collections" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext.valid">
+<span class="sig-name descname"><span class="pre">valid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext.valid" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext.report">
+<span class="sig-name descname"><span class="pre">report</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">rdflib.graph.Graph</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext.report" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext.report_string">
+<span class="sig-name descname"><span class="pre">report_string</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext.report_string" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model" title="buildingmotif.dataclasses.model.Model"><span class="pre">Model</span></a></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext.model" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext.diffset">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">diffset</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.dataclasses.validation.GraphDiff" title="buildingmotif.dataclasses.validation.GraphDiff"><span class="pre">buildingmotif.dataclasses.validation.GraphDiff</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext.diffset" title="Permalink to this definition">#</a></dt>
@@ -794,10 +951,10 @@ populated</p>
             <p class="prev-next-title">buildingmotif.dataclasses.template</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="buildingmotif.namespaces.html" title="next page">
+    <a class='right-next' id="next-link" href="buildingmotif.ingresses.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">buildingmotif.namespaces</p>
+        <p class="prev-next-title">buildingmotif.ingresses</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

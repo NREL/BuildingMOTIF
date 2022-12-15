@@ -73,7 +73,7 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="visually-hidden">Toggle in-page Table of Contents</div>
 </label>
 <!-- Headers at the top -->
-<div class="announcement header-item noprint">⚠️ This is an ALPHA release, things may break or not work! ⚠️</div>
+<div class="announcement header-item noprint">⚠️ This is an ALPHA release for testing purposes only ⚠️</div>
 <div class="header header-item noprint"></div>
 
     
@@ -270,6 +270,48 @@ const thebe_selector_output = ".output, .cell_output"
        <li class="toctree-l4">
         <a class="reference internal" href="buildingmotif.dataclasses.validation.html">
          buildingmotif.dataclasses.validation
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="buildingmotif.ingresses.html">
+       buildingmotif.ingresses
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+      <label for="toctree-checkbox-7">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.bacnet.html">
+         buildingmotif.ingresses.bacnet
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.base.html">
+         buildingmotif.ingresses.base
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.brick.html">
+         buildingmotif.ingresses.brick
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.csv.html">
+         buildingmotif.ingresses.csv
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.template.html">
+         buildingmotif.ingresses.template
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="buildingmotif.ingresses.xlsx.html">
+         buildingmotif.ingresses.xlsx
         </a>
        </li>
       </ul>
@@ -527,6 +569,11 @@ title="Print to PDF"
 <dt class="sig sig-object py" id="buildingmotif.building_motif.building_motif.BuildingMOTIF">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BuildingMOTIF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/building_motif/building_motif.html#BuildingMOTIF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.building_motif.building_motif.BuildingMOTIF" title="Permalink to this definition">#</a></dt>
 <dd><p>Manages BuildingMOTIF data classes.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="buildingmotif.building_motif.building_motif.BuildingMOTIF.session">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">session</span></span><a class="headerlink" href="#buildingmotif.building_motif.building_motif.BuildingMOTIF.session" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.building_motif.building_motif.BuildingMOTIF.setup_tables">
 <span class="sig-name descname"><span class="pre">setup_tables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/building_motif/building_motif.html#BuildingMOTIF.setup_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.building_motif.building_motif.BuildingMOTIF.setup_tables" title="Permalink to this definition">#</a></dt>
@@ -550,6 +597,11 @@ logging level.</p>
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/building_motif/building_motif.html#BuildingMOTIF.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.building_motif.building_motif.BuildingMOTIF.close" title="Permalink to this definition">#</a></dt>
 <dd><p>Close session and engine.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.building_motif.building_motif.BuildingMOTIF.clean">
+<span class="sig-name descname"><span class="pre">clean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#buildingmotif.building_motif.building_motif.BuildingMOTIF.clean" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -580,6 +632,16 @@ instantiated</p>
 Session.</p>
 <p>This enables the use of sessioned transactions in rdflib-sqlalchemy.
 If we are experiencing weird graph database issues this may be the cause.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.building_motif.building_motif.BuildingMotifEngine.begin">
+<span class="sig-name descname"><span class="pre">begin</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/building_motif/building_motif.html#BuildingMotifEngine.begin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.building_motif.building_motif.BuildingMotifEngine.begin" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.building_motif.building_motif.BuildingMotifEngine.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/building_motif/building_motif.html#BuildingMotifEngine.connect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.building_motif.building_motif.BuildingMotifEngine.connect" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </section>

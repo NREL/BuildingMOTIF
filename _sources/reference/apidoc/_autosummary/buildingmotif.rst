@@ -31,6 +31,7 @@
    buildingmotif.building_motif
    buildingmotif.database
    buildingmotif.dataclasses
+   buildingmotif.ingresses
    buildingmotif.namespaces
    buildingmotif.template_compilation
    buildingmotif.template_matcher
