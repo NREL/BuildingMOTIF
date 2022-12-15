@@ -13,7 +13,7 @@ execute:
 # Define the name of the latex output file for PDF builds
 latex:
   latex_documents:
-    targetname: book.tex
+    targetname: BuildingMOTIF.tex
 
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:
@@ -22,13 +22,13 @@ bibtex_bibfiles:
 # Information about where the book exists on the web
 repository:
   url: https://github.com/NREL/BuildingMOTIF
-  path_to_book: doc  # Optional path to your book, relative to the repository root
+  path_to_book: docs  # Optional path to your book, relative to the repository root
   branch: main  # Which branch of the repository should be used when creating links (optional)
 
 # Add GitHub buttons to your book
 # See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
 html:
-  announcement: "⚠️ This is an ALPHA release, things may break or not work! ⚠️"
+  announcement: "⚠️ This is an ALPHA release for testing purposes only ⚠️"
   use_issues_button: true
   use_repository_button: true
 
@@ -36,11 +36,16 @@ html:
 sphinx:
   extra_extensions:
   - 'sphinx.ext.autodoc'
-  - 'sphinx.ext.viewcode'
   - 'sphinx.ext.autosummary'
+  - 'sphinx.ext.viewcode'
   config:
     autosummary_generate: true
     add_module_names: false
+
+    # Autodoc config reference
+    # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#configuration
     autodoc_default_options:
       members: true
       member-order: bysource
+      undoc-members: true
+      private-members: false
