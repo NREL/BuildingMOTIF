@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class Template:
-    """Template. This class mirrors DBTemplate."""
+    """This class mirrors :py:class`database.tables.DBTemplate`."""
 
     _id: int
     _name: str
@@ -36,11 +36,11 @@ class Template:
 
     @classmethod
     def load(cls, id: int) -> "Template":
-        """load Template from db
+        """Load template from database.
 
         :param id: id of template
         :type id: int
-        :return: loaded Template
+        :return: loaded template
         :rtype: Template
         """
         bm = get_building_motif()
@@ -56,13 +56,15 @@ class Template:
         )
 
     def in_memory_copy(self) -> "Template":
-        """
-        Return a copy of this template.
+        """Copy this template.
+
+        :return: copy of this template
+        :rtype: Template
         """
         return Template(
             _id=-1,
             _name=self._name,
-            body=copy_graph(self.body),
+            body=copy_graph(self.body, preserve_blank_nodes=False),
             optional_args=self.optional_args[:],
             _bm=self._bm,
         )
@@ -85,6 +87,11 @@ class Template:
         self._name = new_name
 
     def get_dependencies(self) -> Tuple["Dependency", ...]:
+        """Get the template's dependencies.
+
+        :return: a tuple of dependencies
+        :rtype: Tuple
+        """
         return tuple(
             [
                 Dependency(dep.dependee_id, dep.args)
@@ -95,15 +102,30 @@ class Template:
         )
 
     def add_dependency(self, dependency: "Template", args: Dict[str, str]) -> None:
+        """Add dependency to template.
+
+        :param dependency: dependency to add
+        :type dependency: Template
+        :param args: dictionary of dependency arguments
+        :type args: Dict[str, str]
+        """
         self._bm.table_connection.add_template_dependency(self.id, dependency.id, args)
 
     def remove_dependency(self, dependency: "Template") -> None:
+        """Remove dependency from template.
+
+        :param dependency: dependency to remove
+        :type dependency: Template
+        """
         self._bm.table_connection.remove_template_dependency(self.id, dependency.id)
 
     @property
     def all_parameters(self) -> Set[str]:
-        """
-        The set of all parameters used in this template, including its dependencies
+        """The set of all parameters used in this template *including* its
+        dependencies.
+
+        :return: set of parameters *with* dependencies
+        :rtype: Set[str]
         """
         # handle local parameters first
         params = set(self.parameters)
@@ -115,8 +137,11 @@ class Template:
 
     @property
     def parameters(self) -> Set[str]:
-        """
-        The set of all parameters used in this template, *not* including its dependencies
+        """The set of all parameters used in this template *excluding* its
+        dependencies.
+
+        :return: set of parameters *without* dependencies
+        :rtype: Set[str]
         """
         # handle local parameters first
         nodes = chain.from_iterable(self.body.triples((None, None, None)))
@@ -125,8 +150,10 @@ class Template:
 
     @property
     def dependency_parameters(self) -> Set[str]:
-        """
-        The set of all parameters used in this template's dependencies
+        """The set of all parameters used in this demplate's dependencies.
+
+        :return: set of parameters used in dependencies
+        :rtype: Set[str]
         """
         params: Set[str] = set()
         for dep in self.get_dependencies():
@@ -135,9 +162,11 @@ class Template:
 
     @property
     def parameter_counts(self) -> Counter:
-        """
-        An addressable histogram of the parameter name counts in this template +
-        all of its transitive dependencies.
+        """An addressable histogram of the parameter name counts in this
+        template and all of its transitive dependencies.
+
+        :return: count of parameters
+        :rtype: Counter
         """
         counts: Counter = Counter()
         counts.update(self.parameters)
@@ -148,13 +177,12 @@ class Template:
     # TODO: method to get the 'types' of the parameters
 
     def dependency_for_parameter(self, param: str) -> Optional["Template"]:
-        """
-        Returns the dependency that uses the given parameter if one exists.
+        """Returns the dependency that uses the given parameter if one exists.
 
         :param param: parameter to search for
         :type param: str
-        :return: dependency which uses the given parameter
-        :rtype: Optional["Template"]
+        :return: dependency that uses the given parameter
+        :rtype: Optional[Template]
         """
         for dep in self.get_dependencies():
             if param in dep.args.values():
@@ -162,16 +190,17 @@ class Template:
         return None
 
     def to_inline(self, preserve_args: Optional[List[str]] = None) -> "Template":
-        """
-        Return an inline-able copy of this template by suffixing all parameters
-        with a unique identifier which will avoid parameter name collisions when templates
-        are combined with one another. Any argument names in the preserve_args list will
-        not be adjusted
+        """Return an inline-able copy of this template.
 
-        :param preserve_args: parameters whose names will be preserved, defaults to None
+        Suffixes all parameters with a unique identifier that will avoid
+        parameter name collisions when templates are combined with one another.
+        Any argument names in the `preserve_args` list will not be adjusted.
+
+        :param preserve_args: parameters whose names will be preserved,
+            defaults to None
         :type preserve_args: Optional[List[str]], optional
-        :return: a template w/ globally unique parameters
-        :rtype: "Template"
+        :return: a template with globally unique parameters
+        :rtype: Template
         """
         templ = self.in_memory_copy()
         suffix = f"{token_hex(4)}-inlined"
@@ -189,12 +218,12 @@ class Template:
         return templ
 
     def inline_dependencies(self) -> "Template":
-        """
-        Returns a copy of this template with all dependencies recursively inlined.
-        Parameters of dependencies will be renamed to avoid confusion..
+        """Copies this template with all dependencies recursively inlined.
+
+        Parameters of dependencies will be renamed to avoid confusion.
 
         :return: copy of this template with all dependencies inlined
-        :rtype: "Template"
+        :rtype: Template
         """
         templ = self.in_memory_copy()
         # if this template has no dependencies, then return unaltered
@@ -245,23 +274,27 @@ class Template:
         namespaces: Optional[Dict[str, rdflib.Namespace]] = None,
         require_optional_args: bool = False,
     ) -> Union["Template", rdflib.Graph]:
-        """
-        Evaluate the template with the provided bindings. If all parameters in the template
-        have a provided binding, then a Graph will be returned. Otherwise, a new Template
-        will be returned which incorporates the provided bindings and preserves unbound
-        parameters. If require_optional_args is True, then the template evaluation will not return
-        a Graph unless all optional arguments are bound. If require_optional_args is False, then
-        the template evaluation will return a Graph even if some optional arguments are unbound.
+        """Evaluate the template with the provided bindings.
 
-        :param bindings: map of parameter name -> RDF term to substitute
+        If all parameters in the template have a provided binding, then a graph
+        will be returned. Otherwise, a new Template will be returned that
+        incorporates the provided bindings and preserves unbound parameters. If
+        `require_optional_args` is True, then the template evaluation will not
+        return a graph unless all optional arguments are bound. If
+        `require_optional_args` is False, then the template evaluation will
+        return a graph even if some optional arguments are unbound.
+
+        :param bindings: map of parameter {name: RDF term} to substitute
         :type bindings: Dict[str, Node]
-        :param namespaces: namespace bindings to add to the graph, defaults to None
+        :param namespaces: namespace bindings to add to the graph,
+            defaults to None
         :type namespaces: Optional[Dict[str, rdflib.Namespace]], optional
-        :param require_optional_args: whether to require all optional arguments to be bound,
-                defaults to False
+        :param require_optional_args: whether to require all optional arguments
+            to be bound, defaults to False
         :type require_optional_args: bool
-        :return: either a template or a graph, depending on whether all parameters were provided
-        :rtype: Union["Template", rdflib.Graph]
+        :return: either a template or a graph, depending on whether all
+            parameters were provided
+        :rtype: Union[Template, rdflib.Graph]
         """
         templ = self.in_memory_copy()
         uri_bindings: Dict[Node, Node] = {PARAM[k]: v for k, v in bindings.items()}
@@ -283,8 +316,8 @@ class Template:
         return templ
 
     def fill(self, ns: rdflib.Namespace) -> Tuple[Dict[str, Node], rdflib.Graph]:
-        """
-        Evaluates the template with autogenerated bindings w/n the given "ns" namespace.
+        """Evaluates the template with autogenerated bindings within the given
+        namespace.
 
         :param ns: namespace to contain the autogenerated entities
         :type ns: rdflib.Namespace
@@ -302,6 +335,11 @@ class Template:
 
     @property
     def defining_library(self) -> "Library":
+        """The library defining this template.
+
+        :return: library
+        :rtype: Library
+        """
         from buildingmotif.dataclasses.library import Library
 
         return Library.load(
@@ -309,6 +347,11 @@ class Template:
         )
 
     def library_dependencies(self) -> List["Library"]:
+        """Get library dependencies for this template.
+
+        :return: list of libraries
+        :rtype: List[Library]
+        """
         from buildingmotif.dataclasses.library import Library
 
         libs = {self.defining_library.id}
@@ -319,11 +362,13 @@ class Template:
     def find_subgraphs(
         self, model: Model, *ontologies: rdflib.Graph
     ) -> Generator[Tuple[Mapping, rdflib.Graph, Optional["Template"]], None, None]:
+        """Produces an iterable of subgraphs in the model that are partially or
+        entirely covered by the provided template.
+
+        :yield: iterable of subgraphs in the model
+        :rtype: Generator[Tuple[Mapping, rdflib.Graph, Optional[Template]], None, None]
         """
-        Produces an iterable of subgraphs in the model that are partially or entirely
-        covered by the provided template.
         # TODO: can we figure out what ontology to use automatically?
-        """
         # if ontology is not specified, pull in all shapes related to this template's library
         # and all of its dependencies
         if len(ontologies) == 0:
@@ -343,6 +388,8 @@ class Template:
 
 @dataclass
 class Dependency:
+    """Dependency"""
+
     _template_id: int
     args: Dict[str, str]
 

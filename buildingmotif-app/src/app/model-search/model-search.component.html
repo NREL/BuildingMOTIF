@@ -1,16 +1,21 @@
 <div class="container">
         <div class="header">
-                <div>Models</div>
-                <form class="search-form">
-                        <mat-form-field class="search-bar" appearance="outline" floatLabel="never">
-                                <input type="text"
-                                        aria-label="Search model by description"
-                                        placeholder="Search model by dscription"
-                                        matInput
-                                        [formControl]="fitlerStringControl">
-                                <mat-icon matSuffix>search</mat-icon>
-                        </mat-form-field>
-                </form>      
+                <div class="header-left-side">
+                        <div>Models</div>
+                </div>
+                <div class="header-right-side">
+                        <form class="search-form">
+                                <mat-form-field class="search-bar" appearance="outline" floatLabel="never">
+                                        <input type="text"
+                                                aria-label="Search model by description"
+                                                placeholder="Search model by dscription"
+                                                matInput
+                                                [formControl]="fitlerStringControl">
+                                        <mat-icon matSuffix>search</mat-icon>
+                                </mat-form-field>
+                        </form>
+                        <button mat-raised-button color="primary" routerLink="/models/new"> New Model </button> 
+                </div>
         </div>
 
         <mat-list *ngFor="let model of filteredModels | async">

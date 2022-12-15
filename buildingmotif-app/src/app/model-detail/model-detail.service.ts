@@ -28,10 +28,10 @@ export class ModelDetailService {
       );
   }
 
-  updateModelGraph(id: number, newGraph: string) {
+  updateModelGraph(id: number, newGraph: string, append: boolean = false) {
     const headers = {'Content-Type': "application/xml"}
 
-    return this.http.patch(`http://localhost:5000/models/${id}/graph`, newGraph, {headers, responseType: 'text'})
+    return this.http[append? "patch": "put"](`http://localhost:5000/models/${id}/graph`, newGraph, {headers, responseType: 'text'})
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error
