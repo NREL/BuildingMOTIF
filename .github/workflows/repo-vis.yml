@@ -12,10 +12,12 @@ jobs:
   repo-vis:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@master
-      - name: Update diagram
+      - name: checkout code
+        uses: actions/checkout@main
+
+      - name: update repo diagram
         uses: githubocto/repo-visualizer@main
         with:
-          excluded_paths: "ignore,.github"
-          commit_message: "Repo visualizer: updated diagram [skip ci]"
+          output_file: docs/reference/apidoc/diagram.svg
+          excluded_paths: ".github"
+          commit_message: "update repo diagram [skip ci]"

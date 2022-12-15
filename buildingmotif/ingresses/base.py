@@ -15,7 +15,13 @@ class Record:
     fields: dict
 
 
-class RecordIngressHandler:
+class IngressHandler:
+    """Abstract superclass for Record/Graph ingress handlers"""
+
+    pass
+
+
+class RecordIngressHandler(IngressHandler):
     """Generates Record instances from an underlying metadata source"""
 
     def __init__(self, bm: BuildingMOTIF):
@@ -29,7 +35,7 @@ class RecordIngressHandler:
         raise NotImplementedError("Must be overridden by subclass")
 
 
-class GraphIngressHandler:
+class GraphIngressHandler(IngressHandler):
     """Generates a Graph from an underlying metadata source or RecordIngressHandler"""
 
     def __init__(self, bm: BuildingMOTIF):
