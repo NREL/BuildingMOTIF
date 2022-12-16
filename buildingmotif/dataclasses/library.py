@@ -8,6 +8,8 @@ import rdflib
 import sqlalchemy
 import yaml
 from pkg_resources import resource_exists, resource_filename
+from rdflib.exceptions import ParserError
+from rdflib.plugins.parsers.notation3 import BadSyntax
 from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
@@ -93,6 +95,8 @@ class Library:
 
         :param name: library name
         :type name: str
+        :param overwrite: if True, overwrite the existing copy of the library.
+        :type overwrite: Optional[bool]
         :return: new library
         :rtype: Library
         """
@@ -150,11 +154,8 @@ class Library:
             defaults to None
         :type name: Optional[str], optional
         :param overwrite: if true, replace any existing copy of the
-                        library, defaults to False
+            library, defaults to True
         :type overwrite: Optional[true], optional
-        :param load_if_not_exist: if true, load the library *only* if it does not exist,
-                        otherwise just return the existing library, defaults to False
-        :type load_if_not_exist: Optional[true], optional
         :return: the loaded library
         :rtype: Library
         :raises Exception: if the library cannot be loaded
@@ -222,8 +223,6 @@ class Library:
         :type ontology: rdflib.Graph
         :param overwrite: if true, overwrite the existing copy of the Library
         :type overwrite: bool
-        :param load_if_not_exist: if true, only load the library if it does not exist
-        :type load_if_not_exist: bool
         :return: the loaded Library
         :rtype: "Library"
         """
@@ -292,7 +291,13 @@ class Library:
         assert shape_col_id is not None  # this should always pass
         shape_col = ShapeCollection.load(shape_col_id)
         for filename in get_ontology_files(directory):
-            shape_col.graph.parse(filename, format=guess_format(filename))
+            try:
+                shape_col.graph.parse(filename, format=guess_format(filename))
+            except (ParserError, BadSyntax) as e:
+                logging.getLogger(__name__).error(
+                    f"Could not parse file {filename}: {e}"
+                )
+                raise e
 
     @classmethod
     def _load_from_directory(
