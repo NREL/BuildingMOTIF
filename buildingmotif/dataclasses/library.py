@@ -138,7 +138,7 @@ class Library:
     ) -> "Library":
         """Loads a library from the database or an external source.
         When specifying a path to load a library or ontology_graph from,
-        paths within the buildingmotif.builtin module will be prioritized
+        paths within the buildingmotif.libraries module will be prioritized
         if they resolve.
 
         :param db_id: the unique id of the library in the database,
@@ -165,10 +165,10 @@ class Library:
         elif ontology_graph is not None:
             if isinstance(ontology_graph, str):
                 ontology_graph_path = ontology_graph
-                if resource_exists("buildingmotif.builtin", ontology_graph_path):
+                if resource_exists("buildingmotif.libraries", ontology_graph_path):
                     logging.debug(f"Loading builtin library: {ontology_graph_path}")
                     ontology_graph_path = resource_filename(
-                        "buildingmotif.builtin", ontology_graph_path
+                        "buildingmotif.libraries", ontology_graph_path
                     )
                 ontology_graph = rdflib.Graph()
                 ontology_graph.parse(
@@ -176,10 +176,10 @@ class Library:
                 )
             return cls._load_from_ontology_graph(ontology_graph, overwrite=overwrite)
         elif directory is not None:
-            if resource_exists("buildingmotif.builtin", directory):
+            if resource_exists("buildingmotif.libraries", directory):
                 logging.debug(f"Loading builtin library: {directory}")
                 src = pathlib.Path(
-                    resource_filename("buildingmotif.builtin", directory)
+                    resource_filename("buildingmotif.libraries", directory)
                 )
             else:
                 src = pathlib.Path(directory)
