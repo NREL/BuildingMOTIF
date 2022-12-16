@@ -94,6 +94,8 @@ class Library:
 
         :param name: library name
         :type name: str
+        :param overwrite: if True, overwrite the existing copy of the library.
+        :type overwrite: Optional[bool]
         :return: new library
         :rtype: Library
         """
@@ -148,7 +150,7 @@ class Library:
             defaults to None
         :type name: Optional[str], optional
         :param overwrite: if true, replace any existing copy of the
-                        library, defaults to False
+            library, defaults to True
         :type overwrite: Optional[true], optional
         :return: the loaded library
         :rtype: Library
