@@ -3,6 +3,7 @@ import uuid
 from typing import Dict, List, Tuple
 
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import NoResultFound
 
 from buildingmotif.database.tables import (
     DBLibrary,
@@ -300,9 +301,12 @@ class TableConnection:
         :return: DBTemplate
         :rtype: DBTemplate
         """
-        db_template = (
-            self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
-        )
+        try:
+            db_template = (
+                self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
+            )
+        except NoResultFound:
+            raise NoResultFound(f"No tempalte found with name {name}")
         return db_template
 
     def get_library_defining_db_template(self, id: int) -> DBLibrary:
@@ -390,7 +394,9 @@ class TableConnection:
         if not set(args.values()).issubset(params):
             raise ValueError(
                 f"In {templ.name} the values of the bindings to {dep.name} must correspond to the "
-                "parameters in the dependant template"
+                "parameters in the dependant template."
+                f"Dependency {dep.name} refers to params {set(args.values()).difference(params)} "
+                f"that do not appear in template {templ.name}"
             )
         # do the same for the dependency
         graph = self.bm.graph_connection.get_graph(dep.body_id)
