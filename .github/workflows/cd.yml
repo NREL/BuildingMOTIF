@@ -16,9 +16,11 @@ jobs:
   build:
     name: build Python 🐍 distributions
     runs-on: ubuntu-latest
-
+    outputs:
+      output1: ${{ steps.step3.outputs.test }}
     steps:
     - uses: actions/checkout@master
+
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
@@ -30,6 +32,7 @@ jobs:
         pip install
         build
         --user
+
     - name: Build a binary wheel and a source tarball
       run: >-
         python -m
@@ -40,9 +43,9 @@ jobs:
         .
 
   publish:
-    needs: build
     name: publish Python 🐍 distributions
     runs-on: ubuntu-latest
+    needs: build
     steps:
     - uses: actions/checkout@master
 
