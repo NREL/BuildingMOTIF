@@ -1,5 +1,3 @@
-# https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
-
 name: continuous deployment
 
 on: 
@@ -7,14 +5,11 @@ on:
     branches:
     - develop
     - main
-  push:
-    branches:
-    - main
 
 jobs:
 
   build:
-    name: build Python 🐍 distributions
+    name: build distribution for Python
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -31,14 +26,23 @@ jobs:
     - name: build
       run: poetry build
 
+    - name: upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        path: dist/*
+
   publish:
-    name: publish Python 🐍 distributions
+    name: publish distribution for Python
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
+
+    - name: dnload artifact
+      uses: actions/download-artifact@v3
       with:
-        python-version: ${{ matrix.python-version }}
+        path: dist/*
 
     - name: publish distribution 📦 to Test PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
