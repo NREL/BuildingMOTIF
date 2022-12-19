@@ -16,31 +16,27 @@ jobs:
   build:
     name: build Python 🐍 distributions
     runs-on: ubuntu-latest
-    outputs:
-      output3: ${{ steps.step3.outputs.test }}
+    strategy:
+      matrix:
+       python-version: ['3.8', '3.9', '3.10']
     steps:
     - uses: actions/checkout@master
 
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
-        python-version: "3.10"
+        python-version: ${{ matrix.python-version }}
 
-    - name: Install pypa/build
-      run: >-
-        python -m
-        pip install
-        build
-        --user
+    - name: Run image
+      uses: abatilo/actions-poetry@v2
+      with:
+        poetry-version: "1.1.15"
 
-    - name: Build a binary wheel and a source tarball
-      run: >-
-        python -m
-        build
-        --sdist
-        --wheel
-        --outdir dist/
-        .
+    - name: Install deps
+      run: poetry install
+
+    - name: Build project
+      run: poetry build
     
     - run: echo $GITHUB_OUTPUT
 
@@ -52,22 +48,22 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
-    - run: echo ${{needs.build.outputs.output3}}
-
-    - name: set up Python 3.10
+    - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
-        python-version: "3.10"
-        
-    - name: publish distribution 📦 to Test PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+        python-version: ${{ matrix.python-version }}
+
+    - name: Build and publish to pypi
+      uses: JRubics/poetry-publish@v1.15
       with:
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        repository_url: https://test.pypi.org/legacy/
-        skip_existing: true
+        python_version: ${{ matrix.python-version }}
+        pypi_token: ${{ secrets.PYPI_API_TOKEN }}
+        repository_name: "testpypi"
+        repository_url: "https://test.pypi.org/legacy/"
 
     - name: publish distribution 📦 to PyPI
       if: startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
+        python_version: ${{ matrix.python-version }}
+        pypi_token: ${{ secrets.PYPI_API_TOKEN }}
