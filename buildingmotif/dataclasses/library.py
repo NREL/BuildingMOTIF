@@ -115,7 +115,7 @@ class Library:
 
     @classmethod
     def _clear_library(cls, library: DBLibrary) -> None:
-        """Clear contents of a library
+        """Clear contents of a library.
 
         :param library: library to clear
         :type library: DBLibrary
