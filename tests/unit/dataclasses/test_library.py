@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Optional
 
 import pytest
-from rdflib import RDF, URIRef
+from rdflib import RDF, Graph, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
@@ -94,6 +94,57 @@ def test_load_library_from_directory_with_shapes(bm: BuildingMOTIF):
     assert len(shapeg.graph) > 1
 
 
+def test_load_library_overwrite_graph(bm: BuildingMOTIF):
+    g1 = """@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <urn:shape/> .
+: a owl:Ontology .
+:abc a sh:NodeShape, owl:Class .
+    """
+    g = Graph()
+    g.parse(data=g1, format="ttl")
+    lib = Library.load(ontology_graph=g)
+    assert lib is not None
+    assert len(lib.get_templates()) == 1
+
+    g1 = """@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <urn:shape/> .
+: a owl:Ontology .
+:abc a sh:NodeShape, owl:Class .
+:def a sh:NodeShape, owl:Class .
+    """
+    g = Graph()
+    g.parse(data=g1, format="ttl")
+    lib = Library.load(ontology_graph=g, overwrite=False)
+    assert (
+        len(lib.get_templates()) == 1
+    ), "Library is overwritten when it shouldn't have been"
+
+    lib = Library.load(ontology_graph=g, overwrite=True)
+    bm.session.commit()
+    assert lib is not None
+    assert len(lib.get_templates()) == 2, "Library is overwritten improperly"
+
+
+def test_load_library_overwrite_directory(bm: BuildingMOTIF):
+    first = "tests/unit/fixtures/overwrite-test/1/A"
+    second = "tests/unit/fixtures/overwrite-test/2/A"
+
+    lib = Library.load(directory=first)
+    assert lib is not None
+    assert len(lib.get_templates()) == 1
+
+    lib = Library.load(directory=second, overwrite=False)
+    assert lib is not None
+    assert len(lib.get_templates()) == 1, "Library overwritten when overwrite=False"
+
+    lib = Library.load(directory=second, overwrite=True)
+    bm.session.commit()
+    assert lib is not None
+    assert len(lib.get_templates()) == 2, "Library overwritten improperly"
+
+
 def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
     """
     Test that the libraries can be loaded and used.
@@ -118,5 +169,15 @@ def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
     monkeypatch.setattr(Library, "load", mock_load)
     # Brick dependencies always resolve for the test library
     MockLibrary.create("https://brickschema.org/schema/1.3/Brick")
-    lib = Library._load_from_directory(Path(library))
+    lib = Library._load_from_directory(Path(library), overwrite=False)
+    assert lib is not None
+
+
+def test_builtin_ontologies(bm: BuildingMOTIF, builtin_ontology):
+    lib = Library.load(ontology_graph=builtin_ontology)
+    assert lib is not None
+
+
+def test_builtin_libraries(bm: BuildingMOTIF, builtin_library):
+    lib = Library.load(directory=builtin_library)
     assert lib is not None
