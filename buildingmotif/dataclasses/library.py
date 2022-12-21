@@ -174,7 +174,7 @@ class Library:
                 ontology_graph.parse(
                     ontology_graph_path, format=guess_format(ontology_graph_path)
                 )
-            return cls._load_from_ontology_graph(ontology_graph, overwrite=overwrite)
+            return cls._load_from_ontology(ontology_graph, overwrite=overwrite)
         elif directory is not None:
             if resource_exists("buildingmotif.libraries", directory):
                 logging.debug(f"Loading builtin library: {directory}")
@@ -208,7 +208,7 @@ class Library:
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
     @classmethod
-    def _load_from_ontology_graph(
+    def _load_from_ontology(
         cls, ontology: rdflib.Graph, overwrite: Optional[bool] = True
     ) -> "Library":
         """
