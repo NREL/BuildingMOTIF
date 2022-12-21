@@ -329,9 +329,7 @@ class Library:
 
     @staticmethod
     def _library_exists(library_name: str) -> bool:
-        """
-        Checks whether a library with the given name exists in the database.
-        """
+        """Checks whether a library with the given name exists in the database."""
         bm = get_building_motif()
         try:
             bm.table_connection.get_db_library_by_name(library_name)
