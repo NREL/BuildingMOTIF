@@ -375,9 +375,7 @@ class Library:
         template_id_lookup: Dict[str, int],
         dependency_cache: Dict[int, List[_template_dependency]],
     ):
-        """
-        Read a YML file into this library. Utility function for _load_from_directory
-        """
+        """Read a YML file into this library. Utility function for `_load_from_directory`."""
         contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
         for templ_name, templ_spec in contents.items():
             # compile the template body using its rules
