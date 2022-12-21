@@ -11,14 +11,14 @@ jobs:
   build:
     name: build distribution for Python
     runs-on: ubuntu-latest
-    # strategy:
-    #   matrix:
-    #     python-version-file: ['3.8', '3.9', '3.10']
+    strategy:
+      matrix:
+        python-version-file: ['3.8', '3.9', '3.10']
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
       with:
-        python-version-file: '.python-version' #${{ matrix.python-version }}
+        python-version: ${{ matrix.python-version }}
     - uses: snok/install-poetry@v1
 
     - name: build
