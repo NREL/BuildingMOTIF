@@ -33,7 +33,7 @@ The documentation uses Diataxis[^1] as a framework for its structure, which is o
 - [Model Correction](https://nrel.github.io/BuildingMOTIF/tutorials/model_correction.html)
 - [Template Writing](https://nrel.github.io/BuildingMOTIF/tutorials/template_writing.html)
 
-## How-to Guides
+## Guides
 
 🏗️ under construction
 
