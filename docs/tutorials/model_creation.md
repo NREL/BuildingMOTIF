@@ -77,6 +77,11 @@ The `model.graph` object is just the RDFLib Graph[^4] that stores the model. You
 
 Before we can add semantic metadata to the model, we need to import some `Libraries`. We import libraries by calling `Library.load` in BuildingMOTIF. Libraries can be loaded from directories containing `.yml` and `.ttl` files (for Templates and Shapes, respectively), or from ontology files directly. The code below contains an example of importing the `brick` library, which is simply the Brick ontology. This allows BuildingMOTIF to take advantage of the classes and relationships defined by Brick when validating the model. Loading in these definitions also allows other libraries to refer to Brick definitions. You can also ask a library for the names of the templates it defines, which we'll limit to the first ten below.
 
+```{margin}
+```{warning}
+Currently, libraries in `../../buildingmotif/libraries/` are *included* and libraries in `../../libraries/` are *excluded* from the [BuildingMOTIF Python package](https://pypi.org/project/buildingmotif/) (available by cloning, downloading, or forking the repository). See https://github.com/NREL/BuildingMOTIF/issues/133. 
+```
+
 ```{code-cell}
 # load a library
 from buildingmotif.dataclasses import Library
