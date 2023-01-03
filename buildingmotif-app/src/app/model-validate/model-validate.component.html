@@ -1,0 +1,26 @@
+<div class="title"> Validator </div>
+
+<div class="controls">
+    <form>
+        <mat-form-field appearance="outline">
+            <mat-select [formControl]="selectedLibrary">
+                <mat-option *ngFor="let library of libraries" [value]="library">
+                {{library.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </form>
+
+    <button
+    (click)="validate()"
+    [disabled]="selectedLibrary.invalid"
+    mat-raised-button
+    color="primary">
+        Validate
+    </button>
+</div>
+
+<ngx-codemirror #codemirror
+    [(ngModel)]="validationResponse"
+    [options]="codeMirrorOptions">
+</ngx-codemirror>

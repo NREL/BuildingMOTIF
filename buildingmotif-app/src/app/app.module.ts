@@ -31,6 +31,8 @@ import {MatTableModule} from '@angular/material/table';
 import { TemplateEvaluateResultComponent } from './template-evaluate/template-evaluate-result/template-evaluate-result.component'; 
 import { TemplateEvaluateComponent} from './template-evaluate/template-evaluate.component'
 import { ModelNewComponent } from './model-new/model-new.component'; 
+import { ModelValidateComponent } from './model-validate/model-validate.component';
+import { LibraryService } from './library/library.service';
 
 @NgModule({
   declarations: [
@@ -45,6 +47,7 @@ import { ModelNewComponent } from './model-new/model-new.component';
     TemplateEvaluateFormComponent,
     TemplateEvaluateResultComponent,
     ModelNewComponent,
+    ModelValidateComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,7 +71,7 @@ import { ModelNewComponent } from './model-new/model-new.component';
     MatCardModule,
     MatTableModule
   ],
-  providers: [TemplateDetailService],
+  providers: [TemplateDetailService, LibraryService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

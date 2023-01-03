@@ -1,8 +1,9 @@
-from rdflib import Graph, URIRef
+from rdflib import Graph, Namespace, URIRef
 from rdflib.compare import isomorphic, to_isomorphic
 from rdflib.namespace import RDF
 
-from buildingmotif.dataclasses import Model
+from buildingmotif.dataclasses import Library, Model
+from buildingmotif.namespaces import BRICK, A
 
 graph_data = """
     @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -246,3 +247,103 @@ def test_create_model_bad_name(client, building_motif):
     assert results.status_code == 400
 
     assert len(building_motif.table_connection.get_all_db_models()) == 0
+
+
+def test_validate_model(client, building_motif):
+    # Set up
+    library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    assert library_1 is not None
+    library_2 = Library.load(directory="tests/unit/fixtures/templates")
+    assert library_2 is not None
+
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+    model.add_triples((BLDG["vav1"], A, BRICK.VAV))
+
+    # Action
+    results = client.get(
+        f"/models/{model.id}/validate?library_ids={library_1.id}{library_2.id}",
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Assert
+    assert results.status_code == 200
+    assert len(results.get_json()) == 2
+    [libaray_1_results, library_2_results] = results.get_json()
+
+    assert libaray_1_results.keys() == {"library_id", "message", "reasons", "valid"}
+    assert libaray_1_results["library_id"] == library_1.id
+    assert isinstance(libaray_1_results["message"], str)
+    assert isinstance(libaray_1_results["reasons"], list)
+    assert not libaray_1_results["valid"]
+
+    assert library_2_results.keys() == {"library_id", "message", "reasons", "valid"}
+    assert library_2_results["library_id"] == library_2.id
+    assert isinstance(library_2_results["message"], str)
+    assert isinstance(library_2_results["reasons"], list)
+    assert library_2_results["valid"]
+
+    # Set up
+    model.add_triples((BLDG["vav1"], A, BRICK.VAV))
+    model.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["temp_sensor"]))
+    model.add_triples((BLDG["temp_sensor"], A, BRICK.Temperature_Sensor))
+    model.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["flow_sensor"]))
+    model.add_triples((BLDG["flow_sensor"], A, BRICK.Air_Flow_Sensor))
+
+    # Action
+    results = client.get(
+        f"/models/{model.id}/validate?library_ids={library_1.id}",
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Assert
+    assert results.status_code == 200
+    assert results.get_json()[0]["library_id"] == library_1.id
+    assert isinstance(results.get_json()[0]["message"], str)
+    assert results.get_json()[0]["valid"]
+    assert isinstance(results.get_json()[0]["reasons"], list)
+
+
+def test_validate_model_bad_model_id(client, building_motif):
+    # Set up
+    library = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    assert library is not None
+
+    # Action
+    results = client.get(
+        f"/models/{-1}/validate?library_ids={library.id}",
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Assert
+    assert results.status_code == 404
+
+
+def test_validate_model_no_libraries(client, building_motif):
+    # Set up
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+
+    # Action
+    results = client.get(
+        f"/models/{model.id}/validate",  # no libraries arg
+        headers={"Content-Type": "application/xml"},
+    )
+
+    # Assert
+    assert results.status_code == 400
+
+
+def test_validate_model_bad_library_id(client, building_motif):
+    # Set up
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+
+    # Action
+    results = client.get(
+        f"/models/{model.id}/validate?library_ids=-1",
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Assert
+    assert results.status_code == 404

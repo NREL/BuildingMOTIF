@@ -6,7 +6,7 @@ from rdflib.plugins.parsers.notation3 import BadSyntax
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.model import serialize
-from buildingmotif.dataclasses import Model
+from buildingmotif.dataclasses import Library, Model
 
 blueprint = Blueprint("models", __name__)
 
@@ -124,3 +124,38 @@ def update_model_graph(models_id: int) -> flask.Response:
     current_app.building_motif.session.commit()
 
     return model.graph.serialize(format="ttl")
+
+
+@blueprint.route("/<models_id>/validate", methods=(["GET"]))
+def validate_model(models_id: int) -> flask.Response:
+    try:
+        model = Model.load(models_id)
+    except NoResultFound:
+        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    library_ids = request.args.get("library_ids")
+
+    if library_ids is None:
+        return {"message": "body must contain library_id"}, status.HTTP_400_BAD_REQUEST
+
+    results = []
+    for library_id in library_ids:
+        try:
+            library = Library.load(library_id)
+        except NoResultFound:
+            return {
+                "message": f"No library with id {library_id}"
+            }, status.HTTP_404_NOT_FOUND
+
+        vaildation_context = model.validate([library.get_shape_collection()])
+
+        results.append(
+            {
+                "library_id": int(library_id),
+                "message": vaildation_context.report_string,
+                "valid": vaildation_context.valid,
+                "reasons": [x.reason() for x in vaildation_context.diffset],
+            }
+        )
+
+    return results
