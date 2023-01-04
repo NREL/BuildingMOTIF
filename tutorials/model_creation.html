@@ -53,7 +53,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Model Validation" href="model_validation.html" />
-    <link rel="prev" title="BuildingMOTIF" href="../README.html" />
+    <link rel="prev" title="buildingmotif.utils" href="../reference/apidoc/_autosummary/buildingmotif.utils.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -110,37 +110,15 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
-  Tutorials
- </span>
-</p>
-<ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   Model Creation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="model_validation.html">
-   Model Validation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="model_correction.html">
-   Model Correction
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="template_writing.html">
-   Template Writing
-  </a>
- </li>
-</ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
   Reference
  </span>
 </p>
 <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../reference/developer_documentation.html">
+   Developer Documentation
+  </a>
+ </li>
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="../reference/apidoc/index.html">
    Code Documentation
@@ -317,6 +295,11 @@ const thebe_selector_output = ".output, .cell_output"
       </ul>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">
+       buildingmotif.libraries
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">
        buildingmotif.namespaces
       </a>
@@ -340,9 +323,31 @@ const thebe_selector_output = ".output, .cell_output"
    </li>
   </ul>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Tutorials
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Model Creation
+  </a>
+ </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../reference/developer_documentation.html">
-   Developer Documentation
+  <a class="reference internal" href="model_validation.html">
+   Model Validation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="model_correction.html">
+   Model Correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="template_writing.html">
+   Template Writing
   </a>
  </li>
 </ul>
@@ -697,8 +702,8 @@ title="Print to PDF"
 <p>BuildingMOTIF needs a database to store models, libraries, templates, ontologies, and other data. This database can be <em>in-memory</em> (which will be deleted when the process ends) or <em>persistent</em>. For simplicity, we will start with an in-memory database where <code class="docutils literal notranslate"><span class="pre">bm</span></code> represents a BuildingMOTIF instance.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from buildingmotif import BuildingMOTIF
-bm = BuildingMOTIF(&quot;sqlite://&quot;) # in-memory instance
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span> <span class="c1"># in-memory instance</span>
 </pre></div>
 </div>
 </div>
@@ -713,14 +718,14 @@ bm = BuildingMOTIF(&quot;sqlite://&quot;) # in-memory instance
 <p>Now that we have a BuildingMOTIF instance, we can create a <code class="docutils literal notranslate"><span class="pre">Model</span></code>. Creating a model requires importing the <code class="docutils literal notranslate"><span class="pre">Model</span></code> class, creating an RDF namespace to hold all of the entities in the model, and telling BuildingMOTIF to create a new model with that namespace. The namespace is a URL used to uniquely identify the model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from rdflib import Namespace
-from buildingmotif.dataclasses import Model
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
 
-# create the namespace
-BLDG = Namespace(&#39;urn:bldg/&#39;)
+<span class="c1"># create the namespace</span>
+<span class="n">BLDG</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s1">&#39;urn:bldg/&#39;</span><span class="p">)</span>
 
-# Create the model! This will raise an exception if the namespace is not syntactically valid.
-model = Model.create(BLDG, description=&quot;This is a test model for a simple building&quot;) 
+<span class="c1"># Create the model! This will raise an exception if the namespace is not syntactically valid.</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">BLDG</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;This is a test model for a simple building&quot;</span><span class="p">)</span> 
 </pre></div>
 </div>
 </div>
@@ -728,7 +733,7 @@ model = Model.create(BLDG, description=&quot;This is a test model for a simple b
 <p>We can print out the contents of the model by accessing the <code class="docutils literal notranslate"><span class="pre">.graph</span></code> property of the model object. Printing this out reveals that BuildingMOTIF has added a couple annotations to the model for us, but there is otherwise no metadata about the building itself:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(model.graph.serialize())
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -752,16 +757,23 @@ model = Model.create(BLDG, description=&quot;This is a test model for a simple b
 </div>
 </aside>
 <p>Before we can add semantic metadata to the model, we need to import some <code class="docutils literal notranslate"><span class="pre">Libraries</span></code>. We import libraries by calling <code class="docutils literal notranslate"><span class="pre">Library.load</span></code> in BuildingMOTIF. Libraries can be loaded from directories containing <code class="docutils literal notranslate"><span class="pre">.yml</span></code> and <code class="docutils literal notranslate"><span class="pre">.ttl</span></code> files (for Templates and Shapes, respectively), or from ontology files directly. The code below contains an example of importing the <code class="docutils literal notranslate"><span class="pre">brick</span></code> library, which is simply the Brick ontology. This allows BuildingMOTIF to take advantage of the classes and relationships defined by Brick when validating the model. Loading in these definitions also allows other libraries to refer to Brick definitions. You can also ask a library for the names of the templates it defines, which we’ll limit to the first ten below.</p>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Currently, libraries in <code class="docutils literal notranslate"><span class="pre">../../buildingmotif/libraries/</span></code> are <em>included</em> and libraries in <code class="docutils literal notranslate"><span class="pre">../../libraries/</span></code> are <em>excluded</em> from the <a class="reference external" href="https://pypi.org/project/buildingmotif/">BuildingMOTIF Python package</a> (available by cloning, downloading, or forking the repository). See <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/issues/133">https://github.com/NREL/BuildingMOTIF/issues/133</a>.</p>
+</div>
+</aside>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># load a library
-from buildingmotif.dataclasses import Library
-brick = Library.load(ontology_graph=&quot;../../libraries/brick/Brick-subset.ttl&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load a library</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span>
+<span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
 
-# print the first 10 templates
-print(&quot;The Brick library contains the following templates:&quot;)
-for template in brick.get_templates()[:10]:
-    print(f&quot;  - {template.name}&quot;)
+<span class="c1"># print the first 10 templates</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The Brick library contains the following templates:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_templates</span><span class="p">()[:</span><span class="mi">10</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -769,16 +781,16 @@ for template in brick.get_templates()[:10]:
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#On_Off_Command
-  - https://brickschema.org/schema/Brick#Off_Command
-  - https://brickschema.org/schema/Brick#Occupied_Air_Temperature_Heating_Setpoint
-  - https://brickschema.org/schema/Brick#Return_Air_CO2_Sensor
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Hot_Water_Differential_Pressure_Deadband_Setpoint
   - https://brickschema.org/schema/Brick#Preheat_Demand_Setpoint
-  - https://brickschema.org/schema/Brick#Flow_Sensor
-  - https://brickschema.org/schema/Brick#Unoccupied_Supply_Air_Flow_Setpoint
-  - https://brickschema.org/schema/Brick#Differential_Pressure_Sensor
-  - https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Temperature_Sensor
-  - https://brickschema.org/schema/Brick#Heating_Supply_Air_Flow_Setpoint
+  - https://brickschema.org/schema/Brick#Rain_Duration_Sensor
+  - https://brickschema.org/schema/Brick#Outside_Air_Flow_Setpoint
+  - https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Proportional_Gain_Parameter
+  - https://brickschema.org/schema/Brick#Min_Occupied_Heating_Discharge_Air_Flow_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Core_Temperature_Sensor
+  - https://brickschema.org/schema/Brick#High_Discharge_Air_Temperature_Alarm
+  - https://brickschema.org/schema/Brick#Chilled_Water_Differential_Pressure_Deadband_Setpoint
 </pre></div>
 </div>
 </div>
@@ -799,16 +811,16 @@ for template in brick.get_templates()[:10]:
 <p>Let’s start with the template for an air handling unit (AHU) from the <code class="docutils literal notranslate"><span class="pre">brick</span></code> library, which we can fetch out of the library by referring to it by name. Then, let’s ask the template for the parameters it defines.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># import this to make writing URIs easier
-from buildingmotif.namespaces import BRICK
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import this to make writing URIs easier</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span>
 
-# get template
-ahu_template = brick.get_template_by_name(BRICK.AHU)
+<span class="c1"># get template</span>
+<span class="n">ahu_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">AHU</span><span class="p">)</span>
 
-# print template parameters
-print(&quot;The template has the following parameters:&quot;)
-for param in ahu_template.parameters:
-    print(f&quot;  {param}&quot;)
+<span class="c1"># print template parameters</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The template has the following parameters:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">ahu_template</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -822,7 +834,7 @@ for param in ahu_template.parameters:
 <p>All templates have a mandatory <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter. We can also print out the body of the template to see how those parameters will be used. Any URI that starts with a <code class="docutils literal notranslate"><span class="pre">p:</span></code> is a parameter.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>print(ahu_template.body.serialize())
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ahu_template</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -855,12 +867,12 @@ for param in ahu_template.parameters:
 </aside>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ahu_name = &quot;Core_ZN-PSC_AC&quot;
-ahu_binding_dict = {&quot;name&quot;: BLDG[ahu_name]}
-ahu_graph = ahu_template.evaluate(ahu_binding_dict)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ahu_name</span> <span class="o">=</span> <span class="s2">&quot;Core_ZN-PSC_AC&quot;</span>
+<span class="n">ahu_binding_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">]}</span>
+<span class="n">ahu_graph</span> <span class="o">=</span> <span class="n">ahu_template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">ahu_binding_dict</span><span class="p">)</span>
 
-# ahu_graph is just an instance of rdflib.Graph
-print(ahu_graph.serialize())
+<span class="c1"># ahu_graph is just an instance of rdflib.Graph</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ahu_graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -885,8 +897,8 @@ print(ahu_graph.serialize())
 <p>Now that we have an RDF graph representing an AHU, let’s add it to the model using the <code class="docutils literal notranslate"><span class="pre">add_graph</span></code> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>model.add_graph(ahu_graph)
-print(model.graph.serialize())
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">ahu_graph</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -904,36 +916,36 @@ print(model.graph.serialize())
 <p>Next, we’ll add some of the AHU’s components (a fan, a damper, and a cooling coil) to the model using Templates. Then we’ll connect the components to the AHU using RDFLib’s <code class="docutils literal notranslate"><span class="pre">graph.add((subject,</span> <span class="pre">predicate,</span> <span class="pre">object))</span></code> method.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># templates
-oa_ra_damper_template = brick.get_template_by_name(BRICK.Damper)
-fan_template = brick.get_template_by_name(BRICK.Supply_Fan)
-clg_coil_template = brick.get_template_by_name(BRICK.Cooling_Coil)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># templates</span>
+<span class="n">oa_ra_damper_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Damper</span><span class="p">)</span>
+<span class="n">fan_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Supply_Fan</span><span class="p">)</span>
+<span class="n">clg_coil_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Cooling_Coil</span><span class="p">)</span>
 
-# add fan
-fan_name = f&quot;{ahu_name}-Fan&quot;
-fan_binding_dict = {&quot;name&quot;: BLDG[fan_name]}
-fan_graph = fan_template.evaluate(fan_binding_dict)
-model.add_graph(fan_graph)
+<span class="c1"># add fan</span>
+<span class="n">fan_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ahu_name</span><span class="si">}</span><span class="s2">-Fan&quot;</span>
+<span class="n">fan_binding_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">fan_name</span><span class="p">]}</span>
+<span class="n">fan_graph</span> <span class="o">=</span> <span class="n">fan_template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">fan_binding_dict</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">fan_graph</span><span class="p">)</span>
 
-# add outdoor air/return air damper
-oa_ra_damper_name = f&quot;{ahu_name}-Damper&quot;
-oa_ra_damper_binding_dict = {&quot;name&quot;: BLDG[oa_ra_damper_name]}
-oa_ra_damper_graph = oa_ra_damper_template.evaluate(oa_ra_damper_binding_dict)
-model.add_graph(oa_ra_damper_graph)
+<span class="c1"># add outdoor air/return air damper</span>
+<span class="n">oa_ra_damper_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ahu_name</span><span class="si">}</span><span class="s2">-Damper&quot;</span>
+<span class="n">oa_ra_damper_binding_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">oa_ra_damper_name</span><span class="p">]}</span>
+<span class="n">oa_ra_damper_graph</span> <span class="o">=</span> <span class="n">oa_ra_damper_template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">oa_ra_damper_binding_dict</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">oa_ra_damper_graph</span><span class="p">)</span>
 
-# add clg coil
-clg_coil_name = f&quot;{ahu_name}-Clg_Coil&quot;
-clg_coil_binding_dict = {&quot;name&quot;: BLDG[clg_coil_name]}
-clg_coil_graph = clg_coil_template.evaluate(clg_coil_binding_dict)
-model.add_graph(clg_coil_graph)
+<span class="c1"># add clg coil</span>
+<span class="n">clg_coil_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ahu_name</span><span class="si">}</span><span class="s2">-Clg_Coil&quot;</span>
+<span class="n">clg_coil_binding_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">clg_coil_name</span><span class="p">]}</span>
+<span class="n">clg_coil_graph</span> <span class="o">=</span> <span class="n">clg_coil_template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clg_coil_binding_dict</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">clg_coil_graph</span><span class="p">)</span>
 
-# connect fan, damper, and clg coil to AHU
-model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[oa_ra_damper_name]))
-model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[fan_name]))
-model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[clg_coil_name]))
+<span class="c1"># connect fan, damper, and clg coil to AHU</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">oa_ra_damper_name</span><span class="p">]))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">fan_name</span><span class="p">]))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">clg_coil_name</span><span class="p">]))</span>
 
-# print model to confirm components were added and connected
-print(model.graph.serialize())
+<span class="c1"># print model to confirm components were added and connected</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -983,13 +995,13 @@ print(model.graph.serialize())
 <p>Finally, let’s save the model to use in the next tutorial.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#save model
-model.graph.serialize(destination=&quot;tutorial1_model.ttl&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#save model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial1_model.ttl&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=422b654f-911f-414f-b8a1-6d41546ce409 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=22c0e4aa-4f77-42e8-8a08-7496fb492dbc (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -1040,11 +1052,11 @@ model.graph.serialize(destination=&quot;tutorial1_model.ttl&quot;)
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="../README.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="../reference/apidoc/_autosummary/buildingmotif.utils.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">BuildingMOTIF</p>
+            <p class="prev-next-title">buildingmotif.utils</p>
         </div>
     </a>
     <a class='right-next' id="next-link" href="model_validation.html" title="next page">

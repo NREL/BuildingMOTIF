@@ -110,37 +110,15 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
-  Tutorials
- </span>
-</p>
-<ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="model_creation.html">
-   Model Creation
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   Model Validation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="model_correction.html">
-   Model Correction
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="template_writing.html">
-   Template Writing
-  </a>
- </li>
-</ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
   Reference
  </span>
 </p>
 <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../reference/developer_documentation.html">
+   Developer Documentation
+  </a>
+ </li>
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="../reference/apidoc/index.html">
    Code Documentation
@@ -317,6 +295,11 @@ const thebe_selector_output = ".output, .cell_output"
       </ul>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">
+       buildingmotif.libraries
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">
        buildingmotif.namespaces
       </a>
@@ -340,9 +323,31 @@ const thebe_selector_output = ".output, .cell_output"
    </li>
   </ul>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Tutorials
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../reference/developer_documentation.html">
-   Developer Documentation
+  <a class="reference internal" href="model_creation.html">
+   Model Creation
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Model Validation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="model_correction.html">
+   Model Correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="template_writing.html">
+   Template Writing
   </a>
  </li>
 </ul>
@@ -741,29 +746,38 @@ title="Print to PDF"
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">#</a></h2>
 <p>We create an in-memory BuildingMOTIF instance, load the model from the previous tutorial, and load some libraries to create the manifest with. The <code class="docutils literal notranslate"><span class="pre">constraints.ttl</span></code> library we load is a special library with some custom constraints defined that are helpful for writing manifests.</p>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Currently, libraries in <code class="docutils literal notranslate"><span class="pre">../../buildingmotif/libraries/</span></code> are <em>included</em> and libraries in <code class="docutils literal notranslate"><span class="pre">../../libraries/</span></code> are <em>excluded</em> from the <a class="reference external" href="https://pypi.org/project/buildingmotif/">BuildingMOTIF Python package</a> (available by cloning, downloading, or forking the repository). See <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/issues/133">https://github.com/NREL/BuildingMOTIF/issues/133</a>.</p>
+</div>
+</aside>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from rdflib import Namespace
-from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, Library
-from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Library</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span> <span class="c1"># import this to make writing URIs easier</span>
 
-# in-memory instance
-bm = BuildingMOTIF(&quot;sqlite://&quot;)
+<span class="c1"># in-memory instance</span>
+<span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span>
 
-# create the namespace for the building
-BLDG = Namespace(&#39;urn:bldg/&#39;)
+<span class="c1"># create the namespace for the building</span>
+<span class="n">BLDG</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s1">&#39;urn:bldg/&#39;</span><span class="p">)</span>
 
-# create the building model
-model = Model.create(BLDG, description=&quot;This is a test model for a simple building&quot;)
+<span class="c1"># create the building model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">BLDG</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;This is a test model for a simple building&quot;</span><span class="p">)</span>
 
-# load tutorial 1 model
-model.graph.parse(&quot;tutorial1_model.ttl&quot;, format=&quot;ttl&quot;)
+<span class="c1"># load tutorial 1 model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;tutorial1_model.ttl&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">)</span>
 
-# load in some libraries
-brick = Library.load(ontology_graph=&quot;../../libraries/brick/Brick-subset.ttl&quot;)
-constraints = Library.load(ontology_graph=&quot;../../buildingmotif/resources/constraints.ttl&quot;)
-g36 = Library.load(directory=&quot;../../libraries/ashrae/guideline36&quot;)
+<span class="c1"># load libraries included with the python package</span>
+<span class="n">constraints</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../buildingmotif/libraries/constraints/constraints.ttl&quot;</span><span class="p">)</span>
+
+<span class="c1"># load libraries excluded from the python package (available from the repository)</span>
+<span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
+<span class="n">g36</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../libraries/ashrae/guideline36&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -774,9 +788,9 @@ g36 = Library.load(directory=&quot;../../libraries/ashrae/guideline36&quot;)
 <p>BuildingMOTIF organizes Shapes into <code class="docutils literal notranslate"><span class="pre">Shape</span> <span class="pre">Collections</span></code>. The shape collection associated with a library (if there is one) can be retrieved with the <code class="docutils literal notranslate"><span class="pre">get_shape_collection</span></code> property. Below, we use Brick’s shape collection to ensure that the model is using Brick correctly:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># pass a list of shape collections to .validate()
-validation_result = model.validate([brick.get_shape_collection()])
-print(f&quot;Model is valid? {validation_result.valid}&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pass a list of shape collections to .validate()</span>
+<span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">([</span><span class="n">brick</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -800,21 +814,21 @@ print(f&quot;Model is valid? {validation_result.valid}&quot;)
 </div>
 </aside>
 <p>For now, we will write a <code class="docutils literal notranslate"><span class="pre">manifest</span></code> file directly; in the future, BuildingMOTIF will contain features that make manifests easier to write. Here is the header of a manifest file. This should also suffice for most of your own manifests.</p>
-<div class="highlight-ttl notranslate"><div class="highlight"><pre><span></span>@<span class="nv">prefix</span><span class="w"> </span><span class="nv">brick</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">brickschema</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">schema</span><span class="o">/</span><span class="nv">Brick</span>#<span class="o">&gt;</span><span class="w"> </span>.<span class="w"></span>
-@<span class="nv">prefix</span><span class="w"> </span><span class="nv">owl</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">http</span>:<span class="o">//</span><span class="nv">www</span>.<span class="nv">w3</span>.<span class="nv">org</span><span class="o">/</span><span class="mi">2002</span><span class="o">/</span><span class="mi">07</span><span class="o">/</span><span class="nv">owl</span>#<span class="o">&gt;</span><span class="w"> </span>.<span class="w"></span>
-@<span class="nv">prefix</span><span class="w"> </span><span class="nv">sh</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">http</span>:<span class="o">//</span><span class="nv">www</span>.<span class="nv">w3</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">ns</span><span class="o">/</span><span class="nv">shacl</span>#<span class="o">&gt;</span><span class="w"> </span>.<span class="w"></span>
-@<span class="nv">prefix</span><span class="w"> </span><span class="nv">constraint</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">nrel</span>.<span class="nv">gov</span><span class="o">/</span><span class="nv">BuildingMOTIF</span><span class="o">/</span><span class="nv">constraints</span>#<span class="o">&gt;</span><span class="w"> </span>.<span class="w"></span>
-@<span class="nv">prefix</span><span class="w"> </span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">urn</span>:<span class="nv">my_site_constraints</span><span class="o">/&gt;</span><span class="w"> </span>.<span class="w"></span>
+<div class="highlight-ttl notranslate"><div class="highlight"><pre><span></span>@<span class="nv">prefix</span><span class="w"> </span><span class="nv">brick</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">brickschema</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">schema</span><span class="o">/</span><span class="nv">Brick</span>#<span class="o">&gt;</span><span class="w"> </span>.
+@<span class="nv">prefix</span><span class="w"> </span><span class="nv">owl</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">http</span>:<span class="o">//</span><span class="nv">www</span>.<span class="nv">w3</span>.<span class="nv">org</span><span class="o">/</span><span class="mi">2002</span><span class="o">/</span><span class="mi">07</span><span class="o">/</span><span class="nv">owl</span>#<span class="o">&gt;</span><span class="w"> </span>.
+@<span class="nv">prefix</span><span class="w"> </span><span class="nv">sh</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">http</span>:<span class="o">//</span><span class="nv">www</span>.<span class="nv">w3</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">ns</span><span class="o">/</span><span class="nv">shacl</span>#<span class="o">&gt;</span><span class="w"> </span>.
+@<span class="nv">prefix</span><span class="w"> </span><span class="nv">constraint</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">nrel</span>.<span class="nv">gov</span><span class="o">/</span><span class="nv">BuildingMOTIF</span><span class="o">/</span><span class="nv">constraints</span>#<span class="o">&gt;</span><span class="w"> </span>.
+@<span class="nv">prefix</span><span class="w"> </span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">urn</span>:<span class="nv">my_site_constraints</span><span class="o">/&gt;</span><span class="w"> </span>.
 
-:<span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">owl</span>:<span class="nv">Ontology</span><span class="w"> </span>.<span class="w"></span>
+:<span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">owl</span>:<span class="nv">Ontology</span><span class="w"> </span>.
 </pre></div>
 </div>
 <p>We will now add a constraint stating that the model should contain exactly 1 Brick AHU.</p>
-<div class="highlight-ttl notranslate"><div class="highlight"><pre><span></span><span class="nl">:ahu</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 AHU&quot;</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">AHU</span><span class="w"> </span>.<span class="w"></span>
+<div class="highlight-ttl notranslate"><div class="highlight"><pre><span></span><span class="nl">:ahu</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 AHU&quot;</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">AHU</span><span class="w"> </span>.
 </pre></div>
 </div>
 <p>This basic structure can be changed to require different numbers of different Brick classes. Just don’t forget to change the name of the shape (<code class="docutils literal notranslate"><span class="pre">:ahu-count</span></code>, above) when you copy-paste!</p>
@@ -830,29 +844,29 @@ print(f&quot;Model is valid? {validation_result.valid}&quot;)
 </div>
 <div class="dropdown admonition hint">
 <p class="admonition-title">Hint</p>
-<div class="highlight-ttl notranslate"><div class="highlight"><pre><span></span><span class="nl">:fan</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 supply fan&quot;</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Supply_Fan</span><span class="w"> </span>.<span class="w"></span>
+<div class="highlight-ttl notranslate"><div class="highlight"><pre><span></span><span class="nl">:fan</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 supply fan&quot;</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Supply_Fan</span><span class="w"> </span>.
 
-<span class="nl">:damper</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 damper&quot;</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Damper</span><span class="w"> </span>.<span class="w"></span>
+<span class="nl">:damper</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 damper&quot;</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Damper</span><span class="w"> </span>.
 
-<span class="nl">:clg</span><span class="o">-</span><span class="nv">coil</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 cooling coil&quot;</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Cooling_Coil</span><span class="w"> </span>.<span class="w"></span>
+<span class="nl">:clg</span><span class="o">-</span><span class="nv">coil</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 cooling coil&quot;</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Cooling_Coil</span><span class="w"> </span>.
 
-<span class="nl">:htg</span><span class="o">-</span><span class="nv">coil</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 heating coil&quot;</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span><span class="w"></span>
-<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Heating_Coil</span><span class="w"> </span>.<span class="w"></span>
+<span class="nl">:htg</span><span class="o">-</span><span class="nv">coil</span><span class="o">-</span><span class="nv">count</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">message</span><span class="w"> </span><span class="s2">&quot;need 1 heating coil&quot;</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetNode</span><span class="w"> </span>:<span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">exactCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">constraint</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Heating_Coil</span><span class="w"> </span>.
 </pre></div>
 </div>
 </div>
@@ -867,51 +881,51 @@ print(f&quot;Model is valid? {validation_result.valid}&quot;)
 <p>Put all of the above in a new file called <code class="docutils literal notranslate"><span class="pre">tutorial2_manifest.ttl</span></code>. We’ll also add a shape called <code class="docutils literal notranslate"><span class="pre">sz-vav-ahu-control-sequences</span></code>, which is a use case shape to validate the model against in the next section.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>with open(&quot;tutorial2_manifest.ttl&quot;, &quot;w&quot;) as f:
-    f.write(&quot;&quot;&quot;
-@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
-@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
-@prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .
-@prefix constraint: &lt;https://nrel.gov/BuildingMOTIF/constraints#&gt; .
-@prefix : &lt;urn:my_site_constraints/&gt; .
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;tutorial2_manifest.ttl&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
+<span class="s2">@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .</span>
+<span class="s2">@prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .</span>
+<span class="s2">@prefix constraint: &lt;https://nrel.gov/BuildingMOTIF/constraints#&gt; .</span>
+<span class="s2">@prefix : &lt;urn:my_site_constraints/&gt; .</span>
 
-: a owl:Ontology .
+<span class="s2">: a owl:Ontology .</span>
 
-:ahu-count a sh:NodeShape ;
-    sh:message &quot;need 1 AHU&quot; ;
-    sh:targetNode : ;
-    constraint:exactCount 1 ;
-    constraint:class brick:AHU .
+<span class="s2">:ahu-count a sh:NodeShape ;</span>
+<span class="s2">    sh:message &quot;need 1 AHU&quot; ;</span>
+<span class="s2">    sh:targetNode : ;</span>
+<span class="s2">    constraint:exactCount 1 ;</span>
+<span class="s2">    constraint:class brick:AHU .</span>
 
-:fan-count a sh:NodeShape ;
-    sh:message &quot;need 1 supply fan&quot; ;
-    sh:targetNode : ;
-    constraint:exactCount 1 ;
-    constraint:class brick:Supply_Fan .
+<span class="s2">:fan-count a sh:NodeShape ;</span>
+<span class="s2">    sh:message &quot;need 1 supply fan&quot; ;</span>
+<span class="s2">    sh:targetNode : ;</span>
+<span class="s2">    constraint:exactCount 1 ;</span>
+<span class="s2">    constraint:class brick:Supply_Fan .</span>
 
-:damper-count a sh:NodeShape ;
-    sh:message &quot;need 1 damper&quot; ;
-    sh:targetNode : ;
-    constraint:exactCount 1 ;
-    constraint:class brick:Damper .
+<span class="s2">:damper-count a sh:NodeShape ;</span>
+<span class="s2">    sh:message &quot;need 1 damper&quot; ;</span>
+<span class="s2">    sh:targetNode : ;</span>
+<span class="s2">    constraint:exactCount 1 ;</span>
+<span class="s2">    constraint:class brick:Damper .</span>
 
-:clg-coil-count a sh:NodeShape ;
-    sh:message &quot;need 1 cooling coil&quot; ;
-    sh:targetNode : ;
-    constraint:exactCount 1 ;
-    constraint:class brick:Cooling_Coil .
+<span class="s2">:clg-coil-count a sh:NodeShape ;</span>
+<span class="s2">    sh:message &quot;need 1 cooling coil&quot; ;</span>
+<span class="s2">    sh:targetNode : ;</span>
+<span class="s2">    constraint:exactCount 1 ;</span>
+<span class="s2">    constraint:class brick:Cooling_Coil .</span>
 
-:htg-coil-count a sh:NodeShape ;
-    sh:message &quot;need 1 heating coil&quot; ;
-    sh:targetNode : ;
-    constraint:exactCount 1 ;
-    constraint:class brick:Heating_Coil .
+<span class="s2">:htg-coil-count a sh:NodeShape ;</span>
+<span class="s2">    sh:message &quot;need 1 heating coil&quot; ;</span>
+<span class="s2">    sh:targetNode : ;</span>
+<span class="s2">    constraint:exactCount 1 ;</span>
+<span class="s2">    constraint:class brick:Heating_Coil .</span>
 
-:sz-vav-ahu-control-sequences a sh:NodeShape ;
-    sh:message &quot;AHUs must match the single-zone VAV AHU shape&quot; ;
-    sh:targetClass brick:AHU ;
-    sh:node &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu&gt; .
-&quot;&quot;&quot;)
+<span class="s2">:sz-vav-ahu-control-sequences a sh:NodeShape ;</span>
+<span class="s2">    sh:message &quot;AHUs must match the single-zone VAV AHU shape&quot; ;</span>
+<span class="s2">    sh:targetClass brick:AHU ;</span>
+<span class="s2">    sh:node &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu&gt; .</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -922,24 +936,24 @@ print(f&quot;Model is valid? {validation_result.valid}&quot;)
 <p>We can now ask BuildingMOTIF to validate the model against the manifest and ask BuildingMOTIF for some details if it fails. We also have to be sure to include the supporting shape collections containing the definitions used in the manifest.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># load manifest into BuildingMOTIF as its own library!
-manifest = Library.load(ontology_graph=&quot;tutorial2_manifest.ttl&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load manifest into BuildingMOTIF as its own library!</span>
+<span class="n">manifest</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;tutorial2_manifest.ttl&quot;</span><span class="p">)</span>
 
-# gather shape collections into a list for ease of use
-shape_collections = [
-    brick.get_shape_collection(),
-    constraints.get_shape_collection(),
-    manifest.get_shape_collection(),
-    g36.get_shape_collection(),
-]
+<span class="c1"># gather shape collections into a list for ease of use</span>
+<span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">brick</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
+    <span class="n">constraints</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
+    <span class="n">manifest</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
+    <span class="n">g36</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
+<span class="p">]</span>
 
-# pass a list of shape collections to .validate()
-validation_result = model.validate(shape_collections)
-print(f&quot;Model is valid? {validation_result.valid}&quot;)
+<span class="c1"># pass a list of shape collections to .validate()</span>
+<span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-# print reasons
-for diff in validation_result.diffset:
-    print(f&quot; - {diff.reason()}&quot;)
+<span class="c1"># print reasons</span>
+<span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -959,23 +973,23 @@ for diff in validation_result.diffset:
 <p>The model is failing because we don’t have a heating coil required by the manifest, which we forgot to add in the previous tutorial. It’s also failing the use case validation, which we’ll cover in the next section. To fix the manifest validation, use the equipment templates in the Brick library to create a heating coil, add it to the model, and connect it to the AHU using RDFLib’s <code class="docutils literal notranslate"><span class="pre">graph.add()</span></code> method.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># ahu name
-ahu_name = &quot;Core_ZN-PSC_AC&quot;
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ahu name</span>
+<span class="n">ahu_name</span> <span class="o">=</span> <span class="s2">&quot;Core_ZN-PSC_AC&quot;</span>
 
-# get template
-htg_coil_template = brick.get_template_by_name(BRICK.Heating_Coil)
+<span class="c1"># get template</span>
+<span class="n">htg_coil_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Heating_Coil</span><span class="p">)</span>
 
-# add htg coil
-htg_coil_name = f&quot;{ahu_name}-Htg_Coil&quot;
-htg_coil_binding = {&quot;name&quot;: BLDG[htg_coil_name]}
-htg_coil_graph = htg_coil_template.evaluate(htg_coil_binding)
-model.add_graph(htg_coil_graph)
+<span class="c1"># add htg coil</span>
+<span class="n">htg_coil_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ahu_name</span><span class="si">}</span><span class="s2">-Htg_Coil&quot;</span>
+<span class="n">htg_coil_binding</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">htg_coil_name</span><span class="p">]}</span>
+<span class="n">htg_coil_graph</span> <span class="o">=</span> <span class="n">htg_coil_template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">htg_coil_binding</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">htg_coil_graph</span><span class="p">)</span>
 
-# connect htg coil
-model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[htg_coil_name]))
+<span class="c1"># connect htg coil</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">htg_coil_name</span><span class="p">]))</span>
 
-# print model to confirm component was added and connected
-print(model.graph.serialize())
+<span class="c1"># print model to confirm component was added and connected</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -1005,13 +1019,13 @@ print(model.graph.serialize())
 <p>We can see that the heating coil was added to the model and connected to the AHU so let’s check if the manifest validation failure was fixed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># pass a list of shape collections to .validate()
-validation_result = model.validate(shape_collections)
-print(f&quot;Model is valid? {validation_result.valid}&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pass a list of shape collections to .validate()</span>
+<span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-# print reasons
-for diff in validation_result.diffset:
-    print(f&quot; - {diff.reason()}&quot;)
+<span class="c1"># print reasons</span>
+<span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1034,10 +1048,10 @@ for diff in validation_result.diffset:
 <p>We can use a couple methods to search the libraries for shapes we might want to use. Let’s start by asking the <code class="docutils literal notranslate"><span class="pre">g36</span></code> library for any system specifications it knows about. This library represents <em>ASHRAE Guideline 36 High-Performance Sequences of Operation for HVAC Systems</em><a class="footnote-reference brackets" href="#id5" id="id2">2</a>. A system specification will specify all of the metadata required for an entity to run control sequences associated with that system type.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from buildingmotif.namespaces import BMOTIF
-shapes = g36.get_shape_collection()
-for shape in shapes.get_shapes_of_definition_type(BMOTIF[&quot;System_Specification&quot;]):
-    print(shape)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BMOTIF</span>
+<span class="n">shapes</span> <span class="o">=</span> <span class="n">g36</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">shapes</span><span class="o">.</span><span class="n">get_shapes_of_definition_type</span><span class="p">(</span><span class="n">BMOTIF</span><span class="p">[</span><span class="s2">&quot;System_Specification&quot;</span><span class="p">]):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1096,16 +1110,16 @@ print(f"Model is valid? {validation_result.valid}")
 <p>As shown in the previous section, the AHU fails validation because it doesn’t match the <code class="docutils literal notranslate"><span class="pre">sz-vav-ahu-control-sequences</span></code> requirements. Take a look at the first bit of output, which is the official SHACL validation report text format. These aren’t very understandable but BuildingMOTIF can make this output more interpretable!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># SHACL validation report
-print(validation_result.report_string)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># SHACL validation report</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">validation_result</span><span class="o">.</span><span class="n">report_string</span><span class="p">)</span>
 
-# separator
-print(&quot;-&quot;*79)
+<span class="c1"># separator</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">79</span><span class="p">)</span>
 
-# BuildingMOTIF output
-print(&quot;Model is invalid for these reasons:&quot;)
-for diff in validation_result.diffset:
-    print(f&quot; - {diff.reason()}&quot;)
+<span class="c1"># BuildingMOTIF output</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model is invalid for these reasons:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1129,13 +1143,13 @@ Model is invalid for these reasons:
 <p>The model is failing because the AHU doesn’t have the minimum number of supply fans associated with it. We <em>could</em> add the fan explicitly by adding those triples to the model like we’ve done previously, but we can also ask BuildingMOTIF to generate new templates that explicitly prompt us for the missing information. We’ll cover this feature in the next tutorial so let’s save the model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>#save model
-model.graph.serialize(destination=&quot;tutorial2_model.ttl&quot;)
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#save model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial2_model.ttl&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=9ba70d45-0dec-4164-b520-5d29d3ee6555 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=7a02ba18-3669-4406-9212-317ce2972ee0 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>

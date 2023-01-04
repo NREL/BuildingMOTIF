@@ -107,37 +107,15 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
-  Tutorials
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../../tutorials/model_creation.html">
-   Model Creation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../tutorials/model_validation.html">
-   Model Validation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../tutorials/model_correction.html">
-   Model Correction
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../tutorials/template_writing.html">
-   Template Writing
-  </a>
- </li>
-</ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
   Reference
  </span>
 </p>
 <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../reference/developer_documentation.html">
+   Developer Documentation
+  </a>
+ </li>
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="../../reference/apidoc/index.html">
    Code Documentation
@@ -314,6 +292,11 @@ const thebe_selector_output = ".output, .cell_output"
       </ul>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.libraries.html">
+       buildingmotif.libraries
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">
        buildingmotif.namespaces
       </a>
@@ -337,9 +320,31 @@ const thebe_selector_output = ".output, .cell_output"
    </li>
   </ul>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Tutorials
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../../reference/developer_documentation.html">
-   Developer Documentation
+  <a class="reference internal" href="../../tutorials/model_creation.html">
+   Model Creation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/model_validation.html">
+   Model Validation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/model_correction.html">
+   Model Correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../tutorials/template_writing.html">
+   Template Writing
   </a>
  </li>
 </ul>
@@ -566,7 +571,7 @@ title="Open an issue"
 
 
 <span class="k">def</span> <span class="nf">_get_types</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">_cache</span><span class="p">:</span> <span class="n">_ontology_lookup_cache</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Types for a node should only be URIRefs, so the</span>
 <span class="sd">    type filtering here should be safe.</span>
 <span class="sd">    Defaults to owl:NamedIndividual as a &quot;root&quot; type</span>
@@ -582,7 +587,7 @@ title="Open an issue"
     <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
     <span class="n">_cache</span><span class="p">:</span> <span class="n">_ontology_lookup_cache</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns true if the two terms have covariant types.</span>
 
 <span class="sd">    :param n1: First node</span>
@@ -626,7 +631,7 @@ title="Open an issue"
 <div class="viewcode-block" id="get_semantic_feasibility"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.get_semantic_feasibility">[docs]</a><span class="k">def</span> <span class="nf">get_semantic_feasibility</span><span class="p">(</span>
     <span class="n">G1</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">G2</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">_cache</span><span class="p">:</span> <span class="n">_ontology_lookup_cache</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Returns a function that checks if two nodes are semantically feasible to</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a function that checks if two nodes are semantically feasible to</span>
 <span class="sd">    be matched given the information in the provided ontology.</span>
 
 <span class="sd">    The function returns true if the two nodes are semantically feasible to be</span>
@@ -647,7 +652,7 @@ title="Open an issue"
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: other checks?</span>
     <span class="k">def</span> <span class="nf">semantic_feasibility</span><span class="p">(</span><span class="n">n1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">n2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Checks if two nodes are semantically feasible to be matched.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if two nodes are semantically feasible to be matched.</span>
 
 <span class="sd">        :param n1: node 1</span>
 <span class="sd">        :type n1: Node</span>
@@ -676,7 +681,7 @@ title="Open an issue"
 
 
 <span class="k">class</span> <span class="nc">_VF2SemanticMatcher</span><span class="p">(</span><span class="n">DiGraphMatcher</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A subclass of DiGraphMatcher that incorporates semantic feasibility into the matching</span>
 <span class="sd">    process using the provided ontology.</span>
 
@@ -694,7 +699,7 @@ title="Open an issue"
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">semantic_feasibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">g2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns true if the two nodes are semantically feasible to be matched.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_semantic_feasibility</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">)</span>
@@ -702,7 +707,7 @@ title="Open an issue"
 
 
 <div class="viewcode-block" id="generate_all_subgraphs"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.generate_all_subgraphs">[docs]</a><span class="k">def</span> <span class="nf">generate_all_subgraphs</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Graph</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Generates all node-induced subgraphs of T in order of decreasing size.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates all node-induced subgraphs of T in order of decreasing size.</span>
 
 <span class="sd">    We generate subgraphs in decreasing order of size because we want to find</span>
 <span class="sd">    the largest subgraph as part of the monomorphism search process.</span>
@@ -720,7 +725,7 @@ title="Open an issue"
 
 
 <div class="viewcode-block" id="digraph_to_rdflib"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.digraph_to_rdflib">[docs]</a><span class="k">def</span> <span class="nf">digraph_to_rdflib</span><span class="p">(</span><span class="n">digraph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Turns a `nx.DiGraph` into an `rdflib.Graph`.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turns a `nx.DiGraph` into an `rdflib.Graph`.</span>
 
 <span class="sd">    Expects the nx.DiGraph to have been produced by</span>
 <span class="sd">    :py:func:`rdflib_to_networkx_digraph`.</span>
@@ -737,7 +742,7 @@ title="Open an issue"
 
 
 <div class="viewcode-block" id="TemplateMatcher"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher">[docs]</a><span class="k">class</span> <span class="nc">TemplateMatcher</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Computes the set of subgraphs of G that are monomorphic to T; these are</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the set of subgraphs of G that are monomorphic to T; these are</span>
 <span class="sd">    organized by how &quot;complete&quot; the monomorphism is.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -791,7 +796,7 @@ title="Open an issue"
                         <span class="bp">self</span><span class="o">.</span><span class="n">add_mapping</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TemplateMatcher.add_mapping"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.add_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">add_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Adds a mapping to the set of mappings.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a mapping to the set of mappings.</span>
 
 <span class="sd">        :param mapping: mapping</span>
 <span class="sd">        :type mapping: Mapping</span>
@@ -801,7 +806,7 @@ title="Open an issue"
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">largest_mapping_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the size of the largest mapping.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the size of the largest mapping.</span>
 
 <span class="sd">        :return: size of largest mapping</span>
 <span class="sd">        :rtype: int</span>
@@ -809,7 +814,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mappings</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
 <div class="viewcode-block" id="TemplateMatcher.building_subgraph_from_mapping"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.building_subgraph_from_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">building_subgraph_from_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the subgraph of the building graph that corresponds to the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the subgraph of the building graph that corresponds to the</span>
 <span class="sd">        given mapping.</span>
 
 <span class="sd">        :param mapping: mapping</span>
@@ -823,7 +828,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">digraph_to_rdflib</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TemplateMatcher.template_subgraph_from_mapping"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.template_subgraph_from_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">template_subgraph_from_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the subgraph of the template graph that corresponds to the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the subgraph of the template graph that corresponds to the</span>
 <span class="sd">        given mapping.</span>
 
 <span class="sd">        :param mapping: mapping</span>
@@ -838,7 +843,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">digraph_to_rdflib</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
 
 <div class="viewcode-block" id="TemplateMatcher.remaining_template_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.remaining_template_graph">[docs]</a>    <span class="k">def</span> <span class="nf">remaining_template_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the remaining template graph to be filled out given a</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the remaining template graph to be filled out given a</span>
 <span class="sd">        mapping.</span>
 
 <span class="sd">        :param mapping: mapping</span>
@@ -850,7 +855,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_graph</span> <span class="o">-</span> <span class="n">sg</span></div>
 
 <div class="viewcode-block" id="TemplateMatcher.remaining_template"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.remaining_template">[docs]</a>    <span class="k">def</span> <span class="nf">remaining_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the remaining template to be filled out given a mapping.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the remaining template to be filled out given a mapping.</span>
 
 <span class="sd">        :param mapping: mapping</span>
 <span class="sd">        :type mapping: Mapping</span>
@@ -874,7 +879,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">res</span></div>
 
 <div class="viewcode-block" id="TemplateMatcher.mappings_iter"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.mappings_iter">[docs]</a>    <span class="k">def</span> <span class="nf">mappings_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Returns an iterator over all of the mappings of the given size.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an iterator over all of the mappings of the given size.</span>
 
 <span class="sd">        If size is None, then all mappings are returned in descending order</span>
 <span class="sd">        of the size of the mapping. This means the most complete mappings</span>
@@ -901,7 +906,7 @@ title="Open an issue"
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">Graph</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Returns an iterator over all of the subgraphs with a mapping of the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an iterator over all of the subgraphs with a mapping of the</span>
 <span class="sd">        given size.</span>
 
 <span class="sd">        If size is None, then all mappings are returned in descending order of</span>

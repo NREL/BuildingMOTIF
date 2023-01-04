@@ -24,6 +24,11 @@ The purpose of this tutorial is to learn how to fix a model that fails validatio
 
 Like the previous tutorial, we'll create an in-memory BuildingMOTIF instance, load the model, and load some libraries. We'll also load the manifest from the previous tutorial.
 
+```{margin}
+```{warning}
+Currently, libraries in `../../buildingmotif/libraries/` are *included* and libraries in `../../libraries/` are *excluded* from the [BuildingMOTIF Python package](https://pypi.org/project/buildingmotif/) (available by cloning, downloading, or forking the repository). See https://github.com/NREL/BuildingMOTIF/issues/133. 
+```
+
 ```{code-cell}
 from rdflib import Namespace
 from buildingmotif import BuildingMOTIF
@@ -39,13 +44,15 @@ BLDG = Namespace('urn:bldg/')
 # create the building model
 model = Model.create(BLDG, description="This is a test model for a simple building")
 
-# load tutorial 1 model
+# load tutorial 2 model and manifest
 model.graph.parse("tutorial2_model.ttl", format="ttl")
-
-# load in some libraries
-brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
-constraints = Library.load(ontology_graph="../../buildingmotif/resources/constraints.ttl")
 manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
+
+# load libraries included with the python package
+constraints = Library.load(ontology_graph="../../buildingmotif/libraries/constraints/constraints.ttl")
+
+# load libraries excluded from the python package (available from the repository)
+brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
 g36 = Library.load(directory="../../libraries/ashrae/guideline36")
 ```
 

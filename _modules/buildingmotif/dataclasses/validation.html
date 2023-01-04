@@ -107,37 +107,15 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
-  Tutorials
- </span>
-</p>
-<ul class="nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../tutorials/model_creation.html">
-   Model Creation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../tutorials/model_validation.html">
-   Model Validation
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../tutorials/model_correction.html">
-   Model Correction
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="../../../tutorials/template_writing.html">
-   Template Writing
-  </a>
- </li>
-</ul>
-<p aria-level="2" class="caption" role="heading">
- <span class="caption-text">
   Reference
  </span>
 </p>
 <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../reference/developer_documentation.html">
+   Developer Documentation
+  </a>
+ </li>
  <li class="toctree-l1 has-children">
   <a class="reference internal" href="../../../reference/apidoc/index.html">
    Code Documentation
@@ -314,6 +292,11 @@ const thebe_selector_output = ".output, .cell_output"
       </ul>
      </li>
      <li class="toctree-l3">
+      <a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">
+       buildingmotif.libraries
+      </a>
+     </li>
+     <li class="toctree-l3">
       <a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">
        buildingmotif.namespaces
       </a>
@@ -337,9 +320,31 @@ const thebe_selector_output = ".output, .cell_output"
    </li>
   </ul>
  </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Tutorials
+ </span>
+</p>
+<ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../../../reference/developer_documentation.html">
-   Developer Documentation
+  <a class="reference internal" href="../../../tutorials/model_creation.html">
+   Model Creation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../tutorials/model_validation.html">
+   Model Validation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../tutorials/model_correction.html">
+   Model Correction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../tutorials/template_writing.html">
+   Template Writing
   </a>
  </li>
 </ul>
@@ -509,7 +514,7 @@ title="Open an issue"
 
 <div class="viewcode-block" id="GraphDiff"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphDiff">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">GraphDiff</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;An abstraction of a SHACL Validation Result that can produce a template</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstraction of a SHACL Validation Result that can produce a template</span>
 <span class="sd">    that resolves the difference between the expected and actual graph.</span>
 
 <span class="sd">    Each GraphDiff has a &#39;focus&#39; that is the node in the model that the</span>
@@ -521,7 +526,7 @@ title="Open an issue"
     <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span>
 
 <div class="viewcode-block" id="GraphDiff.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphDiff.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
 
 <span class="sd">        :param lib: the library to hold the templates</span>
 <span class="sd">        :type lib: Library</span>
@@ -531,7 +536,7 @@ title="Open an issue"
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="GraphDiff.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphDiff.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -540,7 +545,7 @@ title="Open an issue"
 
 <div class="viewcode-block" id="PathClassCount"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathClassCount">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">PathClassCount</span><span class="p">(</span><span class="n">GraphDiff</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents an entity missing paths to objects of a given type:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an entity missing paths to objects of a given type:</span>
 <span class="sd">    $this &lt;path&gt; &lt;object&gt; .</span>
 <span class="sd">    &lt;object&gt; a &lt;classname&gt; .</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -551,12 +556,12 @@ title="Open an issue"
     <span class="n">classname</span><span class="p">:</span> <span class="n">URIRef</span>
 
 <div class="viewcode-block" id="PathClassCount.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathClassCount.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">maxc</span><span class="si">}</span><span class="s2"> instances of </span><span class="se">\</span>
 <span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="si">}</span><span class="s2"> on path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 <div class="viewcode-block" id="PathClassCount.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathClassCount.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
 
 <span class="sd">        :param lib: the library to hold the templates</span>
 <span class="sd">        :type lib: Library</span>
@@ -574,7 +579,7 @@ title="Open an issue"
 
 <div class="viewcode-block" id="PathShapeCount"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathShapeCount">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unsafe_hash</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">PathShapeCount</span><span class="p">(</span><span class="n">GraphDiff</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents an entity missing paths to objects that match a given shape.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an entity missing paths to objects that match a given shape.</span>
 <span class="sd">    $this &lt;path&gt; &lt;object&gt; .</span>
 <span class="sd">    &lt;object&gt; a &lt;shapename&gt; .</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -587,12 +592,12 @@ title="Open an issue"
     <span class="n">extra_deps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="nb">hash</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PathShapeCount.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathShapeCount.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">maxc</span><span class="si">}</span><span class="s2"> instances of </span><span class="se">\</span>
 <span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shapename</span><span class="si">}</span><span class="s2"> on path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 <div class="viewcode-block" id="PathShapeCount.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathShapeCount.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">generated</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_deps</span><span class="p">:</span>
@@ -621,19 +626,19 @@ title="Open an issue"
 
 <div class="viewcode-block" id="RequiredPath"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredPath">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">RequiredPath</span><span class="p">(</span><span class="n">GraphDiff</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents an entity missing a required property.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an entity missing a required property.&quot;&quot;&quot;</span>
 
     <span class="n">path</span><span class="p">:</span> <span class="n">URIRef</span>
     <span class="n">minc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="n">maxc</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 
 <div class="viewcode-block" id="RequiredPath.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredPath.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">maxc</span><span class="si">}</span><span class="s2"> uses </span><span class="se">\</span>
 <span class="s2">of path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 <div class="viewcode-block" id="RequiredPath.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredPath.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
 
 <span class="sd">        :param lib: the library to hold the templates</span>
 <span class="sd">        :type lib: Library</span>
@@ -650,16 +655,16 @@ title="Open an issue"
 
 <div class="viewcode-block" id="RequiredClass"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredClass">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">RequiredClass</span><span class="p">(</span><span class="n">GraphDiff</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents an entity that should be an instance of the class.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an entity that should be an instance of the class.&quot;&quot;&quot;</span>
 
     <span class="n">classname</span><span class="p">:</span> <span class="n">URIRef</span>
 
 <div class="viewcode-block" id="RequiredClass.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredClass.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs to be a </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 <div class="viewcode-block" id="RequiredClass.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredClass.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
 
 <span class="sd">        :param lib: the library to hold the templates</span>
 <span class="sd">        :type lib: Library</span>
@@ -674,7 +679,7 @@ title="Open an issue"
 
 <div class="viewcode-block" id="GraphClassCardinality"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphClassCardinality">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">GraphClassCardinality</span><span class="p">(</span><span class="n">GraphDiff</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Represents a graph that is missing an expected number of instances of</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a graph that is missing an expected number of instances of</span>
 <span class="sd">    the given class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -682,11 +687,11 @@ title="Open an issue"
     <span class="n">expectedCount</span><span class="p">:</span> <span class="nb">int</span>
 
 <div class="viewcode-block" id="GraphClassCardinality.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphClassCardinality.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Graph did not have </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">expectedCount</span><span class="si">}</span><span class="s2"> instances of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 <div class="viewcode-block" id="GraphClassCardinality.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphClassCardinality.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
 
 <span class="sd">        :param lib: the library to hold the templates</span>
 <span class="sd">        :type lib: Library</span>
@@ -703,7 +708,7 @@ title="Open an issue"
 
 <div class="viewcode-block" id="ValidationContext"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.ValidationContext">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">ValidationContext</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Holds the necessary information for processing the results of SHACL</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Holds the necessary information for processing the results of SHACL</span>
 <span class="sd">    validation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -715,7 +720,7 @@ title="Open an issue"
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">diffset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;The unordered set of GraphDiffs produced from interpreting the input</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The unordered set of GraphDiffs produced from interpreting the input</span>
 <span class="sd">        SHACL validation report.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_report_to_diffset</span><span class="p">()</span>
@@ -725,7 +730,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">sc</span><span class="o">.</span><span class="n">graph</span> <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape_collections</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="n">Graph</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
 
 <div class="viewcode-block" id="ValidationContext.as_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.ValidationContext.as_templates">[docs]</a>    <span class="k">def</span> <span class="nf">as_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Produces the set of templates that reconcile the GraphDiffs from the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces the set of templates that reconcile the GraphDiffs from the</span>
 <span class="sd">        SHACL validation report.</span>
 
 <span class="sd">        :return: reconciling templates</span>
@@ -734,7 +739,7 @@ title="Open an issue"
         <span class="k">return</span> <span class="n">diffset_to_templates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diffset</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_report_to_diffset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Interpret a SHACL validation report and say what is missing.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interpret a SHACL validation report and say what is missing.</span>
 
 <span class="sd">        :return: a set of GraphDiffs that each abstract a SHACL shape violation</span>
 <span class="sd">        :rtype: Set[GraphDiff]</span>
@@ -837,7 +842,7 @@ title="Open an issue"
 
 
 <div class="viewcode-block" id="diffset_to_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.diffset_to_templates">[docs]</a><span class="k">def</span> <span class="nf">diffset_to_templates</span><span class="p">(</span><span class="n">diffset</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Combine GraphDiff by focus node to generate a list of templates that</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine GraphDiff by focus node to generate a list of templates that</span>
 <span class="sd">    reconcile what is &quot;wrong&quot; with the Graph with respect to the GraphDiffs.</span>
 
 <span class="sd">    :param diffset: a set of diffs produced by `_report_to_diffset`</span>
