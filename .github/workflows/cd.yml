@@ -46,7 +46,7 @@ jobs:
         skip_existing: true
 
     - name: publish distribution 📦 to PyPI
-      if: startsWith(github.ref, 'refs/tags')
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         python_version: ${{ matrix.python-version }}
