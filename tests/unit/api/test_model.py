@@ -268,20 +268,11 @@ def test_validate_model(client, building_motif):
 
     # Assert
     assert results.status_code == 200
-    assert len(results.get_json()) == 2
-    [libaray_1_results, library_2_results] = results.get_json()
 
-    assert libaray_1_results.keys() == {"library_id", "message", "reasons", "valid"}
-    assert libaray_1_results["library_id"] == library_1.id
-    assert isinstance(libaray_1_results["message"], str)
-    assert isinstance(libaray_1_results["reasons"], list)
-    assert not libaray_1_results["valid"]
-
-    assert library_2_results.keys() == {"library_id", "message", "reasons", "valid"}
-    assert library_2_results["library_id"] == library_2.id
-    assert isinstance(library_2_results["message"], str)
-    assert isinstance(library_2_results["reasons"], list)
-    assert library_2_results["valid"]
+    assert results.get_json().keys() == {"message", "reasons", "valid"}
+    assert isinstance(results.get_json()["message"], str)
+    assert isinstance(results.get_json()["reasons"], list)
+    assert not results.get_json()["valid"]
 
     # Set up
     model.add_triples((BLDG["vav1"], A, BRICK.VAV))
@@ -298,10 +289,11 @@ def test_validate_model(client, building_motif):
 
     # Assert
     assert results.status_code == 200
-    assert results.get_json()[0]["library_id"] == library_1.id
-    assert isinstance(results.get_json()[0]["message"], str)
-    assert results.get_json()[0]["valid"]
-    assert isinstance(results.get_json()[0]["reasons"], list)
+
+    assert results.get_json().keys() == {"message", "reasons", "valid"}
+    assert isinstance(results.get_json()["message"], str)
+    assert results.get_json()["valid"]
+    assert isinstance(results.get_json()["reasons"], list)
 
 
 def test_validate_model_bad_model_id(client, building_motif):

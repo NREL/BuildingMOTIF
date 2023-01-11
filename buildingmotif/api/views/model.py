@@ -138,24 +138,20 @@ def validate_model(models_id: int) -> flask.Response:
     if library_ids is None:
         return {"message": "body must contain library_id"}, status.HTTP_400_BAD_REQUEST
 
-    results = []
+    shapes = []
     for library_id in library_ids:
         try:
             library = Library.load(library_id)
+            shapes.append(library.get_shape_collection())
         except NoResultFound:
             return {
                 "message": f"No library with id {library_id}"
             }, status.HTTP_404_NOT_FOUND
 
-        vaildation_context = model.validate([library.get_shape_collection()])
+    vaildation_context = model.validate(shapes)
 
-        results.append(
-            {
-                "library_id": int(library_id),
-                "message": vaildation_context.report_string,
-                "valid": vaildation_context.valid,
-                "reasons": [x.reason() for x in vaildation_context.diffset],
-            }
-        )
-
-    return results
+    return {
+        "message": vaildation_context.report_string,
+        "valid": vaildation_context.valid,
+        "reasons": [x.reason() for x in vaildation_context.diffset],
+    }
