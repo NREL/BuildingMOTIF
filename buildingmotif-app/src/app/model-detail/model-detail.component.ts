@@ -30,14 +30,16 @@ export class ModelDetailComponent{
     matchBrackets: true,
     lint: true
   };
+  showFiller: boolean = true;
+  sideNaveOpen: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private ModelDetailService: ModelDetailService,
     private _snackBar: MatSnackBar,
   ) {
-    [this.model, this.graph] = route.snapshot.data["ModelDetailResolver"]
-    this.graphFormControl.setValue(this.graph)
+    [this.model, this.graph] = route.snapshot.data["ModelDetailResolver"];
+    this.graphFormControl.setValue(this.graph);
   }
 
   onSave(): void{

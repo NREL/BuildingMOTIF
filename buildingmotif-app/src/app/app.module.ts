@@ -33,6 +33,9 @@ import { TemplateEvaluateComponent} from './template-evaluate/template-evaluate.
 import { ModelNewComponent } from './model-new/model-new.component'; 
 import { ModelValidateComponent } from './model-validate/model-validate.component';
 import { LibraryService } from './library/library.service';
+import {MatSidenavModule} from '@angular/material/sidenav'; 
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatCheckboxModule} from '@angular/material/checkbox'; 
 
 @NgModule({
   declarations: [
@@ -69,7 +72,10 @@ import { LibraryService } from './library/library.service';
     MatSnackBarModule,
     CodemirrorModule,
     MatCardModule,
-    MatTableModule
+    MatTableModule,
+    MatSidenavModule,
+    MatTabsModule,
+    MatCheckboxModule,
   ],
   providers: [TemplateDetailService, LibraryService],
   bootstrap: [AppComponent]

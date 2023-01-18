@@ -1,8 +1,15 @@
 import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Library } from '../library/library.service';
-import { FormControl, Validators } from '@angular/forms';
-import { ModelValidateService } from './model-validate.service'
+import { Library } from '../library/library.service'
+import { FormControl, Validators, FormGroup, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
+import { ModelValidateService } from './model-validate.service';
+
+function NoneSelectedValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const anyIsTrue = Object.values(control.value).some(v => v)
+    return anyIsTrue ? null: {noneSelected: {value: true}};
+  };
+}
 
 @Component({
   selector: 'app-model-validate',
@@ -13,8 +20,9 @@ import { ModelValidateService } from './model-validate.service'
 export class ModelValidateComponent {
   @Input() modelId: number | undefined;
   libraries: Library[] = [];
-  selectedLibrary = new FormControl(undefined, [Validators.required]);
+  selectedLibrariesForm: FormGroup = new FormGroup({});
   validationResponse = "";
+  showValidatingSpinner = false;
 
   codeMirrorOptions: any = {
     theme: 'material',
@@ -31,13 +39,26 @@ export class ModelValidateComponent {
 
   constructor(private route: ActivatedRoute, private modelValidateService: ModelValidateService) {
     this.libraries = this.route.snapshot.data["ModelValidateResolver"]
+
+    const selectedLibaryControls: { [id: number]: FormControl } = this.libraries.reduce((acc, curr) => {
+      return { ...acc, [curr.id]: new FormControl(false) }
+    }, {});
+    this.selectedLibrariesForm = new FormGroup(selectedLibaryControls, {validators: NoneSelectedValidator()})
   }
 
-  validate(): void{
-    if (!!this.modelId && this.selectedLibrary.value.id){
-      this.modelValidateService.validateModel(this.modelId, this.selectedLibrary.value.id).subscribe(res => {
-        this.validationResponse = res;
-      })
+  validate(): void {
+    const selectedLibraryIds = Object.entries(this.selectedLibrariesForm.value)
+      .filter(([id, selected]) => selected)
+      .map(([id, selected]) => id);
+
+    if (!!this.modelId){
+      this.showValidatingSpinner = true;
+
+      this.modelValidateService.validateModel(this.modelId, selectedLibraryIds).subscribe(
+        res => {this.validationResponse = res},
+        err => {},
+        () => {this.showValidatingSpinner = false},
+      );
     }
   }
 }
