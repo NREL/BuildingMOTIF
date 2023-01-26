@@ -15,6 +15,6 @@ export class ModelValidateResolver implements Resolve<Library[]> {
   constructor(private libraryService: LibraryService) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Library[]> {
-    return this.libraryService.getAllLibraries();
+    return this.libraryService.getAllShapes();
   }
 }

@@ -4,6 +4,14 @@ import { Library } from '../library/library.service'
 import { FormControl, Validators, FormGroup, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { ModelValidateService } from './model-validate.service';
 
+export interface Shape {
+  library_name: string;
+  library_id: number;
+  uri: string;
+  label: string;
+  description: string;
+}
+
 function NoneSelectedValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const anyIsTrue = Object.values(control.value).some(v => v)
@@ -19,8 +27,8 @@ function NoneSelectedValidator(): ValidatorFn {
 })
 export class ModelValidateComponent {
   @Input() modelId: number | undefined;
-  libraries: Library[] = [];
-  selectedLibrariesForm: FormGroup = new FormGroup({});
+  shapes: Shape[] = [];
+  selectedShapesForm: FormGroup = new FormGroup({});
   validationResponse = "";
   showValidatingSpinner = false;
 
@@ -38,23 +46,24 @@ export class ModelValidateComponent {
   };
 
   constructor(private route: ActivatedRoute, private modelValidateService: ModelValidateService) {
-    this.libraries = this.route.snapshot.data["ModelValidateResolver"]
+    this.shapes = this.route.snapshot.data["ModelValidateResolver"]
 
-    const selectedLibaryControls: { [id: number]: FormControl } = this.libraries.reduce((acc, curr) => {
-      return { ...acc, [curr.id]: new FormControl(false) }
+    const selectedShapesControls: { [shape_uri: string]: FormControl } = this.shapes.reduce((acc, curr) => {
+      return { ...acc, [curr.uri]: new FormControl(false) }
     }, {});
-    this.selectedLibrariesForm = new FormGroup(selectedLibaryControls, {validators: NoneSelectedValidator()})
+    console.log(selectedShapesControls)
+    this.selectedShapesForm = new FormGroup(selectedShapesControls, {validators: NoneSelectedValidator()})
   }
 
   validate(): void {
-    const selectedLibraryIds = Object.entries(this.selectedLibrariesForm.value)
+    const selectedShapeIds = Object.entries(this.selectedShapesForm.value)
       .filter(([id, selected]) => selected)
       .map(([id, selected]) => id);
 
     if (!!this.modelId){
       this.showValidatingSpinner = true;
 
-      this.modelValidateService.validateModel(this.modelId, selectedLibraryIds).subscribe(
+      this.modelValidateService.validateModel(this.modelId, selectedShapeIds).subscribe(
         res => {this.validationResponse = res},
         err => {},
         () => {this.showValidatingSpinner = false},

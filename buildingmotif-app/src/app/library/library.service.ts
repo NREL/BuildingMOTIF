@@ -35,6 +35,14 @@ export class LibraryService {
       );
   }
 
+  getAllShapes() {
+    return this.http.get<Library[]>("http://localhost:5000/libraries/shapes")
+      .pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError) // then handle the error
+      );
+  }
+
   getLibrarysTemplates(library_id: number) {
     return this.http.get<Library>(`http://localhost:5000/libraries/${library_id}?expand_templates=True`)
       .pipe(

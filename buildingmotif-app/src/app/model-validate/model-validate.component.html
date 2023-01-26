@@ -1,11 +1,13 @@
 <div class="container">
-    <mat-list *ngFor="let library of libraries">
-        <mat-checkbox [formControl]="$any(selectedLibrariesForm.controls[library.id])">{{library.name}}</mat-checkbox>
+    <mat-list *ngFor="let shape of shapes">
+        <mat-checkbox [formControl]="$any(selectedShapesForm.controls[shape.uri])">
+            <b>{{shape.uri}}</b> - {{shape.library_name}}
+        </mat-checkbox>
     </mat-list>
 
     <button
     (click)="validate()"
-    [disabled]="selectedLibrariesForm.invalid"
+    [disabled]="selectedShapesForm.invalid"
     mat-raised-button
     color="primary">
         Validate
