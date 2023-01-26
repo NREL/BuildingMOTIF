@@ -132,7 +132,6 @@ class Library:
         db_id: Optional[int] = None,
         ontology_graph: Optional[Union[str, rdflib.Graph]] = None,
         directory: Optional[str] = None,
-        url: Optional[str] = None,
         name: Optional[str] = None,
         overwrite: Optional[bool] = True,
     ) -> "Library":
@@ -147,9 +146,6 @@ class Library:
         :param directory: a path to a directory containing a library,
             or an rdflib graph, defaults to None
         :type directory: Optional[str], optional
-        :param url: a url path to a GitHub repository or zip file
-            containing a library
-        type url: Optional[str], optional
         :param name: the name of the library inside the database,
             defaults to None
         :type name: Optional[str], optional
@@ -175,9 +171,6 @@ class Library:
             if not src.exists():
                 raise Exception(f"Directory {src} does not exist")
             return cls._load_from_directory(src, overwrite=overwrite)
-        elif url is not None:
-            # TODO
-            raise NotImplementedError
         elif name is not None:
             bm = get_building_motif()
             db_library = bm.table_connection.get_db_library_by_name(name)
