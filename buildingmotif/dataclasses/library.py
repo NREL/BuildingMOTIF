@@ -1,8 +1,10 @@
 import logging
 import pathlib
+import tempfile
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
+import git
 import pyshacl
 import rdflib
 import sqlalchemy
@@ -327,6 +329,23 @@ class Library:
 
         return lib
 
+    @classmethod
+    def load_from_libraries_yml(cls, filename: str):
+        """
+        Loads *multiple* libraries from a properly-formatted 'libraries.yml'
+        file. Does not return a Library! You will need to load the libraries by
+        name in order to get the dataclasses.Library object. We recommend loading
+        libraries directly, one-by-one, in most cases. This method is here to support
+        the commandline tool.
+
+        :param filename: the filename of the YAML file to load library names from
+        :type filename: str
+        :rtype: None
+        """
+        libraries = yaml.load(open(filename, "r"), Loader=yaml.FullLoader)
+        for description in libraries:
+            _resolve_library_definition(description)
+
     @staticmethod
     def _library_exists(library_name: str) -> bool:
         """
@@ -487,3 +506,33 @@ class Library:
         if dbt.library_id != self._id:
             raise ValueError(f"Template {name} not in library {self._name}")
         return Template.load(dbt.id)
+
+
+def _resolve_library_definition(desc: Dict[str, Any]):
+    """
+    Loads a library from a description in libraries.yml
+    """
+    if "directory" in desc:
+        spath = pathlib.Path(desc["directory"]).absolute()
+        if spath.exists() and spath.is_dir():
+            logging.info(f"Load local library {spath} (directory)")
+            Library.load(directory=str(spath))
+        else:
+            raise Exception(f"{spath} is not an existing directory")
+    elif "ontology" in desc:
+        ont = desc["ontology"]
+        g = rdflib.Graph().parse(ont, format=rdflib.util.guess_format(ont))
+        logging.info(f"Load library {ont} as ontology graph")
+        Library.load(ontology_graph=g)
+    elif "git" in desc:
+        repo = desc["git"]["repo"]
+        branch = desc["git"]["branch"]
+        path = desc["git"]["path"]
+        logging.info(f"Load library {path} from git repository: {repo}@{branch}")
+        with tempfile.TemporaryDirectory() as temp_loc:
+            git.Repo.clone_from(repo, temp_loc, branch=branch, depth=1)
+            new_path = pathlib.Path(temp_loc) / pathlib.Path(path)
+            if new_path.is_dir():
+                _resolve_library_definition({"directory": new_path})
+            else:
+                _resolve_library_definition({"ontology": new_path})
