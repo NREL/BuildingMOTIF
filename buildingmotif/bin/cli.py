@@ -65,7 +65,7 @@ def load_libraries(
 
 @app.command()
 def serve(
-    host: str = "0.0.0.0",
+    host: str = "localhost",
     port: int = 5000,
     db_uri: Optional[str] = typer.Argument(None, envvar="DB_URI"),
 ):
