@@ -92,3 +92,11 @@ def pytest_generate_tests(metafunc):
         libraries = {str(lib.parent) for lib in libraries_files}
 
         metafunc.parametrize("library", libraries)
+
+    if "builtin_library" in metafunc.fixturenames:
+        builtin_library = {"brick", "constraints"}
+        metafunc.parametrize("builtin_library", builtin_library)
+
+    if "builtin_ontology" in metafunc.fixturenames:
+        builtin_ontology = {"brick/Brick.ttl", "constraints/constraints.ttl"}
+        metafunc.parametrize("builtin_ontology", builtin_ontology)
