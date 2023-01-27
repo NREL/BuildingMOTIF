@@ -27,6 +27,7 @@ def test_get_all_libraries(client, building_motif):
 def test_get_library(client, building_motif):
     # Setup
     lib = Library.create("my_library")
+    lib.create_template("my_template")
 
     # Act
     results = client.get(f"/libraries/{lib.id}")
