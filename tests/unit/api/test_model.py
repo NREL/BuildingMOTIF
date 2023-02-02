@@ -261,9 +261,17 @@ def test_validate_model(client, building_motif):
     model.add_triples((BLDG["vav1"], A, BRICK.VAV))
 
     # Action
-    results = client.get(
-        f"/models/{model.id}/validate?library_ids={library_1.id}{library_2.id}",
+    results = client.post(
+        f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
+        json=[
+            # TODO: what goes here?
+            # {
+            #     "library_id": library_1.id
+            #     "shape_uri": ...
+            # },
+            # ...
+        ],
     )
 
     # Assert
@@ -283,8 +291,16 @@ def test_validate_model(client, building_motif):
 
     # Action
     results = client.get(
-        f"/models/{model.id}/validate?library_ids={library_1.id}",
+        f"/models/{model.id}",
         headers={"Content-Type": "application/json"},
+        json=[
+            # TODO: what goes here?
+            # {
+            #     "library_id": library_1.id
+            #     "shape_uri": ...
+            # },
+            # ...
+        ],
     )
 
     # Assert
@@ -302,40 +318,86 @@ def test_validate_model_bad_model_id(client, building_motif):
     assert library is not None
 
     # Action
-    results = client.get(
-        f"/models/{-1}/validate?library_ids={library.id}",
+    results = client.post(
+        f"/models/{-1}/validate",
         headers={"Content-Type": "application/json"},
+        json=[
+            # TODO: what goes here?
+            # {
+            #     "library_id": library_1.id
+            #     "shape_uri": ...
+            # },
+            # ...
+        ],
     )
 
     # Assert
     assert results.status_code == 404
 
 
-def test_validate_model_no_libraries(client, building_motif):
+def test_validate_model_no_args(client, building_motif):
     # Set up
     BLDG = Namespace("urn:building/")
     model = Model.create(name=BLDG)
 
     # Action
-    results = client.get(
-        f"/models/{model.id}/validate",  # no libraries arg
-        headers={"Content-Type": "application/xml"},
+    results = client.post(
+        f"/models/{model.id}/validate",
+        headers={"Content-Type": "application/json"},
+        # no json
     )
 
     # Assert
     assert results.status_code == 400
 
 
-def test_validate_model_bad_library_id(client, building_motif):
+def test_validate_model_bad_args(client, building_motif):
     # Set up
+    library = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    assert library is not None
     BLDG = Namespace("urn:building/")
     model = Model.create(name=BLDG)
 
-    # Action
-    results = client.get(
-        f"/models/{model.id}/validate?library_ids=-1",
+    # Action 1
+    results = client.post(
+        f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
+        json=[
+            {
+                "library_id": library.id,
+                # no shape_uri
+            }
+        ],
     )
 
-    # Assert
-    assert results.status_code == 404
+    # Assert 1
+    assert results.status_code == 400
+
+    # Action 2
+    results = client.post(
+        f"/models/{model.id}/validate",
+        headers={"Content-Type": "application/json"},
+        json=[
+            {
+                "shape_uri": "https://example.com",
+                # no shape_uri
+            }
+        ],
+    )
+
+    # Assert 2
+    assert results.status_code == 400
+
+    # Action 3
+    results = client.post(
+        f"/models/{model.id}/validate",
+        headers={"Content-Type": "application/json"},
+        json=[
+            {
+                # no library_id or shape_uri
+            }
+        ],
+    )
+
+    # Assert 3
+    assert results.status_code == 400

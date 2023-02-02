@@ -11,7 +11,8 @@ blueprint = Blueprint("libraries", __name__)
 get_shape_query = """
     SELECT ?shape ?label ?desc
     WHERE {
-        ?shape a sh:NodeShape .
+        ?shape a sh:NodeShape ;
+            sh:targetClass|sh:targetSubjectOf|sh:targetObjectsOf|sh:targetNode ?target .
         OPTIONAL { ?shape rdfs:label ?label }
         OPTIONAL { ?shape skos:description ?desc }
     }

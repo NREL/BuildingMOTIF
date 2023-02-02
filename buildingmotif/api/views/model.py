@@ -1,4 +1,7 @@
+from typing import Dict, List, Tuple
+
 import flask
+import pyshacl
 from flask import Blueprint, current_app, jsonify, request
 from flask_api import status
 from rdflib import Graph
@@ -6,7 +9,8 @@ from rdflib.plugins.parsers.notation3 import BadSyntax
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.model import serialize
-from buildingmotif.dataclasses import Library, Model
+from buildingmotif.dataclasses import Library, Model, ShapeCollection
+from buildingmotif.dataclasses.validation import ValidationContext
 
 blueprint = Blueprint("models", __name__)
 
@@ -126,29 +130,85 @@ def update_model_graph(models_id: int) -> flask.Response:
     return model.graph.serialize(format="ttl")
 
 
-@blueprint.route("/<models_id>/validate", methods=(["GET"]))
+def _get_shape_collections_and_ontology_and_schal_graph(
+    body: Dict,
+) -> Tuple[List[ShapeCollection], Graph, Graph]:
+    # get shape collections
+    shape_collections = []
+    for body_item in body:
+        try:
+            library_id = body_item["library_id"]
+            shape_collection = Library.load(library_id).get_shape_collection()
+            shape_collections.append(shape_collection)
+        except KeyError as e:
+            raise KeyError(
+                f"body item {body_item} doees not contain a 'library_id'"
+            ) from e
+        except NoResultFound as e:
+            raise NoResultFound(f"No library with id {library_id}") from e
+
+    # buiild ontology graph
+    ontology_graph = Graph()
+    for shape_collection in shape_collections:
+        ontology_graph += shape_collection.graph
+
+    # build shacl graph
+    shacl_graph = Graph()
+    for body_item in body:
+        try:
+            shape_uri = body_item["shape_uri"]
+            shacl_graph += ontology_graph.cbd(shape_uri)
+        except KeyError as e:
+            raise KeyError(
+                f"body item {body_item} doees not contain a 'shape_uri'"
+            ) from e
+
+    return shape_collections, ontology_graph, shacl_graph
+
+
+@blueprint.route("/<models_id>/validate", methods=(["POST"]))
 def validate_model(models_id: int) -> flask.Response:
+    # get model
     try:
         model = Model.load(models_id)
     except NoResultFound:
         return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
 
-    library_ids = request.args.get("library_ids")
+    # get body
+    if request.content_type != "application/json":
+        return {
+            "message": "request content type must be json"
+        }, status.HTTP_400_BAD_REQUEST
+    try:
+        body = request.json
+    except Exception:
+        return {"message": "cannot read body"}, status.HTTP_400_BAD_REQUEST
 
-    if library_ids is None:
-        return {"message": "body must contain library_id"}, status.HTTP_400_BAD_REQUEST
+    try:
+        (
+            shape_collections,
+            ontology_graph,
+            shacl_graph,
+        ) = _get_shape_collections_and_ontology_and_schal_graph(body)
+    except (KeyError, NoResultFound) as e:
+        return {"message": str(e)}, status.HTTP_400_BAD_REQUEST
 
-    shapes = []
-    for library_id in library_ids:
-        try:
-            library = Library.load(library_id)
-            shapes.append(library.get_shape_collection())
-        except NoResultFound:
-            return {
-                "message": f"No library with id {library_id}"
-            }, status.HTTP_404_NOT_FOUND
-
-    vaildation_context = model.validate(shapes)
+    # validate
+    valid, report_g, report_str = pyshacl.validate(
+        data_graph=model.graph,
+        shacl_graph=shacl_graph,
+        ont_graph=ontology_graph,
+        allow_warnings=True,
+        advanced=True,
+        js=True,
+    )
+    vaildation_context = ValidationContext(
+        shape_collections,
+        valid,
+        report_g,
+        report_str,
+        model,
+    )
 
     return {
         "message": vaildation_context.report_string,

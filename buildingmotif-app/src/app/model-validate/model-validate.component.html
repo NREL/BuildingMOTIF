@@ -1,6 +1,6 @@
 <div class="container">
-    <mat-list *ngFor="let shape of shapes">
-        <mat-checkbox [formControl]="$any(selectedShapesForm.controls[shape.uri])">
+    <mat-list *ngFor="let shape of shapes; let i = index">
+        <mat-checkbox [formControl]="$any(selectedShapesForm.controls[i])">
             <b>{{shape.uri}}</b> - {{shape.library_name}}
         </mat-checkbox>
     </mat-list>

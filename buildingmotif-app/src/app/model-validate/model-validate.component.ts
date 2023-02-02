@@ -48,22 +48,20 @@ export class ModelValidateComponent {
   constructor(private route: ActivatedRoute, private modelValidateService: ModelValidateService) {
     this.shapes = this.route.snapshot.data["ModelValidateResolver"]
 
-    const selectedShapesControls: { [shape_uri: string]: FormControl } = this.shapes.reduce((acc, curr) => {
-      return { ...acc, [curr.uri]: new FormControl(false) }
+    const selectedShapesControls: { [shape_index: number]: FormControl } = this.shapes.reduce((acc, _, i) => {
+      return { ...acc, [i]: new FormControl(false) }
     }, {});
-    console.log(selectedShapesControls)
     this.selectedShapesForm = new FormGroup(selectedShapesControls, {validators: NoneSelectedValidator()})
   }
 
   validate(): void {
-    const selectedShapeIds = Object.entries(this.selectedShapesForm.value)
-      .filter(([id, selected]) => selected)
-      .map(([id, selected]) => id);
+    const selectedShapes = this.shapes.filter((_, i) => this.selectedShapesForm.value[i])
+    const args = selectedShapes.map(s => {return {library_id: s.library_id, shape_uri: s.uri}})
 
     if (!!this.modelId){
       this.showValidatingSpinner = true;
 
-      this.modelValidateService.validateModel(this.modelId, selectedShapeIds).subscribe(
+      this.modelValidateService.validateModel(this.modelId, args).subscribe(
         res => {this.validationResponse = res},
         err => {},
         () => {this.showValidatingSpinner = false},
