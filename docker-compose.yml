@@ -3,17 +3,13 @@ services:
   db:
     container_name: buildingmotif-db
     image: postgres
-    environment:
-       - POSTGRES_DB
-       - POSTGRES_USER
-       - POSTGRES_PASSWORD
     ports:
       - target: 5432
         published: 5432
         protocol: tcp
         mode: host
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      test: ["CMD", "pg_isready", "-d", "db_prod"]
       interval: 30s
       timeout: 30s
       retries: 5
