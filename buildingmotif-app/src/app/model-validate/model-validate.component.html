@@ -1,4 +1,5 @@
 <div class="container">
+    <mat-progress-bar *ngIf="showGettingShapesSpinner" mode="query"></mat-progress-bar>
     <mat-list *ngFor="let shape of shapes; let i = index">
         <mat-checkbox [formControl]="$any(selectedShapesForm.controls[i])">
             <b>{{shape.uri}}</b> - {{shape.library_name}}

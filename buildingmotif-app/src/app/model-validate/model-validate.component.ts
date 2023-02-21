@@ -1,16 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Library } from '../library/library.service'
-import { FormControl, Validators, FormGroup, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { ModelValidateService } from './model-validate.service';
-
-export interface Shape {
-  library_name: string;
-  library_id: number;
-  uri: string;
-  label: string;
-  description: string;
-}
+import { LibraryService, Shape } from '../library/library.service';
 
 function NoneSelectedValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -22,14 +14,15 @@ function NoneSelectedValidator(): ValidatorFn {
 @Component({
   selector: 'app-model-validate',
   templateUrl: './model-validate.component.html',
-  providers: [ModelValidateService],
+  providers: [ModelValidateService, LibraryService],
   styleUrls: ['./model-validate.component.css'],
 })
-export class ModelValidateComponent {
+export class ModelValidateComponent implements OnInit{
   @Input() modelId: number | undefined;
-  shapes: Shape[] = [];
+  shapes?: Shape[] = undefined;
   selectedShapesForm: FormGroup = new FormGroup({});
   validationResponse = "";
+  showGettingShapesSpinner = false;
   showValidatingSpinner = false;
 
   codeMirrorOptions: any = {
@@ -45,8 +38,17 @@ export class ModelValidateComponent {
     readOnly: true,
   };
 
-  constructor(private route: ActivatedRoute, private modelValidateService: ModelValidateService) {
-    this.shapes = this.route.snapshot.data["ModelValidateResolver"]
+  constructor(private modelValidateService: ModelValidateService, private libraryService: LibraryService) {}
+
+  ngOnInit(): void {
+    this.showGettingShapesSpinner = true;
+    this.libraryService.getAllShapes().subscribe(
+      res => {this.shapes = res},
+      err => {},
+      () => {this.showGettingShapesSpinner = false},
+    );
+
+    if (this.shapes == undefined) return;
 
     const selectedShapesControls: { [shape_index: number]: FormControl } = this.shapes.reduce((acc, _, i) => {
       return { ...acc, [i]: new FormControl(false) }
@@ -55,6 +57,8 @@ export class ModelValidateComponent {
   }
 
   validate(): void {
+    if (this.shapes == undefined) return;
+
     const selectedShapes = this.shapes.filter((_, i) => this.selectedShapesForm.value[i])
     const args = selectedShapes.map(s => {return {library_id: s.library_id, shape_uri: s.uri}})
 

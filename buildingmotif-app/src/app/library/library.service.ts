@@ -22,6 +22,14 @@ export interface Template {
   dependency_ids: number[];
 }
 
+export interface Shape {
+  library_name: string;
+  library_id: number;
+  uri: string;
+  label: string;
+  description: string;
+}
+
 @Injectable()
 export class LibraryService {
 
@@ -36,7 +44,7 @@ export class LibraryService {
   }
 
   getAllShapes() {
-    return this.http.get<Library[]>("http://localhost:5000/libraries/shapes")
+    return this.http.get<Shape[]>("http://localhost:5000/libraries/shapes")
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error
