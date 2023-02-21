@@ -6,12 +6,11 @@ services:
     networks:
       bacnet:
         ipv4_address: 172.24.0.3
-    ports:
-      - "47808:47808/udp"
-    command: "python virtual_bacnet.py"
+    command: "python3 virtual_bacnet.py"
 networks:
   bacnet:
     ipam:
       driver: default
       config:
         - subnet: "172.24.0.0/16"
+          gateway: "172.24.0.1"
