@@ -23,7 +23,13 @@ The purpose of this how-to document is to demonstrate the creation of a function
 
 ## External Setup
 
-Make sure you have network access to a BACnet network, and that you are aware on what IP address that BACnet network can be reached. The simplest way to get this working is to use the [virtual machine setup in the simulated digital twin repository](https://github.com/gtfierro/simulated-digital-twin/tree/main/virtual-machine).
+Make sure you have network access to a BACnet network, and that you are aware on what IP address that BACnet network can be reached.
+For this tutorial, we will use [`docker compose`](https://docs.docker.com/compose/) to run a virtual BACnet network which we can scan and generate a Brick model for.
+
+```{margin}
+```{note}
+Another virtual BACnet network to try is the [virtual machine setup in the simulated digital twin repository](https://github.com/gtfierro/simulated-digital-twin/tree/main/virtual-machine).
+```
 
 ## BuildingMOTIF Setup
 
@@ -57,8 +63,8 @@ We use the `buildingmotif.ingresses.bacnet.BACnetNetwork` ingress module to pull
 ```{code-cell}
 from buildingmotif.ingresses.bacnet import BACnetNetwork
 
-bacnet = BACnetNetwork("10.47.35.1/24")
-for rec in bacnet.records[:10]:  # just print the first 10
+bacnet = BACnetNetwork("172.24.0.1/32") # don't change this if you are using the docker compose setup
+for rec in bacnet.records:
     print(rec)
 ```
 
