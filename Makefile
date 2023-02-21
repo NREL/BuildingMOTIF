@@ -6,5 +6,5 @@ test:
 format:
 	poetry run black .
 	poetry run isort .
-	poetry run pylama
+	poetry run pylama buildingmotif tests migrations buildingmotif-app
 	poetry run mypy buildingmotif/*.py tests/*.py migrations/*.py
