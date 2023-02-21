@@ -71,16 +71,6 @@ def get_db_uri(args) -> str:
         help="Database URI of the BuildingMOTIF installation. "
         'Defaults to $DB_URI and then contents of "config.py"',
     ),
-    arg(
-        "-l",
-        "--libraries",
-        help="Filename of the libraries YAML file specifying what "
-        "should be loaded into BuildingMOTIF",
-        default="libraries.yml",
-        required=True,
-        nargs="+",
-        dest="library_manifest_file",
-    ),
 )
 def load_libraries(args):
     """
@@ -96,6 +86,57 @@ def load_libraries(args):
         log.info(f"Loading buildingmotif libraries listed in {manifest_path}")
         Library.load_from_libraries_yml(str(manifest_path))
         bm.session.commit()
+
+
+@subcommand(
+    arg(
+        "-d",
+        "--db",
+        help="Database URI of the BuildingMOTIF installation. "
+        'Defaults to $DB_URI and then contents of "config.py"',
+    ),
+    arg(
+        "--dir",
+        help="Path to a local directory containing the library",
+        nargs="+",
+    ),
+    arg(
+        "-o",
+        "--ont",
+        help="Remote URL or local file path to an RDF ontology",
+        nargs="+",
+    ),
+    arg(
+        "-l",
+        "--libraries",
+        help="Filename of the libraries YAML file specifying what "
+        "should be loaded into BuildingMOTIF",
+        default="libraries.yml",
+        nargs="+",
+        dest="library_manifest_file",
+    ),
+)
+def load(args):
+    """
+    Loads libraries from
+    - local directories (--dir)
+    - local or remote ontology files (--ont)
+    - local library spec file (--libraries): the provided YML file into the
+      BuildingMOTIF instance at $DB_URI or whatever is in 'configs.py'.
+      Use 'get_default_libraries_yml' for the format of the expected libraries.yml file
+    """
+    db_uri = get_db_uri(args)
+    bm = BuildingMOTIF(db_uri)
+    bm.setup_tables()
+    for directory in args.dir:
+        Library.load(directory=directory)
+    for ont in args.ont:
+        Library.load(ontology_graph=ont)
+    for library_manifest_file in args.library_manifest_file:
+        manifest_path = Path(library_manifest_file)
+        log.info(f"Loading buildingmotif libraries listed in {manifest_path}")
+        Library.load_from_libraries_yml(str(manifest_path))
+    bm.session.commit()
 
 
 @subcommand()

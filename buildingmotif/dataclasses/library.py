@@ -4,7 +4,7 @@ import tempfile
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
-import git
+import pygit2
 import pyshacl
 import rdflib
 import sqlalchemy
@@ -541,7 +541,9 @@ def _resolve_library_definition(desc: Dict[str, Any]):
         path = desc["git"]["path"]
         logging.info(f"Load library {path} from git repository: {repo}@{branch}")
         with tempfile.TemporaryDirectory() as temp_loc:
-            git.Repo.clone_from(repo, temp_loc, branch=branch, depth=1)
+            pygit2.clone_repository(
+                repo, temp_loc, checkout_branch=branch
+            )  # , depth=1)
             new_path = pathlib.Path(temp_loc) / pathlib.Path(path)
             if new_path.is_dir():
                 _resolve_library_definition({"directory": new_path})
