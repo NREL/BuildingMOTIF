@@ -1,45 +1,110 @@
+import argparse
 import logging
 import shutil
+import sys
+from os import getenv
 from pathlib import Path
-from typing import Optional
-
-import typer
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library
 
-app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
+cli = argparse.ArgumentParser(
+    prog="buildingmotif", description="CLI Interface for common BuildingMOTIF tasks"
+)
+subparsers = cli.add_subparsers(dest="subcommand")
+subcommands = {}
 log = logging.getLogger()
 log.setLevel(logging.INFO)
 
 ONTOLOGY_FILE_SUFFIXES = ["ttl", "n3", "ntriples", "xml"]
 
 
-@app.command()
-def load_libraries(
-    db_uri: str = typer.Argument("sqlite:///bmotif.db", envvar="DB_URI"),
-    library_manifest_file: str = "libraries.yml",
-):
+# borrowing some ideas from https://gist.github.com/mivade/384c2c41c3a29c637cb6c603d4197f9f
+def arg(*argnames, **kwargs):
+    """Helper for defining arguments on subcommands"""
+    return argnames, kwargs
+
+
+def subcommand(*subparser_args, parent=subparsers):
+    """Decorates a function and makes it available as a subcommand"""
+
+    def decorator(func):
+        parser = parent.add_parser(func.__name__, description=func.__doc__)
+        for args, kwargs in subparser_args:
+            parser.add_argument(*args, **kwargs)
+        parser.set_defaults(func=func)
+        subcommands[func] = parser
+
+    return decorator
+
+
+def get_db_uri(args) -> str:
+    """
+    Fetches the db uri from args, or prints the usage
+    for the corresponding subcommand
+    """
+    db_uri = args.db
+    if db_uri is not None:
+        return db_uri
+    db_uri = getenv("DB_URI")
+    if db_uri is not None:
+        return db_uri
+    try:
+        import configs as building_motif_configs
+    except ImportError:
+        print("No DB URI could be found")
+        print("No configs.py file found")
+        subcommands[args.func].print_help()
+        sys.exit(1)
+    db_uri = building_motif_configs.DB_URI
+    if db_uri is not None:
+        return db_uri
+    print("No DB URI could be found")
+    subcommands[args.func].print_help()
+    sys.exit(1)
+
+
+@subcommand(
+    arg(
+        "-d",
+        "--db",
+        help="Database URI of the BuildingMOTIF installation. "
+        'Defaults to $DB_URI and then contents of "config.py"',
+    ),
+    arg(
+        "-l",
+        "--libraries",
+        help="Filename of the libraries YAML file specifying what "
+        "should be loaded into BuildingMOTIF",
+        default="libraries.yml",
+        required=True,
+        nargs="+",
+        dest="library_manifest_file",
+    ),
+)
+def load_libraries(args):
     """
     Loads libraries from the provided YML file into the BuildingMOTIF instance at $DB_URI
     or whatever is in 'configs.py'. Use 'get_default_libraries_yml' for the format of
     the expected libraries.yml file
     """
-    manifest_path = Path(library_manifest_file)
-    log.info(f"Loading buildingmotif libraries listed in {manifest_path}")
+    db_uri = get_db_uri(args)
     bm = BuildingMOTIF(db_uri)
     bm.setup_tables()
-    bm.setup_tables()
-    Library.load_from_libraries_yml(library_manifest_file)
-    bm.session.commit()
+    for library_manifest_file in args.library_manifest_file:
+        manifest_path = Path(library_manifest_file)
+        log.info(f"Loading buildingmotif libraries listed in {manifest_path}")
+        Library.load_from_libraries_yml(str(manifest_path))
+        bm.session.commit()
 
 
-@app.command()
-def get_default_libraries_yml():
+@subcommand()
+def get_default_libraries_yml(_args):
     """
     Creates a default 'libraries.default.yml' file in the current directory
     that can be edited and used with buildingmotif
     """
+    print(subcommands[_args.func].print_usage())
     default_file = (
         Path(__file__).resolve().parents[1] / "resources" / "libraries.default.yml"
     )
@@ -47,23 +112,40 @@ def get_default_libraries_yml():
     print("libraries.default.yml created in the current directory")
 
 
-@app.command()
-def serve(
-    host: str = "localhost",
-    port: int = 5000,
-    db_uri: Optional[str] = typer.Argument(None, envvar="DB_URI"),
-):
+@subcommand(
+    arg(
+        "-b",
+        "--bind",
+        help="Address on which to bind the API server",
+        default="localhost",
+    ),
+    arg(
+        "-p", "--port", help="Listening port for the API server", type=int, default=5000
+    ),
+    arg(
+        "-d",
+        "--db",
+        help="Database URI of the BuildingMOTIF installation. "
+        'Defaults to $DB_URI and then contents of "config.py"',
+    ),
+)
+def serve(args):
     """
     Serves the BuildingMOTIF API on the indicated host:port
     """
     from buildingmotif.api.app import create_app
 
-    if db_uri is None:
-        import configs as building_motif_configs
-
-        db_uri = building_motif_configs.DB_URI
+    db_uri = get_db_uri(args)
     webapp = create_app(db_uri)
-    webapp.run(host=host, port=port, threaded=False)
+    webapp.run(host=args.host, port=args.port, threaded=False)
+
+
+def app():
+    args = cli.parse_args()
+    if args.subcommand is None:
+        cli.print_help()
+    else:
+        args.func(args)
 
 
 # entrypoint is actually defined in pyproject.toml; this is here for convenience/testing
