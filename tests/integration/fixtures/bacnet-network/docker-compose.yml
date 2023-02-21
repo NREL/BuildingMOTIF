@@ -1,0 +1,17 @@
+version: "3.4"
+services:
+  device:
+    build:
+      dockerfile: Dockerfile
+    networks:
+      bacnet:
+        ipv4_address: 172.24.0.3
+    ports:
+      - "47808:47808/udp"
+    command: "python virtual_bacnet.py"
+networks:
+  bacnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.24.0.0/16"
