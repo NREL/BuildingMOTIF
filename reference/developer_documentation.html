@@ -550,6 +550,11 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#running-on-docker">
+   Running on Docker
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#using">
    Using
   </a>
@@ -626,6 +631,11 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#running-on-docker">
+   Running on Docker
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#using">
    Using
   </a>
@@ -691,6 +701,29 @@ title="Print to PDF"
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">buildingmotif</span>
 </pre></div>
 </div>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="running-on-docker">
+<h1>Running on Docker<a class="headerlink" href="#running-on-docker" title="Permalink to this headline">#</a></h1>
+<ol>
+<li><p>Set config file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span><span class="o">.</span><span class="n">dist</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span>
+
+<span class="n">echo</span> <span class="s2">&quot;DB_URI = &#39;postgresql://buildingmotif:password@buildingmotif-db&#39;&quot;</span> <span class="o">&gt;</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p>Up containers with docker-compose.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span><span class="o">-</span><span class="n">compose</span> <span class="n">up</span> <span class="o">--</span><span class="n">build</span>
+</pre></div>
+</div>
+</li>
+<li><p>Inside <code class="docutils literal notranslate"><span class="pre">buildingmotif-api</span></code>, migrate db.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">exec</span> <span class="o">-</span><span class="n">it</span> <span class="n">buildingmotif</span><span class="o">-</span><span class="n">api</span> <span class="n">alembic</span> <span class="n">upgrade</span> <span class="n">head</span>
+</pre></div>
+</div>
+</li>
+<li><p>The api can now be reached at <a class="reference external" href="http://127.0.0.1:5000">http://127.0.0.1:5000</a> and the app can be reached but <a class="reference external" href="http://localhost:4200">http://localhost:4200</a>.</p></li>
+</ol>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="using">
 <h1>Using<a class="headerlink" href="#using" title="Permalink to this headline">#</a></h1>
@@ -788,7 +821,7 @@ title="Print to PDF"
             mode: "python"
         },
         kernelOptions: {
-            kernelName: "python3",
+            name: "python3",
             path: "./reference"
         },
         predefinedOutput: true
