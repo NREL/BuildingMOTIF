@@ -59,8 +59,11 @@ jobs:
     # - name: Run integration tests with pytest
     #   run: poetry run pytest tests/integration
 
-    - name: Codecov
-      uses: codecov/codecov-action@v3.1.1
+  coverage:
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+    - uses: codecov/codecov-action@v3.1.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage.xml
