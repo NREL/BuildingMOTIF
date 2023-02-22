@@ -17,8 +17,7 @@ jobs:
         virtualenvs-path: ~/.virtualenvs
     - run: |
         poetry install
-        poetry run pycodestyle
-        poetry run pydocstyle
+        poetry run pylama
         poetry run black . --check
         poetry run isort . --check
         poetry run mypy buildingmotif/*.py tests/*.py migrations/*.py
