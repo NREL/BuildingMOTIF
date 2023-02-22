@@ -15,10 +15,8 @@ jobs:
       with:
         virtualenvs-in-project: false
         virtualenvs-path: ~/.virtualenvs
-    - run: poetry install
-
-    - name: Style
-      run: |
+    - run: |
+        poetry install
         poetry run pylama
         poetry run black . --check
         poetry run isort . --check
