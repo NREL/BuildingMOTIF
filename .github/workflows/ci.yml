@@ -9,14 +9,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: ./.github/workflows/setup.yml@ci-cleanup
-    # - uses: actions/checkout@v3
-    # - uses: actions/setup-python@v4
-    # - uses: snok/install-poetry@v1
-    #   with:
-    #     virtualenvs-in-project: false
-    #     virtualenvs-path: ~/.virtualenvs
-    # - run: poetry install
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+    - uses: snok/install-poetry@v1
+      with:
+        virtualenvs-in-project: false
+        virtualenvs-path: ~/.virtualenvs
+    - run: poetry install
 
     - name: Style
       run: |
