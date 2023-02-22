@@ -38,6 +38,7 @@ jobs:
     - name: build jupyter book
       working-directory: ${{runner.workspace}}/BuildingMOTIF/docs/
       run: |
+        pip install -U jupyter-book
         jupyter-book config sphinx .
         sphinx-build . _build/html -b html
 
