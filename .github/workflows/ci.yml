@@ -27,7 +27,7 @@ jobs:
     needs: style
     strategy:
       matrix:
-       python-version: ['3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9', '3.10']
 
     steps:
     - uses: actions/checkout@v3
@@ -38,10 +38,9 @@ jobs:
       with:
         virtualenvs-in-project: false
         virtualenvs-path: ~/.virtualenvs
-
     - run: | 
         poetry install
-        poetry run pytest  tests/unit --cov=./ --cov-report=xml
+        poetry run pytest tests/unit --cov=./ --cov-report=xml
         poetry run pytest tests/integration
 
   coverage:
