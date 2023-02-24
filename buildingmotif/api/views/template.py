@@ -8,7 +8,7 @@ from rdflib.term import Node
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.template import serialize
-from buildingmotif.dataclasses import Template
+from buildingmotif.dataclasses import Model, Template
 
 blueprint = Blueprint("templates", __name__)
 
@@ -69,8 +69,21 @@ def evaluate(template_id: int) -> flask.Response:
             "message": "request content type must be json"
         }, status.HTTP_400_BAD_REQUEST
 
+    model_id = request.get_json().get("model_id")
+    if model_id is None:
+        return {"message": "body must contain 'model_id'"}, status.HTTP_400_BAD_REQUEST
+    try:
+        model = Model.load(model_id)
+    except NoResultFound:
+        return {"message": f"No model with id {model_id}"}, status.HTTP_404_NOT_FOUND
+
+    bindings = request.get_json().get("bindings")
+    if bindings is None:
+        return {"message": "body must contain 'bindings'"}, status.HTTP_400_BAD_REQUEST
+    bindings = get_bindings(bindings)
+    bindings = {k: model.name + "/" + v for k, v in bindings.items()}
+
     # parse bindings from input JSON
-    bindings = get_bindings(request.get_json()["bindings"])
     graph_or_template = template.evaluate(bindings=bindings)
     if isinstance(graph_or_template, Template):
         graph = graph_or_template.body

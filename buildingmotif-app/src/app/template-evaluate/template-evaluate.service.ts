@@ -26,7 +26,7 @@ export class TemplateEvaluateService {
 
     return this.http.post(
       `http://localhost:5000/templates/${templateId}/evaluate`,
-      {modelId, bindings},
+      {model_id: modelId, bindings},
       {responseType: 'text'}
       )
       .pipe(
