@@ -71,30 +71,6 @@ def get_db_uri(args) -> str:
         help="Database URI of the BuildingMOTIF installation. "
         'Defaults to $DB_URI and then contents of "config.py"',
     ),
-)
-def load_libraries(args):
-    """
-    Loads libraries from the provided YML file into the BuildingMOTIF instance at $DB_URI
-    or whatever is in 'configs.py'. Use 'get_default_libraries_yml' for the format of
-    the expected libraries.yml file
-    """
-    db_uri = get_db_uri(args)
-    bm = BuildingMOTIF(db_uri)
-    bm.setup_tables()
-    for library_manifest_file in args.library_manifest_file:
-        manifest_path = Path(library_manifest_file)
-        log.info(f"Loading buildingmotif libraries listed in {manifest_path}")
-        Library.load_from_libraries_yml(str(manifest_path))
-        bm.session.commit()
-
-
-@subcommand(
-    arg(
-        "-d",
-        "--db",
-        help="Database URI of the BuildingMOTIF installation. "
-        'Defaults to $DB_URI and then contents of "config.py"',
-    ),
     arg(
         "--dir",
         help="Path to a local directory containing the library",
@@ -118,10 +94,9 @@ def load_libraries(args):
 )
 def load(args):
     """
-    Loads libraries from
-    - local directories (--dir)
-    - local or remote ontology files (--ont)
-    - local library spec file (--libraries): the provided YML file into the
+    Loads libraries from (1) local directories (--dir),
+    (2) local or remote ontology files (--ont)
+    (3) library spec file (--libraries): the provided YML file into the
       BuildingMOTIF instance at $DB_URI or whatever is in 'configs.py'.
       Use 'get_default_libraries_yml' for the format of the expected libraries.yml file
     """
@@ -145,7 +120,6 @@ def get_default_libraries_yml(_args):
     Creates a default 'libraries.default.yml' file in the current directory
     that can be edited and used with buildingmotif
     """
-    print(subcommands[_args.func].print_usage())
     default_file = (
         Path(__file__).resolve().parents[1] / "resources" / "libraries.default.yml"
     )
