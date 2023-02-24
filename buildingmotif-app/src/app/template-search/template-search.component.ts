@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import { TemplateSearchService, Template } from './template-search.service';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
@@ -16,7 +16,15 @@ export class TemplateSearchComponent implements OnInit{
   fitlerStringControl = new FormControl('');
   filteredTemplates: Observable<Template[]> = new Observable();
 
+  // When in model detail page, allow init of evaluation.
+  @Input() evaulateModelId: number | undefined;
+  @Output() openEvaulateEvent = new EventEmitter<number>();
+
   constructor(private TemplateSearchService: TemplateSearchService){}
+
+  openEvaluateTemplate(template_id: number): void {
+    this.openEvaulateEvent.emit(template_id);
+  }
 
   private _setTemplates(data: Template[]): void {
     this.templates = data;

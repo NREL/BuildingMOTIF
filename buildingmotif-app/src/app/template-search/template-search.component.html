@@ -29,7 +29,7 @@
             <mat-card class="template">
             <mat-card-title>{{template.name}}</mat-card-title>
             <mat-card-actions align="end">
-                <button mat-button routerLink="/templates/{{template.id}}/evaluate">Evaluate</button>
+                <button mat-button *ngIf="evaulateModelId" (click)="openEvaluateTemplate(template.id)">Evaluate</button>
                 <button mat-button routerLink="/templates/{{template.id}}">Details</button>
             </mat-card-actions>
             </mat-card>

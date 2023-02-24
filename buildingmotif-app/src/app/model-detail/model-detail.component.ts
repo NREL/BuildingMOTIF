@@ -8,6 +8,8 @@ import {
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
+import {TemplateEvaluateComponent} from '../template-evaluate/template-evaluate.component'
 
 @Component({
   selector: 'app-model-detail',
@@ -37,6 +39,7 @@ export class ModelDetailComponent{
     private route: ActivatedRoute,
     private ModelDetailService: ModelDetailService,
     private _snackBar: MatSnackBar,
+    public dialog: MatDialog,
   ) {
     [this.model, this.graph] = route.snapshot.data["ModelDetailResolver"];
     this.graphFormControl.setValue(this.graph);
@@ -62,5 +65,12 @@ export class ModelDetailComponent{
 
   undoChangesToGraph(): void {
     this.graphFormControl.setValue(this.graph)
+  }
+
+  openEvaulateEvent(templateId: number): void {
+    this.dialog.open(
+      TemplateEvaluateComponent,
+      {data: {templateId, modelId: this.model.id}}
+    );
   }
 }

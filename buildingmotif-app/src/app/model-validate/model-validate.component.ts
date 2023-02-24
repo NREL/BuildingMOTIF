@@ -70,7 +70,7 @@ export class ModelValidateComponent implements OnInit{
     const selectedLibraries = this.libraries.filter((_, i) => this.selectedLibrariesForm.value[i])
     const args = selectedLibraries.map(l => l.id);
 
-    if (!!this.modelId){
+    if (this.modelId !== undefined){
       this.showValidatingSpinner = true;
 
       this.modelValidateService.validateModel(this.modelId, args).subscribe(

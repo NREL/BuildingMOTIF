@@ -19,14 +19,14 @@ export class TemplateEvaluateService {
 
   constructor(private http: HttpClient) { }
 
-  evaluateTemplate(id: number, parameters: {[name: string]: string}) {
-    const body = Object.entries(parameters).reduce((acc, [name, value]) => {
+  evaluateTemplate(templateId: number, modelId: number, parameters: {[name: string]: string}) {
+    const bindings = Object.entries(parameters).reduce((acc, [name, value]) => {
       return {...acc, [name]: {"@id": value}}
     }, {})
 
     return this.http.post(
-      `http://localhost:5000/templates/${id}/evaluate`,
-      body,
+      `http://localhost:5000/templates/${templateId}/evaluate`,
+      {modelId, bindings},
       {responseType: 'text'}
       )
       .pipe(

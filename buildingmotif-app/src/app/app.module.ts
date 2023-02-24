@@ -36,6 +36,8 @@ import { LibraryService } from './library/library.service';
 import {MatSidenavModule} from '@angular/material/sidenav'; 
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatCheckboxModule} from '@angular/material/checkbox'; 
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatStepperModule} from '@angular/material/stepper';
 
 @NgModule({
   declarations: [
@@ -76,6 +78,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatSidenavModule,
     MatTabsModule,
     MatCheckboxModule,
+    MatDialogModule,
+    MatStepperModule,
   ],
   providers: [TemplateDetailService, LibraryService],
   bootstrap: [AppComponent]

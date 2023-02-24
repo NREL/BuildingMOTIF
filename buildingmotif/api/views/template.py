@@ -70,7 +70,7 @@ def evaluate(template_id: int) -> flask.Response:
         }, status.HTTP_400_BAD_REQUEST
 
     # parse bindings from input JSON
-    bindings = get_bindings(request.get_json())
+    bindings = get_bindings(request.get_json()["bindings"])
     graph_or_template = template.evaluate(bindings=bindings)
     if isinstance(graph_or_template, Template):
         graph = graph_or_template.body
