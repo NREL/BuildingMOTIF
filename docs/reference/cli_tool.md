@@ -55,7 +55,7 @@ The YAML-encoded file contains a list of key-value "documents". Each document co
 
 Using the `directory` key, point to a local directory containing template and shape files. The library will take on the name of the immediately enclosing directory. In the example below `libraries.yml` file, the name of the library will be "ZonePAC":
 
-```yml
+```yaml
 # load a library from a local directory
 - directory: libraries/ZonePAC/
 ```
@@ -64,7 +64,7 @@ Using the `directory` key, point to a local directory containing template and sh
 
 Using the `ontology` key, point to a local *or* remote URL containing an RDF graph containing shapes. Templates will be automatically inferred from the shape descriptions. The name of the library will be given by the name of the graph (pulled from a `<name> a owl:Ontology` triple in the graph).
 
-```yml
+```yaml
 # load an ontology library from a remote URL
 - ontology: https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl
 ```
@@ -73,7 +73,7 @@ Using the `ontology` key, point to a local *or* remote URL containing an RDF gra
 
 Using the `git` key, point to a directory in a branch of a remote git repository. The repository will be temporarily cloned and the corresponding directory (in the given branch) will be loaded into BuildingMOTIF using the same mechanism as for the `directory` key. The `git` document requires the `repo` (URL), `branch` (string) and `path` (string) keys to be provided:
 
-```yml
+```yaml
 # load a directory from a remote directory hosted in a github repo
 - git:
     repo: https://github.com/NREL/BuildingMOTIF
@@ -89,7 +89,7 @@ You can load invidual diretories or ontologies into a BuildingMOTIF instance dir
 
 Use the `--dir` flag to pass the names of directories. The library will take on the name of the immediately enclosing directory. In the example below, the name of the library will be "directory":
 
-```yml
+```bash
 buildingmotif load --dir path/to/library/directory
 ```
 
@@ -99,13 +99,13 @@ Use the `--ont` key to specify a local *or* remote URL containing an RDF graph c
 
 The example below loads the nightly version of the Brick ontology into BuildingMOTIF from a remote URL
 
-```yml
+```bash
 buildingmotif load --ont https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl
 ```
 
 The example below loads a local copy of the ASHRAE 223P ontology into BuildingMOTIF
 
-```yml
+```bash
 buildingmotif load --ont 223p.ttl
 ```
 
