@@ -843,8 +843,10 @@ s223:ManualDamper a s223:Class ;
 
 s223:MeasuredPropertyRule a sh:NodeShape ;
     rdfs:comment "Associate the object of hasMeasurementLocation directly with the observed Property." ;
+    # TODO: what is this suppsoed to do? Does it need a condition?
     sh:rule [ a sh:TripleRule ;
             rdfs:comment "Associate the object of hasMeasurementLocation directly with the observed Property." ;
+            sh:condition [ sh:node [ sh:class s223:Property ] ] ;
             sh:object [ sh:path ( [ sh:inversePath s223:hasMeasurementLocation ] s223:observes ) ] ;
             sh:predicate s223:hasProperty ;
             sh:subject sh:this ] ;
@@ -1417,6 +1419,7 @@ g36:RunStatus-Unknown a g36:RunStatus ;
 g36:VAV_4-1 a s223:Class,
         sh:NodeShape ;
     sh:class g36:VAV ;
+    rdfs:label "g36 vav 4-1" ;
     sh:property [ sh:class s223:DomainSpace ;
             sh:minCount 1 ;
             sh:node [ sh:property [ sh:class g36:Zone ;
@@ -1957,11 +1960,13 @@ s223:QuantifiableActuatableProperty a s223:Class,
 
 s223:QuantityKind-Occupancy a s223:Class,
         s223:QuantityKind-Occupancy,
-        qudt:QuantityKind .
+        qudt:QuantityKind ;
+    rdfs:label "quantitykind-occupancy" .
 
 s223:QuantityKind-RelativePosition a s223:Class,
         s223:QuantityKind-RelativePosition,
-        qudt:QuantityKind .
+        qudt:QuantityKind ;
+    rdfs:label "quantitykind-relativeposition" .
 
 s223:Role-Cooling a s223:EnumerationKind-Role ;
     rdfs:label "Role-Cooling" .
@@ -3268,3 +3273,20 @@ s223:hasConnectionPoint a rdf:Property ;
 
 [] sh:minCount 1 .
 
+s223:EnumerationKind-FlowStatus a s223:Class, s223:EnumerationKind-FlowStatus, sh:NodeShape ;
+  rdfs:label "flow status" ;
+  rdfs:subClassOf s223:EnumerationKind .
+
+
+s223:Role-HeatExchanger a s223:Class, s223:HeatExchanger-Role, sh:NodeShape ;
+  rdfs:label "hx role" ;
+  rdfs:subClassOf s223:EnumerationKind-Role .
+s223:HeatExchanger-Evaporator a s223:Role-HeatExchanger ;
+  rdfs:label "evaporator" .
+s223:HeatExchanger-Cooling a s223:Role-HeatExchanger ;
+  rdfs:label "cooling" .
+s223:HeatExchanger-Heating a s223:Role-HeatExchanger ;
+  rdfs:label "heating" .
+s223:FCU a s223:Class, sh:NodeShape ;
+    rdfs:label "fcu" ;
+    rdfs:subClassOf s223:TerminalUnit.

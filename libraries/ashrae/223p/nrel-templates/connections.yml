@@ -40,7 +40,13 @@ duct:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Duct ;
       s223:hasMedium s223:Medium-Air ;
-      s223:cnx P:a, P:b .
+      s223:connectsAt P:a, P:b .
+    # issue here is that 'connectsAt' requires a,b to be conn points
+    # but we can't instantiate that class directly *and* being a conn point
+    # involves other properties that must be included (e.g. hasmedium).
+    # TODO: how to solve this?
+    # P:a a s223:ConnectionPoint .
+    # P:b a s223:ConnectionPoint .
 
 zone-air-inlet-cp:
   body: >

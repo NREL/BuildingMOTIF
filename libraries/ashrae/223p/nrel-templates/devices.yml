@@ -244,9 +244,9 @@ evaporative-cooler:
     P:in s223:hasProperty P:entering-air-temp .
     P:out s223:hasProperty P:leaving-air-temp, P:leaving-air-humidity .
   dependencies:
-    - template: air-outlet-cp
-      args: {"name": "in"}
     - template: air-inlet-cp
+      args: {"name": "in"}
+    - template: air-outlet-cp
       args: {"name": "out"}
     - template: water-outlet-cp
       args: {"name": "water-in"}
@@ -301,6 +301,8 @@ heat-exchanger:
       args: {"name": "B-chw-diff-press"}
     - template: water-temperature
       args: {"name": "chw-supply-temperature"}
+    - template: water-temperature
+      args: {"name": "chw-return-temperature"}
     - template: water-flow
       args: {"name": "chw-flow"}
     - template: differential-sensor
@@ -309,3 +311,41 @@ heat-exchanger:
       args: {"name": "B-chw-diff-press-sensor", "property": "B-chw-diff-press", "whereA": "B-in", "whereB": "B-out"}
     - template: sensor
       args: {"name": "chw-flow-sensor", "property": "chw-flow"}
+
+fcu:
+  # TODO: add s223:FCU
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:FCU ;
+      s223:contains P:fan, P:cooling-coil ;
+      s223:hasConnectionPoint P:in, P:out .
+  dependencies:
+    - template: chilled-water-coil
+      args: {"name": "cooling-coil"}
+    - template: fan
+      args: {"name": "fan"}
+    - template: air-outlet-cp
+      args: {"name": "out"}
+    - template: air-inlet-cp
+      args: {"name": "in"}
+
+unit-heater:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    P:name a s223:UnitHeater, s223:Equipment ;
+      rdfs:label "Unit Heater" ;
+      s223:contains P:fan, P:heating-coil ;
+      s223:hasConnectionPoint P:in, P:out .
+  dependencies:
+    - template: hot-water-coil
+      args: {"name": "heating-coil"}
+    - template: fan
+      args: {"name": "fan"}
+    - template: air-outlet-cp
+      args: {"name": "out"}
+    - template: air-inlet-cp
+      args: {"name": "in"}
+
