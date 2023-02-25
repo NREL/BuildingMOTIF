@@ -13,48 +13,56 @@ makeup-air-unit:
                     P:evaporative-cooler,
                     P:cooling-coil, P:heating-coil, P:sa_pressure_sensor;
       s223:hasProperty P:oa_rh, P:sa_sp ;
-      s223:cnx P:air-supply, P:outside-air ;
-      s223:hasSystemConnectionPoint P:supply-conn, P:outside-conn .
-    P:c0 a s223:Duct .
-    P:outside-air s223:cnx P:c0 .
-    P:oad-in s223:cnx P:c0 .
+      s223:hasConnectionPoint P:air-supply, P:outside-air .
+    P:outside-air s223:connectsThrough P:c0 .
+    P:oad-in s223:connectsThrough P:c0 .
 
-    P:c1 a s223:Duct .
-    P:oad-out s223:cnx P:c1 .
-    P:pre-filter-in s223:cnx P:c1 .
+    P:oad-out s223:connectsThrough P:c1 .
+    P:pre-filter-in s223:connectsThrough P:c1 .
 
-    P:c2 a s223:Duct .
-    P:pre-filter-out s223:cnx P:c2 .
-    P:final-filter-in s223:cnx P:c2 .
+    P:pre-filter-out s223:connectsThrough P:c2 .
+    P:final-filter-in s223:connectsThrough P:c2 .
 
-    P:c3 a s223:Duct .
-    P:final-filter-out s223:cnx P:c3 .
-    P:HRC-air-in s223:cnx P:c3 .
+    P:final-filter-out s223:connectsThrough P:c3 .
+    P:HRC-air-in s223:connectsThrough P:c3 .
 
-    P:c4 a s223:Duct .
-    P:HRC-air-out s223:cnx P:c4 .
-    P:supply-fan-in s223:cnx P:c4 .
+    P:HRC-air-out s223:connectsThrough P:c4 .
+    P:supply-fan-in s223:connectsThrough P:c4 .
 
-    P:c5 a s223:Duct .
-    P:supply-fan-out s223:cnx P:c5 .
-    P:cooling-coil-air-in s223:cnx P:c5 .
+    P:supply-fan-out s223:connectsThrough P:c5 .
+    P:cooling-coil-air-in s223:connectsThrough P:c5 .
 
-    P:c6 a s223:Duct .
-    P:cooling-coil-air-out s223:cnx P:c6 .
-    P:heating-coil-air-in s223:cnx P:c6 .
+    P:cooling-coil-air-out s223:connectsThrough P:c6 .
+    P:heating-coil-air-in s223:connectsThrough P:c6 .
 
-    P:c7 a s223:Duct .
-    P:heating-coil-air-out s223:cnx P:c7 .
-    P:evaporative-cooler-in s223:cnx P:c7 .
+    P:heating-coil-air-out s223:connectsThrough P:c7 .
+    P:evaporative-cooler-in s223:connectsThrough P:c7 .
 
-    P:c8 a s223:Duct .
-    P:evaporative-cooler-out s223:cnx P:c8 .
-    P:air-supply s223:cnx P:c8 .
+    P:evaporative-cooler-out s223:connectsThrough P:c8 .
+    P:air-supply s223:connectsThrough P:c8 .
       # s223:servesVAV P:vav
       # TODO: building static pressure?
       # TODO: outside air dry bulb temp
       # TODO: outside air differential pressure
   dependencies:
+    - template: duct
+      args: {"name": "c0"}
+    - template: duct
+      args: {"name": "c1"}
+    - template: duct
+      args: {"name": "c2"}
+    - template: duct
+      args: {"name": "c3"}
+    - template: duct
+      args: {"name": "c4"}
+    - template: duct
+      args: {"name": "c5"}
+    - template: duct
+      args: {"name": "c6"}
+    - template: duct
+      args: {"name": "c7"}
+    - template: duct
+      args: {"name": "c8"}
     - template: damper
       args: {"name": "oad"}
     - template: evaporative-cooler
@@ -76,13 +84,9 @@ makeup-air-unit:
     - template: static-pressure
       args: {"name": "sa_sp"}
     - template: air-outlet-cp
-      args: {"name": "air-supply", "mapsto": "supply-conn"}
+      args: {"name": "air-supply"}
     - template: air-inlet-cp
-      args: {"name": "outside-air", "mapsto": "outside-conn"}
-    - template: system-air-inlet-cp
-      args: {"name": "outside-conn"}
-    - template: system-air-outlet-cp
-      args: {"name": "supply-conn"}
+      args: {"name": "outside-air"}
 
 vav-reheat:
   body: >
@@ -92,33 +96,31 @@ vav-reheat:
       s223:contains P:rhc, P:dmp, P:sup-air-flow-sensor,
                     P:sup-air-temp-sensor, P:sup-air-pressure-sensor ;
       s223:hasProperty P:sup-air-temp, P:sup-air-flow, P:sup-air-pressure ;
-      s223:cnx P:air-in, P:air-out ;
-      s223:hasSystemConnectionPoint P:vav-in, P:vav-out .
+      s223:hasConnectionPoint P:air-in, P:air-out .
 
-    P:c0 a s223:Duct .
-    P:air-in s223:cnx P:c0 .
-    P:rhc-air-in s223:cnx P:c0 .
+    P:air-in s223:connectsThrough P:c0 .
+    P:rhc-air-in s223:connectsThrough P:c0 .
 
-    P:c1 a s223:Duct .
-    P:rhc-air-out s223:cnx P:c1 .
-    P:dmp-in s223:cnx P:c1 .
+    P:rhc-air-out s223:connectsThrough P:c1 .
+    P:dmp-in s223:connectsThrough P:c1 .
 
-    P:c2 a s223:Duct .
-    P:dmp-out s223:cnx P:c2 .
-    P:air-out s223:cnx P:c2 .
+    P:dmp-out s223:connectsThrough P:c2 .
+    P:air-out s223:connectsThrough P:c2 .
   dependencies:
+    - template: duct
+      args: {"name": "c0"}
+    - template: duct
+      args: {"name": "c1"}
+    - template: duct
+      args: {"name": "c2"}
     - template: hot-water-coil
       args: {"name": "rhc"}
     - template: damper
       args: {"name": "dmp"}
-    - template: system-air-inlet-cp
-      args: {"name": "vav-in"}
-    - template: system-air-outlet-cp
-      args: {"name": "vav-out"}
     - template: air-inlet-cp
-      args: {"name": "air-in", "mapsto": "vav-in"}
+      args: {"name": "air-in"}
     - template: air-outlet-cp
-      args: {"name": "air-out", "mapsto": "vav-out"}
+      args: {"name": "air-out"}
     - template: air-temperature
       args: {"name": "sup-air-temp"}
     - template: sensor
@@ -138,8 +140,8 @@ fcu:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:FCU, s223:System ;
       s223:contains P:fan, P:cooling-coil ;
-      s223:cnx P:in, P:out ;
-      s223:hasSystemConnectionPoint P:fcu-in, P:fcu-out .
+      s223:hasConnectionPoint P:in, P:out ;
+      s223:hasConnectionPoint P:fcu-in, P:fcu-out .
   dependencies:
     - template: chilled-water-coil
       args: {"name": "cooling-coil"}
@@ -149,9 +151,9 @@ fcu:
       args: {"name": "out", "mapsto": "fcu-out"}
     - template: air-inlet-cp
       args: {"name": "in", "mapsto": "fcu-in"}
-    - template: system-air-inlet-cp
+    - template: air-inlet-cp
       args: {"name": "fcu-in"}
-    - template: system-air-outlet-cp
+    - template: air-outlet-cp
       args: {"name": "fcu-out"}
 
 unit-heater:
@@ -162,8 +164,8 @@ unit-heater:
     P:name a s223:UnitHeater, s223:System ;
       rdfs:label "Unit Heater" ;
       s223:contains P:fan, P:heating-coil ;
-      s223:cnx P:in, P:out ;
-      s223:hasSystemConnectionPoint P:uh-in, P:uh-out .
+      s223:hasConnectionPoint P:in, P:out ;
+      s223:hasConnectionPoint P:uh-in, P:uh-out .
   dependencies:
     - template: hot-water-coil
       args: {"name": "heating-coil"}
@@ -173,9 +175,9 @@ unit-heater:
       args: {"name": "out", "mapsto": "uh-out"}
     - template: air-inlet-cp
       args: {"name": "in", "mapsto": "uh-in"}
-    - template: system-air-inlet-cp
+    - template: air-inlet-cp
       args: {"name": "uh-in"}
-    - template: system-air-outlet-cp
+    - template: air-outlet-cp
       args: {"name": "uh-out"}
 
 chilled-water-system:
