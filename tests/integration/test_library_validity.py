@@ -7,9 +7,6 @@ from buildingmotif.dataclasses import Library, Model
 
 
 @pytest.mark.integration
-@pytest.mark.xfail(
-    reason="223P templates should be brought up to date with recent changes in the standard"
-)
 def test_223p_library(bm, library_path_223p: Path):
     ont_223p = Library.load(ontology_graph="libraries/ashrae/223p/ontology/223p.ttl")
     lib = Library.load(directory=str(library_path_223p))
