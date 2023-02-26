@@ -12,38 +12,40 @@ on:
 
 jobs:
 
-  repo-vis:
+  # deploy docs for develop and main branches
+  deploy-docs:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code
-        uses: actions/checkout@main
-
-      - name: update repo diagram
-        uses: githubocto/repo-visualizer@main
+      # setup
+      - uses: actions/checkout@main
+      - uses: actions/setup-python@main
+      
+      # update repo visualization for docs
+      - uses: githubocto/repo-visualizer@main
         with:
           output_file: docs/reference/apidoc/diagram.svg
           excluded_paths: ".github"
           commit_message: "update repo diagram [skip ci]"
+          
+      # install poetry, dependencies, project, and jupyter book to build docs
+      # TODO confirm this is needed after adding RTD for versioned docs
+      - run: |
+          pip install poetry
+          poetry install
+          pip install .
+          pip install -U jupyter-book
+          jupyter-book config sphinx ./docs/
+          sphinx-build ./docs/ _build/html -b html
+          
+#       # TODO can we use an official GitHub Action? https://github.com/actions/deploy-pages
+#       - uses: peaceiris/actions-gh-pages@v3.6.1
+#         with:
+#           github_token: ${{ secrets.GITHUB_TOKEN }}
+#           publish_dir: ./docs/_build/html
 
-  build:
-    name: build distribution for Python
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.9', '3.10']
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - uses: snok/install-poetry@v1
-
-    - name: build
-      run: poetry build
-
-  publish:
+  deploy-dist:
     name: publish distribution
-    needs: build
+    needs: deploy-docs
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
