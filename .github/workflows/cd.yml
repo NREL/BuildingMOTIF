@@ -17,26 +17,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # setup
-      - uses: actions/checkout@main
-      - uses: actions/setup-python@main
-      
+      - name: checkout
+        uses: actions/checkout@main
+      - name: setup-python
+        uses: actions/setup-python@main
       # update repo visualization for docs
-      - uses: githubocto/repo-visualizer@main
+      - name: repo-visualizer
+        uses: githubocto/repo-visualizer@main
         with:
           output_file: docs/reference/apidoc/diagram.svg
           excluded_paths: ".github"
           commit_message: "update repo diagram [skip ci]"
-          
-      # install poetry, dependencies, project, and jupyter book to build docs
-      # TODO confirm this is needed after adding RTD for versioned docs
-      - run: |
-          pip install poetry
-          poetry install
-          pip install .
-          pip install -U jupyter-book
+      # install project, which is required for autodoc of code
+      - name: install buildingmotif
+        run: pip install .
+      # install jupyter-book, which for some reason isn't available with poetry install
+      - name: install jupyter-book
+        run: pip install jupyter-book
+      # build docs
+      - name: build-docs
+        run: |
           jupyter-book config sphinx ./docs/
           sphinx-build ./docs/ _build/html -b html
-          
 #       # TODO can we use an official GitHub Action? https://github.com/actions/deploy-pages
 #       - uses: peaceiris/actions-gh-pages@v3.6.1
 #         with:
