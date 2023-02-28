@@ -12,8 +12,8 @@ on:
 
 jobs:
 
-  # deploy docs for develop and main branches
-  deploy-docs:
+  # build docs for develop and main branches
+  build-docs:
     runs-on: ubuntu-latest
     steps:
       # setup
@@ -32,22 +32,17 @@ jobs:
       - name: install buildingmotif
         run: pip install .
       # install jupyter-book, which for some reason isn't available with poetry install
-      - name: install jupyter-book
+      - name: install jupyter book
         run: pip install jupyter-book
-      # build docs
-      - name: build-docs
+      # build docs, which are deployed by repo settings
+      - name: build docs
         run: |
           jupyter-book config sphinx ./docs/
           sphinx-build ./docs/ _build/html -b html
-#       # TODO can we use an official GitHub Action? https://github.com/actions/deploy-pages
-#       - uses: peaceiris/actions-gh-pages@v3.6.1
-#         with:
-#           github_token: ${{ secrets.GITHUB_TOKEN }}
-#           publish_dir: ./docs/_build/html
 
   # deploy distribution if a new release and tag are created
   deploy-dist:
-    needs: deploy-docs
+    needs: build-docs
     if: startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
     strategy:
