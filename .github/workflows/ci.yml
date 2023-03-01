@@ -5,7 +5,7 @@ on:
 
 jobs:
 
-  style:
+  format:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -17,14 +17,15 @@ jobs:
         with:
           virtualenvs-in-project: false
           virtualenvs-path: ~/.virtualenvs
-      - run: |
-          poetry install
-          poetry run pylama
-          poetry run black . --check
+      - name: poetry install
+        run: poetry install
+      - name: format
+        run: 
           poetry run isort . --check
+          poetry run black . --check
 
   tests:
-    needs: style
+    needs: format
     runs-on: ubuntu-latest
     strategy:
       matrix:
