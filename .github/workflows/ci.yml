@@ -20,7 +20,7 @@ jobs:
       - name: poetry install
         run: poetry install
       - name: format
-        run: 
+        run: |
           poetry run isort . --check
           poetry run black . --check
 
@@ -44,7 +44,9 @@ jobs:
           virtualenvs-path: ~/.virtualenvs
       - name: poetry install
         run: poetry install
-      - name: static type checks
+      - name: lint
+        run: poetry run pylint buildingmotif
+      - name: type check
         run: poetry run mypy
       - name: unit tests
         run: poetry run pytest tests/unit --cov=./ --cov-report=xml
