@@ -13,8 +13,8 @@ on:
 
 jobs:
 
-  # build docs for develop and main branches
-  build-docs:
+  # deploy docs for develop and main branches
+  deploy-docs:
     runs-on: ubuntu-latest
     steps:
       # setup, checkout pull_request.head.ref for repo-vis
@@ -42,10 +42,16 @@ jobs:
         run: |
           jupyter-book config sphinx ./docs/
           sphinx-build ./docs/ _build/html -b html
+      # TODO can we use an official GitHub Action? https://github.com/actions/deploy-pages
+      - name: deploy docs
+        uses: peaceiris/actions-gh-pages@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_build/html      
 
   # deploy distribution if a new release and tag are created
   deploy-dist:
-    needs: build-docs
+    needs: deploy-docs
     if: startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
     steps:
