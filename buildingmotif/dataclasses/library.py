@@ -19,6 +19,7 @@ from buildingmotif.database.tables import DBLibrary, DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.namespaces import XSD
+from buildingmotif.schemas import validate_libraries_yaml
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import get_ontology_files, get_template_parts_from_shape
 
@@ -358,6 +359,7 @@ class Library:
         :rtype: None
         """
         libraries = yaml.load(open(filename, "r"), Loader=yaml.FullLoader)
+        validate_libraries_yaml(libraries)  # raises exception
         for description in libraries:
             _resolve_library_definition(description)
 
