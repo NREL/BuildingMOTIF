@@ -103,11 +103,11 @@ def load(args):
     db_uri = get_db_uri(args)
     bm = BuildingMOTIF(db_uri)
     bm.setup_tables()
-    for directory in args.dir:
+    for directory in args.dir or []:
         Library.load(directory=directory)
-    for ont in args.ont:
+    for ont in args.ont or []:
         Library.load(ontology_graph=ont)
-    for library_manifest_file in args.library_manifest_file:
+    for library_manifest_file in args.library_manifest_file or []:
         manifest_path = Path(library_manifest_file)
         log.info(f"Loading buildingmotif libraries listed in {manifest_path}")
         Library.load_from_libraries_yml(str(manifest_path))
