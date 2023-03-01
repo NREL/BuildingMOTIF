@@ -10,4 +10,4 @@ Code Documentation
 Code Visualization
 ==================
 
-.. image:: diagram.svg
+.. image:: code_visualization.svg

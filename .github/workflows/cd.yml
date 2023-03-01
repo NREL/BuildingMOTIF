@@ -7,49 +7,67 @@ on:
     - main
   push:
     branches:
+    - develop
     - main
   release:
 
 jobs:
 
-  build:
-    name: build distribution for Python
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.9', '3.10']
-    steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
-    - uses: snok/install-poetry@v1
-
-    - name: build
-      run: poetry build
-
-  publish:
-    name: publish distribution
-    needs: build
+  # build docs for develop and main branches
+  build-docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
-    - uses: snok/install-poetry@v1
+      # setup, checkout pull_request.head.ref for repo-vis
+      - name: checkout
+        uses: actions/checkout@main
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+      - name: setup-python
+        uses: actions/setup-python@main
+      # update repo visualization for docs
+      - name: repo-visualizer
+        uses: githubocto/repo-visualizer@main
+        with:
+          output_file: docs/reference/apidoc/code_visualization.svg
+          excluded_paths: ".github"
+          commit_message: "repo-visualizer [skip actions]"
+      # install project, which is required for autodoc of code
+      - name: install buildingmotif
+        run: pip install .
+      # install jupyter-book, which for some reason isn't available with poetry install
+      - name: install jupyter book
+        run: pip install jupyter-book
+      # build docs, which are deployed by repo settings
+      - name: build docs
+        run: |
+          jupyter-book config sphinx ./docs/
+          sphinx-build ./docs/ _build/html -b html
 
-    - name: build
-      run: poetry build
-
-    - name: publish distribution 📦 to Test PyPI
-      if: ${{ github.base_ref == 'main' }}
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        repository_url: https://test.pypi.org/legacy/
-        skip_existing: true
-
-    - name: publish distribution 📦 to PyPI
-      if: startsWith(github.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
+  # deploy distribution if a new release and tag are created
+  deploy-dist:
+    needs: build-docs
+    if: startsWith(github.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    steps:
+      # setup
+      - name: checkout
+        uses: actions/checkout@main
+      - name: setup-python
+        uses: actions/setup-python@main
+      # install poetry and build dist
+      - name: install poetry
+        run: pip install poetry
+      - name: build dist
+        run: poetry build
+      - name: publish distribution to Test PyPI
+        id: test-pypi
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+          skip_existing: true
+      - name: publish distribution to PyPI
+        if: steps.test-pypi.outcome == 'success'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
