@@ -17,9 +17,11 @@ jobs:
   build-docs:
     runs-on: ubuntu-latest
     steps:
-      # setup
+      # setup, checkout pull_request.head.ref for repo-vis
       - name: checkout
         uses: actions/checkout@main
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
       - name: setup-python
         uses: actions/setup-python@main
       # update repo visualization for docs
