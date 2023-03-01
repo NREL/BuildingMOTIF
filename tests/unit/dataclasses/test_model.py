@@ -128,3 +128,17 @@ def test_model_compile(bm: BuildingMOTIF):
     )
 
     assert isomorphic(compiled_model, precompiled_model)
+
+
+def test_get_shape_collection(clean_building_motif):
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+    shape_collection = model.get_shape_collection()
+    shape_collection.graph.add(
+        (URIRef("http://example.org/alex"), RDF.type, FOAF.Person)
+    )
+
+    assert model.get_shape_collection() == shape_collection
+    assert isomorphic(
+        shape_collection.load(shape_collection.id).graph, shape_collection.graph
+    )

@@ -32,6 +32,7 @@ class Model:
     _description: str
     graph: rdflib.Graph
     _bm: "BuildingMOTIF"
+    _shape_collection_id: int
 
     @classmethod
     def create(cls, name: str, description: str = "") -> "Model":
@@ -59,6 +60,7 @@ class Model:
             _description=db_model.description,
             graph=graph,
             _bm=bm,
+            _shape_collection_id=db_model.shape_collection_id,
         )
 
     @classmethod
@@ -88,6 +90,7 @@ class Model:
             _description=db_model.description,
             graph=graph,
             _bm=bm,
+            _shape_collection_id=db_model.shape_collection_id,
         )
 
     @property
@@ -275,3 +278,11 @@ class Model:
             )
 
         return results
+
+    def get_shape_collection(self) -> ShapeCollection:
+        """Get ShapeCollection from model.
+
+        :return: model's shape collection
+        :rtype: ShapeCollection
+        """
+        return ShapeCollection.load(self._shape_collection_id)
