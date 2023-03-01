@@ -22,7 +22,6 @@ jobs:
           poetry run pylama
           poetry run black . --check
           poetry run isort . --check
-          poetry run mypy buildingmotif/*.py tests/*.py migrations/*.py
 
   tests:
     needs: style
@@ -42,11 +41,16 @@ jobs:
         with:
           virtualenvs-in-project: false
           virtualenvs-path: ~/.virtualenvs
-      - run: | 
-          poetry install
-          poetry run pytest tests/unit --cov=./ --cov-report=xml
-          poetry run pytest tests/integration
-          poetry build
+      - name: poetry install
+        run: poetry install
+      - name: static type checks
+        run: poetry run mypy buildingmotif/*.py tests/*.py migrations/*.py
+      - name: unit tests
+        run: poetry run pytest tests/unit --cov=./ --cov-report=xml
+      - name: integration tests
+        run: poetry run pytest tests/integration
+      - name: build tests
+        run: poetry build
 
   coverage:
     needs: tests
