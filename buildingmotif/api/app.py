@@ -67,7 +67,7 @@ def create_app(DB_URI):
 if __name__ == "__main__":
     """Run API."""
     # If config doesn't exist, this is considered a third party import and module cant be found.
-    import configs as building_motif_configs  # type: ignore # isort:skip
+    import configs as building_motif_configs  # type: ignore # isort:skip pylint: disable=skip
 
     app = create_app(building_motif_configs.DB_URI)
     app.run(debug=True, threaded=False)
