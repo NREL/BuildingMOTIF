@@ -11,7 +11,10 @@ from buildingmotif import BuildingMOTIF
 class Record:
     """Represents a piece of metadata from some metadata ingress"""
 
+    # an arbitrary "type hint"
     rtype: str
+    # possibly-nested dictionary of (semi-)structured data from
+    # the underlying source
     fields: dict
 
 
