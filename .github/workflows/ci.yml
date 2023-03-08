@@ -5,7 +5,7 @@ on:
 
 jobs:
 
-  format:
+  styling:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -19,13 +19,13 @@ jobs:
           virtualenvs-path: ~/.virtualenvs
       - name: poetry install
         run: poetry install
-      - name: format
+      - name: run isort and black
         run: |
           poetry run isort . --check
           poetry run black . --check
 
-  tests:
-    needs: format
+  testing:
+    needs: styling
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -56,7 +56,7 @@ jobs:
         run: poetry build
 
   coverage:
-    needs: tests
+    needs: testing
     runs-on: ubuntu-latest
     steps:
       - uses: codecov/codecov-action@main
