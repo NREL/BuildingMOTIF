@@ -27,11 +27,13 @@ def test_bacnet_ingress(bm):
         tobrick = BACnetToBrickIngress(bm, bacnet)
         m.add_graph(tobrick.graph(BLDG))
 
-        devices = list(m.graph.objects(RDF["type"], BACNET["BACnetDevice"]))
-        assert len(devices) == 1, "Did not find exactly 1 device"
-        assert devices[0][0] == BLDG["599"]  # type: ignore
+        devices = list(m.graph.subjects(RDF["type"], BACNET["BACnetDevice"]))
+        assert (
+            len(devices) == 1
+        ), f"Did not find exactly 1 device (found {len(devices)})"
+        assert devices[0] == BLDG["599"]  # type: ignore
 
-        objects = list(m.graph.objects(RDF["type"], BRICK["Point"]))
+        objects = list(m.graph.subjects(RDF["type"], BRICK["Point"]))
         assert len(objects) == 2, "Did not find exactly 2 points"
     finally:
         subprocess.run(docker_compose_stop, cwd=docker_compose_path)

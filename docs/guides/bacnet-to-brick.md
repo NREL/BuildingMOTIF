@@ -52,8 +52,8 @@ BLDG = Namespace('urn:bldg/')
 model = Model.create(BLDG, description="This is a test model for a simple building")
 
 # load some libraries we will use later
-brick = Library.load(ontology_graph="../../libraries/brick/Brick.ttl")
-constraints = Library.load(ontology_graph="../../buildingmotif/resources/constraints.ttl")
+brick = Library.load(ontology_graph="https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl")
+constraints = Library.load(ontology_graph="building_motif_ontology.ttl")
 ```
 
 ## Pulling in BACnet Metadata
