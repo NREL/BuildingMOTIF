@@ -34,4 +34,18 @@ class Record:
 
 The choice of values for the `Record` is up to each `RecordIngressHandler` instance.
 
-## Example: BACnet to Brick
+## Usage Example: BACnet to Brick
+
+To illustrate use of the `Ingress` API we show how to use two ingress handlers provided by BuildingMOTIF to construct a Brick model from a BACnet network.
+
+We will use `buildingmotif.ingresses.bacnet.BACnetNetwork` (a `RecordIngressHandler`) to pull some `Record`s out of a BACnet network.
+These `Record`s will represent BACnet objects and devices; we use the `rtype` of each `Record`  to differentiate this.
+
+```python
+from buildingmotif.ingresses.bacnet import BACnetNetwork
+
+# scan the 10.0.0.1/24 subnet for BACnet devices
+network = BACnetNetwork(ip="10.0.0.1/24")
+```
+
+
