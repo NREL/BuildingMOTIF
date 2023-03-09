@@ -64,7 +64,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/template_writing';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Creating a Brick Model from a BACnet Network" href="../guides/bacnet-to-brick.html" />
+    <link rel="next" title="Bibliography" href="../bibliography.html" />
     <link rel="prev" title="Model Correction" href="model_correction.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -159,11 +159,6 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../reference/developer_documentation.html">Developer Documentation</a></li>
-
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="../reference/cli_tool.html">Command Line Tool</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -202,7 +197,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -218,10 +212,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="model_validation.html">Model Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model_correction.html">Model Correction</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Template Writing</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../guides/bacnet-to-brick.html">Creating a Brick Model from a BACnet Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -475,7 +465,7 @@ document.write(`
 <span class="w">    </span><span class="no">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
 <span class="w">    </span><span class="no">p:name a brick:Variable_Air_Volume_Box_With_Reheat ;</span>
 <span class="w">        </span><span class="no">brick:hasPart p:damper, p:htg-coil ;</span>
-<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp, p:occ, p:co2 ;</span>
+<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp ;</span>
 <span class="w">        </span><span class="no">brick:feeds p:zone .</span>
 <span class="w">  </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;occ&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;co2&#39;</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">dependencies</span><span class="p">:</span>
@@ -518,7 +508,7 @@ document.write(`
 <span class="w">    </span><span class="no">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
 <span class="w">    </span><span class="no">p:name a brick:Variable_Air_Volume_Box_With_Reheat ;</span>
 <span class="w">        </span><span class="no">brick:hasPart p:damper, p:htg-coil ;</span>
-<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp, p:occ, p:co2 ;</span>
+<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp ;</span>
 <span class="w">        </span><span class="no">brick:feeds p:zone .</span>
 </pre></div>
 </div>
@@ -539,7 +529,7 @@ document.write(`
 <span class="w">    </span><span class="no">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
 <span class="w">    </span><span class="no">p:name a brick:Variable_Air_Volume_Box_With_Reheat ;</span>
 <span class="w">        </span><span class="no">brick:hasPart p:damper, p:htg-coil ;</span>
-<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp, p:occ, p:co2 ;</span>
+<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp ;</span>
 <span class="w">        </span><span class="no">brick:feeds p:zone .</span>
 <span class="w">  </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;occ&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;co2&#39;</span><span class="p p-Indicator">]</span>
 </pre></div>
@@ -562,7 +552,7 @@ document.write(`
 <span class="w">    </span><span class="no">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
 <span class="w">    </span><span class="no">p:name a brick:Variable_Air_Volume_Box_With_Reheat ;</span>
 <span class="w">        </span><span class="no">brick:hasPart p:damper, p:htg-coil ;</span>
-<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp, p:occ, p:co2 ;</span>
+<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp ;</span>
 <span class="w">        </span><span class="no">brick:feeds p:zone .</span>
 <span class="w">  </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;occ&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;co2&#39;</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">dependencies</span><span class="p">:</span>
@@ -614,7 +604,7 @@ document.write(`
 <span class="w">    </span><span class="no">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
 <span class="w">    </span><span class="no">p:name a brick:Variable_Air_Volume_Box_With_Reheat ;</span>
 <span class="w">        </span><span class="no">brick:hasPart p:damper, p:htg-coil ;</span>
-<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp, p:occ, p:co2 ;</span>
+<span class="w">        </span><span class="no">brick:hasPoint p:sa-flow, p:sa-temp, p:za-temp ;</span>
 <span class="w">        </span><span class="no">brick:feeds p:zone .</span>
 <span class="w">  </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;occ&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;co2&#39;</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">dependencies</span><span class="p">:</span>
@@ -743,11 +733,11 @@ my-templates/
       </div>
     </a>
     <a class="right-next"
-       href="../guides/bacnet-to-brick.html"
+       href="../bibliography.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Creating a Brick Model from a BACnet Network</p>
+        <p class="prev-next-title">Bibliography</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

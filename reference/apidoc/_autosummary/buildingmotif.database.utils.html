@@ -159,11 +159,6 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../developer_documentation.html">Developer Documentation</a></li>
-
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="../../cli_tool.html">Command Line Tool</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Code Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="buildingmotif.html">buildingmotif</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -202,7 +197,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -218,10 +212,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_validation.html">Model Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_correction.html">Model Correction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/template_writing.html">Template Writing</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../guides/bacnet-to-brick.html">Creating a Brick Model from a BACnet Network</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -423,185 +413,6 @@ document.write(`
                   
   <section id="module-buildingmotif.database.utils">
 <span id="buildingmotif-database-utils"></span><h1>buildingmotif.database.utils<a class="headerlink" href="#module-buildingmotif.database.utils" title="Permalink to this heading">#</a></h1>
-<p class="rubric">Classes</p>
-<table class="autosummary longtable table autosummary">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.database.utils.JSONType" title="buildingmotif.database.utils.JSONType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JSONType</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Custom JSON type that uses JSONB on Postgres and JSON on other dialects.</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="py class">
-<dt class="sig sig-object py" id="buildingmotif.database.utils.JSONType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JSONType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/utils.html#JSONType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.utils.JSONType" title="Permalink to this definition">#</a></dt>
-<dd><p>Custom JSON type that uses JSONB on Postgres and JSON on other dialects.
-This allows us to use our custom JSON serialization below <em>and</em> have the
-database enforce uniqueness on JSON-encoded dictionaries</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildingmotif.database.utils.JSONType.impl">
-<span class="sig-name descname"><span class="pre">impl</span></span><a class="headerlink" href="#buildingmotif.database.utils.JSONType.impl" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">JSON</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildingmotif.database.utils.JSONType.hashable">
-<span class="sig-name descname"><span class="pre">hashable</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#buildingmotif.database.utils.JSONType.hashable" title="Permalink to this definition">#</a></dt>
-<dd><p>Flag, if False, means values from this type aren’t hashable.</p>
-<p>Used by the ORM when uniquing result lists.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildingmotif.database.utils.JSONType.cache_ok">
-<span class="sig-name descname"><span class="pre">cache_ok</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#buildingmotif.database.utils.JSONType.cache_ok" title="Permalink to this definition">#</a></dt>
-<dd><p>Indicate if statements using this <code class="xref py py-class docutils literal notranslate"><span class="pre">ExternalType</span></code> are “safe to
-cache”.</p>
-<p>The default value <code class="docutils literal notranslate"><span class="pre">None</span></code> will emit a warning and then not allow caching
-of a statement which includes this type.   Set to <code class="docutils literal notranslate"><span class="pre">False</span></code> to disable
-statements using this type from being cached at all without a warning.
-When set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the object’s class and selected elements from its
-state will be used as part of the cache key.  For example, using a
-<code class="xref py py-class docutils literal notranslate"><span class="pre">TypeDecorator</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyType</span><span class="p">(</span><span class="n">TypeDecorator</span><span class="p">):</span>
-    <span class="n">impl</span> <span class="o">=</span> <span class="n">String</span>
-
-    <span class="n">cache_ok</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">internal_only</span> <span class="o">=</span> <span class="kc">True</span>
-</pre></div>
-</div>
-<p>The cache key for the above type would be equivalent to:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MyType</span><span class="p">([</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">_static_cache_key</span>
-<span class="go">(&lt;class &#39;__main__.MyType&#39;&gt;, (&#39;choices&#39;, (&#39;a&#39;, &#39;b&#39;, &#39;c&#39;)))</span>
-</pre></div>
-</div>
-<p>The caching scheme will extract attributes from the type that correspond
-to the names of parameters in the <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> method.  Above, the
-“choices” attribute becomes part of the cache key but “internal_only”
-does not, because there is no parameter named “internal_only”.</p>
-<p>The requirements for cacheable elements is that they are hashable
-and also that they indicate the same SQL rendered for expressions using
-this type every time for a given cache value.</p>
-<p>To accommodate for datatypes that refer to unhashable structures such
-as dictionaries, sets and lists, these objects can be made “cacheable”
-by assigning hashable structures to the attributes whose names
-correspond with the names of the arguments.  For example, a datatype
-which accepts a dictionary of lookup values may publish this as a sorted
-series of tuples.   Given a previously un-cacheable type as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LookupType</span><span class="p">(</span><span class="n">UserDefinedType</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;a custom type that accepts a dictionary as a parameter.</span>
-
-<span class="sd">    this is the non-cacheable version, as &quot;self.lookup&quot; is not</span>
-<span class="sd">    hashable.</span>
-
-<span class="sd">    &#39;&#39;&#39;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lookup</span> <span class="o">=</span> <span class="n">lookup</span>
-
-    <span class="k">def</span> <span class="nf">get_col_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;VARCHAR(255)&quot;</span>
-
-    <span class="k">def</span> <span class="nf">bind_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
-        <span class="c1"># ...  works with &quot;self.lookup&quot; ...</span>
-</pre></div>
-</div>
-<p>Where “lookup” is a dictionary.  The type will not be able to generate
-a cache key:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">type_</span> <span class="o">=</span> <span class="n">LookupType</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">type_</span><span class="o">.</span><span class="n">_static_cache_key</span>
-<span class="go">&lt;stdin&gt;:1: SAWarning: UserDefinedType LookupType({&#39;a&#39;: 10, &#39;b&#39;: 20}) will not</span>
-<span class="go">produce a cache key because the ``cache_ok`` flag is not set to True.</span>
-<span class="go">Set this flag to True if this type object&#39;s state is safe to use</span>
-<span class="go">in a cache key, or False to disable this warning.</span>
-<span class="go">symbol(&#39;no_cache&#39;)</span>
-</pre></div>
-</div>
-<p>If we <strong>did</strong> set up such a cache key, it wouldn’t be usable. We would
-get a tuple structure that contains a dictionary inside of it, which
-cannot itself be used as a key in a “cache dictionary” such as SQLAlchemy’s
-statement cache, since Python dictionaries aren’t hashable:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># set cache_ok = True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">type_</span><span class="o">.</span><span class="n">cache_ok</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># this is the cache key it would generate</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span> <span class="o">=</span> <span class="n">type_</span><span class="o">.</span><span class="n">_static_cache_key</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">key</span>
-<span class="go">(&lt;class &#39;__main__.LookupType&#39;&gt;, (&#39;lookup&#39;, {&#39;a&#39;: 10, &#39;b&#39;: 20}))</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># however this key is not hashable, will fail when used with</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># SQLAlchemy statement cache</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">some_cache</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="s2">&quot;some sql value&quot;</span><span class="p">}</span>
-<span class="x">Traceback (most recent call last): File &quot;&lt;stdin&gt;&quot;, line 1,</span>
-<span class="x">in &lt;module&gt; TypeError: unhashable type: &#39;dict&#39;</span>
-</pre></div>
-</div>
-<p>The type may be made cacheable by assigning a sorted tuple of tuples
-to the “.lookup” attribute:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LookupType</span><span class="p">(</span><span class="n">UserDefinedType</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;a custom type that accepts a dictionary as a parameter.</span>
-
-<span class="sd">    The dictionary is stored both as itself in a private variable,</span>
-<span class="sd">    and published in a public variable as a sorted tuple of tuples,</span>
-<span class="sd">    which is hashable and will also return the same value for any</span>
-<span class="sd">    two equivalent dictionaries.  Note it assumes the keys and</span>
-<span class="sd">    values of the dictionary are themselves hashable.</span>
-
-<span class="sd">    &#39;&#39;&#39;</span>
-
-    <span class="n">cache_ok</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span> <span class="o">=</span> <span class="n">lookup</span>
-
-        <span class="c1"># assume keys/values of &quot;lookup&quot; are hashable; otherwise</span>
-        <span class="c1"># they would also need to be converted in some way here</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lookup</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">lookup</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lookup</span><span class="p">)</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get_col_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;VARCHAR(255)&quot;</span>
-
-    <span class="k">def</span> <span class="nf">bind_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
-        <span class="c1"># ...  works with &quot;self._lookup&quot; ...</span>
-</pre></div>
-</div>
-<p>Where above, the cache key for <code class="docutils literal notranslate"><span class="pre">LookupType({&quot;a&quot;:</span> <span class="pre">10,</span> <span class="pre">&quot;b&quot;:</span> <span class="pre">20})</span></code> will be:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">LookupType</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">})</span><span class="o">.</span><span class="n">_static_cache_key</span>
-<span class="go">(&lt;class &#39;__main__.LookupType&#39;&gt;, (&#39;lookup&#39;, ((&#39;a&#39;, 10), (&#39;b&#39;, 20))))</span>
-</pre></div>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.4.14: </span>- added the <code class="docutils literal notranslate"><span class="pre">cache_ok</span></code> flag to allow
-some configurability of caching for <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeDecorator</span></code> classes.</p>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version 1.4.28: </span>- added the <code class="xref py py-class docutils literal notranslate"><span class="pre">ExternalType</span></code> mixin which
-generalizes the <code class="docutils literal notranslate"><span class="pre">cache_ok</span></code> flag to both the <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeDecorator</span></code>
-and <code class="xref py py-class docutils literal notranslate"><span class="pre">UserDefinedType</span></code> classes.</p>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><span class="xref std std-ref">sql_caching</span></p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.database.utils.JSONType.load_dialect_impl">
-<span class="sig-name descname"><span class="pre">load_dialect_impl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dialect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/utils.html#JSONType.load_dialect_impl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.utils.JSONType.load_dialect_impl" title="Permalink to this definition">#</a></dt>
-<dd><p>Return a <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeEngine</span></code> object corresponding to a dialect.</p>
-<p>This is an end-user override hook that can be used to provide
-differing types depending on the given dialect.  It is used
-by the <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeDecorator</span></code> implementation of <code class="xref py py-meth docutils literal notranslate"><span class="pre">type_engine()</span></code>
-to help determine what type should ultimately be returned
-for a given <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeDecorator</span></code>.</p>
-<p>By default returns <code class="docutils literal notranslate"><span class="pre">self.impl</span></code>.</p>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 
     <script type="text/x-thebe-config">
