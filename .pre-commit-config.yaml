@@ -1,22 +1,24 @@
 repos:
--   repo: https://github.com/gvanderest/pylama-pre-commit
-    rev: 0.1.2
-    hooks:
-    -   id: pylama
--   repo: https://github.com/psf/black
-    rev: 23.1.0
-    hooks:
-    -   id: black
-        entry: black --check
 -   repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
     -    id: isort
-         entry: isort --check
+         entry: poetry run isort --check
+-   repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+    -   id: black
+        entry: poetry run black --check
+-   repo: https://github.com/pycqa/flake8
+    rev: 5.0.0
+    hooks:
+    -   id: flake8
+        entry: poetry run flake8 buildingmotif
+# can't poetry run becuase not present in repository https://github.com/pre-commit/mirrors-mypy
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.0.1
+    rev: v0.931
     hooks:
     -   id: mypy
         args: ["--install-types", "--non-interactive", "--ignore-missing-imports"]
-        additional_dependencies: [sqlalchemy2-stubs <= 0.0.2a32, SQLAlchemy < 2.0]
+        additional_dependencies: [sqlalchemy2-stubs <= 0.0.2a20, SQLAlchemy <= 1.4]
 exclude: docs/conf.py
