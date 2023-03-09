@@ -1,0 +1,887 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Creating a Brick Model from a BACnet Network &#8212; BuildingMOTIF Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/bacnet-to-brick';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Bibliography" href="../bibliography.html" />
+    <link rel="prev" title="Template Writing" href="../tutorials/template_writing.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+
+  <div class="bd-header-announcement container-fluid bd-header-announcement">
+    <div class="bd-header-announcement__content">⚠️ This is an ALPHA release for testing purposes only ⚠️</div>
+  </div>
+
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">BuildingMOTIF Documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    BuildingMOTIF
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reference/developer_documentation.html">Developer Documentation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.app.html">buildingmotif.api.app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.views.html">buildingmotif.api.views</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.html">buildingmotif.building_motif</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.building_motif.html">buildingmotif.building_motif.building_motif</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html">buildingmotif.building_motif.singleton</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.utils.html">buildingmotif.database.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html">buildingmotif.dataclasses.library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html">buildingmotif.dataclasses.model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html">buildingmotif.dataclasses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html">buildingmotif.dataclasses.validation</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.html">buildingmotif.ingresses</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.csv.html">buildingmotif.ingresses.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/model_creation.html">Model Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/model_validation.html">Model Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/model_correction.html">Model Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/template_writing.html">Template Writing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Creating a Brick Model from a BACnet Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fguides/bacnet-to-brick.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/guides/bacnet-to-brick.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Creating a Brick Model from a BACnet Network</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#external-setup">External Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-setup">BuildingMOTIF Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pulling-in-bacnet-metadata">Pulling in BACnet Metadata</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-to-brick-an-initial-model">BACnet to Brick: an Initial Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#augmenting-the-initial-model-our-strategy">Augmenting the Initial Model: Our Strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#point-type-inference">Point Type Inference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-more-complete-model-with-templates">Creating a More Complete Model with Templates</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="creating-a-brick-model-from-a-bacnet-network">
+<h1>Creating a Brick Model from a BACnet Network<a class="headerlink" href="#creating-a-brick-model-from-a-bacnet-network" title="Permalink to this heading">#</a></h1>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This tutorial assumes that <code class="docutils literal notranslate"><span class="pre">BuildingMOTIF</span></code> has already been installed in the local environment with the <code class="docutils literal notranslate"><span class="pre">bacnet-ingress</span></code> option <strong>and</strong> that the user has access to a BACnet network with descriptive names. One easy way of <em>emulating</em> a BACnet network is to use the <a class="reference external" href="https://github.com/gtfierro/simulated-digital-twin">Simulated Digital Twin</a> repository.</p>
+</div>
+</aside>
+<p>The purpose of this how-to document is to demonstrate the creation of a functional Brick model from a BACnet network. This will be accomplished by using BuildingMOTIF’s “ingresses” to import a BACnet network as a basic Brick model, and then using BuildingMOTIF to augment the basic Brick model with more descriptive metadata.</p>
+<section id="external-setup">
+<h2>External Setup<a class="headerlink" href="#external-setup" title="Permalink to this heading">#</a></h2>
+<p>Make sure you have network access to a BACnet network, and that you are aware on what IP address that BACnet network can be reached.
+For this tutorial, we will use <a class="reference external" href="https://docs.docker.com/compose/"><code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">compose</span></code></a> to run a virtual BACnet network which we can scan and generate a Brick model for.</p>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Another virtual BACnet network to try is the <a class="reference external" href="https://github.com/gtfierro/simulated-digital-twin/tree/main/virtual-machine">virtual machine setup in the simulated digital twin repository</a>.</p>
+</div>
+</aside>
+</section>
+<section id="buildingmotif-setup">
+<h2>BuildingMOTIF Setup<a class="headerlink" href="#buildingmotif-setup" title="Permalink to this heading">#</a></h2>
+<p>Like the previous tutorial, we’ll create an in-memory BuildingMOTIF instance and load some libraries.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Library</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span> <span class="c1"># import this to make writing URIs easier</span>
+
+<span class="c1"># in-memory instance</span>
+<span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+<span class="c1"># create the namespace for the building</span>
+<span class="n">BLDG</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s1">&#39;urn:bldg/&#39;</span><span class="p">)</span>
+
+<span class="c1"># create the building model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">BLDG</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;This is a test model for a simple building&quot;</span><span class="p">)</span>
+
+<span class="c1"># load some libraries we will use later</span>
+<span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl&quot;</span><span class="p">)</span>
+<span class="n">constraints</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;building_motif_ontology.ttl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">18</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="c1"># load some libraries we will use later</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl&quot;</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">18</span> <span class="n">constraints</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;building_motif_ontology.ttl&quot;</span><span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.2/x64/lib/python3.11/site-packages/buildingmotif/dataclasses/library.py:174,</span> in <span class="ni">Library.load</span><span class="nt">(cls, db_id, ontology_graph, directory, name, overwrite)</span>
+<span class="g g-Whitespace">    </span><span class="mi">170</span>             <span class="n">ontology_graph_path</span> <span class="o">=</span> <span class="n">resource_filename</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">171</span>                 <span class="s2">&quot;buildingmotif.libraries&quot;</span><span class="p">,</span> <span class="n">ontology_graph_path</span>
+<span class="g g-Whitespace">    </span><span class="mi">172</span>             <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">173</span>         <span class="n">ontology_graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+<span class="ne">--&gt; </span><span class="mi">174</span>         <span class="n">ontology_graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">175</span>             <span class="n">ontology_graph_path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">guess_format</span><span class="p">(</span><span class="n">ontology_graph_path</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">176</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">177</span>     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_from_ontology</span><span class="p">(</span><span class="n">ontology_graph</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">178</span> <span class="k">elif</span> <span class="n">directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.2/x64/lib/python3.11/site-packages/rdflib/graph.py:1234,</span> in <span class="ni">Graph.parse</span><span class="nt">(self, source, publicID, format, location, file, data, **args)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1153</span> <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1154</span>     <span class="bp">self</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1155</span>     <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1161</span>     <span class="o">**</span><span class="n">args</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1162</span> <span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">1163</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">1164</span><span class="sd">     Parse an RDF source adding the resulting triples to the Graph.</span>
+<span class="g g-Whitespace">   </span><span class="mi">1165</span><span class="sd"> </span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1231</span><span class="sd"> </span>
+<span class="g g-Whitespace">   </span><span class="mi">1232</span><span class="sd">     &quot;&quot;&quot;</span>
+<span class="ne">-&gt; </span><span class="mi">1234</span>     <span class="n">source</span> <span class="o">=</span> <span class="n">create_input_source</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1235</span>         <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1236</span>         <span class="n">publicID</span><span class="o">=</span><span class="n">publicID</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1237</span>         <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1238</span>         <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1239</span>         <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1240</span>         <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1241</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1242</span>     <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1243</span>         <span class="nb">format</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">content_type</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.2/x64/lib/python3.11/site-packages/rdflib/parser.py:326,</span> in <span class="ni">create_input_source</span><span class="nt">(source, publicID, location, file, data, format)</span>
+<span class="g g-Whitespace">    </span><span class="mi">318</span> <span class="n">auto_close</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># make sure we close all file handles we open</span>
+<span class="g g-Whitespace">    </span><span class="mi">320</span> <span class="k">if</span> <span class="n">location</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">321</span>     <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">322</span>         <span class="n">absolute_location</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">323</span>         <span class="n">auto_close</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">324</span>         <span class="n">file</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">325</span>         <span class="n">input_source</span><span class="p">,</span>
+<span class="ne">--&gt; </span><span class="mi">326</span>     <span class="p">)</span> <span class="o">=</span> <span class="n">_create_input_source_from_location</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">327</span>         <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">328</span>         <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">329</span>         <span class="n">input_source</span><span class="o">=</span><span class="n">input_source</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">330</span>         <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">331</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">333</span> <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">334</span>     <span class="n">input_source</span> <span class="o">=</span> <span class="n">FileInputSource</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.2/x64/lib/python3.11/site-packages/rdflib/parser.py:373,</span> in <span class="ni">_create_input_source_from_location</span><span class="nt">(file, format, input_source, location)</span>
+<span class="g g-Whitespace">    </span><span class="mi">371</span> <span class="k">if</span> <span class="n">absolute_location</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;file:///&quot;</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">372</span>     <span class="n">filename</span> <span class="o">=</span> <span class="n">url2pathname</span><span class="p">(</span><span class="n">absolute_location</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;file:///&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">))</span>
+<span class="ne">--&gt; </span><span class="mi">373</span>     <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">374</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">375</span>     <span class="n">input_source</span> <span class="o">=</span> <span class="n">URLInputSource</span><span class="p">(</span><span class="n">absolute_location</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span>
+
+<span class="ne">FileNotFoundError</span>: [Errno 2] No such file or directory: &#39;/home/runner/work/BuildingMOTIF/BuildingMOTIF/docs/building_motif_ontology.ttl&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="pulling-in-bacnet-metadata">
+<h2>Pulling in BACnet Metadata<a class="headerlink" href="#pulling-in-bacnet-metadata" title="Permalink to this heading">#</a></h2>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">buildingmotif.ingresses.bacnet.BACnetNetwork</span></code> ingress module to pull structured information from the BACnet network. The ingress module scrapes the BACnet network and produces a set of “records” which correspond to the individual BACnet Devices and Objects discovered in the network.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif.ingresses.bacnet</span> <span class="kn">import</span> <span class="n">BACnetNetwork</span>
+
+<span class="n">bacnet</span> <span class="o">=</span> <span class="n">BACnetNetwork</span><span class="p">(</span><span class="s2">&quot;172.24.0.1/32&quot;</span><span class="p">)</span> <span class="c1"># don&#39;t change this if you are using the docker compose setup</span>
+<span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">bacnet</span><span class="o">.</span><span class="n">records</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Each of these records has an <code class="docutils literal notranslate"><span class="pre">rtype</span></code> field, which is used by the ingress implementation to differentiate between different kinds of records; here it differentiates between BACnet Devices and BACnet Objects, which have different expressions in Brick. The <code class="docutils literal notranslate"><span class="pre">fields</span></code> attribute cotnains arbitrary key-value pairs, again defined by the ingress implementation, which can be interpreted by another ingress module.</p>
+</section>
+<section id="bacnet-to-brick-an-initial-model">
+<h2>BACnet to Brick: an Initial Model<a class="headerlink" href="#bacnet-to-brick-an-initial-model" title="Permalink to this heading">#</a></h2>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">buildingmotif.ingresses.brick.BACnetToBrickIngress</span></code> ingress module to turn the <code class="docutils literal notranslate"><span class="pre">Record</span></code>s from the <code class="docutils literal notranslate"><span class="pre">BACnetNetwork</span></code> ingress into a Brick model. This is as simple as choosing a namespace for the entities (this is usually just the same namespace used for the Model, i.e. <code class="docutils literal notranslate"><span class="pre">BLDG</span></code> above) and connecting our new ingress module instance to the existing BACnet network ingress module.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif.ingresses.brick</span> <span class="kn">import</span> <span class="n">BACnetToBrickIngress</span>
+
+<span class="c1"># create the Brick ingress module and connect to the existing bacnet module</span>
+<span class="n">brick2bacnet</span> <span class="o">=</span> <span class="n">BACnetToBrickIngress</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">bacnet</span><span class="p">)</span>
+<span class="c1"># creates the graph from the BACnet records</span>
+<span class="n">bacnet_network_graph</span> <span class="o">=</span> <span class="n">brick2bacnet</span><span class="o">.</span><span class="n">graph</span><span class="p">(</span><span class="n">BLDG</span><span class="p">)</span>
+<span class="c1"># add the graph to our model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">bacnet_network_graph</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now take a look at the resulting graph:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now see the devices and their objects represented in the model. However, the metadata is not very descriptive. All of the BACnet objects have been inferred to be instances of <code class="docutils literal notranslate"><span class="pre">brick:Point</span></code>.
+In the next step, we will use BuildingMOTIF to incorporate our other knowledge about the building to augment this Brick model with more descriptive metadata.</p>
+</section>
+<section id="augmenting-the-initial-model-our-strategy">
+<h2>Augmenting the Initial Model: Our Strategy<a class="headerlink" href="#augmenting-the-initial-model-our-strategy" title="Permalink to this heading">#</a></h2>
+<p>There is <a class="reference external" href="https://docs.brickschema.org/lifecycle/creation.html">existing documentation</a> on techniques for inferring Brick metadata from point labels. Below, we will show how a simple Python-based point type inference module can be implemented by extending BuildingMOTIF’s existing ingress module implementation. Then, we will use BuildingMOTIF’s templates to incorporate the inferred points into a bigger model.</p>
+</section>
+<section id="point-type-inference">
+<h2>Point Type Inference<a class="headerlink" href="#point-type-inference" title="Permalink to this heading">#</a></h2>
+<p>For completeness, here are the names of the 5 points in the BACnet network scanned above (these will be different if you are not using the Simulated Digital Twin platform):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hvac_oveAhu_yPumHea_u</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hvac_oveZonSupSou_TZonCooSet_u</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hvac_oveZonSupSou_TZonHeaSet_u</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hvac_reaZonSou_TSup_y</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hvac_reaZonSou_TZon_y</span></code></p></li>
+</ul>
+<p>Squinting at these point names, we might see how we can divide each name into sections: <code class="docutils literal notranslate"><span class="pre">hvac_&lt;equip</span> <span class="pre">or</span> <span class="pre">zone</span> <span class="pre">name&gt;_&lt;point</span> <span class="pre">type&gt;_&lt;u</span> <span class="pre">or</span> <span class="pre">y&gt;</span></code>. Let’s write Python code to pull out the Brick metadata we can from these labels.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">BRICK</span>
+<span class="k">def</span> <span class="nf">parse_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses the label and puts the resulting triples in the provided graph.&quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">point_type</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">parts</span> <span class="c1"># throw away everything that&#39;s not the point type</span>
+
+    <span class="k">if</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;TZonCooSet&#39;</span><span class="p">:</span>
+        <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Zone_Air_Cooling_Temperature_Setpoint</span>
+    <span class="k">elif</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;TZonHeaSet&#39;</span><span class="p">:</span>
+        <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Zone_Air_Heating_Temperature_Setpoint</span>
+    <span class="k">elif</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;TSup&#39;</span><span class="p">:</span>
+        <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Supply_Air_Temperature_Sensor</span>
+    <span class="k">elif</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;TZon&#39;</span><span class="p">:</span>
+        <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Zone_Air_Temperature_Sensor</span>
+    <span class="k">elif</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;yPumHea&#39;</span><span class="p">:</span>
+        <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heating_Command</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown point type!&quot;</span><span class="p">)</span>
+
+    <span class="n">output</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">brick_class</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can wrap this function in an ingress module so it is easy to reuse later. This just requires a little bit of moving some code around</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif.ingresses.base</span> <span class="kn">import</span> <span class="n">GraphIngressHandler</span>
+
+<span class="k">class</span> <span class="nc">MyPointParser</span><span class="p">(</span><span class="n">GraphIngressHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bm</span><span class="p">:</span> <span class="n">BuildingMOTIF</span><span class="p">,</span> <span class="n">upstream</span><span class="p">:</span> <span class="n">GraphIngressHandler</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bm</span> <span class="o">=</span> <span class="n">bm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upstream</span> <span class="o">=</span> <span class="n">upstream</span> <span class="c1"># this will point to our BACnetToBrickIngress handler</span>
+
+    <span class="k">def</span> <span class="nf">parse_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">entity</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parses the label and puts the resulting triples in the provided graph.</span>
+<span class="sd">        Adds the type to the indicated entity&quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">point_type</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">parts</span> <span class="c1"># throw away everything that&#39;s not the point type</span>
+
+        <span class="k">if</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;TZonCooSet&#39;</span><span class="p">:</span>
+            <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Zone_Air_Cooling_Temperature_Setpoint</span>
+        <span class="k">elif</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;TZonHeaSet&#39;</span><span class="p">:</span>
+            <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Zone_Air_Heating_Temperature_Setpoint</span>
+        <span class="k">elif</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;TSup&#39;</span><span class="p">:</span>
+            <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Supply_Air_Temperature_Sensor</span>
+        <span class="k">elif</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;TZon&#39;</span><span class="p">:</span>
+            <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Zone_Air_Temperature_Sensor</span>
+        <span class="k">elif</span> <span class="n">point_type</span> <span class="o">==</span> <span class="s1">&#39;yPumHea&#39;</span><span class="p">:</span>
+            <span class="n">brick_class</span> <span class="o">=</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heating_Command</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown point type!&quot;</span><span class="p">)</span>
+
+        <span class="n">output</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">entity</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">brick_class</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;the method we override to implement a GraphIngressHandler&quot;&quot;&quot;</span>
+        <span class="n">output_graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+        <span class="n">bacnet_graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">upstream</span><span class="o">.</span><span class="n">graph</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+        <span class="n">point_labels</span> <span class="o">=</span> <span class="n">bacnet_graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            SELECT ?entity ?label WHERE {</span>
+<span class="s2">                ?entity &lt;https://brickschema.org/schema/ref#hasExternalReference&gt; ?ref .</span>
+<span class="s2">                ?ref &lt;http://data.ashrae.org/bacnet/2020#object-name&gt; ?label</span>
+<span class="s2">            }&quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">entity</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">point_labels</span><span class="p">:</span>
+            <span class="c1"># infer type for each</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse_label</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">output_graph</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output_graph</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can invoke our ingress module:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create the Brick ingress module and connect to the existing bacnet module</span>
+<span class="n">point_ingress</span> <span class="o">=</span> <span class="n">MyPointParser</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">brick2bacnet</span><span class="p">)</span>
+<span class="c1"># creates the graph from the BACnet records</span>
+<span class="n">augmented_graph</span> <span class="o">=</span> <span class="n">point_ingress</span><span class="o">.</span><span class="n">graph</span><span class="p">(</span><span class="n">BLDG</span><span class="p">)</span>
+<span class="c1"># add the graph to our model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">augmented_graph</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>and display the resulting model</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now see that the points in our model have more descriptive Brick types.</p>
+</section>
+<section id="creating-a-more-complete-model-with-templates">
+<h2>Creating a More Complete Model with Templates<a class="headerlink" href="#creating-a-more-complete-model-with-templates" title="Permalink to this heading">#</a></h2>
+<p>We can now focus on associating these points with real equipment and zones to create a more complete Brick model. The most straightforward way of doing this is to create templates that convey what we think the parts of the building should look like.</p>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As BuildingMOTIF gets more mature, there will be a larger ecosystem of Templates and Shapes we can draw from. For this (simple) example, we will create our own Templates that match the limited metadata we have about the sample building.</p>
+</div>
+</aside>
+<p>Let’s create two templates: one for an HVAC zone and one for a VAV box.</p>
+<div class="highlight-yml notranslate"><div class="highlight"><pre><span></span>sample-hvac-zone:
+  body: &gt;
+    @prefix p: &lt;urn:___param___#&gt; .
+    @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+    p:name a brick:HVAC_Zone ;
+        brick:hasPoint p:zone-temp .
+  dependencies:
+  - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {&quot;name&quot;: &quot;zone-temp&quot;}
+sample-vav:
+  body: &gt;
+    @prefix p: &lt;urn:___param___#&gt; .
+    @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+    p:name a brick:VAV ;
+        brick:hasPoint p:sup-temp, p:heat-sp, p:cool-sp ;
+        brick:feeds p:zone .
+  dependencies:
+  - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {&quot;name&quot;: &quot;sup-temp&quot;}
+  - template: https://brickschema.org/schema/Brick#Zone_Air_Heating_Temperature_Setpoint
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {&quot;name&quot;: &quot;heat-sp&quot;}
+  - template: https://brickschema.org/schema/Brick#Zone_Air_Cooling_Temperature_Setpoint
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {&quot;name&quot;: &quot;cool-sp&quot;}
+  - template: sample-hvac-zone
+    args: {&quot;name&quot;: &quot;zone&quot;}
+</pre></div>
+</div>
+<p>We load this library into BuildingMOTIF:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">templates</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;libraries/bacnet-to-brick-templates&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./guides"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../tutorials/template_writing.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Template Writing</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../bibliography.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bibliography</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#external-setup">External Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-setup">BuildingMOTIF Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pulling-in-bacnet-metadata">Pulling in BACnet Metadata</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-to-brick-an-initial-model">BACnet to Brick: an Initial Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#augmenting-the-initial-model-our-strategy">Augmenting the Initial Model: Our Strategy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#point-type-inference">Point Type Inference</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-more-complete-model-with-templates">Creating a More Complete Model with Templates</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner">
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By NREL
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div></div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
