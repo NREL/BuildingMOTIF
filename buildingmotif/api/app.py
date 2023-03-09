@@ -70,4 +70,4 @@ if __name__ == "__main__":
     import configs as building_motif_configs  # type: ignore # isort:skip
 
     app = create_app(building_motif_configs.DB_URI)
-    app.run(debug=True, host="0.0.0.0", threaded=False)
+    app.run(debug=True, threaded=False)
