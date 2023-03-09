@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Developer Documentation &#8212; BuildingMOTIF Documentation</title>
+    <title>Command Line Tool &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -61,11 +61,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/developer_documentation';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/cli_tool';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Command Line Tool" href="cli_tool.html" />
-    <link rel="prev" title="BuildingMOTIF" href="../README.html" />
+    <link rel="next" title="Code Documentation" href="apidoc/index.html" />
+    <link rel="prev" title="Developer Documentation" href="developer_documentation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -158,8 +158,8 @@ const thebe_selector_output = ".output, .cell_output"
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Developer Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_tool.html">Command Line Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_documentation.html">Developer Documentation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Command Line Tool</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -289,7 +289,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Freference/developer_documentation.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Freference/cli_tool.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -319,7 +319,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="../_sources/reference/developer_documentation.md" target="_blank"
+      <li><a href="../_sources/reference/cli_tool.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -401,7 +401,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Developer Documentation</h1>
+    <h1>Command Line Tool</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -411,16 +411,22 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing">Installing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-integration">Continuous Integration</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local">Local</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remote">Remote</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#library-loading">Library Loading</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cli-usage">CLI Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bulk-library-loading">Bulk Library Loading</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#directory">Directory</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ontology">Ontology</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#git-repository">Git Repository</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documenting">Documenting</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-and-publishing">Building and Publishing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#web-app">Web App</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-individual-libraries">Loading Individual Libraries</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Directory</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Ontology</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-api-server">BuildingMOTIF API Server</a></li>
 </ul>
             </nav>
         </div>
@@ -432,110 +438,118 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="developer-documentation">
-<h1>Developer Documentation<a class="headerlink" href="#developer-documentation" title="Permalink to this heading">#</a></h1>
-<section id="installing">
-<h2>Installing<a class="headerlink" href="#installing" title="Permalink to this heading">#</a></h2>
-<ol class="arabic">
-<li><p>Install prerequisites:</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="command-line-tool">
+<h1>Command Line Tool<a class="headerlink" href="#command-line-tool" title="Permalink to this heading">#</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">buildingmotif</span></code> command line tool will be available upon <a class="reference internal" href="developer_documentation.html"><span class="doc std std-doc">installing BuildingMOTIF</span></a>. This provides several utilities for interacting with BuildingMOTIF:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://www.python.org/downloads/">Python &gt;= 3.8.0</a>.</p></li>
-<li><p><a class="reference external" href="https://python-poetry.org/docs/#installation">Poetry</a>.</p></li>
+<li><p>library loading</p></li>
+<li><p>running an API server</p></li>
 </ul>
-</li>
-<li><p>Clone this repository.</p></li>
-<li><p>Change directory to the new <code class="docutils literal notranslate"><span class="pre">/BuildingMOTIF</span></code> directory.</p></li>
-<li><p>Create and activate a virtual environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># for example</span>
-<span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="o">.</span><span class="n">venv</span>
-<span class="n">source</span> <span class="o">.</span><span class="n">venv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
-</pre></div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Don’t forget to set the <code class="docutils literal notranslate"><span class="pre">$DB_URI</span></code> variable (or supply the <code class="docutils literal notranslate"><span class="pre">-d</span></code>  option on the CLI tool) to make sure the CLI tool interacts with the right BuildingMOTIF database!</p>
 </div>
-</li>
-<li><p>Install dependencies and pre-commit.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">install</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
-</pre></div>
-</div>
-</li>
-</ol>
-</section>
-<section id="developing">
-<h2>Developing<a class="headerlink" href="#developing" title="Permalink to this heading">#</a></h2>
-<p>To initialize your database, create your local configs file, enter your db uri, and run the migrations.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span><span class="o">.</span><span class="n">dist</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span>
-
-<span class="n">echo</span> <span class="s2">&quot;DB_URI = &#39;sqlite:////path/to/db.db&#39;&quot;</span> <span class="o">&gt;</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span>
-
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">alembic</span> <span class="n">upgrade</span> <span class="n">head</span>
-</pre></div>
-</div>
-<p>After making changes to the tables, you must make a new db migration.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">alembic</span> <span class="n">revision</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;Description of Changes.&quot;</span> <span class="o">--</span><span class="n">autogenerate</span>
-</pre></div>
-</div>
-<p>Additional changes may need to be made to the migration, so be sure to check it. <a class="reference external" href="https://alembic.sqlalchemy.org/en/latest/autogenerate.html#auto-generating-migrations">Read here</a> for more information on alembic autogenerate migrations.</p>
-<p>Uping the API</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">python</span> <span class="n">buildingmotif</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">app</span><span class="o">.</span><span class="n">py</span>
-</pre></div>
-</div>
-<p>API will run on localhost:5000</p>
-</section>
-<section id="continuous-integration">
-<h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this heading">#</a></h2>
-<p>The CI process for developers’ local clones and the remote repository should be the same for reproduceability, i.e. the commands in the following files should be the same (with <em>slight</em> differences).</p>
+<section id="library-loading">
+<h2>Library Loading<a class="headerlink" href="#library-loading" title="Permalink to this heading">#</a></h2>
+<p>Recall that a <code class="docutils literal notranslate"><span class="pre">Library</span></code> is a unit of distribution for shapes (for validation of metadata models) and templates (for generation of metadata models). Libraries can be loaded into BuildingMOTIF in 3 ways:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/.pre-commit-config.yaml">.pre-commit-config.yaml</a></p></li>
-<li><p><a class="reference external" href="https://github.com/NREL/BuildingMOTIF/tree/develop/.github/workflows/ci.yml">ci.yml</a></p></li>
+<li><p><strong>programmatically</strong>, using the <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">Library</span></code></span> class</p></li>
+<li><p><strong>individually</strong>, using the <code class="docutils literal notranslate"><span class="pre">buildingmotif</span> <span class="pre">load</span></code> command (see below)</p></li>
+<li><p><strong>in bulk</strong>, using the <code class="docutils literal notranslate"><span class="pre">buildingmotif</span> <span class="pre">load</span></code> command (see below)</p></li>
 </ul>
-<section id="local">
-<h3>Local<a class="headerlink" href="#local" title="Permalink to this heading">#</a></h3>
-<p>Local CI is done automatically when pushing with <code class="docutils literal notranslate"><span class="pre">.pre-commit-config.yaml</span></code>, which runs <em>static</em> tests that can be run manually with the following command.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">run</span> <span class="o">-</span><span class="n">a</span>
-</pre></div>
-</div>
-<p>Pre-commit commands can be run individually with the following commands. Configuration of <code class="docutils literal notranslate"><span class="pre">isort</span></code>, <code class="docutils literal notranslate"><span class="pre">black</span></code>, and <code class="docutils literal notranslate"><span class="pre">mypy</span></code> are done in <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/pyproject.toml">pyproject.toml</a> and configuration of <code class="docutils literal notranslate"><span class="pre">flake8</span></code> is done in <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/.flake8">.flake8</a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">isort</span> <span class="o">--</span><span class="n">check</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">black</span> <span class="o">--</span><span class="n">check</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">buildingmotif</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">mypy</span>
-</pre></div>
-</div>
-<p>The above does not include <em>dynamic</em> testing (unit and integration), which can be run manually with the following command. To run tests with DEBUG prints add the <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">log_cli=true</span></code> argument to the command</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">pytest</span>
-</pre></div>
-</div>
-</section>
-<section id="remote">
-<h3>Remote<a class="headerlink" href="#remote" title="Permalink to this heading">#</a></h3>
-<p>Remote CI is done with a GitHub Action from the <code class="docutils literal notranslate"><span class="pre">ci.yml</span></code> workflow.</p>
-</section>
-</section>
-<section id="documenting">
-<h2>Documenting<a class="headerlink" href="#documenting" title="Permalink to this heading">#</a></h2>
-<p>Documentation can be built locally with the following command, which will make the HTML files in the <code class="docutils literal notranslate"><span class="pre">docs/build/html/</span></code> directory.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">docs</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">make</span> <span class="n">html</span>
-</pre></div>
-</div>
-</section>
-<section id="building-and-publishing">
-<h2>Building and Publishing<a class="headerlink" href="#building-and-publishing" title="Permalink to this heading">#</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># build and publish test</span>
-<span class="n">poetry</span> <span class="n">publish</span> <span class="o">--</span><span class="n">build</span> <span class="o">--</span><span class="n">dry</span><span class="o">-</span><span class="n">run</span>
+<section id="cli-usage">
+<h3>CLI Usage<a class="headerlink" href="#cli-usage" title="Permalink to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>usage:<span class="w"> </span>buildingmotif<span class="w"> </span>load<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-d<span class="w"> </span>DB<span class="o">]</span><span class="w"> </span><span class="o">[</span>--dir<span class="w"> </span>DIR<span class="w"> </span><span class="o">[</span>DIR<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>-o<span class="w"> </span>ONT<span class="w"> </span><span class="o">[</span>ONT<span class="w"> </span>...<span class="o">]]</span><span class="w"> </span><span class="o">[</span>-l<span class="w"> </span>LIBRARY_MANIFEST_FILE<span class="w"> </span><span class="o">[</span>LIBRARY_MANIFEST_FILE<span class="w"> </span>...<span class="o">]]</span>
 
-<span class="c1"># build and publish</span>
-<span class="n">poetry</span> <span class="n">publish</span> <span class="o">--</span><span class="n">build</span>
+Loads<span class="w"> </span>libraries<span class="w"> </span>from<span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span><span class="w"> </span><span class="nb">local</span><span class="w"> </span>directories<span class="w"> </span><span class="o">(</span>--dir<span class="o">)</span>,<span class="w"> </span><span class="o">(</span><span class="m">2</span><span class="o">)</span><span class="w"> </span><span class="nb">local</span><span class="w"> </span>or<span class="w"> </span>remote<span class="w"> </span>ontology<span class="w"> </span>files<span class="w"> </span><span class="o">(</span>--ont<span class="o">)</span><span class="w"> </span><span class="o">(</span><span class="m">3</span><span class="o">)</span><span class="w"> </span>library<span class="w"> </span>spec<span class="w"> </span>file<span class="w"> </span><span class="o">(</span>--libraries<span class="o">)</span>:<span class="w"> </span>the<span class="w"> </span>provided<span class="w"> </span>YML<span class="w"> </span>file<span class="w"> </span>into<span class="w"> </span>the<span class="w"> </span>BuildingMOTIF<span class="w"> </span>instance<span class="w"> </span>at<span class="w"> </span><span class="nv">$DB_URI</span><span class="w"> </span>or<span class="w"> </span>whatever
+is<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s1">&#39;configs.py&#39;</span>.<span class="w"> </span>Use<span class="w"> </span><span class="s1">&#39;get_default_libraries_yml&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>the<span class="w"> </span>format<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>expected<span class="w"> </span>libraries.yml<span class="w"> </span>file
+
+optional<span class="w"> </span>arguments:
+<span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">            </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<span class="w">  </span>-d<span class="w"> </span>DB,<span class="w"> </span>--db<span class="w"> </span>DB<span class="w">        </span>Database<span class="w"> </span>URI<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>BuildingMOTIF<span class="w"> </span>installation.<span class="w"> </span>Defaults<span class="w"> </span>to<span class="w"> </span><span class="nv">$DB_URI</span><span class="w"> </span>and<span class="w"> </span><span class="k">then</span><span class="w"> </span>contents<span class="w"> </span>of<span class="w"> </span><span class="s2">&quot;config.py&quot;</span>
+<span class="w">  </span>--dir<span class="w"> </span>DIR<span class="w"> </span><span class="o">[</span>DIR<span class="w"> </span>...<span class="o">]</span><span class="w">   </span>Path<span class="w"> </span>to<span class="w"> </span>a<span class="w"> </span><span class="nb">local</span><span class="w"> </span>directory<span class="w"> </span>containing<span class="w"> </span>the<span class="w"> </span>library
+<span class="w">  </span>-o<span class="w"> </span>ONT<span class="w"> </span><span class="o">[</span>ONT<span class="w"> </span>...<span class="o">]</span>,<span class="w"> </span>--ont<span class="w"> </span>ONT<span class="w"> </span><span class="o">[</span>ONT<span class="w"> </span>...<span class="o">]</span>
+<span class="w">                        </span>Remote<span class="w"> </span>URL<span class="w"> </span>or<span class="w"> </span><span class="nb">local</span><span class="w"> </span>file<span class="w"> </span>path<span class="w"> </span>to<span class="w"> </span>an<span class="w"> </span>RDF<span class="w"> </span>ontology
+<span class="w">  </span>-l<span class="w"> </span>LIBRARY_MANIFEST_FILE<span class="w"> </span><span class="o">[</span>LIBRARY_MANIFEST_FILE<span class="w"> </span>...<span class="o">]</span>,<span class="w"> </span>--libraries<span class="w"> </span>LIBRARY_MANIFEST_FILE<span class="w"> </span><span class="o">[</span>LIBRARY_MANIFEST_FILE<span class="w"> </span>...<span class="o">]</span>
+<span class="w">                        </span>Filename<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>libraries<span class="w"> </span>YAML<span class="w"> </span>file<span class="w"> </span>specifying<span class="w"> </span>what<span class="w"> </span>should<span class="w"> </span>be<span class="w"> </span>loaded<span class="w"> </span>into<span class="w"> </span>BuildingMOTIF
 </pre></div>
 </div>
 </section>
-<section id="web-app">
-<h2>Web App<a class="headerlink" href="#web-app" title="Permalink to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p><a class="reference external" href="https://nodejs.org/en/download/">Download Node.js</a></p></li>
-<li><p><a class="reference external" href="https://angular.io/guide/setup-local">Install Angular</a></p></li>
-<li><p>See <span class="xref myst">buildingmotif-app/README.md</span></p></li>
-</ol>
+<section id="bulk-library-loading">
+<h3>Bulk Library Loading<a class="headerlink" href="#bulk-library-loading" title="Permalink to this heading">#</a></h3>
+<p>To load multiple libraries into BuildingMOTIF, create a <code class="docutils literal notranslate"><span class="pre">libraries.yml</span></code> file that describes the libraries to load and where they can be found.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">buildingmotif</span> <span class="pre">load</span></code> command to load all libraries described in the <code class="docutils literal notranslate"><span class="pre">libraries.yml</span></code> file into BuildingMOTIF:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>buildingmotif<span class="w"> </span>load<span class="w"> </span>-l<span class="w"> </span>libraries.yml
+</pre></div>
+</div>
+<p>The YAML-encoded file contains a list of key-value “documents”. Each document corresponds to a library to be loaded into BuildingMOTIF. There are three ways to specify a library: by directory, ontology URL, and <code class="docutils literal notranslate"><span class="pre">git</span></code> repository.</p>
+<p><strong>Use <code class="docutils literal notranslate"><span class="pre">buildingmotif</span> <span class="pre">get_default_libraries_yml</span></code> to create an example <code class="docutils literal notranslate"><span class="pre">libraries.default.yml</span></code> file in the current directory.</strong></p>
+<section id="directory">
+<h4>Directory<a class="headerlink" href="#directory" title="Permalink to this heading">#</a></h4>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">directory</span></code> key, point to a local directory containing template and shape files. The library will take on the name of the immediately enclosing directory. In the example below <code class="docutils literal notranslate"><span class="pre">libraries.yml</span></code> file, the name of the library will be “ZonePAC”:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># load a library from a local directory</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">libraries/ZonePAC/</span>
+</pre></div>
+</div>
+</section>
+<section id="ontology">
+<h4>Ontology<a class="headerlink" href="#ontology" title="Permalink to this heading">#</a></h4>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">ontology</span></code> key, point to a local <em>or</em> remote URL containing an RDF graph containing shapes. Templates will be automatically inferred from the shape descriptions. The name of the library will be given by the name of the graph (pulled from a <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;</span> <span class="pre">a</span> <span class="pre">owl:Ontology</span></code> triple in the graph).</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># load an ontology library from a remote URL</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ontology</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl</span>
+</pre></div>
+</div>
+</section>
+<section id="git-repository">
+<h4>Git Repository<a class="headerlink" href="#git-repository" title="Permalink to this heading">#</a></h4>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">git</span></code> key, point to a directory in a branch of a remote git repository. The repository will be temporarily cloned and the corresponding directory (in the given branch) will be loaded into BuildingMOTIF using the same mechanism as for the <code class="docutils literal notranslate"><span class="pre">directory</span></code> key. The <code class="docutils literal notranslate"><span class="pre">git</span></code> document requires the <code class="docutils literal notranslate"><span class="pre">repo</span></code> (URL), <code class="docutils literal notranslate"><span class="pre">branch</span></code> (string) and <code class="docutils literal notranslate"><span class="pre">path</span></code> (string) keys to be provided:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># load a directory from a remote directory hosted in a github repo</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">git</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/NREL/BuildingMOTIF</span>
+<span class="w">    </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">main</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">libraries/chiller-plant</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="loading-individual-libraries">
+<h3>Loading Individual Libraries<a class="headerlink" href="#loading-individual-libraries" title="Permalink to this heading">#</a></h3>
+<p>You can load invidual diretories or ontologies into a BuildingMOTIF instance directly using the command line.</p>
+<section id="id1">
+<h4>Directory<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h4>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">--dir</span></code> flag to pass the names of directories. The library will take on the name of the immediately enclosing directory. In the example below, the name of the library will be “directory”:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>buildingmotif<span class="w"> </span>load<span class="w"> </span>--dir<span class="w"> </span>path/to/library/directory
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h4>Ontology<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h4>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">--ont</span></code> key to specify a local <em>or</em> remote URL containing an RDF graph containing shapes. Templates will be automatically inferred from the shape descriptions. The name of the library will be given by the name of the graph (pulled from a <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;</span> <span class="pre">a</span> <span class="pre">owl:Ontology</span></code> triple in the graph).</p>
+<p>The example below loads the nightly version of the Brick ontology into BuildingMOTIF from a remote URL</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>buildingmotif<span class="w"> </span>load<span class="w"> </span>--ont<span class="w"> </span>https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl
+</pre></div>
+</div>
+<p>The example below loads a local copy of the ASHRAE 223P ontology into BuildingMOTIF</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>buildingmotif<span class="w"> </span>load<span class="w"> </span>--ont<span class="w"> </span>223p.ttl
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="buildingmotif-api-server">
+<h2>BuildingMOTIF API Server<a class="headerlink" href="#buildingmotif-api-server" title="Permalink to this heading">#</a></h2>
+<p>To run a copy of the BuildingMOTIF API server, use <code class="docutils literal notranslate"><span class="pre">buildingmotif</span> <span class="pre">serve</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>usage: buildingmotif serve [-h] [-b BIND] [-p PORT] [-d DB]
+
+Serves the BuildingMOTIF API on the indicated host:port
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -b BIND, --bind BIND  Address on which to bind the API server
+  -p PORT, --port PORT  Listening port for the API server
+  -d DB, --db DB        Database URI of the BuildingMOTIF installation. Defaults to $DB_URI and then contents of &quot;config.py&quot;
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -568,20 +582,20 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../README.html"
+       href="developer_documentation.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">BuildingMOTIF</p>
+        <p class="prev-next-title">Developer Documentation</p>
       </div>
     </a>
     <a class="right-next"
-       href="cli_tool.html"
+       href="apidoc/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Command Line Tool</p>
+        <p class="prev-next-title">Code Documentation</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -600,16 +614,22 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing">Installing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-integration">Continuous Integration</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local">Local</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remote">Remote</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#library-loading">Library Loading</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cli-usage">CLI Usage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bulk-library-loading">Bulk Library Loading</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#directory">Directory</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ontology">Ontology</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#git-repository">Git Repository</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documenting">Documenting</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-and-publishing">Building and Publishing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#web-app">Web App</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-individual-libraries">Loading Individual Libraries</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Directory</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Ontology</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-api-server">BuildingMOTIF API Server</a></li>
 </ul>
   </nav></div>
 
