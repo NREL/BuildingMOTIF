@@ -13,12 +13,6 @@ buildingmotif.database.utils
 
    
    
-   .. rubric:: Classes
-
-   .. autosummary::
-   
-      JSONType
-   
    
 
    

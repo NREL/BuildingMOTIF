@@ -64,7 +64,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/developer_documentation';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Command Line Tool" href="cli_tool.html" />
+    <link rel="next" title="Code Documentation" href="apidoc/index.html" />
     <link rel="prev" title="BuildingMOTIF" href="../README.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -159,7 +159,9 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Developer Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_tool.html">Command Line Tool</a></li>
+
+
+
 <li class="toctree-l1 has-children"><a class="reference internal" href="apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -198,7 +200,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -411,17 +412,21 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing">Installing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-integration">Continuous Integration</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local">Local</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remote">Remote</a></li>
-</ul>
-</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Developer Documentation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installing">Installing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#using">Using</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uping-the-api">Uping the API</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formatting">Formatting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#migrating">Migrating</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documenting">Documenting</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-and-publishing">Building and Publishing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#web-app">Web App</a></li>
 </ul>
+</li>
+</ul>
+
             </nav>
         </div>
     </div>
@@ -434,35 +439,31 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="developer-documentation">
 <h1>Developer Documentation<a class="headerlink" href="#developer-documentation" title="Permalink to this heading">#</a></h1>
-<section id="installing">
-<h2>Installing<a class="headerlink" href="#installing" title="Permalink to this heading">#</a></h2>
-<ol class="arabic">
-<li><p>Install prerequisites:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://www.python.org/downloads/">Python &gt;= 3.8.0</a>.</p></li>
-<li><p><a class="reference external" href="https://python-poetry.org/docs/#installation">Poetry</a>.</p></li>
-</ul>
-</li>
-<li><p>Clone this repository.</p></li>
-<li><p>Change directory to the new <code class="docutils literal notranslate"><span class="pre">/BuildingMOTIF</span></code> directory.</p></li>
-<li><p>Create and activate a virtual environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># for example</span>
-<span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="o">.</span><span class="n">venv</span>
-<span class="n">source</span> <span class="o">.</span><span class="n">venv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="installing">
+<h1>Installing<a class="headerlink" href="#installing" title="Permalink to this heading">#</a></h1>
+<p>Install <a class="reference external" href="https://www.python.org/downloads/">Python &gt;= 3.8.0</a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">buildingmotif</span>
 </pre></div>
 </div>
-</li>
-<li><p>Install dependencies and pre-commit.</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="using">
+<h1>Using<a class="headerlink" href="#using" title="Permalink to this heading">#</a></h1>
+<p>See the <code class="docutils literal notranslate"><span class="pre">notebooks</span></code> directory.</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="developing">
+<h1>Developing<a class="headerlink" href="#developing" title="Permalink to this heading">#</a></h1>
+<ol class="arabic">
+<li><p>Install <a class="reference external" href="https://www.python.org/downloads/">Python &gt;= 3.8.0</a>.</p></li>
+<li><p>Install <a class="reference external" href="https://python-poetry.org/docs/#installation">Poetry</a>.</p></li>
+<li><p>Clone, download, or fork this repository.</p></li>
+<li><p>Install dependenices with poetry.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">install</span>
 <span class="n">poetry</span> <span class="n">run</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
 </pre></div>
 </div>
 </li>
-</ol>
-</section>
-<section id="developing">
-<h2>Developing<a class="headerlink" href="#developing" title="Permalink to this heading">#</a></h2>
-<p>To initialize your database, create your local configs file, enter your db uri, and run the migrations.</p>
+<li><p>To initialize your database, create your local configs file, enter your db uri, and run the migrations.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span><span class="o">.</span><span class="n">dist</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span>
 
 <span class="n">echo</span> <span class="s2">&quot;DB_URI = &#39;sqlite:////path/to/db.db&#39;&quot;</span> <span class="o">&gt;</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span>
@@ -470,46 +471,37 @@ document.write(`
 <span class="n">poetry</span> <span class="n">run</span> <span class="n">alembic</span> <span class="n">upgrade</span> <span class="n">head</span>
 </pre></div>
 </div>
-<p>After making changes to the tables, you must make a new db migration.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">alembic</span> <span class="n">revision</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;Description of Changes.&quot;</span> <span class="o">--</span><span class="n">autogenerate</span>
-</pre></div>
-</div>
-<p>Additional changes may need to be made to the migration, so be sure to check it. <a class="reference external" href="https://alembic.sqlalchemy.org/en/latest/autogenerate.html#auto-generating-migrations">Read here</a> for more information on alembic autogenerate migrations.</p>
-<p>Uping the API</p>
+</li>
+</ol>
+<section id="uping-the-api">
+<h2>Uping the API<a class="headerlink" href="#uping-the-api" title="Permalink to this heading">#</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">python</span> <span class="n">buildingmotif</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">app</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
 <p>API will run on localhost:5000</p>
 </section>
-<section id="continuous-integration">
-<h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this heading">#</a></h2>
-<p>The CI process for developers’ local clones and the remote repository should be the same for reproduceability, i.e. the commands in the following files should be the same (with <em>slight</em> differences).</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/.pre-commit-config.yaml">.pre-commit-config.yaml</a></p></li>
-<li><p><a class="reference external" href="https://github.com/NREL/BuildingMOTIF/tree/develop/.github/workflows/ci.yml">ci.yml</a></p></li>
-</ul>
-<section id="local">
-<h3>Local<a class="headerlink" href="#local" title="Permalink to this heading">#</a></h3>
-<p>Local CI is done automatically when pushing with <code class="docutils literal notranslate"><span class="pre">.pre-commit-config.yaml</span></code>, which runs <em>static</em> tests that can be run manually with the following command.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">run</span> <span class="o">-</span><span class="n">a</span>
-</pre></div>
-</div>
-<p>Pre-commit commands can be run individually with the following commands. Configuration of <code class="docutils literal notranslate"><span class="pre">isort</span></code>, <code class="docutils literal notranslate"><span class="pre">black</span></code>, and <code class="docutils literal notranslate"><span class="pre">mypy</span></code> are done in <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/pyproject.toml">pyproject.toml</a> and configuration of <code class="docutils literal notranslate"><span class="pre">flake8</span></code> is done in <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/.flake8">.flake8</a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">isort</span> <span class="o">--</span><span class="n">check</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">black</span> <span class="o">--</span><span class="n">check</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">buildingmotif</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">mypy</span>
-</pre></div>
-</div>
-<p>The above does not include <em>dynamic</em> testing (unit and integration), which can be run manually with the following command. To run tests with DEBUG prints add the <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">log_cli=true</span></code> argument to the command</p>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this heading">#</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">pytest</span>
 </pre></div>
 </div>
+<p>To run tests with DEBUG prints add the <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">log_cli=true</span></code> argument to the command</p>
 </section>
-<section id="remote">
-<h3>Remote<a class="headerlink" href="#remote" title="Permalink to this heading">#</a></h3>
-<p>Remote CI is done with a GitHub Action from the <code class="docutils literal notranslate"><span class="pre">ci.yml</span></code> workflow.</p>
+<section id="formatting">
+<h2>Formatting<a class="headerlink" href="#formatting" title="Permalink to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">black</span> <span class="o">.</span>
+<span class="n">poetry</span> <span class="n">run</span> <span class="n">isort</span> <span class="o">.</span>
+<span class="n">poetry</span> <span class="n">run</span> <span class="n">pylama</span>
+</pre></div>
+</div>
 </section>
+<section id="migrating">
+<h2>Migrating<a class="headerlink" href="#migrating" title="Permalink to this heading">#</a></h2>
+<p>After making changes to the tables, you must make a new db migration.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">alembic</span> <span class="n">revision</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;Description of Changes.&quot;</span> <span class="o">--</span><span class="n">autogenerate</span>
+</pre></div>
+</div>
+<p>Additional changes may need to be made to the migration, so be sure to check it. <a class="reference external" href="https://alembic.sqlalchemy.org/en/latest/autogenerate.html#auto-generating-migrations">Read here</a> for more information on alembic autogenerate migrations.</p>
 </section>
 <section id="documenting">
 <h2>Documenting<a class="headerlink" href="#documenting" title="Permalink to this heading">#</a></h2>
@@ -577,11 +569,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="cli_tool.html"
+       href="apidoc/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Command Line Tool</p>
+        <p class="prev-next-title">Code Documentation</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -600,17 +592,21 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing">Installing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-integration">Continuous Integration</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local">Local</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remote">Remote</a></li>
-</ul>
-</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Developer Documentation</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#installing">Installing</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#using">Using</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uping-the-api">Uping the API</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing">Testing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formatting">Formatting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#migrating">Migrating</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documenting">Documenting</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-and-publishing">Building and Publishing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#web-app">Web App</a></li>
 </ul>
+</li>
+</ul>
+
   </nav></div>
 
 </div></div>
