@@ -120,34 +120,60 @@ class PropertyShape(Shape):
 
         return self
 
-    def matches_class(
-        self, class_: URIRef, min: int = None, max: int = None, exactly: int = None
-    ):
-        self.add((self, SH["class"], class_))
-
-        if exactly is not None:
-            min = max = exactly
-        if min is not None:
-            self.add((self, SH["minCount"], Literal(min)))
-        if max is not None:
-            self.add((self, SH["maxCount"], Literal(max)))
-        return self
-
-    def matches_shape(
-        self, shape: Node, min: int = None, max: int = None, exactly: int = None
+    def matches(
+        self,
+        target: Node,
+        type: URIRef,
+        min: int = None,
+        max: int = None,
+        exactly: int = None,
+        qualified=False,
     ):
         if min is None and max is None and exactly is None:
-            self.add((self, SH["node"], shape))
+            if qualified:
+                raise ValueError("min, max or exactly must have a value")
+            else:
+                self.add((self, type, target))
             return self
 
-        self.add((self, SH["qualifiedValueShape"], shape))
         if exactly is not None:
             min = max = exactly
-        if min is not None:
-            self.add((self, SH["qualifiedMinCount"], Literal(min)))
-        if max is not None:
-            self.add((self, SH["qualifiedMaxCount"], Literal(max)))
+
+        if qualified:
+            blank_node = BNode()
+            self.add((blank_node, type, target))
+            self.add((self, SH["qualifiedValueShape"], blank_node))
+            if min is not None:
+                self.add((self, SH["qualifiedMinCount"], Literal(min)))
+            if max is not None:
+                self.add((self, SH["qualifiedMaxCount"], Literal(max)))
+        else:
+            self.add((self, type, target))
+            if min is not None:
+                self.add((self, SH["minCount"], Literal(min)))
+            if max is not None:
+                self.add((self, SH["maxCount"], Literal(max)))
         return self
+
+    def matches_class(
+        self,
+        class_: URIRef,
+        min: int = None,
+        max: int = None,
+        exactly: int = None,
+        qualified=False,
+    ):
+        return self.matches(class_, SH["class"], min, max, exactly, qualified)
+
+    def matches_shape(
+        self,
+        shape: Node,
+        min: int = None,
+        max: int = None,
+        exactly: int = None,
+        qualified=False,
+    ):
+        return self.matches(shape, SH["node"], min, max, exactly, qualified)
 
 
 def OR(*nodes: Node) -> Shape:
