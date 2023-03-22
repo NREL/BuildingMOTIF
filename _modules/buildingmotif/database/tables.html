@@ -212,6 +212,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_correction.html">Model Correction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/template_writing.html">Template Writing</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/bacnet-to-brick.html">Creating a Brick Model from a BACnet Network</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
@@ -381,15 +385,7 @@ document.write(`
     <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">())</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">graph_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">())</span>
-    <span class="n">shape_collection_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span>
-        <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;shape_collection.id&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">)</span>
-    <span class="n">shape_collection</span><span class="p">:</span> <span class="s2">&quot;DBShapeCollection&quot;</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
-        <span class="s2">&quot;DBShapeCollection&quot;</span><span class="p">,</span>
-        <span class="n">uselist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all,delete&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="n">graph_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="DBShapeCollection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBShapeCollection">[docs]</a><span class="k">class</span> <span class="nc">DBShapeCollection</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
@@ -399,7 +395,9 @@ document.write(`
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;shape_collection&quot;</span>
     <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">graph_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">())</span></div>
+    <span class="n">graph_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">())</span>
+
+    <span class="n">library</span><span class="p">:</span> <span class="s2">&quot;DBLibrary&quot;</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;DBLibrary&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;shape_collection&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DBLibrary"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBLibrary">[docs]</a><span class="k">class</span> <span class="nc">DBLibrary</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
@@ -418,6 +416,7 @@ document.write(`
     <span class="p">)</span>
     <span class="n">shape_collection</span><span class="p">:</span> <span class="n">DBShapeCollection</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
         <span class="s2">&quot;DBShapeCollection&quot;</span><span class="p">,</span>
+        <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;library&quot;</span><span class="p">,</span>
         <span class="n">uselist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all,delete&quot;</span><span class="p">,</span>
     <span class="p">)</span></div>
