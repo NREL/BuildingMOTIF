@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>buildingmotif.ingresses.base &#8212; BuildingMOTIF Documentation</title>
+    <title>buildingmotif.database.utils &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -60,7 +60,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/ingresses/base';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/database/utils';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -286,7 +286,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/ingresses/base.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/database/utils.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -362,53 +362,63 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>Source code for buildingmotif.ingresses.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+  <h1>Source code for buildingmotif.database.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
 
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Namespace</span>
-
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">import</span> <span class="nn">sqlalchemy</span> <span class="k">as</span> <span class="nn">sa</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.dialects.postgresql</span> <span class="kn">import</span> <span class="n">JSONB</span>
 
 
-<div class="viewcode-block" id="Record"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.Record">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Record</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a piece of metadata from some metadata ingress&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="JSONType"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.utils.html#buildingmotif.database.utils.JSONType">[docs]</a><span class="k">class</span> <span class="nc">JSONType</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">TypeDecorator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom JSON type that uses JSONB on Postgres and JSON on other dialects.</span>
+<span class="sd">    This allows us to use our custom JSON serialization below *and* have the</span>
+<span class="sd">    database enforce uniqueness on JSON-encoded dictionaries</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">rtype</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span></div>
+    <span class="n">impl</span> <span class="o">=</span> <span class="n">sa</span><span class="o">.</span><span class="n">JSON</span>
+    <span class="n">hashable</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">cache_ok</span> <span class="o">=</span> <span class="kc">True</span>
 
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="IngressHandler"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.IngressHandler">[docs]</a><span class="k">class</span> <span class="nc">IngressHandler</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract superclass for Record/Graph ingress handlers&quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
-
-
-<div class="viewcode-block" id="RecordIngressHandler"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.RecordIngressHandler">[docs]</a><span class="k">class</span> <span class="nc">RecordIngressHandler</span><span class="p">(</span><span class="n">IngressHandler</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates Record instances from an underlying metadata source&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bm</span><span class="p">:</span> <span class="n">BuildingMOTIF</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bm</span> <span class="o">=</span> <span class="n">bm</span>
-
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Record</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generates (then caches) a list of Records from an underlying data source</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Must be overridden by subclass&quot;</span><span class="p">)</span></div>
+<div class="viewcode-block" id="JSONType.load_dialect_impl"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.utils.html#buildingmotif.database.utils.JSONType.load_dialect_impl">[docs]</a>    <span class="k">def</span> <span class="nf">load_dialect_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dialect</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;postgresql&quot;</span><span class="p">:</span>
+            <span class="c1"># Use the native JSON type.</span>
+            <span class="k">return</span> <span class="n">dialect</span><span class="o">.</span><span class="n">type_descriptor</span><span class="p">(</span><span class="n">JSONB</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dialect</span><span class="o">.</span><span class="n">type_descriptor</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">JSON</span><span class="p">())</span></div></div>
 
 
-<div class="viewcode-block" id="GraphIngressHandler"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.GraphIngressHandler">[docs]</a><span class="k">class</span> <span class="nc">GraphIngressHandler</span><span class="p">(</span><span class="n">IngressHandler</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates a Graph from an underlying metadata source or RecordIngressHandler&quot;&quot;&quot;</span>
+<span class="c1"># the custom ser/de handlers are to allow the database to ensure</span>
+<span class="c1"># uniqueness of dependency bindings (see https://github.com/NREL/BuildingMOTIF/pull/113)</span>
+<span class="k">def</span> <span class="nf">_custom_json_serializer</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serializes dictionaries as a sorted list of key-value tuples. All</span>
+<span class="sd">    other items are serialized as normal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="c1"># ensure dictionary has at least 1 pair</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">obj</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="nb">sorted</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()]))</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bm</span><span class="p">:</span> <span class="n">BuildingMOTIF</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bm</span> <span class="o">=</span> <span class="n">bm</span>
 
-<div class="viewcode-block" id="GraphIngressHandler.graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.GraphIngressHandler.graph">[docs]</a>    <span class="k">def</span> <span class="nf">graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates an RDF graph with all entities being placed in the given namespace&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Must be overridden by subclass&quot;</span><span class="p">)</span></div></div>
+<span class="k">def</span> <span class="nf">_custom_json_deserializer</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handles deserializing the objects serialied by _custom_json_serializer</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+    <span class="c1"># return normal object if it is not a list</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obj</span>
+    <span class="c1"># if *all* of the items in the list are pairs,</span>
+    <span class="c1"># then we deserialize as a dictionary</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="n">obj</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="c1"># ...otherwise return. It&#39;s just a normal list!</span>
+    <span class="k">return</span> <span class="n">obj</span>
 </pre></div>
 
                 </article>

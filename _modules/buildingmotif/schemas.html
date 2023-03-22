@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>buildingmotif.namespaces &#8212; BuildingMOTIF Documentation</title>
+    <title>buildingmotif.schemas &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -60,7 +60,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/namespaces';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/schemas';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -286,7 +286,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/namespaces.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/schemas.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -362,63 +362,54 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>Source code for buildingmotif.namespaces</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
+  <h1>Source code for buildingmotif.schemas</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
-<span class="n">BMOTIF</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;https://nrel.gov/BuildingMOTIF#&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">jsonschema</span>
 
-<span class="c1"># special namespace to denote template parameters inside RDF graphs</span>
-<span class="n">PARAM</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;urn:___param___#&quot;</span><span class="p">)</span>
+<span class="n">LIBRARIES_YAML_SCHEMA</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;oneOf&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;directory&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">}},</span>
+                <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;directory&quot;</span><span class="p">],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ontology&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">}},</span>
+                <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ontology&quot;</span><span class="p">],</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;git&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="s2">&quot;repo&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+                            <span class="s2">&quot;branch&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+                            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
+                        <span class="p">},</span>
+                        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;branch&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">],</span>
+                    <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">}</span>
 
-<span class="c1"># all versions of Brick &gt; 1.1 have these namespaces</span>
-<span class="n">BRICK</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;https://brickschema.org/schema/Brick#&quot;</span><span class="p">)</span>
-<span class="n">TAG</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;https://brickschema.org/schema/BrickTag#&quot;</span><span class="p">)</span>
-<span class="n">BSH</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;https://brickschema.org/schema/BrickShape#&quot;</span><span class="p">)</span>
-<span class="n">REF</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;https://brickschema.org/schema/Brick/ref#&quot;</span><span class="p">)</span>
 
-<span class="c1"># defaults</span>
-<span class="n">OWL</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2002/07/owl#&quot;</span><span class="p">)</span>
-<span class="n">RDF</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;</span><span class="p">)</span>
-<span class="n">RDFS</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2000/01/rdf-schema#&quot;</span><span class="p">)</span>
-<span class="n">SKOS</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2004/02/skos/core#&quot;</span><span class="p">)</span>
-<span class="n">SH</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/ns/shacl#&quot;</span><span class="p">)</span>
-<span class="n">XSD</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://www.w3.org/2001/XMLSchema#&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="validate_libraries_yaml"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.schemas.html#buildingmotif.schemas.validate_libraries_yaml">[docs]</a><span class="k">def</span> <span class="nf">validate_libraries_yaml</span><span class="p">(</span><span class="n">doc</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validates a given document against the library.yml schema. Raises</span>
+<span class="sd">    a jsonschema.exceptions.ValidationError if errors are found</span>
 
-<span class="c1"># QUDT namespaces</span>
-<span class="n">QUDT</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://qudt.org/schema/qudt/&quot;</span><span class="p">)</span>
-<span class="n">QUDTQK</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://qudt.org/vocab/quantitykind/&quot;</span><span class="p">)</span>
-<span class="n">QUDTDV</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://qudt.org/vocab/dimensionvector/&quot;</span><span class="p">)</span>
-<span class="n">UNIT</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://qudt.org/vocab/unit/&quot;</span><span class="p">)</span>
-
-<span class="n">BACNET</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;http://data.ashrae.org/bacnet/2020#&quot;</span><span class="p">)</span>
-
-<span class="n">BM</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;https://nrel.gov/BuildingMOTIF#&quot;</span><span class="p">)</span>
-<span class="n">CONSTRAINT</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;https://nrel.gov/BuildingMOTIF/constraints#&quot;</span><span class="p">)</span>
-
-<span class="n">A</span> <span class="o">=</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span>
-
-
-<div class="viewcode-block" id="bind_prefixes"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.namespaces.html#buildingmotif.namespaces.bind_prefixes">[docs]</a><span class="k">def</span> <span class="nf">bind_prefixes</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Associate common prefixes with the graph.</span>
-
-<span class="sd">    :param graph: graph</span>
-<span class="sd">    :type graph: rdflib.Graph</span>
+<span class="sd">    :param doc: a value retrieved from deserializing libraries.yml file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;xsd&quot;</span><span class="p">,</span> <span class="n">XSD</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;rdf&quot;</span><span class="p">,</span> <span class="n">RDF</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;owl&quot;</span><span class="p">,</span> <span class="n">OWL</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;rdfs&quot;</span><span class="p">,</span> <span class="n">RDFS</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;skos&quot;</span><span class="p">,</span> <span class="n">SKOS</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;sh&quot;</span><span class="p">,</span> <span class="n">SH</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;qudtqk&quot;</span><span class="p">,</span> <span class="n">QUDTQK</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;qudt&quot;</span><span class="p">,</span> <span class="n">QUDT</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;unit&quot;</span><span class="p">,</span> <span class="n">UNIT</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;brick&quot;</span><span class="p">,</span> <span class="n">BRICK</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="n">TAG</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;bsh&quot;</span><span class="p">,</span> <span class="n">BSH</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;constraint&quot;</span><span class="p">,</span> <span class="n">CONSTRAINT</span><span class="p">)</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;bmotif&quot;</span><span class="p">,</span> <span class="n">BM</span><span class="p">)</span></div>
+    <span class="n">jsonschema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="n">LIBRARIES_YAML_SCHEMA</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span></div>
 </pre></div>
 
                 </article>
