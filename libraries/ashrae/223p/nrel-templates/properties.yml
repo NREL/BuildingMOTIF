@@ -103,9 +103,11 @@ run-status:
 flow-status:
   body: >
     @prefix P: <urn:___param___#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
-    P:name a s223:EnumeratedObservableProperty .
-    # s223:hasEnumerationKind s223:EnumerationKind-FlowStatus .
+    P:name a s223:EnumeratedObservableProperty ;
+      s223:hasEnumerationKind s223:EnumerationKind-FlowStatus .
+    # TODO: add Flowstatus from g36 to s223
 
 relative-humidity:
   body: >
