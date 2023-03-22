@@ -16,7 +16,7 @@ kernelspec:
 
 ```{margin}
 ```{important}
-This tutorial assumes that `BuildingMOTIF` has already been installed in the local environment with the `bacnet-ingress` option **and** that the user has access to a BACnet network with descriptive names. One easy way of *emulating* a BACnet network is to use the [Simulated Digital Twin](https://github.com/gtfierro/simulated-digital-twin) repository.
+This tutorial assumes that `BuildingMOTIF` has already been installed in the local environment with the `bacnet-ingress` option **and** that the user has access to a BACnet network with descriptive names.
 ```
 
 The purpose of this how-to document is to demonstrate the creation of a functional Brick model from a BACnet network. This will be accomplished by using BuildingMOTIF's "ingresses" to import a BACnet network as a basic Brick model, and then using BuildingMOTIF to augment the basic Brick model with more descriptive metadata.
@@ -24,18 +24,145 @@ The purpose of this how-to document is to demonstrate the creation of a function
 ## External Setup
 
 Make sure you have network access to a BACnet network, and that you are aware on what IP address that BACnet network can be reached.
-For this tutorial, we will use [`docker compose`](https://docs.docker.com/compose/) to run a virtual BACnet network which we can scan and generate a Brick model for.
+For this tutorial, we will use [`docker compose`](https://docs.docker.com/compose/) to run a virtual BACnet network which we can scan and generate a Brick model for; see the sub-section below.
 
 ```{margin}
 ```{note}
 Another virtual BACnet network to try is the [virtual machine setup in the simulated digital twin repository](https://github.com/gtfierro/simulated-digital-twin/tree/main/virtual-machine).
 ```
 
+### BACnet Network Setup
+
+This cell sets up a virtual BACnet network that can be run locally to make the rest of the tutorial work as expected.
+You do not need to run this if you are connecting to a real BACnet network.
+
+<details>
+
+```{code-cell} python3
+import subprocess
+import shlex
+with open('virtual_bacnet.py', 'w') as f:
+    f.write('''
+import random
+import sys
+
+from bacpypes.app import BIPSimpleApplication
+from bacpypes.consolelogging import ConfigArgumentParser
+from bacpypes.core import run
+from bacpypes.debugging import ModuleLogger, bacpypes_debugging
+from bacpypes.local.device import LocalDeviceObject
+from bacpypes.object import AnalogInputObject
+from bacpypes.service.device import DeviceCommunicationControlServices
+from bacpypes.service.object import ReadWritePropertyMultipleServices
+
+_debug = 0
+_log = ModuleLogger(globals())
+
+
+@bacpypes_debugging
+class VirtualBACnetApp(
+    BIPSimpleApplication,
+    ReadWritePropertyMultipleServices,
+    DeviceCommunicationControlServices,
+):
+    pass
+
+
+class VirtualDevice:
+    def __init__(self, host: str = "0.0.0.0"):
+        parser = ConfigArgumentParser(description=__doc__)
+        args = parser.parse_args()
+        self.device = LocalDeviceObject(ini=args.ini)
+        self.application = VirtualBACnetApp(self.device, host)
+
+        # setup points
+        self.points = {
+            "SupplyTempSensor": AnalogInputObject(
+                objectName="VAV-1/SAT",
+                objectIdentifier=("analogInput", 0),
+                presentValue=random.randint(1, 100),
+            ),
+            "HeatingSetpoint": AnalogInputObject(
+                objectName="VAV-1/HSP",
+                objectIdentifier=("analogInput", 1),
+                presentValue=random.randint(1, 100),
+            ),
+            "CoolingSetpoint": AnalogInputObject(
+                objectName="VAV-1/CSP",
+                objectIdentifier=("analogInput", 2),
+                presentValue=random.randint(1, 100),
+            ),
+            "ZoneTempSensor": AnalogInputObject(
+                objectName="VAV-1/Zone",
+                objectIdentifier=("analogInput", 3),
+                presentValue=random.randint(1, 100),
+            ),
+        }
+
+        for p in self.points.values():
+            self.application.add_object(p)
+
+        run()
+
+
+if __name__ == "__main__":
+    VirtualDevice(sys.argv[1] if len(sys.argv) > 1 else "0.0.0.0")
+''')
+
+with open('Dockerfile.bacnet', 'w') as f:
+    f.write('''FROM ubuntu:latest as base
+
+WORKDIR /opt
+
+RUN apt update \
+    && apt install -y \
+    python3 \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install BACpypes
+
+COPY virtual_bacnet.py virtual_bacnet.py
+COPY BACpypes.ini .''')
+
+with open('BACpypes.ini', 'w') as f:
+    f.write('''[BACpypes]
+objectName: VirtualBACnet
+#address: 172.17.0.1/24
+objectIdentifier: 599
+maxApduLengthAccepted: 1024
+segmentationSupported: segmentedBoth
+vendorIdentifier: 15''')
+
+
+with open('docker-compose-bacnet.yml','w') as f:
+    f.write('''version: "3.4"
+services:
+  device:
+    build:
+      dockerfile: Dockerfile.bacnet
+    networks:
+      bacnet:
+        ipv4_address: 172.24.0.3
+    command: "python3 virtual_bacnet.py"
+networks:
+  bacnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.24.0.0/16"
+          gateway: "172.24.0.1"''')
+docker_compose_start = shlex.split("docker compose -f docker-compose-bacnet.yml up -d")
+subprocess.run(docker_compose_start)
+```
+
+</details>
+
 ## BuildingMOTIF Setup
 
 Like the previous tutorial, we'll create an in-memory BuildingMOTIF instance and load some libraries.
 
-```{code-cell}
+```{code-cell} python3
 import logging
 from rdflib import Namespace
 from buildingmotif import BuildingMOTIF
@@ -53,14 +180,13 @@ model = Model.create(BLDG, description="This is a test model for a simple buildi
 
 # load some libraries we will use later
 brick = Library.load(ontology_graph="https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl")
-constraints = Library.load(ontology_graph="building_motif_ontology.ttl")
 ```
 
 ## Pulling in BACnet Metadata
 
 We use the `buildingmotif.ingresses.bacnet.BACnetNetwork` ingress module to pull structured information from the BACnet network. The ingress module scrapes the BACnet network and produces a set of "records" which correspond to the individual BACnet Devices and Objects discovered in the network.
 
-```{code-cell}
+```{code-cell} python3
 from buildingmotif.ingresses.bacnet import BACnetNetwork
 
 bacnet = BACnetNetwork("172.24.0.1/32") # don't change this if you are using the docker compose setup
@@ -75,7 +201,7 @@ Each of these records has an `rtype` field, which is used by the ingress impleme
 We use the `buildingmotif.ingresses.brick.BACnetToBrickIngress` ingress module to turn the `Record`s from the `BACnetNetwork` ingress into a Brick model. This is as simple as choosing a namespace for the entities (this is usually just the same namespace used for the Model, i.e. `BLDG` above) and connecting our new ingress module instance to the existing BACnet network ingress module.
 
 
-```{code-cell}
+```{code-cell} python3
 from buildingmotif.ingresses.brick import BACnetToBrickIngress
 
 # create the Brick ingress module and connect to the existing bacnet module
@@ -88,7 +214,7 @@ model.add_graph(bacnet_network_graph)
 
 We can now take a look at the resulting graph:
 
-```{code-cell}
+```{code-cell} python3
 print(model.graph.serialize())
 ```
 
@@ -101,43 +227,43 @@ There is [existing documentation](https://docs.brickschema.org/lifecycle/creatio
 
 ## Point Type Inference
 
-For completeness, here are the names of the 5 points in the BACnet network scanned above (these will be different if you are not using the Simulated Digital Twin platform):
+For completeness, here are the names of the 4 points in the BACnet network scanned above (these will be different if you are not using the provided `docker compose` setup):
 
-- `hvac_oveAhu_yPumHea_u`
-- `hvac_oveZonSupSou_TZonCooSet_u`
-- `hvac_oveZonSupSou_TZonHeaSet_u`
-- `hvac_reaZonSou_TSup_y`
-- `hvac_reaZonSou_TZon_y`
+- `VAV-1/SAT`
+- `VAV-1/HSP`
+- `VAV-1/CSP`
+- `VAV-1/Zone`
 
-Squinting at these point names, we might see how we can divide each name into sections: `hvac_<equip or zone name>_<point type>_<u or y>`. Let's write Python code to pull out the Brick metadata we can from these labels.
+Squinting at these point names, we might see how we can divide each name into sections: `{equip name} / {point type}`. Let's write Python code to pull out the Brick metadata we can from these labels.
 
-```{code-cell}
+```python3
 from rdflib import Graph, URIRef
 from buildingmotif.namespaces import RDF, BRICK
 def parse_label(label: str, output: Graph):
     """Parses the label and puts the resulting triples in the provided graph."""
-    parts = label.split('_')
-    _, _, point_type, _ = parts # throw away everything that's not the point type
+    parts = label.split('/')
+    equip_name, point_type = parts
 
-    if point_type == 'TZonCooSet':
-        brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
-    elif point_type == 'TZonHeaSet':
-        brick_class = BRICK.Zone_Air_Heating_Temperature_Setpoint
-    elif point_type == 'TSup':
+    if point_type == 'SAT':
         brick_class = BRICK.Supply_Air_Temperature_Sensor
-    elif point_type == 'TZon':
+    elif point_type == 'HSP':
+        brick_class = BRICK.Zone_Air_Heating_Temperature_Setpoint
+    elif point_type == 'CSP':
+        brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
+    elif point_type == 'Zone':
         brick_class = BRICK.Zone_Air_Temperature_Sensor
-    elif point_type == 'yPumHea':
-        brick_class = BRICK.Heating_Command
     else:
-        raise Exception("Unknown point type!")
+        raise Exception(f"Unknown point type! {point_type}")
 
     output.add((BLDG[label], RDF.type, brick_class))
+    output.add((BLDG[equip_name], RDF.type, BRICK.Equipment)) # not sure what type this is yet, choose 'Equipment' for now
 ```
 
 We can wrap this function in an ingress module so it is easy to reuse later. This just requires a little bit of moving some code around
 
-```{code-cell}
+```{code-cell} python3
+from rdflib import Graph, URIRef
+from buildingmotif.namespaces import RDF, BRICK
 from buildingmotif.ingresses.base import GraphIngressHandler
 
 class MyPointParser(GraphIngressHandler):
@@ -148,23 +274,22 @@ class MyPointParser(GraphIngressHandler):
     def parse_label(self, label: str, entity: URIRef, output: Graph):
         """Parses the label and puts the resulting triples in the provided graph.
         Adds the type to the indicated entity"""
-        parts = label.split('_')
-        _, _, point_type, _ = parts # throw away everything that's not the point type
+        parts = label.split('/')
+        equip_name, point_type = parts
 
-        if point_type == 'TZonCooSet':
-            brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
-        elif point_type == 'TZonHeaSet':
-            brick_class = BRICK.Zone_Air_Heating_Temperature_Setpoint
-        elif point_type == 'TSup':
+        if point_type == 'SAT':
             brick_class = BRICK.Supply_Air_Temperature_Sensor
-        elif point_type == 'TZon':
+        elif point_type == 'HSP':
+            brick_class = BRICK.Zone_Air_Heating_Temperature_Setpoint
+        elif point_type == 'CSP':
+            brick_class = BRICK.Zone_Air_Cooling_Temperature_Setpoint
+        elif point_type == 'Zone':
             brick_class = BRICK.Zone_Air_Temperature_Sensor
-        elif point_type == 'yPumHea':
-            brick_class = BRICK.Heating_Command
         else:
-            raise Exception("Unknown point type!")
+            raise Exception(f"Unknown point type! {point_type}")
 
         output.add((entity, RDF.type, brick_class))
+        output.add((BLDG[equip_name], RDF.type, BRICK.Equipment)) # not sure what type this is yet, choose 'Equipment' for now
 
     def graph(self, ns: Namespace) -> Graph:
         """the method we override to implement a GraphIngressHandler"""
@@ -184,7 +309,7 @@ class MyPointParser(GraphIngressHandler):
 
 Now we can invoke our ingress module:
 
-```{code-cell}
+```{code-cell} python3
 # create the Brick ingress module and connect to the existing bacnet module
 point_ingress = MyPointParser(bm, brick2bacnet)
 # creates the graph from the BACnet records
@@ -195,7 +320,7 @@ model.add_graph(augmented_graph)
 
 and display the resulting model
 
-```{code-cell}
+```{code-cell} python3
 print(model.graph.serialize())
 ```
 
@@ -246,6 +371,16 @@ sample-vav:
 
 We load this library into BuildingMOTIF:
 
-```{code-cell}
+```{code-cell} python3
 templates = Library.load(directory="libraries/bacnet-to-brick-templates")
+vav_templ = templates.get_template_by_name('sample-vav').inline_dependencies()
+for mapping, _, _ in vav_templ.find_subgraphs(model, brick.get_shape_collection().graph):
+    print(mapping)
+```
+
+## Clean up
+
+```{code-cell} python3
+docker_compose_stop = shlex.split("docker compose -f docker-compose-bacnet.yml down")
+subprocess.run(docker_compose_stop)
 ```

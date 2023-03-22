@@ -32,14 +32,24 @@ class VirtualDevice:
 
         # setup points
         self.points = {
-            "TempSensor": AnalogInputObject(
-                objectName="TempSensor",
+            "SupplyTempSensor": AnalogInputObject(
+                objectName="VAV-1/SAT",
                 objectIdentifier=("analogInput", 0),
                 presentValue=random.randint(1, 100),
             ),
-            "HumiditySensor": AnalogInputObject(
-                objectName="HumiditySensor",
+            "HeatingSetpoint": AnalogInputObject(
+                objectName="VAV-1/HSP",
                 objectIdentifier=("analogInput", 1),
+                presentValue=random.randint(1, 100),
+            ),
+            "CoolingSetpoint": AnalogInputObject(
+                objectName="VAV-1/CSP",
+                objectIdentifier=("analogInput", 2),
+                presentValue=random.randint(1, 100),
+            ),
+            "ZoneTempSensor": AnalogInputObject(
+                objectName="VAV-1/Zone",
+                objectIdentifier=("analogInput", 3),
                 presentValue=random.randint(1, 100),
             ),
         }
