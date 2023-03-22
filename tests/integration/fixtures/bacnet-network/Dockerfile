@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as base
+FROM ubuntu:latest as base
 
 WORKDIR /opt
 
