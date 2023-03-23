@@ -12,7 +12,7 @@ from buildingmotif.namespaces import BACNET, BRICK, RDF
 # path to docker compose file
 docker_compose_path = Path(__file__).parent / Path("fixtures") / Path("bacnet-network")
 # command to start docker compose
-docker_compose_start = shlex.split("docker compose up -d")
+docker_compose_start = shlex.split("docker compose up -d --build")
 # command to stop docker compose
 docker_compose_stop = shlex.split("docker compose down")
 
@@ -37,4 +37,6 @@ def test_bacnet_ingress(bm, bacnet_network):
     assert devices[0] == BLDG["599"]  # type: ignore
 
     objects = list(m.graph.subjects(RDF["type"], BRICK["Point"]))
-    assert len(objects) == 4, "Did not find exactly 4 points"
+    assert (
+        len(objects) == 4
+    ), f"Did not find exactly 4 points; found {len(objects)} instead"

@@ -332,14 +332,10 @@ It is important to note that this particular ingress we have dveloped is specifi
 In the future, BuildingMOTIF will incorporate more sophisticated inference mechanisms; for now, consider the above as an example of how to interact with the BACnet ingress.
 
 <details>
-
-## Clean up
-
 Here we teardown the BACnet network we created
 
 ```{code-cell} python3
 docker_compose_stop = shlex.split("docker compose -f docker-compose-bacnet.yml down")
 subprocess.run(docker_compose_stop)
 ```
-
 </details>
