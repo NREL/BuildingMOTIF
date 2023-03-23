@@ -19,14 +19,14 @@ jobs:
     steps:
       # setup, checkout pull_request.head.ref for repo-vis
       - name: checkout
-        uses: actions/checkout@main
+        uses: actions/checkout@v3
         with:
           ref: ${{github.event.pull_request.head.ref}}
       - name: setup-python
-        uses: actions/setup-python@main
+        uses: actions/setup-python@v3
       # update repo visualization for docs
       - name: repo-visualizer
-        uses: githubocto/repo-visualizer@main
+        uses: githubocto/repo-visualizer@0.8.2
         with:
           output_file: docs/reference/apidoc/code_visualization.svg
           excluded_paths: ".github"
@@ -41,10 +41,10 @@ jobs:
       - name: build docs
         run: |
           jupyter-book config sphinx ./docs/
-          sphinx-build ./docs/ _build/html -b html
+          sphinx-build ./docs/ docs/_build/html -b html
       # TODO can we use an official GitHub Action? https://github.com/actions/deploy-pages
       - name: deploy docs
-        uses: peaceiris/actions-gh-pages@main
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_build/html      
@@ -57,12 +57,16 @@ jobs:
     steps:
       # setup
       - name: checkout
-        uses: actions/checkout@main
+        uses: actions/checkout@v3
       - name: setup-python
-        uses: actions/setup-python@main
+        uses: actions/setup-python@v3
       # install poetry and build dist
-      - name: install poetry
-        run: pip install poetry
+      - name: install-poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0
+          virtualenvs-in-project: false
+          virtualenvs-path: ~/.virtualenvs
       - name: build dist
         run: poetry build
       - name: publish distribution to Test PyPI
