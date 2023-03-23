@@ -10,8 +10,8 @@ from buildingmotif.database.tables import DBModel, DBShapeCollection
 @mock.patch("uuid.uuid4")
 def test_create_db_model(mock_uuid4, table_connection):
     mocked_graph_uuid = uuid.uuid4()
-    mocked_shape_collection_uuid = uuid.uuid4()
-    mock_uuid4.side_effect = [mocked_graph_uuid, mocked_shape_collection_uuid]
+    mocked_manifest_uuid = uuid.uuid4()
+    mock_uuid4.side_effect = [mocked_graph_uuid, mocked_manifest_uuid]
 
     db_model = table_connection.create_db_model(
         name="my_db_model", description="a very good model"
@@ -20,8 +20,8 @@ def test_create_db_model(mock_uuid4, table_connection):
     assert db_model.name == "my_db_model"
     assert db_model.description == "a very good model"
     assert db_model.graph_id == str(mocked_graph_uuid)
-    assert isinstance(db_model.shape_collection, DBShapeCollection)
-    assert db_model.shape_collection.graph_id == str(mocked_shape_collection_uuid)
+    assert isinstance(db_model.manifest, DBShapeCollection)
+    assert db_model.manifest.graph_id == str(mocked_manifest_uuid)
 
 
 def test_get_db_models(table_connection):
@@ -45,16 +45,16 @@ def test_get_db_models(table_connection):
 @mock.patch("uuid.uuid4")
 def test_get_db_model(mock_uuid4, table_connection):
     mocked_graph_uuid = uuid.uuid4()
-    mocked_shape_collection_uuid = uuid.uuid4()
-    mock_uuid4.side_effect = [mocked_graph_uuid, mocked_shape_collection_uuid]
+    mocked_manifest_uuid = uuid.uuid4()
+    mock_uuid4.side_effect = [mocked_graph_uuid, mocked_manifest_uuid]
 
     db_model = table_connection.create_db_model(name="my_db_model")
     db_model = table_connection.get_db_model(id=db_model.id)
 
     assert db_model.name == "my_db_model"
     assert db_model.graph_id == str(mocked_graph_uuid)
-    assert isinstance(db_model.shape_collection, DBShapeCollection)
-    assert db_model.shape_collection.graph_id == str(mocked_shape_collection_uuid)
+    assert isinstance(db_model.manifest, DBShapeCollection)
+    assert db_model.manifest.graph_id == str(mocked_manifest_uuid)
 
 
 def test_get_db_model_does_not_exist(table_connection):
@@ -102,7 +102,7 @@ def test_delete_db_model(table_connection):
         table_connection.get_db_model(db_model.id)
 
     with pytest.raises(NoResultFound):
-        table_connection.get_db_shape_collection(db_model.shape_collection.id)
+        table_connection.get_db_shape_collection(db_model.manifest.id)
 
 
 def tests_delete_db_model_does_does_exist(table_connection):

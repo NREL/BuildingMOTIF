@@ -52,7 +52,7 @@ class TableConnection:
             name=name,
             graph_id=graph_id,
             description=description,
-            shape_collection=shape_collection,
+            manifest=shape_collection,
         )
         self.bm.session.add(db_model)
 

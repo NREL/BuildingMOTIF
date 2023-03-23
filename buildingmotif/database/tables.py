@@ -17,10 +17,10 @@ class DBModel(Base):
     name: Mapped[str] = Column(String())
     description: Mapped[str] = Column(Text(), default="", nullable=False)
     graph_id: Mapped[str] = Column(String())
-    shape_collection_id: Mapped[int] = Column(
+    manifest_id: Mapped[int] = Column(
         Integer, ForeignKey("shape_collection.id"), nullable=False
     )
-    shape_collection: "DBShapeCollection" = relationship(
+    manifest: "DBShapeCollection" = relationship(
         "DBShapeCollection",
         uselist=False,
         cascade="all,delete",
