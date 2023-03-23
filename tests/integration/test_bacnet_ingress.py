@@ -37,4 +37,4 @@ def test_bacnet_ingress(bm, bacnet_network):
     assert devices[0] == BLDG["599"]  # type: ignore
 
     objects = list(m.graph.subjects(RDF["type"], BRICK["Point"]))
-    assert len(objects) == 2, "Did not find exactly 2 points"
+    assert len(objects) == 4, "Did not find exactly 4 points"
