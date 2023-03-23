@@ -61,8 +61,12 @@ jobs:
       - name: setup-python
         uses: actions/setup-python@v3
       # install poetry and build dist
-      - name: install poetry
-        run: pip install poetry
+      - name: install-poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0
+          virtualenvs-in-project: false
+          virtualenvs-path: ~/.virtualenvs
       - name: build dist
         run: poetry build
       - name: publish distribution to Test PyPI
