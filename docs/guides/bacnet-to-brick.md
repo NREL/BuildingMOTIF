@@ -382,9 +382,8 @@ Tutorial forthcoming! Don't worry about the specifics of this for now. You will 
 
 ```{code-cell} python3
 inlined = vav_templ.inline_dependencies()
-mapping, _, _ = next(inlined.find_subgraphs(model, brick.get_shape_collection().graph))
-inferred_vav = vav_templ.evaluate(mapping)
-model.add_graph(inferred_vav)
+_, subgraph, _ = next(inlined.find_subgraphs(model, brick.get_shape_collection().graph))
+model.add_graph(subgraph)
 ```
 
 Finally, we can visualize the model inferred from our BACnet network:
