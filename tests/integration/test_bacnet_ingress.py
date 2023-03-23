@@ -10,7 +10,7 @@ from buildingmotif.ingresses import BACnetNetwork, BACnetToBrickIngress
 from buildingmotif.namespaces import BACNET, BRICK, RDF
 
 # path to docker compose file
-docker_compose_path = Path(__file__).parent / Path("fixtures") / Path("bacnet-network")
+docker_compose_path = Path(__file__).parent / Path("fixtures") / Path("bacnet")
 # command to start docker compose
 docker_compose_start = shlex.split("docker compose up -d --build")
 # command to stop docker compose
