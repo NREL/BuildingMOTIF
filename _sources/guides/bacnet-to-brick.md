@@ -345,16 +345,12 @@ sample-hvac-zone:
     p:name a brick:HVAC_Zone ;
         brick:hasPoint p:zone-temp .
   dependencies:
-  - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
-    library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "zone-temp"}
 sample-vav:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:VAV ;
-        brick:hasPoint p:sup-temp, p:heat-sp, p:cool-sp ;
-        brick:feeds p:zone .
+        brick:hasPoint p:sup-temp, p:heat-sp, p:cool-sp, p:zone-temp .
   dependencies:
   - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
     library: https://brickschema.org/schema/1.3/Brick
@@ -365,20 +361,41 @@ sample-vav:
   - template: https://brickschema.org/schema/Brick#Zone_Air_Cooling_Temperature_Setpoint
     library: https://brickschema.org/schema/1.3/Brick
     args: {"name": "cool-sp"}
-  - template: sample-hvac-zone
-    args: {"name": "zone"}
+  - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "zone-temp"}
 ```
 
-We load this library into BuildingMOTIF:
+We load this library into BuildingMOTIF and extract the `sample-vav` template:
 
 ```{code-cell} python3
 templates = Library.load(directory="libraries/bacnet-to-brick-templates")
-vav_templ = templates.get_template_by_name('sample-vav').inline_dependencies()
-for mapping, _, _ in vav_templ.find_subgraphs(model, brick.get_shape_collection().graph):
-    print(mapping)
+vav_templ = templates.get_template_by_name('sample-vav')
+```
+
+We can now use BuildingMOTIF's "autocomplete" functionality to find likely ways that our BACnet points in the model correspond to the `sample-vav` template
+
+```{margin}
+```{note}
+Tutorial forthcoming! Don't worry about the specifics of this for now. You will probably want to do most of the model construction inside your Ingress implementation.
+```
+
+```{code-cell} python3
+inlined = vav_templ.inline_dependencies()
+mapping, _, _ = next(inlined.find_subgraphs(model, brick.get_shape_collection().graph))
+inferred_vav = vav_templ.evaluate(mapping)
+model.add_graph(inferred_vav)
+```
+
+Finally, we can visualize the model inferred from our BACnet network:
+
+```{code-cell} python3
+print(model.graph.serialize())
 ```
 
 ## Clean up
+
+Here we teardown the BACnet network we created
 
 ```{code-cell} python3
 docker_compose_stop = shlex.split("docker compose -f docker-compose-bacnet.yml down")
