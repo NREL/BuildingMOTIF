@@ -215,6 +215,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_correction.html">Model Correction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/template_writing.html">Template Writing</a></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/bacnet-to-brick.html">Creating a Brick Model from a BACnet Network</a></li>
+</ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
@@ -418,14 +422,14 @@ document.write(`
 <p class="rubric">Classes</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.model.Model" title="buildingmotif.dataclasses.model.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>(_id, _name, _description, graph, _bm, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.model.Model" title="buildingmotif.dataclasses.model.Model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Model</span></code></a>(_id, _name, _description, graph, _bm)</p></td>
 <td><p>This class mirrors <code class="xref py py-class docutils literal notranslate"><span class="pre">database.tables.DBModel</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.model.Model">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_bm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.building_motif.building_motif.html#buildingmotif.building_motif.building_motif.BuildingMOTIF" title="buildingmotif.building_motif.building_motif.BuildingMOTIF"><span class="pre">BuildingMOTIF</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">_manifest_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.model.Model" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_bm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.building_motif.building_motif.html#buildingmotif.building_motif.building_motif.BuildingMOTIF" title="buildingmotif.building_motif.building_motif.BuildingMOTIF"><span class="pre">BuildingMOTIF</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.model.Model" title="Permalink to this definition">#</a></dt>
 <dd><p>This class mirrors <code class="xref py py-class docutils literal notranslate"><span class="pre">database.tables.DBModel</span></code>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.model.Model.graph">
@@ -570,20 +574,6 @@ ValidationContext</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dict[URIRef, <a class="reference internal" href="buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.ValidationContext" title="buildingmotif.dataclasses.validation.ValidationContext">ValidationContext</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.dataclasses.model.Model.get_manifest">
-<span class="sig-name descname"><span class="pre">get_manifest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">ShapeCollection</span></a></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/model.html#Model.get_manifest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.model.Model.get_manifest" title="Permalink to this definition">#</a></dt>
-<dd><p>Get ShapeCollection from model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>model’s shape collection</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection">ShapeCollection</a></p>
 </dd>
 </dl>
 </dd></dl>
