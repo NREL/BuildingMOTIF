@@ -20,10 +20,9 @@ A `Record` is a simple Python data structure:
 ```python
 @dataclass
 class Record:
-    # an arbitrary "type hint"
+    # a "type hint" or other identifier for an application-defined category of Records
     rtype: str
-    # possibly-nested dictionary of (semi-)structured data from
-    # the underlying source
+    # key-value pairs of data from the underlying source. Application-defined structure
     fields: dict
 ```
 
@@ -52,5 +51,3 @@ from buildingmotif.ingresses.bacnet import BACnetNetwork
 # scan the 10.0.0.1/24 subnet for BACnet devices
 network = BACnetNetwork(ip="10.0.0.1/24")
 ```
-
-
