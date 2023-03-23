@@ -35,7 +35,7 @@ The documentation uses Diataxis[^1] as a framework for its structure, which is o
 
 ## Guides
 
-- [Brick model from BACnet network guide](https://nrel.github.io/BuildingMOTIF/guides/bacnet-to-brick.html)
+🏗️ under construction
 
 ## Explanation
 
