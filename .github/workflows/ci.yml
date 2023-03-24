@@ -19,7 +19,7 @@ jobs:
           virtualenvs-in-project: false
           virtualenvs-path: ~/.virtualenvs
       - name: poetry install
-        run: poetry install
+        run: poetry install --all-extras
       - name: run isort and black
         run: |
           poetry run isort . --check
@@ -45,7 +45,7 @@ jobs:
           virtualenvs-in-project: false
           virtualenvs-path: ~/.virtualenvs
       - name: poetry install
-        run: poetry install
+        run: poetry install --all-extras
       - name: lint
         run: poetry run flake8 buildingmotif
       - name: type check
