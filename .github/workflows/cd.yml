@@ -24,13 +24,13 @@ jobs:
           ref: ${{github.event.pull_request.head.ref}}
       - name: setup-python
         uses: actions/setup-python@v3
-      # update repo visualization for docs
-      - name: repo-visualizer
-        uses: githubocto/repo-visualizer@0.8.2
-        with:
-          output_file: docs/reference/apidoc/code_visualization.svg
-          excluded_paths: ".github"
-          commit_message: "repo-visualizer [skip actions]"
+      # # update repo visualization for docs
+      # - name: repo-visualizer
+      #   uses: githubocto/repo-visualizer@0.8.2
+      #   with:
+      #     output_file: docs/reference/apidoc/code_visualization.svg
+      #     excluded_paths: ".github"
+      #     commit_message: "repo-visualizer [skip actions]"
       # install project, which is required for autodoc of code
       - name: install buildingmotif
         run: pip install .

@@ -7,7 +7,7 @@ Code Documentation
 
    buildingmotif
 
-Code Visualization
-==================
+.. Code Visualization
+.. ==================
 
-.. image:: code_visualization.svg
+.. .. image:: code_visualization.svg
