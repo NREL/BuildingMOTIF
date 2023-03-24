@@ -11,8 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Creating a Brick Model from a BACnet Network
-
+# Ingress - BACnet to Brick
 
 ```{margin}
 ```{important}
