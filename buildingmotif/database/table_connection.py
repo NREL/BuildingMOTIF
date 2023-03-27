@@ -41,10 +41,10 @@ class TableConnection:
         :return: DBModel
         :rtype: DBModel
         """
-        shape_collection_id = str(uuid.uuid4())
+        manifest_id = str(uuid.uuid4())
         self.logger.debug(f"Creating shape collection in model: '{name}'")
-        shape_collection = DBShapeCollection(graph_id=shape_collection_id)
-        self.bm.session.add(shape_collection)
+        manifest = DBShapeCollection(graph_id=manifest_id)
+        self.bm.session.add(manifest)
 
         graph_id = str(uuid.uuid4())
         self.logger.debug(f"Creating model: '{name}', with graph: '{graph_id}'")
@@ -52,7 +52,7 @@ class TableConnection:
             name=name,
             graph_id=graph_id,
             description=description,
-            manifest=shape_collection,
+            manifest=manifest,
         )
         self.bm.session.add(db_model)
 
