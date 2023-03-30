@@ -1,7 +1,7 @@
 # BuildingMOTIF
 
 [![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF) 
-[![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://nrel.github.io/BuildingMOTIF/)
+[![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest)
 ![PyPI](https://img.shields.io/pypi/v/buildingmotif)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/buildingmotif)
 
@@ -35,7 +35,7 @@ The documentation uses Diataxis[^1] as a framework for its structure, which is o
 
 ## Guides
 
-🏗️ under construction
+- [Brick model from BACnet network guide](https://nrel.github.io/BuildingMOTIF/guides/bacnet-to-brick.html)
 
 ## Explanation
 

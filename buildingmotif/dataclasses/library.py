@@ -1,8 +1,10 @@
 import logging
 import pathlib
+import tempfile
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
+import pygit2
 import pyshacl
 import rdflib
 import sqlalchemy
@@ -17,6 +19,7 @@ from buildingmotif.database.tables import DBLibrary, DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.namespaces import XSD
+from buildingmotif.schemas import validate_libraries_yaml
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import get_ontology_files, get_template_parts_from_shape
 
@@ -144,8 +147,8 @@ class Library:
         :param db_id: the unique id of the library in the database,
             defaults to None
         :type db_id: Optional[int], optional
-        :param ontology_graph: a path to a serialized RDF graph,
-            defaults to None
+        :param ontology_graph: a path to a serialized RDF graph.
+            Supports remote ontology URLs, defaults to None
         :type ontology_graph: Optional[str|rdflib.Graph], optional
         :param directory: a path to a directory containing a library,
             or an rdflib graph, defaults to None
@@ -342,6 +345,24 @@ class Library:
 
         return lib
 
+    @classmethod
+    def load_from_libraries_yml(cls, filename: str):
+        """
+        Loads *multiple* libraries from a properly-formatted 'libraries.yml'
+        file. Does not return a Library! You will need to load the libraries by
+        name in order to get the dataclasses.Library object. We recommend loading
+        libraries directly, one-by-one, in most cases. This method is here to support
+        the commandline tool.
+
+        :param filename: the filename of the YAML file to load library names from
+        :type filename: str
+        :rtype: None
+        """
+        libraries = yaml.load(open(filename, "r"), Loader=yaml.FullLoader)
+        validate_libraries_yaml(libraries)  # raises exception
+        for description in libraries:
+            _resolve_library_definition(description)
+
     @staticmethod
     def _library_exists(library_name: str) -> bool:
         """Checks whether a library with the given name exists in the database."""
@@ -500,3 +521,35 @@ class Library:
         if dbt.library_id != self._id:
             raise ValueError(f"Template {name} not in library {self._name}")
         return Template.load(dbt.id)
+
+
+def _resolve_library_definition(desc: Dict[str, Any]):
+    """
+    Loads a library from a description in libraries.yml
+    """
+    if "directory" in desc:
+        spath = pathlib.Path(desc["directory"]).absolute()
+        if spath.exists() and spath.is_dir():
+            logging.info(f"Load local library {spath} (directory)")
+            Library.load(directory=str(spath))
+        else:
+            raise Exception(f"{spath} is not an existing directory")
+    elif "ontology" in desc:
+        ont = desc["ontology"]
+        g = rdflib.Graph().parse(ont, format=rdflib.util.guess_format(ont))
+        logging.info(f"Load library {ont} as ontology graph")
+        Library.load(ontology_graph=g)
+    elif "git" in desc:
+        repo = desc["git"]["repo"]
+        branch = desc["git"]["branch"]
+        path = desc["git"]["path"]
+        logging.info(f"Load library {path} from git repository: {repo}@{branch}")
+        with tempfile.TemporaryDirectory() as temp_loc:
+            pygit2.clone_repository(
+                repo, temp_loc, checkout_branch=branch
+            )  # , depth=1)
+            new_path = pathlib.Path(temp_loc) / pathlib.Path(path)
+            if new_path.is_dir():
+                _resolve_library_definition({"directory": new_path})
+            else:
+                _resolve_library_definition({"ontology": new_path})
