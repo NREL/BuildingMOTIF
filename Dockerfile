@@ -1,17 +1,24 @@
 FROM python:3.8
 
 # Copy project
-WORKDIR /buildingmotif
-COPY ./buildingmotif ./buildingmotif
+ADD buildingmotif /opt/buildingmotif
+ADD libraries /opt/libraries
+COPY configs.py /opt/
+ADD migrations /opt/migrations
+COPY alembic.ini /opt/
+COPY pyproject.toml /opt/
+COPY poetry.lock /opt/
+ADD docs /opt/docs
+WORKDIR /opt/
 
-# Install Dependices
-RUN pip install poetry && poetry config virtualenvs.create false
-COPY ./poetry.lock .
-COPY ./pyproject.toml .
-COPY ./README.md .
-RUN poetry install --no-dev
+# Install dpeendencies
+RUN pip install poetry==1.4.0 && poetry config virtualenvs.create false
+RUN ls /opt && poetry install --no-dev
+RUN echo "#!/bin/bash\nalembic upgrade head\npython buildingmotif/api/app.py" > /opt/start.sh
+RUN chmod +x /opt/start.sh
 
-COPY ./libraries ./libraries
-COPY ./configs.py ./configs.py
-COPY ./migrations ./migrations
-COPY ./alembic.ini ./alembic.ini
+#WORKDIR /opt/buildingmotif
+#COPY ./libraries ./libraries
+#COPY ./configs.py ./configs.py
+#COPY ./migrations ./migrations
+#COPY ./alembic.ini ./alembic.ini

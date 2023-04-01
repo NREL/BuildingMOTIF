@@ -1,8 +1,10 @@
-version: "1.0"
+version: "3.9"
 services:
   db:
     container_name: buildingmotif-db
     image: postgres
+    environment:
+      - POSTGRES_PASSWORD=password
     ports:
       - target: 5432
         published: 5432
@@ -10,10 +12,10 @@ services:
         mode: host
     healthcheck:
       test: ["CMD", "pg_isready", "-d", "db_prod"]
-      interval: 30s
+      interval: 10s
       timeout: 30s
       retries: 5
-      start_period: 10s
+      start_period: 5s
 
   api:
     container_name: buildingmotif-api
@@ -26,8 +28,8 @@ services:
       - target: 5000
         published: 5000
         protocol: tcp
-        mode: host
-    entrypoint: poetry run python /buildingmotif/buildingmotif/api/app.py
+        mode: host 
+    entrypoint: poetry run /opt/start.sh
 
   app:
     container_name: buildingmotif-app
