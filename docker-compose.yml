@@ -19,6 +19,8 @@ services:
 
   api:
     container_name: buildingmotif-api
+    environment:
+      - DB_URI=postgresql://postgres:password@db
     depends_on: # require that the db is up and listening
       db:
         condition: service_healthy
