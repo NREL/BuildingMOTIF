@@ -128,3 +128,13 @@ def test_model_compile(bm: BuildingMOTIF):
     )
 
     assert isomorphic(compiled_model, precompiled_model)
+
+
+def test_get_manifest(clean_building_motif):
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+    manifest = model.get_manifest()
+    manifest.graph.add((URIRef("http://example.org/alex"), RDF.type, FOAF.Person))
+
+    assert model.get_manifest() == manifest
+    assert isomorphic(manifest.load(manifest.id).graph, manifest.graph)

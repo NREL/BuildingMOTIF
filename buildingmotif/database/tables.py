@@ -17,6 +17,14 @@ class DBModel(Base):
     name: Mapped[str] = Column(String())
     description: Mapped[str] = Column(Text(), default="", nullable=False)
     graph_id: Mapped[str] = Column(String())
+    manifest_id: Mapped[int] = Column(
+        Integer, ForeignKey("shape_collection.id"), nullable=False
+    )
+    manifest: "DBShapeCollection" = relationship(
+        "DBShapeCollection",
+        uselist=False,
+        cascade="all,delete",
+    )
 
 
 class DBShapeCollection(Base):
@@ -27,8 +35,6 @@ class DBShapeCollection(Base):
     __tablename__ = "shape_collection"
     id: Mapped[int] = Column(Integer, primary_key=True)
     graph_id: Mapped[str] = Column(String())
-
-    library: "DBLibrary" = relationship("DBLibrary", back_populates="shape_collection")
 
 
 class DBLibrary(Base):
@@ -47,7 +53,6 @@ class DBLibrary(Base):
     )
     shape_collection: DBShapeCollection = relationship(
         "DBShapeCollection",
-        back_populates="library",
         uselist=False,
         cascade="all,delete",
     )
