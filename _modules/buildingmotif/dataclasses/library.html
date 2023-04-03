@@ -870,6 +870,8 @@ document.write(`
 <span class="sd">        :return: library&#39;s shape collection</span>
 <span class="sd">        :rtype: ShapeCollection</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: we should save the libraries shape_collection to a class attr on load/create. That</span>
+        <span class="c1"># way we wont need an additional db query each time we call this function.</span>
         <span class="n">db_library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">db_library</span><span class="o">.</span><span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
