@@ -1,7 +1,4 @@
-from typing import Dict, List, Tuple
-
 import flask
-import pyshacl
 from flask import Blueprint, current_app, jsonify, request
 from flask_api import status
 from rdflib import Graph
@@ -9,8 +6,7 @@ from rdflib.plugins.parsers.notation3 import BadSyntax
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.model import serialize
-from buildingmotif.dataclasses import Library, Model, ShapeCollection
-from buildingmotif.dataclasses.validation import ValidationContext
+from buildingmotif.dataclasses import Library, Model
 
 blueprint = Blueprint("models", __name__)
 
@@ -130,42 +126,6 @@ def update_model_graph(models_id: int) -> flask.Response:
     return model.graph.serialize(format="ttl")
 
 
-def _get_shape_collections_and_ontology_and_schal_graph(
-    body: Dict,
-) -> Tuple[List[ShapeCollection], Graph, Graph]:
-    # get shape collections
-    shape_collections = []
-    for body_item in body:
-        try:
-            library_id = body_item["library_id"]
-            shape_collection = Library.load(library_id).get_shape_collection()
-            shape_collections.append(shape_collection)
-        except KeyError as e:
-            raise KeyError(
-                f"body item {body_item} doees not contain a 'library_id'"
-            ) from e
-        except NoResultFound as e:
-            raise NoResultFound(f"No library with id {library_id}") from e
-
-    # buiild ontology graph
-    ontology_graph = Graph()
-    for shape_collection in shape_collections:
-        ontology_graph += shape_collection.graph
-
-    # build shacl graph
-    shacl_graph = Graph()
-    for body_item in body:
-        try:
-            shape_uri = body_item["shape_uri"]
-            shacl_graph += ontology_graph.cbd(shape_uri)
-        except KeyError as e:
-            raise KeyError(
-                f"body item {body_item} doees not contain a 'shape_uri'"
-            ) from e
-
-    return shape_collections, ontology_graph, shacl_graph
-
-
 @blueprint.route("/<models_id>/validate", methods=(["POST"]))
 def validate_model(models_id: int) -> flask.Response:
     # get model
@@ -174,44 +134,40 @@ def validate_model(models_id: int) -> flask.Response:
     except NoResultFound:
         return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
 
-    # get body
-    if request.content_type != "application/json":
-        return {
-            "message": "request content type must be json"
-        }, status.HTTP_400_BAD_REQUEST
-    try:
-        body = request.json
-    except Exception:
-        return {"message": "cannot read body"}, status.HTTP_400_BAD_REQUEST
+    shape_collections = []
 
-    try:
-        (
-            shape_collections,
-            ontology_graph,
-            shacl_graph,
-        ) = _get_shape_collections_and_ontology_and_schal_graph(body)
-    except (KeyError, NoResultFound) as e:
-        return {"message": str(e)}, status.HTTP_400_BAD_REQUEST
+    # no body provided -- default to model manifest
+    if request.content_length is None:
+        shape_collections = [model.get_manifest()]
+    else:
+        # get body
+        if request.content_type != "application/json":
+            return flask.Response(
+                {"message": "request content type must be json"},
+                status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            body = request.json
+        except Exception as e:
+            return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
 
-    # validate
-    valid, report_g, report_str = pyshacl.validate(
-        data_graph=model.graph,
-        shacl_graph=shacl_graph,
-        ont_graph=ontology_graph,
-        allow_warnings=True,
-        advanced=True,
-        js=True,
-    )
-    vaildation_context = ValidationContext(
-        shape_collections,
-        valid,
-        report_g,
-        report_str,
-        model,
-    )
+        if body is not None and not isinstance(body, dict):
+            return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
+        shape_collections = []
+        body = body if body is not None else {}
+        for library_id in body.get("library_ids", []):
+            try:
+                shape_collection = Library.load(library_id).get_shape_collection()
+                shape_collections.append(shape_collection)
+            except NoResultFound as e:
+                raise NoResultFound(f"No library with id {library_id}") from e
+
+    # if shape_collections is empty, model.validate will default
+    # to the model's manifest
+    vaildation_context = model.validate(shape_collections)
 
     return {
         "message": vaildation_context.report_string,
         "valid": vaildation_context.valid,
         "reasons": [x.reason() for x in vaildation_context.diffset],
-    }
+    }, status.HTTP_200_OK

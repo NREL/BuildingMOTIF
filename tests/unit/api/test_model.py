@@ -264,14 +264,7 @@ def test_validate_model(client, building_motif):
     results = client.post(
         f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        json=[
-            # TODO: what goes here?
-            # {
-            #     "library_id": library_1.id
-            #     "shape_uri": ...
-            # },
-            # ...
-        ],
+        json={"library_ids": [library_1.id, library_2.id]},
     )
 
     # Assert
@@ -290,17 +283,10 @@ def test_validate_model(client, building_motif):
     model.add_triples((BLDG["flow_sensor"], A, BRICK.Air_Flow_Sensor))
 
     # Action
-    results = client.get(
-        f"/models/{model.id}",
+    results = client.post(
+        f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        json=[
-            # TODO: what goes here?
-            # {
-            #     "library_id": library_1.id
-            #     "shape_uri": ...
-            # },
-            # ...
-        ],
+        json={"library_ids": [library_1.id, library_2.id]},
     )
 
     # Assert
@@ -319,16 +305,9 @@ def test_validate_model_bad_model_id(client, building_motif):
 
     # Action
     results = client.post(
-        f"/models/{-1}/validate",
+        "/models/-1/validate",
         headers={"Content-Type": "application/json"},
-        json=[
-            # TODO: what goes here?
-            # {
-            #     "library_id": library_1.id
-            #     "shape_uri": ...
-            # },
-            # ...
-        ],
+        json={"library_ids": [library.id]},
     )
 
     # Assert
@@ -344,11 +323,34 @@ def test_validate_model_no_args(client, building_motif):
     results = client.post(
         f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        # no json
     )
 
     # Assert
-    assert results.status_code == 400
+    assert results.status_code == 200
+    assert results.get_json().keys() == {"message", "reasons", "valid"}
+    assert isinstance(results.get_json()["message"], str)
+    assert results.get_json()["valid"]
+    assert isinstance(results.get_json()["reasons"], list)
+
+
+def test_validate_model_no_library_ids(client, building_motif):
+    # Set up
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+
+    # Action
+    results = client.post(
+        f"/models/{model.id}/validate",
+        headers={"Content-Type": "application/json"},
+        json={},
+    )
+
+    # Assert
+    assert results.status_code == 200
+    assert results.get_json().keys() == {"message", "reasons", "valid"}
+    assert isinstance(results.get_json()["message"], str)
+    assert results.get_json()["valid"]
+    assert isinstance(results.get_json()["reasons"], list)
 
 
 def test_validate_model_bad_args(client, building_motif):
@@ -377,27 +379,8 @@ def test_validate_model_bad_args(client, building_motif):
     results = client.post(
         f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        json=[
-            {
-                "shape_uri": "https://example.com",
-                # no shape_uri
-            }
-        ],
+        json=[],
     )
 
     # Assert 2
-    assert results.status_code == 400
-
-    # Action 3
-    results = client.post(
-        f"/models/{model.id}/validate",
-        headers={"Content-Type": "application/json"},
-        json=[
-            {
-                # no library_id or shape_uri
-            }
-        ],
-    )
-
-    # Assert 3
     assert results.status_code == 400
