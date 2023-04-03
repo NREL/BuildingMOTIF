@@ -1,6 +1,6 @@
 @prefix brick: <https://brickschema.org/schema/Brick#> .
-@prefix default3: <urn:ashrae/g36/4.8/sz-vav-ahu/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix vav48: <urn:ashrae/g36/4.8/sz-vav-ahu/> .
 
 <urn:bldg/> a owl:Ontology .
 
@@ -15,16 +15,16 @@
 <urn:bldg/Core_ZN-PSC_AC-Damper> a brick:Damper .
 
 <urn:bldg/Core_ZN-PSC_AC-Fan> a brick:Supply_Fan,
-        default3:sa-fan ;
+        vav48:sa-fan ;
     brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-Fanp1>,
         <urn:bldg/Core_ZN-PSC_AC-Fanp2>,
         <urn:bldg/Core_ZN-PSC_AC-Fanp3> .
 
-<urn:bldg/Core_ZN-PSC_AC-Fanp1> a brick:Frequency_Command .
+<urn:bldg/Core_ZN-PSC_AC-Fanp1> a brick:Fan_Status .
 
 <urn:bldg/Core_ZN-PSC_AC-Fanp2> a brick:Start_Stop_Command .
 
-<urn:bldg/Core_ZN-PSC_AC-Fanp3> a brick:Fan_Status .
+<urn:bldg/Core_ZN-PSC_AC-Fanp3> a brick:Frequency_Command .
 
 <urn:bldg/Core_ZN-PSC_AC-Htg_Coil> a brick:Heating_Coil .
 
