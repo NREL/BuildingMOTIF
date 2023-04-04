@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from alembic import context
@@ -16,8 +17,12 @@ import configs as building_motif_configs  # type: ignore # isort:skip
 # access to the values within the .ini file in use.
 config = context.config
 
-# custom url from configs.
-config.set_main_option("sqlalchemy.url", building_motif_configs.DB_URI)
+# custom url from configs. Prioritize OS environment variable
+db_uri = os.getenv("DB_URI")
+if db_uri is not None:
+    config.set_main_option("sqlalchemy.url", db_uri)
+else:
+    config.set_main_option("sqlalchemy.url", building_motif_configs.DB_URI)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
