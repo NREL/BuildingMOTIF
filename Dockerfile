@@ -14,7 +14,7 @@ WORKDIR /opt/
 # Install dpeendencies
 RUN pip install poetry==1.4.0 && poetry config virtualenvs.create false
 RUN ls /opt && poetry install --no-dev
-RUN echo "#!/bin/bash\nalembic upgrade head\npython buildingmotif/api/app.py" > /opt/start.sh
+RUN echo "#!/bin/bash\nset -ex\nalembic upgrade head\npython buildingmotif/api/app.py" > /opt/start.sh
 RUN chmod +x /opt/start.sh
 
 #WORKDIR /opt/buildingmotif
