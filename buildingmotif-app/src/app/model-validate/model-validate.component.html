@@ -1,14 +1,14 @@
 <div class="container">
-    <mat-progress-bar *ngIf="showGettingShapesSpinner" mode="query"></mat-progress-bar>
-    <mat-list *ngFor="let shape of shapes; let i = index">
-        <mat-checkbox [formControl]="$any(selectedShapesForm.controls[i])">
-            <b>{{shape.uri}}</b> - {{shape.library_name}}
+    <mat-progress-bar *ngIf="showGettingLibrariesSpinner" mode="query"></mat-progress-bar>
+    <mat-list *ngFor="let library of libraries; let i = index">
+        <mat-checkbox [formControl]="$any(selectedLibrariesForm.controls[i])">
+            <b>{{library.name}}</b>
         </mat-checkbox>
     </mat-list>
 
     <button
     (click)="validate()"
-    [disabled]="selectedShapesForm.invalid"
+    [disabled]="selectedLibrariesForm.invalid"
     mat-raised-button
     color="primary">
         Validate

@@ -12,11 +12,11 @@ export class ModelValidateService {
 
   constructor(private http: HttpClient) { }
 
-  validateModel(modelId: number, args: {library_id: number; shape_uri: string;}[]) {
+  validateModel(modelId: number, args: number[]) {
     const headers = {'Content-Type': "application/json"}
 
     return this.http.post(`http://localhost:5000/models/${modelId}/validate`,
-        args,
+        {"library_ids": args},
         {headers, responseType: 'text'}
       )
       .pipe(

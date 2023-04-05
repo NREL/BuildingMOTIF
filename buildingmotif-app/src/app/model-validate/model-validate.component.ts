@@ -2,7 +2,7 @@ import { Component, Input, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { ModelValidateService } from './model-validate.service';
-import { LibraryService, Shape } from '../library/library.service';
+import { LibraryService, Library } from '../library/library.service';
 
 function NoneSelectedValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -19,10 +19,10 @@ function NoneSelectedValidator(): ValidatorFn {
 })
 export class ModelValidateComponent implements OnInit{
   @Input() modelId: number | undefined;
-  shapes?: Shape[] = undefined;
-  selectedShapesForm: FormGroup = new FormGroup({});
+  libraries?: Library[] = undefined;
+  selectedLibrariesForm: FormGroup = new FormGroup({});
   validationResponse = "";
-  showGettingShapesSpinner = false;
+  showGettingLibrariesSpinner = false;
   showValidatingSpinner = false;
 
   codeMirrorOptions: any = {
@@ -41,26 +41,26 @@ export class ModelValidateComponent implements OnInit{
   constructor(private modelValidateService: ModelValidateService, private libraryService: LibraryService) {}
 
   ngOnInit(): void {
-    this.showGettingShapesSpinner = true;
-    this.libraryService.getAllShapes().subscribe(
-      res => {this.shapes = res},
+    this.showGettingLibrariesSpinner = true;
+    this.libraryService.getAllLibraries().subscribe(
+      res => {this.libraries = res},
       err => {},
-      () => {this.showGettingShapesSpinner = false},
+      () => {this.showGettingLibrariesSpinner = false},
     );
 
-    if (this.shapes == undefined) return;
+    if (this.libraries == undefined) return;
 
-    const selectedShapesControls: { [shape_index: number]: FormControl } = this.shapes.reduce((acc, _, i) => {
+    const selectedLibrariesControls: { [library_index: number]: FormControl } = this.libraries.reduce((acc, _, i) => {
       return { ...acc, [i]: new FormControl(false) }
     }, {});
-    this.selectedShapesForm = new FormGroup(selectedShapesControls, {validators: NoneSelectedValidator()})
+    this.selectedLibrariesForm = new FormGroup(selectedLibrariesControls, {validators: NoneSelectedValidator()})
   }
 
   validate(): void {
-    if (this.shapes == undefined) return;
+    if (this.libraries == undefined) return;
 
-    const selectedShapes = this.shapes.filter((_, i) => this.selectedShapesForm.value[i])
-    const args = selectedShapes.map(s => {return {library_id: s.library_id, shape_uri: s.uri}})
+    const selectedLibraries = this.libraries.filter((_, i) => this.selectedLibrariesForm.value[i])
+    const args = selectedLibraries.map(l => {return l.id})
 
     if (!!this.modelId){
       this.showValidatingSpinner = true;
