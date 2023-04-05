@@ -41,6 +41,10 @@ services:
       - api
     build: ./buildingmotif-app
     image: buildingmotif-app:latest
+    volumes:
+      - type: bind
+        source: ./buildingmotif-app
+        target: /buildingmotif-app
     ports:
       - target: 4200
         published: 4200

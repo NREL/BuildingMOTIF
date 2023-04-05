@@ -43,14 +43,17 @@ export class ModelValidateComponent implements OnInit{
   ngOnInit(): void {
     this.showGettingLibrariesSpinner = true;
     this.libraryService.getAllLibraries().subscribe(
-      res => {this.libraries = res},
+      res => {
+        this.populateSelectedLibrariesControls(res);
+        this.libraries = res;
+      },
       err => {},
       () => {this.showGettingLibrariesSpinner = false},
     );
+  }
 
-    if (this.libraries == undefined) return;
-
-    const selectedLibrariesControls: { [library_index: number]: FormControl } = this.libraries.reduce((acc, _, i) => {
+  populateSelectedLibrariesControls(libraries: Library[]): void {
+    const selectedLibrariesControls: { [library_index: number]: FormControl } = libraries.reduce((acc, _, i) => {
       return { ...acc, [i]: new FormControl(false) }
     }, {});
     this.selectedLibrariesForm = new FormGroup(selectedLibrariesControls, {validators: NoneSelectedValidator()})

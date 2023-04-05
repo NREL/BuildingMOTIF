@@ -1,7 +1,7 @@
 <div class="container">
     <mat-progress-bar *ngIf="showGettingLibrariesSpinner" mode="query"></mat-progress-bar>
-    <mat-list *ngFor="let library of libraries; let i = index">
-        <mat-checkbox [formControl]="$any(selectedLibrariesForm.controls[i])">
+    <mat-list *ngFor="let library of libraries; let i = index" [formGroup]="selectedLibrariesForm">
+        <mat-checkbox [formGroupName]="i">
             <b>{{library.name}}</b>
         </mat-checkbox>
     </mat-list>
