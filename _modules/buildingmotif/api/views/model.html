@@ -523,12 +523,17 @@ document.write(`
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;body is not dict&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
         <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">body</span> <span class="o">=</span> <span class="n">body</span> <span class="k">if</span> <span class="n">body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">nonexistent_libraries</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">library_id</span> <span class="ow">in</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;library_ids&quot;</span><span class="p">,</span> <span class="p">[]):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">shape_collection</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">library_id</span><span class="p">)</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span>
                 <span class="n">shape_collections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shape_collection</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">NoResultFound</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">NoResultFound</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No library with id </span><span class="si">{</span><span class="n">library_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+                <span class="n">nonexistent_libraries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">library_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonexistent_libraries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Libraries with ids </span><span class="si">{</span><span class="n">nonexistent_libraries</span><span class="si">}</span><span class="s2"> do not exist&quot;</span>
+            <span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
 
     <span class="c1"># if shape_collections is empty, model.validate will default</span>
     <span class="c1"># to the model&#39;s manifest</span>
