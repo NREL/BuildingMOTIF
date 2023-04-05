@@ -155,12 +155,17 @@ def validate_model(models_id: int) -> flask.Response:
             return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
         shape_collections = []
         body = body if body is not None else {}
+        nonexistent_libraries = []
         for library_id in body.get("library_ids", []):
             try:
                 shape_collection = Library.load(library_id).get_shape_collection()
                 shape_collections.append(shape_collection)
-            except NoResultFound as e:
-                raise NoResultFound(f"No library with id {library_id}") from e
+            except NoResultFound:
+                nonexistent_libraries.append(library_id)
+        if len(nonexistent_libraries) > 0:
+            return {
+                "message": f"Libraries with ids {nonexistent_libraries} do not exist"
+            }, status.HTTP_400_BAD_REQUEST
 
     # if shape_collections is empty, model.validate will default
     # to the model's manifest

@@ -353,6 +353,22 @@ def test_validate_model_no_library_ids(client, building_motif):
     assert isinstance(results.get_json()["reasons"], list)
 
 
+def test_validate_model_bad_library_ids(client, building_motif):
+    # Set up
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+
+    # Action
+    results = client.post(
+        f"/models/{model.id}/validate",
+        headers={"Content-Type": "application/json"},
+        json={"library_ids": [-1, -2, -3]},
+    )
+
+    # Assert
+    assert results.status_code == 400
+
+
 def test_validate_model_bad_args(client, building_motif):
     # Set up
     library = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
