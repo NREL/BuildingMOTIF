@@ -159,7 +159,9 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../reference/developer_documentation.html">Developer Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/cli_tool.html">Command Line Tool</a></li>
+
+
+
 <li class="toctree-l1 has-children"><a class="reference internal" href="../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -198,7 +200,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -206,6 +207,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 </ul>
 </li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current nav bd-sidenav">
@@ -213,10 +215,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="model_validation.html">Model Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="model_correction.html">Model Correction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="template_writing.html">Template Writing</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../guides/ingress-bacnet-to-brick.html">Ingress - BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -536,16 +534,16 @@ document.write(`
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Motor_Direction_Status
-  - https://brickschema.org/schema/Brick#Discharge_Water_Temperature_Alarm
-  - https://brickschema.org/schema/Brick#Unoccupied_Return_Air_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#Return_Air_Dewpoint_Sensor
-  - https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Proportional_Band_Parameter
-  - https://brickschema.org/schema/Brick#Lead_On_Off_Command
-  - https://brickschema.org/schema/Brick#Alarm_Delay_Parameter
-  - https://brickschema.org/schema/Brick#Occupied_Zone_Air_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#Unoccupied_Cooling_Supply_Air_Flow_Setpoint
-  - https://brickschema.org/schema/Brick#Supply_Air_Static_Pressure_Sensor
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#High_Temperature_Alarm_Parameter
+  - https://brickschema.org/schema/Brick#Air_Flow_Alarm
+  - https://brickschema.org/schema/Brick#Supply_Water_Temperature_Integral_Time_Parameter
+  - https://brickschema.org/schema/Brick#Differential_Pressure_Proportional_Band
+  - https://brickschema.org/schema/Brick#Cooling_Supply_Air_Temperature_Integral_Time_Parameter
+  - https://brickschema.org/schema/Brick#Humidity_Setpoint
+  - https://brickschema.org/schema/Brick#Unoccupied_Cooling_Temperature_Setpoint
+  - https://brickschema.org/schema/Brick#Enable_Status
+  - https://brickschema.org/schema/Brick#Speed_Setpoint
+  - https://brickschema.org/schema/Brick#Command
 </pre></div>
 </div>
 </div>
@@ -756,7 +754,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=03900f5a-905c-4653-b860-818d5fd6828f (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=a3275878-6c8f-4d96-9125-84ce8324207f (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>

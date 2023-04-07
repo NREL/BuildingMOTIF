@@ -156,7 +156,9 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/developer_documentation.html">Developer Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/cli_tool.html">Command Line Tool</a></li>
+
+
+
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -195,7 +197,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -203,6 +204,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 </ul>
 </li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
@@ -210,10 +212,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_validation.html">Model Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_correction.html">Model Correction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/template_writing.html">Template Writing</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../guides/ingress-bacnet-to-brick.html">Ingress - BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -366,9 +364,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.api.app</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">current_app</span>
+<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">current_app</span>
 <span class="kn">from</span> <span class="nn">flask_api</span> <span class="kn">import</span> <span class="n">status</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.exc</span> <span class="kn">import</span> <span class="n">SQLAlchemyError</span>
 
@@ -436,15 +432,11 @@ document.write(`
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run API.&quot;&quot;&quot;</span>
-    <span class="n">db_uri</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DB_URI&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">db_uri</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># If config doesn&#39;t exist, this is considered a third party import and module cant be found.</span>
-        <span class="kn">import</span> <span class="nn">configs</span> <span class="k">as</span> <span class="nn">building_motif_configs</span>  <span class="c1"># type: ignore # isort:skip</span>
+    <span class="c1"># If config doesn&#39;t exist, this is considered a third party import and module cant be found.</span>
+    <span class="kn">import</span> <span class="nn">configs</span> <span class="k">as</span> <span class="nn">building_motif_configs</span>  <span class="c1"># type: ignore # isort:skip</span>
 
-        <span class="n">db_uri</span> <span class="o">=</span> <span class="n">building_motif_configs</span><span class="o">.</span><span class="n">DB_URI</span>
-
-    <span class="n">app</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">(</span><span class="n">db_uri</span><span class="p">)</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span> <span class="n">threaded</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">(</span><span class="n">building_motif_configs</span><span class="o">.</span><span class="n">DB_URI</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">threaded</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
                 </article>

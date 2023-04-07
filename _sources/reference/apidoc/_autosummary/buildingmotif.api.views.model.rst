@@ -18,7 +18,6 @@ buildingmotif.api.views.model
       get_model
       get_model_graph
       update_model_graph
-      validate_model
    
    
 

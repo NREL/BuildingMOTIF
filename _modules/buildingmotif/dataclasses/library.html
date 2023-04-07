@@ -156,7 +156,9 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/developer_documentation.html">Developer Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../reference/cli_tool.html">Command Line Tool</a></li>
+
+
+
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -195,7 +197,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -203,6 +204,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 </ul>
 </li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
@@ -210,10 +212,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_validation.html">Model Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_correction.html">Model Correction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/template_writing.html">Template Writing</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../guides/ingress-bacnet-to-brick.html">Ingress - BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -368,11 +366,9 @@ document.write(`
   <h1>Source code for buildingmotif.dataclasses.library</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">pygit2</span>
 <span class="kn">import</span> <span class="nn">pyshacl</span>
 <span class="kn">import</span> <span class="nn">rdflib</span>
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
@@ -387,7 +383,6 @@ document.write(`
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.template</span> <span class="kn">import</span> <span class="n">Template</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">XSD</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.schemas</span> <span class="kn">import</span> <span class="n">validate_libraries_yaml</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.template_compilation</span> <span class="kn">import</span> <span class="n">compile_template_spec</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">get_ontology_files</span><span class="p">,</span> <span class="n">get_template_parts_from_shape</span>
 
@@ -515,8 +510,8 @@ document.write(`
 <span class="sd">        :param db_id: the unique id of the library in the database,</span>
 <span class="sd">            defaults to None</span>
 <span class="sd">        :type db_id: Optional[int], optional</span>
-<span class="sd">        :param ontology_graph: a path to a serialized RDF graph.</span>
-<span class="sd">            Supports remote ontology URLs, defaults to None</span>
+<span class="sd">        :param ontology_graph: a path to a serialized RDF graph,</span>
+<span class="sd">            defaults to None</span>
 <span class="sd">        :type ontology_graph: Optional[str|rdflib.Graph], optional</span>
 <span class="sd">        :param directory: a path to a directory containing a library,</span>
 <span class="sd">            or an rdflib graph, defaults to None</span>
@@ -713,24 +708,6 @@ document.write(`
 
         <span class="k">return</span> <span class="n">lib</span>
 
-<div class="viewcode-block" id="Library.load_from_libraries_yml"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.load_from_libraries_yml">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load_from_libraries_yml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loads *multiple* libraries from a properly-formatted &#39;libraries.yml&#39;</span>
-<span class="sd">        file. Does not return a Library! You will need to load the libraries by</span>
-<span class="sd">        name in order to get the dataclasses.Library object. We recommend loading</span>
-<span class="sd">        libraries directly, one-by-one, in most cases. This method is here to support</span>
-<span class="sd">        the commandline tool.</span>
-
-<span class="sd">        :param filename: the filename of the YAML file to load library names from</span>
-<span class="sd">        :type filename: str</span>
-<span class="sd">        :rtype: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">libraries</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">),</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
-        <span class="n">validate_libraries_yaml</span><span class="p">(</span><span class="n">libraries</span><span class="p">)</span>  <span class="c1"># raises exception</span>
-        <span class="k">for</span> <span class="n">description</span> <span class="ow">in</span> <span class="n">libraries</span><span class="p">:</span>
-            <span class="n">_resolve_library_definition</span><span class="p">(</span><span class="n">description</span><span class="p">)</span></div>
-
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_library_exists</span><span class="p">(</span><span class="n">library_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether a library with the given name exists in the database.&quot;&quot;&quot;</span>
@@ -870,8 +847,6 @@ document.write(`
 <span class="sd">        :return: library&#39;s shape collection</span>
 <span class="sd">        :rtype: ShapeCollection</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># TODO: we should save the libraries shape_collection to a class attr on load/create. That</span>
-        <span class="c1"># way we wont need an additional db query each time we call this function.</span>
         <span class="n">db_library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">db_library</span><span class="o">.</span><span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
@@ -889,38 +864,6 @@ document.write(`
         <span class="k">if</span> <span class="n">dbt</span><span class="o">.</span><span class="n">library_id</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Template </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not in library </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dbt</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div></div>
-
-
-<span class="k">def</span> <span class="nf">_resolve_library_definition</span><span class="p">(</span><span class="n">desc</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Loads a library from a description in libraries.yml</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="s2">&quot;directory&quot;</span> <span class="ow">in</span> <span class="n">desc</span><span class="p">:</span>
-        <span class="n">spath</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">desc</span><span class="p">[</span><span class="s2">&quot;directory&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">spath</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="n">spath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Load local library </span><span class="si">{</span><span class="n">spath</span><span class="si">}</span><span class="s2"> (directory)&quot;</span><span class="p">)</span>
-            <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">spath</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">spath</span><span class="si">}</span><span class="s2"> is not an existing directory&quot;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="s2">&quot;ontology&quot;</span> <span class="ow">in</span> <span class="n">desc</span><span class="p">:</span>
-        <span class="n">ont</span> <span class="o">=</span> <span class="n">desc</span><span class="p">[</span><span class="s2">&quot;ontology&quot;</span><span class="p">]</span>
-        <span class="n">g</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">ont</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">guess_format</span><span class="p">(</span><span class="n">ont</span><span class="p">))</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Load library </span><span class="si">{</span><span class="n">ont</span><span class="si">}</span><span class="s2"> as ontology graph&quot;</span><span class="p">)</span>
-        <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="n">g</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="s2">&quot;git&quot;</span> <span class="ow">in</span> <span class="n">desc</span><span class="p">:</span>
-        <span class="n">repo</span> <span class="o">=</span> <span class="n">desc</span><span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">][</span><span class="s2">&quot;repo&quot;</span><span class="p">]</span>
-        <span class="n">branch</span> <span class="o">=</span> <span class="n">desc</span><span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">][</span><span class="s2">&quot;branch&quot;</span><span class="p">]</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">desc</span><span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">][</span><span class="s2">&quot;path&quot;</span><span class="p">]</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Load library </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> from git repository: </span><span class="si">{</span><span class="n">repo</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">branch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">temp_loc</span><span class="p">:</span>
-            <span class="n">pygit2</span><span class="o">.</span><span class="n">clone_repository</span><span class="p">(</span>
-                <span class="n">repo</span><span class="p">,</span> <span class="n">temp_loc</span><span class="p">,</span> <span class="n">checkout_branch</span><span class="o">=</span><span class="n">branch</span>
-            <span class="p">)</span>  <span class="c1"># , depth=1)</span>
-            <span class="n">new_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">temp_loc</span><span class="p">)</span> <span class="o">/</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">new_path</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-                <span class="n">_resolve_library_definition</span><span class="p">({</span><span class="s2">&quot;directory&quot;</span><span class="p">:</span> <span class="n">new_path</span><span class="p">})</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">_resolve_library_definition</span><span class="p">({</span><span class="s2">&quot;ontology&quot;</span><span class="p">:</span> <span class="n">new_path</span><span class="p">})</span>
 </pre></div>
 
                 </article>

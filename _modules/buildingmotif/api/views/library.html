@@ -156,7 +156,9 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../../reference/developer_documentation.html">Developer Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../reference/cli_tool.html">Command Line Tool</a></li>
+
+
+
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -195,7 +197,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -203,6 +204,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 </ul>
 </li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
@@ -210,10 +212,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/model_validation.html">Model Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/model_correction.html">Model Correction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/template_writing.html">Template Writing</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../../guides/ingress-bacnet-to-brick.html">Ingress - BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -372,19 +370,8 @@ document.write(`
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm.exc</span> <span class="kn">import</span> <span class="n">NoResultFound</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.library</span> <span class="kn">import</span> <span class="n">serialize</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
 
 <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;libraries&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
-
-<span class="n">get_shape_query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    SELECT ?shape ?label ?desc</span>
-<span class="s2">    WHERE {</span>
-<span class="s2">        ?shape a sh:NodeShape ;</span>
-<span class="s2">            sh:targetClass|sh:targetSubjectOf|sh:targetObjectsOf|sh:targetNode ?target .</span>
-<span class="s2">        OPTIONAL { ?shape rdfs:label ?label }</span>
-<span class="s2">        OPTIONAL { ?shape skos:description ?desc }</span>
-<span class="s2">    }</span>
-<span class="s2">&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="get_all_libraries"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.library.html#buildingmotif.api.views.library.get_all_libraries">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
@@ -397,33 +384,6 @@ document.write(`
     <span class="n">db_libs</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">building_motif</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_all_db_libraries</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="n">db_libs</span><span class="p">)),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
-
-
-<div class="viewcode-block" id="get_all_shapes"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.library.html#buildingmotif.api.views.library.get_all_shapes">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/shapes&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_all_shapes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all shapes.</span>
-
-<span class="sd">    :return: all shapes</span>
-<span class="sd">    :rtype: flask.Response</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="n">db_libs</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">building_motif</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_all_db_libraries</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">db_lib</span> <span class="ow">in</span> <span class="n">db_libs</span><span class="p">:</span>
-        <span class="n">shape_collection</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">db_lib</span><span class="o">.</span><span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-        <span class="n">shapes</span> <span class="o">=</span> <span class="n">shape_collection</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">get_shape_query</span><span class="p">)</span>
-        <span class="n">results</span> <span class="o">+=</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;library_name&quot;</span><span class="p">:</span> <span class="n">db_lib</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="s2">&quot;library_id&quot;</span><span class="p">:</span> <span class="n">db_lib</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
-                <span class="s2">&quot;uri&quot;</span><span class="p">:</span> <span class="n">uri</span><span class="p">,</span>
-                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
-            <span class="p">}</span>
-            <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">description</span> <span class="ow">in</span> <span class="n">shapes</span>
-        <span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
 
 
 <div class="viewcode-block" id="get_library"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.library.html#buildingmotif.api.views.library.get_library">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;library_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>

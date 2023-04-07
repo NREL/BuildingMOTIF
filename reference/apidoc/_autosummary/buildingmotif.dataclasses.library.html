@@ -159,7 +159,9 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../developer_documentation.html">Developer Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli_tool.html">Command Line Tool</a></li>
+
+
+
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Code Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="buildingmotif.html">buildingmotif</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -198,7 +200,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -206,6 +207,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 </ul>
 </li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
@@ -213,10 +215,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_validation.html">Model Validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_correction.html">Model Correction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/template_writing.html">Template Writing</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../guides/ingress-bacnet-to-brick.html">Ingress - BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -462,8 +460,8 @@ if they resolve.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>db_id</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – the unique id of the library in the database,
 defaults to None</p></li>
-<li><p><strong>ontology_graph</strong> (<em>Optional</em><em>[</em><em>str</em><em>|</em><em>rdflib.Graph</em><em>]</em><em>, </em><em>optional</em>) – a path to a serialized RDF graph.
-Supports remote ontology URLs, defaults to None</p></li>
+<li><p><strong>ontology_graph</strong> (<em>Optional</em><em>[</em><em>str</em><em>|</em><em>rdflib.Graph</em><em>]</em><em>, </em><em>optional</em>) – a path to a serialized RDF graph,
+defaults to None</p></li>
 <li><p><strong>directory</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – a path to a directory containing a library,
 or an rdflib graph, defaults to None</p></li>
 <li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – the name of the library inside the database,
@@ -480,24 +478,6 @@ library, defaults to True</p></li>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Exception</strong> – if the library cannot be loaded</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.dataclasses.library.Library.load_from_libraries_yml">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_from_libraries_yml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/library.html#Library.load_from_libraries_yml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.library.Library.load_from_libraries_yml" title="Permalink to this definition">#</a></dt>
-<dd><p>Loads <em>multiple</em> libraries from a properly-formatted ‘libraries.yml’
-file. Does not return a Library! You will need to load the libraries by
-name in order to get the dataclasses.Library object. We recommend loading
-libraries directly, one-by-one, in most cases. This method is here to support
-the commandline tool.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – the filename of the YAML file to load library names from</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
