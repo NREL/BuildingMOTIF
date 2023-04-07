@@ -1,0 +1,42 @@
+version: "1.0"
+services:
+  db:
+    container_name: buildingmotif-db
+    image: postgres
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+
+  api:
+    container_name: buildingmotif-api
+    depends_on: # require that the db is up and listening
+      db:
+        condition: service_healthy
+    build: .
+    image: buildingmotif-api:latest
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+        mode: host
+    entrypoint: poetry run python /buildingmotif/buildingmotif/api/app.py
+
+  app:
+    container_name: buildingmotif-app
+    depends_on: # require that the api server has started
+      - api
+    build: ./buildingmotif-app
+    image: buildingmotif-app:latest
+    ports:
+      - target: 4200
+        published: 4200
+        protocol: tcp
+        mode: host

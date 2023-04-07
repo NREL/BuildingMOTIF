@@ -380,9 +380,6 @@ class Template:
 
         matcher = TemplateMatcher(model.graph, self, ontology)
         for mapping, sg in matcher.building_mapping_subgraphs_iter():
-            print(mapping)
-            print(sg.serialize())
-            print("*" * 80)
             yield mapping, sg, matcher.remaining_template(mapping)
 
 
