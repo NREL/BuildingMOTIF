@@ -39,3 +39,9 @@ export class ModelValidateService {
     return throwError(() => new Error(`${error.status}: ${error.error}`));
   }
 }
+
+export interface ValidationResponse {
+    valid: boolean;
+    message: string;
+    reasons: string[];
+}

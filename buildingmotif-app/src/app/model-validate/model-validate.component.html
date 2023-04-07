@@ -15,9 +15,10 @@
     </button>
 
     <mat-progress-bar *ngIf="showValidatingSpinner" mode="indeterminate"></mat-progress-bar>
+    <span><b *ngIf="validationResponse">Valid?</b> {{ validationResponse?.valid }}</span>
     <ngx-codemirror #codemirror
-        *ngIf = "validationResponse !== ''"
-        [(ngModel)]="validationResponse"
+        *ngIf = "validationResponse"
+        [(ngModel)]="validationResponse.message"
         [options]="codeMirrorOptions">
     </ngx-codemirror>
 </div>

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
-import { ModelValidateService } from './model-validate.service';
+import { ModelValidateService, ValidationResponse } from './model-validate.service';
 import { LibraryService, Library } from '../library/library.service';
 
 function NoneSelectedValidator(): ValidatorFn {
@@ -21,7 +21,7 @@ export class ModelValidateComponent implements OnInit{
   @Input() modelId: number | undefined;
   libraries?: Library[] = undefined;
   selectedLibrariesForm: FormGroup = new FormGroup({});
-  validationResponse = "";
+  validationResponse?: ValidationResponse = undefined;
   showGettingLibrariesSpinner = false;
   showValidatingSpinner = false;
 
@@ -63,13 +63,13 @@ export class ModelValidateComponent implements OnInit{
     if (this.libraries == undefined) return;
 
     const selectedLibraries = this.libraries.filter((_, i) => this.selectedLibrariesForm.value[i])
-    const args = selectedLibraries.map(l => {return l.id})
+    const args = selectedLibraries.map(l => l.id);
 
     if (!!this.modelId){
       this.showValidatingSpinner = true;
 
       this.modelValidateService.validateModel(this.modelId, args).subscribe(
-        res => {this.validationResponse = res},
+        res => {this.validationResponse = JSON.parse(res)},
         err => {},
         () => {this.showValidatingSpinner = false},
       );
