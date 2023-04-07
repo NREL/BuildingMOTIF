@@ -27,7 +27,7 @@ export class ModelValidateComponent implements OnInit{
 
   codeMirrorOptions: any = {
     theme: 'material',
-    mode: 'application/json',
+    mode: 'text',
     lineNumbers: true,
     lineWrapping: true,
     foldGutter: true,
