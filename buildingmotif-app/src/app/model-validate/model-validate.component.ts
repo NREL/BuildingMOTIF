@@ -4,11 +4,16 @@ import { FormControl, FormGroup, ValidatorFn, ValidationErrors, AbstractControl 
 import { ModelValidateService, ValidationResponse } from './model-validate.service';
 import { LibraryService, Library } from '../library/library.service';
 
+// verify that at least one checkbox is checked in the FormGroup
 function NoneSelectedValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const anyIsTrue = Object.values(control.value).some(v => v)
-    return anyIsTrue ? null: {noneSelected: {value: true}};
-  };
+    return (control: AbstractControl) => {
+        const formGroup = control as FormGroup;
+        const checkedKeys = Object.keys(formGroup.controls).filter((key) => formGroup.controls[key].value);
+
+        if (checkedKeys.length === 0) { return { noneSelected: {value: true}}; }
+
+        return null;
+    };
 }
 
 @Component({
