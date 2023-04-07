@@ -34,6 +34,7 @@
    buildingmotif.ingresses
    buildingmotif.libraries
    buildingmotif.namespaces
+   buildingmotif.schemas
    buildingmotif.template_compilation
    buildingmotif.template_matcher
    buildingmotif.utils
