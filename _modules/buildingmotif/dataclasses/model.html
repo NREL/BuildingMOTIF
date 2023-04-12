@@ -213,12 +213,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../guides/csv-import.html">CSV Import</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/ingress-bacnet-to-brick.html">Ingress - BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -509,13 +504,19 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">+=</span> <span class="n">graph</span></div>
 
-<div class="viewcode-block" id="Model.validate"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ShapeCollection</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValidationContext&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates this model against the given ShapeCollections.</span>
+<div class="viewcode-block" id="Model.validate"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">shape_collections</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ShapeCollection</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValidationContext&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates this model against the given list of ShapeCollections.</span>
+<span class="sd">        If no list is provided, the model will be validated against the model&#39;s &quot;manifest&quot;.</span>
+<span class="sd">        If a list of shape collections is provided, the manifest will *not* be automatically</span>
+<span class="sd">        included in the set of shape collections.</span>
 
 <span class="sd">        Loads all of the ShapeCollections into a single graph.</span>
 
 <span class="sd">        :param shape_collections: a list of ShapeCollections against which the</span>
-<span class="sd">            graph should be validated</span>
+<span class="sd">            graph should be validated. If an empty list or None is provided, the</span>
+<span class="sd">            model will be validated against the model&#39;s manifest.</span>
 <span class="sd">        :type shape_collections: List[ShapeCollection]</span>
 <span class="sd">        :return: An object containing useful properties/methods to deal with</span>
 <span class="sd">            the validation results</span>
@@ -525,6 +526,8 @@ document.write(`
         <span class="c1"># but also want a report. Is this the base pySHACL report? Or a useful</span>
         <span class="c1"># transformation, like a list of deltas for potential fixes?</span>
         <span class="n">shapeg</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">shape_collections</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()]</span>
         <span class="c1"># aggregate shape graphs</span>
         <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">shape_collections</span><span class="p">:</span>
             <span class="c1"># inline sh:node for interpretability</span>
