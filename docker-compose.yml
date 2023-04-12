@@ -42,10 +42,11 @@ services:
       - api
     build: ./buildingmotif-app
     image: buildingmotif-app:latest
-    volumes:
-      - type: bind
-        source: ./buildingmotif-app
-        target: /buildingmotif-app
+    # UNCOMMENT this if you want to preserve local builds for debugging
+    # volumes:
+    #   - type: bind
+    #     source: ./buildingmotif-app
+    #     target: /buildingmotif-app
     ports:
       - target: 4200
         published: 4200
