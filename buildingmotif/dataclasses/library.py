@@ -502,6 +502,8 @@ class Library:
         :return: library's shape collection
         :rtype: ShapeCollection
         """
+        # TODO: we should save the libraries shape_collection to a class attr on load/create. That
+        # way we wont need an additional db query each time we call this function.
         db_library = self._bm.table_connection.get_db_library_by_id(self._id)
 
         return ShapeCollection.load(db_library.shape_collection.id)

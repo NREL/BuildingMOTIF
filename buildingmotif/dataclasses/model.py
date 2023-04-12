@@ -136,13 +136,19 @@ class Model:
         """
         self.graph += graph
 
-    def validate(self, shape_collections: List[ShapeCollection]) -> "ValidationContext":
-        """Validates this model against the given ShapeCollections.
+    def validate(
+        self, shape_collections: Optional[List[ShapeCollection]] = None
+    ) -> "ValidationContext":
+        """Validates this model against the given list of ShapeCollections.
+        If no list is provided, the model will be validated against the model's "manifest".
+        If a list of shape collections is provided, the manifest will *not* be automatically
+        included in the set of shape collections.
 
         Loads all of the ShapeCollections into a single graph.
 
         :param shape_collections: a list of ShapeCollections against which the
-            graph should be validated
+            graph should be validated. If an empty list or None is provided, the
+            model will be validated against the model's manifest.
         :type shape_collections: List[ShapeCollection]
         :return: An object containing useful properties/methods to deal with
             the validation results
@@ -152,6 +158,8 @@ class Model:
         # but also want a report. Is this the base pySHACL report? Or a useful
         # transformation, like a list of deltas for potential fixes?
         shapeg = rdflib.Graph()
+        if shape_collections is None or len(shape_collections) == 0:
+            shape_collections = [self.get_manifest()]
         # aggregate shape graphs
         for sc in shape_collections:
             # inline sh:node for interpretability

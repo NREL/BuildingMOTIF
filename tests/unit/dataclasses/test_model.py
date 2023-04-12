@@ -138,3 +138,44 @@ def test_get_manifest(clean_building_motif):
 
     assert model.get_manifest() == manifest
     assert isomorphic(manifest.load(manifest.id).graph, manifest.graph)
+
+
+def test_validate_with_manifest(clean_building_motif):
+    g = Graph()
+    g.parse(
+        data="""
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix : <urn:ex/> .
+    :a  a  :Class ;
+        rdfs:label "a" .
+    :b a :Class . # will fail
+    """
+    )
+
+    manifest_g = Graph()
+    manifest_g.parse(
+        data="""
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix : <urn:ex/> .
+    :shape a sh:NodeShape ;
+        sh:targetClass :Class ;
+        sh:property [ sh:path rdfs:label ; sh:minCount 1 ] .
+    """
+    )
+
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+    model.add_graph(g)
+    manifest = model.get_manifest()
+    manifest.add_graph(manifest_g)
+
+    ctx = model.validate(None)
+    assert not ctx.valid, "Model validated but it should throw an error"

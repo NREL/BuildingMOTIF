@@ -1,14 +1,32 @@
-<div class="container">
-    <div class="title">{{model.name}}</div>
+    <mat-drawer-container class="container">
+        <div class="main-content-and-button">
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="title">{{model.name}}</div>
 
-    <ngx-codemirror #codemirror
-        class="graph"
-        [options]="codeMirrorOptions"
-        [formControl]="graphFormControl">
-    </ngx-codemirror>
+                <ngx-codemirror #codemirror class="graph" [options]="codeMirrorOptions" [formControl]="graphFormControl">
+                </ngx-codemirror>
 
-    <div class="buttons">
-        <button mat-raised-button (click)="onSave()" color="primary">Save</button>
-        <button mat-raised-button (click)="undoChangesToGraph()" color="primary">Undo</button>
-    </div>
-</div>
+                <div class="buttons">
+                    <button mat-raised-button (click)="onSave()" color="primary">Save</button>
+                    <button mat-raised-button (click)="undoChangesToGraph()" color="primary">Undo</button>
+                </div>
+            </div>
+
+            <button class="side-nav-button" mat-flat-button (click)="drawer.toggle()" color="basic">
+                <mat-icon *ngIf="!drawer.opened"> arrow_backward </mat-icon>
+                <mat-icon *ngIf="drawer.opened"> arrow_forward </mat-icon>
+            </button>
+        </div>
+
+        <!-- Side Nav -->
+        <mat-drawer #drawer class="sidenav-content" mode="side" position="end">
+            <mat-tab-group>
+                <mat-tab label="First"> Content 1 </mat-tab>
+                <mat-tab label="Second"> Content 2 </mat-tab>
+                <mat-tab label="Validate">
+                    <app-model-validate class="validate" [modelId]=model.id></app-model-validate>
+                </mat-tab>
+            </mat-tab-group>          
+        </mat-drawer>
+    </mat-drawer-container>
