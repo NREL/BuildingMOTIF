@@ -26,14 +26,15 @@ services:
     depends_on: # require that the db is up and listening
       db:
         condition: service_healthy
-    build: .
+    build:
+      context: .
+      dockerfile: buildingmotif/api/Dockerfile
     image: buildingmotif-api:latest
     ports:
       - target: 5000
         published: 5000
         protocol: tcp
         mode: host 
-    entrypoint: poetry run /opt/start.sh
 
   app:
     container_name: buildingmotif-app
