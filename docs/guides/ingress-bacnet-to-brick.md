@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Ingress - BACnet to Brick
+# BACnet to Brick
 
 ```{margin}
 ```{important}
