@@ -14,7 +14,6 @@ buildingmotif.api.views.library
    .. autosummary::
    
       get_all_libraries
-      get_all_shapes
       get_library
    
    

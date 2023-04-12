@@ -7,8 +7,9 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Overview: module code &#8212; BuildingMOTIF Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Ingresses &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -60,9 +61,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'explanations/ingresses';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Bibliography" href="../bibliography.html" />
+    <link rel="prev" title="BACnet to Brick" href="../guides/ingress-bacnet-to-brick.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -217,8 +220,8 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../explanations/ingresses.html">Ingresses</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ingresses</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -294,7 +297,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/index.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fexplanations/ingresses.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -306,6 +309,54 @@ const thebe_selector_output = ".output, .cell_output"
   </span>
 <span class="btn__text-container">Open issue</span>
 </a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/explanations/ingresses.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
 </li>
       
   </ul>
@@ -345,7 +396,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -356,11 +409,35 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1></h1>
+    <h1>Ingresses</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ingress-types">Ingress Types</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#record-ingress-handler">Record Ingress Handler</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graph-ingress-handler">Graph Ingress Handler</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#useful-built-in-ingress-handlers">Useful Built-in Ingress Handlers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-networks">BACnet Networks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-files">CSV Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xlsx-spreadsheet-files">XLSX / Spreadsheet Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-instantiation">Template Instantiation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-to-brick">BACnet to Brick</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-import">CSV Import</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -370,34 +447,118 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>All modules for which code is available</h1>
-<ul><li><a href="buildingmotif/api/app.html">buildingmotif.api.app</a></li>
-<li><a href="buildingmotif/api/views/library.html">buildingmotif.api.views.library</a></li>
-<li><a href="buildingmotif/api/views/model.html">buildingmotif.api.views.model</a></li>
-<li><a href="buildingmotif/api/views/template.html">buildingmotif.api.views.template</a></li>
-<li><a href="buildingmotif/building_motif/building_motif.html">buildingmotif.building_motif.building_motif</a></li>
-<li><a href="buildingmotif/building_motif/singleton.html">buildingmotif.building_motif.singleton</a></li>
-<li><a href="buildingmotif/database/graph_connection.html">buildingmotif.database.graph_connection</a></li>
-<li><a href="buildingmotif/database/table_connection.html">buildingmotif.database.table_connection</a></li>
-<li><a href="buildingmotif/database/tables.html">buildingmotif.database.tables</a></li>
-<li><a href="buildingmotif/database/utils.html">buildingmotif.database.utils</a></li>
-<li><a href="buildingmotif/dataclasses/library.html">buildingmotif.dataclasses.library</a></li>
-<li><a href="buildingmotif/dataclasses/model.html">buildingmotif.dataclasses.model</a></li>
-<li><a href="buildingmotif/dataclasses/shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
-<li><a href="buildingmotif/dataclasses/template.html">buildingmotif.dataclasses.template</a></li>
-<li><a href="buildingmotif/dataclasses/validation.html">buildingmotif.dataclasses.validation</a></li>
-<li><a href="buildingmotif/ingresses/bacnet.html">buildingmotif.ingresses.bacnet</a></li>
-<li><a href="buildingmotif/ingresses/base.html">buildingmotif.ingresses.base</a></li>
-<li><a href="buildingmotif/ingresses/brick.html">buildingmotif.ingresses.brick</a></li>
-<li><a href="buildingmotif/ingresses/csv.html">buildingmotif.ingresses.csv</a></li>
-<li><a href="buildingmotif/ingresses/template.html">buildingmotif.ingresses.template</a></li>
-<li><a href="buildingmotif/ingresses/xlsx.html">buildingmotif.ingresses.xlsx</a></li>
-<li><a href="buildingmotif/namespaces.html">buildingmotif.namespaces</a></li>
-<li><a href="buildingmotif/schemas.html">buildingmotif.schemas</a></li>
-<li><a href="buildingmotif/template_compilation.html">buildingmotif.template_compilation</a></li>
-<li><a href="buildingmotif/template_matcher.html">buildingmotif.template_matcher</a></li>
-<li><a href="buildingmotif/utils.html">buildingmotif.utils</a></li>
+  <section class="tex2jax_ignore mathjax_ignore" id="ingresses">
+<h1>Ingresses<a class="headerlink" href="#ingresses" title="Permalink to this heading">#</a></h1>
+<p><em>Ingresses</em> are BuildingMOTIF’s mechanism for importing metadata from external sources.
+The <code class="docutils literal notranslate"><span class="pre">Ingress</span></code> APIs are deliberately general so that they can be easily extended to new metadata sources.</p>
+<p><code class="docutils literal notranslate"><span class="pre">IngressHandler</span></code> has two abstract subclasses:</p>
+<ul class="simple">
+<li><p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code></span>, which produces <code class="docutils literal notranslate"><span class="pre">Record</span></code>s</p></li>
+<li><p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code></span>, which produces <code class="docutils literal notranslate"><span class="pre">Graph</span></code>s</p></li>
 </ul>
+<p>Every concrete <code class="docutils literal notranslate"><span class="pre">IngressHandler</span></code> should inherit from one of these two classes.</p>
+<section id="ingress-types">
+<h2>Ingress Types<a class="headerlink" href="#ingress-types" title="Permalink to this heading">#</a></h2>
+<section id="record-ingress-handler">
+<h3>Record Ingress Handler<a class="headerlink" href="#record-ingress-handler" title="Permalink to this heading">#</a></h3>
+<p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code></span> defines one method: <code class="docutils literal notranslate"><span class="pre">records()</span> <span class="pre">-&gt;</span> <span class="pre">List[Record]</span></code>.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">Record</span></code> is a simple Python data structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Record</span><span class="p">:</span>
+    <span class="c1"># a &quot;type hint&quot; or other identifier for an application-defined category of Records</span>
+    <span class="n">rtype</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="c1"># key-value pairs of data from the underlying source. Application-defined structure</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span>
+</pre></div>
+</div>
+<p>The choice of values for the <code class="docutils literal notranslate"><span class="pre">Record</span></code> is up to each <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code> instance:</p>
+<ul class="simple">
+<li><p>the <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">BACnetIngressHandler</span></code></span> uses the <code class="docutils literal notranslate"><span class="pre">rtype</span></code> field to differentiate between BACnet Devices and BACnet Objects. The <code class="docutils literal notranslate"><span class="pre">fields</span></code> field contains key-value pairs of different BACnet properties like <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">units</span></code></p></li>
+<li><p>the <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">CSVIngressHandler</span></code></span> uses the <code class="docutils literal notranslate"><span class="pre">rtype</span></code> field to denote the CSV filename, and uses the <code class="docutils literal notranslate"><span class="pre">fields</span></code> field to store column-cell values from each row of the CSV file</p></li>
+</ul>
+</section>
+<section id="graph-ingress-handler">
+<h3>Graph Ingress Handler<a class="headerlink" href="#graph-ingress-handler" title="Permalink to this heading">#</a></h3>
+<p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code></span> defines one method: <code class="docutils literal notranslate"><span class="pre">graph(ns:</span> <span class="pre">rdflib.Namespace)</span> <span class="pre">-&gt;</span> <span class="pre">rdflib.Graph</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rdflib.Graph</span></code> returned by this method contains RDF data (inferred, translated, computed, etc) from some underlying source.
+<code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code>s source their metadata from either an upstream <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code> or any other source provided in the instantiation of the <code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code> subclass.</p>
+<p>Any new entities/URIs/etc created or inferred by the <code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code> should be placed into the provided namespace (<code class="docutils literal notranslate"><span class="pre">ns</span></code>).
+An instance of <code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code> is typically at the <em>end</em> of a pipeline of <code class="docutils literal notranslate"><span class="pre">IngressHandler</span></code>s.</p>
+</section>
+</section>
+<section id="useful-built-in-ingress-handlers">
+<h2>Useful Built-in Ingress Handlers<a class="headerlink" href="#useful-built-in-ingress-handlers" title="Permalink to this heading">#</a></h2>
+<p>BuildingMOTIF provides several built-in ingress handlers.
+The full list can be found <span class="xref myst">here</span>.</p>
+<section id="bacnet-networks">
+<h3>BACnet Networks<a class="headerlink" href="#bacnet-networks" title="Permalink to this heading">#</a></h3>
+<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">BACnetIngressHandler</span></code></span> takes an IP subnet as an argument (e.g. <code class="docutils literal notranslate"><span class="pre">10.0.0.1/24</span></code>) and generates a set of <code class="docutils literal notranslate"><span class="pre">Record</span></code>s corresponding to the BACnet devices and objects found on that subnet.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rtype</span></code>: “object” if the <code class="docutils literal notranslate"><span class="pre">Record</span></code> represents a BACnet Object, else “device” if the <code class="docutils literal notranslate"><span class="pre">Record</span></code> represents a BACnet Device</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fields</span></code>: key-value pairs that differ based on <code class="docutils literal notranslate"><span class="pre">rtype</span></code>:</p>
+<ul>
+<li><p>BACnet devices: <code class="docutils literal notranslate"><span class="pre">address</span></code> and <code class="docutils literal notranslate"><span class="pre">device_id</span></code> for BACnet devices</p></li>
+<li><p>BACnet objects: <code class="docutils literal notranslate"><span class="pre">device_id</span></code> (for owning BACnet device) and all properties on the object</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="csv-files">
+<h3>CSV Files<a class="headerlink" href="#csv-files" title="Permalink to this heading">#</a></h3>
+<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">CSVIngressHandler</span></code></span> takes a CSV filename as an argument  (e.g. <code class="docutils literal notranslate"><span class="pre">mydata.csv</span></code>) and generates a set of <code class="docutils literal notranslate"><span class="pre">Record</span></code>s corresponding to each row in the file.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rtype</span></code>: the filename that contained the row</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fields</span></code>: key-value pairs for the row. The key is the column name; the value is the value of that column at the given row</p></li>
+</ul>
+</section>
+<section id="xlsx-spreadsheet-files">
+<h3>XLSX / Spreadsheet Files<a class="headerlink" href="#xlsx-spreadsheet-files" title="Permalink to this heading">#</a></h3>
+<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">XLSXIngressHandler</span></code></span> takes a path to an <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code> file as an argument and generates a set of <code class="docutils literal notranslate"><span class="pre">Records</span></code> for each row for each sheet in the spreadsheet file.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rtype</span></code>: the sheet name containing the row</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fields</span></code>: key-value pairs for each row; the keys are the names of the columns and the values are the cell values at that column for the given row</p></li>
+</ul>
+</section>
+<section id="template-instantiation">
+<h3>Template Instantiation<a class="headerlink" href="#template-instantiation" title="Permalink to this heading">#</a></h3>
+<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code></span> class instantiates a given <code class="docutils literal notranslate"><span class="pre">Template</span></code> with each of the <code class="docutils literal notranslate"><span class="pre">Record</span></code>s generated by an upstream <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code>. Instantiating <code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code>  requires a <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">Template</span></code></span> instance (probably from a <code class="docutils literal notranslate"><span class="pre">Library</span></code>), an optional “mapper”, and an upstream <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code>.</p>
+<p>A “mapper” is a function which maps the column names of the CSV file to the parameters of a template.
+If “mapper” is left as <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the <code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code> will use the column names as the parameter names.</p>
+<p>There is also a <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">TemplateIngressWithChooser</span></code></span> class which acts essentially the same as <code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code>, but uses an additional function to dynamically choose the <code class="docutils literal notranslate"><span class="pre">Template</span></code> to be instantiated for each <code class="docutils literal notranslate"><span class="pre">Record</span></code>.</p>
+</section>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">#</a></h2>
+<section id="bacnet-to-brick">
+<h3>BACnet to Brick<a class="headerlink" href="#bacnet-to-brick" title="Permalink to this heading">#</a></h3>
+<p>See <span class="xref myst">the BACnet to Brick guide</span></p>
+</section>
+<section id="csv-import">
+<h3>CSV Import<a class="headerlink" href="#csv-import" title="Permalink to this heading">#</a></h3>
+<p>See <a class="reference internal" href="../guides/csv-import.html"><span class="doc std std-doc">the CSV import guide</span></a></p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./explanations"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
 
                 </article>
               
@@ -410,6 +571,24 @@ document.write(`
   
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="../guides/ingress-bacnet-to-brick.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">BACnet to Brick</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../bibliography.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bibliography</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div></div>
   
 </div>
@@ -419,6 +598,36 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ingress-types">Ingress Types</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#record-ingress-handler">Record Ingress Handler</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graph-ingress-handler">Graph Ingress Handler</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#useful-built-in-ingress-handlers">Useful Built-in Ingress Handlers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-networks">BACnet Networks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-files">CSV Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xlsx-spreadsheet-files">XLSX / Spreadsheet Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-instantiation">Template Instantiation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-to-brick">BACnet to Brick</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-import">CSV Import</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

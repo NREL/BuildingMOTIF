@@ -213,7 +213,12 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../guides/ingress-bacnet-to-brick.html">Ingress - BACnet to Brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/csv-import.html">CSV Import</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -870,8 +875,6 @@ document.write(`
 <span class="sd">        :return: library&#39;s shape collection</span>
 <span class="sd">        :rtype: ShapeCollection</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># TODO: we should save the libraries shape_collection to a class attr on load/create. That</span>
-        <span class="c1"># way we wont need an additional db query each time we call this function.</span>
         <span class="n">db_library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">db_library</span><span class="o">.</span><span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
