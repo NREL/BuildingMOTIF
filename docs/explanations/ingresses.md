@@ -85,4 +85,4 @@ See [the BACnet to Brick guide](/guides/bacnet-to-brick)
 
 ### CSV Import
 
-See [the CSV import guide]((/guides/csv-import)
+See [the CSV import guide](/guides/csv-import)
