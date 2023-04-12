@@ -74,7 +74,7 @@ export class ModelValidateComponent implements OnInit{
       this.showValidatingSpinner = true;
 
       this.modelValidateService.validateModel(this.modelId, args).subscribe(
-        res => {this.validationResponse = JSON.parse(res)},
+        res => {this.validationResponse = res},
         err => {},
         () => {this.showValidatingSpinner = false},
       );

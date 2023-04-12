@@ -15,9 +15,9 @@ export class ModelValidateService {
   validateModel(modelId: number, args: number[]) {
     const headers = {'Content-Type': "application/json"}
 
-    return this.http.post(`http://localhost:5000/models/${modelId}/validate`,
+    return this.http.post<ValidationResponse>(`http://localhost:5000/models/${modelId}/validate`,
         {"library_ids": args},
-        {headers, responseType: 'text'}
+        {headers, responseType: 'json'}
       )
       .pipe(
         retry(3), // retry a failed request up to 3 times
