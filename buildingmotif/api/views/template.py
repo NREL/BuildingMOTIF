@@ -81,7 +81,7 @@ def evaluate(template_id: int) -> flask.Response:
     if bindings is None:
         return {"message": "body must contain 'bindings'"}, status.HTTP_400_BAD_REQUEST
     bindings = get_bindings(bindings)
-    bindings = {k: model.name + "/" + v for k, v in bindings.items()}
+    bindings = {k: model.name.strip("/") + "/" + v for k, v in bindings.items()}
 
     # parse bindings from input JSON
     graph_or_template = template.evaluate(bindings=bindings)

@@ -34,7 +34,6 @@ export class TemplateEvaluateComponent implements OnInit {
     .subscribe({
       next: (template: Template) => {
         this.template = template
-        console.log("template-evaluate: init " + this.template.id + " " + this.modelId)
       }, // success path
       error: (error) => this.error = error // error path
     });
