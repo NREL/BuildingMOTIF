@@ -1,7 +1,7 @@
 from flask_api import status
 from rdflib import Graph, Namespace
 
-from buildingmotif.dataclasses import Library
+from buildingmotif.dataclasses import Library, Model
 from buildingmotif.namespaces import BRICK, A
 
 BLDG = Namespace("urn:building/")
@@ -78,6 +78,7 @@ def test_get_template_not_found(client):
 
 
 def test_evaluate(client, building_motif):
+    model = Model.create(name="urn:my_model")
     lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     zone.inline_dependencies()
@@ -85,12 +86,89 @@ def test_evaluate(client, building_motif):
 
     results = client.post(
         f"/templates/{zone.id}/evaluate",
-        json={"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
+        json={
+            "model_id": model.id,
+            "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
+        },
     )
 
     assert results.status_code == status.HTTP_200_OK
     graph = Graph().parse(data=results.data, format="ttl")
-    assert (BLDG["cav1"], A, BRICK.CAV) in graph
-    assert (BLDG["zone1"], A, BRICK.HVAC_Zone) in graph
-    assert (BLDG["zone1"], BRICK.isFedBy, BLDG["cav1"]) in graph
+    assert (model.name + "/" + BLDG["cav1"], A, BRICK.CAV) in graph
+    assert (model.name + "/" + BLDG["zone1"], A, BRICK.HVAC_Zone) in graph
+    assert (
+        model.name + "/" + BLDG["zone1"],
+        BRICK.isFedBy,
+        model.name + "/" + BLDG["cav1"],
+    ) in graph
     assert len(list(graph.triples((None, None, None)))) == 3
+
+
+def test_evaluate_bad_templated_id(client, building_motif):
+    model = Model.create(name="urn:my_model")
+
+    results = client.post(
+        "/templates/-1/evaluate",
+        json={
+            "model_id": model.id,
+            "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
+        },
+    )
+
+    assert results.status_code == 404
+
+
+def test_evaluate_no_body(client, building_motif):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    zone = lib.get_template_by_name("zone")
+    zone.inline_dependencies()
+    assert zone.parameters == {"name", "cav"}
+
+    results = client.post(f"/templates/{zone.id}/evaluate")
+
+    assert results.status_code == 400
+
+
+def test_evaluate_bad_body(client, building_motif):
+    model = Model.create(name="urn:my_model")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    zone = lib.get_template_by_name("zone")
+    zone.inline_dependencies()
+    assert zone.parameters == {"name", "cav"}
+
+    results = client.post(
+        f"/templates/{zone.id}/evaluate",
+        json={
+            # no model
+            "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
+        },
+    )
+
+    assert results.status_code == 400
+
+    results = client.post(
+        f"/templates/{zone.id}/evaluate",
+        json={
+            "model_id": model.id,
+            # no bindings
+        },
+    )
+
+    assert results.status_code == 400
+
+
+def test_evaluate_bad_model_id(client, building_motif):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    zone = lib.get_template_by_name("zone")
+    zone.inline_dependencies()
+    assert zone.parameters == {"name", "cav"}
+
+    results = client.post(
+        f"/templates/{zone.id}/evaluate",
+        json={
+            "model_id": -1,
+            "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
+        },
+    )
+
+    assert results.status_code == 404

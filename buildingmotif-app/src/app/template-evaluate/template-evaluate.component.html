@@ -1,17 +1,23 @@
-<div class="container">
-    <div class="title"> {{template.name}} </div>
+<mat-progress-bar *ngIf="!template" class="progess-bar" mode="query"></mat-progress-bar>
 
-    <div [ngSwitch]="state">
-        <app-template-evaluate-form
-            *ngSwitchCase="'FORM'"
-            [template]="template"
-            (parameterFormValuesEvent)="parameterFormValuesEvent($event)">
-        </app-template-evaluate-form>
-        
-        <app-template-evaluate-result
-            *ngSwitchCase="'RESULT'"
-            [evaluateTemplate]="evaluatedGraph"
-            [models]="models">
-        </app-template-evaluate-result>
-    </div>
+<div *ngIf="template">
+    <div class="title">{{template.name}}</div>
+    <mat-stepper linear #stepper>
+        <mat-step>
+            <ng-template matStepLabel>Fill out template</ng-template>
+            <app-template-evaluate-form
+                [template]="template"
+                (parameterFormValuesEvent)="parameterFormValuesEvent($event)">
+            </app-template-evaluate-form>
+        </mat-step>
+
+        <mat-step>
+            <ng-template matStepLabel>Review evaluated graph</ng-template>
+            <app-template-evaluate-result
+                [evaluateTemplate]="evaluatedGraph"
+                [modelId]="data.modelId">
+            </app-template-evaluate-result>
+        </mat-step>
+
+    </mat-stepper>
 </div>
