@@ -406,7 +406,7 @@ class TableConnection:
                 f"In {templ.name} the values of the bindings to {dep.name} must correspond to the "
                 "parameters in the dependant template."
                 f"Dependency {dep.name} refers to params {set(args.values()).difference(params)} "
-                f"that do not appear in template {templ.name}"
+                f"that do not appear in template {templ.name} ({params})"
             )
         # do the same for the dependency
         graph = self.bm.graph_connection.get_graph(dep.body_id)
