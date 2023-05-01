@@ -1,39 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-
-import { Observable, throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Model } from '../types'
+import { throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
-export interface Template {
-  name: string;
-  id: number;
-  body_id: number;
-  optional_args: string[];
-  library_id: string;
-  dependency_ids: number[];
-}
-
-@Injectable()
-export class TemplateEvaluateService {
+@Injectable({
+  providedIn: 'root'
+})
+export class ModelValidateService {
 
   constructor(private http: HttpClient) { }
 
-  evaluateTemplate(templateId: number, modelId: number, parameters: {[name: string]: string}) {
-    const bindings = Object.entries(parameters).reduce((acc, [name, value]) => {
-      return {...acc, [name]: {"@id": value}}
-    }, {})
+  validateModel(modelId: number, args: number[]) {
+    const headers = {'Content-Type': "application/json"}
 
-    return this.http.post(
-      `http://localhost:5000/templates/${templateId}/evaluate`,
-      {model_id: modelId, bindings},
-      {responseType: 'text'}
+    return this.http.post<ValidationResponse>(`http://localhost:5000/models/${modelId}/validate`,
+        {"library_ids": args},
+        {headers, responseType: 'json'}
       )
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error
       );
-
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -49,5 +38,10 @@ export class TemplateEvaluateService {
     // Return an observable with a user-facing error message.
     return throwError(() => new Error(`${error.status}: ${error.error}`));
   }
+}
 
+export interface ValidationResponse {
+    valid: boolean;
+    message: string;
+    reasons: string[];
 }

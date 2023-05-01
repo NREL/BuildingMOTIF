@@ -1,8 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
 import { ModelDetailService } from 'src/app/model-detail/model-detail.service';
-import { Model } from 'src/app/types';
-import {Router} from "@angular/router"
 
 @Component({
   selector: 'app-template-evaluate-result',
@@ -12,8 +9,7 @@ import {Router} from "@angular/router"
 })
 export class TemplateEvaluateResultComponent {
   @Input() evaluateTemplate?: string;
-  @Input() models?: Model[];
-  selectedModel = new FormControl(undefined, [Validators.required]);
+  @Input() modelId?: number;
 
   codeMirrorOptions: any = {
     theme: 'material',
@@ -28,12 +24,14 @@ export class TemplateEvaluateResultComponent {
     readOnly: true
   };
 
-  constructor(private router: Router, private modelDetailService: ModelDetailService) { }
+  constructor(private modelDetailService: ModelDetailService) { }
 
   addToModel(){
+    if (this.modelId == undefined) return // we shouldn't hit this
     if (this.evaluateTemplate == undefined) return // we shouldn't hit this
-    this.modelDetailService.updateModelGraph(this.selectedModel.value.id, this.evaluateTemplate, true).subscribe(() => {
-      this.router.navigate([`/models/${this.selectedModel.value.id}`])
+
+    this.modelDetailService.updateModelGraph(this.modelId, this.evaluateTemplate, true).subscribe(() => {
+      location.reload();
     })
   }
 

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TemplateSearchComponent } from '../app/template-search/template-search.component'
-import { TemplateSearchResolver } from '../app/template-search/template-search.resolver'
 import { TemplateDetailComponent } from '../app/template-detail/template-detail.component'
 import { ModelSearchComponent } from '../app/model-search/model-search.component'
 import { ModelSearchResolver } from '../app/model-search/model-search.resolver'
@@ -15,8 +14,8 @@ const routes: Routes = [
   { path: 'models/new', component: ModelNewComponent},
   { path: 'templates/:id', component: TemplateDetailComponent },
   { path: 'templates/:id/evaluate', component: TemplateEvaluateComponent, resolve: {TemplateEvaluateResolver}},
-  { path: 'models/:id', component: ModelDetailComponent, resolve: {ModelDetailResolver} },
-  { path: 'templates', component: TemplateSearchComponent, resolve: {templateSearch:TemplateSearchResolver}},
+  { path: 'models/:id', component: ModelDetailComponent, resolve: {ModelDetailResolver}},
+  { path: 'templates', component: TemplateSearchComponent},
   { path: 'models', component: ModelSearchComponent, resolve: {ModelSearchResolver}},
   { path: '',   redirectTo: '/templates', pathMatch: 'full' },
 ];
