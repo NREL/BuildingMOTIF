@@ -4,7 +4,7 @@ from rdflib import RDF, BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
 from rdflib.term import Node
 
-from buildingmotif.namespaces import SH, A, bind_prefixes
+from buildingmotif.namespaces import CONSTRAINT, SH, A, bind_prefixes
 
 
 class Shape(Graph):
@@ -134,10 +134,27 @@ class NodeShape(Shape):
         :type class_: Node
         :param active: should shape actively target the class or not
         :type active: bool"""
-        predicate = predicate = SH["target_class"] if active else SH["class"]
+        predicate = SH["targetClass"] if active else SH["class"]
 
         self.add((self, predicate, class_))
+        self.add((self, CONSTRAINT["class"], class_))
 
+        return self
+
+    def always_run(self):
+        """Add blank node target
+        This target insures that the shape will always be evaluated.
+        If the shape has properties this can cause it to fail."""
+        self.add((self, SH["targetNode"], BNode()))
+        return self
+
+    def count(self, exactly: int = None):
+        """Add an exact count constraint.
+
+        :param exactly: exact number of instances of class to match
+        :type exactly: int"""
+        if exactly:
+            self.add((self, CONSTRAINT["exactCount"], Literal(exactly)))
         return self
 
     def has_property(self, property: Union[Node, URIRef]):
