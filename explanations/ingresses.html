@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Model Correction &#8212; BuildingMOTIF Documentation</title>
+    <title>Ingresses &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -61,11 +61,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'tutorials/model_correction';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'explanations/ingresses';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Template Writing" href="template_writing.html" />
-    <link rel="prev" title="Model Validation" href="model_validation.html" />
+    <link rel="next" title="Bibliography" href="../bibliography.html" />
+    <link rel="prev" title="BACnet to Brick" href="../guides/ingress-bacnet-to-brick.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -212,11 +212,11 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="model_creation.html">Model Creation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="model_validation.html">Model Validation</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Model Correction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="template_writing.html">Template Writing</a></li>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/model_creation.html">Model Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/model_validation.html">Model Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/model_correction.html">Model Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/template_writing.html">Template Writing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul class="nav bd-sidenav">
@@ -224,8 +224,8 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../explanations/ingresses.html">Ingresses</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ingresses</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -301,7 +301,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Ftutorials/model_correction.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fexplanations/ingresses.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -331,7 +331,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="../_sources/tutorials/model_correction.md" target="_blank"
+      <li><a href="../_sources/explanations/ingresses.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -413,7 +413,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Model Correction</h1>
+    <h1>Ingresses</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -423,9 +423,23 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-validation">Model Validation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-correction-with-templates">Model Correction with Templates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ingress-types">Ingress Types</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#record-ingress-handler">Record Ingress Handler</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graph-ingress-handler">Graph Ingress Handler</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#useful-built-in-ingress-handlers">Useful Built-in Ingress Handlers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-networks">BACnet Networks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-files">CSV Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xlsx-spreadsheet-files">XLSX / Spreadsheet Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-instantiation">Template Instantiation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-to-brick">BACnet to Brick</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-import">CSV Import</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -437,195 +451,96 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="model-correction">
-<h1>Model Correction<a class="headerlink" href="#model-correction" title="Permalink to this heading">#</a></h1>
-<aside class="margin sidebar">
-<p class="sidebar-title"></p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>This tutorial assumes that <code class="docutils literal notranslate"><span class="pre">BuildingMOTIF</span></code> has already been installed in the local environment.</p>
-</div>
-</aside>
-<p>The purpose of this tutorial is to learn how to fix a model that fails validation using BuildingMOTIF Templates to automate the correction process.</p>
-<section id="setup">
-<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this heading">#</a></h2>
-<p>Like the previous tutorial, we’ll create an in-memory BuildingMOTIF instance, load the model, and load some libraries. We’ll also load the manifest from the previous tutorial.</p>
-<aside class="margin sidebar">
-<p class="sidebar-title"></p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Currently, libraries in <code class="docutils literal notranslate"><span class="pre">../../buildingmotif/libraries/</span></code> are <em>included</em> and libraries in <code class="docutils literal notranslate"><span class="pre">../../libraries/</span></code> are <em>excluded</em> from the <a class="reference external" href="https://pypi.org/project/buildingmotif/">BuildingMOTIF Python package</a> (available by cloning, downloading, or forking the repository). See <a class="github reference external" href="https://github.com/NREL/BuildingMOTIF/issues/133">NREL/BuildingMOTIF#133</a>.</p>
-</div>
-</aside>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Library</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span> <span class="c1"># import this to make writing URIs easier</span>
-
-<span class="c1"># in-memory instance</span>
-<span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span>
-
-<span class="c1"># create the namespace for the building</span>
-<span class="n">BLDG</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s1">&#39;urn:bldg/&#39;</span><span class="p">)</span>
-
-<span class="c1"># create the building model</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">BLDG</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;This is a test model for a simple building&quot;</span><span class="p">)</span>
-
-<span class="c1"># load tutorial 2 model and manifest</span>
-<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;tutorial2_model.ttl&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">)</span>
-<span class="n">manifest</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;tutorial2_manifest.ttl&quot;</span><span class="p">)</span>
-
-<span class="c1"># load libraries included with the python package</span>
-<span class="n">constraints</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../buildingmotif/libraries/constraints/constraints.ttl&quot;</span><span class="p">)</span>
-
-<span class="c1"># load libraries excluded from the python package (available from the repository)</span>
-<span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
-<span class="n">g36</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../libraries/ashrae/guideline36&quot;</span><span class="p">)</span>
+  <section class="tex2jax_ignore mathjax_ignore" id="ingresses">
+<h1>Ingresses<a class="headerlink" href="#ingresses" title="Permalink to this heading">#</a></h1>
+<p><em>Ingresses</em> are BuildingMOTIF’s mechanism for importing metadata from external sources.
+The <code class="docutils literal notranslate"><span class="pre">Ingress</span></code> APIs are deliberately general so that they can be easily extended to new metadata sources.</p>
+<p><code class="docutils literal notranslate"><span class="pre">IngressHandler</span></code> has two abstract subclasses:</p>
+<ul class="simple">
+<li><p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code></span>, which produces <code class="docutils literal notranslate"><span class="pre">Record</span></code>s</p></li>
+<li><p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code></span>, which produces <code class="docutils literal notranslate"><span class="pre">Graph</span></code>s</p></li>
+</ul>
+<p>Every concrete <code class="docutils literal notranslate"><span class="pre">IngressHandler</span></code> should inherit from one of these two classes.</p>
+<section id="ingress-types">
+<h2>Ingress Types<a class="headerlink" href="#ingress-types" title="Permalink to this heading">#</a></h2>
+<section id="record-ingress-handler">
+<h3>Record Ingress Handler<a class="headerlink" href="#record-ingress-handler" title="Permalink to this heading">#</a></h3>
+<p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code></span> defines one method: <code class="docutils literal notranslate"><span class="pre">records()</span> <span class="pre">-&gt;</span> <span class="pre">List[Record]</span></code>.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">Record</span></code> is a simple Python data structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Record</span><span class="p">:</span>
+    <span class="c1"># a &quot;type hint&quot; or other identifier for an application-defined category of Records</span>
+    <span class="n">rtype</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="c1"># key-value pairs of data from the underlying source. Application-defined structure</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span>
 </pre></div>
 </div>
-</div>
-</div>
+<p>The choice of values for the <code class="docutils literal notranslate"><span class="pre">Record</span></code> is up to each <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code> instance:</p>
+<ul class="simple">
+<li><p>the <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">BACnetIngressHandler</span></code></span> uses the <code class="docutils literal notranslate"><span class="pre">rtype</span></code> field to differentiate between BACnet Devices and BACnet Objects. The <code class="docutils literal notranslate"><span class="pre">fields</span></code> field contains key-value pairs of different BACnet properties like <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">units</span></code></p></li>
+<li><p>the <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">CSVIngressHandler</span></code></span> uses the <code class="docutils literal notranslate"><span class="pre">rtype</span></code> field to denote the CSV filename, and uses the <code class="docutils literal notranslate"><span class="pre">fields</span></code> field to store column-cell values from each row of the CSV file</p></li>
+</ul>
 </section>
-<section id="model-validation">
-<h2>Model Validation<a class="headerlink" href="#model-validation" title="Permalink to this heading">#</a></h2>
-<p>Let’s validate the model again to see what’s causing the failure.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># gather shape collections into a list for ease of use</span>
-<span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">brick</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
-    <span class="n">constraints</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
-    <span class="n">manifest</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
-    <span class="n">g36</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
-<span class="p">]</span>
-
-<span class="c1"># pass a list of shape collections to .validate()</span>
-<span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="c1"># print reasons</span>
-<span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
-</pre></div>
-</div>
-</div>
-</div>
+<section id="graph-ingress-handler">
+<h3>Graph Ingress Handler<a class="headerlink" href="#graph-ingress-handler" title="Permalink to this heading">#</a></h3>
+<p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code></span> defines one method: <code class="docutils literal notranslate"><span class="pre">graph(ns:</span> <span class="pre">rdflib.Namespace)</span> <span class="pre">-&gt;</span> <span class="pre">rdflib.Graph</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">rdflib.Graph</span></code> returned by this method contains RDF data (inferred, translated, computed, etc) from some underlying source.
+<code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code>s source their metadata from either an upstream <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code> or any other source provided in the instantiation of the <code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code> subclass.</p>
+<p>Any new entities/URIs/etc created or inferred by the <code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code> should be placed into the provided namespace (<code class="docutils literal notranslate"><span class="pre">ns</span></code>).
+An instance of <code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code> is typically at the <em>end</em> of a pipeline of <code class="docutils literal notranslate"><span class="pre">IngressHandler</span></code>s.</p>
 </section>
-<section id="model-correction-with-templates">
-<h2>Model Correction with Templates<a class="headerlink" href="#model-correction-with-templates" title="Permalink to this heading">#</a></h2>
-<p>The model is failing because the AHU doesn’t have the minimum number of supply fans associated with it. We <em>could</em> add the fan explicitly by adding those triples to the model like we’ve done previously, but we can also ask BuildingMOTIF to generate new templates that explicitly prompt us for the missing information. We can also take a closer look at the first autogenerated template</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a new library to hold these generated templates</span>
-<span class="n">generated_templates</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;my-autogenerated-templates&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="p">:</span>
-    <span class="n">diff</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">generated_templates</span><span class="p">)</span>
-
-<span class="c1"># print some of the autogenerated template</span>
-<span class="k">for</span> <span class="n">templ</span> <span class="ow">in</span> <span class="n">generated_templates</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Name (autogenerated): </span><span class="si">{</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameters (autogenerated): </span><span class="si">{</span><span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Template body (autogenerated):&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">79</span><span class="p">)</span>
-    <span class="k">break</span> <span class="c1"># just to demonstrate the first piece of output</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>In this case, the generated templates are fairly simple. They require an input for the name of the supply fan and the names of several missing points. We can loop through each of these generated templates and create the names. Here, we are creating arbitrary names for the points but in a real setting you would likely pull the equipment or point names from an external source like a Building Information Model or BACnet network<a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> (see future tutorials for how to do this!) Another challenge is the fact that we already have a supply fan in the model. Here, we can take advantage of the fact that the name of the fan in the existing model are just the name of the AHU wtih the <code class="docutils literal notranslate"><span class="pre">-Fan</span></code> postfix. The name of the AHU is in the generated templates (see above) so we can just pull out the name of the AHU, add the postfix, and use that as the value for the <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span>
-<span class="k">for</span> <span class="n">templ</span> <span class="ow">in</span> <span class="n">generated_templates</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span>
-    <span class="c1"># get name of AHU from template body</span>
-    <span class="n">ahu_name</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">))</span>
-    <span class="c1"># generate the name of the supply fan</span>
-    <span class="n">supply_fan_name</span> <span class="o">=</span> <span class="n">ahu_name</span> <span class="o">+</span> <span class="s1">&#39;-Fan&#39;</span>
-
-    <span class="c1"># we know from the exploration above that each template has</span>
-    <span class="c1"># 1 parameter called &#39;name&#39;, which we assign to the name of the supply fan</span>
-    <span class="n">bindings</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">supply_fan_name</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="c1"># the rest of the parameters have random names, so let&#39;s generate</span>
-    <span class="c1"># random URIs for those by putting the name of the parameter at the end</span>
-    <span class="c1"># of the fan&#39;s name</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">templ</span><span class="o">.</span><span class="n">parameters</span> <span class="o">-</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">}:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="n">bindings</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">supply_fan_name</span> <span class="o">+</span> <span class="n">p</span>
-    <span class="n">supply_fan</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">bindings</span><span class="p">)</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">supply_fan</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added supply fan </span><span class="si">{</span><span class="n">supply_fan_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We use the same code as before to ask BuildingMOTIF if the model is now valid:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
-</pre></div>
-</div>
-</div>
-</div>
-<p>Success! The model is valid with respect to the targeted use case, i.e. the model can support the high-performance sequences of operation for single zone VAV AHUs from ASHRAE Guideline 36. Let’s take a look at the validated model and save it for use in future tutorials.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># print model</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
-
-<span class="c1">#save model</span>
-<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial3_model.ttl&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
-@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
-
-&lt;urn:bldg/&gt; a owl:Ontology .
-
-&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
-    brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
-        &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
-        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt;,
-        &lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Supply_Fan .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; a brick:Heating_Coil .
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=f646898f-14c8-4206-8723-f550ae728008 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
-</pre></div>
-</div>
-</div>
-</div>
-<hr class="footnotes docutils" />
-<aside class="footnote brackets" id="id2" role="note">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
-<p><a class="reference external" href="https://bacnet.org/">https://bacnet.org/</a></p>
-</aside>
+</section>
+<section id="useful-built-in-ingress-handlers">
+<h2>Useful Built-in Ingress Handlers<a class="headerlink" href="#useful-built-in-ingress-handlers" title="Permalink to this heading">#</a></h2>
+<p>BuildingMOTIF provides several built-in ingress handlers.
+The full list can be found <span class="xref myst">here</span>.</p>
+<section id="bacnet-networks">
+<h3>BACnet Networks<a class="headerlink" href="#bacnet-networks" title="Permalink to this heading">#</a></h3>
+<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">BACnetIngressHandler</span></code></span> takes an IP subnet as an argument (e.g. <code class="docutils literal notranslate"><span class="pre">10.0.0.1/24</span></code>) and generates a set of <code class="docutils literal notranslate"><span class="pre">Record</span></code>s corresponding to the BACnet devices and objects found on that subnet.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rtype</span></code>: “object” if the <code class="docutils literal notranslate"><span class="pre">Record</span></code> represents a BACnet Object, else “device” if the <code class="docutils literal notranslate"><span class="pre">Record</span></code> represents a BACnet Device</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fields</span></code>: key-value pairs that differ based on <code class="docutils literal notranslate"><span class="pre">rtype</span></code>:</p>
+<ul>
+<li><p>BACnet devices: <code class="docutils literal notranslate"><span class="pre">address</span></code> and <code class="docutils literal notranslate"><span class="pre">device_id</span></code> for BACnet devices</p></li>
+<li><p>BACnet objects: <code class="docutils literal notranslate"><span class="pre">device_id</span></code> (for owning BACnet device) and all properties on the object</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="csv-files">
+<h3>CSV Files<a class="headerlink" href="#csv-files" title="Permalink to this heading">#</a></h3>
+<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">CSVIngressHandler</span></code></span> takes a CSV filename as an argument  (e.g. <code class="docutils literal notranslate"><span class="pre">mydata.csv</span></code>) and generates a set of <code class="docutils literal notranslate"><span class="pre">Record</span></code>s corresponding to each row in the file.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rtype</span></code>: the filename that contained the row</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fields</span></code>: key-value pairs for the row. The key is the column name; the value is the value of that column at the given row</p></li>
+</ul>
+</section>
+<section id="xlsx-spreadsheet-files">
+<h3>XLSX / Spreadsheet Files<a class="headerlink" href="#xlsx-spreadsheet-files" title="Permalink to this heading">#</a></h3>
+<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">XLSXIngressHandler</span></code></span> takes a path to an <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code> file as an argument and generates a set of <code class="docutils literal notranslate"><span class="pre">Records</span></code> for each row for each sheet in the spreadsheet file.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rtype</span></code>: the sheet name containing the row</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fields</span></code>: key-value pairs for each row; the keys are the names of the columns and the values are the cell values at that column for the given row</p></li>
+</ul>
+</section>
+<section id="template-instantiation">
+<h3>Template Instantiation<a class="headerlink" href="#template-instantiation" title="Permalink to this heading">#</a></h3>
+<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code></span> class instantiates a given <code class="docutils literal notranslate"><span class="pre">Template</span></code> with each of the <code class="docutils literal notranslate"><span class="pre">Record</span></code>s generated by an upstream <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code>. Instantiating <code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code>  requires a <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">Template</span></code></span> instance (probably from a <code class="docutils literal notranslate"><span class="pre">Library</span></code>), an optional “mapper”, and an upstream <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code>.</p>
+<p>A “mapper” is a function which maps the column names of the CSV file to the parameters of a template.
+If “mapper” is left as <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the <code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code> will use the column names as the parameter names.</p>
+<p>There is also a <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">TemplateIngressWithChooser</span></code></span> class which acts essentially the same as <code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code>, but uses an additional function to dynamically choose the <code class="docutils literal notranslate"><span class="pre">Template</span></code> to be instantiated for each <code class="docutils literal notranslate"><span class="pre">Record</span></code>.</p>
+</section>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">#</a></h2>
+<section id="bacnet-to-brick">
+<h3>BACnet to Brick<a class="headerlink" href="#bacnet-to-brick" title="Permalink to this heading">#</a></h3>
+<p>See <span class="xref myst">the BACnet to Brick guide</span></p>
+</section>
+<section id="csv-import">
+<h3>CSV Import<a class="headerlink" href="#csv-import" title="Permalink to this heading">#</a></h3>
+<p>See <a class="reference internal" href="../guides/csv-import.html"><span class="doc std std-doc">the CSV import guide</span></a></p>
+</section>
 </section>
 </section>
 
@@ -642,7 +557,7 @@ document.write(`
         },
         kernelOptions: {
             name: "python3",
-            path: "./tutorials"
+            path: "./explanations"
         },
         predefinedOutput: true
     }
@@ -661,20 +576,20 @@ document.write(`
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="model_validation.html"
+       href="../guides/ingress-bacnet-to-brick.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Model Validation</p>
+        <p class="prev-next-title">BACnet to Brick</p>
       </div>
     </a>
     <a class="right-next"
-       href="template_writing.html"
+       href="../bibliography.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Template Writing</p>
+        <p class="prev-next-title">Bibliography</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -696,9 +611,23 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-validation">Model Validation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-correction-with-templates">Model Correction with Templates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ingress-types">Ingress Types</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#record-ingress-handler">Record Ingress Handler</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graph-ingress-handler">Graph Ingress Handler</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#useful-built-in-ingress-handlers">Useful Built-in Ingress Handlers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-networks">BACnet Networks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-files">CSV Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xlsx-spreadsheet-files">XLSX / Spreadsheet Files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-instantiation">Template Instantiation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-to-brick">BACnet to Brick</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-import">CSV Import</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
