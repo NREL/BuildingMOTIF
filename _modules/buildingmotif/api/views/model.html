@@ -196,6 +196,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -213,12 +217,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../../guides/csv-import.html">CSV Import</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../guides/ingress-bacnet-to-brick.html">Ingress - BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -379,7 +378,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm.exc</span> <span class="kn">import</span> <span class="n">NoResultFound</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.model</span> <span class="kn">import</span> <span class="n">serialize</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
 
 <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 
@@ -497,58 +496,6 @@ document.write(`
     <span class="n">current_app</span><span class="o">.</span><span class="n">building_motif</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="validate_model"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.validate_model">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;models_id&gt;/validate&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">validate_model</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-    <span class="c1"># get model</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">models_id</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No model with id </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
-
-    <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="c1"># no body provided -- default to model manifest</span>
-    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">content_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># get body</span>
-        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">content_type</span> <span class="o">!=</span> <span class="s2">&quot;application/json&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;request content type must be json&quot;</span><span class="p">},</span>
-                <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">body</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;cannot read body </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
-
-        <span class="k">if</span> <span class="n">body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;body is not dict&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
-        <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">body</span> <span class="o">=</span> <span class="n">body</span> <span class="k">if</span> <span class="n">body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
-        <span class="n">nonexistent_libraries</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">library_id</span> <span class="ow">in</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;library_ids&quot;</span><span class="p">,</span> <span class="p">[]):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">shape_collection</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">library_id</span><span class="p">)</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span>
-                <span class="n">shape_collections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shape_collection</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-                <span class="n">nonexistent_libraries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">library_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonexistent_libraries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span>
-                <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Libraries with ids </span><span class="si">{</span><span class="n">nonexistent_libraries</span><span class="si">}</span><span class="s2"> do not exist&quot;</span>
-            <span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
-
-    <span class="c1"># if shape_collections is empty, model.validate will default</span>
-    <span class="c1"># to the model&#39;s manifest</span>
-    <span class="n">vaildation_context</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">report_string</span><span class="p">,</span>
-        <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">valid</span><span class="p">,</span>
-        <span class="s2">&quot;reasons&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">diffset</span><span class="p">],</span>
-    <span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
 </pre></div>
 
                 </article>

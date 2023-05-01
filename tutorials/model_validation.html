@@ -199,6 +199,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -216,12 +220,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../guides/csv-import.html">CSV Import</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/ingress-bacnet-to-brick.html">Ingress - BACnet to Brick</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -693,7 +692,6 @@ document.write(`
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Heating_Coil
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
 </pre></div>
 </div>
 </div>
@@ -761,10 +759,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
 </pre></div>
 </div>
 </div>
@@ -792,15 +787,15 @@ urn:ashrae/g36/4.6/mz-vav-ahu/supply-fan
 urn:ashrae/g36/4.6/mz-vav-ahu/return-damper
 urn:ashrae/g36/4.6/mz-vav-ahu/heating-coil
 urn:ashrae/g36/4.6/mz-vav-ahu/cooling-coil
+urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu
+urn:ashrae/g36/components/cooling_damper
+urn:ashrae/g36/components/heating_damper
+urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only
 urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/terminal-unit
 urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/terminal-unit
 urn:ashrae/g36/4.3/fan-powered/terminal-unit
 urn:ashrae/g36/4.3/fan-powered/fan
 urn:ashrae/g36/4.3/fan-powered/damper
-urn:ashrae/g36/components/cooling_damper
-urn:ashrae/g36/components/heating_damper
-urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only
-urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu
 urn:ashrae/g36/4.2/vav-with-reheat/vav-with-reheat
 </pre></div>
 </div>
@@ -856,17 +851,10 @@ print(f"Model is valid? {validation_result.valid}")
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Validation Report
-Conforms: False
-Results (1):
-Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
-	Severity: sh:Violation
-	Source Shape: [ sh:path brick:hasPart ; sh:qualifiedMaxCount Literal(&quot;1&quot;, datatype=xsd:integer) ; sh:qualifiedMinCount Literal(&quot;1&quot;, datatype=xsd:integer) ; sh:qualifiedValueShape [ sh:node &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan&gt; ] ]
-	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
-	Result Path: brick:hasPart
+Conforms: True
 
 -------------------------------------------------------------------------------
 Model is invalid for these reasons:
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
 </pre></div>
 </div>
 </div>
@@ -880,7 +868,7 @@ Model is invalid for these reasons:
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=eecaa958-90df-4412-a6e7-c862cbd9202c (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=163a42dc-9c8d-49b1-a5d3-69838d2509bf (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
