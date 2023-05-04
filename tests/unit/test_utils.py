@@ -196,6 +196,10 @@ def test_inline_sh_and(bm: BuildingMOTIF):
         in ctx.report_string
         or "Value class is not in classes (brick:Class3, brick:Class2)"
         in ctx.report_string
+        or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class3>, <https://brickschema.org/schema/Brick#Class2>)"
+        in ctx.report_string
+        or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class2>, <https://brickschema.org/schema/Brick#Class3>)"
+        in ctx.report_string
     ), ctx.report_string
     assert (
         "Less than 1 values on <urn:model#x>->brick:relationship" in ctx.report_string
