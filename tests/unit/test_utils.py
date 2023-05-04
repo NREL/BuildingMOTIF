@@ -251,4 +251,6 @@ def test_inline_sh_node(bm: BuildingMOTIF):
     )
     assert (
         "Less than 1 values on <urn:model#x>->brick:relationship" in ctx.report_string
+        or "Less than 1 values on <urn:model#x>-><https://brickschema.org/schema/Brick#relationship>"
+        in ctx.report_string
     )
