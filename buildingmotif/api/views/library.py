@@ -9,6 +9,9 @@ from buildingmotif.dataclasses.shape_collection import ShapeCollection
 blueprint = Blueprint("libraries", __name__)
 
 get_shape_query = """
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
     SELECT ?shape ?label ?desc
     WHERE {
         ?shape a sh:NodeShape ;
