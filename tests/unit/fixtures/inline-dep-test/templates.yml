@@ -1,0 +1,46 @@
+A:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Entity ;
+    brick:hasPoint P:b, P:c, P:d .
+  optional: ['d']
+  dependencies:
+  - template: B
+    args: {"name": "b"}
+  - template: C
+    args: {"name": "c"}
+  - template: D
+    args: {"name": "d"}
+
+B:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:B ;
+      brick:hasPart P:bp .
+
+C:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:C ;
+      brick:hasPart P:cp .
+
+D:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:D ;
+      brick:hasPart P:dp .
+
+A-alt:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Entity ;
+    brick:hasPoint P:b .
+  optional: ['b-bp']
+  dependencies:
+  - template: B
+    args: {"name": "b"}
