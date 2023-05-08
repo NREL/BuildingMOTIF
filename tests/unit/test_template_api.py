@@ -1,3 +1,4 @@
+import pytest
 from rdflib import Graph, Namespace
 
 from buildingmotif import BuildingMOTIF
@@ -17,9 +18,10 @@ def test_template_evaluate(bm: BuildingMOTIF):
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"name", "cav"}
 
-    partial = zone.evaluate({"name": BLDG["zone1"]})
-    assert isinstance(partial, Template)
-    assert partial.parameters == {"cav"}
+    with pytest.warns():
+        partial = zone.evaluate({"name": BLDG["zone1"]})
+        assert isinstance(partial, Template)
+        assert partial.parameters == {"cav"}
 
     graph = partial.evaluate({"cav": BLDG["cav1"]})
     assert isinstance(graph, Graph)
@@ -109,6 +111,7 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
         "sf-ss",
         "sf-st",
         "oad-pos",
+        "oad-sen",
     }
     assert inlined.parameters == preserved_params
 
@@ -128,6 +131,13 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     t = templ.evaluate(
         {"name": BLDG["vav"], "zone": BLDG["zone1"]}, require_optional_args=True
     )
+    assert isinstance(t, Template)
+    assert t.parameters == {"occ"}
+
+    with pytest.warns():
+        t = templ.evaluate(
+            {"name": BLDG["vav"], "zone": BLDG["zone1"]}, require_optional_args=True
+        )
     assert isinstance(t, Template)
     assert t.parameters == {"occ"}
 
@@ -151,7 +161,7 @@ def test_template_matching(bm: BuildingMOTIF):
 
     remaining_template = matcher.remaining_template(mapping)
     assert isinstance(remaining_template, Template)
-    assert remaining_template.parameters == {"pos"}
+    assert remaining_template.parameters == {"sen", "pos"}
 
 
 def test_template_matcher_with_graph_target(bm: BuildingMOTIF):
