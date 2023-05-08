@@ -605,7 +605,8 @@ document.write(`
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">templ</span>
 
-        <span class="c1"># start with this template&#39;s parameters; if there is</span>
+        <span class="c1"># start with this template&#39;s parameters; this recurses into each</span>
+        <span class="c1"># dependency to inline dependencies</span>
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
             <span class="c1"># get the inlined version of the dependency</span>
             <span class="n">deptempl</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span>
@@ -631,15 +632,22 @@ document.write(`
             <span class="n">replace_nodes</span><span class="p">(</span>
                 <span class="n">deptempl</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="p">{</span><span class="n">PARAM</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rename_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
             <span class="p">)</span>
-            <span class="c1"># be sure to rename optional arguments too</span>
-            <span class="n">unused_optional_args</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">deptempl</span><span class="o">.</span><span class="n">optional_args</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="n">dep_optional_args</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">rename_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">unused_optional_args</span>
-            <span class="p">]</span>
 
-            <span class="c1"># append into the dependant body</span>
+            <span class="c1"># figure out which of deptempl&#39;s parameters are encoded as &#39;optional&#39; by the</span>
+            <span class="c1"># parent (depending) template</span>
+            <span class="n">deptempl_opt_args</span> <span class="o">=</span> <span class="n">deptempl</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span><span class="p">)</span>
+            <span class="c1"># if the &#39;name&#39; of the deptempl is optional, then all the arguments inside deptempl</span>
+            <span class="c1"># become optional</span>
+            <span class="k">if</span> <span class="n">rename_params</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">deptempl_opt_args</span><span class="p">:</span>
+                <span class="c1"># mark all of deptempl&#39;s parameters as optional</span>
+                <span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">+=</span> <span class="n">deptempl</span><span class="o">.</span><span class="n">parameters</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># otherwise, only add the parameters that are explicitly</span>
+                <span class="c1"># marked as optional *and* appear in this dependency</span>
+                <span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">+=</span> <span class="n">deptempl_opt_args</span>
+
+            <span class="c1"># append the inlined template into the parent&#39;s body</span>
             <span class="n">templ</span><span class="o">.</span><span class="n">body</span> <span class="o">+=</span> <span class="n">deptempl</span><span class="o">.</span><span class="n">body</span>
-            <span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">+=</span> <span class="n">dep_optional_args</span>
 
         <span class="k">return</span> <span class="n">templ</span></div>
 
