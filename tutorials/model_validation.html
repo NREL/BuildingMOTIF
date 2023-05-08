@@ -199,10 +199,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -696,7 +692,8 @@ document.write(`
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Heating_Coil
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
+ - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Heating_Coil
 </pre></div>
 </div>
 </div>
@@ -764,7 +761,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
 </pre></div>
 </div>
 </div>
@@ -856,10 +856,17 @@ print(f"Model is valid? {validation_result.valid}")
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Validation Report
-Conforms: True
+Conforms: False
+Results (1):
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: [ sh:path brick:hasPart ; sh:qualifiedMaxCount Literal(&quot;1&quot;, datatype=xsd:integer) ; sh:qualifiedMinCount Literal(&quot;1&quot;, datatype=xsd:integer) ; sh:qualifiedValueShape [ sh:node &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan&gt; ] ]
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPart
 
 -------------------------------------------------------------------------------
 Model is invalid for these reasons:
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
 </pre></div>
 </div>
 </div>
@@ -873,7 +880,7 @@ Model is invalid for these reasons:
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=c904657c-72fa-4ed2-ab30-0b1260788b6e (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=6fbe0df5-0dee-44f6-9307-b6cd6507e4f3 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
