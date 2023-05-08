@@ -232,7 +232,8 @@ class Template:
         if not self.get_dependencies():
             return templ
 
-        # start with this template's parameters; if there is
+        # start with this template's parameters; this recurses into each
+        # dependency to inline dependencies
         for dep in self.get_dependencies():
             # get the inlined version of the dependency
             deptempl = dep.template.inline_dependencies()
@@ -258,15 +259,22 @@ class Template:
             replace_nodes(
                 deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
             )
-            # be sure to rename optional arguments too
-            unused_optional_args = set(deptempl.optional_args) - set(dep.args.keys())
-            dep_optional_args = [
-                rename_params.get(arg, arg) for arg in unused_optional_args
-            ]
 
-            # append into the dependant body
+            # figure out which of deptempl's parameters are encoded as 'optional' by the
+            # parent (depending) template
+            deptempl_opt_args = deptempl.parameters.intersection(templ.optional_args)
+            # if the 'name' of the deptempl is optional, then all the arguments inside deptempl
+            # become optional
+            if rename_params["name"] in deptempl_opt_args:
+                # mark all of deptempl's parameters as optional
+                templ.optional_args += deptempl.parameters
+            else:
+                # otherwise, only add the parameters that are explicitly
+                # marked as optional *and* appear in this dependency
+                templ.optional_args += deptempl_opt_args
+
+            # append the inlined template into the parent's body
             templ.body += deptempl.body
-            templ.optional_args += dep_optional_args
 
         return templ
 

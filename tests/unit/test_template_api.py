@@ -115,6 +115,29 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     }
     assert inlined.parameters == preserved_params
 
+    # test optional 'name' param on dependency; this should
+    # preserve optionality of all params in the dependency
+    lib = Library.load(directory="tests/unit/fixtures/inline-dep-test")
+    templ = lib.get_template_by_name("A")
+    assert templ.parameters == {"name", "b", "c", "d"}
+    assert set(templ.optional_args) == {"d"}
+    assert len(templ.get_dependencies()) == 3
+    inlined = templ.inline_dependencies()
+    assert len(inlined.get_dependencies()) == 0
+    assert inlined.parameters == {"name", "b", "c", "b-bp", "c-cp", "d", "d-dp"}
+    assert set(inlined.optional_args) == {"d", "d-dp"}
+
+    # test optional non-'name' parameter on dependency; this should
+    # only make that single parameter optional
+    templ = lib.get_template_by_name("A-alt")
+    assert templ.parameters == {"name", "b"}
+    assert set(templ.optional_args) == {"b-bp"}
+    assert len(templ.get_dependencies()) == 1
+    inlined = templ.inline_dependencies()
+    assert len(inlined.get_dependencies()) == 0
+    assert inlined.parameters == {"name", "b", "b-bp"}
+    assert set(inlined.optional_args) == {"b-bp"}
+
 
 def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     """

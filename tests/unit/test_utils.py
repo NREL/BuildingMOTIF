@@ -236,14 +236,12 @@ def test_inline_sh_node(bm: BuildingMOTIF):
     model.add_graph(data)
 
     new_sg = rewrite_shape_graph(sg)
-    print(new_sg.serialize())
 
     sc = ShapeCollection.create()
     sc.add_graph(new_sg)
 
     ctx = model.validate([sc])
-    print(ctx.report_string)
-    assert not ctx.valid
+    assert not ctx.valid, ctx.report_string
     assert (
         "Value class is not in classes (brick:Class2, brick:Class3)"
         in ctx.report_string
