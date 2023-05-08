@@ -1,3 +1,4 @@
+import warnings
 from collections import Counter
 from dataclasses import dataclass
 from itertools import chain
@@ -122,7 +123,7 @@ class Template:
     @property
     def all_parameters(self) -> Set[str]:
         """The set of all parameters used in this template *including* its
-        dependencies.
+        dependencies. Includes optional parameters.
 
         :return: set of parameters *with* dependencies
         :rtype: Set[str]
@@ -138,7 +139,7 @@ class Template:
     @property
     def parameters(self) -> Set[str]:
         """The set of all parameters used in this template *excluding* its
-        dependencies.
+        dependencies. Includes optional parameters.
 
         :return: set of parameters *without* dependencies
         :rtype: Set[str]
@@ -150,7 +151,8 @@ class Template:
 
     @property
     def dependency_parameters(self) -> Set[str]:
-        """The set of all parameters used in this demplate's dependencies.
+        """The set of all parameters used in this demplate's dependencies, including
+        optional parameters.
 
         :return: set of parameters used in dependencies
         :rtype: Set[str]
@@ -273,6 +275,7 @@ class Template:
         bindings: Dict[str, Node],
         namespaces: Optional[Dict[str, rdflib.Namespace]] = None,
         require_optional_args: bool = False,
+        warn_unused: bool = True,
     ) -> Union["Template", rdflib.Graph]:
         """Evaluate the template with the provided bindings.
 
@@ -292,13 +295,29 @@ class Template:
         :param require_optional_args: whether to require all optional arguments
             to be bound, defaults to False
         :type require_optional_args: bool
+        :param warn_unused: if True, print a warning if there were any parameters left
+            unbound during evaluation. If 'require_optional_args' is True,
+            then this will consider optional parameters when producing the warning;
+            otherwise, optional paramters will be ignored; defaults to True
+        :type warn_unused: bool
         :return: either a template or a graph, depending on whether all
             parameters were provided
         :rtype: Union[Template, rdflib.Graph]
         """
         templ = self.in_memory_copy()
+        # put all of the parameter names into the PARAM namespace so they can be
+        # directly subsituted in the template body
         uri_bindings: Dict[Node, Node] = {PARAM[k]: v for k, v in bindings.items()}
+        # replace the param:<name> URIs in the template body with the bindings
+        # provided in the call to evaluate()
         replace_nodes(templ.body, uri_bindings)
+        leftover_params = (
+            templ.parameters.difference(bindings.keys())
+            if not require_optional_args
+            else (templ.parameters.union(self.optional_args)).difference(
+                bindings.keys()
+            )
+        )
         # true if all parameters are now bound or only optional args are unbound
         if len(templ.parameters) == 0 or (
             not require_optional_args and templ.parameters == set(self.optional_args)
@@ -313,6 +332,10 @@ class Template:
                 for arg in unbound_optional_args:
                     remove_triples_with_node(templ.body, PARAM[arg])
             return templ.body
+        if len(leftover_params) > 0 and warn_unused:
+            warnings.warn(
+                f"Parameters \"{', '.join(leftover_params)}\" were not provided during evaluation"
+            )
         return templ
 
     def fill(self, ns: rdflib.Namespace) -> Tuple[Dict[str, Node], rdflib.Graph]:

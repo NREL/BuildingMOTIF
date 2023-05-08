@@ -11,7 +11,7 @@ from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
 
-from buildingmotif.namespaces import OWL, PARAM, RDF, SH, bind_prefixes
+from buildingmotif.namespaces import OWL, PARAM, RDF, SH, XSD, bind_prefixes
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Template
@@ -27,6 +27,14 @@ def _gensym(prefix: str = "p") -> URIRef:
     global _gensym_counter
     _gensym_counter += 1
     return PARAM[f"{prefix}{_gensym_counter}"]
+
+
+def _param_name(param: URIRef) -> str:
+    """
+    Returns the name of the param w/o the prefix
+    """
+    assert param.startswith(PARAM)
+    return param[len(PARAM) :]
 
 
 def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
@@ -483,3 +491,25 @@ def rewrite_shape_graph(g: Graph) -> Graph:
         # make sure to handle sh:node *after* sh:and
         _inline_sh_node(sg)
     return sg
+
+
+def skip_uri(uri: URIRef) -> bool:
+    """
+    Returns true if the URI should be skipped during processing
+    because it is axiomatic or not expected to be imported.
+
+    Skips URIs in the XSD, SHACL namespaces
+
+    :return: True if the URI should be skipped; false otherwise
+    :rtype: bool
+    """
+    # Now that we have all the templates, we can populate the dependencies.
+    # IGNORES missing XSD imports --- there is really no reason to import the XSD
+    # ontology because the handling is baked into the software processing the RDF
+    # graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we
+    # suppress them.
+    skip_ns = [XSD, SH]
+    for ns in skip_ns:
+        if uri.startswith(ns):
+            return True
+    return False
