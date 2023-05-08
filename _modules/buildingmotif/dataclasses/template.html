@@ -196,6 +196,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -371,8 +375,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.dataclasses.template</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_hex</span>
@@ -496,7 +499,7 @@ document.write(`
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">all_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of all parameters used in this template *including* its</span>
-<span class="sd">        dependencies. Includes optional parameters.</span>
+<span class="sd">        dependencies.</span>
 
 <span class="sd">        :return: set of parameters *with* dependencies</span>
 <span class="sd">        :rtype: Set[str]</span>
@@ -512,7 +515,7 @@ document.write(`
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of all parameters used in this template *excluding* its</span>
-<span class="sd">        dependencies. Includes optional parameters.</span>
+<span class="sd">        dependencies.</span>
 
 <span class="sd">        :return: set of parameters *without* dependencies</span>
 <span class="sd">        :rtype: Set[str]</span>
@@ -524,8 +527,7 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dependency_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of all parameters used in this template&#39;s dependencies, including</span>
-<span class="sd">        optional parameters.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of all parameters used in this demplate&#39;s dependencies.</span>
 
 <span class="sd">        :return: set of parameters used in dependencies</span>
 <span class="sd">        :rtype: Set[str]</span>
@@ -605,8 +607,7 @@ document.write(`
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">templ</span>
 
-        <span class="c1"># start with this template&#39;s parameters; this recurses into each</span>
-        <span class="c1"># dependency to inline dependencies</span>
+        <span class="c1"># start with this template&#39;s parameters; if there is</span>
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
             <span class="c1"># get the inlined version of the dependency</span>
             <span class="n">deptempl</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span>
@@ -632,22 +633,15 @@ document.write(`
             <span class="n">replace_nodes</span><span class="p">(</span>
                 <span class="n">deptempl</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="p">{</span><span class="n">PARAM</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rename_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
             <span class="p">)</span>
+            <span class="c1"># be sure to rename optional arguments too</span>
+            <span class="n">unused_optional_args</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">deptempl</span><span class="o">.</span><span class="n">optional_args</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">dep_optional_args</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">rename_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">unused_optional_args</span>
+            <span class="p">]</span>
 
-            <span class="c1"># figure out which of deptempl&#39;s parameters are encoded as &#39;optional&#39; by the</span>
-            <span class="c1"># parent (depending) template</span>
-            <span class="n">deptempl_opt_args</span> <span class="o">=</span> <span class="n">deptempl</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span><span class="p">)</span>
-            <span class="c1"># if the &#39;name&#39; of the deptempl is optional, then all the arguments inside deptempl</span>
-            <span class="c1"># become optional</span>
-            <span class="k">if</span> <span class="n">rename_params</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">deptempl_opt_args</span><span class="p">:</span>
-                <span class="c1"># mark all of deptempl&#39;s parameters as optional</span>
-                <span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">+=</span> <span class="n">deptempl</span><span class="o">.</span><span class="n">parameters</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># otherwise, only add the parameters that are explicitly</span>
-                <span class="c1"># marked as optional *and* appear in this dependency</span>
-                <span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">+=</span> <span class="n">deptempl_opt_args</span>
-
-            <span class="c1"># append the inlined template into the parent&#39;s body</span>
+            <span class="c1"># append into the dependant body</span>
             <span class="n">templ</span><span class="o">.</span><span class="n">body</span> <span class="o">+=</span> <span class="n">deptempl</span><span class="o">.</span><span class="n">body</span>
+            <span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">+=</span> <span class="n">dep_optional_args</span>
 
         <span class="k">return</span> <span class="n">templ</span></div>
 
@@ -656,7 +650,6 @@ document.write(`
         <span class="n">bindings</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">],</span>
         <span class="n">namespaces</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Namespace</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">require_optional_args</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">warn_unused</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the template with the provided bindings.</span>
 
@@ -676,29 +669,13 @@ document.write(`
 <span class="sd">        :param require_optional_args: whether to require all optional arguments</span>
 <span class="sd">            to be bound, defaults to False</span>
 <span class="sd">        :type require_optional_args: bool</span>
-<span class="sd">        :param warn_unused: if True, print a warning if there were any parameters left</span>
-<span class="sd">            unbound during evaluation. If &#39;require_optional_args&#39; is True,</span>
-<span class="sd">            then this will consider optional parameters when producing the warning;</span>
-<span class="sd">            otherwise, optional paramters will be ignored; defaults to True</span>
-<span class="sd">        :type warn_unused: bool</span>
 <span class="sd">        :return: either a template or a graph, depending on whether all</span>
 <span class="sd">            parameters were provided</span>
 <span class="sd">        :rtype: Union[Template, rdflib.Graph]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">templ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_memory_copy</span><span class="p">()</span>
-        <span class="c1"># put all of the parameter names into the PARAM namespace so they can be</span>
-        <span class="c1"># directly subsituted in the template body</span>
         <span class="n">uri_bindings</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">PARAM</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">bindings</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="c1"># replace the param:&lt;name&gt; URIs in the template body with the bindings</span>
-        <span class="c1"># provided in the call to evaluate()</span>
         <span class="n">replace_nodes</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">uri_bindings</span><span class="p">)</span>
-        <span class="n">leftover_params</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">bindings</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">require_optional_args</span>
-            <span class="k">else</span> <span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_args</span><span class="p">))</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span>
-                <span class="n">bindings</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
         <span class="c1"># true if all parameters are now bound or only optional args are unbound</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="n">require_optional_args</span> <span class="ow">and</span> <span class="n">templ</span><span class="o">.</span><span class="n">parameters</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_args</span><span class="p">)</span>
@@ -713,10 +690,6 @@ document.write(`
                 <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">unbound_optional_args</span><span class="p">:</span>
                     <span class="n">remove_triples_with_node</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">arg</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">templ</span><span class="o">.</span><span class="n">body</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">leftover_params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">warn_unused</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Parameters </span><span class="se">\&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">leftover_params</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> were not provided during evaluation&quot;</span>
-            <span class="p">)</span>
         <span class="k">return</span> <span class="n">templ</span></div>
 
 <div class="viewcode-block" id="Template.fill"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.fill">[docs]</a>    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">],</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">]:</span>

@@ -196,6 +196,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
@@ -391,13 +395,10 @@ document.write(`
 <span class="kn">from</span> <span class="nn">buildingmotif.database.tables</span> <span class="kn">import</span> <span class="n">DBLibrary</span><span class="p">,</span> <span class="n">DBTemplate</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.template</span> <span class="kn">import</span> <span class="n">Template</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">XSD</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.schemas</span> <span class="kn">import</span> <span class="n">validate_libraries_yaml</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.template_compilation</span> <span class="kn">import</span> <span class="n">compile_template_spec</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">get_ontology_files</span><span class="p">,</span>
-    <span class="n">get_template_parts_from_shape</span><span class="p">,</span>
-    <span class="n">skip_uri</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">get_ontology_files</span><span class="p">,</span> <span class="n">get_template_parts_from_shape</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
@@ -762,8 +763,12 @@ document.write(`
                     <span class="k">if</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">template_id_lookup</span><span class="p">:</span>
                         <span class="n">dependee</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">[</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]])</span>
                         <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
-                    <span class="c1"># check documentation for skip_uri for what URIs get skipped</span>
-                    <span class="k">elif</span> <span class="ow">not</span> <span class="n">skip_uri</span><span class="p">(</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]):</span>
+                    <span class="c1"># Now that we have all the templates, we can populate the dependencies.</span>
+                    <span class="c1"># IGNORES missing XSD imports --- there is really no reason to import the XSD</span>
+                    <span class="c1"># ontology because the handling is baked into the software processing the RDF</span>
+                    <span class="c1"># graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we</span>
+                    <span class="c1"># suppress them.</span>
+                    <span class="k">elif</span> <span class="ow">not</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">XSD</span><span class="p">):</span>
                         <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;Warning: could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
                         <span class="p">)</span>
