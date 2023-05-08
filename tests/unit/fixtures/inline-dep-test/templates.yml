@@ -44,3 +44,76 @@ A-alt:
   dependencies:
   - template: B
     args: {"name": "b"}
+
+# for test case
+
+Parent:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Entity ;
+      brick:hasPart P:level1 .
+  dependencies:
+  - template: Level1
+    args: {"name": "level1"}
+
+Level1:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Entity ;
+      brick:hasPart P:level2 .
+  dependencies:
+  - template: Level2
+    args: {"name": "level2"}
+
+Level2:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Entity ;
+      brick:hasPart P:level3 .
+  dependencies:
+  - template: Level3
+    args: {"name": "level3"}
+
+Level3:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Entity .
+
+
+# for test case
+Parent-opt:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Entity ;
+      brick:hasPart P:level1 .
+  optional: ["level1"]
+  dependencies:
+  - template: Level1-opt
+    args: {"name": "level1"}
+
+Level1-opt:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Entity ;
+      brick:hasPart P:level2 .
+  optional: ["level2"]
+  dependencies:
+  - template: Level2-opt
+    args: {"name": "level2"}
+
+Level2-opt:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    P:name a brick:Entity ;
+      brick:hasPart P:level3 .
+  optional: ["level3"]
+  dependencies:
+  - template: Level3
+    args: {"name": "level3"}

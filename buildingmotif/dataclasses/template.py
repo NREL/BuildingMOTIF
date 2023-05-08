@@ -260,6 +260,7 @@ class Template:
                 deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
             )
 
+            templ_optional_args = set(templ.optional_args)
             # figure out which of deptempl's parameters are encoded as 'optional' by the
             # parent (depending) template
             deptempl_opt_args = deptempl.parameters.intersection(templ.optional_args)
@@ -267,11 +268,19 @@ class Template:
             # become optional
             if rename_params["name"] in deptempl_opt_args:
                 # mark all of deptempl's parameters as optional
-                templ.optional_args += deptempl.parameters
+                templ_optional_args.update(deptempl.parameters)
             else:
                 # otherwise, only add the parameters that are explicitly
                 # marked as optional *and* appear in this dependency
-                templ.optional_args += deptempl_opt_args
+                templ_optional_args.update(deptempl_opt_args)
+            # ensure that the optional_args includes all params marked as
+            # optional by the dependency
+            templ_optional_args.update(
+                [rename_params[n] for n in deptempl.optional_args]
+            )
+
+            # convert our set of optional params to a list and assign to the parent template
+            templ.optional_args = list(templ_optional_args)
 
             # append the inlined template into the parent's body
             templ.body += deptempl.body

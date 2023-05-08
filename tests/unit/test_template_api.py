@@ -138,6 +138,33 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     assert inlined.parameters == {"name", "b", "b-bp"}
     assert set(inlined.optional_args) == {"b-bp"}
 
+    # test inlining 2 or more levels
+    parent = lib.get_template_by_name("Parent")
+    assert parent.parameters == {"name", "level1"}
+    inlined = parent.inline_dependencies()
+    assert inlined.parameters == {
+        "name",
+        "level1",
+        "level1-level2",
+        "level1-level2-level3",
+    }
+
+    # test inlining 2 or more levels with optional params
+    parent = lib.get_template_by_name("Parent-opt")
+    assert parent.parameters == {"name", "level1"}
+    inlined = parent.inline_dependencies()
+    assert inlined.parameters == {
+        "name",
+        "level1",
+        "level1-level2",
+        "level1-level2-level3",
+    }
+    assert set(inlined.optional_args) == {
+        "level1",
+        "level1-level2",
+        "level1-level2-level3",
+    }
+
 
 def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     """
