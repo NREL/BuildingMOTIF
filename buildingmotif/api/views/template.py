@@ -48,7 +48,7 @@ def get_template(templates_id: int) -> flask.Response:
     return jsonify(serialize(template, include_parameters)), status.HTTP_200_OK
 
 
-@blueprint.route("/<template_id>/evaluate", methods=(["POST"]))
+@blueprint.route("/<template_id>/evaluate/bindings", methods=(["POST"]))
 def evaluate(template_id: int) -> flask.Response:
     """evaluate template with giving binding
 
