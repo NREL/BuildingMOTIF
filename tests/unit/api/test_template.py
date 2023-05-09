@@ -85,7 +85,7 @@ def test_evaluate(client, building_motif):
     assert zone.parameters == {"name", "cav"}
 
     results = client.post(
-        f"/templates/{zone.id}/evaluate",
+        f"/templates/{zone.id}/evaluate/bindings",
         json={
             "model_id": model.id,
             "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
@@ -108,7 +108,7 @@ def test_evaluate_bad_templated_id(client, building_motif):
     model = Model.create(name="urn:my_model")
 
     results = client.post(
-        "/templates/-1/evaluate",
+        "/templates/-1/evaluate/bindings",
         json={
             "model_id": model.id,
             "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
@@ -124,7 +124,7 @@ def test_evaluate_no_body(client, building_motif):
     zone.inline_dependencies()
     assert zone.parameters == {"name", "cav"}
 
-    results = client.post(f"/templates/{zone.id}/evaluate")
+    results = client.post(f"/templates/{zone.id}/evaluate/bindings")
 
     assert results.status_code == 400
 
@@ -137,7 +137,7 @@ def test_evaluate_bad_body(client, building_motif):
     assert zone.parameters == {"name", "cav"}
 
     results = client.post(
-        f"/templates/{zone.id}/evaluate",
+        f"/templates/{zone.id}/evaluate/bindings",
         json={
             # no model
             "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
@@ -147,7 +147,7 @@ def test_evaluate_bad_body(client, building_motif):
     assert results.status_code == 400
 
     results = client.post(
-        f"/templates/{zone.id}/evaluate",
+        f"/templates/{zone.id}/evaluate/bindings",
         json={
             "model_id": model.id,
             # no bindings
@@ -164,7 +164,7 @@ def test_evaluate_bad_model_id(client, building_motif):
     assert zone.parameters == {"name", "cav"}
 
     results = client.post(
-        f"/templates/{zone.id}/evaluate",
+        f"/templates/{zone.id}/evaluate/bindings",
         json={
             "model_id": -1,
             "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
