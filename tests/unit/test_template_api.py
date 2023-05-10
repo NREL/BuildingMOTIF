@@ -148,6 +148,7 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
         "level1-level2",
         "level1-level2-level3",
     }
+    assert len(inlined.optional_args) == 0
 
     # test inlining 2 or more levels with optional params
     parent = lib.get_template_by_name("Parent-opt")
