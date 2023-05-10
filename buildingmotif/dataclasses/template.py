@@ -165,7 +165,7 @@ class Template:
 
     @property
     def dependency_parameters(self) -> Set[str]:
-        """The set of all parameters used in this demplate's dependencies, including
+        """The set of all parameters used in this template's dependencies, including
         optional parameters.
 
         :return: set of parameters used in dependencies
