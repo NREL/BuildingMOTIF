@@ -192,6 +192,15 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     assert isinstance(t, Template)
     assert t.parameters == {"occ"}
 
+    with pytest.warns():
+        partial_templ = templ.evaluate({"name": BLDG["vav"]})
+    assert isinstance(partial_templ, Template)
+    g = partial_templ.evaluate({"zone": BLDG["zone1"]})
+    assert isinstance(g, Graph)
+    t = partial_templ.evaluate({"zone": BLDG["zone1"]}, require_optional_args=True)
+    assert isinstance(t, Template)
+    assert t.parameters == {"occ"}
+
 
 def test_template_matching(bm: BuildingMOTIF):
     EX = Namespace("urn:ex/")
