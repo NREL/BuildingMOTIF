@@ -826,9 +826,19 @@ and it’s args</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.database.table_connection.TableConnection.add_template_dependency">
-<span class="sig-name descname"><span class="pre">add_template_dependency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependency_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/table_connection.html#TableConnection.add_template_dependency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.table_connection.TableConnection.add_template_dependency" title="Permalink to this definition">#</a></dt>
-<dd><p>Create dependency between two templates.</p>
+<dt class="sig sig-object py" id="buildingmotif.database.table_connection.TableConnection.add_template_dependency_preliminary">
+<span class="sig-name descname"><span class="pre">add_template_dependency_preliminary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependency_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/table_connection.html#TableConnection.add_template_dependency_preliminary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.table_connection.TableConnection.add_template_dependency_preliminary" title="Permalink to this definition">#</a></dt>
+<dd><p>Creates a <em>preliminary</em> dependency between two templates. This dependency
+is preliminary because the bindings between the dependent/dependency templates
+are <em>not validated</em>. This serves to populate the DAG of dependencies between templates
+before the parameter bindings are checked. This ensures that all of the parameters for
+a template <em>and those in its dependencies</em> can all be identified and used as part of
+the parameter binding check. The upshot of this process is dependencies between two
+templates can refer to parameters in a template <em>or its dependencies</em>. This is necessary
+to support templates that contain many nested components that refer to each other (such
+as the s223:mapsTo property).</p>
+<p><a href="#id3"><span class="problematic" id="id4">**</span></a>Important: be sure to run “check_template_dependencies” to ensure all of your templates
+will work as you expect!</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -836,6 +846,31 @@ and it’s args</p>
 <li><p><strong>dependency_id</strong> (<em>int</em>) – dependency template id</p></li>
 <li><p><strong>args</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – mapping of dependency params to dependant params</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – if all dependee required_params not in args</p></li>
+<li><p><strong>ValueError</strong> – if dependant and dependency template don’t share a</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.database.table_connection.TableConnection.check_template_dependencies">
+<span class="sig-name descname"><span class="pre">check_template_dependencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/table_connection.html#TableConnection.check_template_dependencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.table_connection.TableConnection.check_template_dependencies" title="Permalink to this definition">#</a></dt>
+<dd><p>Verifies that all template dependencies have valid references to the parameters
+in the dependency or (recursively) its dependencies. Raises an exception if any
+issues are found. Checks all templates in the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.database.table_connection.TableConnection.check_template_dependency">
+<span class="sig-name descname"><span class="pre">check_template_dependency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.database.tables.html#buildingmotif.database.tables.DepsAssociation" title="buildingmotif.database.tables.DepsAssociation"><span class="pre">DepsAssociation</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/table_connection.html#TableConnection.check_template_dependency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.table_connection.TableConnection.check_template_dependency" title="Permalink to this definition">#</a></dt>
+<dd><p>Create dependency between two templates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dep</strong> (<a class="reference internal" href="buildingmotif.database.tables.html#buildingmotif.database.tables.DepsAssociation" title="buildingmotif.database.tables.DepsAssociation"><em>DepsAssociation</em></a>) – the dependency object to check</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
