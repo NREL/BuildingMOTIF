@@ -381,6 +381,8 @@ class Library:
         template_id_lookup: Dict[str, int],
         dependency_cache: Mapping[int, Union[List[_template_dependency], List[dict]]],
     ):
+        # two phases here: first, add all of the templates and their dependencies
+        # to the database but *don't* check that the dependencies are valid yet
         for template in self.get_templates():
             if template.id not in dependency_cache:
                 continue
@@ -401,6 +403,9 @@ class Library:
                     except Exception as e:
                         logging.warn(f"Warning: could not resolve dependency {dep}")
                         raise e
+        # check that all dependencies are valid (use parameters that exist, etc)
+        for template in self.get_templates():
+            template.check_dependencies()
 
     def _read_yml_file(
         self,

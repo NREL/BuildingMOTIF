@@ -1,5 +1,6 @@
 import logging
 import uuid
+from functools import lru_cache
 from typing import Dict, List, Tuple
 
 from sqlalchemy.engine import Engine
@@ -12,7 +13,6 @@ from buildingmotif.database.tables import (
     DBTemplate,
     DepsAssociation,
 )
-from buildingmotif.utils import get_parameters
 
 
 class TableConnection:
@@ -377,10 +377,21 @@ class TableConnection:
         )
         db_template.optional_args = optional_args
 
-    def add_template_dependency(
+    def add_template_dependency_preliminary(
         self, template_id: int, dependency_id: int, args: Dict[str, str]
     ):
-        """Create dependency between two templates.
+        """Creates a *preliminary* dependency between two templates. This dependency
+        is preliminary because the bindings between the dependent/dependency templates
+        are *not validated*. This serves to populate the DAG of dependencies between templates
+        before the parameter bindings are checked. This ensures that all of the parameters for
+        a template *and those in its dependencies* can all be identified and used as part of
+        the parameter binding check. The upshot of this process is dependencies between two
+        templates can refer to parameters in a template *or its dependencies*. This is necessary
+        to support templates that contain many nested components that refer to each other (such
+        as the s223:mapsTo property).
+
+        **Important: be sure to run "check_template_dependencies" to ensure all of your templates
+        will work as you expect!
 
         :param template_id: dependant template id
         :type template_id: int
@@ -390,44 +401,15 @@ class TableConnection:
         :type args: Dict[str, str]
         :raises ValueError: if all dependee required_params not in args
         :raises ValueError: if dependant and dependency template don't share a
-            library
         """
         self.logger.debug(
             f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
         )
         templ = self.get_db_template_by_id(template_id)
-        graph = self.bm.graph_connection.get_graph(templ.body_id)
-        params = get_parameters(graph)
-        dep = self.get_db_template_by_id(dependency_id)
-
-        # check parameters are valid
-        if not set(args.values()).issubset(params):
-            raise ValueError(
-                f"In {templ.name} the values of the bindings to {dep.name} must correspond to the "
-                "parameters in the dependant template."
-                f"Dependency {dep.name} refers to params {set(args.values()).difference(params)} "
-                f"that do not appear in template {templ.name} ({params})"
-            )
-        # do the same for the dependency
-        graph = self.bm.graph_connection.get_graph(dep.body_id)
-        dep_params = get_parameters(graph)
-        if not set(args.keys()).issubset(dep_params):
-            raise ValueError(
-                f"In {templ.name} the keys of the bindings to {dep.name} must correspond to the "
-                "parameters in the template dependency"
-            )
-
-        # TODO: do we need this kind of check?
         if "name" not in args.keys():
             raise ValueError(
                 f"The name parameter is required for the dependency '{templ.name}'"
             )
-        if len(params) > 0 and args["name"] not in params:
-            raise ValueError(
-                "The name parameter of the dependency must be bound to a param in this template."
-                f"'name' was bound to {args['name']} but available params are {params}"
-            )
-
         # In the past we had a check here to make sure the two templates were in the same library.
         # This has been removed because it wasn't actually necessary, but we may add it back in
         # in the future.
@@ -439,6 +421,67 @@ class TableConnection:
 
         self.bm.session.add(relationship)
         self.bm.session.flush()
+
+    def check_template_dependencies(self):
+        """
+        Verifies that all template dependencies have valid references to the parameters
+        in the dependency or (recursively) its dependencies. Raises an exception if any
+        issues are found. Checks all templates in the database.
+        """
+        # TODO: maybe optimize this to only check recently added templates
+        # (i.e. maybe those added since last commit?)
+        for db_templ in self.get_all_db_templates():
+            for dep in self.get_db_template_dependencies(db_templ.id):
+                self.check_template_dependency(dep)
+
+    @lru_cache(maxsize=128)
+    def check_template_dependency(self, dep: DepsAssociation):
+        """Create dependency between two templates.
+
+        :param dep: the dependency object to check
+        :type dep: DepsAssociation
+        :raises ValueError: if all dependee required_params not in args
+        :raises ValueError: if dependant and dependency template don't share a
+            library
+        """
+        template_id = dep.dependant_id
+        dependency_id = dep.dependee_id
+        args = dep.args
+        self.logger.debug(
+            f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
+        )
+        from buildingmotif.dataclasses import Template
+
+        templ = Template.load(template_id)
+        params = templ.inline_dependencies().parameters
+        dep_templ = Template.load(dependency_id)
+        dep_params = dep_templ.inline_dependencies().parameters
+
+        # check parameters are valid
+        if not set(args.values()).issubset(params):
+            raise ValueError(
+                f"In {templ.name} the values of the bindings to {dep_templ.name} must correspond to the "
+                "parameters in the dependant template."
+                f"Dependency {dep_templ.name} refers to params {set(args.values()).difference(params)} "
+                f"that do not appear in template {templ.name} ({params})"
+            )
+        # do the same for the dependency
+        binding_params = set(args.keys())
+        if not binding_params.issubset(dep_params):
+            diff = binding_params.difference(dep_params)
+            raise ValueError(
+                f"In {templ.name} the keys of the bindings to {dep_templ.name} must correspond to the "
+                "parameters in the template dependency. "
+                f"The dependency binding uses params {diff} which don't appear in the dependency template. "
+                f"Available dependency parameters are {dep_params}"
+            )
+
+        # TODO: do we need this kind of check?
+        if len(params) > 0 and args["name"] not in params:
+            raise ValueError(
+                "The name parameter of the dependency must be bound to a param in this template."
+                f"'name' was bound to {args['name']} but available params are {params}"
+            )
 
     def remove_template_dependency(self, template_id: int, dependency_id: int):
         """Remove dependency between two templates.

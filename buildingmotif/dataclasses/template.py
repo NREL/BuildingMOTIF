@@ -110,7 +110,21 @@ class Template:
         :param args: dictionary of dependency arguments
         :type args: Dict[str, str]
         """
-        self._bm.table_connection.add_template_dependency(self.id, dependency.id, args)
+        self._bm.table_connection.add_template_dependency_preliminary(
+            self.id, dependency.id, args
+        )
+
+    def check_dependencies(self):
+        """
+        Verifies that all dependencies have valid references to the parameters
+        in the dependency or (recursively) its dependencies. Raises an exception if any
+        issues are found.
+
+        It is recommended to call this after *all* templates in a library have been
+        loaded in to the DB, else this might falsely raise an error
+        """
+        for dep in self._bm.table_connection.get_db_template_dependencies(self.id):
+            self._bm.table_connection.check_template_dependency(dep)
 
     def remove_dependency(self, dependency: "Template") -> None:
         """Remove dependency from template.

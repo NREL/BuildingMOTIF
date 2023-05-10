@@ -208,9 +208,10 @@ def test_add_template_dependency(bm: BuildingMOTIF):
         dependee_template,
     ) = create_dependency_test_fixtures(bm)
 
-    bm.table_connection.add_template_dependency(
+    bm.table_connection.add_template_dependency_preliminary(
         dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
     )
+    bm.table_connection.check_template_dependencies()
 
     assert dependant_template.dependencies == [dependee_template]
     assert dependee_template.dependants == [dependant_template]
@@ -230,9 +231,10 @@ def test_add_template_dependency_bad_args(bm: BuildingMOTIF):
     ) = create_dependency_test_fixtures(bm)
 
     with pytest.raises(ValueError):
-        bm.table_connection.add_template_dependency(
+        bm.table_connection.add_template_dependency_preliminary(
             dependant_template.id, dependee_template.id, {"bad": "ding"}
         )
+        bm.table_connection.check_template_dependencies()
 
 
 def test_add_template_dependency_already_exist(bm: BuildingMOTIF):
@@ -242,14 +244,15 @@ def test_add_template_dependency_already_exist(bm: BuildingMOTIF):
         dependee_template,
     ) = create_dependency_test_fixtures(bm)
 
-    bm.table_connection.add_template_dependency(
+    bm.table_connection.add_template_dependency_preliminary(
         dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
     )
 
     with pytest.raises(IntegrityError):
-        bm.table_connection.add_template_dependency(
+        bm.table_connection.add_template_dependency_preliminary(
             dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
         )
+        bm.table_connection.check_template_dependencies()
 
     bm.table_connection.bm.session.rollback()
 
@@ -261,9 +264,10 @@ def test_get_dependencies(bm: BuildingMOTIF):
         dependee_template,
     ) = create_dependency_test_fixtures(bm)
 
-    bm.table_connection.add_template_dependency(
+    bm.table_connection.add_template_dependency_preliminary(
         dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
     )
+    bm.table_connection.check_template_dependencies()
 
     res = bm.table_connection.get_db_template_dependencies(dependant_template.id)
     assert len(res) == 1
@@ -280,9 +284,10 @@ def test_remove_dependencies(bm: BuildingMOTIF):
         dependee_template,
     ) = create_dependency_test_fixtures(bm)
 
-    bm.table_connection.add_template_dependency(
+    bm.table_connection.add_template_dependency_preliminary(
         dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
     )
+    bm.table_connection.check_template_dependencies()
 
     res = bm.table_connection.get_db_template_dependencies(dependant_template.id)
     assert len(res) == 1

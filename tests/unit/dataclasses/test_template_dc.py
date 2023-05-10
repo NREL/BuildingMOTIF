@@ -131,6 +131,7 @@ def test_add_dependency_bad_args(clean_building_motif):
 
     with pytest.raises(ValueError):
         dependant.add_dependency(dependee, {"bad": "xyz"})
+        dependant.check_dependencies()
 
 
 def test_add_dependency_already_exist(clean_building_motif):
