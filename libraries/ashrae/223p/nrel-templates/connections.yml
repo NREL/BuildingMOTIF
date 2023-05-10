@@ -5,6 +5,8 @@ air-outlet-cp:
     P:name a s223:OutletConnectionPoint ;
       s223:mapsTo P:mapsto ;
       s223:hasMedium s223:Medium-Air .
+    P:mapsto a s223:OutletConnectionPoint ;
+      s223:hasMedium s223:Medium-Air .
   optional: ["mapsto"]
 
 water-inlet-cp:
@@ -13,6 +15,8 @@ water-inlet-cp:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:InletConnectionPoint ;
       s223:mapsTo P:mapsto ;
+      s223:hasMedium s223:Medium-Water .
+    P:mapsto a s223:InletConnectionPoint ;
       s223:hasMedium s223:Medium-Water .
   optional: ["mapsto"]
 
@@ -23,6 +27,8 @@ water-outlet-cp:
     P:name a s223:OutletConnectionPoint ;
       s223:mapsTo P:mapsto ;
       s223:hasMedium s223:Medium-Water .
+    P:mapsto a s223:OutletConnectionPoint ;
+      s223:hasMedium s223:Medium-Water .
   optional: ["mapsto"]
 
 air-inlet-cp:
@@ -31,6 +37,8 @@ air-inlet-cp:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:InletConnectionPoint ;
       s223:mapsTo P:mapsto ;
+      s223:hasMedium s223:Medium-Air .
+    P:mapsto a s223:InletConnectionPoint ;
       s223:hasMedium s223:Medium-Air .
   optional: ["mapsto"]
 
@@ -55,6 +63,8 @@ zone-air-inlet-cp:
     P:name a s223:InletZoneConnectionPoint ;
       s223:mapsTo P:mapsto ;
       s223:hasMedium s223:Medium-Air .
+    P:mapsto a s223:InletConnectionPoint ;
+      s223:hasMedium s223:Medium-Air .
   optional: ["mapsto"]
 
 zone-air-outlet-cp:
@@ -63,5 +73,7 @@ zone-air-outlet-cp:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:OutletZoneConnectionPoint ;
       s223:mapsTo P:mapsto ;
+      s223:hasMedium s223:Medium-Air .
+    P:mapsto a s223:OutletConnectionPoint ;
       s223:hasMedium s223:Medium-Air .
   optional: ["mapsto"]
