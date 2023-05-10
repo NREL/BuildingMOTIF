@@ -255,6 +255,7 @@ class Library:
             advanced=True,
             inplace=True,
             js=True,
+            allow_warnings=True,
         )
 
         lib = cls.create(ontology_name, overwrite=overwrite)

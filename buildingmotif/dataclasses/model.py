@@ -216,6 +216,7 @@ class Model:
             advanced=True,
             inplace=True,
             js=True,
+            allow_warnings=True,
         )
         post_compile_length = len(model_graph)  # type: ignore
 
@@ -229,6 +230,7 @@ class Model:
                 advanced=True,
                 inplace=True,
                 js=True,
+                allow_warnings=True,
             )
             post_compile_length = len(model_graph)  # type: ignore
             attempts -= 1
