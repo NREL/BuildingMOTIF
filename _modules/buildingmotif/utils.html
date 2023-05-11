@@ -388,7 +388,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">rdflib.paths</span> <span class="kn">import</span> <span class="n">ZeroOrOne</span>
 <span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">SH</span><span class="p">,</span> <span class="n">XSD</span><span class="p">,</span> <span class="n">bind_prefixes</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">SH</span><span class="p">,</span> <span class="n">bind_prefixes</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Template</span>
@@ -404,14 +404,6 @@ document.write(`
     <span class="k">global</span> <span class="n">_gensym_counter</span>
     <span class="n">_gensym_counter</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">PARAM</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">_gensym_counter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">_param_name</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the name of the param without the prefix.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="n">param</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">param</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="p">:]</span>
 
 
 <div class="viewcode-block" id="copy_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.copy_graph">[docs]</a><span class="k">def</span> <span class="nf">copy_graph</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">preserve_blank_nodes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
@@ -868,28 +860,6 @@ document.write(`
         <span class="c1"># make sure to handle sh:node *after* sh:and</span>
         <span class="n">_inline_sh_node</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sg</span></div>
-
-
-<div class="viewcode-block" id="skip_uri"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.skip_uri">[docs]</a><span class="k">def</span> <span class="nf">skip_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns true if the URI should be skipped during processing</span>
-<span class="sd">    because it is axiomatic or not expected to be imported.</span>
-
-<span class="sd">    Skips URIs in the XSD and SHACL namespaces.</span>
-
-<span class="sd">    :return: True if the URI should be skipped; False otherwise</span>
-<span class="sd">    :rtype: bool</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Now that we have all the templates, we can populate the dependencies.</span>
-    <span class="c1"># IGNORES missing XSD imports --- there is really no reason to import the XSD</span>
-    <span class="c1"># ontology because the handling is baked into the software processing the RDF</span>
-    <span class="c1"># graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we</span>
-    <span class="c1"># suppress them.</span>
-    <span class="n">skip_ns</span> <span class="o">=</span> <span class="p">[</span><span class="n">XSD</span><span class="p">,</span> <span class="n">SH</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">ns</span> <span class="ow">in</span> <span class="n">skip_ns</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">uri</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="kc">False</span></div>
 </pre></div>
 
                 </article>
