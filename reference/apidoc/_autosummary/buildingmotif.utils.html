@@ -463,7 +463,10 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.rewrite_shape_graph" title="buildingmotif.utils.rewrite_shape_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rewrite_shape_graph</span></code></a>(g)</p></td>
 <td><p>Rewrites the input graph to make the resulting validation report more useful.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.template_to_shape" title="buildingmotif.utils.template_to_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">template_to_shape</span></code></a>(template)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.skip_uri" title="buildingmotif.utils.skip_uri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skip_uri</span></code></a>(uri)</p></td>
+<td><p>Returns true if the URI should be skipped during processing because it is axiomatic or not expected to be imported.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.template_to_shape" title="buildingmotif.utils.template_to_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">template_to_shape</span></code></a>(template)</p></td>
 <td><p>Turn this template into a SHACL shape.</p></td>
 </tr>
 </tbody>
@@ -681,6 +684,22 @@ the parameter <cite>urn:___param___#abc</cite> in a graph would be returned as <
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Graph</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.utils.skip_uri">
+<span class="sig-name descname"><span class="pre">skip_uri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">URIRef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#skip_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.skip_uri" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns true if the URI should be skipped during processing
+because it is axiomatic or not expected to be imported.</p>
+<p>Skips URIs in the XSD, SHACL namespaces</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the URI should be skipped; false otherwise</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>

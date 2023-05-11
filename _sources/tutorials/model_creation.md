@@ -93,60 +93,6 @@ for template in brick.get_templates()[:10]:
     print(f"  - {template.name}")
 ```
 
-## Adding to a Model Manually
-
-Because `Model`s are wrappers around RDF graphs, it is possible to manipulate those RDF graphs directly.
-BuildingMOTIF supports adding *individual triples* to models as well as *adding whole graphs* to models.
-
-The RDF graph underlying a `Model` is accessible via the `.graph` attribute. This is an instance of [`RDFlib.Graph`](https://rdflib.readthedocs.io/en/stable/intro_to_graphs.html).
-
-### Adding individual RDF triples to a Model
-
-To add an RDF triple to a model, use the `Model.graph.add()` method:
-
-```{code-cell}
-# import this to make writing URIs easier
-from buildingmotif.namespaces import BRICK, RDF
-
-model.graph.add((BLDG["abc"], RDF.type, BRICK.Temperature_Sensor))
-```
-
-### Importing RDF graphs into a Model
-
-```{margin}
-```{important}
-You should not load ontologies, schemas, rules, etc into a Model. These belong in **Libraries**!
-```
-
-It is also possible to import RDF graphs into a `Model`.
-
-If you already have an in-memory `RDFlib.Graph` object available (e.g. through an [Graph Ingress](/guides/ingresses) or loading in a Turtle file), just use `Model.add_graph`:
-
-```{code-cell}
-import rdflib
-my_graph = rdflib.Graph()
-# parse files:
-# my_graph.parse("my_external_file.ttl")
-# or parse raw strings:
-my_graph.parse(data='''
-@prefix bldg: <urn:ex/> .
-@prefix brick: <https://brickschema.org/schema/Brick#> .
-bldg:A1 a brick:Air_Handler_Unit .
-''')
-model.add_graph(my_graph)
-```
-
-You can also use the `Model.graph.parse` method directly:
-
-
-```{code-cell}
-model.graph.parse(data='''
-@prefix bldg: <urn:ex/> .
-@prefix brick: <https://brickschema.org/schema/Brick#> .
-bldg:A1 a brick:Air_Handler_Unit .
-''')
-```
-
 ## Adding to a Model with Templates
 
 ### Exploring a Template
