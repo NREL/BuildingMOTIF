@@ -100,7 +100,7 @@ BuildingMOTIF supports adding *individual triples* to models as well as *adding 
 
 The RDF graph underlying a `Model` is accessible via the `.graph` attribute. This is an instance of [`RDFlib.Graph`](https://rdflib.readthedocs.io/en/stable/intro_to_graphs.html).
 
-### Adding individual RDF triples to a Model
+### Adding Individual RDF Triples to a Model
 
 To add an RDF triple to a model, use the `Model.graph.add()` method:
 
