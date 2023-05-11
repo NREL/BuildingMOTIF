@@ -408,7 +408,7 @@ class TableConnection:
         templ = self.get_db_template_by_id(template_id)
         if "name" not in args.keys():
             raise ValueError(
-                f"The name parameter is required for the dependency '{templ.name}'"
+                f"The name parameter is required for the dependency '{templ.name}'."
             )
         # In the past we had a check here to make sure the two templates were in the same library.
         # This has been removed because it wasn't actually necessary, but we may add it back in
