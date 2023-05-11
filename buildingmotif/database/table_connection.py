@@ -390,7 +390,7 @@ class TableConnection:
         to support templates that contain many nested components that refer to each other (such
         as the s223:mapsTo property).
 
-        **Important: be sure to run "check_template_dependencies" to ensure all of your templates
+        **Important:** Be sure to run "check_template_dependencies" to ensure all of your templates.
         will work as you expect!
 
         :param template_id: dependant template id
