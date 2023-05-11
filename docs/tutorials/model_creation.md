@@ -111,11 +111,11 @@ from buildingmotif.namespaces import BRICK, RDF
 model.graph.add((BLDG["abc"], RDF.type, BRICK.Temperature_Sensor))
 ```
 
-### Importing RDF graphs into a Model
+### Importing RDF Graphs Into a Model
 
 ```{margin}
 ```{important}
-You should not load ontologies, schemas, rules, etc into a Model. These belong in **Libraries**!
+You should not load ontologies, schemas, rules, etc. into a Model. These belong in **Libraries**!
 ```
 
 It is also possible to import RDF graphs into a `Model`.
@@ -137,7 +137,6 @@ model.add_graph(my_graph)
 ```
 
 You can also use the `Model.graph.parse` method directly:
-
 
 ```{code-cell}
 model.graph.parse(data='''
