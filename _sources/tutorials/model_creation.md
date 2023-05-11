@@ -123,6 +123,7 @@ It is also possible to import RDF graphs into a `Model`.
 If you already have an in-memory `RDFlib.Graph` object available (e.g. through an [Graph Ingress](/guides/ingresses) or loading in a Turtle file), just use `Model.add_graph`:
 
 ```{code-cell}
+import rdflib
 my_graph = rdflib.Graph()
 # parse files:
 # my_graph.parse("my_external_file.ttl")

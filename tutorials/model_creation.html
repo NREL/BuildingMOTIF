@@ -548,16 +548,18 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
-  - https://brickschema.org/schema/Brick#Hot_Water_Return_Temperature_Sensor
-  - https://brickschema.org/schema/Brick#Parameter
-  - https://brickschema.org/schema/Brick#Max_Cooling_Supply_Air_Flow_Setpoint_Limit
-  - https://brickschema.org/schema/Brick#Supply_Air_Flow_Reset_Setpoint
-  - https://brickschema.org/schema/Brick#Fan_On_Off_Status
-  - https://brickschema.org/schema/Brick#Zone_Standby_Load_Shed_Command
-  - https://brickschema.org/schema/Brick#Fresh_Air_Setpoint_Limit
-  - https://brickschema.org/schema/Brick#HVAC_Zone
-  - https://brickschema.org/schema/Brick#Supply_Air_Temperature_Alarm
-  - https://brickschema.org/schema/Brick#Frequency_Command
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Discharge_Water_Temperature_Sensor
+  - https://brickschema.org/schema/Brick#Heating_Discharge_Air_Temperature_Proportional_Band_Parameter
+  - https://brickschema.org/schema/Brick#Supply_Air_Static_Pressure_Setpoint
+  - https://brickschema.org/schema/Brick#Locally_On_Off_Status
+  - https://brickschema.org/schema/Brick#On_Command
+  - https://brickschema.org/schema/Brick#Medium_Temperature_Hot_Water_Return_Temperature_Sensor
+  - https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+  - https://brickschema.org/schema/Brick#Water_Alarm
+  - https://brickschema.org/schema/Brick#Even_Month_Status
+  - https://brickschema.org/schema/Brick#Water_Temperature_Sensor
 </pre></div>
 </div>
 </div>
@@ -581,7 +583,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=5fdd5f76-b03b-4c4e-8a6b-e6d0a4b22d79 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=53e0261a-b6f0-4d84-a3f2-e57cbc312d8a (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -600,7 +602,8 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <p>If you already have an in-memory <code class="docutils literal notranslate"><span class="pre">RDFlib.Graph</span></code> object available (e.g. through an <span class="xref myst">Graph Ingress</span> or loading in a Turtle file), just use <code class="docutils literal notranslate"><span class="pre">Model.add_graph</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rdflib</span>
+<span class="n">my_graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
 <span class="c1"># parse files:</span>
 <span class="c1"># my_graph.parse(&quot;my_external_file.ttl&quot;)</span>
 <span class="c1"># or parse raw strings:</span>
@@ -613,24 +616,6 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">my_graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="c1"># parse files:</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="c1"># my_graph.parse(&quot;my_external_file.ttl&quot;)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># or parse raw strings:</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">my_graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span><span class="s1"> @prefix bldg: &lt;urn:ex/&gt; .</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span><span class="s1"> @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span><span class="s1"> bldg:A1 a brick:Air_Handler_Unit .</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span><span class="s1"> &#39;&#39;&#39;</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;rdflib&#39; is not defined
-</pre></div>
-</div>
-</div>
 </div>
 <p>You can also use the <code class="docutils literal notranslate"><span class="pre">Model.graph.parse</span></code> method directly:</p>
 <div class="cell docutils container">
@@ -640,6 +625,11 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <span class="s1">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
 <span class="s1">bldg:A1 a brick:Air_Handler_Unit .</span>
 <span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=53e0261a-b6f0-4d84-a3f2-e57cbc312d8a (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -674,11 +664,24 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The template has the following parameters:
+  name
+</pre></div>
+</div>
+</div>
 </div>
 <p>All templates have a mandatory <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter. We can also print out the body of the template to see how those parameters will be used. Any URI that starts with a <code class="docutils literal notranslate"><span class="pre">p:</span></code> is a parameter.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">ahu_template</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:___param___#name&gt; a brick:AHU .
 </pre></div>
 </div>
 </div>
@@ -713,6 +716,13 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU .
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="adding-evaluated-templates-to-the-model">
@@ -729,6 +739,21 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">ahu_graph</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix bldg: &lt;urn:ex/&gt; .
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+
+&lt;urn:bldg/&gt; a owl:Ontology .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU .
+
+&lt;urn:bldg/abc&gt; a brick:Temperature_Sensor .
+
+bldg:A1 a brick:Air_Handler_Unit .
 </pre></div>
 </div>
 </div>
@@ -769,6 +794,30 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix bldg: &lt;urn:ex/&gt; .
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+
+&lt;urn:bldg/&gt; a owl:Ontology .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
+    brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; .
+
+&lt;urn:bldg/abc&gt; a brick:Temperature_Sensor .
+
+bldg:A1 a brick:Air_Handler_Unit .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Supply_Fan .
+</pre></div>
+</div>
+</div>
 </div>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
@@ -798,6 +847,11 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#save model</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial1_model.ttl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=53e0261a-b6f0-4d84-a3f2-e57cbc312d8a (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
