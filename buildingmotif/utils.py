@@ -500,7 +500,7 @@ def skip_uri(uri: URIRef) -> bool:
 
     Skips URIs in the XSD, SHACL namespaces
 
-    :return: True if the URI should be skipped; false otherwise
+    :return: True if the URI should be skipped; False otherwise
     :rtype: bool
     """
     # Now that we have all the templates, we can populate the dependencies.
