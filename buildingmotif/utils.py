@@ -31,7 +31,7 @@ def _gensym(prefix: str = "p") -> URIRef:
 
 def _param_name(param: URIRef) -> str:
     """
-    Returns the name of the param w/o the prefix
+    Returns the name of the param without the prefix.
     """
     assert param.startswith(PARAM)
     return param[len(PARAM) :]
