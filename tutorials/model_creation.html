@@ -425,11 +425,6 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-model">Creating a Model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-libraries">Loading Libraries</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-to-a-model-manually">Adding to a Model Manually</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-individual-rdf-triples-to-a-model">Adding Individual RDF Triples to a Model</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#importing-rdf-graphs-into-a-model">Importing RDF Graphs Into a Model</a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-to-a-model-with-templates">Adding to a Model with Templates</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-a-template">Exploring a Template</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-a-template">Evaluating a Template</a></li>
@@ -548,93 +543,20 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Air_Flow_Deadband_Setpoint
-  - https://brickschema.org/schema/Brick#Cooling_Command
-  - https://brickschema.org/schema/Brick#Occupied_Mode_Status
-  - https://brickschema.org/schema/Brick#Effective_Return_Air_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#Temperature_Sensor
-  - https://brickschema.org/schema/Brick#Max_Air_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#Min_Unoccupied_Heating_Supply_Air_Flow_Setpoint_Limit
-  - https://brickschema.org/schema/Brick#Cooling_Supply_Air_Temperature_Proportional_Band_Parameter
-  - https://brickschema.org/schema/Brick#Heating_Supply_Air_Temperature_Integral_Time_Parameter
-  - https://brickschema.org/schema/Brick#Average_Discharge_Air_Flow_Sensor
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="adding-to-a-model-manually">
-<h2>Adding to a Model Manually<a class="headerlink" href="#adding-to-a-model-manually" title="Permalink to this heading">#</a></h2>
-<p>Because <code class="docutils literal notranslate"><span class="pre">Model</span></code>s are wrappers around RDF graphs, it is possible to manipulate those RDF graphs directly.
-BuildingMOTIF supports adding <em>individual triples</em> to models as well as <em>adding whole graphs</em> to models.</p>
-<p>The RDF graph underlying a <code class="docutils literal notranslate"><span class="pre">Model</span></code> is accessible via the <code class="docutils literal notranslate"><span class="pre">.graph</span></code> attribute. This is an instance of <a class="reference external" href="https://rdflib.readthedocs.io/en/stable/intro_to_graphs.html"><code class="docutils literal notranslate"><span class="pre">RDFlib.Graph</span></code></a>.</p>
-<section id="adding-individual-rdf-triples-to-a-model">
-<h3>Adding Individual RDF Triples to a Model<a class="headerlink" href="#adding-individual-rdf-triples-to-a-model" title="Permalink to this heading">#</a></h3>
-<p>To add an RDF triple to a model, use the <code class="docutils literal notranslate"><span class="pre">Model.graph.add()</span></code> method:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import this to make writing URIs easier</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span><span class="p">,</span> <span class="n">RDF</span>
-
-<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="s2">&quot;abc&quot;</span><span class="p">],</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Temperature_Sensor</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=7b3b8200-f154-4991-84d0-129c479cf1bb (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+  - https://brickschema.org/schema/Brick#Gas_Sensor
+  - https://brickschema.org/schema/Brick#Preheat_Discharge_Air_Temperature_Sensor
+  - https://brickschema.org/schema/Brick#Discharge_Air_Humidity_Sensor
+  - https://brickschema.org/schema/Brick#Differential_Pressure_Setpoint
+  - https://brickschema.org/schema/Brick#Supply_Air_Temperature_Cooling_Setpoint
+  - https://brickschema.org/schema/Brick#Run_Request_Status
+  - https://brickschema.org/schema/Brick#Supply_Air_Temperature_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Min_Position_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Rain_Sensor
+  - https://brickschema.org/schema/Brick#Status
 </pre></div>
 </div>
 </div>
 </div>
-</section>
-<section id="importing-rdf-graphs-into-a-model">
-<h3>Importing RDF Graphs Into a Model<a class="headerlink" href="#importing-rdf-graphs-into-a-model" title="Permalink to this heading">#</a></h3>
-<aside class="margin sidebar">
-<p class="sidebar-title"></p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>You should not load ontologies, schemas, rules, etc. into a Model. These belong in <strong>Libraries</strong>!</p>
-</div>
-</aside>
-<p>It is also possible to import RDF graphs into a <code class="docutils literal notranslate"><span class="pre">Model</span></code>.</p>
-<p>If you already have an in-memory <code class="docutils literal notranslate"><span class="pre">RDFlib.Graph</span></code> object available (e.g. through an <span class="xref myst">Graph Ingress</span> or loading in a Turtle file), just use <code class="docutils literal notranslate"><span class="pre">Model.add_graph</span></code>:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rdflib</span>
-<span class="n">my_graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
-<span class="c1"># parse files:</span>
-<span class="c1"># my_graph.parse(&quot;my_external_file.ttl&quot;)</span>
-<span class="c1"># or parse raw strings:</span>
-<span class="n">my_graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">@prefix bldg: &lt;urn:ex/&gt; .</span>
-<span class="s1">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
-<span class="s1">bldg:A1 a brick:Air_Handler_Unit .</span>
-<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">my_graph</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>You can also use the <code class="docutils literal notranslate"><span class="pre">Model.graph.parse</span></code> method directly:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">@prefix bldg: &lt;urn:ex/&gt; .</span>
-<span class="s1">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
-<span class="s1">bldg:A1 a brick:Air_Handler_Unit .</span>
-<span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=7b3b8200-f154-4991-84d0-129c479cf1bb (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
-</pre></div>
-</div>
-</div>
-</div>
-</section>
 </section>
 <section id="adding-to-a-model-with-templates">
 <h2>Adding to a Model with Templates<a class="headerlink" href="#adding-to-a-model-with-templates" title="Permalink to this heading">#</a></h2>
@@ -666,7 +588,9 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The template has the following parameters:
-  name
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  name
 </pre></div>
 </div>
 </div>
@@ -679,9 +603,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
-
-&lt;urn:___param___#name&gt; a brick:AHU .
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;urn:___param___#name&gt; a &lt;https://brickschema.org/schema/Brick#AHU&gt; .
 </pre></div>
 </div>
 </div>
@@ -743,17 +665,11 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix bldg: &lt;urn:ex/&gt; .
-@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
-@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
 
 &lt;urn:bldg/&gt; a owl:Ontology .
 
-&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU .
-
-&lt;urn:bldg/abc&gt; a brick:Temperature_Sensor .
-
-bldg:A1 a brick:Air_Handler_Unit .
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a &lt;https://brickschema.org/schema/Brick#AHU&gt; .
 </pre></div>
 </div>
 </div>
@@ -795,26 +711,21 @@ bldg:A1 a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix bldg: &lt;urn:ex/&gt; .
-@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix ns1: &lt;https://brickschema.org/schema/Brick#&gt; .
 @prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
 
 &lt;urn:bldg/&gt; a owl:Ontology .
 
-&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
-    brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a ns1:AHU ;
+    ns1:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
         &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
         &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; .
 
-&lt;urn:bldg/abc&gt; a brick:Temperature_Sensor .
+&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a ns1:Cooling_Coil .
 
-bldg:A1 a brick:Air_Handler_Unit .
+&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a ns1:Damper .
 
-&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Supply_Fan .
+&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a ns1:Supply_Fan .
 </pre></div>
 </div>
 </div>
@@ -851,7 +762,7 @@ bldg:A1 a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=7b3b8200-f154-4991-84d0-129c479cf1bb (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=b4159005-f1b2-4e16-8d36-4191d46b7c87 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -946,11 +857,6 @@ bldg:A1 a brick:Air_Handler_Unit .
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-model">Creating a Model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-libraries">Loading Libraries</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-to-a-model-manually">Adding to a Model Manually</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-individual-rdf-triples-to-a-model">Adding Individual RDF Triples to a Model</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#importing-rdf-graphs-into-a-model">Importing RDF Graphs Into a Model</a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-to-a-model-with-templates">Adding to a Model with Templates</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-a-template">Exploring a Template</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-a-template">Evaluating a Template</a></li>
