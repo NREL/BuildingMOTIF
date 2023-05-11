@@ -382,7 +382,7 @@ class TableConnection:
     ):
         """Creates a *preliminary* dependency between two templates. This dependency
         is preliminary because the bindings between the dependent/dependency templates
-        are *not validated*. This serves to populate the DAG of dependencies between templates
+        are *not validated*. This serves to populate the directed acyclic graph of dependencies between templates
         before the parameter bindings are checked. This ensures that all of the parameters for
         a template *and those in its dependencies* can all be identified and used as part of
         the parameter binding check. The upshot of this process is dependencies between two
