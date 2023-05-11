@@ -463,7 +463,7 @@ class TableConnection:
                 f"In {templ.name} the values of the bindings to {dep_templ.name} must correspond to the "
                 "parameters in the dependant template."
                 f"Dependency {dep_templ.name} refers to params {set(args.values()).difference(params)} "
-                f"that do not appear in template {templ.name} ({params})"
+                f"that do not appear in template {templ.name} ({params})."
             )
         # do the same for the dependency
         binding_params = set(args.keys())
