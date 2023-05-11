@@ -390,7 +390,7 @@ class TableConnection:
         to support templates that contain many nested components that refer to each other (such
         as the s223:mapsTo property).
 
-        **Important:** Be sure to run "check_template_dependencies" to ensure all of your templates.
+        **Important:** Be sure to run "check_all_template_dependencies" to ensure all of your templates.
         will work as you expect!
 
         :param template_id: dependant template id
@@ -422,7 +422,7 @@ class TableConnection:
         self.bm.session.add(relationship)
         self.bm.session.flush()
 
-    def check_template_dependencies(self):
+    def check_all_template_dependencies(self):
         """
         Verifies that all template dependencies have valid references to the parameters
         in the dependency or (recursively) its dependencies. Raises an exception if any
@@ -432,11 +432,17 @@ class TableConnection:
         # (i.e. maybe those added since last commit?)
         for db_templ in self.get_all_db_templates():
             for dep in self.get_db_template_dependencies(db_templ.id):
-                self.check_template_dependency(dep)
+                self.check_template_dependency_relationship(dep)
 
     @lru_cache(maxsize=128)
-    def check_template_dependency(self, dep: DepsAssociation):
-        """Create dependency between two templates.
+    def check_template_dependency_relationship(self, dep: DepsAssociation):
+        """Verify that the dependency between two templates is well-formed. This involves
+        a series of checks:
+        - existence of the dependent and dependency templates is performed during the add_ method
+        - the args keys appear in the dependency, or recursively in a template that is a dependency
+          of the named dependency
+        - the args values appear in the dependent template
+        - there is a 'name' parameter in the dependent template
 
         :param dep: the dependency object to check
         :type dep: DepsAssociation

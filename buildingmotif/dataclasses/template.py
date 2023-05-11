@@ -124,7 +124,7 @@ class Template:
         loaded in to the DB, else this might falsely raise an error
         """
         for dep in self._bm.table_connection.get_db_template_dependencies(self.id):
-            self._bm.table_connection.check_template_dependency(dep)
+            self._bm.table_connection.check_template_dependency_relationship(dep)
 
     def remove_dependency(self, dependency: "Template") -> None:
         """Remove dependency from template.
