@@ -498,7 +498,7 @@ def skip_uri(uri: URIRef) -> bool:
     Returns true if the URI should be skipped during processing
     because it is axiomatic or not expected to be imported.
 
-    Skips URIs in the XSD, SHACL namespaces
+    Skips URIs in the XSD and SHACL namespaces.
 
     :return: True if the URI should be skipped; False otherwise
     :rtype: bool
