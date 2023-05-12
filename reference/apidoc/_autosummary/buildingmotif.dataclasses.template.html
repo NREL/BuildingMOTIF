@@ -522,16 +522,6 @@ document.write(`
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.dataclasses.template.Template.check_dependencies">
-<span class="sig-name descname"><span class="pre">check_dependencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/template.html#Template.check_dependencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.template.Template.check_dependencies" title="Permalink to this definition">#</a></dt>
-<dd><p>Verifies that all dependencies have valid references to the parameters
-in the dependency or (recursively) its dependencies. Raises an exception if any
-issues are found.</p>
-<p>It is recommended to call this after <em>all</em> templates in a library have been
-loaded in to the DB, else this might falsely raise an error.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.template.Template.remove_dependency">
 <span class="sig-name descname"><span class="pre">remove_dependency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dependency</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/template.html#Template.remove_dependency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.template.Template.remove_dependency" title="Permalink to this definition">#</a></dt>
 <dd><p>Remove dependency from template.</p>
@@ -546,7 +536,7 @@ loaded in to the DB, else this might falsely raise an error.</p>
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.template.Template.all_parameters">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.template.Template.all_parameters" title="Permalink to this definition">#</a></dt>
 <dd><p>The set of all parameters used in this template <em>including</em> its
-dependencies. Includes optional parameters.</p>
+dependencies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>set of parameters <em>with</em> dependencies</p>
@@ -561,7 +551,7 @@ dependencies. Includes optional parameters.</p>
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.template.Template.parameters">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.template.Template.parameters" title="Permalink to this definition">#</a></dt>
 <dd><p>The set of all parameters used in this template <em>excluding</em> its
-dependencies. Includes optional parameters.</p>
+dependencies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>set of parameters <em>without</em> dependencies</p>
@@ -575,8 +565,7 @@ dependencies. Includes optional parameters.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.template.Template.dependency_parameters">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dependency_parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.template.Template.dependency_parameters" title="Permalink to this definition">#</a></dt>
-<dd><p>The set of all parameters used in this template’s dependencies, including
-optional parameters.</p>
+<dd><p>The set of all parameters used in this demplate’s dependencies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>set of parameters used in dependencies</p>
@@ -657,7 +646,7 @@ defaults to None</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.template.Template.evaluate">
-<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bindings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Namespace</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_optional_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn_unused</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Graph</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/template.html#Template.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.template.Template.evaluate" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bindings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Namespace</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_optional_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Graph</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/template.html#Template.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.template.Template.evaluate" title="Permalink to this definition">#</a></dt>
 <dd><p>Evaluate the template with the provided bindings.</p>
 <p>If all parameters in the template have a provided binding, then a graph
 will be returned. Otherwise, a new Template will be returned that
@@ -674,10 +663,6 @@ return a graph even if some optional arguments are unbound.</p>
 defaults to None</p></li>
 <li><p><strong>require_optional_args</strong> (<em>bool</em>) – whether to require all optional arguments
 to be bound, defaults to False</p></li>
-<li><p><strong>warn_unused</strong> (<em>bool</em>) – if True, print a warning if there were any parameters left
-unbound during evaluation. If ‘require_optional_args’ is True,
-then this will consider optional parameters when producing the warning;
-otherwise, optional paramters will be ignored; defaults to True</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -692,15 +677,12 @@ parameters were provided</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.template.Template.fill">
-<span class="sig-name descname"><span class="pre">fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_optional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Graph</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/template.html#Template.fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.template.Template.fill" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">fill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Graph</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/template.html#Template.fill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.template.Template.fill" title="Permalink to this definition">#</a></dt>
 <dd><p>Evaluates the template with autogenerated bindings within the given
 namespace.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ns</strong> (<em>rdflib.Namespace</em>) – namespace to contain the autogenerated entities</p></li>
-<li><p><strong>include_optional</strong> (<em>bool</em>) – if True, invent URIs for optional parameters; ignore if False</p></li>
-</ul>
+<dd class="field-odd"><p><strong>ns</strong> (<em>rdflib.Namespace</em>) – namespace to contain the autogenerated entities</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a tuple of the bindings used and the resulting graph</p>
