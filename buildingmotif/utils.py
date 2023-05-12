@@ -495,7 +495,7 @@ def rewrite_shape_graph(g: Graph) -> Graph:
 
 def skip_uri(uri: URIRef) -> bool:
     """
-    Returns true if the URI should be skipped during processing
+    Returns True if the URI should be skipped during processing
     because it is axiomatic or not expected to be imported.
 
     Skips URIs in the XSD and SHACL namespaces.
