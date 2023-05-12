@@ -121,7 +121,7 @@ class Template:
         issues are found.
 
         It is recommended to call this after *all* templates in a library have been
-        loaded in to the DB, else this might falsely raise an error
+        loaded in to the DB, else this might falsely raise an error.
         """
         for dep in self._bm.table_connection.get_db_template_dependencies(self.id):
             self._bm.table_connection.check_template_dependency_relationship(dep)
