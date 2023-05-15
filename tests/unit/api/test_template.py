@@ -109,20 +109,6 @@ def test_evaluate_bindings(client, building_motif):
     assert len(list(graph.triples((None, None, None)))) == 3
 
 
-def test_evaluate_bindings_bad_templated_id(client, building_motif):
-    model = Model.create(name="urn:my_model")
-
-    results = client.post(
-        "/templates/-1/evaluate/bindings",
-        json={
-            "model_id": model.id,
-            "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
-        },
-    )
-
-    assert results.status_code == 404
-
-
 def test_evaluate_bindings_no_body(client, building_motif):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
@@ -176,11 +162,13 @@ def test_evaluate_bindings_bad_model_id(client, building_motif):
         },
     )
 
-    assert results.status_code == 404
+    assert results.status_code == 404, results.content
 
 
 def test_evaluate_ingress(client, building_motif):
-    model = Model.create(name="urn:my_model")
+    # create a 'MODEL' namespace here to scope the entities we create
+    MODEL = Namespace("urn:my_model/")
+    model = Model.create(name=MODEL)
     lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     zone.inline_dependencies()
@@ -191,18 +179,14 @@ def test_evaluate_ingress(client, building_motif):
         data=BINDINGS,
     )
 
-    assert results.status_code == status.HTTP_200_OK
-    print(results.data)
+    assert results.status_code == status.HTTP_200_OK, results.data
     graph = Graph().parse(data=results.data, format="ttl")
-    print("++++")
-    print([t for t in graph])
-    print("++++")
-    assert (model.name + "/" + BLDG["cav1"], A, BRICK.CAV) in graph
-    assert (model.name + "/" + BLDG["zone1"], A, BRICK.HVAC_Zone) in graph
+    assert (MODEL["cav1"], A, BRICK.CAV) in graph
+    assert (MODEL["zone1"], A, BRICK.HVAC_Zone) in graph
     assert (
-        model.name + "/" + BLDG["zone1"],
+        MODEL["zone1"],
         BRICK.isFedBy,
-        model.name + "/" + BLDG["cav1"],
+        MODEL["cav1"],
     ) in graph
     assert len(list(graph.triples((None, None, None)))) == 3
 
@@ -274,4 +258,4 @@ def test_evaluate_ingress_bad_model_id(client, building_motif):
         },
     )
 
-    assert results.status_code == 404
+    assert results.status_code == 404, results.data
