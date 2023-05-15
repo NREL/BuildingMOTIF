@@ -1,3 +1,4 @@
+import pytest
 from rdflib import Graph, Namespace
 
 from buildingmotif import BuildingMOTIF
@@ -17,9 +18,10 @@ def test_template_evaluate(bm: BuildingMOTIF):
     zone = lib.get_template_by_name("zone")
     assert zone.parameters == {"name", "cav"}
 
-    partial = zone.evaluate({"name": BLDG["zone1"]})
-    assert isinstance(partial, Template)
-    assert partial.parameters == {"cav"}
+    with pytest.warns():
+        partial = zone.evaluate({"name": BLDG["zone1"]})
+        assert isinstance(partial, Template)
+        assert partial.parameters == {"cav"}
 
     graph = partial.evaluate({"cav": BLDG["cav1"]})
     assert isinstance(graph, Graph)
@@ -109,8 +111,60 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
         "sf-ss",
         "sf-st",
         "oad-pos",
+        "oad-sen",
     }
     assert inlined.parameters == preserved_params
+
+    # test optional 'name' param on dependency; this should
+    # preserve optionality of all params in the dependency
+    lib = Library.load(directory="tests/unit/fixtures/inline-dep-test")
+    templ = lib.get_template_by_name("A")
+    assert templ.parameters == {"name", "b", "c", "d"}
+    assert set(templ.optional_args) == {"d"}
+    assert len(templ.get_dependencies()) == 3
+    inlined = templ.inline_dependencies()
+    assert len(inlined.get_dependencies()) == 0
+    assert inlined.parameters == {"name", "b", "c", "b-bp", "c-cp", "d", "d-dp"}
+    assert set(inlined.optional_args) == {"d", "d-dp"}
+
+    # test optional non-'name' parameter on dependency; this should
+    # only make that single parameter optional
+    templ = lib.get_template_by_name("A-alt")
+    assert templ.parameters == {"name", "b"}
+    assert set(templ.optional_args) == {"b-bp"}
+    assert len(templ.get_dependencies()) == 1
+    inlined = templ.inline_dependencies()
+    assert len(inlined.get_dependencies()) == 0
+    assert inlined.parameters == {"name", "b", "b-bp"}
+    assert set(inlined.optional_args) == {"b-bp"}
+
+    # test inlining 2 or more levels
+    parent = lib.get_template_by_name("Parent")
+    assert parent.parameters == {"name", "level1"}
+    inlined = parent.inline_dependencies()
+    assert inlined.parameters == {
+        "name",
+        "level1",
+        "level1-level2",
+        "level1-level2-level3",
+    }
+    assert len(inlined.optional_args) == 0
+
+    # test inlining 2 or more levels with optional params
+    parent = lib.get_template_by_name("Parent-opt")
+    assert parent.parameters == {"name", "level1"}
+    inlined = parent.inline_dependencies()
+    assert inlined.parameters == {
+        "name",
+        "level1",
+        "level1-level2",
+        "level1-level2-level3",
+    }
+    assert set(inlined.optional_args) == {
+        "level1",
+        "level1-level2",
+        "level1-level2-level3",
+    }
 
 
 def test_template_evaluate_with_optional(bm: BuildingMOTIF):
@@ -128,6 +182,22 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     t = templ.evaluate(
         {"name": BLDG["vav"], "zone": BLDG["zone1"]}, require_optional_args=True
     )
+    assert isinstance(t, Template)
+    assert t.parameters == {"occ"}
+
+    with pytest.warns():
+        t = templ.evaluate(
+            {"name": BLDG["vav"], "zone": BLDG["zone1"]}, require_optional_args=True
+        )
+    assert isinstance(t, Template)
+    assert t.parameters == {"occ"}
+
+    with pytest.warns():
+        partial_templ = templ.evaluate({"name": BLDG["vav"]})
+    assert isinstance(partial_templ, Template)
+    g = partial_templ.evaluate({"zone": BLDG["zone1"]})
+    assert isinstance(g, Graph)
+    t = partial_templ.evaluate({"zone": BLDG["zone1"]}, require_optional_args=True)
     assert isinstance(t, Template)
     assert t.parameters == {"occ"}
 
@@ -151,7 +221,7 @@ def test_template_matching(bm: BuildingMOTIF):
 
     remaining_template = matcher.remaining_template(mapping)
     assert isinstance(remaining_template, Template)
-    assert remaining_template.parameters == {"pos"}
+    assert remaining_template.parameters == {"sen", "pos"}
 
 
 def test_template_matcher_with_graph_target(bm: BuildingMOTIF):

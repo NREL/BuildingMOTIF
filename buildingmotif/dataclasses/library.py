@@ -18,10 +18,13 @@ from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBLibrary, DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
-from buildingmotif.namespaces import XSD
 from buildingmotif.schemas import validate_libraries_yaml
 from buildingmotif.template_compilation import compile_template_spec
-from buildingmotif.utils import get_ontology_files, get_template_parts_from_shape
+from buildingmotif.utils import (
+    get_ontology_files,
+    get_template_parts_from_shape,
+    skip_uri,
+)
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -252,6 +255,7 @@ class Library:
             advanced=True,
             inplace=True,
             js=True,
+            allow_warnings=True,
         )
 
         lib = cls.create(ontology_name, overwrite=overwrite)
@@ -378,6 +382,8 @@ class Library:
         template_id_lookup: Dict[str, int],
         dependency_cache: Mapping[int, Union[List[_template_dependency], List[dict]]],
     ):
+        # two phases here: first, add all of the templates and their dependencies
+        # to the database but *don't* check that the dependencies are valid yet
         for template in self.get_templates():
             if template.id not in dependency_cache:
                 continue
@@ -386,12 +392,8 @@ class Library:
                     if dep["template"] in template_id_lookup:
                         dependee = Template.load(template_id_lookup[dep["template"]])
                         template.add_dependency(dependee, dep["args"])
-                    # Now that we have all the templates, we can populate the dependencies.
-                    # IGNORES missing XSD imports --- there is really no reason to import the XSD
-                    # ontology because the handling is baked into the software processing the RDF
-                    # graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we
-                    # suppress them.
-                    elif not dep["template"].startswith(XSD):
+                    # check documentation for skip_uri for what URIs get skipped
+                    elif not skip_uri(dep["template"]):
                         logging.warn(
                             f"Warning: could not find dependee {dep['template']}"
                         )
@@ -402,6 +404,9 @@ class Library:
                     except Exception as e:
                         logging.warn(f"Warning: could not resolve dependency {dep}")
                         raise e
+        # check that all dependencies are valid (use parameters that exist, etc)
+        for template in self.get_templates():
+            template.check_dependencies()
 
     def _read_yml_file(
         self,
