@@ -34,6 +34,7 @@ export class ModelDetailComponent{
   };
   showFiller: boolean = true;
   sideNaveOpen: boolean = false;
+  updateingGraphSpinner: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -60,7 +61,7 @@ export class ModelDetailComponent{
   }
 
   openSnackBar(message: string) {
-    this._snackBar.open(message, "oh", {});
+    this._snackBar.open(message, "close", {});
   }
 
   undoChangesToGraph(): void {
@@ -72,5 +73,29 @@ export class ModelDetailComponent{
       TemplateEvaluateComponent,
       {data: {templateId, modelId: this.model.id}}
     );
+  }
+
+  updateGraphWithFile(event: Event) {
+    this.updateingGraphSpinner = true;
+    const element = event.currentTarget as HTMLInputElement;
+    let files: FileList | null = element.files;
+    const fileToUpload = files?.item(0) ?? null;
+
+    if (!fileToUpload) return;
+
+    this.ModelDetailService.updateModelGraph(this.model.id, fileToUpload)
+    .subscribe({
+      next: (data: string) => {
+        this.graph = data;
+        this.graphFormControl.setValue(this.graph);
+        this.openSnackBar("success")
+      }, // success path
+      error: (error) => {
+        this.openSnackBar("error")
+      }, // error path
+      complete: () => {
+        this.updateingGraphSpinner = false;
+      }
+    });
   }
 }
