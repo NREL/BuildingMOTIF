@@ -15,13 +15,23 @@ export class TemplateEvaluateFormComponent implements OnInit {
   displayedColumns: string[] = ['parameterName', 'parametersValueControl'];
   parametersForm: FormGroup = new FormGroup({});
   dataSource: {parameterName: string, parametersValueControl: FormControl}[] = [];
+  fileToUpload: File | null = null;
 
   @Output() parameterFormValuesEvent = new EventEmitter<{[name: string]: string}>();
+  @Output() ingressFileEvent = new EventEmitter<File>();
 
   constructor() {}
 
   evaluateClicked(): void {
     this.parameterFormValuesEvent.emit(this.parametersForm.value);
+  }
+
+  handleFileInput(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    let files: FileList | null = element.files;
+    this.fileToUpload = files?.item(0) ?? null;
+
+    if(this.fileToUpload) this.ingressFileEvent.emit(this.fileToUpload);
   }
 
   ngOnInit(): void {

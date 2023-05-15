@@ -11,16 +11,27 @@ class CSVIngress(RecordIngressHandler):
     The type of the record is the name of the CSV file
     """
 
-    def __init__(self, filename: Path):
-        self.filename = filename
+    def __init__(self, filename: Path = None, data: str = None):
+        if filename is not None and data is not None:
+            raise ValueError("Both filename and data are defined.")
+
+        if filename:
+            self.dict_reader = DictReader(open(filename))
+            self.rtype = filename
+
+        elif data:
+            self.dict_reader = DictReader(data, delimiter=",")
+            self.rtype = "data stream"
+
+        else:
+            raise ValueError("Either filename or data must be defined.")
 
     @cached_property
     def records(self) -> List[Record]:
         records = []
-        rdr = DictReader(open(self.filename))
-        for row in rdr:
+        for row in self.dict_reader:
             rec = Record(
-                rtype=str(self.filename),
+                rtype=self.rtype,
                 fields=row,
             )
             records.append(rec)
