@@ -103,6 +103,7 @@ def test_add_dependency(clean_building_motif):
     assert dependant.get_dependencies() == (
         Dependency(dependee.id, {"name": "1", "param": "2"}),
     )
+    dependant.check_dependencies()
 
 
 def test_add_multiple_dependencies(clean_building_motif):
@@ -122,6 +123,7 @@ def test_add_multiple_dependencies(clean_building_motif):
         in dependant.get_dependencies()
     )
     assert len(dependant.get_dependencies()) == 2
+    dependant.check_dependencies()
 
 
 def test_add_dependency_bad_args(clean_building_motif):
