@@ -28,7 +28,7 @@ def test_223p_library(bm, library_path_223p: Path):
             print(" ...skipping")
             continue
         m = Model.create(MODEL)
-        _, g = templ.inline_dependencies().fill(MODEL)
+        _, g = templ.inline_dependencies().fill(MODEL, include_optional=True)
         assert isinstance(g, Graph), "was not a graph"
         m.add_graph(g)
         ctx = m.validate([ont_223p.get_shape_collection()])

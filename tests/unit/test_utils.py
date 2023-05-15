@@ -1,15 +1,18 @@
 import pyshacl  # type: ignore
+import pytest
 from rdflib import Graph, Namespace, URIRef
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Model, ShapeCollection
-from buildingmotif.namespaces import BRICK, A
+from buildingmotif.namespaces import BRICK, SH, XSD, A
 from buildingmotif.utils import (
     PARAM,
+    _param_name,
     get_parameters,
     get_template_parts_from_shape,
     replace_nodes,
     rewrite_shape_graph,
+    skip_uri,
 )
 
 PREAMBLE = """@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
@@ -196,9 +199,15 @@ def test_inline_sh_and(bm: BuildingMOTIF):
         in ctx.report_string
         or "Value class is not in classes (brick:Class3, brick:Class2)"
         in ctx.report_string
+        or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class3>, <https://brickschema.org/schema/Brick#Class2>)"
+        in ctx.report_string
+        or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class2>, <https://brickschema.org/schema/Brick#Class3>)"
+        in ctx.report_string
     ), ctx.report_string
     assert (
         "Less than 1 values on <urn:model#x>->brick:relationship" in ctx.report_string
+        or "Less than 1 values on <urn:model#x>-><https://brickschema.org/schema/Brick#relationship>"
+        in ctx.report_string
     )
 
 
@@ -238,13 +247,34 @@ def test_inline_sh_node(bm: BuildingMOTIF):
     sc.add_graph(new_sg)
 
     ctx = model.validate([sc])
-    assert not ctx.valid
+    assert not ctx.valid, ctx.report_string
     assert (
         "Value class is not in classes (brick:Class2, brick:Class3)"
         in ctx.report_string
         or "Value class is not in classes (brick:Class3, brick:Class2)"
         in ctx.report_string
+        or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class3>, <https://brickschema.org/schema/Brick#Class2>)"
+        in ctx.report_string
+        or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class2>, <https://brickschema.org/schema/Brick#Class3>)"
+        in ctx.report_string
     )
     assert (
         "Less than 1 values on <urn:model#x>->brick:relationship" in ctx.report_string
+        or "Less than 1 values on <urn:model#x>-><https://brickschema.org/schema/Brick#relationship>"
+        in ctx.report_string
     )
+
+
+def test_param_name():
+    good_p = PARAM["abc"]
+    assert _param_name(good_p) == "abc"
+
+    bad_p = BRICK["abc"]
+    with pytest.raises(AssertionError):
+        _param_name(bad_p)
+
+
+def test_skip_uri():
+    assert skip_uri(XSD.integer)
+    assert skip_uri(SH.NodeShape)
+    assert not skip_uri(BRICK.Sensor)

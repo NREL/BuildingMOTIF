@@ -58,9 +58,9 @@ makeup-air-unit:
     - template: duct
       args: {"name": "c7", "a": "heating-coil-air-out", "b": "evaporative-cooler-in"}
     - template: damper
-      args: {"name": "oad"}
+      args: {"name": "oad", "in-mapsto": "outside-air"}
     - template: evaporative-cooler
-      args: {"name": "evaporative-cooler"}
+      args: {"name": "evaporative-cooler", "out-mapsto": "air-supply"}
     - template: filter
       args: {"name": "pre-filter"}
     - template: filter
@@ -101,9 +101,9 @@ vav-reheat:
     - template: duct
       args: {"name": "c0", "a": "rhc-air-out", "b": "dmp-in"}
     - template: hot-water-coil
-      args: {"name": "rhc"}
+      args: {"name": "rhc", "air-in-mapsto": "air-in"}
     - template: damper
-      args: {"name": "dmp"}
+      args: {"name": "dmp", "out-mapsto": "air-out"}
     - template: air-inlet-cp
       args: {"name": "air-in"}
     - template: air-outlet-cp
