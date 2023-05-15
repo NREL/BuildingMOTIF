@@ -24,6 +24,7 @@ buildingmotif.utils
       remove_triples_with_node
       replace_nodes
       rewrite_shape_graph
+      skip_uri
       template_to_shape
    
    
