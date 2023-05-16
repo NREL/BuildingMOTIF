@@ -50,7 +50,7 @@ def test_bacnet_scan_cli(bm, bacnet_network, tmp_path):
     subprocess.run(
         shlex.split(f"buildingmotif scan -o ${str(output_file)} -ip 172.24.0.1/32")
     )
-    assert Path("output.json").exists()
+    assert output_file.exists()
     bacnet = BACnetNetwork.load(output_file)
     tobrick = BACnetToBrickIngress(bm, bacnet)
     m.add_graph(tobrick.graph(BLDG))
