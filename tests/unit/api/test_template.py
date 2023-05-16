@@ -251,9 +251,8 @@ def test_evaluate_ingress_bad_model_id(client, building_motif):
     assert zone.parameters == {"name", "cav"}
 
     results = client.post(
-        f"/templates/{zone.id}/evaluate/ingress",
+        f"/templates/{zone.id}/evaluate/ingress?model_id=-1",
         json={
-            "model_id": -1,
             "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
         },
     )
