@@ -43,6 +43,23 @@ def test_bacnet_ingress(bm, bacnet_network):
 
 
 @pytest.mark.integration
-def test_bacnet_scan_cli(bm, bacnet_network):
-    subprocess.run(shlex.split("buildingmotif scan -o output.json -ip 172.24.0.1/32"))
+def test_bacnet_scan_cli(bm, bacnet_network, tmp_path):
+    BLDG = Namespace("urn:building/")
+    m = Model.create(BLDG, "test building for bacnet scan")
+    output_file = tmp_path / "output.json"
+    subprocess.run(
+        shlex.split(f"buildingmotif scan -o ${str(output_file)} -ip 172.24.0.1/32")
+    )
     assert Path("output.json").exists()
+    bacnet = BACnetNetwork.load(output_file)
+    tobrick = BACnetToBrickIngress(bm, bacnet)
+    m.add_graph(tobrick.graph(BLDG))
+
+    devices = list(m.graph.subjects(RDF["type"], BACNET["BACnetDevice"]))
+    assert len(devices) == 1, f"Did not find exactly 1 device (found {len(devices)})"
+    assert devices[0] == BLDG["599"]  # type: ignore
+
+    objects = list(m.graph.subjects(RDF["type"], BRICK["Point"]))
+    assert (
+        len(objects) == 4
+    ), f"Did not find exactly 4 points; found {len(objects)} instead"
