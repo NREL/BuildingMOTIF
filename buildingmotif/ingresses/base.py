@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from os import PathLike
 from pathlib import Path
-from typing import List, Union
+from typing import List
 
 from rdflib import Graph, Namespace
 
@@ -40,16 +40,28 @@ class RecordIngressHandler(IngressHandler):
         """
         raise NotImplementedError("Must be overridden by subclass")
 
-    def dump(self, output: PathLike = None) -> Union[str, None]:
+    def dump(self, path: PathLike):
+        output_string = self.dumps()
+        Path(path).write_text(output_string)
+
+    def dumps(self) -> str:
         records = [
             {"rtype": record.rtype, "fields": record.fields} for record in self.records
         ]
-        output_string = json.dumps(records)
-        if output:
-            Path(output).write_text(output_string)
-        else:
-            return output_string
-        return None
+        return json.dumps(records)
+
+    @classmethod
+    def load(cls, path: PathLike):
+        return cls.loads(Path(path).read_text())
+
+    @classmethod
+    def loads(cls, s: str):
+        self = cls.__new__(cls)
+        records = []
+        for record in json.loads(s):
+            records.append(Record(record["rtype"], record["fields"]))
+        self.records = records
+        return self
 
 
 class GraphIngressHandler(IngressHandler):
