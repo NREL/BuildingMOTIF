@@ -162,7 +162,7 @@ def test_evaluate_bindings_bad_model_id(client, building_motif):
         },
     )
 
-    assert results.status_code == 400, results.content
+    assert results.status_code == 404, results.data
 
 
 def test_evaluate_ingress(client, building_motif):
