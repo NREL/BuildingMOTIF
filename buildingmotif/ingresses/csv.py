@@ -1,7 +1,8 @@
 from csv import DictReader
 from functools import cached_property
+from io import StringIO
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Union
 
 from buildingmotif.ingresses.base import Record, RecordIngressHandler
 
@@ -11,13 +12,17 @@ class CSVIngress(RecordIngressHandler):
     The type of the record is the name of the CSV file
     """
 
-    def __init__(self, filename: Path = None, data: str = None):
+    def __init__(
+        self,
+        filename: Optional[Path] = None,
+        data: Optional[Union[str, StringIO]] = None,
+    ):
         if filename is not None and data is not None:
             raise ValueError("Both filename and data are defined.")
 
         if filename:
             self.dict_reader = DictReader(open(filename))
-            self.rtype = filename
+            self.rtype = str(filename)
 
         elif data:
             self.dict_reader = DictReader(data, delimiter=",")

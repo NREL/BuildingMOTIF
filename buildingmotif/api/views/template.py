@@ -76,7 +76,7 @@ def evaluate_ingress(template_id: int) -> flask.Response:
     if raw_data is None:
         return {"message": "no file recieved."}, status.HTTP_404_NOT_FOUND
 
-    # evaulate
+    # evaluate template
     try:
         data = StringIO(raw_data.decode("utf-8"))
         csv_ingress = CSVIngress(data=data)
