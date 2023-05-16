@@ -188,7 +188,7 @@ def test_evaluate_ingress(client, building_motif):
         BRICK.isFedBy,
         MODEL["cav1"],
     ) in graph
-    assert len(list(graph.triples((None, None, None)))) == 3
+    assert len(list(graph.triples((None, None, None)))) == 6
 
 
 def test_evaluate_bindings_bad_templated_id(client, building_motif):
