@@ -83,7 +83,7 @@ export class ModelDetailComponent{
 
     if (!fileToUpload) return;
 
-    this.ModelDetailService.updateModelGraph(this.model.id, fileToUpload)
+    this.ModelDetailService.updateModelGraph(this.model.id, fileToUpload, true)
     .subscribe({
       next: (data: string) => {
         this.graph = data;
