@@ -40,3 +40,9 @@ def test_bacnet_ingress(bm, bacnet_network):
     assert (
         len(objects) == 4
     ), f"Did not find exactly 4 points; found {len(objects)} instead"
+
+
+@pytest.mark.integration
+def test_bacnet_scan_cli(bm, bacnet_network):
+    subprocess.run(shlex.split("buildingmotif scan -o output.json -ip 172.24.0.1/32"))
+    assert Path("output.json").exists()
