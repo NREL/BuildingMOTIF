@@ -34,7 +34,7 @@ export class ModelDetailComponent{
   };
   showFiller: boolean = true;
   sideNaveOpen: boolean = false;
-  updateingGraphSpinner: boolean = false;
+  updatingGraphSpinner: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -76,7 +76,7 @@ export class ModelDetailComponent{
   }
 
   updateGraphWithFile(event: Event) {
-    this.updateingGraphSpinner = true;
+    this.updatingGraphSpinner = true;
     const element = event.currentTarget as HTMLInputElement;
     let files: FileList | null = element.files;
     const fileToUpload = files?.item(0) ?? null;
@@ -94,7 +94,7 @@ export class ModelDetailComponent{
         this.openSnackBar("error")
       }, // error path
       complete: () => {
-        this.updateingGraphSpinner = false;
+        this.updatingGraphSpinner = false;
       }
     });
   }
