@@ -7,8 +7,8 @@ from buildingmotif.namespaces import BRICK, A
 BLDG = Namespace("urn:building/")
 
 BINDINGS = b"""name,cav
-cav1,room345
-cav2,room567
+zone1,cav1
+zone2,cav2
 """
 
 
