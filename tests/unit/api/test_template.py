@@ -109,6 +109,20 @@ def test_evaluate_bindings(client, building_motif):
     assert len(list(graph.triples((None, None, None)))) == 3
 
 
+def test_evaluate_bindings_bad_templated_id(client, building_motif):
+    model = Model.create(name="urn:my_model")
+
+    results = client.post(
+        "/templates/-1/evaluate/bindings",
+        json={
+            "model_id": model.id,
+            "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
+        },
+    )
+
+    assert results.status_code == 404
+
+
 def test_evaluate_bindings_no_body(client, building_motif):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
@@ -183,26 +197,10 @@ def test_evaluate_ingress(client, building_motif):
     graph = Graph().parse(data=results.data, format="ttl")
     assert (MODEL["cav1"], A, BRICK.CAV) in graph
     assert (MODEL["zone1"], A, BRICK.HVAC_Zone) in graph
-    assert (
-        MODEL["zone1"],
-        BRICK.isFedBy,
-        MODEL["cav1"],
-    ) in graph
-    assert len(list(graph.triples((None, None, None)))) == 6
-
-
-def test_evaluate_bindings_bad_templated_id(client, building_motif):
-    model = Model.create(name="urn:my_model")
-
-    results = client.post(
-        "/templates/-1/evaluate/bindings",
-        json={
-            "model_id": model.id,
-            "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
-        },
-    )
-
-    assert results.status_code == 404
+    assert (MODEL["zone1"], BRICK.isFedBy, MODEL["cav1"]) in graph
+    assert (MODEL["cav2"], A, BRICK.CAV) in graph
+    assert (MODEL["zone2"], A, BRICK.HVAC_Zone) in graph
+    assert (MODEL["zone2"], BRICK.isFedBy, MODEL["cav2"]) in graph
 
 
 def test_evaluate_ingress_no_body(client, building_motif):
