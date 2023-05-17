@@ -42,17 +42,20 @@ class BACnetNetwork(RecordIngressHandler):
         # for each discovered Device, create a BAC0.device object
         # This will read the BACnet objects off of the Device.
         # Save the BACnet objects in the objects dictionary
-        assert self.network.discoveredDevices is not None
-        for (address, device_id) in self.network.discoveredDevices:  # type: ignore
-            # set poll to 0 to avoid reading the points regularly
-            dev = BAC0.device(address, device_id, self.network, poll=0)
-            self.devices.append(dev)
-            self.objects[(address, device_id)] = []
+        try:
+            assert self.network.discoveredDevices is not None
+            for (address, device_id) in self.network.discoveredDevices:  # type: ignore
+                # set poll to 0 to avoid reading the points regularly
+                dev = BAC0.device(address, device_id, self.network, poll=0)
+                self.devices.append(dev)
+                self.objects[(address, device_id)] = []
 
-            for bobj in dev.points:
-                obj = bobj.properties.asdict
-                self._clean_object(obj)
-                self.objects[(address, device_id)].append(obj)
+                for bobj in dev.points:
+                    obj = bobj.properties.asdict
+                    self._clean_object(obj)
+                    self.objects[(address, device_id)].append(obj)
+        finally:
+            self.network.disconnect()
 
     def _clean_object(self, obj: Dict[str, Any]):
         if "name" in obj:
