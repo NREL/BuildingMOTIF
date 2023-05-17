@@ -384,7 +384,6 @@ document.write(`
 
 <span class="kn">import</span> <span class="nn">rdflib</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
@@ -405,10 +404,7 @@ document.write(`
 <span class="sd">    model itself rather than a specific node</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># the node that failed (shape target)</span>
     <span class="n">focus</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]</span>
-    <span class="c1"># the SHACL validation result graph corresponding to this failure</span>
-    <span class="n">validation_result</span><span class="p">:</span> <span class="n">Graph</span>
     <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span>
 
 <div class="viewcode-block" id="GraphDiff.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphDiff.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
@@ -424,24 +420,6 @@ document.write(`
 <div class="viewcode-block" id="GraphDiff.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphDiff.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
-
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">_result_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Node</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the &#39;name&#39; of the ValidationReport to make failed_shape/failed_component</span>
-<span class="sd">        easier to express&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">subjects</span><span class="p">())</span>
-
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">failed_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The URI of the Shape that failed&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_result_uri</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">sourceShape</span><span class="p">)</span>
-
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">failed_component</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The Constraint Component of the Shape that failed&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_result_uri</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">sourceConstraintComponent</span>
-        <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reason</span><span class="p">())</span></div>
@@ -474,7 +452,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">focus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">body</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minc</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minc</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">):</span>
             <span class="n">inst</span> <span class="o">=</span> <span class="n">_gensym</span><span class="p">()</span>
             <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">inst</span><span class="p">))</span>
             <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">inst</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="p">))</span>
@@ -658,10 +636,6 @@ document.write(`
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">SH</span><span class="o">.</span><span class="n">result</span><span class="p">):</span>
             <span class="c1"># check if the failure is due to our count constraint component</span>
             <span class="n">focus</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">focusNode</span><span class="p">)</span>
-            <span class="c1"># get the subgraph corresponding to this ValidationReport -- see</span>
-            <span class="c1"># https://www.w3.org/TR/shacl/#results-validation-result for details</span>
-            <span class="c1"># on the structure and expected properties</span>
-            <span class="n">validation_report</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">cbd</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="n">g</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">sourceConstraintComponent</span><span class="p">)</span>
                 <span class="o">==</span> <span class="n">CONSTRAINT</span><span class="o">.</span><span class="n">countConstraintComponent</span>
@@ -673,22 +647,14 @@ document.write(`
                 <span class="c1"># here, our &#39;self.focus&#39; is the graph itself, which we don&#39;t want to have bound</span>
                 <span class="c1"># to the templates during evaluation (for this specific kind of diff).</span>
                 <span class="c1"># For this reason we override focus to be None</span>
-                <span class="n">diffs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-                    <span class="n">GraphClassCardinality</span><span class="p">(</span>
-                        <span class="kc">None</span><span class="p">,</span>
-                        <span class="n">validation_report</span><span class="p">,</span>
-                        <span class="n">g</span><span class="p">,</span>
-                        <span class="n">of_class</span><span class="p">,</span>
-                        <span class="nb">int</span><span class="p">(</span><span class="n">expected_count</span><span class="p">),</span>
-                    <span class="p">)</span>
-                <span class="p">)</span>
+                <span class="n">diffs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">GraphClassCardinality</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">of_class</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">expected_count</span><span class="p">)))</span>
             <span class="k">elif</span> <span class="p">(</span>
                 <span class="n">g</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">sourceConstraintComponent</span><span class="p">)</span>
                 <span class="o">==</span> <span class="n">SH</span><span class="o">.</span><span class="n">ClassConstraintComponent</span>
             <span class="p">):</span>
                 <span class="n">requiring_shape</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">sourceShape</span><span class="p">)</span>
                 <span class="n">expected_class</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">requiring_shape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">])</span>
-                <span class="n">diffs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">RequiredClass</span><span class="p">(</span><span class="n">focus</span><span class="p">,</span> <span class="n">validation_report</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">expected_class</span><span class="p">))</span>
+                <span class="n">diffs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">RequiredClass</span><span class="p">(</span><span class="n">focus</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">expected_class</span><span class="p">))</span>
             <span class="k">elif</span> <span class="p">(</span>
                 <span class="n">g</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">sourceConstraintComponent</span><span class="p">)</span>
                 <span class="o">==</span> <span class="n">SH</span><span class="o">.</span><span class="n">NodeConstraintComponent</span>
@@ -720,7 +686,6 @@ document.write(`
                     <span class="n">diffs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
                         <span class="n">PathClassCount</span><span class="p">(</span>
                             <span class="n">focus</span><span class="p">,</span>
-                            <span class="n">validation_report</span><span class="p">,</span>
                             <span class="n">g</span><span class="p">,</span>
                             <span class="n">path</span><span class="p">,</span>
                             <span class="nb">int</span><span class="p">(</span><span class="n">min_count</span><span class="p">)</span> <span class="k">if</span> <span class="n">min_count</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
@@ -735,7 +700,6 @@ document.write(`
                     <span class="n">diffs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
                         <span class="n">PathShapeCount</span><span class="p">(</span>
                             <span class="n">focus</span><span class="p">,</span>
-                            <span class="n">validation_report</span><span class="p">,</span>
                             <span class="n">g</span><span class="p">,</span>
                             <span class="n">path</span><span class="p">,</span>
                             <span class="nb">int</span><span class="p">(</span><span class="n">min_count</span><span class="p">)</span> <span class="k">if</span> <span class="n">min_count</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
@@ -750,7 +714,6 @@ document.write(`
                     <span class="n">diffs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
                         <span class="n">RequiredPath</span><span class="p">(</span>
                             <span class="n">focus</span><span class="p">,</span>
-                            <span class="n">validation_report</span><span class="p">,</span>
                             <span class="n">g</span><span class="p">,</span>
                             <span class="n">path</span><span class="p">,</span>
                             <span class="nb">int</span><span class="p">(</span><span class="n">min_count</span><span class="p">)</span> <span class="k">if</span> <span class="n">min_count</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
