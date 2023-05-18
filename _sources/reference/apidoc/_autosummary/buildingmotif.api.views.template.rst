@@ -13,8 +13,7 @@ buildingmotif.api.views.template
 
    .. autosummary::
    
-      evaluate_bindings
-      evaluate_ingress
+      evaluate
       get_all_templates
       get_bindings
       get_template
