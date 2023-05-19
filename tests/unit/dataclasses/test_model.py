@@ -1,11 +1,11 @@
 import pytest
-from rdflib import Graph, Literal, Namespace, URIRef
+from rdflib import BNode, Graph, Literal, Namespace, URIRef
 from rdflib.compare import isomorphic
-from rdflib.namespace import FOAF, RDF
+from rdflib.namespace import FOAF
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library, Model, ValidationContext
-from buildingmotif.namespaces import BRICK, RDFS, A
+from buildingmotif.namespaces import BRICK, RDF, RDFS, SH, A
 
 BLDG = Namespace("urn:building/")
 
@@ -104,6 +104,9 @@ def test_validate_model_with_failure(bm: BuildingMOTIF):
     assert isinstance(ctx, ValidationContext)
     assert not ctx.valid
     assert len(ctx.diffset) == 1
+    diff = ctx.diffset.pop()
+    assert isinstance(diff.failed_shape, BNode)
+    assert diff.failed_component == SH.MinCountConstraintComponent
 
     model.add_triples((bindings["name"], RDFS.label, Literal("hvac zone 1")))
     # validate the graph (should now be valid)
