@@ -22,15 +22,9 @@ depends_on = None
 def upgrade():
     # add NULLABLE 'id' column
     with op.batch_alter_table("deps_association_table", schema=None) as batch_op:
-        batch_op.add_column(sa.Column("id", sa.Integer(), nullable=True))
         batch_op.drop_constraint("deps_association_table_pkey", type_="primary")
-        batch_op.create_primary_key("deps_association_pk", columns=["id"])
-        batch_op.alter_column(
-            existing_type=sa.INTEGER(),
-            column_name="id",
-            autoincrement=True,
-            existing_autoincrement=True,
-            nullable=False,
+        batch_op.add_column(
+            sa.Column("id", sa.Integer(), nullable=True, primary_key=True)
         )
 
         batch_op.alter_column(
