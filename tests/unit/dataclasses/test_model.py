@@ -105,7 +105,10 @@ def test_validate_model_with_failure(bm: BuildingMOTIF):
     assert not ctx.valid
     assert len(ctx.diffset) == 1
     diff = ctx.diffset.pop()
-    assert isinstance(diff.failed_shape, BNode)
+    assert isinstance(diff.failed_shape, BNode), (
+        diff.failed_shape,
+        type(diff.failed_shape),
+    )
     assert diff.failed_component == SH.MinCountConstraintComponent
 
     model.add_triples((bindings["name"], RDFS.label, Literal("hvac zone 1")))
