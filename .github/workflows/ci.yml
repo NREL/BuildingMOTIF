@@ -50,6 +50,12 @@ jobs:
         run: poetry run flake8 buildingmotif
       - name: type check
         run: poetry run mypy
+      - name: bacnet tests
+        run: |
+        cd tests/integration/fixtures/bacnet
+        docker compose up --build -d
+        docker compose run buildingmotif poetry run pytest -m bacnet
+        docker compose down
       - name: unit tests
         run: poetry run pytest tests/unit --cov=./ --cov-report=xml
       - name: integration tests

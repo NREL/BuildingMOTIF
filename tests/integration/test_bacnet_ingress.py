@@ -24,11 +24,11 @@ def bacnet_network():
     subprocess.run(docker_compose_stop, cwd=docker_compose_path)
 
 
-@pytest.mark.integration
-def test_bacnet_ingress(bm, bacnet_network):
+@pytest.mark.bacnet
+def test_bacnet_ingress(bm):
     BLDG = Namespace("urn:building/")
     m = Model.create(BLDG, "test building for bacnet scan")
-    bacnet = BACnetNetwork("172.24.0.1/32")
+    bacnet = BACnetNetwork("172.24.0.2/32")
     tobrick = BACnetToBrickIngress(bm, bacnet)
     m.add_graph(tobrick.graph(BLDG))
 
@@ -42,13 +42,15 @@ def test_bacnet_ingress(bm, bacnet_network):
     ), f"Did not find exactly 4 points; found {len(objects)} instead"
 
 
-@pytest.mark.integration
-def test_bacnet_scan_cli(bm, bacnet_network, tmp_path):
+@pytest.mark.bacnet
+def test_bacnet_scan_cli(bm, tmp_path):
     BLDG = Namespace("urn:building/")
     m = Model.create(BLDG, "test building for bacnet scan")
-    output_file = tmp_path / "output.json"
+    d = tmp_path / "scans"
+    d.mkdir()
+    output_file = d / "output.json"
     subprocess.run(
-        shlex.split(f"buildingmotif scan -o ${str(output_file)} -ip 172.24.0.1/32")
+        shlex.split(f'buildingmotif scan -o "{str(output_file)}" -ip 172.24.0.2/32')
     )
     assert output_file.exists()
     bacnet = BACnetNetwork.load(output_file)

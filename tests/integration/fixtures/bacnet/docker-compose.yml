@@ -7,8 +7,13 @@ services:
       bacnet:
         ipv4_address: 172.24.0.3
     command: "python3 virtual_bacnet.py"
-    ports:
-     - "47808:47808/udp"
+  buildingmotif:
+    build:
+      context: ../../../../
+      dockerfile: tests/integration/fixtures/buildingmotif/Dockerfile
+    networks:
+      bacnet:
+        ipv4_address: 172.24.0.2 
 networks:
   bacnet:
     ipam:

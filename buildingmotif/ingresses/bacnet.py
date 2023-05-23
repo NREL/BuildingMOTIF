@@ -55,6 +55,8 @@ class BACnetNetwork(RecordIngressHandler):
                     self._clean_object(obj)
                     self.objects[(address, device_id)].append(obj)
         finally:
+            for dev in self.devices:
+                self.network.unregister_device(dev)
             self.network.disconnect()
 
     def _clean_object(self, obj: Dict[str, Any]):
@@ -86,6 +88,7 @@ class BACnetNetwork(RecordIngressHandler):
         for (address, device_id), objs in self.objects.items():
             for obj in objs:
                 fields = obj.copy()
+                del fields["device"]
                 fields["device_id"] = device_id
                 records.append(
                     Record(

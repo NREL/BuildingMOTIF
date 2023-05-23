@@ -48,7 +48,9 @@ class RecordIngressHandler(IngressHandler):
         :type path: PathLike
         """
         output_string = self.dumps()
-        Path(path).write_text(output_string)
+        output_file = Path(path)
+        with output_file.open("w", encoding="utf-8") as f:
+            f.write(output_string)
 
     def dumps(self) -> str:
         """
