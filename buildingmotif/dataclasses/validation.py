@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
 import rdflib
 from rdflib import Graph, URIRef
+from rdflib.term import Node
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
@@ -27,7 +28,10 @@ class GraphDiff:
     model itself rather than a specific node
     """
 
+    # the node that failed (shape target)
     focus: Optional[URIRef]
+    # the SHACL validation result graph corresponding to this failure
+    validation_result: Graph
     graph: Graph
 
     def resolve(self, lib: "Library") -> List["Template"]:
@@ -43,6 +47,24 @@ class GraphDiff:
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         raise NotImplementedError
+
+    @cached_property
+    def _result_uri(self) -> Node:
+        """Return the 'name' of the ValidationReport to make failed_shape/failed_component
+        easier to express"""
+        return next(self.validation_result.subjects())
+
+    @cached_property
+    def failed_shape(self) -> Optional[URIRef]:
+        """The URI of the Shape that failed"""
+        return self.validation_result.value(self._result_uri, SH.sourceShape)
+
+    @cached_property
+    def failed_component(self) -> Optional[URIRef]:
+        """The Constraint Component of the Shape that failed"""
+        return self.validation_result.value(
+            self._result_uri, SH.sourceConstraintComponent
+        )
 
     def __hash__(self):
         return hash(self.reason())
@@ -75,7 +97,7 @@ class PathClassCount(GraphDiff):
         """
         assert self.focus is not None
         body = Graph()
-        for i in range(self.minc or 0):
+        for _ in range(self.minc or 0):
             inst = _gensym()
             body.add((self.focus, self.path, inst))
             body.add((inst, A, self.classname))
@@ -259,6 +281,10 @@ class ValidationContext:
         for result in g.objects(predicate=SH.result):
             # check if the failure is due to our count constraint component
             focus = g.value(result, SH.focusNode)
+            # get the subgraph corresponding to this ValidationReport -- see
+            # https://www.w3.org/TR/shacl/#results-validation-result for details
+            # on the structure and expected properties
+            validation_report = g.cbd(result)
             if (
                 g.value(result, SH.sourceConstraintComponent)
                 == CONSTRAINT.countConstraintComponent
@@ -270,14 +296,22 @@ class ValidationContext:
                 # here, our 'self.focus' is the graph itself, which we don't want to have bound
                 # to the templates during evaluation (for this specific kind of diff).
                 # For this reason we override focus to be None
-                diffs.add(GraphClassCardinality(None, g, of_class, int(expected_count)))
+                diffs.add(
+                    GraphClassCardinality(
+                        None,
+                        validation_report,
+                        g,
+                        of_class,
+                        int(expected_count),
+                    )
+                )
             elif (
                 g.value(result, SH.sourceConstraintComponent)
                 == SH.ClassConstraintComponent
             ):
                 requiring_shape = g.value(result, SH.sourceShape)
                 expected_class = g.value(requiring_shape, SH["class"])
-                diffs.add(RequiredClass(focus, g, expected_class))
+                diffs.add(RequiredClass(focus, validation_report, g, expected_class))
             elif (
                 g.value(result, SH.sourceConstraintComponent)
                 == SH.NodeConstraintComponent
@@ -309,6 +343,7 @@ class ValidationContext:
                     diffs.add(
                         PathClassCount(
                             focus,
+                            validation_report,
                             g,
                             path,
                             int(min_count) if min_count else None,
@@ -323,6 +358,7 @@ class ValidationContext:
                     diffs.add(
                         PathShapeCount(
                             focus,
+                            validation_report,
                             g,
                             path,
                             int(min_count) if min_count else None,
@@ -337,6 +373,7 @@ class ValidationContext:
                     diffs.add(
                         RequiredPath(
                             focus,
+                            validation_report,
                             g,
                             path,
                             int(min_count) if min_count else None,
