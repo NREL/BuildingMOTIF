@@ -1,6 +1,5 @@
 import shlex
 import subprocess
-from pathlib import Path
 
 import pytest
 from rdflib import Namespace
@@ -8,20 +7,6 @@ from rdflib import Namespace
 from buildingmotif.dataclasses import Model
 from buildingmotif.ingresses import BACnetNetwork, BACnetToBrickIngress
 from buildingmotif.namespaces import BACNET, BRICK, RDF
-
-# path to docker compose file
-docker_compose_path = Path(__file__).parent / Path("fixtures") / Path("bacnet")
-# command to start docker compose
-docker_compose_start = shlex.split("docker compose up -d --build")
-# command to stop docker compose
-docker_compose_stop = shlex.split("docker compose down")
-
-
-@pytest.fixture()
-def bacnet_network():
-    subprocess.run(docker_compose_start, cwd=docker_compose_path)
-    yield
-    subprocess.run(docker_compose_stop, cwd=docker_compose_path)
 
 
 @pytest.mark.bacnet
