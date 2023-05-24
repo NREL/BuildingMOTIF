@@ -60,7 +60,10 @@ class GraphDiff:
         possible_uris: Set[Node] = set(self.validation_result.subjects())
         objects: Set[Node] = set(self.validation_result.objects())
         sub_not_obj = possible_uris - objects
-        assert len(sub_not_obj) == 1
+        if len(sub_not_obj) != 1:
+            raise Exception(
+                "Validation result has more than one 'root' node, which should not happen. Please raise an issue on https://github.com/NREL/BuildingMOTIF"
+            )
         return sub_not_obj.pop()
 
     @cached_property
