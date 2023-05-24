@@ -437,7 +437,10 @@ document.write(`
         <span class="n">possible_uris</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">subjects</span><span class="p">())</span>
         <span class="n">objects</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">objects</span><span class="p">())</span>
         <span class="n">sub_not_obj</span> <span class="o">=</span> <span class="n">possible_uris</span> <span class="o">-</span> <span class="n">objects</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_not_obj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_not_obj</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;Validation result has more than one &#39;root&#39; node, which should not happen. Please raise an issue on https://github.com/NREL/BuildingMOTIF&quot;</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="n">sub_not_obj</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 
     <span class="nd">@cached_property</span>
