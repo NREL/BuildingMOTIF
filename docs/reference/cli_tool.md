@@ -23,8 +23,7 @@ Recall that a `Library` is a unit of distribution for shapes (for validation of 
 ```bash
 usage: buildingmotif load [-h] [-d DB] [--dir DIR [DIR ...]] [-o ONT [ONT ...]] [-l LIBRARY_MANIFEST_FILE [LIBRARY_MANIFEST_FILE ...]]
 
-Loads libraries from (1) local directories (--dir), (2) local or remote ontology files (--ont) (3) library spec file (--libraries): the provided YML file into the BuildingMOTIF instance at $DB_URI or whatever
-is in 'configs.py'. Use 'get_default_libraries_yml' for the format of the expected libraries.yml file
+Loads libraries from (1) local directories (--dir), (2) local or remote ontology files (--ont) (3) library spec file (--libraries): the provided YML file into the BuildingMOTIF instance at $DB_URI
 
 optional arguments:
   -h, --help            show this help message and exit

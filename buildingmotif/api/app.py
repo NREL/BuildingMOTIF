@@ -69,11 +69,6 @@ def create_app(DB_URI):
 if __name__ == "__main__":
     """Run API."""
     db_uri = os.getenv("DB_URI")
-    if db_uri is None:
-        # If config doesn't exist, this is considered a third party import and module cant be found.
-        import configs as building_motif_configs  # type: ignore # isort:skip
-
-        db_uri = building_motif_configs.DB_URI
 
     app = create_app(db_uri)
     app.run(debug=True, host="0.0.0.0", threaded=False)

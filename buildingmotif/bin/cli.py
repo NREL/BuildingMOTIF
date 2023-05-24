@@ -49,16 +49,6 @@ def get_db_uri(args) -> str:
     db_uri = getenv("DB_URI")
     if db_uri is not None:
         return db_uri
-    try:
-        import configs as building_motif_configs
-    except ImportError:
-        print("No DB URI could be found")
-        print("No configs.py file found")
-        subcommands[args.func].print_help()
-        sys.exit(1)
-    db_uri = building_motif_configs.DB_URI
-    if db_uri is not None:
-        return db_uri
     print("No DB URI could be found")
     subcommands[args.func].print_help()
     sys.exit(1)
@@ -97,7 +87,7 @@ def load(args):
     Loads libraries from (1) local directories (--dir),
     (2) local or remote ontology files (--ont)
     (3) library spec file (--libraries): the provided YML file into the
-      BuildingMOTIF instance at $DB_URI or whatever is in 'configs.py'.
+      BuildingMOTIF instance at $DB_URI.
       Use 'get_default_libraries_yml' for the format of the expected libraries.yml file
     """
     db_uri = get_db_uri(args)
