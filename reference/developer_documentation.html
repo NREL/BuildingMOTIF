@@ -474,8 +474,11 @@ document.write(`
 </section>
 <section id="developing">
 <h2>Developing<a class="headerlink" href="#developing" title="Permalink to this heading">#</a></h2>
-<p>To initialize your database, init $DB_URI (set in <code class="docutils literal notranslate"><span class="pre">.env</span></code>) and run the migrations.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="o">-</span><span class="n">o</span> <span class="n">allexport</span><span class="p">;</span> <span class="n">source</span> <span class="o">.</span><span class="n">env</span><span class="p">;</span> <span class="nb">set</span> <span class="o">+</span><span class="n">o</span> <span class="n">allexport</span>
+<p>To initialize your database, create your local configs file, enter your db uri, and run the migrations.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cp</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span><span class="o">.</span><span class="n">dist</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span>
+
+<span class="n">echo</span> <span class="s2">&quot;DB_URI = &#39;sqlite:////path/to/db.db&#39;&quot;</span> <span class="o">&gt;</span> <span class="n">configs</span><span class="o">.</span><span class="n">py</span>
+
 <span class="n">poetry</span> <span class="n">run</span> <span class="n">alembic</span> <span class="n">upgrade</span> <span class="n">head</span>
 </pre></div>
 </div>
