@@ -51,8 +51,20 @@ class GraphDiff:
     @cached_property
     def _result_uri(self) -> Node:
         """Return the 'name' of the ValidationReport to make failed_shape/failed_component
-        easier to express"""
-        return next(self.validation_result.subjects())
+        easier to express. We compute this by taking advantage of the fact that the validation
+        result graph is actually a tree with a single root. We can find the root by finding
+        all URIs which appear as subjects in the validation_result graph that do *not* appear
+        as objects; this should  be exactly one URI which is the 'root' of the validation result
+        graph
+        """
+        possible_uris: Set[Node] = set(self.validation_result.subjects())
+        objects: Set[Node] = set(self.validation_result.objects())
+        sub_not_obj = possible_uris - objects
+        if len(sub_not_obj) != 1:
+            raise Exception(
+                "Validation result has more than one 'root' node, which should not happen. Please raise an issue on https://github.com/NREL/BuildingMOTIF"
+            )
+        return sub_not_obj.pop()
 
     @cached_property
     def failed_shape(self) -> Optional[URIRef]:
