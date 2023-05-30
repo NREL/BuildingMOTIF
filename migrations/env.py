@@ -16,6 +16,8 @@ config = context.config
 
 # custom url from environment variable
 db_uri = os.getenv("DB_URI")
+if db_uri is None:
+    raise ValueError("envvar DB_URI not set.")
 config.set_main_option("sqlalchemy.url", db_uri)
 
 # Interpret the config file for Python logging.
