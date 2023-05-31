@@ -12,6 +12,7 @@ from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.model import Model
 from buildingmotif.namespaces import bind_prefixes
 from buildingmotif.template_matcher import Mapping, TemplateMatcher
+from buildingmotif.template_to_shape import template_to_nodeshape
 from buildingmotif.utils import (
     PARAM,
     combine_graphs,
@@ -439,6 +440,17 @@ class Template:
         matcher = TemplateMatcher(model.graph, self, ontology)
         for mapping, sg in matcher.building_mapping_subgraphs_iter():
             yield mapping, sg, matcher.remaining_template(mapping)
+
+    def to_nodeshape(self) -> rdflib.Graph:
+        """
+        Interprets the template body as a SHACL shape and returns the SHACL
+        shape in its own graph. See buildingmotif.template_to_shape.template_to_nodeshape
+        for the specific translation rules and implementation.
+
+        :return: a graph containing the NodeShape
+        :rtype: rdflib.Graph
+        """
+        return template_to_nodeshape(self)
 
 
 @dataclass
