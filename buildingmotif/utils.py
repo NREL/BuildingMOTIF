@@ -7,6 +7,7 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
+import rfc3987
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
@@ -513,3 +514,11 @@ def skip_uri(uri: URIRef) -> bool:
         if uri.startswith(ns):
             return True
     return False
+
+
+def validate_uri(uri: str):
+    parsed = rfc3987.parse(uri)
+    if not parsed["scheme"]:
+        raise ValueError(
+            f"{uri} does not look like a valid URI, trying to serialize this will break."
+        )
