@@ -3,7 +3,7 @@ from itertools import chain
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
-import rfc3987
+import rfc3987  # type: ignore
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
