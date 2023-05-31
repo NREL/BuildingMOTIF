@@ -202,6 +202,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -375,23 +376,17 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">secrets</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span></span><span class="kn">import</span> <span class="nn">secrets</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
 
+<span class="kn">import</span> <span class="nn">rfc3987</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
 <span class="kn">from</span> <span class="nn">rdflib.paths</span> <span class="kn">import</span> <span class="n">ZeroOrOne</span>
 <span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">SH</span><span class="p">,</span> <span class="n">XSD</span><span class="p">,</span> <span class="n">bind_prefixes</span>
-
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Template</span>
 
 <span class="n">Triple</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span>
 <span class="n">_gensym_counter</span> <span class="o">=</span> <span class="mi">0</span>
@@ -629,151 +624,6 @@ document.write(`
     <span class="k">return</span> <span class="n">body</span><span class="p">,</span> <span class="n">deps</span></div>
 
 
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_TemplateIndex</span><span class="p">:</span>
-    <span class="n">template</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span>
-    <span class="n">param_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span>
-    <span class="n">prop_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span>
-    <span class="n">prop_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span>
-    <span class="n">prop_shapes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span>
-    <span class="n">target</span><span class="p">:</span> <span class="n">URIRef</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">target_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">_prep_shape_graph</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
-    <span class="n">bind_prefixes</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;mark&quot;</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">shape</span>
-
-
-<span class="k">def</span> <span class="nf">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TemplateIndex</span><span class="p">:</span>
-    <span class="n">templ_graph</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-        <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;mark&quot;</span><span class="p">:</span> <span class="n">PARAM</span><span class="p">}</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">templ_graph</span><span class="p">,</span> <span class="n">Graph</span><span class="p">)</span>
-
-    <span class="c1"># pick a random node to act as the &#39;target&#39; of the shape</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">templ_graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">)))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Choosing </span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2"> as the target of the shape&quot;</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">URIRef</span><span class="p">)</span>
-
-    <span class="c1"># store the classes for each parameter</span>
-    <span class="n">param_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">ptype</span><span class="p">)</span> <span class="ow">in</span> <span class="n">templ_graph</span><span class="o">.</span><span class="n">subject_objects</span><span class="p">(</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
-        <span class="n">param_types</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ptype</span><span class="p">)</span>
-
-    <span class="c1"># store the properties and their types for the target</span>
-    <span class="n">prop_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="n">prop_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="n">prop_shapes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="c1"># TODO: prop_shapes for all properties whose object corresponds to another shape</span>
-    <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">templ_graph</span><span class="o">.</span><span class="n">predicate_objects</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="c1"># maybe_param = str(o).removeprefix(PARAM) Python &gt;=3.9</span>
-        <span class="n">maybe_param</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="p">:]</span>
-        <span class="k">if</span> <span class="n">maybe_param</span> <span class="ow">in</span> <span class="n">templ</span><span class="o">.</span><span class="n">dependency_parameters</span><span class="p">:</span>
-            <span class="n">dep</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">dependency_for_parameter</span><span class="p">(</span><span class="n">maybe_param</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dep</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">prop_shapes</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">URIRef</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">_name</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">param_types</span><span class="p">:</span>
-            <span class="n">prop_types</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_types</span><span class="p">[</span><span class="n">o</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PARAM</span><span class="p">:</span>
-            <span class="n">prop_values</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="ow">in</span> <span class="n">PARAM</span> <span class="ow">and</span> <span class="n">o</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">param_types</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">o</span><span class="si">}</span><span class="s2"> is does not have a type and does not seem to be a literal&quot;</span>
-            <span class="p">)</span>
-    <span class="k">return</span> <span class="n">_TemplateIndex</span><span class="p">(</span>
-        <span class="n">templ</span><span class="p">,</span>
-        <span class="nb">dict</span><span class="p">(</span><span class="n">param_types</span><span class="p">),</span>
-        <span class="nb">dict</span><span class="p">(</span><span class="n">prop_types</span><span class="p">),</span>
-        <span class="nb">dict</span><span class="p">(</span><span class="n">prop_values</span><span class="p">),</span>
-        <span class="nb">dict</span><span class="p">(</span><span class="n">prop_shapes</span><span class="p">),</span>
-        <span class="n">target</span><span class="p">,</span>
-    <span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_add_property_shape</span><span class="p">(</span>
-    <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">constraint</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Node</span>
-<span class="p">):</span>
-    <span class="n">pshape</span> <span class="o">=</span> <span class="n">BNode</span><span class="p">()</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">property</span><span class="p">,</span> <span class="n">pshape</span><span class="p">))</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;minCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;maxCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
-
-
-<span class="k">def</span> <span class="nf">_add_qualified_property_shape</span><span class="p">(</span>
-    <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">constraint</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Node</span>
-<span class="p">):</span>
-    <span class="n">pshape</span> <span class="o">=</span> <span class="n">BNode</span><span class="p">()</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">property</span><span class="p">,</span> <span class="n">pshape</span><span class="p">))</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
-    <span class="n">qvc</span> <span class="o">=</span> <span class="n">BNode</span><span class="p">()</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;qualifiedValueShape&quot;</span><span class="p">],</span> <span class="n">qvc</span><span class="p">))</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">qvc</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;qualifiedMinCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
-    <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;qualifiedMaxCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
-
-
-<div class="viewcode-block" id="template_to_shape"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.template_to_shape">[docs]</a><span class="k">def</span> <span class="nf">template_to_shape</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn this template into a SHACL shape.</span>
-
-<span class="sd">    :param template: template to convert</span>
-<span class="sd">    :type template: template</span>
-<span class="sd">    :return: graph of template</span>
-<span class="sd">    :rtype: Graph</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># TODO If &#39;use_all&#39; is True, this will create a shape that incorporates all</span>
-    <span class="c1"># Templates by the same name in the same Library.</span>
-    <span class="n">templ</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="n">_prep_shape_graph</span><span class="p">()</span>
-
-    <span class="n">idx</span> <span class="o">=</span> <span class="n">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="p">)</span>
-
-    <span class="n">shape</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="o">.</span><span class="n">targetClass</span><span class="p">,</span> <span class="n">idx</span><span class="o">.</span><span class="n">target_type</span><span class="p">))</span>
-    <span class="c1"># create the shape</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">))</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">idx</span><span class="o">.</span><span class="n">target_type</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">ptypes</span> <span class="ow">in</span> <span class="n">idx</span><span class="o">.</span><span class="n">prop_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ptypes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">_add_property_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">prop</span><span class="p">,</span> <span class="n">ptypes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># more than one ptype</span>
-            <span class="k">for</span> <span class="n">ptype</span> <span class="ow">in</span> <span class="n">ptypes</span><span class="p">:</span>
-                <span class="n">_add_qualified_property_shape</span><span class="p">(</span>
-                    <span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">prop</span><span class="p">,</span> <span class="n">ptype</span>
-                <span class="p">)</span>
-    <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">idx</span><span class="o">.</span><span class="n">prop_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">_add_property_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="o">.</span><span class="n">hasValue</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># more than one ptype</span>
-            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
-                <span class="n">_add_qualified_property_shape</span><span class="p">(</span>
-                    <span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="o">.</span><span class="n">hasValue</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">value</span>
-                <span class="p">)</span>
-    <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">shapes</span> <span class="ow">in</span> <span class="n">idx</span><span class="o">.</span><span class="n">prop_shapes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shapes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">_add_property_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">],</span> <span class="n">prop</span><span class="p">,</span> <span class="n">shapes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># more than one ptype</span>
-            <span class="k">for</span> <span class="n">shp</span> <span class="ow">in</span> <span class="n">shapes</span><span class="p">:</span>
-                <span class="n">_add_qualified_property_shape</span><span class="p">(</span>
-                    <span class="c1"># TODO: fix this?</span>
-                    <span class="n">shape</span><span class="p">,</span>
-                    <span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span>
-                    <span class="n">SH</span><span class="o">.</span><span class="n">node</span><span class="p">,</span>
-                    <span class="n">prop</span><span class="p">,</span>
-                    <span class="n">PARAM</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">shp</span><span class="p">)],</span>
-                <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">shape</span></div>
-
-
 <div class="viewcode-block" id="new_temporary_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.new_temporary_graph">[docs]</a><span class="k">def</span> <span class="nf">new_temporary_graph</span><span class="p">(</span><span class="n">more_namespaces</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a new in-memory RDF graph with common and additional namespace</span>
 <span class="sd">    bindings.</span>
@@ -890,6 +740,14 @@ document.write(`
         <span class="k">if</span> <span class="n">uri</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="validate_uri"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.validate_uri">[docs]</a><span class="k">def</span> <span class="nf">validate_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">parsed</span> <span class="o">=</span> <span class="n">rfc3987</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">parsed</span><span class="p">[</span><span class="s2">&quot;scheme&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">uri</span><span class="si">}</span><span class="s2"> does not look like a valid URI, trying to serialize this will break.&quot;</span>
+        <span class="p">)</span></div>
 </pre></div>
 
                 </article>
