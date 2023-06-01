@@ -376,7 +376,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.template_to_shape</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
@@ -406,8 +406,8 @@ document.write(`
     <span class="k">if</span> <span class="n">constraint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;minCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="n">exact_count</span><span class="p">)))</span>
-    <span class="k">if</span> <span class="n">exact_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;maxCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="n">exact_count</span><span class="p">)))</span>
+    <span class="c1"># if exact_count &gt; 0:</span>
+    <span class="c1">#    graph.add((pshape, SH[&quot;maxCount&quot;], Literal(exact_count)))</span>
 
 
 <span class="k">def</span> <span class="nf">_add_qualified_property_shape</span><span class="p">(</span>
@@ -425,8 +425,8 @@ document.write(`
     <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;qualifiedValueShape&quot;</span><span class="p">],</span> <span class="n">qvc</span><span class="p">))</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">qvc</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;qualifiedMinCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="n">exact_count</span><span class="p">)))</span>
-    <span class="k">if</span> <span class="n">exact_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;qualifiedMaxCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="n">exact_count</span><span class="p">)))</span>
+    <span class="c1"># if exact_count &gt; 0:</span>
+    <span class="c1">#    graph.add((pshape, SH[&quot;qualifiedMaxCount&quot;], Literal(exact_count)))</span>
 
 
 <span class="nd">@dataclass</span>
@@ -438,16 +438,34 @@ document.write(`
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">required</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">counts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
+            <span class="n">c</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">c</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">first</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">required</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">required</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># aggregate by type</span>
+        <span class="n">c_required</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required</span><span class="p">)</span>
+        <span class="n">c_optional</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">c_optional</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">c_required</span><span class="p">:</span>
+                <span class="n">c_required</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">c_required</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">c_optional</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required</span><span class="p">,</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">required</span><span class="p">)),</span>
-                <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="p">,</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="p">)),</span>
+                <span class="n">c_required</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+                <span class="n">c_optional</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
             <span class="p">]</span>
         <span class="p">)</span>
 
@@ -464,32 +482,71 @@ document.write(`
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">target_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_types</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">add_to_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds this template index in its shape form</span>
 <span class="sd">        into the provided graph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_property_shapes</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_prop_types_to_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_prop_shapes_to_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_prop_values_to_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_unspecific_props_to_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_resolve_property_shapes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compresses the chains of items in each of the prop_* dictionaries</span>
+<span class="sd">        to avoid contradictory or redundant information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># remove &#39;unspecified&#39; props from prop_unspecific if they have</span>
+        <span class="c1"># definitions elsewhere</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specified_props</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specified_props</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prop_types</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specified_props</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prop_values</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specified_props</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prop_shapes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specified_props</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prop_unspecific</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specified_props</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prop_unspecific</span><span class="p">)</span>
+        <span class="c1"># new_prop_types: Dict[Node, _OptNodeList] = dict()</span>
+        <span class="c1"># for prop, ptypes in self.prop_types.items():</span>
+        <span class="c1">#    c_required = Counter([x for x in ptypes.required])</span>
+        <span class="c1">#    c_optional = Counter([x for x in ptypes.optional])</span>
+        <span class="c1">#    for k, v in list(c_optional.items()):</span>
+        <span class="c1">#        if k in c_required:</span>
+        <span class="c1">#            c_required[k] = min(c_required[k], v)</span>
+        <span class="c1">#            del c_optional[k]</span>
+        <span class="c1">#    # at this point, c_required aggregates all of the optional props</span>
+        <span class="c1">#    # that also show up in required. c_optional only contains optional shapes now</span>
+        <span class="c1">#    new_prop_types[prop] = _OptNodeList()</span>
+        <span class="c1">#    new_prop_types[prop].required = list(</span>
+        <span class="c1">#        chain.from_iterable(</span>
+        <span class="c1">#            repeat(item, count) for item, count in c_required.items()</span>
+        <span class="c1">#        )</span>
+        <span class="c1">#    )</span>
+        <span class="c1">#    new_prop_types[prop].optional = list(</span>
+        <span class="c1">#        chain.from_iterable(</span>
+        <span class="c1">#            repeat(item, count) for item, count in c_optional.items()</span>
+        <span class="c1">#        )</span>
+        <span class="c1">#    )</span>
+        <span class="c1"># self.prop_types = new_prop_types</span>
 
     <span class="k">def</span> <span class="nf">_add_prop_types_to_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds the prop_types index to the graph containing the shape</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">ptypes</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ptypes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">ptype</span><span class="p">,</span> <span class="n">required</span> <span class="o">=</span> <span class="n">ptypes</span><span class="o">.</span><span class="n">first</span>
-                <span class="n">mincount</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">required</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
+                <span class="n">ptypes</span>
+            <span class="p">)</span>  <span class="c1"># count by type; if there is more than 1 type for this prop, use qualified</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">specified_props</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ptype</span><span class="p">,</span> <span class="n">mincount</span> <span class="o">=</span> <span class="n">ptypes</span><span class="o">.</span><span class="n">first</span>
                 <span class="n">_add_property_shape</span><span class="p">(</span>
                     <span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">prop</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">mincount</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">required</span> <span class="ow">in</span> <span class="n">ptypes</span><span class="p">:</span>
-                    <span class="n">mincount</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">required</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">mincount</span> <span class="ow">in</span> <span class="n">ptypes</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="n">_add_qualified_property_shape</span><span class="p">(</span>
                         <span class="n">shape</span><span class="p">,</span>
                         <span class="n">PARAM</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">],</span>
@@ -504,15 +561,16 @@ document.write(`
 <span class="sd">        Adds the prop_shapes index to the graph containing the shape</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">ptypes</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_shapes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ptypes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">ptype</span><span class="p">,</span> <span class="n">required</span> <span class="o">=</span> <span class="n">ptypes</span><span class="o">.</span><span class="n">first</span>
-                <span class="n">mincount</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">required</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
+                <span class="n">ptypes</span>
+            <span class="p">)</span>  <span class="c1"># count by type; if there is more than 1 type for this prop, use qualified</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">specified_props</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ptype</span><span class="p">,</span> <span class="n">mincount</span> <span class="o">=</span> <span class="n">ptypes</span><span class="o">.</span><span class="n">first</span>
                 <span class="n">_add_property_shape</span><span class="p">(</span>
                     <span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">],</span> <span class="n">prop</span><span class="p">,</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">mincount</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">required</span> <span class="ow">in</span> <span class="n">ptypes</span><span class="p">:</span>
-                    <span class="n">mincount</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">required</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">ptype</span><span class="p">,</span> <span class="n">mincount</span> <span class="ow">in</span> <span class="n">ptypes</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="n">_add_qualified_property_shape</span><span class="p">(</span>
                         <span class="n">shape</span><span class="p">,</span>
                         <span class="n">PARAM</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">],</span>
@@ -527,7 +585,10 @@ document.write(`
 <span class="sd">        Adds the prop_values index to the graph containing the shape</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
+                <span class="n">values</span>
+            <span class="p">)</span>  <span class="c1"># count by type; if there is more than 1 type for this prop, use qualified</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">specified_props</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">_add_property_shape</span><span class="p">(</span>
                     <span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="o">.</span><span class="n">hasValue</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="p">)</span>
@@ -538,8 +599,10 @@ document.write(`
                     <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_add_unspecific_props_to_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_unspecific</span><span class="p">:</span>
-            <span class="n">_add_property_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">prop</span><span class="p">,</span> <span class="n">mincount</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prop_unspecific</span><span class="p">:</span>
+            <span class="n">_add_property_shape</span><span class="p">(</span>
+                <span class="n">shape</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prop</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mincount</span>
+            <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_prep_shape_graph</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
@@ -549,10 +612,8 @@ document.write(`
     <span class="k">return</span> <span class="n">shape</span>
 
 
-<span class="k">def</span> <span class="nf">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TemplateIndex</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TemplateIndex</span><span class="p">:</span>
     <span class="n">templ_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
-
-    <span class="n">target</span> <span class="o">=</span> <span class="n">PARAM</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
 
     <span class="c1"># store the classes for each parameter</span>
     <span class="n">param_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -586,14 +647,15 @@ document.write(`
 
                 <span class="c1"># use the template name directly if it is a URI, else put it into the PARAM</span>
                 <span class="c1"># namespace to easily convert it to a URI</span>
-                <span class="k">if</span> <span class="n">validate_uri</span><span class="p">(</span><span class="n">dep_templ</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">validate_uri</span><span class="p">(</span><span class="n">dep_templ</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                     <span class="n">shape_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">URIRef</span><span class="p">(</span><span class="n">dep_templ</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                     <span class="n">dep_templ_shape_name</span> <span class="o">=</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">dep_templ</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
                     <span class="n">shape_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dep_templ_shape_name</span><span class="p">)</span>
 
             <span class="c1"># Otherwise, if &quot;{o} rdf:type {class}&quot; exists within the graph, then</span>
-            <span class="c1"># we can associate an sh:class with</span>
+            <span class="c1"># we can associate an sh:class with that type</span>
             <span class="n">o_class</span> <span class="o">=</span> <span class="n">templ_graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">o_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># determine which type list we are inserting into;</span>
@@ -654,14 +716,29 @@ document.write(`
     <span class="n">templ</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
     <span class="n">shape</span> <span class="o">=</span> <span class="n">_prep_shape_graph</span><span class="p">()</span>
 
-    <span class="n">idx</span><span class="p">:</span> <span class="n">_TemplateIndex</span> <span class="o">=</span> <span class="n">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="p">)</span>
-
+    <span class="c1"># create an index for the &#39;name&#39; parameter -- this is the root of the template.</span>
+    <span class="c1"># Make sure to inline_dependencies so that the full context is captured when generating</span>
+    <span class="c1"># the shape</span>
+    <span class="n">idx</span><span class="p">:</span> <span class="n">_TemplateIndex</span> <span class="o">=</span> <span class="n">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">(),</span> <span class="n">PARAM</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
     <span class="c1"># TODO: don&#39;t add targetClass for now...maybe there is some case where we want it?</span>
+    <span class="n">shape</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">target_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">shape</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">idx</span><span class="o">.</span><span class="n">target_type</span><span class="p">))</span>
+    <span class="n">idx</span><span class="o">.</span><span class="n">add_to_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1"># find all other ?x rdf:type ?class nodes in the template that don&#39;t start with &#39;name&#39;</span>
+    <span class="c1"># and make sure to add them too</span>
+    <span class="k">for</span> <span class="n">sub_templ</span> <span class="ow">in</span> <span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sub_templ</span><span class="p">,</span> <span class="n">URIRef</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sub_templ</span> <span class="o">==</span> <span class="n">PARAM</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span>
+            <span class="k">continue</span>
+        <span class="n">sub_idx</span><span class="p">:</span> <span class="n">_TemplateIndex</span> <span class="o">=</span> <span class="n">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="p">,</span> <span class="n">sub_templ</span><span class="p">)</span>
+        <span class="n">shape</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">sub_templ</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">sub_idx</span><span class="o">.</span><span class="n">target_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shape</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">sub_templ</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">sub_idx</span><span class="o">.</span><span class="n">target_type</span><span class="p">))</span>
+        <span class="n">sub_idx</span><span class="o">.</span><span class="n">add_to_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
 
     <span class="c1"># create the shape</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">))</span>
-    <span class="n">shape</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">PARAM</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">idx</span><span class="o">.</span><span class="n">target_type</span><span class="p">))</span>
-    <span class="n">idx</span><span class="o">.</span><span class="n">add_to_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">shape</span></div>
 </pre></div>
 
