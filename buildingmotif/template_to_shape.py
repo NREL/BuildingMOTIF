@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import Counter, defaultdict
 from copy import copy
 from dataclasses import dataclass, field
 from itertools import chain
@@ -28,8 +28,8 @@ def _add_property_shape(
     if constraint is not None and value is not None:
         graph.add((pshape, constraint, value))
     graph.add((pshape, SH["minCount"], Literal(exact_count)))
-    if exact_count > 0:
-        graph.add((pshape, SH["maxCount"], Literal(exact_count)))
+    # if exact_count > 0:
+    #    graph.add((pshape, SH["maxCount"], Literal(exact_count)))
 
 
 def _add_qualified_property_shape(
@@ -47,8 +47,8 @@ def _add_qualified_property_shape(
     graph.add((pshape, SH["qualifiedValueShape"], qvc))
     graph.add((qvc, constraint, value))
     graph.add((pshape, SH["qualifiedMinCount"], Literal(exact_count)))
-    if exact_count > 0:
-        graph.add((pshape, SH["qualifiedMaxCount"], Literal(exact_count)))
+    # if exact_count > 0:
+    #    graph.add((pshape, SH["qualifiedMaxCount"], Literal(exact_count)))
 
 
 @dataclass
@@ -60,16 +60,34 @@ class _OptNodeList:
         return len(self.required) + len(self.optional)
 
     @property
-    def first(self) -> Tuple[Node, bool]:
-        if self.required:
-            return (self.required[0], True)
-        return (self.optional[0], False)
+    def counts(self) -> Dict[Node, int]:
+        c = Counter(self.required)
+        for k in self.optional:
+            c[k] = max(c[k], 0)
+        return c
+
+    @property
+    def first(self) -> Tuple[Node, int]:
+        return next(iter(self.counts.items()))
+
+    def remove(self, node: Node):
+        if node in self.required:
+            self.required.remove(node)
+        if node in self.optional:
+            self.optional.remove(node)
 
     def __iter__(self):
+        # aggregate by type
+        c_required = Counter(self.required)
+        c_optional = Counter(self.optional)
+        for k, v in list(c_optional.items()):
+            if k in c_required:
+                c_required[k] = min(c_required[k], v)
+                del c_optional[k]
         return chain.from_iterable(
             [
-                zip(self.required, [True] * len(self.required)),
-                zip(self.optional, [False] * len(self.optional)),
+                c_required.items(),
+                c_optional.items(),
             ]
         )
 
@@ -86,32 +104,71 @@ class _TemplateIndex:
 
     @property
     def target_type(self):
-        return self.param_types[self.target][0]
+        return self.param_types.get(self.target, [None])[0]
 
     def add_to_shape(self, shape: Graph):
         """
         Adds this template index in its shape form
         into the provided graph
         """
+        self._resolve_property_shapes()
         self._add_prop_types_to_shape(shape)
         self._add_prop_shapes_to_shape(shape)
         self._add_prop_values_to_shape(shape)
         self._add_unspecific_props_to_shape(shape)
+
+    def _resolve_property_shapes(self):
+        """
+        Compresses the chains of items in each of the prop_* dictionaries
+        to avoid contradictory or redundant information
+        """
+        # remove 'unspecified' props from prop_unspecific if they have
+        # definitions elsewhere
+        self.specified_props = Counter()
+        self.specified_props.update(self.prop_types.keys())
+        self.specified_props.update(self.prop_values.keys())
+        self.specified_props.update(self.prop_shapes.keys())
+        for prop in self.specified_props:
+            self.prop_unspecific.remove(prop)
+        self.specified_props.update(self.prop_unspecific)
+        # new_prop_types: Dict[Node, _OptNodeList] = dict()
+        # for prop, ptypes in self.prop_types.items():
+        #    c_required = Counter([x for x in ptypes.required])
+        #    c_optional = Counter([x for x in ptypes.optional])
+        #    for k, v in list(c_optional.items()):
+        #        if k in c_required:
+        #            c_required[k] = min(c_required[k], v)
+        #            del c_optional[k]
+        #    # at this point, c_required aggregates all of the optional props
+        #    # that also show up in required. c_optional only contains optional shapes now
+        #    new_prop_types[prop] = _OptNodeList()
+        #    new_prop_types[prop].required = list(
+        #        chain.from_iterable(
+        #            repeat(item, count) for item, count in c_required.items()
+        #        )
+        #    )
+        #    new_prop_types[prop].optional = list(
+        #        chain.from_iterable(
+        #            repeat(item, count) for item, count in c_optional.items()
+        #        )
+        #    )
+        # self.prop_types = new_prop_types
 
     def _add_prop_types_to_shape(self, shape: Graph):
         """
         Adds the prop_types index to the graph containing the shape
         """
         for prop, ptypes in self.prop_types.items():
-            if len(ptypes) == 1:
-                ptype, required = ptypes.first
-                mincount = 1 if required else 0
+            c = Counter(
+                ptypes
+            )  # count by type; if there is more than 1 type for this prop, use qualified
+            if len(c) == 1 and self.specified_props[prop] == 1:
+                ptype, mincount = ptypes.first
                 _add_property_shape(
                     shape, PARAM[self.template.name], SH["class"], prop, ptype, mincount
                 )
             else:
-                for ptype, required in ptypes:
-                    mincount = 1 if required else 0
+                for ptype, mincount in ptypes.counts.items():
                     _add_qualified_property_shape(
                         shape,
                         PARAM[self.template.name],
@@ -126,15 +183,16 @@ class _TemplateIndex:
         Adds the prop_shapes index to the graph containing the shape
         """
         for prop, ptypes in self.prop_shapes.items():
-            if len(ptypes) == 1:
-                ptype, required = ptypes.first
-                mincount = 1 if required else 0
+            c = Counter(
+                ptypes
+            )  # count by type; if there is more than 1 type for this prop, use qualified
+            if len(c) == 1 and self.specified_props[prop] == 1:
+                ptype, mincount = ptypes.first
                 _add_property_shape(
                     shape, PARAM[self.template.name], SH["node"], prop, ptype, mincount
                 )
             else:
-                for ptype, required in ptypes:
-                    mincount = 1 if required else 0
+                for ptype, mincount in ptypes.counts.items():
                     _add_qualified_property_shape(
                         shape,
                         PARAM[self.template.name],
@@ -149,7 +207,10 @@ class _TemplateIndex:
         Adds the prop_values index to the graph containing the shape
         """
         for prop, values in self.prop_values.items():
-            if len(values) == 1:
+            c = Counter(
+                values
+            )  # count by type; if there is more than 1 type for this prop, use qualified
+            if len(c) == 1 and self.specified_props[prop] == 1:
                 _add_property_shape(
                     shape, PARAM[self.template.name], SH.hasValue, prop, values[0]
                 )
@@ -160,8 +221,10 @@ class _TemplateIndex:
                     )
 
     def _add_unspecific_props_to_shape(self, shape: Graph):
-        for prop in self.prop_unspecific:
-            _add_property_shape(shape, PARAM[self.template.name], None, prop, None)
+        for (prop, mincount) in self.prop_unspecific:
+            _add_property_shape(
+                shape, PARAM[self.template.name], None, prop, None, mincount
+            )
 
 
 def _prep_shape_graph() -> Graph:
@@ -171,10 +234,8 @@ def _prep_shape_graph() -> Graph:
     return shape
 
 
-def _index_properties(templ: "Template") -> _TemplateIndex:
+def _index_properties(templ: "Template", target: URIRef) -> _TemplateIndex:
     templ_graph = copy_graph(templ.body)
-
-    target = PARAM["name"]
 
     # store the classes for each parameter
     param_types: Dict[Node, List[Node]] = defaultdict(list)
@@ -208,14 +269,15 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
 
                 # use the template name directly if it is a URI, else put it into the PARAM
                 # namespace to easily convert it to a URI
-                if validate_uri(dep_templ.name):
+                try:
+                    validate_uri(dep_templ.name)
                     shape_list.append(URIRef(dep_templ.name))
-                else:
+                except ValueError:
                     dep_templ_shape_name = PARAM[dep_templ.name]
                     shape_list.append(dep_templ_shape_name)
 
             # Otherwise, if "{o} rdf:type {class}" exists within the graph, then
-            # we can associate an sh:class with
+            # we can associate an sh:class with that type
             o_class = templ_graph.value(o, RDF.type)
             if o_class is not None:
                 # determine which type list we are inserting into;
@@ -276,12 +338,27 @@ def template_to_nodeshape(template: "Template") -> Graph:
     templ = copy(template)
     shape = _prep_shape_graph()
 
-    idx: _TemplateIndex = _index_properties(templ)
-
+    # create an index for the 'name' parameter -- this is the root of the template.
+    # Make sure to inline_dependencies so that the full context is captured when generating
+    # the shape
+    idx: _TemplateIndex = _index_properties(templ.inline_dependencies(), PARAM["name"])
     # TODO: don't add targetClass for now...maybe there is some case where we want it?
+    shape.add((PARAM[templ.name], RDF.type, SH.NodeShape))
+    if idx.target_type is not None:
+        shape.add((PARAM[templ.name], SH["class"], idx.target_type))
+    idx.add_to_shape(shape)
+
+    # find all other ?x rdf:type ?class nodes in the template that don't start with 'name'
+    # and make sure to add them too
+    for sub_templ in templ.body.objects(RDF.type):
+        assert isinstance(sub_templ, URIRef)
+        if sub_templ == PARAM["name"]:
+            continue
+        sub_idx: _TemplateIndex = _index_properties(templ, sub_templ)
+        shape.add((sub_templ, RDF.type, SH.NodeShape))
+        if sub_idx.target_type is not None:
+            shape.add((sub_templ, SH["class"], sub_idx.target_type))
+        sub_idx.add_to_shape(shape)
 
     # create the shape
-    shape.add((PARAM[templ.name], RDF.type, SH.NodeShape))
-    shape.add((PARAM[templ.name], SH["class"], idx.target_type))
-    idx.add_to_shape(shape)
     return shape

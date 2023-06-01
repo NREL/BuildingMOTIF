@@ -389,6 +389,10 @@ class Template:
             if include_optional or param not in self.optional_args
         }
         res = self.evaluate(bindings)
+        if not isinstance(res, rdflib.Graph):
+            raise ValueError(
+                f"Expected graph but got template after call to evaluate(). Missing params: {res.parameters}"
+            )
         assert isinstance(res, rdflib.Graph)
         return bindings, res
 
