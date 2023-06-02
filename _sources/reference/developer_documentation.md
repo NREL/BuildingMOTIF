@@ -21,12 +21,9 @@
 
 ## Developing
 
-To initialize your database, create your local configs file, enter your db uri, and run the migrations.
+To initialize your database, init $DB_URI (set in `.env`) and run the migrations.
 ```
-cp configs.py.dist configs.py
-
-echo "DB_URI = 'sqlite:////path/to/db.db'" > configs.py
-
+set -o allexport; source .env; set +o allexport
 poetry run alembic upgrade head
 ```
 

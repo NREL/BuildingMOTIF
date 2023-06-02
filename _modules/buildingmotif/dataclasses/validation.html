@@ -202,7 +202,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -429,20 +428,8 @@ document.write(`
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">_result_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Node</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the &#39;name&#39; of the ValidationReport to make failed_shape/failed_component</span>
-<span class="sd">        easier to express. We compute this by taking advantage of the fact that the validation</span>
-<span class="sd">        result graph is actually a tree with a single root. We can find the root by finding</span>
-<span class="sd">        all URIs which appear as subjects in the validation_result graph that do *not* appear</span>
-<span class="sd">        as objects; this should  be exactly one URI which is the &#39;root&#39; of the validation result</span>
-<span class="sd">        graph</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">possible_uris</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">subjects</span><span class="p">())</span>
-        <span class="n">objects</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">objects</span><span class="p">())</span>
-        <span class="n">sub_not_obj</span> <span class="o">=</span> <span class="n">possible_uris</span> <span class="o">-</span> <span class="n">objects</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_not_obj</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Validation result has more than one &#39;root&#39; node, which should not happen. Please raise an issue on https://github.com/NREL/BuildingMOTIF&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">sub_not_obj</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="sd">        easier to express&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">subjects</span><span class="p">())</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">failed_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
