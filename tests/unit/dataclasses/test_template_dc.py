@@ -1,12 +1,18 @@
+from pathlib import Path
+from tempfile import NamedTemporaryFile
+
+import openpyxl
 import pytest
 import rdflib
-from rdflib import RDF, URIRef
+from rdflib import RDF, Namespace, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from buildingmotif.dataclasses import Library, Template
 from buildingmotif.dataclasses.template import Dependency
+from buildingmotif.ingresses.template import TemplateIngress
+from buildingmotif.ingresses.xlsx import XLSXIngress
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import graph_size
 
@@ -220,3 +226,86 @@ def test_template_compilation(clean_building_motif):
     assert templ.name == "test"
     assert sorted(templ.parameters) == sorted(("name", "occ", "temp", "sp", "zone"))
     assert graph_size(templ.body) == 8
+
+
+def test_template_spreadsheet_generation(clean_building_motif):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    BLDG = Namespace("urn:bldg/")
+
+    def add_spreadsheet_row(sheet, bindings):
+        num_columns = sheet.max_column
+        for column in range(1, num_columns + 1):
+            param = sheet.cell(row=1, column=column).value
+            sheet.cell(row=2, column=column).value = bindings[param][len(BLDG) :]
+
+    # test simple template, no deps, no optional, no inline
+    templ = lib.get_template_by_name("supply-fan")
+    bindings, filled = templ.fill(BLDG)
+    with NamedTemporaryFile(suffix=".xlsx") as dest:
+        templ.generate_spreadsheet(Path(dest.name))
+
+        w = openpyxl.load_workbook(dest.name)
+        add_spreadsheet_row(w.active, bindings)
+        w.save(Path(dest.name))
+
+        reader = XLSXIngress(Path(dest.name))
+        ing = TemplateIngress(templ, None, reader)
+        g = ing.graph(BLDG)
+
+        assert isomorphic(
+            g, filled
+        ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
+
+    # test simple template, no deps, WITH optional, no inline
+    templ = lib.get_template_by_name("outside-air-damper")
+    bindings, filled = templ.fill(BLDG, include_optional=True)
+    with NamedTemporaryFile(suffix=".xlsx") as dest:
+        templ.generate_spreadsheet(Path(dest.name))
+
+        w = openpyxl.load_workbook(dest.name)
+        add_spreadsheet_row(w.active, bindings)
+        w.save(Path(dest.name))
+
+        reader = XLSXIngress(Path(dest.name))
+        ing = TemplateIngress(templ, None, reader)
+        g = ing.graph(BLDG)
+
+        assert isomorphic(
+            g, filled
+        ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
+
+    # test simple template, WITH deps, WITH optional, no inline
+    templ = lib.get_template_by_name("single-zone-vav-ahu")
+    bindings, filled = templ.fill(BLDG, include_optional=True)
+    with NamedTemporaryFile(suffix=".xlsx") as dest:
+        templ.generate_spreadsheet(Path(dest.name))
+
+        w = openpyxl.load_workbook(dest.name)
+        add_spreadsheet_row(w.active, bindings)
+        w.save(Path(dest.name))
+
+        reader = XLSXIngress(Path(dest.name))
+        ing = TemplateIngress(templ, None, reader)
+        g = ing.graph(BLDG)
+
+        assert isomorphic(
+            g, filled
+        ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
+
+    # test simple template, WITH deps, WITH optional, no inline
+    templ = lib.get_template_by_name("single-zone-vav-ahu").inline_dependencies()
+    bindings, filled = templ.fill(BLDG, include_optional=True)
+    with NamedTemporaryFile(suffix=".xlsx") as dest:
+        templ.generate_spreadsheet(Path(dest.name))
+
+        w = openpyxl.load_workbook(dest.name)
+        add_spreadsheet_row(w.active, bindings)
+        w.save(Path(dest.name))
+
+        reader = XLSXIngress(Path(dest.name))
+        ing = TemplateIngress(templ, None, reader, inline=True)
+        g = ing.graph(BLDG)
+
+        assert isomorphic(
+            g, filled
+        ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
