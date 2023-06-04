@@ -1,7 +1,10 @@
+import logging
 import warnings
 from collections import Counter
+from copy import copy
 from dataclasses import dataclass
 from itertools import chain
+from os import PathLike
 from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
@@ -439,6 +442,52 @@ class Template:
         matcher = TemplateMatcher(model.graph, self, ontology)
         for mapping, sg in matcher.building_mapping_subgraphs_iter():
             yield mapping, sg, matcher.remaining_template(mapping)
+
+    def generate_spreadsheet(self, path: PathLike, inline: bool = False):
+        """
+        Generate a spreadsheet for this template. Once filled out, the resulting
+        template can be passed to a Template Ingress to populate a model.
+
+        :param path: destination of the generated spreadsheet (should probably
+                    end in '.xlsx')
+        :type path: PathLike
+        :type path: PathLike
+        :param inline: if True, generate the spreadsheet for the inlined template
+        :type inline: bool, optional
+        """
+        try:
+            from openpyxl import Workbook
+            from openpyxl.utils import get_column_letter
+            from openpyxl.worksheet.table import Table, TableStyleInfo
+        except ImportError:
+            logging.critical(
+                "Install the 'xlsx-ingress' module, e.g. 'pip install buildingmotif[xlsx-ingress]'"
+            )
+            return
+        templ = self if not inline else self.inline_dependencies()
+        all_parameters = copy(templ.parameters)
+        mandatory_parameters = all_parameters - set(templ.optional_args)
+
+        workbook = Workbook()
+        sheet = workbook.active
+        if sheet is None:
+            raise Exception("Could not open active sheet in Workbook")
+
+        row_data = list(mandatory_parameters) + list(templ.optional_args)
+        for column_index, cell_value in enumerate(row_data, 1):
+            column_letter = get_column_letter(column_index)
+            sheet[f"{column_letter}1"] = cell_value  # type: ignore
+            # Adjust column width based on cell content
+            column_dimensions = sheet.column_dimensions[column_letter]  # type: ignore
+            column_dimensions.width = max(column_dimensions.width, len(str(cell_value)))
+
+        tab = Table(
+            displayName="Table1", ref=f"A1:{get_column_letter(len(row_data))}10"
+        )
+        style = TableStyleInfo(name="TableStyleMedium9", showRowStripes=True)
+        tab.tableStyleInfo = style
+        sheet.add_table(tab)
+        workbook.save(path)
 
 
 @dataclass
