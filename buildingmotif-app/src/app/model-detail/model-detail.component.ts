@@ -1,15 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Model } from '../types'
-import { ModelDetailService } from './model-detail.service'
-import {FormControl} from '@angular/forms';
-import {
-  MatSnackBar,
-  MatSnackBarHorizontalPosition,
-  MatSnackBarVerticalPosition,
-} from '@angular/material/snack-bar';
+import { ModelDetailService, Triple } from './model-detail.service'
+import { FormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {MatDialog} from '@angular/material/dialog';
 import {TemplateEvaluateComponent} from '../template-evaluate/template-evaluate.component'
+import {MatSort, Sort, MatSortModule, } from '@angular/material/sort';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 
 @Component({
   selector: 'app-model-detail',
@@ -17,7 +15,7 @@ import {TemplateEvaluateComponent} from '../template-evaluate/template-evaluate.
   providers: [ModelDetailService],
   styleUrls: ['./model-detail.component.css']
 })
-export class ModelDetailComponent{
+export class ModelDetailComponent implements OnInit{
   model: Model;
   graph: string; // graph as in DB
   graphFormControl: FormControl = new FormControl(''); // graph as in UI
@@ -35,6 +33,9 @@ export class ModelDetailComponent{
   showFiller: boolean = true;
   sideNaveOpen: boolean = false;
   updatingGraphSpinner: boolean = false;
+  tableData = new MatTableDataSource<Triple>();
+  displayedColumns = ["parent", "ptype", "child", "ctype"];
+  columnsToDisplay = ["parent", "ptype", "child", "ctype"];
 
   constructor(
     private route: ActivatedRoute,
@@ -44,6 +45,19 @@ export class ModelDetailComponent{
   ) {
     [this.model, this.graph] = route.snapshot.data["ModelDetailResolver"];
     this.graphFormControl.setValue(this.graph);
+  }
+
+  @ViewChild(MatSort) sort: MatSort | null = null;
+
+  ngOnInit() {
+    this.ModelDetailService.getModelTable(this.model.id)
+      .subscribe({
+        next: (data: Triple[]) => {
+          this.tableData = new MatTableDataSource(data);
+          this.tableData.sort = this.sort;
+        }, // success path
+        error: (error) => {} // error path  
+      });
   }
 
   onSave(): void{

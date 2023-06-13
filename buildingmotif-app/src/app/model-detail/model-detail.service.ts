@@ -5,6 +5,8 @@ import { Model } from '../types'
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
+export interface Triple {subject: string, object: string, predicate: string};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +24,14 @@ export class ModelDetailService {
 
   getModelGraph(id: number) {
     return this.http.get(`http://localhost:5000/models/${id}/graph`, {responseType: 'text'})
+      .pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError) // then handle the error
+      );
+  }
+
+  getModelTable(id: number): Observable<Triple[]> {
+    return this.http.get<Triple[]>(`http://localhost:5000/models/${id}/table`)
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error

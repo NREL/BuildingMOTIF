@@ -38,6 +38,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatCheckboxModule} from '@angular/material/checkbox'; 
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatSortModule} from '@angular/material/sort'; 
 
 @NgModule({
   declarations: [
@@ -80,6 +81,7 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatCheckboxModule,
     MatDialogModule,
     MatStepperModule,
+    MatSortModule,
   ],
   providers: [TemplateDetailService, LibraryService],
   bootstrap: [AppComponent]

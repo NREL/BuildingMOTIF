@@ -56,6 +56,34 @@ def get_model_graph(models_id: int) -> Graph:
 
     return model.graph.serialize(format="ttl"), status.HTTP_200_OK
 
+q = """
+    SELECT ?parent ?ptype ?child ?ctype 
+    WHERE {
+        ?parent brick:hasPart ?child .
+        ?parent rdf:type ?ptype .
+        ?child rdf:type ?ctype
+    }
+    """
+
+@blueprint.route("/<models_id>/table", methods=(["GET"]))
+def get_model_table(models_id: int) -> Graph:
+    """Get model graph by id.
+
+    :param models_id: model id
+    :type models_id: int
+    :return: requested model graph
+    :rtype: rdflib.Graph
+    """
+    try:
+        model = Model.load(models_id)
+    except NoResultFound:
+        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    return [
+        {"parent": p, "ptype": pt, "child": c, "ctype": ct}
+        for p, pt, c, ct in model.graph.query(q)
+    ], status.HTTP_200_OK
+
 
 @blueprint.route("", methods=(["POST"]))
 def create_model() -> flask.Response:

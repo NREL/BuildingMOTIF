@@ -2,22 +2,62 @@
     <div class="main-content-and-button">
         <!-- Main Content -->
         <div class="main-content">
-            <div class="title">{{model.name}}</div>
-            <mat-progress-bar mode="indeterminate" *ngIf="updatingGraphSpinner"></mat-progress-bar>
-            <div class="graph-info" *ngIf="!updatingGraphSpinner">
-                <ngx-codemirror #codemirror class="graph" [options]="codeMirrorOptions" [formControl]="graphFormControl">
-                </ngx-codemirror>
+            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
 
-                <!-- Buttons -->
-                <div class="buttons">
-                    <button mat-raised-button (click)="onSave()" color="primary">Save</button>
-                    <button mat-raised-button (click)="undoChangesToGraph()" color="primary">Undo</button>
-                    <button mat-raised-button color="primary" (click)="fileInput.click()">
-                        <div>Update with file</div>
-                        <input type="file" id="file" hidden #fileInput (change)="updateGraphWithFile($event)">
-                    </button>
-                </div>
-            </div>
+                <!-- Turtle View -->
+                <mat-tab label="Turtle">
+                    <div class="title">{{model.name}}</div>
+                    <mat-progress-bar mode="indeterminate" *ngIf="updatingGraphSpinner"></mat-progress-bar>
+                    <div class="graph-info" *ngIf="!updatingGraphSpinner">
+                        <ngx-codemirror #codemirror class="graph" [options]="codeMirrorOptions" [formControl]="graphFormControl">
+                        </ngx-codemirror>
+
+                        <div class="buttons">
+                            <button mat-raised-button (click)="onSave()" color="primary">Save</button>
+                            <button mat-raised-button (click)="undoChangesToGraph()" color="primary">Undo</button>
+                            <button mat-raised-button color="primary" (click)="fileInput.click()">
+                                <div>Update with file</div>
+                                <input type="file" id="file" hidden #fileInput (change)="updateGraphWithFile($event)">
+                            </button>
+                        </div>
+                    </div>                
+                </mat-tab>
+
+                <!-- Table -->
+                <mat-tab label="Parent/Child Table">
+                    <table mat-table [dataSource]="tableData" matSort>
+                        <ng-container matColumnDef="parent">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Parent </th>
+                            <td mat-cell *matCellDef="let element"> {{element.parent}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="ptype">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Parent Type </th>
+                            <td mat-cell *matCellDef="let element"> {{element.ptype}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="child">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Child </th>
+                            <td mat-cell *matCellDef="let element"> {{element.child}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="ctype">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Child Type </th>
+                            <td mat-cell *matCellDef="let element"> {{element.ctype}} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                </mat-tab>
+
+                <mat-tab label="Third">Content 3</mat-tab>
+            </mat-tab-group>
+
+
+
+
+
         </div>
 
         <!-- Side Nav Handle -->
