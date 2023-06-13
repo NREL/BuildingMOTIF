@@ -502,15 +502,15 @@ document.write(`
 </ul>
 <section id="local">
 <h3>Local<a class="headerlink" href="#local" title="Permalink to this heading">#</a></h3>
-<p>Local CI is done automatically when pushing with <code class="docutils literal notranslate"><span class="pre">.pre-commit-config.yaml</span></code>, which runs <em>static</em> tests that can be run manually with the following command. This command will also generate fixes to formatting errors in staged files. After running you will need to stage the fixes for these files before running again.</p>
+<p>Local CI is done automatically when pushing with <code class="docutils literal notranslate"><span class="pre">.pre-commit-config.yaml</span></code>, which runs <em>static</em> tests that can be run manually with the following command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">run</span> <span class="o">-</span><span class="n">a</span>
 </pre></div>
 </div>
 <p>Pre-commit commands can be run individually with the following commands. Configuration of <code class="docutils literal notranslate"><span class="pre">isort</span></code>, <code class="docutils literal notranslate"><span class="pre">black</span></code>, and <code class="docutils literal notranslate"><span class="pre">mypy</span></code> are done in <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/pyproject.toml">pyproject.toml</a> and configuration of <code class="docutils literal notranslate"><span class="pre">flake8</span></code> is done in <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/.flake8">.flake8</a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">isort</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">black</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">isort</span> <span class="o">--</span><span class="n">check</span>
+<span class="n">poetry</span> <span class="n">run</span> <span class="n">black</span> <span class="o">--</span><span class="n">check</span>
 <span class="n">poetry</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">buildingmotif</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">mypy</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">types</span> <span class="o">--</span><span class="n">non</span><span class="o">-</span><span class="n">interactive</span> <span class="o">--</span><span class="n">ignore</span><span class="o">-</span><span class="n">missing</span><span class="o">-</span><span class="n">imports</span>
+<span class="n">poetry</span> <span class="n">run</span> <span class="n">mypy</span>
 </pre></div>
 </div>
 <p>The above does not include <em>dynamic</em> testing (unit and integration), which can be run manually with the following command. To run tests with DEBUG prints add the <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">log_cli=true</span></code> argument to the command</p>
