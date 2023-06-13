@@ -1,5 +1,6 @@
 # configure logging output
 import logging
+import warnings
 from functools import cached_property
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -43,7 +44,8 @@ class BACnetNetwork(RecordIngressHandler):
         # This will read the BACnet objects off of the Device.
         # Save the BACnet objects in the objects dictionary
         try:
-            assert self.network.discoveredDevices is not None
+            if self.network.discoveredDevices is None:
+                warnings.warn("BACnet ingress could not find any BACnet devices")
             for (address, device_id) in self.network.discoveredDevices:  # type: ignore
                 # set poll to 0 to avoid reading the points regularly
                 dev = BAC0.device(address, device_id, self.network, poll=0)
