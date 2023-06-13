@@ -52,7 +52,10 @@ The CI process for developers' local clones and the remote repository should be 
 
 ### Local
 
-Local CI is done automatically when pushing with `.pre-commit-config.yaml`, which runs *static* tests that can be run manually with the following command. This command will also generate fixes to formatting errors in staged files. After running you will need to stage the fixes for these files before running again.
+Local CI is done automatically when comitting with `.pre-commit-config.yaml`, which runs *static* tests against staged files and generates fixes as possible. If the pre-commit checks fail the generated fixes can be inspected and staged as desired before attempting to commit again.
+
+
+The command below will test files and generate fixes to formatting errors in files (running without `-a` will only fix staged files) without generating a commit upon successful completion.
 ```
 pre-commit run -a
 ```
