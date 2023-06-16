@@ -1,3 +1,4 @@
+import csv
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
@@ -11,10 +12,13 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from buildingmotif.dataclasses import Library, Template
 from buildingmotif.dataclasses.template import Dependency
+from buildingmotif.ingresses.csv import CSVIngress
 from buildingmotif.ingresses.template import TemplateIngress
 from buildingmotif.ingresses.xlsx import XLSXIngress
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import graph_size
+
+BLDG = Namespace("urn:bldg/")
 
 dependant_template_body = rdflib.Graph()
 dependant_template_body.parse(
@@ -228,24 +232,36 @@ def test_template_compilation(clean_building_motif):
     assert graph_size(templ.body) == 8
 
 
-def test_template_spreadsheet_generation(clean_building_motif):
-    lib = Library.load(directory="tests/unit/fixtures/templates")
-    BLDG = Namespace("urn:bldg/")
+# utility function for spreadsheet tests
+def _add_spreadsheet_row(sheet, bindings):
+    num_columns = sheet.max_column
+    for column in range(1, num_columns + 1):
+        param = sheet.cell(row=1, column=column).value
+        sheet.cell(row=2, column=column).value = bindings[param][len(BLDG) :]
 
-    def add_spreadsheet_row(sheet, bindings):
-        num_columns = sheet.max_column
-        for column in range(1, num_columns + 1):
-            param = sheet.cell(row=1, column=column).value
-            sheet.cell(row=2, column=column).value = bindings[param][len(BLDG) :]
+
+def _add_csv_row(output_io, tempfile, bindings):
+    params = [param.strip() for param in output_io.getvalue().split(",")]
+    w = csv.writer(tempfile)
+    w.writerow([bindings[param][len(BLDG) :] for param in params])
+    tempfile.flush()
+
+
+def test_template_spreadsheet_generation_simple_nodeps_noopt_noinline(
+    clean_building_motif,
+):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
 
     # test simple template, no deps, no optional, no inline
     templ = lib.get_template_by_name("supply-fan")
     bindings, filled = templ.fill(BLDG)
     with NamedTemporaryFile(suffix=".xlsx") as dest:
-        templ.generate_spreadsheet(Path(dest.name))
+        output = templ.generate_spreadsheet()
+        assert output is not None
+        dest.write(output.getbuffer())
 
         w = openpyxl.load_workbook(dest.name)
-        add_spreadsheet_row(w.active, bindings)
+        _add_spreadsheet_row(w.active, bindings)
         w.save(Path(dest.name))
 
         reader = XLSXIngress(Path(dest.name))
@@ -255,15 +271,46 @@ def test_template_spreadsheet_generation(clean_building_motif):
         assert isomorphic(
             g, filled
         ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
+
+
+def test_template_csv_generation_simple_nodeps_noopt_noinline(clean_building_motif):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+
+    # test simple template, no deps, no optional, no inline
+    templ = lib.get_template_by_name("supply-fan")
+    bindings, filled = templ.fill(BLDG)
+    with NamedTemporaryFile(mode="w", suffix=".csv") as dest:
+        output = templ.generate_csv()
+        assert output is not None
+        dest.writelines([output.getvalue()])
+        dest.flush()
+
+        _add_csv_row(output, dest, bindings)
+
+        reader = CSVIngress(Path(dest.name))
+        ing = TemplateIngress(templ, None, reader)
+        g = ing.graph(BLDG)
+
+        assert isomorphic(
+            g, filled
+        ), f"Template -> csv -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
+
+
+def test_template_spreadsheet_generation_simple_nodeps_withopt_noinline(
+    clean_building_motif,
+):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
 
     # test simple template, no deps, WITH optional, no inline
     templ = lib.get_template_by_name("outside-air-damper")
     bindings, filled = templ.fill(BLDG, include_optional=True)
     with NamedTemporaryFile(suffix=".xlsx") as dest:
-        templ.generate_spreadsheet(Path(dest.name))
+        output = templ.generate_spreadsheet()
+        assert output is not None
+        dest.write(output.getbuffer())
 
         w = openpyxl.load_workbook(dest.name)
-        add_spreadsheet_row(w.active, bindings)
+        _add_spreadsheet_row(w.active, bindings)
         w.save(Path(dest.name))
 
         reader = XLSXIngress(Path(dest.name))
@@ -273,15 +320,46 @@ def test_template_spreadsheet_generation(clean_building_motif):
         assert isomorphic(
             g, filled
         ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
+
+
+def test_template_csv_generation_simple_nodeps_withopt_noinline(clean_building_motif):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+
+    # test simple template, no deps, WITH optional, no inline
+    templ = lib.get_template_by_name("outside-air-damper")
+    bindings, filled = templ.fill(BLDG, include_optional=True)
+    with NamedTemporaryFile(mode="w", suffix=".csv") as dest:
+        output = templ.generate_csv()
+        assert output is not None
+        dest.writelines([output.getvalue()])
+        dest.flush()
+
+        _add_csv_row(output, dest, bindings)
+
+        reader = CSVIngress(Path(dest.name))
+        ing = TemplateIngress(templ, None, reader)
+        g = ing.graph(BLDG)
+
+        assert isomorphic(
+            g, filled
+        ), f"Template -> csv -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
+
+
+def test_template_spreadsheet_generation_simple_withdeps_withopt_noinline(
+    clean_building_motif,
+):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
 
     # test simple template, WITH deps, WITH optional, no inline
     templ = lib.get_template_by_name("single-zone-vav-ahu")
     bindings, filled = templ.fill(BLDG, include_optional=True)
     with NamedTemporaryFile(suffix=".xlsx") as dest:
-        templ.generate_spreadsheet(Path(dest.name))
+        output = templ.generate_spreadsheet()
+        assert output is not None
+        dest.write(output.getbuffer())
 
         w = openpyxl.load_workbook(dest.name)
-        add_spreadsheet_row(w.active, bindings)
+        _add_spreadsheet_row(w.active, bindings)
         w.save(Path(dest.name))
 
         reader = XLSXIngress(Path(dest.name))
@@ -292,14 +370,45 @@ def test_template_spreadsheet_generation(clean_building_motif):
             g, filled
         ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
 
+
+def test_template_csv_generation_simple_withdeps_withopt_noinline(clean_building_motif):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+
     # test simple template, WITH deps, WITH optional, no inline
+    templ = lib.get_template_by_name("single-zone-vav-ahu")
+    bindings, filled = templ.fill(BLDG, include_optional=True)
+    with NamedTemporaryFile(mode="w", suffix=".csv") as dest:
+        output = templ.generate_csv()
+        assert output is not None
+        dest.writelines([output.getvalue()])
+        dest.flush()
+
+        _add_csv_row(output, dest, bindings)
+
+        reader = CSVIngress(Path(dest.name))
+        ing = TemplateIngress(templ, None, reader)
+        g = ing.graph(BLDG)
+
+        assert isomorphic(
+            g, filled
+        ), f"Template -> csv -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
+
+
+def test_template_spreadsheet_generation_simple_withdeps_withopt_withinline(
+    clean_building_motif,
+):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+
+    # test simple template, WITH deps, WITH optional, WITH inline
     templ = lib.get_template_by_name("single-zone-vav-ahu").inline_dependencies()
     bindings, filled = templ.fill(BLDG, include_optional=True)
     with NamedTemporaryFile(suffix=".xlsx") as dest:
-        templ.generate_spreadsheet(Path(dest.name))
+        output = templ.generate_spreadsheet()
+        assert output is not None
+        dest.write(output.getbuffer())
 
         w = openpyxl.load_workbook(dest.name)
-        add_spreadsheet_row(w.active, bindings)
+        _add_spreadsheet_row(w.active, bindings)
         w.save(Path(dest.name))
 
         reader = XLSXIngress(Path(dest.name))
@@ -309,3 +418,28 @@ def test_template_spreadsheet_generation(clean_building_motif):
         assert isomorphic(
             g, filled
         ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"
+
+
+def test_template_csv_generation_simple_withdeps_withopt_withinline(
+    clean_building_motif,
+):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+
+    # test simple template, WITH deps, WITH optional, WITH inline
+    templ = lib.get_template_by_name("single-zone-vav-ahu").inline_dependencies()
+    bindings, filled = templ.fill(BLDG, include_optional=True)
+    with NamedTemporaryFile(mode="w", suffix=".csv") as dest:
+        output = templ.generate_csv()
+        assert output is not None
+        dest.writelines([output.getvalue()])
+        dest.flush()
+
+        _add_csv_row(output, dest, bindings)
+
+        reader = CSVIngress(Path(dest.name))
+        ing = TemplateIngress(templ, None, reader, inline=True)
+        g = ing.graph(BLDG)
+
+        assert isomorphic(
+            g, filled
+        ), f"Template -> csv -> ingress -> graph path did not generate a result isomorphic to just filling the template {templ.name}"

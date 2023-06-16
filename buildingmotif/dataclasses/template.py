@@ -1,8 +1,10 @@
+import csv
 import logging
 import warnings
 from collections import Counter
 from copy import copy
 from dataclasses import dataclass
+from io import BytesIO, StringIO
 from itertools import chain
 from os import PathLike
 from secrets import token_hex
@@ -443,17 +445,53 @@ class Template:
         for mapping, sg in matcher.building_mapping_subgraphs_iter():
             yield mapping, sg, matcher.remaining_template(mapping)
 
-    def generate_spreadsheet(self, path: PathLike, inline: bool = False):
+    def generate_csv(
+        self, path: Optional[PathLike] = None, inline: bool = False
+    ) -> Optional[StringIO]:
         """
-        Generate a spreadsheet for this template. Once filled out, the resulting
-        template can be passed to a Template Ingress to populate a model.
+        Generate a CSV for this template which contains a column for each template parameter.
+        Once filled out, the resulting CSV file can be passed to a Template Ingress to populate a model.
+        Returns a 'io.BytesIO' object which can be written to a file or sent to another program/function.
 
-        :param path: destination of the generated spreadsheet (should probably
-                    end in '.xlsx')
-        :type path: PathLike
-        :type path: PathLike
+        :param path: if not None, writes the CSV to the indicated file
+        :type path: PathLike, optional
         :param inline: if True, generate the spreadsheet for the inlined template
         :type inline: bool, optional
+        :return: String buffer containing the resulting CSV file
+        :rtype: StringIO
+        """
+        templ = self if not inline else self.inline_dependencies()
+        all_parameters = copy(templ.parameters)
+        mandatory_parameters = all_parameters - set(templ.optional_args)
+        row_data = list(mandatory_parameters) + list(templ.optional_args)
+
+        if path is not None:
+            # write directly to file
+            with open(path) as f:
+                writer = csv.writer(f)
+                writer.writerow(row_data)
+            return None
+
+        # write to in-memory file
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(row_data)
+        return output
+
+    def generate_spreadsheet(
+        self, path: Optional[PathLike] = None, inline: bool = False
+    ) -> Optional[BytesIO]:
+        """
+        Generate a spreadsheet for this template which contains a column for each template parameter.
+        Once filled out, the resulting spreadsheet can be passed to a Template Ingress to populate a model.
+        Returns a 'io.BytesIO' object which can be written to a file or sent to another program/function.
+
+        :param path: if not None, writes the CSV to the indicated file
+        :type path: PathLike, optional
+        :param inline: if True, generate the spreadsheet for the inlined template
+        :type inline: bool, optional
+        :return: Byte buffer containing the resulting spreadsheet file
+        :rtype: BytesIO
         """
         try:
             from openpyxl import Workbook
@@ -463,7 +501,7 @@ class Template:
             logging.critical(
                 "Install the 'xlsx-ingress' module, e.g. 'pip install buildingmotif[xlsx-ingress]'"
             )
-            return
+            return None
         templ = self if not inline else self.inline_dependencies()
         all_parameters = copy(templ.parameters)
         mandatory_parameters = all_parameters - set(templ.optional_args)
@@ -487,7 +525,16 @@ class Template:
         style = TableStyleInfo(name="TableStyleMedium9", showRowStripes=True)
         tab.tableStyleInfo = style
         sheet.add_table(tab)
-        workbook.save(path)
+
+        if path is not None:
+            # write directly to file
+            workbook.save(path)
+            return None
+
+        # save the file in-memory and return the resulting buffer
+        f = BytesIO()
+        workbook.save(f)
+        return f
 
 
 @dataclass
