@@ -375,15 +375,10 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.dataclasses.template</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span><span class="p">,</span> <span class="n">StringIO</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">PathLike</span>
 <span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_hex</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -820,98 +815,7 @@ document.write(`
 
         <span class="n">matcher</span> <span class="o">=</span> <span class="n">TemplateMatcher</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">matcher</span><span class="o">.</span><span class="n">building_mapping_subgraphs_iter</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">sg</span><span class="p">,</span> <span class="n">matcher</span><span class="o">.</span><span class="n">remaining_template</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Template.generate_csv"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.generate_csv">[docs]</a>    <span class="k">def</span> <span class="nf">generate_csv</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringIO</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate a CSV for this template which contains a column for each template parameter.</span>
-<span class="sd">        Once filled out, the resulting CSV file can be passed to a Template Ingress to populate a model.</span>
-<span class="sd">        Returns a &#39;io.BytesIO&#39; object which can be written to a file or sent to another program/function.</span>
-
-<span class="sd">        :param path: if not None, writes the CSV to the indicated file</span>
-<span class="sd">        :type path: PathLike, optional</span>
-<span class="sd">        :param inline: if True, generate the spreadsheet for the inlined template</span>
-<span class="sd">        :type inline: bool, optional</span>
-<span class="sd">        :return: String buffer containing the resulting CSV file</span>
-<span class="sd">        :rtype: StringIO</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">templ</span> <span class="o">=</span> <span class="bp">self</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">inline</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span>
-        <span class="n">all_parameters</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">mandatory_parameters</span> <span class="o">=</span> <span class="n">all_parameters</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span><span class="p">)</span>
-        <span class="n">row_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mandatory_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># write directly to file</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row_data</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="c1"># write to in-memory file</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
-        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row_data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">output</span></div>
-
-<div class="viewcode-block" id="Template.generate_spreadsheet"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.generate_spreadsheet">[docs]</a>    <span class="k">def</span> <span class="nf">generate_spreadsheet</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BytesIO</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generate a spreadsheet for this template which contains a column for each template parameter.</span>
-<span class="sd">        Once filled out, the resulting spreadsheet can be passed to a Template Ingress to populate a model.</span>
-<span class="sd">        Returns a &#39;io.BytesIO&#39; object which can be written to a file or sent to another program/function.</span>
-
-<span class="sd">        :param path: if not None, writes the CSV to the indicated file</span>
-<span class="sd">        :type path: PathLike, optional</span>
-<span class="sd">        :param inline: if True, generate the spreadsheet for the inlined template</span>
-<span class="sd">        :type inline: bool, optional</span>
-<span class="sd">        :return: Byte buffer containing the resulting spreadsheet file</span>
-<span class="sd">        :rtype: BytesIO</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">openpyxl</span> <span class="kn">import</span> <span class="n">Workbook</span>
-            <span class="kn">from</span> <span class="nn">openpyxl.utils</span> <span class="kn">import</span> <span class="n">get_column_letter</span>
-            <span class="kn">from</span> <span class="nn">openpyxl.worksheet.table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableStyleInfo</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
-                <span class="s2">&quot;Install the &#39;xlsx-ingress&#39; module, e.g. &#39;pip install buildingmotif[xlsx-ingress]&#39;&quot;</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">templ</span> <span class="o">=</span> <span class="bp">self</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">inline</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span>
-        <span class="n">all_parameters</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
-        <span class="n">mandatory_parameters</span> <span class="o">=</span> <span class="n">all_parameters</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span><span class="p">)</span>
-
-        <span class="n">workbook</span> <span class="o">=</span> <span class="n">Workbook</span><span class="p">()</span>
-        <span class="n">sheet</span> <span class="o">=</span> <span class="n">workbook</span><span class="o">.</span><span class="n">active</span>
-        <span class="k">if</span> <span class="n">sheet</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not open active sheet in Workbook&quot;</span><span class="p">)</span>
-
-        <span class="n">row_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mandatory_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">column_index</span><span class="p">,</span> <span class="n">cell_value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row_data</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">column_letter</span> <span class="o">=</span> <span class="n">get_column_letter</span><span class="p">(</span><span class="n">column_index</span><span class="p">)</span>
-            <span class="n">sheet</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_letter</span><span class="si">}</span><span class="s2">1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell_value</span>  <span class="c1"># type: ignore</span>
-            <span class="c1"># Adjust column width based on cell content</span>
-            <span class="n">column_dimensions</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="n">column_dimensions</span><span class="p">[</span><span class="n">column_letter</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
-            <span class="n">column_dimensions</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">column_dimensions</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cell_value</span><span class="p">)))</span>
-
-        <span class="n">tab</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
-            <span class="n">displayName</span><span class="o">=</span><span class="s2">&quot;Table1&quot;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;A1:</span><span class="si">{</span><span class="n">get_column_letter</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row_data</span><span class="p">))</span><span class="si">}</span><span class="s2">10&quot;</span>
-        <span class="p">)</span>
-        <span class="n">style</span> <span class="o">=</span> <span class="n">TableStyleInfo</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;TableStyleMedium9&quot;</span><span class="p">,</span> <span class="n">showRowStripes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">tab</span><span class="o">.</span><span class="n">tableStyleInfo</span> <span class="o">=</span> <span class="n">style</span>
-        <span class="n">sheet</span><span class="o">.</span><span class="n">add_table</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># write directly to file</span>
-            <span class="n">workbook</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="c1"># save the file in-memory and return the resulting buffer</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
-        <span class="n">workbook</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">f</span></div></div>
+            <span class="k">yield</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">sg</span><span class="p">,</span> <span class="n">matcher</span><span class="o">.</span><span class="n">remaining_template</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Dependency">[docs]</a><span class="nd">@dataclass</span>
