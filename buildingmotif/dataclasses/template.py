@@ -467,7 +467,7 @@ class Template:
 
         if path is not None:
             # write directly to file
-            with open(path) as f:
+            with open(path, "w") as f:
                 writer = csv.writer(f)
                 writer.writerow(row_data)
             return None
