@@ -37,7 +37,8 @@ def _add_csv_row(params, tempfile, bindings):
 
 
 def pytest_generate_tests(metafunc):
-    BuildingMOTIF("sqlite://")  # in-memory
+    bm = BuildingMOTIF("sqlite://")  # in-memory
+    bm.setup_tables()
     fixture_lib = Library.load(directory="tests/unit/fixtures/templates")
     if metafunc.fixturenames == ["template", "bindings", "filled"]:
         # test simple template, no deps, no optional, no inline
