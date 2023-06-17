@@ -15,7 +15,7 @@
    ```
 5. Install dependencies and pre-commit.
     ```
-    poetry install --with dev  # includes development dependencies
+    poetry install
     poetry run pre-commit install
     ```
 
@@ -42,14 +42,6 @@ Uping the API
 poetry run python buildingmotif/api/app.py
 ```
 API will run on localhost:5000
-
-### Using Postgres
-
-**In Development**: While we find SQLite much easier to use for development, there are reasons to use Postgres as the backend database for BuildingMOTIF during development.
-We recommend use of the `psycopg2-binary` package for interacting with Postgres for development. *This will be installed automatically as part of installing development dependencies. Make sure you use `poetry install --with dev`*.
-
-**In Prodution**: To use Postgres as the backend database in a production deployment, we recommend installation of BuildingMOTIF with the `postgres` feature (`pip install BuildingMOTIF[postgres]`).
-This will install the `psycopg2` library  which is [recommended over `psycopg2-binary` for production settings](https://pypi.org/project/psycopg2-binary/).
 
 ## Continuous Integration
 
