@@ -7,7 +7,6 @@ import openpyxl
 from rdflib import Namespace
 from rdflib.compare import isomorphic
 
-from buildingmotif.building_motif.building_motif import BuildingMOTIF
 from buildingmotif.dataclasses import Library
 from buildingmotif.ingresses.csv import CSVIngress
 from buildingmotif.ingresses.template import TemplateIngress
@@ -37,46 +36,35 @@ def _add_csv_row(params, tempfile, bindings):
 
 
 def pytest_generate_tests(metafunc):
-    bm = BuildingMOTIF("sqlite://")  # in-memory
-    bm.setup_tables()
-    fixture_lib = Library.load(directory="tests/unit/fixtures/templates")
-    if metafunc.fixturenames == ["template", "bindings", "filled"]:
-        # test simple template, no deps, no optional, no inline
-        fan = fixture_lib.get_template_by_name("supply-fan")
-        fan_bind, fan_fill = fan.fill(BLDG)
-
-        # test simple template, no deps, WITH optional, no inline
-        oad = fixture_lib.get_template_by_name("outside-air-damper")
-        oad_bind, oad_fill = oad.fill(BLDG, include_optional=True)
-
-        # test simple template, WITH deps, WITH optional, no inline
-        szva = fixture_lib.get_template_by_name("single-zone-vav-ahu")
-        szva_bind, szva_fill = szva.fill(BLDG, include_optional=True)
-
-        # test simple template, WITH deps, WITH optional, WITH inline
-        szva_inline = fixture_lib.get_template_by_name(
-            "single-zone-vav-ahu"
-        ).inline_dependencies()
-        szva_inline_bind, szva_inline_fill = szva_inline.fill(
-            BLDG, include_optional=True
-        )
-
+    if metafunc.fixturenames == [
+        "clean_building_motif",
+        "template_name",
+        "include_optional",
+        "inline_dependencies",
+    ]:
         test_cases = {
-            "NOdep-NOoptional-NOinline": (fan, fan_bind, fan_fill),
-            "NOdep-WITHoptional-NOinline": (oad, oad_bind, oad_fill),
-            "WITHdep-WITHoptional-NOinline": (szva, szva_bind, szva_fill),
-            "WITHdep-WITHoptional-WITHinline": (
-                szva_inline,
-                szva_inline_bind,
-                szva_inline_fill,
-            ),
+            "NOdep-NOoptional-NOinline": ("supply-fan", False, False),
+            "NOdep-WITHoptional-NOinline": ("outside-air-damper", True, False),
+            "WITHdep-WITHoptional-NOinline": ("single-zone-vav-ahu", True, False),
+            "WITHdep-WITHoptional-WITHinline": ("single-zone-vav-ahu", True, True),
         }
         metafunc.parametrize(
-            "template,bindings,filled", test_cases.values(), ids=test_cases.keys()
+            "template_name,include_optional,inline_dependencies",
+            test_cases.values(),
+            ids=test_cases.keys(),
         )
 
 
-def test_template_generation_inmemory(template, bindings, filled):
+def test_template_generation_inmemory(
+    clean_building_motif, template_name, include_optional, inline_dependencies
+):
+    fixture_lib = Library.load(directory="tests/unit/fixtures/templates")
+    template = fixture_lib.get_template_by_name(template_name)
+    template = fixture_lib.get_template_by_name(template_name)
+    if inline_dependencies:
+        template = template.inline_dependencies()
+    bindings, filled = template.fill(BLDG, include_optional=include_optional)
+
     with NamedTemporaryFile(suffix=".xlsx") as dest:
         output = template.generate_spreadsheet()
         assert output is not None
@@ -95,7 +83,15 @@ def test_template_generation_inmemory(template, bindings, filled):
         ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {template.name}"
 
 
-def test_template_generation_file(template, bindings, filled):
+def test_template_generation_file(
+    clean_building_motif, template_name, include_optional, inline_dependencies
+):
+    fixture_lib = Library.load(directory="tests/unit/fixtures/templates")
+    template = fixture_lib.get_template_by_name(template_name)
+    if inline_dependencies:
+        template = template.inline_dependencies()
+    bindings, filled = template.fill(BLDG, include_optional=include_optional)
+
     with NamedTemporaryFile(suffix=".xlsx") as dest:
         output = template.generate_spreadsheet(Path(dest.name))
         assert output is None
@@ -113,7 +109,15 @@ def test_template_generation_file(template, bindings, filled):
         ), f"Template -> spreadsheet -> ingress -> graph path did not generate a result isomorphic to just filling the template {template.name}"
 
 
-def test_csv_generation_inmemory(template, bindings, filled):
+def test_csv_generation_inmemory(
+    clean_building_motif, template_name, include_optional, inline_dependencies
+):
+    fixture_lib = Library.load(directory="tests/unit/fixtures/templates")
+    template = fixture_lib.get_template_by_name(template_name)
+    if inline_dependencies:
+        template = template.inline_dependencies()
+    bindings, filled = template.fill(BLDG, include_optional=include_optional)
+
     with NamedTemporaryFile(mode="w", suffix=".csv") as dest:
         output = template.generate_csv()
         assert output is not None
@@ -129,10 +133,18 @@ def test_csv_generation_inmemory(template, bindings, filled):
 
         assert isomorphic(
             g, filled
-        ), f"Template -> csv -> ingress -> graph path did not generate a result isomorphic to just filling the template {template.name}"
+        ), f"Template -> csv -> ingress -> graph path did not generate a result isomorphic to just filling the template {template.name}\n{(filled - g).serialize()}"
 
 
-def test_csv_generation_file(template, bindings, filled):
+def test_csv_generation_file(
+    clean_building_motif, template_name, include_optional, inline_dependencies
+):
+    fixture_lib = Library.load(directory="tests/unit/fixtures/templates")
+    template = fixture_lib.get_template_by_name(template_name)
+    if inline_dependencies:
+        template = template.inline_dependencies()
+    bindings, filled = template.fill(BLDG, include_optional=include_optional)
+
     with NamedTemporaryFile(mode="w", suffix=".csv") as dest:
         output = template.generate_csv(Path(dest.name))
         assert output is None
@@ -147,4 +159,4 @@ def test_csv_generation_file(template, bindings, filled):
 
         assert isomorphic(
             g, filled
-        ), f"Template -> csv -> ingress -> graph path did not generate a result isomorphic to just filling the template {template.name}"
+        ), f"Template -> csv -> ingress -> graph path did not generate a result isomorphic to just filling the template {template.name}\n{(filled - g).serialize()}"
