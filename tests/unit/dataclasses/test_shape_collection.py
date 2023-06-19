@@ -1,5 +1,7 @@
+import random
+
 import rdflib
-from rdflib import RDF, URIRef
+from rdflib import RDF, Graph, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
 
@@ -122,11 +124,35 @@ def test_get_shapes_for_class(clean_building_motif):
 
 
 def test_shape_to_query(clean_building_motif):
+    # fix seed for random variable names
+    random.seed(0)
+
+    g = Graph()
+
     lib = Library.load(ontology_graph="tests/unit/fixtures/shape_to_query/shapes.ttl")
     sc = lib.get_shape_collection()
 
-    print("query:", sc.shape_to_query(URIRef("urn:shapes_to_query/sensor")))
-    print()
-    print("query:", sc.shape_to_query(URIRef("urn:shapes_to_query/vav")))
+    query1 = sc.shape_to_query(URIRef("urn:shapes_to_query/sensor"))
+    assert (
+        "?my0 rdf:type/rdfs:subClassOf <https://brickschema.org/schema/Brick/ref#BACnetReference> ."
+        in query1
+    )
+    # assert this parses correctly
+    g.query(query1)
 
-    assert False
+    query2 = sc.shape_to_query(URIRef("urn:shapes_to_query/vav"))
+    assert "?target <https://brickschema.org/schema/Brick#hasPoint> ?sensor ." in query2
+    assert (
+        "?air_flow_sensor rdf:type/rdfs:subClassOf <https://brickschema.org/schema/Brick#Air_Flow_Sensor> ."
+        in query2
+    )
+    assert (
+        "OPTIONAL { ?target <https://brickschema.org/schema/Brick#hasPoint> ?dp_sensor ."
+        in query2
+    )
+    assert (
+        "?iq0 rdf:type/rdfs:subClassOf <https://brickschema.org/schema/Brick/ref#BACnetReference> ."
+        in query2
+    )
+    # assert this parses correctly
+    g.query(query2)
