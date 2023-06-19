@@ -119,3 +119,14 @@ def test_get_shapes_for_class(clean_building_motif):
         BRICK["Terminal_Unit"], [brick.get_shape_collection()]
     )
     assert len(shapes) == 1
+
+
+def test_shape_to_query(clean_building_motif):
+    lib = Library.load(ontology_graph="tests/unit/fixtures/shape_to_query/shapes.ttl")
+    sc = lib.get_shape_collection()
+
+    print("query:", sc.shape_to_query(URIRef("urn:shapes_to_query/sensor")))
+    print()
+    print("query:", sc.shape_to_query(URIRef("urn:shapes_to_query/vav")))
+
+    assert False
