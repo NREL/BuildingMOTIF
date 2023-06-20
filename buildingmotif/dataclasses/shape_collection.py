@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
 import rdflib
 from rdflib import RDF, RDFS, Graph, URIRef
-from rdflib.paths import ZeroOrOne
+from rdflib.paths import ZeroOrMore, ZeroOrOne
 from rdflib.term import Node
 
 from buildingmotif import get_building_motif
@@ -262,7 +262,7 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
         return varname
 
     # `<shape> sh:targetClass <class>` -> `?target rdf:type/rdfs:subClassOf* <class>`
-    targetClasses = graph.objects(shape, SH.targetClass)
+    targetClasses = graph.objects(shape, SH.targetClass | SH["class"])
     tc_clauses = [
         f"?target rdf:type/rdfs:subClassOf* {tc.n3()} .\n" for tc in targetClasses  # type: ignore
     ]
@@ -275,6 +275,21 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
         path = graph.value(pshape, SH.path)
         if not graph.value(pshape, SH.qualifiedValueShape):
             pshapes_by_path[path].append(pshape)  # type: ignore
+
+    for dep_shape in graph.objects(shape, SH.node):
+        dep_clause, dep_project = _shape_to_where(graph, dep_shape)
+        clauses += dep_clause
+        project.update(dep_project)
+
+    for or_clause in graph.objects(shape, SH["or"]):
+        items = list(graph.objects(or_clause, (RDF.rest * ZeroOrMore) / RDF.first))  # type: ignore
+        or_parts = []
+        for item in items:
+            or_body, or_project = _shape_to_where(graph, item)
+            or_parts.append(or_body)
+            project.update(or_project)
+        clauses += " UNION ".join(f"{{ {or_body} }}" for or_body in or_parts)
+
     # assign a unique variable for each sh:path w/o a qualified shape
     pshape_vars: Dict[Node, str] = {}
     for pshape_list in pshapes_by_path.values():
