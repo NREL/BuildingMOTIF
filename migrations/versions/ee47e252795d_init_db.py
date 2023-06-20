@@ -64,7 +64,7 @@ def upgrade():
             ["dependee_id"],
             ["template.id"],
         ),
-        sa.PrimaryKeyConstraint("dependant_id", "dependee_id"),
+        sa.PrimaryKeyConstraint("dependant_id", "dependee_id", name="pk_constraint"),
     )
     # ### end Alembic commands ###
 
