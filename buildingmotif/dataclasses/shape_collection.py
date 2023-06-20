@@ -296,7 +296,7 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
             pshape, (SH["qualifiedValueShape"] * ZeroOrOne / SH["class"])  # type: ignore
         )
         if pclass:
-            clause = f"?target {path.n3()} {name} .\n {name} rdf:type/rdfs:subClassOf {pclass.n3()} .\n"
+            clause = f"?target {path.n3()} {name} .\n {name} rdf:type/rdfs:subClassOf* {pclass.n3()} .\n"
             if qMinCount == 0:
                 clause = f"OPTIONAL {{ {clause} }} .\n"
             clauses += clause
