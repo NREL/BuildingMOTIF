@@ -38,6 +38,5 @@
    buildingmotif.shape_builder
    buildingmotif.template_compilation
    buildingmotif.template_matcher
-   buildingmotif.template_to_shape
    buildingmotif.utils
 
