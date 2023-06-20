@@ -445,9 +445,7 @@ class Template:
         for mapping, sg in matcher.building_mapping_subgraphs_iter():
             yield mapping, sg, matcher.remaining_template(mapping)
 
-    def generate_csv(
-        self, path: Optional[PathLike] = None, inline: bool = False
-    ) -> Optional[StringIO]:
+    def generate_csv(self, path: Optional[PathLike] = None) -> Optional[StringIO]:
         """
         Generate a CSV for this template which contains a column for each template parameter.
         Once filled out, the resulting CSV file can be passed to a Template Ingress to populate a model.
@@ -455,15 +453,12 @@ class Template:
 
         :param path: if not None, writes the CSV to the indicated file
         :type path: PathLike, optional
-        :param inline: if True, generate the spreadsheet for the inlined template
-        :type inline: bool, optional
         :return: String buffer containing the resulting CSV file
         :rtype: StringIO
         """
-        templ = self if not inline else self.inline_dependencies()
-        all_parameters = copy(templ.parameters)
-        mandatory_parameters = all_parameters - set(templ.optional_args)
-        row_data = list(mandatory_parameters) + list(templ.optional_args)
+        all_parameters = copy(self.parameters)
+        mandatory_parameters = all_parameters - set(self.optional_args)
+        row_data = list(mandatory_parameters) + list(self.optional_args)
 
         if path is not None:
             # write directly to file
@@ -479,7 +474,7 @@ class Template:
         return output
 
     def generate_spreadsheet(
-        self, path: Optional[PathLike] = None, inline: bool = False
+        self, path: Optional[PathLike] = None
     ) -> Optional[BytesIO]:
         """
         Generate a spreadsheet for this template which contains a column for each template parameter.
@@ -488,8 +483,6 @@ class Template:
 
         :param path: if not None, writes the CSV to the indicated file
         :type path: PathLike, optional
-        :param inline: if True, generate the spreadsheet for the inlined template
-        :type inline: bool, optional
         :return: Byte buffer containing the resulting spreadsheet file
         :rtype: BytesIO
         """
@@ -502,16 +495,15 @@ class Template:
                 "Install the 'xlsx-ingress' module, e.g. 'pip install buildingmotif[xlsx-ingress]'"
             )
             return None
-        templ = self if not inline else self.inline_dependencies()
-        all_parameters = copy(templ.parameters)
-        mandatory_parameters = all_parameters - set(templ.optional_args)
+        all_parameters = copy(self.parameters)
+        mandatory_parameters = all_parameters - set(self.optional_args)
 
         workbook = Workbook()
         sheet = workbook.active
         if sheet is None:
             raise Exception("Could not open active sheet in Workbook")
 
-        row_data = list(mandatory_parameters) + list(templ.optional_args)
+        row_data = list(mandatory_parameters) + list(self.optional_args)
         for column_index, cell_value in enumerate(row_data, 1):
             column_letter = get_column_letter(column_index)
             sheet[f"{column_letter}1"] = cell_value  # type: ignore
