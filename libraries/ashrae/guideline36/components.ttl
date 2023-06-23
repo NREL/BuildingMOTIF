@@ -29,3 +29,121 @@
         sh:qualifiedMaxCount 1 ;
     ] ;
 .
+
+# component of 4.3, 4.6, 4.7, 4.8, 4.12
+:supply-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Supply_Fan ;
+    rdfs:label "Supply Fan" ;
+    # fan start/stop, required for all
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # fan speed, required for all except 4.3
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Fan_Speed_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # supply fan status, optional for all assuming 4.7, which is blank in 2021, follows the other AHUs
+    # NOTE "Connect to VFD Status or ECM Status or to current switch" might be a Brick improvement
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Fan_Status ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# component of 4.6, 4.7, 4.8, 4.12
+:filter a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:filter ;
+    rdfs:label "Filter" ;
+    # filter pressure drop, optional for all
+    sh:property [ 
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Differential_Pressure_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# component of 4.6, 4.8, 4.12
+:cooling-coil a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Cooling_Coil ;
+    rdfs:label "Cooling Coil" ;
+    # cooling signal, required for all
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Cooling_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# component of 4.2, 4.3, 4.7 (required)
+# component of 4.6, 4.8, 4.12 (application-specific)
+# NOTE guideline is inconsistent for cases when htg coils are not a component
+:heating-coil a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Heating_Coil ;
+    rdfs:label "Heating Coil" ;
+    # heating signal, required for all
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Heating_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# component of 4.1, 4.2, 4.3, 4.4, 4.5, 4.8, 4.9, 4.12
+:thermostat a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Thermostat ;
+    rdfs:label "Thermostat" ;
+    # zone temperature, required for all except 4.9
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Zone_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # local override, application-specific for all except 4.9 (NA)
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Override_Command ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # zone temperature setpoint adjustment, application-specific for all except 4.9 (NA)
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Differential_Air_Temperature_Setpoint ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# component of 4.1, 4.2, 4.3, 4.4, 4.5, 4.8, 4.12 (systems serving a single zone)
+# NOTE may need to clarify cases for zones containing rooms and relationship to points
+:zone a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:HVAC_Zone ;
+    rdfs:label "HVAC Zone" ;
+    # occupancy sensor, application-specific for all
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Occupancy_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # window switch, application-specific for all
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Open_Close_Status ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;    
+    # zone CO2 sensor, application-specific for all
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:CO2_Level_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
