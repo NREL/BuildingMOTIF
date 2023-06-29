@@ -55,11 +55,11 @@ heating-coil:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Heating_Coil ;
-      brick:hasPoint p:cmd .
+      brick:hasPoint p:heating_signal .
   dependencies:
   - template: https://brickschema.org/schema/Brick#Position_Command
     library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "cmd"}
+    args: {"name": "heating_signal"}
 
 cooling-coil:
   body: >
@@ -70,7 +70,7 @@ cooling-coil:
   dependencies:
     - template: https://brickschema.org/schema/Brick#Cooling_Command
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "cmd"}
+      args: {"name": "cooling_signal"}
 
 filter:
   body: >
@@ -81,5 +81,5 @@ filter:
   dependencies:
     - template: https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "filter_pd"}
+      args: {"name": "pressure_drop"}
 

@@ -7,20 +7,20 @@ fan-coil-unit:
       brick:hasPart p:fan, p:clg_coil, p:htg_coil, p:filter ;
       brick:hasPoint 
         p:fan_start_stop, p:fan_speed, p:fan_status, p:sa_temp, p:ra_temp, 
-        p:filter_pd, p:clg_signal, p:htg_signal, p:zone_temp .
+        p:filter_pd, p:clg_signal, p:htg_signal, p:za_temp .
   optional: ['clg_coil', 'htg_coil', 'fan_status', 'ra_temp', 'filter_pd']
   dependencies:
+    - template: fan
+      args: {"name": "fan"}
+    - template: cooling-coil
+      args: {"name": "clg_coil"}
+    - template: heating-coil
+      args: {"name": "htg_coil"}
+    - template: filter
+      args: {"name": "filter"}
     - template: https://brickschema.org/schema/Brick#HVAC_Zone
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "zone"}
-    - template: fan
-      args: {"name": "fcu_fan"}
-    - template: cooling-coil
-      args: {"name": "fcu_clg_coil"}
-    - template: heating-coil
-      args: {"name": "fcu_htg_coil"}
-    - template: filter
-      args: {"name": "fcu_filter"}
+      args: {"name": "zone"}      
     - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "sa_temp"}
@@ -29,4 +29,4 @@ fan-coil-unit:
       args: {"name": "ra_temp"}
     - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "ztemp"}
+      args: {"name": "za_temp"}
