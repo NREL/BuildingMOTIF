@@ -375,11 +375,8 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.ingresses.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">PathLike</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Namespace</span>
@@ -415,47 +412,7 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates (then caches) a list of Records from an underlying data source</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Must be overridden by subclass&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RecordIngressHandler.dump"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.RecordIngressHandler.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Takes the contents of the records of this handler and writes them to a JSON file</span>
-
-<span class="sd">        :param path: path to write output file to</span>
-<span class="sd">        :type path: PathLike</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">output_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dumps</span><span class="p">()</span>
-        <span class="n">output_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">output_file</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_string</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="RecordIngressHandler.dumps"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.RecordIngressHandler.dumps">[docs]</a>    <span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Takes the contents of the records of this handler and writes them to a string</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">records</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">&quot;rtype&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">rtype</span><span class="p">,</span> <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">fields</span><span class="p">}</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">records</span>
-        <span class="p">]</span>
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">records</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="RecordIngressHandler.load"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.RecordIngressHandler.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Takes a file generated by &#39;dump&#39; and creates a new ingress handler with those records</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span></div>
-
-<div class="viewcode-block" id="RecordIngressHandler.loads"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.RecordIngressHandler.loads">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Takes the string output by &#39;dumps&#39; and creates a new ingress handler with those records</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
-        <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Record</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;rtype&quot;</span><span class="p">],</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">records</span> <span class="o">=</span> <span class="n">records</span>
-        <span class="k">return</span> <span class="bp">self</span></div></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Must be overridden by subclass&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GraphIngressHandler"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.GraphIngressHandler">[docs]</a><span class="k">class</span> <span class="nc">GraphIngressHandler</span><span class="p">(</span><span class="n">IngressHandler</span><span class="p">):</span>
