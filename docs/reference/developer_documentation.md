@@ -52,17 +52,20 @@ The CI process for developers' local clones and the remote repository should be 
 
 ### Local
 
-Local CI is done automatically when pushing with `.pre-commit-config.yaml`, which runs *static* tests that can be run manually with the following command. 
+Local CI is done automatically when comitting with `.pre-commit-config.yaml`, which runs *static* tests against staged files and generates fixes as possible. If the pre-commit checks fail the generated fixes can be inspected and staged as desired before attempting to commit again.
+
+
+The command below will test files and generate fixes to formatting errors in files (running without `-a` will only fix staged files) without generating a commit upon successful completion.
 ```
 pre-commit run -a
 ```
 
 Pre-commit commands can be run individually with the following commands. Configuration of `isort`, `black`, and `mypy` are done in [pyproject.toml](https://github.com/NREL/BuildingMOTIF/blob/develop/pyproject.toml) and configuration of `flake8` is done in [.flake8](https://github.com/NREL/BuildingMOTIF/blob/develop/.flake8). 
 ```
-poetry run isort --check
-poetry run black --check
+poetry run isort
+poetry run black
 poetry run flake8 buildingmotif
-poetry run mypy
+poetry run mypy --install-types --non-interactive --ignore-missing-imports
 ```
 
 The above does not include *dynamic* testing (unit and integration), which can be run manually with the following command. To run tests with DEBUG prints add the `-o log_cli=true` argument to the command
