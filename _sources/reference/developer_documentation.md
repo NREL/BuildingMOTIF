@@ -15,7 +15,7 @@
    ```
 5. Install dependencies and pre-commit.
     ```
-    poetry install --with dev  # includes development dependencies
+    poetry install
     poetry run pre-commit install
     ```
 
@@ -43,14 +43,6 @@ poetry run python buildingmotif/api/app.py
 ```
 API will run on localhost:5000
 
-### Using Postgres
-
-**In Development**: While we find SQLite much easier to use for development, there are reasons to use Postgres as the backend database for BuildingMOTIF during development.
-We recommend use of the `psycopg2-binary` package for interacting with Postgres for development. *This will be installed automatically as part of installing development dependencies. Make sure you use `poetry install --with dev`*.
-
-**In Production**: To use Postgres as the backend database in a production deployment, we recommend installation of BuildingMOTIF with the `postgres` feature (`pip install BuildingMOTIF[postgres]`).
-This will install the `psycopg2` library  which is [recommended over `psycopg2-binary` for production settings](https://pypi.org/project/psycopg2-binary/). If you are using BuildingMOTIF as a dependency in another project, make sure to include the `postgres` feature; for example, to add BuildingMOTIF to a [Poetry-based](https://python-poetry.org) project, use `poetry add BuildingMOTIF[postgres]`.
-
 ## Continuous Integration
 
 The CI process for developers' local clones and the remote repository should be the same for reproduceability, i.e. the commands in the following files should be the same (with *slight* differences).
@@ -60,17 +52,20 @@ The CI process for developers' local clones and the remote repository should be 
 
 ### Local
 
-Local CI is done automatically when pushing with `.pre-commit-config.yaml`, which runs *static* tests that can be run manually with the following command. 
+Local CI is done automatically when comitting with `.pre-commit-config.yaml`, which runs *static* tests against staged files and generates fixes as possible. If the pre-commit checks fail the generated fixes can be inspected and staged as desired before attempting to commit again.
+
+
+The command below will test files and generate fixes to formatting errors in files (running without `-a` will only fix staged files) without generating a commit upon successful completion.
 ```
 pre-commit run -a
 ```
 
 Pre-commit commands can be run individually with the following commands. Configuration of `isort`, `black`, and `mypy` are done in [pyproject.toml](https://github.com/NREL/BuildingMOTIF/blob/develop/pyproject.toml) and configuration of `flake8` is done in [.flake8](https://github.com/NREL/BuildingMOTIF/blob/develop/.flake8). 
 ```
-poetry run isort --check
-poetry run black --check
+poetry run isort
+poetry run black
 poetry run flake8 buildingmotif
-poetry run mypy
+poetry run mypy --install-types --non-interactive --ignore-missing-imports
 ```
 
 The above does not include *dynamic* testing (unit and integration), which can be run manually with the following command. To run tests with DEBUG prints add the `-o log_cli=true` argument to the command
