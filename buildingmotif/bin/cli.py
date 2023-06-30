@@ -7,6 +7,7 @@ from pathlib import Path
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library
+from buildingmotif.ingresses.bacnet import BACnetNetwork
 
 cli = argparse.ArgumentParser(
     prog="buildingmotif", description="CLI Interface for common BuildingMOTIF tasks"
@@ -161,6 +162,16 @@ def app():
         cli.print_help()
     else:
         args.func(args)
+
+
+@subcommand(
+    arg("-o", "--output_file", help="Output file for BACnet scan", required=True),
+    arg("-ip", help="ip address of BACnet network to scan", default=None),
+)
+def scan(args):
+    """Scans a BACnet network and generates a JSON file for later processing"""
+    bacnet_network = BACnetNetwork(args.ip)
+    bacnet_network.dump(Path(args.output_file))
 
 
 # entrypoint is actually defined in pyproject.toml; this is here for convenience/testing
