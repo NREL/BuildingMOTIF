@@ -2,6 +2,7 @@ version: "3.4"
 services:
   device:
     build:
+      context: .
       dockerfile: Dockerfile
     networks:
       bacnet:
@@ -13,7 +14,7 @@ services:
       dockerfile: tests/integration/fixtures/buildingmotif/Dockerfile
     networks:
       bacnet:
-        ipv4_address: 172.24.0.2 
+        ipv4_address: 172.24.0.2
 networks:
   bacnet:
     ipam:
