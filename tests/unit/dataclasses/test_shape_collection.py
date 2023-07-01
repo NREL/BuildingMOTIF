@@ -134,16 +134,16 @@ def test_shape_to_query(clean_building_motif):
 
     query1 = sc.shape_to_query(URIRef("urn:shapes_to_query/sensor"))
     assert (
-        "?my0 rdf:type/rdfs:subClassOf <https://brickschema.org/schema/Brick/ref#BACnetReference> ."
+        "rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick/ref#BACnetReference> ."
         in query1
-    )
+    ), query1
     # assert this parses correctly
     g.query(query1)
 
     query2 = sc.shape_to_query(URIRef("urn:shapes_to_query/vav"))
     assert "?target <https://brickschema.org/schema/Brick#hasPoint> ?sensor ." in query2
     assert (
-        "?air_flow_sensor rdf:type/rdfs:subClassOf <https://brickschema.org/schema/Brick#Air_Flow_Sensor> ."
+        "?air_flow_sensor rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#Air_Flow_Sensor> ."
         in query2
     )
     assert (
@@ -151,7 +151,7 @@ def test_shape_to_query(clean_building_motif):
         in query2
     )
     assert (
-        "?iq0 rdf:type/rdfs:subClassOf <https://brickschema.org/schema/Brick/ref#BACnetReference> ."
+        "rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick/ref#BACnetReference> ."
         in query2
     )
     # assert this parses correctly
