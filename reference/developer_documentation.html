@@ -424,10 +424,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing">Installing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-postgres">Using Postgres</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-integration">Continuous Integration</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local">Local</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remote">Remote</a></li>
@@ -468,7 +465,7 @@ document.write(`
 </div>
 </li>
 <li><p>Install dependencies and pre-commit.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">install</span> <span class="o">--</span><span class="k">with</span> <span class="n">dev</span>  <span class="c1"># includes development dependencies</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">install</span>
 <span class="n">poetry</span> <span class="n">run</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
 </pre></div>
 </div>
@@ -495,13 +492,6 @@ document.write(`
 </pre></div>
 </div>
 <p>API will run on localhost:5000</p>
-<section id="using-postgres">
-<h3>Using Postgres<a class="headerlink" href="#using-postgres" title="Permalink to this heading">#</a></h3>
-<p><strong>In Development</strong>: While we find SQLite much easier to use for development, there are reasons to use Postgres as the backend database for BuildingMOTIF during development.
-We recommend use of the <code class="docutils literal notranslate"><span class="pre">psycopg2-binary</span></code> package for interacting with Postgres for development. <em>This will be installed automatically as part of installing development dependencies. Make sure you use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">--with</span> <span class="pre">dev</span></code></em>.</p>
-<p><strong>In Production</strong>: To use Postgres as the backend database in a production deployment, we recommend installation of BuildingMOTIF with the <code class="docutils literal notranslate"><span class="pre">postgres</span></code> feature (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">BuildingMOTIF[postgres]</span></code>).
-This will install the <code class="docutils literal notranslate"><span class="pre">psycopg2</span></code> library  which is <a class="reference external" href="https://pypi.org/project/psycopg2-binary/">recommended over <code class="docutils literal notranslate"><span class="pre">psycopg2-binary</span></code> for production settings</a>. If you are using BuildingMOTIF as a dependency in another project, make sure to include the <code class="docutils literal notranslate"><span class="pre">postgres</span></code> feature; for example, to add BuildingMOTIF to a <a class="reference external" href="https://python-poetry.org">Poetry-based</a> project, use <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">add</span> <span class="pre">BuildingMOTIF[postgres]</span></code>.</p>
-</section>
 </section>
 <section id="continuous-integration">
 <h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this heading">#</a></h2>
@@ -512,16 +502,15 @@ This will install the <code class="docutils literal notranslate"><span class="pr
 </ul>
 <section id="local">
 <h3>Local<a class="headerlink" href="#local" title="Permalink to this heading">#</a></h3>
-<p>Local CI is done automatically when comitting with <code class="docutils literal notranslate"><span class="pre">.pre-commit-config.yaml</span></code>, which runs <em>static</em> tests against staged files and generates fixes as possible. If the pre-commit checks fail the generated fixes can be inspected and staged as desired before attempting to commit again.</p>
-<p>The command below will test files and generate fixes to formatting errors in files (running without <code class="docutils literal notranslate"><span class="pre">-a</span></code> will only fix staged files) without generating a commit upon successful completion.</p>
+<p>Local CI is done automatically when pushing with <code class="docutils literal notranslate"><span class="pre">.pre-commit-config.yaml</span></code>, which runs <em>static</em> tests that can be run manually with the following command.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">run</span> <span class="o">-</span><span class="n">a</span>
 </pre></div>
 </div>
 <p>Pre-commit commands can be run individually with the following commands. Configuration of <code class="docutils literal notranslate"><span class="pre">isort</span></code>, <code class="docutils literal notranslate"><span class="pre">black</span></code>, and <code class="docutils literal notranslate"><span class="pre">mypy</span></code> are done in <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/pyproject.toml">pyproject.toml</a> and configuration of <code class="docutils literal notranslate"><span class="pre">flake8</span></code> is done in <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/blob/develop/.flake8">.flake8</a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">isort</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">black</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">isort</span> <span class="o">--</span><span class="n">check</span>
+<span class="n">poetry</span> <span class="n">run</span> <span class="n">black</span> <span class="o">--</span><span class="n">check</span>
 <span class="n">poetry</span> <span class="n">run</span> <span class="n">flake8</span> <span class="n">buildingmotif</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">mypy</span> <span class="o">--</span><span class="n">install</span><span class="o">-</span><span class="n">types</span> <span class="o">--</span><span class="n">non</span><span class="o">-</span><span class="n">interactive</span> <span class="o">--</span><span class="n">ignore</span><span class="o">-</span><span class="n">missing</span><span class="o">-</span><span class="n">imports</span>
+<span class="n">poetry</span> <span class="n">run</span> <span class="n">mypy</span>
 </pre></div>
 </div>
 <p>The above does not include <em>dynamic</em> testing (unit and integration), which can be run manually with the following command. To run tests with DEBUG prints add the <code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">log_cli=true</span></code> argument to the command</p>
@@ -630,10 +619,7 @@ This will install the <code class="docutils literal notranslate"><span class="pr
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing">Installing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-postgres">Using Postgres</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developing">Developing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-integration">Continuous Integration</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#local">Local</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remote">Remote</a></li>
