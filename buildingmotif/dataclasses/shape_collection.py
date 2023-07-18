@@ -245,6 +245,29 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         return f"{preamble} SELECT {' '.join(project)} WHERE {{\n{clauses}\n}}"
 
 
+def _is_list(graph: Graph, node: Node):
+    return (node, RDF.first, None) in graph
+
+
+def _sh_path_to_path(graph: Graph, sh_path_value: Node):
+    # check if sh:path points to a list
+    if _is_list(graph, sh_path_value):
+        components = list(
+            graph.objects(sh_path_value, (RDF.rest * ZeroOrMore) / RDF.first)
+        )
+        return "/".join([_sh_path_to_path(graph, comp) for comp in components])
+    part = graph.value(sh_path_value, SH.oneOrMorePath)
+    if part is not None:
+        return f"{_sh_path_to_path(graph, part)}+"
+    part = graph.value(sh_path_value, SH.zeroOrMorePath)
+    if part is not None:
+        return f"{_sh_path_to_path(graph, part)}*"
+    part = graph.value(sh_path_value, SH.zeroOrOnePath)
+    if part is not None:
+        return f"{_sh_path_to_path(graph, part)}?"
+    return sh_path_value.n3()
+
+
 def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
     # we will build the query as a string
     clauses: str = ""
@@ -272,7 +295,7 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
     # for all uses of the same sh:path value
     pshapes_by_path: Dict[Node, List[Node]] = defaultdict(list)
     for pshape in graph.objects(shape, SH.property):
-        path = graph.value(pshape, SH.path)
+        path = _sh_path_to_path(graph, graph.value(pshape, SH.path))
         if not graph.value(pshape, SH.qualifiedValueShape):
             pshapes_by_path[path].append(pshape)  # type: ignore
 
@@ -304,14 +327,14 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
         name = pshape_vars.get(
             pshape, f"?{graph.value(pshape, SH.name) or gensym()}".replace(" ", "_")
         )
-        path = graph.value(pshape, SH.path)
+        path = _sh_path_to_path(graph, graph.value(pshape, SH.path))
         qMinCount = graph.value(pshape, SH.qualifiedMinCount) or 0
 
         pclass = graph.value(
             pshape, (SH["qualifiedValueShape"] * ZeroOrOne / SH["class"])  # type: ignore
         )
         if pclass:
-            clause = f"?target {path.n3()} {name} .\n {name} rdf:type/rdfs:subClassOf* {pclass.n3()} .\n"
+            clause = f"?target {path} {name} .\n {name} rdf:type/rdfs:subClassOf* {pclass.n3()} .\n"
             if qMinCount == 0:
                 clause = f"OPTIONAL {{ {clause} }} .\n"
             clauses += clause
@@ -322,16 +345,28 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
         )
         if pnode:
             node_clauses, node_project = _shape_to_where(graph, pnode)
-            clause = f"?target {path.n3()} {name} .\n"
+            clause = f"?target {path} {name} .\n"
             clause += node_clauses.replace("?target", name)
             if qMinCount == 0:
                 clause = f"OPTIONAL {{ {clause} }}"
             clauses += clause
             project.update({p.replace("?target", name) for p in node_project})
 
+        or_values = graph.value(
+            pshape, (SH["qualifiedValueShape"] * ZeroOrOne / SH["or"])
+        )
+        if or_values:
+            items = list(graph.objects(or_values, (RDF.rest * ZeroOrMore) / RDF.first))
+            or_parts = []
+            for item in items:
+                or_body, or_project = _shape_to_where(graph, item)
+                or_parts.append(or_body)
+                project.update(or_project)
+            clauses += " UNION ".join(f"{{ {or_body} }}" for or_body in or_parts)
+
         pvalue = graph.value(pshape, SH.hasValue)
         if pvalue:
-            clauses += f"?target {path.n3()} {pvalue.n3()} .\n"
+            clauses += f"?target {path} {pvalue.n3()} .\n"
 
     return clauses, list(project)
 
