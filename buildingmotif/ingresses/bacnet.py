@@ -1,5 +1,6 @@
 # configure logging output
 import logging
+import warnings
 from functools import cached_property
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -42,17 +43,23 @@ class BACnetNetwork(RecordIngressHandler):
         # for each discovered Device, create a BAC0.device object
         # This will read the BACnet objects off of the Device.
         # Save the BACnet objects in the objects dictionary
-        assert self.network.discoveredDevices is not None
-        for (address, device_id) in self.network.discoveredDevices:  # type: ignore
-            # set poll to 0 to avoid reading the points regularly
-            dev = BAC0.device(address, device_id, self.network, poll=0)
-            self.devices.append(dev)
-            self.objects[(address, device_id)] = []
+        try:
+            if self.network.discoveredDevices is None:
+                warnings.warn("BACnet ingress could not find any BACnet devices")
+            for (address, device_id) in self.network.discoveredDevices:  # type: ignore
+                # set poll to 0 to avoid reading the points regularly
+                dev = BAC0.device(address, device_id, self.network, poll=0)
+                self.devices.append(dev)
+                self.objects[(address, device_id)] = []
 
-            for bobj in dev.points:
-                obj = bobj.properties.asdict
-                self._clean_object(obj)
-                self.objects[(address, device_id)].append(obj)
+                for bobj in dev.points:
+                    obj = bobj.properties.asdict
+                    self._clean_object(obj)
+                    self.objects[(address, device_id)].append(obj)
+        finally:
+            for dev in self.devices:
+                self.network.unregister_device(dev)
+            self.network.disconnect()
 
     def _clean_object(self, obj: Dict[str, Any]):
         if "name" in obj:
@@ -83,6 +90,7 @@ class BACnetNetwork(RecordIngressHandler):
         for (address, device_id), objs in self.objects.items():
             for obj in objs:
                 fields = obj.copy()
+                del fields["device"]
                 fields["device_id"] = device_id
                 records.append(
                     Record(
