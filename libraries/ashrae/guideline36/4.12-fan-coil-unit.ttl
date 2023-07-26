@@ -7,40 +7,11 @@
 @prefix : <urn:ashrae/g36/4.12/fan-coil-unit/> .
 
 :fan-coil-unit a sh:NodeShape, owl:Class, bmotif:System_Specification ;
-    sh:class brick:Fan_Coil_Unit ;
     rdfs:label "Fan Coil Unit" ;
-    # Required
+    sh:class brick:Fan_Coil_Unit ;
     sh:property [
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:supply-fan ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # Application-specific
-    sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:cooling-coil ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # Application-specific
-    sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:heating-coil ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # Required?
-    sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:filter ] ;
-        sh:qualifiedMinCount 0 ; 
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # Required?
-    sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:thermostat] ;
+        sh:qualifiedValueShape [ sh:node :supply-fan ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
@@ -58,10 +29,107 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1
     ] ;
+    # Optional
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:filter ] ;
+        sh:qualifiedMinCount 0 ; 
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # Application-specific
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:cooling-coil ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # Application-specific
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:heating-coil ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # Required
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:thermostat] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
     # must feed a zone
     sh:property [
         sh:path brick:feeds ;
-        sh:qualifiedValueShape [ sh:class components:zone ] ;
+        sh:qualifiedValueShape [ sh:node components:zone ] ;
         sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:supply-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Supply Fan" ;
+    sh:class brick:Supply_Fan ;
+    # motor
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:or ( sh:node :variable-speed-drive sh:node :motor )
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:variable-frequency-drive a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Variable Frequency Drive" ;
+    sh:class brick:Variable_Frequency_Drive ;
+    # required
+    sh:property [
+        rdfs:label "Fan start/stop" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Fan speed" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount [ sh:class brick:Frequency_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Supply fan status" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Status ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:motor a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Motor" ;
+    sh:class brick:Motor ;
+    # required
+    sh:property [
+        rdfs:label "Fan start/stop" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Fan speed" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount [ sh:class brick:Frequency_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Supply fan status" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Status ] ;
+        sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] .
