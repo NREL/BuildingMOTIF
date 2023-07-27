@@ -11,46 +11,48 @@
     sh:class brick:Fan_Coil_Unit ;
     sh:property [
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node :supply-fan ] ;
+        sh:qualifiedValueShape [ sh:node components:supply-fan ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # Required
+    # required
     sh:property [
+        rdfs:label "Supply air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # Optional
+    # optional
     sh:property [
+        rdfs:label "Return air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1
     ] ;
-    # Optional
+    # optional
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:filter ] ;
         sh:qualifiedMinCount 0 ; 
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # Application-specific
+    # application-specific
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:cooling-coil ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # Application-specific
+    # application-specific
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:heating-coil ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # Required
+    # required
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:thermostat] ;
@@ -62,74 +64,5 @@
         sh:path brick:feeds ;
         sh:qualifiedValueShape [ sh:node components:zone ] ;
         sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-:supply-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Supply Fan" ;
-    sh:class brick:Supply_Fan ;
-    # motor
-    sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [
-            sh:or ( sh:node :variable-speed-drive sh:node :motor )
-        ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-:variable-frequency-drive a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Variable Frequency Drive" ;
-    sh:class brick:Variable_Frequency_Drive ;
-    # required
-    sh:property [
-        rdfs:label "Fan start/stop" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # required
-    sh:property [
-        rdfs:label "Fan speed" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedMinCount [ sh:class brick:Frequency_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # optional
-    sh:property [
-        rdfs:label "Supply fan status" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Status ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-:motor a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Motor" ;
-    sh:class brick:Motor ;
-    # required
-    sh:property [
-        rdfs:label "Fan start/stop" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # required
-    sh:property [
-        rdfs:label "Fan speed" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedMinCount [ sh:class brick:Frequency_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # optional
-    sh:property [
-        rdfs:label "Supply fan status" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Status ] ;
-        sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] .
