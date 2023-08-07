@@ -1,0 +1,434 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+@prefix components: <urn:ashrae/g36/components/> .
+@prefix : <urn:ashrae/g36/4.11/hot-water-plant/> .
+
+# NOTE the following differentiates between a System (plant) and a Loop (loop) per Brick,
+# where a plant produces and a loop distributes the fluid.
+
+# NOTE the following two subsections are not well organized for translating into machine readable code.
+# For example, 4.11.3 mixes primary-only points with primary-secondary points.
+# Thus, the following two subsections have been explicitly separated into Primary (only) HW Loops
+# and (Primary) Secondary HW Loops.
+
+# 4.11 Hot Water Plant
+
+:hot-water-plant a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:or (
+        sh:node :primary-plant
+        sh:node :primary-seconary-plant
+    ) .
+
+:primary-plant a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "Primary HW Plant" ;
+    sh:class brick:Hot_Water_System ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :boiler ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :primary-loop ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:primary-secondary-plant a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "Primary Secondary HW Plant" ;
+    sh:class brick:Hot_Water_System ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :boiler ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :primary-seconary-loop ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# 4.11.1 Boilers
+# TODO add dedicated boiler pump
+
+:boiler a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:or (
+        sh:class brick:Electric_Boiler
+        sh:class brick:Condensing_Natural_Gas_Boiler
+        sh:node :noncondensing-boiler
+    ) ;
+    rdfs:label "Boiler" ;
+    # required
+    sh:property [
+        rdfs:label "Boiler enable" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Enable_Status ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "HW supply temperature setpoint" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Leaving_Hot_Water_Temperature_Setpoint ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Boiler firing rate" ;
+        rdfs:comment "Optional point for monitoring boiler firing rate." ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Valve_Position_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # applications
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :isolation-valve ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Boiler natural gas flow" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Natural_Gas_Flow_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# TODO topology see comment
+:noncondensing-boiler a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Noncondensing Boiler" ;
+    sh:class brick:Noncondensing_Natural_Gas_Boiler ;
+    # applications, required for primary-only plants and primary-secondary plants with noncondensing boilers
+    sh:property [
+        rdfs:label "Plant HW return temperature" ;
+        rdfs:comment "For primary-only plants, locate on plant side of the HW minimum flow bypass to allow for correct load calculations." ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Return_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# application-specific
+# TODO required for boiler plants with headered primary pumps
+# TODO add Boiler_Isolation_Valve subclass to brick?
+:isolation-valve a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Isolation Valve" ;
+    rdfs:comment "Required for boiler plants with headered primary pumps. Delete otherwise." ;
+    sh:class brick:Isolation_Valve ;
+    # required, inferred from DO point
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Valve_Position_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    # optional, but required for application
+    sh:property [
+        rdfs:label "isolation valve closed end switch" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Switch_Status ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional, but required for application
+    sh:property [
+        rdfs:label "isolation valve open end switch" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Switch_Status ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# 4.11.2 HW Pumps (see components.ttl)
+
+# 4.11.3 Primary (only) HW Loop
+
+:primary-loop a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:or (
+        sh:node :constant-primary-loop
+        sh:node :variable-primary-loop
+    ) ;
+    # applications, required for primary-only plants
+    # TODO see comment
+    sh:property [
+        rdfs:label "HW supply or return flow" ;
+        rdfs:comment "the flow meter must be located on the plant side of the HW minimum flow bypass where provided" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [
+            sh:or ( sh:class brick:Hot_Water_Supply_Flow_Sensor sh:class brick:Hot_Water_Return_Flow_Sensor )
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # applications, required for primary-only plants
+    sh:property [
+        rdfs:label "HW supply temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Supply_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    # TODO https://github.com/BrickSchema/Brick/issues/532
+    sh:property [
+        rdfs:label "HW system gauge pressure" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Pressure_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:constant-primary-loop a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "Constant Primary HW Loop" ;
+    sh:class brick:Hot_Water_Loop ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:constant-speed-pump ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
+
+:variable-primary-loop a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "Variable Primary HW Loop" ;
+    sh:class brick:Hot_Water_Loop ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:variable-speed-pump ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :bypass-valve ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# TODO see comment
+:bypass-valve a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Bypass Valve" ;
+    rdfs:comment "HW bypass valve is required for variable flow primary-only plants with boilers with non-zero minimum flow. Delete otherwise." ;
+    sh:class brick:Bypass_Valve ;
+    # applications
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Valve_Position_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Loop HW return temperature" ;
+        rdfs:comment "Optional sensor for monitoring temperature coming back from coils in primary-only plants with a HW bypass. Delete for all other plant configurations." ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Return_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# 4.11.4 (Primary) Secondary HW Loop
+
+:primary-secondary-loop a sh:NodeShape, owl:class, bmotif:HVAC ;
+    sh:or (
+        sh:node :constant-primary-constant-secondary-loop
+        sh:node :constant-primary-variable-secondary-loop
+        sh:node :variable-primary-constant-secondary-loop
+        sh:node :variable-primary-variable-secondary-loop
+    ) ;
+    # applications, optional per 4.11.3
+    sh:property [
+        rdfs:label "HW supply temperature" ;
+        rdfs:comment "Optional for primary-secondary plants." ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Supply_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Secondary HW supply temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Supply_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Secondary HW return temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Return_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # applications
+    sh:property [
+        rdfs:label "Secondary HW supply or return flow" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [
+            sh:or ( sh:class brick:Hot_Water_Supply_Flow_Sensor sh:class brick:Hot_Water_Return_Flow_Sensor )
+        ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # TODO applications, for hybrid plants with condensing and non-condensing boilers.
+    sh:property [
+        rdfs:label "Intermediate HW supply temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Supply_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:constant-primary-constant-secondary-loop a sh:NodeShape, owl:class, bmotif:HVAC ;
+    rdfs:label "Constant Primary Constant Secondary HW Loop" ;
+    sh:class brick:Hot_Water_Loop ;
+    sh:property [
+        rdfs:label "Constant Primary HW Loop" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Loop ;
+            sh:path brick:hasPart ;
+            sh:qualifiedValueShape [ sh:node components:constant-speed-pump ] ;
+            sh:qualifiedMinCount 1 ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "Constant Secondary HW Loop" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Loop ;
+            sh:path brick:hasPart ;
+            sh:qualifiedValueShape [ sh:node components:constant-speed-pump ] ;
+            sh:qualifiedMinCount 1 ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:constant-primary-variable-secondary-loop a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Constant Primary-Variable Secondary HW Loop" ;
+    sh:class brick:Hot_Water_Loop ;
+    sh:property [
+        rdfs:label "Constant Primary HW Loop" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Loop ;
+            sh:path brick:hasPart ;
+            sh:qualifiedValueShape [ sh:node components:constant-speed-pump ] ;
+            sh:qualifiedMinCount 1 ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "Variable Secondary HW Loop" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Loop ;
+            sh:path brick:hasPart ;
+            sh:qualifiedValueShape [ sh:node components:variable-speed-pump ] ;
+            sh:qualifiedMinCount 1 ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # applications, not recommended per 4.11.3
+    sh:property [
+        rdfs:label "HW supply or return flow" ;
+        rdfs:comment "Not required nor recommended for constant primary-variable secondary plants." ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [
+            sh:or ( sh:class brick:Hot_Water_Supply_Flow_Sensor sh:class brick:Hot_Water_Return_Flow_Sensor )
+        ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 0 ;
+    ] .
+
+:variable-primary-constant-secondary-loop a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Variable Primary Constant Secondary HW Loop" ;
+    sh:class brick:Hot_Water_Loop ;
+    sh:property [
+        rdfs:label "Variable Primary HW Loop" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Loop ;
+            sh:path brick:hasPart ;
+            sh:qualifiedValueShape [ sh:node components:variable-speed-pump ] ;
+            sh:qualifiedMinCount 1 ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "Constant Secondary HW Loop" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Loop ;
+            sh:path brick:hasPart ;
+            sh:qualifiedValueShape [ sh:node components:constant-speed-pump ] ;
+            sh:qualifiedMinCount 1 ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:variable-primary-variable-secondary-loop a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Variable Primary-Variable Secondary HW Loop" ;
+    sh:class brick:Hot_Water_Loop ;
+    sh:property [
+        rdfs:label "Variable Primary HW Loop" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Loop ;
+            sh:path brick:hasPart ;
+            sh:qualifiedValueShape [
+                sh:node components:variable-speed-pump ;
+                # optional, per 4.11.3
+                sh:property [
+                    rdfs:label "Decoupler flow" ;
+                    rdfs:comment "Optional flow meter for primary pump speed control in variable primary-variable secondary plants." ;
+                    sh:path brick:hasPoint ;
+                    sh:qualifiedValueShape [ sh:node brick:Hot_Water_Flow_Sensor ] ;
+                    sh:qualifiedMinCount 0 ;
+                    sh:qualifiedMaxCount 1 ;
+                ] ;
+            ] ;
+            sh:qualifiedMinCount 1 ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "Variable Secondary HW Loop" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Loop ;
+            sh:path brick:hasPart ;
+            sh:qualifiedValueShape [ sh:node components:variable-speed-pump ] ;
+            sh:qualifiedMinCount 1 ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # applications, optional per 4.11.3
+    sh:property [
+        rdfs:label "HW supply or return flow" ;
+        rdfs:comment "Optional for variable primary-variable secondary plants." ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [
+            sh:or ( sh:class brick:Hot_Water_Supply_Flow_Sensor sh:class brick:Hot_Water_Return_Flow_Sensor )
+        ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
