@@ -170,3 +170,104 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] .
+
+# Water Side
+
+# Pumps
+
+# component of 4.11.2
+:constant-speed-pump-motor a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Constant Speed Pump Motor" ;
+    sh:class brick:Motor ;
+    # required
+    sh:property [
+        rdfs:label "Pump Start" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:On_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Pump Status" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Pump_Status ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:variable-speed-pump-motor a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Variable Speed Pump Motor" ;
+    sh:class brick:Variable_Frequency_Drive ;
+    # required
+    sh:property [
+        rdfs:label "Pump Start" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:On_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Pump Status" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Pump_Status ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # application-specific, required for VFDs
+    sh:property [
+        rdfs:label "Pump Speed" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Frequency_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:constant-speed-pump a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Constant Speed Pump" ;
+    sh:class brick:Hot_Water_Pump ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :constant-speed-pump-motor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # application-specific
+    # TODO required for pump(s) serving multiple control valves
+    sh:property [
+        rdfs:label "Differential Pressure" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Differential_Pressure_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:variable-speed-pump a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Variable Speed Pump" ;
+    sh:class brick:Hot_Water_Pump ;
+    # TODO hasPart might not be the correct relationship for a pump with a VFD, which is a separate piece of equipment
+    sh:property [ 
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :variable-speed-pump-motor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # application-specific
+    # TODO required for pump(s) serving multiple control valves
+    sh:property [
+        rdfs:label "Differential Pressure" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Differential_Pressure_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Alarm" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Fault_Status ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
