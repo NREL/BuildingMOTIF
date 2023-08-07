@@ -104,7 +104,7 @@ def test_validate_model_with_failure(bm: BuildingMOTIF):
     assert isinstance(ctx, ValidationContext)
     assert not ctx.valid
     assert len(ctx.diffset) == 1
-    diff = ctx.diffset.pop()
+    diff = next(iter(ctx.diffset.values())).pop()
     assert isinstance(diff.failed_shape, BNode), (
         diff.failed_shape,
         type(diff.failed_shape),
