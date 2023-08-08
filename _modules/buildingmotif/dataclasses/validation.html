@@ -380,7 +380,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_hex</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">rdflib</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
@@ -635,7 +635,7 @@ document.write(`
     <span class="n">model</span><span class="p">:</span> <span class="s2">&quot;Model&quot;</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">diffset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">diffset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The unordered set of GraphDiffs produced from interpreting the input</span>
 <span class="sd">        SHACL validation report.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -654,7 +654,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">diffset_to_templates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diffset</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_report_to_diffset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">_report_to_diffset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Interpret a SHACL validation report and say what is missing.</span>
 
 <span class="sd">        :return: a set of GraphDiffs that each abstract a SHACL shape violation</span>
