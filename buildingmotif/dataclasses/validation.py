@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import chain
 from secrets import token_hex
-from typing import TYPE_CHECKING, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
 import rdflib
 from rdflib import Graph, URIRef
@@ -258,7 +258,7 @@ class ValidationContext:
     model: "Model"
 
     @cached_property
-    def diffset(self) -> dict[Optional[URIRef], Set[GraphDiff]]:
+    def diffset(self) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """The unordered set of GraphDiffs produced from interpreting the input
         SHACL validation report.
         """
@@ -277,7 +277,7 @@ class ValidationContext:
         """
         return diffset_to_templates(self.diffset)
 
-    def _report_to_diffset(self) -> dict[Optional[URIRef], Set[GraphDiff]]:
+    def _report_to_diffset(self) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """Interpret a SHACL validation report and say what is missing.
 
         :return: a set of GraphDiffs that each abstract a SHACL shape violation
