@@ -289,7 +289,7 @@ class ValidationContext:
         # proppath = SH["property"] | (SH.qualifiedValueShape / SH["property"])  # type: ignore
 
         g = self.report + self._context
-        diffs: dict[Optional[URIRef], Set[GraphDiff]] = defaultdict(set)
+        diffs: Dict[Optional[URIRef], Set[GraphDiff]] = defaultdict(set)
         for result in g.objects(predicate=SH.result):
             # check if the failure is due to our count constraint component
             focus = g.value(result, SH.focusNode)
@@ -394,7 +394,7 @@ class ValidationContext:
 
 
 def diffset_to_templates(
-    grouped_diffset: dict[Optional[URIRef], Set[GraphDiff]]
+    grouped_diffset: Dict[Optional[URIRef], Set[GraphDiff]]
 ) -> List["Template"]:
     """Combine GraphDiff by focus node to generate a list of templates that
     reconcile what is "wrong" with the Graph with respect to the GraphDiffs.
