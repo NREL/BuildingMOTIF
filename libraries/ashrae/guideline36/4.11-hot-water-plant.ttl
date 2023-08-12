@@ -114,7 +114,7 @@
         rdfs:label "Plant HW return temperature" ;
         rdfs:comment "For primary-only plants, locate on plant side of the HW minimum flow bypass to allow for correct load calculations." ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Return_Temperature_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Entering_Hot_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] .
@@ -166,7 +166,7 @@
         rdfs:comment "the flow meter must be located on the plant side of the HW minimum flow bypass where provided" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [
-            sh:or ( sh:class brick:Hot_Water_Supply_Flow_Sensor sh:class brick:Hot_Water_Return_Flow_Sensor )
+            sh:or ( sh:class brick:Leaving_Hot_Water_Flow_Sensor sh:class brick:Entering_Hot_Water_Flow_Sensor )
         ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
@@ -175,7 +175,7 @@
     sh:property [
         rdfs:label "HW supply temperature" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Supply_Temperature_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Leaving_Hot_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
@@ -230,7 +230,7 @@
         rdfs:label "Loop HW return temperature" ;
         rdfs:comment "Optional sensor for monitoring temperature coming back from coils in primary-only plants with a HW bypass. Delete for all other plant configurations." ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Return_Temperature_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Entering_Hot_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] .
@@ -249,7 +249,7 @@
         rdfs:label "HW supply temperature" ;
         rdfs:comment "Optional for primary-secondary plants." ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Supply_Temperature_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Leaving_Hot_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
@@ -257,7 +257,7 @@
     sh:property [
         rdfs:label "Secondary HW supply temperature" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Supply_Temperature_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Leaving_Hot_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
@@ -265,7 +265,7 @@
     sh:property [
         rdfs:label "Secondary HW return temperature" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Return_Temperature_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Entering_Hot_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
@@ -274,7 +274,7 @@
         rdfs:label "Secondary HW supply or return flow" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [
-            sh:or ( sh:class brick:Hot_Water_Supply_Flow_Sensor sh:class brick:Hot_Water_Return_Flow_Sensor )
+            sh:or ( sh:class brick:Leaving_Hot_Water_Flow_Sensor sh:class brick:Entering_Hot_Water_Flow_Sensor )
         ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
@@ -283,7 +283,7 @@
     sh:property [
         rdfs:label "Intermediate HW supply temperature" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Hot_Water_Supply_Temperature_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Leaving_Hot_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] .
@@ -349,7 +349,7 @@
         rdfs:comment "Not required nor recommended for constant primary-variable secondary plants." ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [
-            sh:or ( sh:class brick:Hot_Water_Supply_Flow_Sensor sh:class brick:Hot_Water_Return_Flow_Sensor )
+            sh:or ( sh:class brick:Leaving_Hot_Water_Flow_Sensor sh:class brick:Entering_Hot_Water_Flow_Sensor )
         ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 0 ;
@@ -427,7 +427,7 @@
         rdfs:comment "Optional for variable primary-variable secondary plants." ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [
-            sh:or ( sh:class brick:Hot_Water_Supply_Flow_Sensor sh:class brick:Hot_Water_Return_Flow_Sensor )
+            sh:or ( sh:class brick:Leaving_Hot_Water_Flow_Sensor sh:class brick:Entering_Hot_Water_Flow_Sensor )
         ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
