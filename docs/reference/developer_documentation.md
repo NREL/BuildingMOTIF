@@ -21,7 +21,8 @@
 
 ## Developing
 
-To initialize your database, init $DB_URI (set in `.env`) and run the migrations.
+### Database
+Initialize a database by setting it in the `.env` file, then run the migrations. Note for Windows users, the following commands require a Unix shell, e.g. Bash.
 ```
 set -o allexport; source .env; set +o allexport
 poetry run alembic upgrade head
