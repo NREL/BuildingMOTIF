@@ -615,6 +615,12 @@ document.write(`
             <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="n">otype</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
             <span class="c1"># body.add((param, RDF.type, otype))</span>
 
+        <span class="c1"># add &#39;hasValue&#39;</span>
+
+        <span class="n">pvalue</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;hasValue&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">pvalue</span><span class="p">:</span>
+            <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">))</span>
+
     <span class="k">if</span> <span class="p">(</span><span class="n">shape_name</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">OWL</span><span class="o">.</span><span class="n">Class</span><span class="p">)</span> <span class="ow">in</span> <span class="n">shape_graph</span><span class="p">:</span>
         <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">shape_name</span><span class="p">))</span>
 

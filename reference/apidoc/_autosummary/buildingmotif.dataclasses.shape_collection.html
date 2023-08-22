@@ -580,6 +580,19 @@ class</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.shape_collection.ShapeCollection.shape_to_query">
+<span class="sig-name descname"><span class="pre">shape_to_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">URIRef</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/shape_collection.html#ShapeCollection.shape_to_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.shape_collection.ShapeCollection.shape_to_query" title="Permalink to this definition">#</a></dt>
+<dd><p>This method takes a URI representing a SHACL shape as an argument and returns
+a SPARQL query selecting the information which would be used to satisfy that
+SHACL shape. This uses the following rules:
+- <cite>&lt;shape&gt; sh:targetClass &lt;class&gt;</cite> -&gt; <cite>?target rdf:type/rdfs:subClassOf* &lt;class&gt;</cite>
+- <cite>&lt;shape&gt; sh:property [ sh:path &lt;path&gt;; sh:class &lt;class&gt;; sh:name &lt;name&gt; ]</cite> -&gt;</p>
+<blockquote>
+<div><p>?target &lt;path&gt; ?name . ?name rdf:type/rdfs:subClassOf* &lt;class&gt;</p>
+</div></blockquote>
+</dd></dl>
+
 </dd></dl>
 
 </section>
