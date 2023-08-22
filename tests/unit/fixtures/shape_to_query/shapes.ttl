@@ -1,0 +1,47 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix ref: <https://brickschema.org/schema/Brick/ref#> .
+@prefix : <urn:shapes_to_query/> .
+
+: a owl:Ontology .
+
+:sensor a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:Sensor ;
+    sh:property [
+        sh:path brick:hasUnits ;
+        sh:hasValue unit:DEG_F ;
+    ] ;
+    sh:property [
+        sh:path ref:hasExternalReference ;
+        sh:class ref:BACnetReference ;
+    ] ;
+.
+
+:vav a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:VAV ;
+    sh:property [
+        sh:name "sensor" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:node :sensor ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        sh:name "air flow sensor" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Air_Flow_Sensor ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        sh:name "dp sensor" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Air_Differential_Pressure_Sensor ] ;
+        # optional
+    ] ;
+.
