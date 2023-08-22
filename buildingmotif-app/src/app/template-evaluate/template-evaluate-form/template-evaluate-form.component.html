@@ -1,4 +1,12 @@
 <div *ngIf="!!template">
+    <div class="instructions">
+        Either
+        <button mat-raised-button color="primary">
+            <label for="file">Choose File</label>
+            <input type="file" id="file" hidden (change)="handleFileInput($event)">
+        </button>
+        or fill out the template:
+    </div>
     <table mat-table [dataSource]="dataSource" class="table">
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
@@ -25,7 +33,7 @@
         mat-raised-button
         color="primary"
         (click)="evaluateClicked()"
-        [disabled]="parametersForm.invalid"
-        matStepperNext>Evaluate
+        [disabled]="parametersForm.invalid">
+            Evaluate
     </button>
 </div>

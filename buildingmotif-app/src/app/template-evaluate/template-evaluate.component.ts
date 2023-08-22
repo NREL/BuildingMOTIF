@@ -1,8 +1,9 @@
-import { Component, OnInit, Inject, Input } from '@angular/core';
+import { Component, OnInit, Inject, Input, ViewChild } from '@angular/core';
 import { Template } from '../types';
 import { TemplateEvaluateService } from './template-evaluate.service';
 import { TemplateDetailService } from '../template-detail/template-detail.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
 
 export interface DialogData {
   templateId: number;
@@ -20,6 +21,7 @@ export class TemplateEvaluateComponent implements OnInit {
   template: Template | undefined = undefined;
   evaluatedGraph?: string;
   modelId?: number;
+  @ViewChild("stepper") stepper?: MatStepper;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -39,13 +41,25 @@ export class TemplateEvaluateComponent implements OnInit {
     });
   }
 
-   parameterFormValuesEvent(parameterFormValues: {[name: string]: string}): void {
+  parameterFormValuesEvent(parameterFormValues: {[name: string]: string}): void {
     if (this.template == undefined) return;
     if (this.modelId == undefined) return;
 
-    const evaluateTemplate = this.templateEvaluateService.evaluateTemplate(this.template.id, this.modelId, parameterFormValues);
+    const evaluateTemplate = this.templateEvaluateService.evaluateTemplateBindings(this.template.id, this.modelId, parameterFormValues);
     evaluateTemplate.subscribe((result) => {
-      this.evaluatedGraph = result
+      this.evaluatedGraph = result;
+      this.stepper?.next();
+    });
+  }
+
+  ingressFileEvent(file: File): void {
+    if (this.template == undefined) return;
+    if (this.modelId == undefined) return;
+
+    const evaluateTemplate = this.templateEvaluateService.evaluateTemplateIngress(this.template.id, this.modelId, file);
+    evaluateTemplate.subscribe((result) => {
+      this.evaluatedGraph = result;
+      this.stepper?.next();
     });
   }
 

@@ -6,6 +6,11 @@ from buildingmotif.namespaces import BRICK, A
 
 BLDG = Namespace("urn:building/")
 
+BINDINGS = b"""name,cav
+zone1,cav1
+zone2,cav2
+"""
+
 
 def test_get_all_templates(client, building_motif):
     # Setup
@@ -77,7 +82,7 @@ def test_get_template_not_found(client):
     assert results.json == {"message": "No template with id -1"}
 
 
-def test_evaluate(client, building_motif):
+def test_evaluate_bindings(client, building_motif):
     model = Model.create(name="urn:my_model")
     lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
@@ -85,7 +90,7 @@ def test_evaluate(client, building_motif):
     assert zone.parameters == {"name", "cav"}
 
     results = client.post(
-        f"/templates/{zone.id}/evaluate",
+        f"/templates/{zone.id}/evaluate/bindings",
         json={
             "model_id": model.id,
             "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
@@ -104,11 +109,11 @@ def test_evaluate(client, building_motif):
     assert len(list(graph.triples((None, None, None)))) == 3
 
 
-def test_evaluate_bad_templated_id(client, building_motif):
+def test_evaluate_bindings_bad_templated_id(client, building_motif):
     model = Model.create(name="urn:my_model")
 
     results = client.post(
-        "/templates/-1/evaluate",
+        "/templates/-1/evaluate/bindings",
         json={
             "model_id": model.id,
             "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
@@ -118,18 +123,18 @@ def test_evaluate_bad_templated_id(client, building_motif):
     assert results.status_code == 404
 
 
-def test_evaluate_no_body(client, building_motif):
+def test_evaluate_bindings_no_body(client, building_motif):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     zone.inline_dependencies()
     assert zone.parameters == {"name", "cav"}
 
-    results = client.post(f"/templates/{zone.id}/evaluate")
+    results = client.post(f"/templates/{zone.id}/evaluate/bindings")
 
     assert results.status_code == 400
 
 
-def test_evaluate_bad_body(client, building_motif):
+def test_evaluate_bindings_bad_body(client, building_motif):
     model = Model.create(name="urn:my_model")
     lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
@@ -137,7 +142,7 @@ def test_evaluate_bad_body(client, building_motif):
     assert zone.parameters == {"name", "cav"}
 
     results = client.post(
-        f"/templates/{zone.id}/evaluate",
+        f"/templates/{zone.id}/evaluate/bindings",
         json={
             # no model
             "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
@@ -147,7 +152,7 @@ def test_evaluate_bad_body(client, building_motif):
     assert results.status_code == 400
 
     results = client.post(
-        f"/templates/{zone.id}/evaluate",
+        f"/templates/{zone.id}/evaluate/bindings",
         json={
             "model_id": model.id,
             # no bindings
@@ -157,18 +162,97 @@ def test_evaluate_bad_body(client, building_motif):
     assert results.status_code == 400
 
 
-def test_evaluate_bad_model_id(client, building_motif):
+def test_evaluate_bindings_bad_model_id(client, building_motif):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     zone = lib.get_template_by_name("zone")
     zone.inline_dependencies()
     assert zone.parameters == {"name", "cav"}
 
     results = client.post(
-        f"/templates/{zone.id}/evaluate",
+        f"/templates/{zone.id}/evaluate/bindings",
         json={
             "model_id": -1,
             "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
         },
     )
 
-    assert results.status_code == 404
+    assert results.status_code == 404, results.data
+
+
+def test_evaluate_ingress(client, building_motif):
+    # create a 'MODEL' namespace here to scope the entities we create
+    MODEL = Namespace("urn:my_model/")
+    model = Model.create(name=MODEL)
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    zone = lib.get_template_by_name("zone")
+    zone.inline_dependencies()
+    assert zone.parameters == {"name", "cav"}
+
+    results = client.post(
+        f"/templates/{zone.id}/evaluate/ingress?model_id={model.id}",
+        data=BINDINGS,
+    )
+
+    assert results.status_code == status.HTTP_200_OK, results.data
+    graph = Graph().parse(data=results.data, format="ttl")
+    assert (MODEL["cav1"], A, BRICK.CAV) in graph
+    assert (MODEL["zone1"], A, BRICK.HVAC_Zone) in graph
+    assert (MODEL["zone1"], BRICK.isFedBy, MODEL["cav1"]) in graph
+    assert (MODEL["cav2"], A, BRICK.CAV) in graph
+    assert (MODEL["zone2"], A, BRICK.HVAC_Zone) in graph
+    assert (MODEL["zone2"], BRICK.isFedBy, MODEL["cav2"]) in graph
+
+
+def test_evaluate_ingress_no_body(client, building_motif):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    zone = lib.get_template_by_name("zone")
+    zone.inline_dependencies()
+    assert zone.parameters == {"name", "cav"}
+
+    results = client.post(f"/templates/{zone.id}/evaluate/ingress")
+
+    assert results.status_code == 400
+
+
+def test_evaluate_ingress_bad_body(client, building_motif):
+    model = Model.create(name="urn:my_model")
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    zone = lib.get_template_by_name("zone")
+    zone.inline_dependencies()
+    assert zone.parameters == {"name", "cav"}
+
+    results = client.post(
+        f"/templates/{zone.id}/evaluate/ingress",
+        json={
+            # no model
+            "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
+        },
+    )
+
+    assert results.status_code == 400
+
+    results = client.post(
+        f"/templates/{zone.id}/evaluate/ingress",
+        json={
+            "model_id": model.id,
+            # no bindings
+        },
+    )
+
+    assert results.status_code == 400
+
+
+def test_evaluate_ingress_bad_model_id(client, building_motif):
+    lib = Library.load(directory="tests/unit/fixtures/templates")
+    zone = lib.get_template_by_name("zone")
+    zone.inline_dependencies()
+    assert zone.parameters == {"name", "cav"}
+
+    results = client.post(
+        f"/templates/{zone.id}/evaluate/ingress?model_id=-1",
+        json={
+            "bindings": {"name": {"@id": BLDG["zone1"]}, "cav": {"@id": BLDG["cav1"]}},
+        },
+    )
+
+    assert results.status_code == 404, results.data
