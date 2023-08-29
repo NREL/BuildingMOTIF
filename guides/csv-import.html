@@ -226,7 +226,6 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../explanations/ingresses.html">Ingresses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -428,13 +427,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="csv-import">
 <h1>CSV Import<a class="headerlink" href="#csv-import" title="Permalink to this heading">#</a></h1>
-<p>Assume we have the following CSV file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">,</span><span class="n">room</span><span class="p">,</span><span class="n">name</span><span class="o">-</span><span class="n">co2</span><span class="p">,</span><span class="n">name</span><span class="o">-</span><span class="n">temp</span><span class="p">,</span><span class="n">name</span><span class="o">-</span><span class="n">sp</span>
-<span class="n">tstat2</span><span class="p">,</span><span class="n">room345</span><span class="p">,</span><span class="n">co2</span><span class="o">-</span><span class="mi">345</span><span class="p">,</span><span class="n">temp</span><span class="o">-</span><span class="mi">345</span><span class="p">,</span><span class="n">sp</span><span class="o">-</span><span class="mi">345</span>
-<span class="n">tstat3</span><span class="p">,</span><span class="n">room567</span><span class="p">,</span><span class="n">cow</span><span class="o">-</span><span class="mi">567</span><span class="p">,</span><span class="n">temp</span><span class="o">-</span><span class="mi">567</span><span class="p">,</span><span class="n">sp</span><span class="o">-</span><span class="mi">567</span>
-</pre></div>
-</div>
-<p>And the following Template in a library called <code class="docutils literal notranslate"><span class="pre">csv-tutorial</span></code>:</p>
+<p>Assume we have the following Template in a library called <code class="docutils literal notranslate"><span class="pre">csv-tutorial</span></code>:</p>
 <div class="highlight-yml notranslate"><div class="highlight"><pre><span></span>my-thermostat:
   body: &gt;
     @prefix P: &lt;urn:___param___#&gt; .
@@ -466,6 +459,31 @@ my-tstat-points:
       args: {&quot;name&quot;: &quot;co2&quot;}
 </pre></div>
 </div>
+<p>Loaded in memory like so:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span>
+
+<span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span> <span class="c1"># in-memory</span>
+
+<span class="c1"># load in the library containing our template and get the template</span>
+<span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;csv-tutorial&quot;</span><span class="p">)</span>
+<span class="n">tstat_templ</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="s1">&#39;my-thermostat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can generate an empty csv file with the approiate column headers for a csvIngress with <code class="docutils literal notranslate"><span class="pre">generate_csv</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tstat_templ</span><span class="o">.</span><span class="n">generate_csv</span><span class="p">(</span><span class="s2">&quot;data.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which gives us <code class="docutils literal notranslate"><span class="pre">data.csv</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">,</span><span class="n">room</span><span class="p">,</span><span class="n">name</span><span class="o">-</span><span class="n">co2</span><span class="p">,</span><span class="n">name</span><span class="o">-</span><span class="n">temp</span><span class="p">,</span><span class="n">name</span><span class="o">-</span><span class="n">sp</span>
+</pre></div>
+</div>
+<p>Assume we fill it out like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">,</span><span class="n">room</span><span class="p">,</span><span class="n">name</span><span class="o">-</span><span class="n">co2</span><span class="p">,</span><span class="n">name</span><span class="o">-</span><span class="n">temp</span><span class="p">,</span><span class="n">name</span><span class="o">-</span><span class="n">sp</span>
+<span class="n">tstat2</span><span class="p">,</span><span class="n">room345</span><span class="p">,</span><span class="n">co2</span><span class="o">-</span><span class="mi">345</span><span class="p">,</span><span class="n">temp</span><span class="o">-</span><span class="mi">345</span><span class="p">,</span><span class="n">sp</span><span class="o">-</span><span class="mi">345</span>
+<span class="n">tstat3</span><span class="p">,</span><span class="n">room567</span><span class="p">,</span><span class="n">cow</span><span class="o">-</span><span class="mi">567</span><span class="p">,</span><span class="n">temp</span><span class="o">-</span><span class="mi">567</span><span class="p">,</span><span class="n">sp</span><span class="o">-</span><span class="mi">567</span>
+</pre></div>
+</div>
 <p>We can create a CSV ingress handler using the built-in class (<span class="xref myst"><code class="docutils literal notranslate"><span class="pre">CSVIngressHandler</span></code></span>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">Graph</span>
 <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
@@ -474,13 +492,17 @@ my-tstat-points:
 <span class="kn">from</span> <span class="nn">buildingmotif.ingresses</span> <span class="kn">import</span> <span class="n">CSVIngress</span><span class="p">,</span> <span class="n">TemplateIngress</span><span class="p">,</span> <span class="n">Record</span>
 
 <span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span> <span class="c1"># in-memory</span>
+
 <span class="n">BLDG</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;urn:my_site/&quot;</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">BLDG</span><span class="p">)</span> <span class="c1"># create our model</span>
+
 <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;csv-tutorial&quot;</span><span class="p">)</span> <span class="c1"># load in the library containing our template</span>
+<span class="n">tstat_templ</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="s1">&#39;my-thermostat&#39;</span><span class="p">)</span>
 
 <span class="n">csv</span> <span class="o">=</span> <span class="n">CSVIngress</span><span class="p">(</span><span class="s2">&quot;data.csv&quot;</span><span class="p">)</span> <span class="c1"># the CSV file above</span>
 <span class="n">ingress</span> <span class="o">=</span> <span class="n">TemplateIngress</span><span class="p">(</span><span class="n">tstat_templ</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">(),</span> <span class="kc">None</span><span class="p">,</span> <span class="n">csv</span><span class="p">)</span>
 <span class="n">graph</span> <span class="o">=</span> <span class="n">ingress</span><span class="o">.</span><span class="n">graph</span><span class="p">(</span><span class="n">BLDG</span><span class="p">)</span>
+
 <span class="nb">print</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span> <span class="c1"># print the resulting model</span>
 </pre></div>
 </div>
