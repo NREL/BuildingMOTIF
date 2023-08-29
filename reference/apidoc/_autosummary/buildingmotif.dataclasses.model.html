@@ -226,6 +226,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -526,7 +527,7 @@ document.write(`
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.model.Model.validate">
-<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape_collections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">ShapeCollection</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_on_missing_imports</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.ValidationContext" title="buildingmotif.dataclasses.validation.ValidationContext"><span class="pre">ValidationContext</span></a></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/model.html#Model.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.model.Model.validate" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape_collections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">ShapeCollection</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.ValidationContext" title="buildingmotif.dataclasses.validation.ValidationContext"><span class="pre">ValidationContext</span></a></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/model.html#Model.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.model.Model.validate" title="Permalink to this definition">#</a></dt>
 <dd><p>Validates this model against the given list of ShapeCollections.
 If no list is provided, the model will be validated against the model’s “manifest”.
 If a list of shape collections is provided, the manifest will <em>not</em> be automatically
@@ -534,14 +535,9 @@ included in the set of shape collections.</p>
 <p>Loads all of the ShapeCollections into a single graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>shape_collections</strong> (<em>List</em><em>[</em><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><em>ShapeCollection</em></a><em>]</em>) – a list of ShapeCollections against which the
+<dd class="field-odd"><p><strong>shape_collections</strong> (<em>List</em><em>[</em><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><em>ShapeCollection</em></a><em>]</em>) – a list of ShapeCollections against which the
 graph should be validated. If an empty list or None is provided, the
-model will be validated against the model’s manifest.</p></li>
-<li><p><strong>error_on_missing_imports</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, raises an error if any of the dependency
-ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
-to True</p></li>
-</ul>
+model will be validated against the model’s manifest.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An object containing useful properties/methods to deal with
@@ -605,20 +601,6 @@ ValidationContext</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection">ShapeCollection</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.dataclasses.model.Model.update_manifest">
-<span class="sig-name descname"><span class="pre">update_manifest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifest</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">ShapeCollection</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library" title="buildingmotif.dataclasses.library.Library"><span class="pre">Library</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/model.html#Model.update_manifest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.model.Model.update_manifest" title="Permalink to this definition">#</a></dt>
-<dd><p>Updates the manifest for this model by replacing
-it with the provided ShapeCollection. If a library is
-provided instead, fetch the shape collection for that
-library with Library.get_shape_collection()</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>manifest</strong> (<em>Union</em><em>[</em><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><em>ShapeCollection</em></a><em>, </em><a class="reference internal" href="buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library" title="buildingmotif.dataclasses.library.Library"><em>Library</em></a><em>]</em>) – the ShapeCollection containing all the shapes against which to validate this model</p>
 </dd>
 </dl>
 </dd></dl>
