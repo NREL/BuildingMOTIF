@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 
 import pyshacl
 import rdflib
 import rfc3987
 
 from buildingmotif import get_building_motif
+from buildingmotif.dataclasses.library import Library
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.namespaces import A
@@ -162,8 +163,8 @@ class Model:
             shape_collections = [self.get_manifest()]
         # aggregate shape graphs
         for sc in shape_collections:
-            # inline sh:node for interpretability
-            shapeg += sc.graph
+            shapeg += sc.resolve_imports().graph
+        # inline sh:node for interpretability
         shapeg = rewrite_shape_graph(shapeg)
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
@@ -296,3 +297,29 @@ class Model:
         :rtype: ShapeCollection
         """
         return ShapeCollection.load(self._manifest_id)
+
+    def update_manifest(self, manifest: Union[ShapeCollection, Library]):
+        """Updates the manifest for this model by replacing
+        it with the provided ShapeCollection. If a library is
+        provided instead, fetch the shape collection for that
+        library with Library.get_shape_collection()
+
+        :param manifest: the ShapeCollection containing all the shapes against which to validate this model
+        :type manifest: Union[ShapeCollection, Library]
+        """
+        if isinstance(manifest, Library):
+            sc = manifest.get_shape_collection()
+            if sc.id is None:
+                # manifest is a ShapeCollection
+                raise Exception(
+                    "Provided manifest does not have an 'id'. Make sure it is part of a Library!"
+                )
+            self._manifest_id = sc.id
+        elif manifest.id is None:
+            # manifest is a ShapeCollection
+            raise Exception(
+                "Provided manifest does not have an 'id'. Make sure it is part of a Library!"
+            )
+        else:
+            # manifest is a ShapeCollection
+            self._manifest_id = manifest.id
