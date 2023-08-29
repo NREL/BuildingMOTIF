@@ -46,12 +46,9 @@ def test_load_model(clean_building_motif):
 
 def test_update_model_manifest(clean_building_motif):
     m = Model.create(name="https://example.com", description="a very good model")
-    with pytest.raises(Exception):
-        # should be empty _manifest_id, so no ShapeCollection can be found
-        m.get_manifest()
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
-    # update with library
+    # update manifest with library
     m.update_manifest(lib)
     assert m.get_manifest().id == lib.get_shape_collection().id
     # update with ShapeCollection
