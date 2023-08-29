@@ -240,7 +240,11 @@ model.update_manifest(manifest)
 
 ### Validating the Model
 
-We can now ask BuildingMOTIF to validate the model against the manifest and ask BuildingMOTIF for some details if it fails. We also have to be sure to include the supporting shape collections containing the definitions used in the manifest.
+We can now ask BuildingMOTIF to validate the model against the manifest and ask BuildingMOTIF for some details if it fails.
+By default, BuildingMOTIF will include all shape collections imported by the manifest (`owl:imports`). BuildingMOTIF will
+complain if the manifest requires ontologies that have not yet been loaded into BuildingMOTIF; this is why we are careful
+to load in the Brick and Guideline36 libraries at the top of this tutorial.
+
 
 ```{code-cell}
 validation_result = model.validate()
@@ -251,8 +255,13 @@ for diff in validation_result.diffset:
     print(f" - {diff.reason()}")
 ```
 
-```{code-cell}
+```{admonition} Tip on supplying extra shape collections
+:class: dropdown
 
+We can also provide a list of shape collections directly to `Model.validate`; BuildingMOTIF
+will use these shape collections to validate the model *instead of* the manifest.
+
+```python
 # gather shape collections into a list for ease of use
 shape_collections = [
     brick.get_shape_collection(),
@@ -297,8 +306,7 @@ print(model.graph.serialize())
 We can see that the heating coil was added to the model and connected to the AHU so let's check if the manifest validation failure was fixed.
 
 ```{code-cell}
-# pass a list of shape collections to .validate()
-validation_result = model.validate(shape_collections)
+validation_result = model.validate()
 print(f"Model is valid? {validation_result.valid}")
 
 # print reasons
