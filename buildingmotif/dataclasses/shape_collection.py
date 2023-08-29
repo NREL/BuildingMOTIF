@@ -65,6 +65,15 @@ class ShapeCollection:
     def id(self, new_id):
         raise AttributeError("Cannot modify db id")
 
+    @property
+    def graph_name(self) -> Optional[URIRef]:
+        """
+        Returns the name of the graph (subject of "a owl:Ontology")
+        if one exists
+        """
+        # will be None if this is not found
+        return self.graph.value(predicate=RDF.type, object=OWL.Ontology)  # type: ignore
+
     def add_triples(self, *triples: Triple) -> None:
         """Add the given triples to the graph.
 
@@ -97,7 +106,9 @@ class ShapeCollection:
             cbd = new_cbd
         return cbd
 
-    def resolve_imports(self, recursive_limit: int = -1) -> "ShapeCollection":
+    def resolve_imports(
+        self, recursive_limit: int = -1, error_on_missing_imports: bool = True
+    ) -> "ShapeCollection":
         """Resolves `owl:imports` to as many levels as requested.
 
         By default, all `owl:imports` are recursively resolved. This limit can
@@ -107,11 +118,20 @@ class ShapeCollection:
         :param recursive_limit: how many levels of `owl:imports` to resolve,
             defaults to -1 (all)
         :type recursive_limit: int, optional
+        :param error_on_missing_imports: if True, raises an error if any of the dependency
+            ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
+            to True
+        :type error_on_missing_imports: bool, optional
         :return: a new ShapeCollection with the types resolved
         :rtype: ShapeCollection
         """
         resolved_namespaces: Set[rdflib.URIRef] = set()
-        resolved = _resolve_imports(self.graph, recursive_limit, resolved_namespaces)
+        resolved = _resolve_imports(
+            self.graph,
+            recursive_limit,
+            resolved_namespaces,
+            error_on_missing_imports=error_on_missing_imports,
+        )
         new_sc = ShapeCollection.create()
         new_sc.add_graph(resolved)
         return new_sc
@@ -223,9 +243,14 @@ class ShapeCollection:
 
 
 def _resolve_imports(
-    graph: rdflib.Graph, recursive_limit: int, seen: Set[rdflib.URIRef]
+    graph: rdflib.Graph,
+    recursive_limit: int,
+    seen: Set[rdflib.URIRef],
+    error_on_missing_imports: bool = True,
 ) -> rdflib.Graph:
     from buildingmotif.dataclasses.library import Library
+
+    bm = get_building_motif()
 
     logger = logging.getLogger(__name__)
 
@@ -240,13 +265,37 @@ def _resolve_imports(
         # go find the graph definition from our libraries
         try:
             lib = Library.load(name=ontology)
+            sc_to_add = lib.get_shape_collection()
         except Exception as e:
             logger.error(
-                "Could not resolve import of library/shape collection: %s", ontology
+                "Could not resolve import of %s from Libraries (%s). Trying shape collections",
+                ontology,
+                e,
             )
-            raise e
+            sc_to_add = None
+
+        # search through our shape collections for a graph with the provided name
+        if sc_to_add is None:
+            for shape_collection in bm.table_connection.get_all_db_shape_collections():
+                sc = ShapeCollection.load(shape_collection.id)
+                if sc.graph_name == ontology:
+                    sc_to_add = sc
+                    break
+            logger.error(
+                "Could not resolve import of %s from Libraries. Trying shape collections",
+                ontology,
+            )
+
+        if sc_to_add is None:
+            if error_on_missing_imports:
+                raise Exception("Could not resolve import of %s", ontology)
+            continue
+
         dependency = _resolve_imports(
-            lib.get_shape_collection().graph, recursive_limit - 1, seen
+            sc_to_add.graph,
+            recursive_limit - 1,
+            seen,
+            error_on_missing_imports=error_on_missing_imports,
         )
         new_g += dependency
         print(f"graph size now {len(new_g)}")
