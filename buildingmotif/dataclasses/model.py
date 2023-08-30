@@ -6,7 +6,6 @@ import rdflib
 import rfc3987
 
 from buildingmotif import get_building_motif
-from buildingmotif.dataclasses.library import Library
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.namespaces import A
@@ -14,6 +13,7 @@ from buildingmotif.utils import Triple, copy_graph, rewrite_shape_graph
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
+    from buildingmotif.dataclasses import Library
 
 
 def _validate_uri(uri: str):
@@ -138,7 +138,9 @@ class Model:
         self.graph += graph
 
     def validate(
-        self, shape_collections: Optional[List[ShapeCollection]] = None
+        self,
+        shape_collections: Optional[List[ShapeCollection]] = None,
+        error_on_missing_imports: bool = True,
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
@@ -151,6 +153,10 @@ class Model:
             graph should be validated. If an empty list or None is provided, the
             model will be validated against the model's manifest.
         :type shape_collections: List[ShapeCollection]
+        :param error_on_missing_imports: if True, raises an error if any of the dependency
+            ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
+            to True
+        :type error_on_missing_imports: bool, optional
         :return: An object containing useful properties/methods to deal with
             the validation results
         :rtype: ValidationContext
@@ -163,7 +169,9 @@ class Model:
             shape_collections = [self.get_manifest()]
         # aggregate shape graphs
         for sc in shape_collections:
-            shapeg += sc.resolve_imports().graph
+            shapeg += sc.resolve_imports(
+                error_on_missing_imports=error_on_missing_imports
+            ).graph
         # inline sh:node for interpretability
         shapeg = rewrite_shape_graph(shapeg)
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
@@ -298,7 +306,7 @@ class Model:
         """
         return ShapeCollection.load(self._manifest_id)
 
-    def update_manifest(self, manifest: Union[ShapeCollection, Library]):
+    def update_manifest(self, manifest: Union[ShapeCollection, "Library"]):
         """Updates the manifest for this model by replacing
         it with the provided ShapeCollection. If a library is
         provided instead, fetch the shape collection for that
@@ -307,6 +315,9 @@ class Model:
         :param manifest: the ShapeCollection containing all the shapes against which to validate this model
         :type manifest: Union[ShapeCollection, Library]
         """
+        # import Library here to avoid circular import
+        from buildingmotif.dataclasses.library import Library
+
         if isinstance(manifest, Library):
             sc = manifest.get_shape_collection()
             if sc.id is None:

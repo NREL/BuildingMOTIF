@@ -44,7 +44,94 @@ def test_load_model(clean_building_motif):
     assert isomorphic(result.graph, m.graph)
 
 
-def test_validate_model(clean_building_motif):
+def test_update_model_manifest(clean_building_motif):
+    m = Model.create(name="https://example.com", description="a very good model")
+    lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    assert lib is not None
+    # update manifest with library
+    m.update_manifest(lib)
+    assert m.get_manifest().id == lib.get_shape_collection().id
+    # update with ShapeCollection
+    m.update_manifest(lib.get_shape_collection())
+    assert m.get_manifest().id == lib.get_shape_collection().id
+
+
+def test_validate_model_manifest(clean_building_motif):
+    m = Model.create(name="https://example.com", description="a very good model")
+    m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
+
+    lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    assert lib is not None
+
+    m.update_manifest(lib)
+
+    # validate against manifest -- should fail
+    result = m.validate()
+    assert not result.valid
+
+    # add triples to graph to validate
+    m.graph.add(
+        (
+            URIRef("https://example.com/vav1"),
+            BRICK.hasPoint,
+            URIRef("https://example.com/flow"),
+        )
+    )
+    m.graph.add((URIRef("https://example.com/flow"), A, BRICK.Air_Flow_Sensor))
+    m.graph.add(
+        (
+            URIRef("https://example.com/vav1"),
+            BRICK.hasPoint,
+            URIRef("https://example.com/temp"),
+        )
+    )
+    m.graph.add((URIRef("https://example.com/temp"), A, BRICK.Temperature_Sensor))
+
+    # validate against manifest -- should pass
+    result = m.validate()
+    assert result.valid
+
+
+def test_validate_model_manifest_with_imports(clean_building_motif):
+    m = Model.create(name="https://example.com", description="a very good model")
+    m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
+
+    # import brick
+    Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+
+    # shape2.ttl attaches an import statement to the manifest
+    lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape2.ttl")
+    assert lib is not None
+
+    m.update_manifest(lib)
+
+    # add triples to graph to validate
+    # using subclasses here -- buildingmotif must resolve the library import in order for these to validate correctly
+    m.graph.add(
+        (
+            URIRef("https://example.com/vav1"),
+            BRICK.hasPoint,
+            URIRef("https://example.com/flow"),
+        )
+    )
+    m.graph.add((URIRef("https://example.com/flow"), A, BRICK.Supply_Air_Flow_Sensor))
+    m.graph.add(
+        (
+            URIRef("https://example.com/vav1"),
+            BRICK.hasPoint,
+            URIRef("https://example.com/temp"),
+        )
+    )
+    m.graph.add(
+        (URIRef("https://example.com/temp"), A, BRICK.Supply_Air_Temperature_Sensor)
+    )
+
+    # validate against manifest -- should pass now
+    result = m.validate(error_on_missing_imports=False)
+    assert result.valid, result.report_string
+
+
+def test_validate_model_explicit_shapes(clean_building_motif):
     # load library
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
