@@ -696,7 +696,14 @@ document.write(`
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Heating_Coil
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">18</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span> <span class="c1"># print reasons</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="p">:</span>
+<span class="ne">---&gt; </span><span class="mi">18</span>     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="ne">AttributeError</span>: &#39;NoneType&#39; object has no attribute &#39;reason&#39;
 </pre></div>
 </div>
 </div>
@@ -727,33 +734,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix bldg: &lt;urn:ex/&gt; .
-@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
-@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
-
-&lt;urn:bldg/&gt; a owl:Ontology .
-
-&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
-    brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
-        &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
-        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt;,
-        &lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; .
-
-&lt;urn:bldg/abc&gt; a brick:Temperature_Sensor .
-
-bldg:A1 a brick:Air_Handler_Unit .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Supply_Fan .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; a brick:Heating_Coil .
-</pre></div>
-</div>
-</div>
 </div>
 <p>We can see that the heating coil was added to the model and connected to the AHU so let’s check if the manifest validation failure was fixed.</p>
 <div class="cell docutils container">
@@ -765,11 +745,6 @@ bldg:A1 a brick:Air_Handler_Unit .
 <span class="c1"># print reasons</span>
 <span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
 </pre></div>
 </div>
 </div>
@@ -788,25 +763,6 @@ bldg:A1 a brick:Air_Handler_Unit .
 <span class="n">shapes</span> <span class="o">=</span> <span class="n">g36</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">shapes</span><span class="o">.</span><span class="n">get_shapes_of_definition_type</span><span class="p">(</span><span class="n">BMOTIF</span><span class="p">[</span><span class="s2">&quot;System_Specification&quot;</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:ashrae/g36/components/cooling_damper
-urn:ashrae/g36/components/heating_damper
-urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/terminal-unit
-urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only
-urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/terminal-unit
-urn:ashrae/g36/4.2/vav-with-reheat/vav-with-reheat
-urn:ashrae/g36/4.6/mz-vav-ahu/AHU
-urn:ashrae/g36/4.6/mz-vav-ahu/supply-fan
-urn:ashrae/g36/4.6/mz-vav-ahu/return-damper
-urn:ashrae/g36/4.6/mz-vav-ahu/heating-coil
-urn:ashrae/g36/4.6/mz-vav-ahu/cooling-coil
-urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu
-urn:ashrae/g36/4.3/fan-powered/terminal-unit
-urn:ashrae/g36/4.3/fan-powered/fan
-urn:ashrae/g36/4.3/fan-powered/damper
 </pre></div>
 </div>
 </div>
@@ -859,26 +815,12 @@ print(f"Model is valid? {validation_result.valid}")
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Validation Report
-Conforms: True
-
--------------------------------------------------------------------------------
-Model is invalid for these reasons:
-</pre></div>
-</div>
-</div>
 </div>
 <p>The model is failing because the AHU doesn’t have the minimum number of supply fans associated with it. We <em>could</em> add the fan explicitly by adding those triples to the model like we’ve done previously, but we can also ask BuildingMOTIF to generate new templates that explicitly prompt us for the missing information. We’ll cover this feature in the next tutorial so let’s save the model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#save model</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial2_model.ttl&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=116b2b1f-c185-49d0-8745-87bf22181780 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
