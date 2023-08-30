@@ -61,8 +61,6 @@ The [`CSVIngressHandler`](/reference/apidoc/_autosummary/buildingmotif.ingresses
 - `rtype`: the filename that contained the row
 - `fields`: key-value pairs for the row. The key is the column name; the value is the value of that column at the given row
 
-Calling `generate_csv` on a `Template` will create an empty csv with headers. A `CSVIngress` made with this csv can be passed to `TemplateIngress` with that `Template`.
-
 ### XLSX / Spreadsheet Files
 
 The [`XLSXIngressHandler`](/reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html#buildingmotif.ingresses.xlsx.XLSXIngress) takes a path to an `.xlsx` file as an argument and generates a set of `Records` for each row for each sheet in the spreadsheet file.
