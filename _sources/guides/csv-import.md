@@ -1,14 +1,6 @@
 # CSV Import
 
-Assume we have the following CSV file:
-
-```
-name,room,name-co2,name-temp,name-sp
-tstat2,room345,co2-345,temp-345,sp-345
-tstat3,room567,cow-567,temp-567,sp-567
-```
-
-And the following Template in a library called `csv-tutorial`:
+Assume we have the following Template in a library called `csv-tutorial`:
 
 ```yml
 my-thermostat:
@@ -42,6 +34,39 @@ my-tstat-points:
       args: {"name": "co2"}
 ```
 
+Loaded in memory like so:
+
+```python
+from buildingmotif import BuildingMOTIF
+from buildingmotif.dataclasses import Library
+
+bm = BuildingMOTIF("sqlite://") # in-memory
+
+# load in the library containing our template and get the template
+lib = Library.load(directory="csv-tutorial")
+tstat_templ = lib.get_template_by_name('my-thermostat')
+```
+
+We can generate an empty csv file with the approiate column headers for a csvIngress with `generate_csv`:
+
+```python
+tstat_templ.generate_csv("data.csv")
+```
+
+which gives us `data.csv`:
+
+```
+name,room,name-co2,name-temp,name-sp
+```
+
+Assume we fill it out like so:
+
+```
+name,room,name-co2,name-temp,name-sp
+tstat2,room345,co2-345,temp-345,sp-345
+tstat3,room567,cow-567,temp-567,sp-567
+```
+
 We can create a CSV ingress handler using the built-in class ([`CSVIngressHandler`](/reference/apidoc/_autosummary/buildingmotif.ingresses.csv.html#buildingmotif.ingresses.csv.CSVIngress)):
 
 ```python
@@ -52,13 +77,17 @@ from buildingmotif.dataclasses import Model, Library, Template
 from buildingmotif.ingresses import CSVIngress, TemplateIngress, Record
 
 bm = BuildingMOTIF("sqlite://") # in-memory
+
 BLDG = Namespace("urn:my_site/")
 model = Model.create(BLDG) # create our model
+
 lib = Library.load(directory="csv-tutorial") # load in the library containing our template
+tstat_templ = lib.get_template_by_name('my-thermostat')
 
 csv = CSVIngress("data.csv") # the CSV file above
 ingress = TemplateIngress(tstat_templ.inline_dependencies(), None, csv)
 graph = ingress.graph(BLDG)
+
 print(graph.serialize()) # print the resulting model
 ```
 
