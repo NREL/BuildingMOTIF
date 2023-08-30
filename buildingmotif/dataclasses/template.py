@@ -1,7 +1,12 @@
+import csv
+import logging
 import warnings
 from collections import Counter
+from copy import copy
 from dataclasses import dataclass
+from io import BytesIO, StringIO
 from itertools import chain
+from os import PathLike
 from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
@@ -455,6 +460,89 @@ class Template:
         :rtype: rdflib.Graph
         """
         return template_to_nodeshape(self)
+
+    def generate_csv(self, path: Optional[PathLike] = None) -> Optional[StringIO]:
+        """
+        Generate a CSV for this template which contains a column for each template parameter.
+        Once filled out, the resulting CSV file can be passed to a Template Ingress to populate a model.
+        Returns a 'io.BytesIO' object which can be written to a file or sent to another program/function.
+
+        :param path: if not None, writes the CSV to the indicated file
+        :type path: PathLike, optional
+        :return: String buffer containing the resulting CSV file
+        :rtype: StringIO
+        """
+        all_parameters = copy(self.parameters)
+        mandatory_parameters = all_parameters - set(self.optional_args)
+        row_data = list(mandatory_parameters) + list(self.optional_args)
+
+        if path is not None:
+            # write directly to file
+            with open(path, "w") as f:
+                writer = csv.writer(f)
+                writer.writerow(row_data)
+            return None
+
+        # write to in-memory file
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(row_data)
+        return output
+
+    def generate_spreadsheet(
+        self, path: Optional[PathLike] = None
+    ) -> Optional[BytesIO]:
+        """
+        Generate a spreadsheet for this template which contains a column for each template parameter.
+        Once filled out, the resulting spreadsheet can be passed to a Template Ingress to populate a model.
+        Returns a 'io.BytesIO' object which can be written to a file or sent to another program/function.
+
+        :param path: if not None, writes the CSV to the indicated file
+        :type path: PathLike, optional
+        :return: Byte buffer containing the resulting spreadsheet file
+        :rtype: BytesIO
+        """
+        try:
+            from openpyxl import Workbook
+            from openpyxl.utils import get_column_letter
+            from openpyxl.worksheet.table import Table, TableStyleInfo
+        except ImportError:
+            logging.critical(
+                "Install the 'xlsx-ingress' module, e.g. 'pip install buildingmotif[xlsx-ingress]'"
+            )
+            return None
+        all_parameters = copy(self.parameters)
+        mandatory_parameters = all_parameters - set(self.optional_args)
+
+        workbook = Workbook()
+        sheet = workbook.active
+        if sheet is None:
+            raise Exception("Could not open active sheet in Workbook")
+
+        row_data = list(mandatory_parameters) + list(self.optional_args)
+        for column_index, cell_value in enumerate(row_data, 1):
+            column_letter = get_column_letter(column_index)
+            sheet[f"{column_letter}1"] = cell_value  # type: ignore
+            # Adjust column width based on cell content
+            column_dimensions = sheet.column_dimensions[column_letter]  # type: ignore
+            column_dimensions.width = max(column_dimensions.width, len(str(cell_value)))
+
+        tab = Table(
+            displayName="Table1", ref=f"A1:{get_column_letter(len(row_data))}10"
+        )
+        style = TableStyleInfo(name="TableStyleMedium9", showRowStripes=True)
+        tab.tableStyleInfo = style
+        sheet.add_table(tab)
+
+        if path is not None:
+            # write directly to file
+            workbook.save(path)
+            return None
+
+        # save the file in-memory and return the resulting buffer
+        f = BytesIO()
+        workbook.save(f)
+        return f
 
 
 @dataclass

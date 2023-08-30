@@ -52,6 +52,10 @@ class TemplateIngress(GraphIngressHandler):
     def graph(self, ns: Namespace) -> Graph:
         g = Graph()
 
+        # ensure 'ns' is a Namespace or URI forming won't work
+        if not isinstance(ns, Namespace):
+            ns = Namespace(ns)
+
         records = self.upstream.records
         assert records is not None
         for rec in records:
@@ -105,6 +109,10 @@ class TemplateIngressWithChooser(GraphIngressHandler):
     def graph(self, ns: Namespace) -> Graph:
         g = Graph()
 
+        # ensure 'ns' is a Namespace or URI forming won't work
+        if not isinstance(ns, Namespace):
+            ns = Namespace(ns)
+
         records = self.upstream.records
         assert records is not None
         for rec in records:
@@ -119,6 +127,7 @@ class TemplateIngressWithChooser(GraphIngressHandler):
 
 
 def _get_term(field_value: str, ns: Namespace) -> Node:
+    assert isinstance(ns, Namespace), f"{ns} must be a rdflib.Namespace instance"
     try:
         uri = URIRef(ns[field_value])
         uri.n3()  # raises an exception if invalid URI
