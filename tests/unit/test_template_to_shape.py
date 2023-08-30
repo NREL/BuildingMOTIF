@@ -96,16 +96,10 @@ def test_template_to_shape_dependency(bm):
         ] ;
         sh:property [
             sh:path brick:hasPoint ;
-            sh:node p:temp-sensor ;
-            sh:minCount 1 ;
-        ] ;
-        sh:property [
-            sh:path brick:hasPoint ;
+            sh:class brick:Temperature_Sensor ;
             sh:minCount 1 ;
         ] ;
     .
-    p:temp-sensor a sh:NodeShape ;
-        sh:class brick:Temperature_Sensor .
     """
     expected_graph = Graph()
     expected_graph.parse(data=expected_graph_ttl, format="ttl")
@@ -196,7 +190,7 @@ def test_template_to_shape_duplicate_props(bm):
 def test_template_to_shape_validates(bm, library):
     BLDG = Namespace("urn:bldg/")
     model = Model.create(BLDG)
-    lib = Library.load(ontology_graph="libraries/brick/Brick.ttl")
+    Library.load(ontology_graph="brick/Brick.ttl")
     lib = Library.load(directory=library)
     for template in lib.get_templates():
         # add the generated shape to our collection
