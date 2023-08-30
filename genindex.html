@@ -202,6 +202,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -585,8 +586,6 @@ document.write(`
         <li><a href="reference/apidoc/_autosummary/buildingmotif.database.utils.html#module-buildingmotif.database.utils">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     buildingmotif.dataclasses
 
@@ -594,6 +593,8 @@ document.write(`
         <li><a href="reference/apidoc/_autosummary/buildingmotif.dataclasses.html#module-buildingmotif.dataclasses">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     buildingmotif.dataclasses.library
 
@@ -725,6 +726,13 @@ document.write(`
 
       <ul>
         <li><a href="reference/apidoc/_autosummary/buildingmotif.template_matcher.html#module-buildingmotif.template_matcher">module</a>
+</li>
+      </ul></li>
+      <li>
+    buildingmotif.template_to_shape
+
+      <ul>
+        <li><a href="reference/apidoc/_autosummary/buildingmotif.template_to_shape.html#module-buildingmotif.template_to_shape">module</a>
 </li>
       </ul></li>
       <li>
@@ -1016,8 +1024,6 @@ document.write(`
         <li><a href="reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBShapeCollection.graph_id">(DBShapeCollection attribute)</a>
 </li>
       </ul></li>
-      <li><a href="reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.graph_name">graph_name (ShapeCollection property)</a>
-</li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.graph_size">graph_size() (in module buildingmotif.utils)</a>
 </li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphClassCardinality">GraphClassCardinality (class in buildingmotif.dataclasses.validation)</a>
@@ -1242,6 +1248,8 @@ document.write(`
 </li>
         <li><a href="reference/apidoc/_autosummary/buildingmotif.template_matcher.html#module-buildingmotif.template_matcher">buildingmotif.template_matcher</a>
 </li>
+        <li><a href="reference/apidoc/_autosummary/buildingmotif.template_to_shape.html#module-buildingmotif.template_to_shape">buildingmotif.template_to_shape</a>
+</li>
         <li><a href="reference/apidoc/_autosummary/buildingmotif.utils.html#module-buildingmotif.utils">buildingmotif.utils</a>
 </li>
       </ul></li>
@@ -1463,11 +1471,11 @@ document.write(`
 </li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Dependency.template_id">template_id (Dependency property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.template_subgraph_from_mapping">template_subgraph_from_mapping() (TemplateMatcher method)</a>
 </li>
-      <li><a href="reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.template_to_shape">template_to_shape() (in module buildingmotif.utils)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/apidoc/_autosummary/buildingmotif.template_to_shape.html#buildingmotif.template_to_shape.template_to_nodeshape">template_to_nodeshape() (in module buildingmotif.template_to_shape)</a>
 </li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.ingresses.template.html#buildingmotif.ingresses.template.TemplateIngress">TemplateIngress (class in buildingmotif.ingresses.template)</a>
 </li>
@@ -1481,6 +1489,8 @@ document.write(`
 </li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.to_inline">to_inline() (Template method)</a>
 </li>
+      <li><a href="reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.to_nodeshape">to_nodeshape() (Template method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1493,15 +1503,13 @@ document.write(`
 </li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_model_name">update_db_model_name() (TableConnection method)</a>
 </li>
-      <li><a href="reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_library">update_db_template_library() (TableConnection method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_library">update_db_template_library() (TableConnection method)</a>
+</li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_name">update_db_template_name() (TableConnection method)</a>
 </li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_optional_args">update_db_template_optional_args() (TableConnection method)</a>
-</li>
-      <li><a href="reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.update_manifest">update_manifest() (Model method)</a>
 </li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.update_model_graph">update_model_graph() (in module buildingmotif.api.views.model)</a>
 </li>
@@ -1520,6 +1528,8 @@ document.write(`
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.validate_model">validate_model() (in module buildingmotif.api.views.model)</a>
+</li>
+      <li><a href="reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.validate_uri">validate_uri() (in module buildingmotif.utils)</a>
 </li>
       <li><a href="reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphDiff.validation_result">validation_result (GraphDiff attribute)</a>
 </li>
