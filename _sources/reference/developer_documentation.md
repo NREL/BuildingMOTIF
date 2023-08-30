@@ -105,13 +105,3 @@ poetry publish --build
 1. [Download Node.js](https://nodejs.org/en/download/)
 2. [Install Angular](https://angular.io/guide/setup-local)
 3. See [buildingmotif-app/README.md](buildingmotif-app/README.md)
-
-
-## Running on Docker
-1. Ensure `.env` contains the correct database information. 
-
-2. Up containers with docker-compose.
-    ```
-    docker-compose up --build
-    ```
-3. The api can now be reached at http://127.0.0.1:5000 and the app can be reached but http://localhost:4200.

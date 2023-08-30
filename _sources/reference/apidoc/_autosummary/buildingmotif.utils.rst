@@ -25,7 +25,7 @@ buildingmotif.utils
       replace_nodes
       rewrite_shape_graph
       skip_uri
-      template_to_shape
+      validate_uri
    
    
 
