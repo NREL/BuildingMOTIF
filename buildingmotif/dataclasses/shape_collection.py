@@ -267,7 +267,7 @@ def _resolve_imports(
             lib = Library.load(name=ontology)
             sc_to_add = lib.get_shape_collection()
         except Exception as e:
-            logger.error(
+            logger.warning(
                 "Could not resolve import of %s from Libraries (%s). Trying shape collections",
                 ontology,
                 e,
@@ -281,7 +281,7 @@ def _resolve_imports(
                 if sc.graph_name == ontology:
                     sc_to_add = sc
                     break
-            logger.error(
+            logger.warning(
                 "Could not resolve import of %s from Libraries. Trying shape collections",
                 ontology,
             )
@@ -298,5 +298,4 @@ def _resolve_imports(
             error_on_missing_imports=error_on_missing_imports,
         )
         new_g += dependency
-        print(f"graph size now {len(new_g)}")
     return new_g
