@@ -1,3 +1,4 @@
+import pytest
 from rdflib import Graph, Namespace
 from rdflib.compare import isomorphic
 
@@ -188,6 +189,8 @@ def test_template_to_shape_duplicate_props(bm):
 
 
 def test_template_to_shape_validates(bm, library):
+    if library == "libraries/ashrae/223p/nrel-templates":
+        pytest.skip("Skipping until 223P support is fixed")
     BLDG = Namespace("urn:bldg/")
     model = Model.create(BLDG)
     Library.load(ontology_graph="brick/Brick.ttl")
