@@ -223,7 +223,6 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../explanations/ingresses.html">Ingresses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -610,16 +609,11 @@ document.write(`
         <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">otype</span><span class="p">,</span> <span class="n">mincount</span><span class="p">)</span> <span class="o">=</span> <span class="n">property_path</span><span class="p">,</span> <span class="n">otypes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mincounts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mincount</span><span class="p">,</span> <span class="n">Literal</span><span class="p">)</span>
 
-        <span class="n">param_name</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
-
-        <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">mincount</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">param_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">param</span> <span class="o">=</span> <span class="n">PARAM</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}{</span><span class="n">num</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">param</span> <span class="o">=</span> <span class="n">_gensym</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">mincount</span><span class="p">)):</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">_gensym</span><span class="p">()</span>
             <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">param</span><span class="p">))</span>
-            <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">otype</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
-            <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">otype</span><span class="p">))</span>
+            <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="n">otype</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
+            <span class="c1"># body.add((param, RDF.type, otype))</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">shape_name</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">OWL</span><span class="o">.</span><span class="n">Class</span><span class="p">)</span> <span class="ow">in</span> <span class="n">shape_graph</span><span class="p">:</span>
         <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">shape_name</span><span class="p">))</span>
@@ -628,15 +622,9 @@ document.write(`
     <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
         <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">cls</span><span class="p">))</span>
 
-    <span class="n">classes</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">shape_name</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;targetClass&quot;</span><span class="p">])</span>
-    <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
-        <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">cls</span><span class="p">))</span>
-
     <span class="n">nodes</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">shape_name</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-        <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">}}</span>
-        <span class="p">)</span>  <span class="c1"># tie to root param</span>
+        <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="n">node</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">}})</span>  <span class="c1"># tie to root param</span>
 
     <span class="k">return</span> <span class="n">body</span><span class="p">,</span> <span class="n">deps</span></div>
 

@@ -226,7 +226,6 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../explanations/ingresses.html">Ingresses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -428,6 +427,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-validation-ontology">Model Validation - Ontology</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-validation-manifest">Model Validation - Manifest</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-a-manifest">Writing a Manifest</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-the-manifest-to-the-model">Adding the Manifest to the Model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validating-the-model">Validating the Model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixing-the-model">Fixing the Model</a></li>
 </ul>
@@ -481,7 +481,8 @@ document.write(`
 <p>Validating a model is the process of ensuring that the model is both <em>correct</em> (uses the ontologies correctly) and <em>semantically sufficient</em> (it contains sufficient metadata to execute the desired applications or enable the desired use cases). Validation is always done with respect to sets of <code class="docutils literal notranslate"><span class="pre">Shapes</span></code> using the Shapes Constraint Language (SHACL)<a class="footnote-reference brackets" href="#id4" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Permalink to this heading">#</a></h2>
-<p>We create an in-memory BuildingMOTIF instance, load the model from the previous tutorial, and load some libraries to create the manifest with. The <code class="docutils literal notranslate"><span class="pre">constraints.ttl</span></code> library we load is a special library with some custom constraints defined that are helpful for writing manifests.</p>
+<p>We create an in-memory BuildingMOTIF instance, load the model from the previous tutorial, and load some libraries to create the manifest with.
+The <code class="docutils literal notranslate"><span class="pre">constraints.ttl</span></code> library we load is a special library with some custom constraints defined that are helpful for writing manifests.</p>
 <aside class="margin sidebar">
 <p class="sidebar-title"></p>
 <div class="admonition warning">
@@ -521,7 +522,7 @@ document.write(`
 </section>
 <section id="model-validation-ontology">
 <h2>Model Validation - Ontology<a class="headerlink" href="#model-validation-ontology" title="Permalink to this heading">#</a></h2>
-<p>BuildingMOTIF organizes Shapes into <code class="docutils literal notranslate"><span class="pre">Shape</span> <span class="pre">Collections</span></code>. The shape collection associated with a library (if there is one) can be retrieved with the <code class="docutils literal notranslate"><span class="pre">get_shape_collection</span></code> property. Below, we use Brick’s shape collection to ensure that the model is using Brick correctly:</p>
+<p>BuildingMOTIF organizes Shapes into <code class="docutils literal notranslate"><span class="pre">Shape</span> <span class="pre">Collections</span></code>. The shape collection associated with a library (if there is one) can be retrieved with the <code class="docutils literal notranslate"><span class="pre">get_shape_collection</span></code> method. Below, we use Brick’s shape collection to ensure that the model is using Brick correctly:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pass a list of shape collections to .validate()</span>
@@ -549,14 +550,18 @@ document.write(`
 <p>A <code class="docutils literal notranslate"><span class="pre">manifest</span></code> is an RDF graph with a set of <code class="docutils literal notranslate"><span class="pre">Shapes</span></code> inside, which place constraints and requirements on what metadata must be contained within a metadata model.</p>
 </div>
 </aside>
-<p>For now, we will write a <code class="docutils literal notranslate"><span class="pre">manifest</span></code> file directly; in the future, BuildingMOTIF will contain features that make manifests easier to write. Here is the header of a manifest file. This should also suffice for most of your own manifests.</p>
+<p>For now, we will write a <code class="docutils literal notranslate"><span class="pre">manifest</span></code> file directly; in the future, BuildingMOTIF will contain features that make manifests easier to write.
+Here is the header of a manifest file. This should also suffice for most of your own manifests.</p>
 <div class="highlight-ttl notranslate"><div class="highlight"><pre><span></span>@<span class="nv">prefix</span><span class="w"> </span><span class="nv">brick</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">brickschema</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">schema</span><span class="o">/</span><span class="nv">Brick</span>#<span class="o">&gt;</span><span class="w"> </span>.
 @<span class="nv">prefix</span><span class="w"> </span><span class="nv">owl</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">http</span>:<span class="o">//</span><span class="nv">www</span>.<span class="nv">w3</span>.<span class="nv">org</span><span class="o">/</span><span class="mi">2002</span><span class="o">/</span><span class="mi">07</span><span class="o">/</span><span class="nv">owl</span>#<span class="o">&gt;</span><span class="w"> </span>.
 @<span class="nv">prefix</span><span class="w"> </span><span class="nv">sh</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">http</span>:<span class="o">//</span><span class="nv">www</span>.<span class="nv">w3</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">ns</span><span class="o">/</span><span class="nv">shacl</span>#<span class="o">&gt;</span><span class="w"> </span>.
 @<span class="nv">prefix</span><span class="w"> </span><span class="nv">constraint</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">nrel</span>.<span class="nv">gov</span><span class="o">/</span><span class="nv">BuildingMOTIF</span><span class="o">/</span><span class="nv">constraints</span>#<span class="o">&gt;</span><span class="w"> </span>.
 @<span class="nv">prefix</span><span class="w"> </span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">urn</span>:<span class="nv">my_site_constraints</span><span class="o">/&gt;</span><span class="w"> </span>.
 
-:<span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">owl</span>:<span class="nv">Ontology</span><span class="w"> </span>.
+:<span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">owl</span>:<span class="nv">Ontology</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">owl</span>:<span class="nv">imports</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">brickschema</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">schema</span><span class="o">/</span><span class="mi">1</span>.<span class="mi">3</span><span class="o">/</span><span class="nv">Brick</span><span class="o">&gt;</span>,
+<span class="w">                </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">nrel</span>.<span class="nv">gov</span><span class="o">/</span><span class="nv">BuildingMOTIF</span><span class="o">/</span><span class="nv">constraints</span><span class="o">&gt;</span>,
+<span class="w">                </span><span class="o">&lt;</span><span class="nv">urn</span>:<span class="nv">ashrae</span><span class="o">/</span><span class="nv">g36</span><span class="o">&gt;</span><span class="w"> </span>.
 </pre></div>
 </div>
 <p>We will now add a constraint stating that the model should contain exactly 1 Brick AHU.</p>
@@ -570,7 +575,7 @@ document.write(`
 <p>This basic structure can be changed to require different numbers of different Brick classes. Just don’t forget to change the name of the shape (<code class="docutils literal notranslate"><span class="pre">:ahu-count</span></code>, above) when you copy-paste!</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>As an exercise, try writing shapes that require the model to have the following.</p>
+<p>As an exercise, try writing shapes that require the model to contain the following.</p>
 <ul class="simple">
 <li><p>(1) Brick Supply_Fan</p></li>
 <li><p>(1) Brick Damper</p></li>
@@ -615,6 +620,7 @@ document.write(`
     sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .
 ``` -->
 <p>Put all of the above in a new file called <code class="docutils literal notranslate"><span class="pre">tutorial2_manifest.ttl</span></code>. We’ll also add a shape called <code class="docutils literal notranslate"><span class="pre">sz-vav-ahu-control-sequences</span></code>, which is a use case shape to validate the model against in the next section.</p>
+<p>The following block of code puts all of the above in the <code class="docutils literal notranslate"><span class="pre">tutorial2_manifest.ttl</span></code> file for you:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;tutorial2_manifest.ttl&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -625,7 +631,10 @@ document.write(`
 <span class="s2">@prefix constraint: &lt;https://nrel.gov/BuildingMOTIF/constraints#&gt; .</span>
 <span class="s2">@prefix : &lt;urn:my_site_constraints/&gt; .</span>
 
-<span class="s2">: a owl:Ontology .</span>
+<span class="s2">: a owl:Ontology ;</span>
+<span class="s2">    owl:imports &lt;https://brickschema.org/schema/1.3/Brick&gt;,</span>
+<span class="s2">                &lt;https://nrel.gov/BuildingMOTIF/constraints&gt;,</span>
+<span class="s2">                &lt;urn:ashrae/g36&gt; .</span>
 
 <span class="s2">:ahu-count a sh:NodeShape ;</span>
 <span class="s2">    sh:message &quot;need 1 AHU&quot; ;</span>
@@ -667,24 +676,31 @@ document.write(`
 </div>
 </div>
 </section>
-<section id="validating-the-model">
-<h3>Validating the Model<a class="headerlink" href="#validating-the-model" title="Permalink to this heading">#</a></h3>
-<p>We can now ask BuildingMOTIF to validate the model against the manifest and ask BuildingMOTIF for some details if it fails. We also have to be sure to include the supporting shape collections containing the definitions used in the manifest.</p>
+<section id="adding-the-manifest-to-the-model">
+<h3>Adding the Manifest to the Model<a class="headerlink" href="#adding-the-manifest-to-the-model" title="Permalink to this heading">#</a></h3>
+<p>We associate the manifest with our model so that BuildingMOTIF knows that we want validate the model against these specific shapes.
+We can always update this manifest, or validate our model against other shapes; however, validating a model against its manifest is
+the most common use case, so this is treated specially in BuildingMOTIF.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load manifest into BuildingMOTIF as its own library!</span>
 <span class="n">manifest</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;tutorial2_manifest.ttl&quot;</span><span class="p">)</span>
-
-<span class="c1"># gather shape collections into a list for ease of use</span>
-<span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">brick</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
-    <span class="n">constraints</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
-    <span class="n">manifest</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
-    <span class="n">g36</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
-<span class="p">]</span>
-
-<span class="c1"># pass a list of shape collections to .validate()</span>
-<span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
+<span class="c1"># set it as the manifest for the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">update_manifest</span><span class="p">(</span><span class="n">manifest</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="validating-the-model">
+<h3>Validating the Model<a class="headerlink" href="#validating-the-model" title="Permalink to this heading">#</a></h3>
+<p>We can now ask BuildingMOTIF to validate the model against the manifest and ask BuildingMOTIF for some details if it fails.
+By default, BuildingMOTIF will include all shape collections imported by the manifest (<code class="docutils literal notranslate"><span class="pre">owl:imports</span></code>). BuildingMOTIF will
+complain if the manifest requires ontologies that have not yet been loaded into BuildingMOTIF; this is why we are careful
+to load in the Brick and Guideline36 libraries at the top of this tutorial.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="c1"># print reasons</span>
@@ -694,12 +710,45 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-30 14:56:29,313 | buildingmotif.dataclasses.shape_collection |  ERROR: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-30 14:56:29,323 | buildingmotif.dataclasses.shape_collection |  ERROR: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>graph size now 49
+graph size now 695
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>graph size now 4800
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+ - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Heating_Coil
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Heating_Coil
-</pre></div>
 </div>
+</div>
+<div class="dropdown admonition">
+<p class="admonition-title">Tip on supplying extra shape collections</p>
+<p>We can also provide a list of shape collections directly to <code class="docutils literal notranslate"><span class="pre">Model.validate</span></code>; BuildingMOTIF
+will use these shape collections to validate the model <em>instead of</em> the manifest.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># gather shape collections into a list for ease of use</span>
+<span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">brick</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
+    <span class="n">constraints</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
+    <span class="n">manifest</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
+    <span class="n">g36</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">(),</span>
+<span class="p">]</span>
+
+<span class="c1"># pass a list of shape collections to .validate()</span>
+<span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># print reasons</span>
+<span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
 </section>
@@ -759,8 +808,7 @@ bldg:A1 a brick:Air_Handler_Unit .
 <p>We can see that the heating coil was added to the model and connected to the AHU so let’s check if the manifest validation failure was fixed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pass a list of shape collections to .validate()</span>
-<span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="c1"># print reasons</span>
@@ -770,6 +818,19 @@ bldg:A1 a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-30 14:56:30,336 | buildingmotif.dataclasses.shape_collection |  ERROR: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-08-30 14:56:30,345 | buildingmotif.dataclasses.shape_collection |  ERROR: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>graph size now 49
+graph size now 695
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>graph size now 4800
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
 </pre></div>
 </div>
@@ -879,7 +940,7 @@ Model is invalid for these reasons:
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=5b4ccb82-c587-42d7-9140-53595caea43c (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=c5e609f4-1c1d-4164-8287-218cedf7da2d (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -968,6 +1029,7 @@ Model is invalid for these reasons:
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-validation-ontology">Model Validation - Ontology</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-validation-manifest">Model Validation - Manifest</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-a-manifest">Writing a Manifest</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-the-manifest-to-the-model">Adding the Manifest to the Model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#validating-the-model">Validating the Model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixing-the-model">Fixing the Model</a></li>
 </ul>
