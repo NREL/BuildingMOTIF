@@ -644,7 +644,7 @@ document.write(`
             <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">ontology</span><span class="p">)</span>
             <span class="n">sc_to_add</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2"> from Libraries (</span><span class="si">%s</span><span class="s2">). Trying shape collections&quot;</span><span class="p">,</span>
                 <span class="n">ontology</span><span class="p">,</span>
                 <span class="n">e</span><span class="p">,</span>
@@ -658,7 +658,7 @@ document.write(`
                 <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">graph_name</span> <span class="o">==</span> <span class="n">ontology</span><span class="p">:</span>
                     <span class="n">sc_to_add</span> <span class="o">=</span> <span class="n">sc</span>
                     <span class="k">break</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2"> from Libraries. Trying shape collections&quot;</span><span class="p">,</span>
                 <span class="n">ontology</span><span class="p">,</span>
             <span class="p">)</span>
@@ -675,7 +675,6 @@ document.write(`
             <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">new_g</span> <span class="o">+=</span> <span class="n">dependency</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;graph size now </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new_g</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">new_g</span>
 </pre></div>
 
