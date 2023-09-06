@@ -103,7 +103,7 @@ for templ in generated_templates.get_templates():
 
 In this case, the generated templates are fairly simple. They require an input for the name of the supply fan and the names of several missing points. We can loop through each of these generated templates and create the names. Here, we are creating arbitrary names for the points but in a real setting you would likely pull the equipment or point names from an external source like a Building Information Model or BACnet network[^1] (see future tutorials for how to do this!) Another challenge is the fact that we already have a supply fan in the model. Here, we can take advantage of the fact that the name of the fan in the existing model are just the name of the AHU wtih the `-Fan` postfix. The name of the AHU is in the generated templates (see above) so we can just pull out the name of the AHU, add the postfix, and use that as the value for the `name` parameter.
 
-If we just add the generated templates to the building model, we will probably pass validation *but* the entities will not have names with any significance to the building. It is highly recommended to use the template evaluation features (demonstrated below) to fill in the parameters with the "real" names of the entities as they appear in the building and/or building management system.
+If we just add the generated templates to the building model, we will probably pass validation *but* the entity names will have no significance to the building. It is highly recommended to use the template evaluation features (demonstrated below) to fill in the parameters with the "real" names of the entities as they appear in the building and/or building management system.
 
 [^1]: https://bacnet.org/
 
