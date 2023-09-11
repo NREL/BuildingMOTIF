@@ -480,6 +480,13 @@ document.write(`
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.shape_collection.ShapeCollection.id" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.shape_collection.ShapeCollection.graph_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">graph_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">URIRef</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.shape_collection.ShapeCollection.graph_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the name of the graph (subject of “a owl:Ontology”)
+if one exists</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.shape_collection.ShapeCollection.add_triples">
 <span class="sig-name descname"><span class="pre">add_triples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">triples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/shape_collection.html#ShapeCollection.add_triples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.shape_collection.ShapeCollection.add_triples" title="Permalink to this definition">#</a></dt>
@@ -504,15 +511,20 @@ document.write(`
 
 <dl class="py method">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.shape_collection.ShapeCollection.resolve_imports">
-<span class="sig-name descname"><span class="pre">resolve_imports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recursive_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">ShapeCollection</span></a></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/shape_collection.html#ShapeCollection.resolve_imports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.shape_collection.ShapeCollection.resolve_imports" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">resolve_imports</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recursive_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_on_missing_imports</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">ShapeCollection</span></a></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/shape_collection.html#ShapeCollection.resolve_imports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.shape_collection.ShapeCollection.resolve_imports" title="Permalink to this definition">#</a></dt>
 <dd><p>Resolves <cite>owl:imports</cite> to as many levels as requested.</p>
 <p>By default, all <cite>owl:imports</cite> are recursively resolved. This limit can
 be changed to 0 to suppress resolving imports, or to 1..n to handle
 recursion up to that limit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>recursive_limit</strong> (<em>int</em><em>, </em><em>optional</em>) – how many levels of <cite>owl:imports</cite> to resolve,
-defaults to -1 (all)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recursive_limit</strong> (<em>int</em><em>, </em><em>optional</em>) – how many levels of <cite>owl:imports</cite> to resolve,
+defaults to -1 (all)</p></li>
+<li><p><strong>error_on_missing_imports</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, raises an error if any of the dependency
+ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
+to True</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a new ShapeCollection with the types resolved</p>

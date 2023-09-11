@@ -442,6 +442,15 @@ document.write(`
     <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Cannot modify db id&quot;</span><span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">graph_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the name of the graph (subject of &quot;a owl:Ontology&quot;)</span>
+<span class="sd">        if one exists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># will be None if this is not found</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="nb">object</span><span class="o">=</span><span class="n">OWL</span><span class="o">.</span><span class="n">Ontology</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
 <div class="viewcode-block" id="ShapeCollection.add_triples"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.add_triples">[docs]</a>    <span class="k">def</span> <span class="nf">add_triples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">triples</span><span class="p">:</span> <span class="n">Triple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the given triples to the graph.</span>
 
@@ -474,7 +483,9 @@ document.write(`
             <span class="n">cbd</span> <span class="o">=</span> <span class="n">new_cbd</span>
         <span class="k">return</span> <span class="n">cbd</span>
 
-<div class="viewcode-block" id="ShapeCollection.resolve_imports"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.resolve_imports">[docs]</a>    <span class="k">def</span> <span class="nf">resolve_imports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recursive_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ShapeCollection&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="ShapeCollection.resolve_imports"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.resolve_imports">[docs]</a>    <span class="k">def</span> <span class="nf">resolve_imports</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">recursive_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">error_on_missing_imports</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ShapeCollection&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolves `owl:imports` to as many levels as requested.</span>
 
 <span class="sd">        By default, all `owl:imports` are recursively resolved. This limit can</span>
@@ -484,11 +495,20 @@ document.write(`
 <span class="sd">        :param recursive_limit: how many levels of `owl:imports` to resolve,</span>
 <span class="sd">            defaults to -1 (all)</span>
 <span class="sd">        :type recursive_limit: int, optional</span>
+<span class="sd">        :param error_on_missing_imports: if True, raises an error if any of the dependency</span>
+<span class="sd">            ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults</span>
+<span class="sd">            to True</span>
+<span class="sd">        :type error_on_missing_imports: bool, optional</span>
 <span class="sd">        :return: a new ShapeCollection with the types resolved</span>
 <span class="sd">        :rtype: ShapeCollection</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">resolved_namespaces</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="n">resolved</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">recursive_limit</span><span class="p">,</span> <span class="n">resolved_namespaces</span><span class="p">)</span>
+        <span class="n">resolved</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+            <span class="n">recursive_limit</span><span class="p">,</span>
+            <span class="n">resolved_namespaces</span><span class="p">,</span>
+            <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">new_sc</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
         <span class="n">new_sc</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">resolved</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new_sc</span></div>
@@ -600,9 +620,14 @@ document.write(`
 
 
 <span class="k">def</span> <span class="nf">_resolve_imports</span><span class="p">(</span>
-    <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">recursive_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seen</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+    <span class="n">recursive_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">seen</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">],</span>
+    <span class="n">error_on_missing_imports</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.library</span> <span class="kn">import</span> <span class="n">Library</span>
+
+    <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -617,16 +642,39 @@ document.write(`
         <span class="c1"># go find the graph definition from our libraries</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">ontology</span><span class="p">)</span>
+            <span class="n">sc_to_add</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;Could not resolve import of library/shape collection: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ontology</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2"> from Libraries (</span><span class="si">%s</span><span class="s2">). Trying shape collections&quot;</span><span class="p">,</span>
+                <span class="n">ontology</span><span class="p">,</span>
+                <span class="n">e</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">raise</span> <span class="n">e</span>
+            <span class="n">sc_to_add</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># search through our shape collections for a graph with the provided name</span>
+        <span class="k">if</span> <span class="n">sc_to_add</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">shape_collection</span> <span class="ow">in</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_all_db_shape_collections</span><span class="p">():</span>
+                <span class="n">sc</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">graph_name</span> <span class="o">==</span> <span class="n">ontology</span><span class="p">:</span>
+                    <span class="n">sc_to_add</span> <span class="o">=</span> <span class="n">sc</span>
+                    <span class="k">break</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2"> from Libraries. Trying shape collections&quot;</span><span class="p">,</span>
+                <span class="n">ontology</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sc_to_add</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">error_on_missing_imports</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
+            <span class="k">continue</span>
+
         <span class="n">dependency</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
-            <span class="n">lib</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">recursive_limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">seen</span>
+            <span class="n">sc_to_add</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+            <span class="n">recursive_limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">seen</span><span class="p">,</span>
+            <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">new_g</span> <span class="o">+=</span> <span class="n">dependency</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;graph size now </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">new_g</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">new_g</span>
 </pre></div>
 
