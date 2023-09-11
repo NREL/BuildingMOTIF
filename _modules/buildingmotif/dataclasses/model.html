@@ -514,9 +514,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">+=</span> <span class="n">graph</span></div>
 
 <div class="viewcode-block" id="Model.validate"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">shape_collections</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ShapeCollection</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">error_on_missing_imports</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">shape_collections</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ShapeCollection</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValidationContext&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates this model against the given list of ShapeCollections.</span>
 <span class="sd">        If no list is provided, the model will be validated against the model&#39;s &quot;manifest&quot;.</span>
@@ -529,10 +527,6 @@ document.write(`
 <span class="sd">            graph should be validated. If an empty list or None is provided, the</span>
 <span class="sd">            model will be validated against the model&#39;s manifest.</span>
 <span class="sd">        :type shape_collections: List[ShapeCollection]</span>
-<span class="sd">        :param error_on_missing_imports: if True, raises an error if any of the dependency</span>
-<span class="sd">            ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults</span>
-<span class="sd">            to True</span>
-<span class="sd">        :type error_on_missing_imports: bool, optional</span>
 <span class="sd">        :return: An object containing useful properties/methods to deal with</span>
 <span class="sd">            the validation results</span>
 <span class="sd">        :rtype: ValidationContext</span>
@@ -545,10 +539,8 @@ document.write(`
             <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()]</span>
         <span class="c1"># aggregate shape graphs</span>
         <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">shape_collections</span><span class="p">:</span>
-            <span class="n">shapeg</span> <span class="o">+=</span> <span class="n">sc</span><span class="o">.</span><span class="n">resolve_imports</span><span class="p">(</span>
-                <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">graph</span>
-        <span class="c1"># inline sh:node for interpretability</span>
+            <span class="c1"># inline sh:node for interpretability</span>
+            <span class="n">shapeg</span> <span class="o">+=</span> <span class="n">sc</span><span class="o">.</span><span class="n">graph</span>
         <span class="n">shapeg</span> <span class="o">=</span> <span class="n">rewrite_shape_graph</span><span class="p">(</span><span class="n">shapeg</span><span class="p">)</span>
         <span class="c1"># TODO: do we want to preserve the materialized triples added to data_graph via reasoning?</span>
         <span class="n">data_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
@@ -680,16 +672,7 @@ document.write(`
 <span class="sd">        :return: model&#39;s shape collection</span>
 <span class="sd">        :rtype: ShapeCollection</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_manifest_id</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Model.update_manifest"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.update_manifest">[docs]</a>    <span class="k">def</span> <span class="nf">update_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">ShapeCollection</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the manifest for this model by adding in the contents</span>
-<span class="sd">        of the shape graph inside the provided SHapeCollection</span>
-
-<span class="sd">        :param manifest: the ShapeCollection containing additional shapes against which to validate this model</span>
-<span class="sd">        :type manifest: ShapeCollection</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()</span><span class="o">.</span><span class="n">graph</span> <span class="o">+=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">graph</span></div></div>
+        <span class="k">return</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_manifest_id</span><span class="p">)</span></div></div>
 </pre></div>
 
                 </article>
