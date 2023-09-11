@@ -40,8 +40,7 @@ Validating a model is the process of ensuring that the model is both *correct* (
 
 ## Setup
 
-We create an in-memory BuildingMOTIF instance, load the model from the previous tutorial, and load some libraries to create the manifest with.
-The `constraints.ttl` library we load is a special library with some custom constraints defined that are helpful for writing manifests.
+We create an in-memory BuildingMOTIF instance, load the model from the previous tutorial, and load some libraries to create the manifest with. The `constraints.ttl` library we load is a special library with some custom constraints defined that are helpful for writing manifests.
 
 ```{margin}
 ```{warning}
@@ -76,7 +75,7 @@ g36 = Library.load(directory="../../libraries/ashrae/guideline36")
 
 ## Model Validation - Ontology
 
-BuildingMOTIF organizes Shapes into `Shape Collections`. The shape collection associated with a library (if there is one) can be retrieved with the `get_shape_collection` method. Below, we use Brick's shape collection to ensure that the model is using Brick correctly:
+BuildingMOTIF organizes Shapes into `Shape Collections`. The shape collection associated with a library (if there is one) can be retrieved with the `get_shape_collection` property. Below, we use Brick's shape collection to ensure that the model is using Brick correctly:
 
 ```{code-cell}
 # pass a list of shape collections to .validate()
@@ -95,8 +94,7 @@ Success! The model is valid according to the Brick ontology.
 A `manifest` is an RDF graph with a set of `Shapes` inside, which place constraints and requirements on what metadata must be contained within a metadata model. 
 ```
 
-For now, we will write a `manifest` file directly; in the future, BuildingMOTIF will contain features that make manifests easier to write.
-Here is the header of a manifest file. This should also suffice for most of your own manifests.
+For now, we will write a `manifest` file directly; in the future, BuildingMOTIF will contain features that make manifests easier to write. Here is the header of a manifest file. This should also suffice for most of your own manifests.
 
 ```ttl
 @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -105,10 +103,7 @@ Here is the header of a manifest file. This should also suffice for most of your
 @prefix constraint: <https://nrel.gov/BuildingMOTIF/constraints#> .
 @prefix : <urn:my_site_constraints/> .
 
-: a owl:Ontology ;
-    owl:imports <https://brickschema.org/schema/1.3/Brick>,
-                <https://nrel.gov/BuildingMOTIF/constraints>,
-                <urn:ashrae/g36> .
+: a owl:Ontology .
 ```
 
 We will now add a constraint stating that the model should contain exactly 1 Brick AHU.
@@ -124,7 +119,7 @@ We will now add a constraint stating that the model should contain exactly 1 Bri
 This basic structure can be changed to require different numbers of different Brick classes. Just don't forget to change the name of the shape (`:ahu-count`, above) when you copy-paste!
 
 ```{attention}
-As an exercise, try writing shapes that require the model to contain the following.
+As an exercise, try writing shapes that require the model to have the following.
 - (1) Brick Supply_Fan
 - (1) Brick Damper
 - (1) Brick Cooling_Coil
@@ -171,8 +166,6 @@ As an exercise, try writing shapes that require the model to contain the followi
 
 Put all of the above in a new file called `tutorial2_manifest.ttl`. We'll also add a shape called `sz-vav-ahu-control-sequences`, which is a use case shape to validate the model against in the next section.
 
-The following block of code puts all of the above in the `tutorial2_manifest.ttl` file for you:
-
 ```{code-cell}
 with open("tutorial2_manifest.ttl", "w") as f:
     f.write("""
@@ -182,10 +175,7 @@ with open("tutorial2_manifest.ttl", "w") as f:
 @prefix constraint: <https://nrel.gov/BuildingMOTIF/constraints#> .
 @prefix : <urn:my_site_constraints/> .
 
-: a owl:Ontology ;
-    owl:imports <https://brickschema.org/schema/1.3/Brick>,
-                <https://nrel.gov/BuildingMOTIF/constraints>,
-                <urn:ashrae/g36> .
+: a owl:Ontology .
 
 :ahu-count a sh:NodeShape ;
     sh:message "need 1 AHU" ;
@@ -224,44 +214,14 @@ with open("tutorial2_manifest.ttl", "w") as f:
 """)
 ```
 
-### Adding the Manifest to the Model
+### Validating the Model
 
-We associate the manifest with our model so that BuildingMOTIF knows that we want validate the model against these specific shapes.
-We can always update this manifest, or validate our model against other shapes; however, validating a model against its manifest is
-the most common use case, so this is treated specially in BuildingMOTIF.
-
+We can now ask BuildingMOTIF to validate the model against the manifest and ask BuildingMOTIF for some details if it fails. We also have to be sure to include the supporting shape collections containing the definitions used in the manifest.
 
 ```{code-cell}
 # load manifest into BuildingMOTIF as its own library!
 manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
-# set it as the manifest for the model
-model.update_manifest(manifest)
-```
 
-### Validating the Model
-
-We can now ask BuildingMOTIF to validate the model against the manifest and ask BuildingMOTIF for some details if it fails.
-By default, BuildingMOTIF will include all shape collections imported by the manifest (`owl:imports`). BuildingMOTIF will
-complain if the manifest requires ontologies that have not yet been loaded into BuildingMOTIF; this is why we are careful
-to load in the Brick and Guideline36 libraries at the top of this tutorial.
-
-
-```{code-cell}
-validation_result = model.validate()
-print(f"Model is valid? {validation_result.valid}")
-
-# print reasons
-for diff in validation_result.diffset:
-    print(f" - {diff.reason()}")
-```
-
-```{admonition} Tip on supplying extra shape collections
-:class: dropdown
-
-We can also provide a list of shape collections directly to `Model.validate`; BuildingMOTIF
-will use these shape collections to validate the model *instead of* the manifest.
-
-```python
 # gather shape collections into a list for ease of use
 shape_collections = [
     brick.get_shape_collection(),
@@ -271,7 +231,7 @@ shape_collections = [
 ]
 
 # pass a list of shape collections to .validate()
-validation_result = model.validate()
+validation_result = model.validate(shape_collections)
 print(f"Model is valid? {validation_result.valid}")
 
 # print reasons
@@ -306,7 +266,8 @@ print(model.graph.serialize())
 We can see that the heating coil was added to the model and connected to the AHU so let's check if the manifest validation failure was fixed.
 
 ```{code-cell}
-validation_result = model.validate()
+# pass a list of shape collections to .validate()
+validation_result = model.validate(shape_collections)
 print(f"Model is valid? {validation_result.valid}")
 
 # print reasons
