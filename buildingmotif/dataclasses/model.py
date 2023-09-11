@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 import pyshacl
 import rdflib
@@ -13,7 +13,6 @@ from buildingmotif.utils import Triple, copy_graph, rewrite_shape_graph
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
-    from buildingmotif.dataclasses import Library
 
 
 def _validate_uri(uri: str):
@@ -306,31 +305,11 @@ class Model:
         """
         return ShapeCollection.load(self._manifest_id)
 
-    def update_manifest(self, manifest: Union[ShapeCollection, "Library"]):
-        """Updates the manifest for this model by replacing
-        it with the provided ShapeCollection. If a library is
-        provided instead, fetch the shape collection for that
-        library with Library.get_shape_collection()
+    def update_manifest(self, manifest: ShapeCollection):
+        """Updates the manifest for this model by adding in the contents
+        of the shape graph inside the provided SHapeCollection
 
-        :param manifest: the ShapeCollection containing all the shapes against which to validate this model
-        :type manifest: Union[ShapeCollection, Library]
+        :param manifest: the ShapeCollection containing additional shapes against which to validate this model
+        :type manifest: ShapeCollection
         """
-        # import Library here to avoid circular import
-        from buildingmotif.dataclasses.library import Library
-
-        if isinstance(manifest, Library):
-            sc = manifest.get_shape_collection()
-            if sc.id is None:
-                # manifest is a ShapeCollection
-                raise Exception(
-                    "Provided manifest does not have an 'id'. Make sure it is part of a Library!"
-                )
-            self._manifest_id = sc.id
-        elif manifest.id is None:
-            # manifest is a ShapeCollection
-            raise Exception(
-                "Provided manifest does not have an 'id'. Make sure it is part of a Library!"
-            )
-        else:
-            # manifest is a ShapeCollection
-            self._manifest_id = manifest.id
+        self.get_manifest().graph += manifest.graph

@@ -49,11 +49,8 @@ def test_update_model_manifest(clean_building_motif):
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
     # update manifest with library
-    m.update_manifest(lib)
-    assert m.get_manifest().id == lib.get_shape_collection().id
-    # update with ShapeCollection
     m.update_manifest(lib.get_shape_collection())
-    assert m.get_manifest().id == lib.get_shape_collection().id
+    assert len(list(m.get_manifest().graph.subjects(RDF.type, SH.NodeShape))) == 2
 
 
 def test_validate_model_manifest(clean_building_motif):
@@ -63,7 +60,7 @@ def test_validate_model_manifest(clean_building_motif):
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
 
-    m.update_manifest(lib)
+    m.update_manifest(lib.get_shape_collection())
 
     # validate against manifest -- should fail
     result = m.validate()
@@ -103,7 +100,7 @@ def test_validate_model_manifest_with_imports(clean_building_motif):
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape2.ttl")
     assert lib is not None
 
-    m.update_manifest(lib)
+    m.update_manifest(lib.get_shape_collection())
 
     # add triples to graph to validate
     # using subclasses here -- buildingmotif must resolve the library import in order for these to validate correctly
