@@ -114,4 +114,4 @@ poetry publish --build
     ```
     docker-compose up --build
     ```
-3. The api can now be reached at http://127.0.0.1:5000 and the app can be reached but http://localhost:4200.
+3. The api can now be reached at http://localhost:5000 and the app can be reached but http://localhost:4200.
