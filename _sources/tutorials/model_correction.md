@@ -116,7 +116,10 @@ for templ in generated_templates.get_templates():
         continue
     # bindings[0]['ahu'] returns the value of the 'ahu' variable for the first row of the results
     ahu_name = bindings[0]['ahu']
-    # generate the name of the supply fan
+
+    # Generate the name of the supply fan. If we were modeling a real building,
+    # we would want to use the name of the actual supply fan. Here, we just choose
+    # a sensible name for the purposes of the tutorial.
     supply_fan_name = ahu_name + '-Fan'
 
     # we know from the exploration above that each template has
