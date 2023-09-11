@@ -87,8 +87,7 @@ Remote CI is done with a GitHub Action from the `ci.yml` workflow.
 Documentation can be built locally with the following command, which will make the HTML files in the `docs/build/html/` directory.
 
 ```
-cd docs
-poetry run make html
+poetry run sphinx-build ./docs ./docs/_build/html -b html
 ```
 
 ## Building and Publishing
