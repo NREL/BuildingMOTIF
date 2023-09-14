@@ -109,7 +109,7 @@ The example below loads a local copy of the ASHRAE 223P ontology into BuildingMO
 buildingmotif load --ont 223p.ttl
 ```
 
-### BACnet Network Scanning
+### BACnet Scanning
 
 ```bash
 usage: buildingmotif scan [-h] -o OUTPUT_FILE [-ip IP]
