@@ -123,7 +123,7 @@ optional arguments:
   -ip IP                ip address of BACnet network to scan
 ```
 
-The BuildingMOTIF CLI includes a BACnet scanner which can be accessed by invoking the `scan` subcommand. This command takes two inputs:
+The BuildingMOTIF CLI includes a BACnet scanner, which can be accessed by invoking the `scan` subcommand. This command takes two inputs:
   - **Output file** - Where the scan information will be saved
   - **IP address** - The IP address to bind to and the subnet of the BACnet network. Example `172.24.0.2/32`
 
