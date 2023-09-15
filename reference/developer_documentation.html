@@ -437,6 +437,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documenting">Documenting</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-and-publishing">Building and Publishing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#web-app">Web App</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-on-docker">Running on Docker</a></li>
 </ul>
             </nav>
         </div>
@@ -538,8 +539,7 @@ This will install the <code class="docutils literal notranslate"><span class="pr
 <section id="documenting">
 <h2>Documenting<a class="headerlink" href="#documenting" title="Permalink to this heading">#</a></h2>
 <p>Documentation can be built locally with the following command, which will make the HTML files in the <code class="docutils literal notranslate"><span class="pre">docs/build/html/</span></code> directory.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">docs</span>
-<span class="n">poetry</span> <span class="n">run</span> <span class="n">make</span> <span class="n">html</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">poetry</span> <span class="n">run</span> <span class="n">sphinx</span><span class="o">-</span><span class="n">build</span> <span class="o">./</span><span class="n">docs</span> <span class="o">./</span><span class="n">docs</span><span class="o">/</span><span class="n">_build</span><span class="o">/</span><span class="n">html</span> <span class="o">-</span><span class="n">b</span> <span class="n">html</span>
 </pre></div>
 </div>
 </section>
@@ -559,6 +559,18 @@ This will install the <code class="docutils literal notranslate"><span class="pr
 <li><p><a class="reference external" href="https://nodejs.org/en/download/">Download Node.js</a></p></li>
 <li><p><a class="reference external" href="https://angular.io/guide/setup-local">Install Angular</a></p></li>
 <li><p>See <span class="xref myst">buildingmotif-app/README.md</span></p></li>
+</ol>
+</section>
+<section id="running-on-docker">
+<h2>Running on Docker<a class="headerlink" href="#running-on-docker" title="Permalink to this heading">#</a></h2>
+<ol class="arabic">
+<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">.env</span></code> contains the correct database information.</p></li>
+<li><p>Up containers with docker-compose.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span><span class="o">-</span><span class="n">compose</span> <span class="n">up</span> <span class="o">--</span><span class="n">build</span>
+</pre></div>
+</div>
+</li>
+<li><p>The api can now be reached at <a class="reference external" href="http://localhost:5000">http://localhost:5000</a> and the app can be reached but <a class="reference external" href="http://localhost:4200">http://localhost:4200</a>.</p></li>
 </ol>
 </section>
 </section>
@@ -644,6 +656,7 @@ This will install the <code class="docutils literal notranslate"><span class="pr
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documenting">Documenting</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-and-publishing">Building and Publishing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#web-app">Web App</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-on-docker">Running on Docker</a></li>
 </ul>
   </nav></div>
 
