@@ -23,8 +23,8 @@ The documentation uses Diataxis[^1] as a framework for its structure, which is o
 
 ## Reference
 
-- [Command Line Interface](https://nrel.github.io/BuildingMOTIF/reference/cli_tool.html)
 - [Developer Documentation](https://nrel.github.io/BuildingMOTIF/reference/developer_documentation.html)
+- [Command Line Interface](https://nrel.github.io/BuildingMOTIF/reference/cli_tool.html)
 - [Code Documentation](https://nrel.github.io/BuildingMOTIF/reference/apidoc/index.html)
 
 ## Tutorials
