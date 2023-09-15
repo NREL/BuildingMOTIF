@@ -1,38 +1,42 @@
+# https://jupyterbook.org/customize/config.html
+
 # Book settings
-# Learn more at https://jupyterbook.org/customize/config.html
+title                       : BuildingMOTIF Documentation
+author                      : NREL
+copyright                   : "2023"
+logo                        : BuildingMOTIF-logo-rev.svg
 
-title: BuildingMOTIF Documentation
-author: NREL
-# logo: logo.png
-
-# Force re-execution of notebooks on each build.
-# See https://jupyterbook.org/content/execute.html
+# Execution settings
+# Force re-execution of notebooks on each build. https://jupyterbook.org/content/execute.html
 execute:
-  execute_notebooks: force
-  timeout: 300
+  execute_notebooks         : force
+  timeout                   : 300
 
-# Define the name of the latex output file for PDF builds
+# Parse and render settings
+
+# HTML-specific settings
+html:
+  favicon                   : BuildingMOTIF-icon-rev.svg
+  announcement              : "⚠️ This is an BETA release for testing purposes only ⚠️"
+  use_issues_button         : true
+  use_repository_button     : true
+
+# LaTeX-specific settings
 latex:
   latex_documents:
-    targetname: BuildingMOTIF.tex
-
+    targetname              : BuildingMOTIF.tex
 # Add a bibtex file so that we can create citations
 bibtex_bibfiles:
   - bibliography.bib
 
-# Information about where the book exists on the web
+
+# Launch button settings
 repository:
-  url: https://github.com/NREL/BuildingMOTIF
-  path_to_book: docs  # Optional path to your book, relative to the repository root
-  branch: main  # Which branch of the repository should be used when creating links (optional)
+  url                       : https://github.com/NREL/BuildingMOTIF
+  path_to_book              : docs  # Optional path to your book, relative to the repository root
+  branch                    : main  # Which branch of the repository should be used when creating links (optional)
 
-# Add GitHub buttons to your book
-# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
-html:
-  announcement: "⚠️ This is an ALPHA release for testing purposes only ⚠️"
-  use_issues_button: true
-  use_repository_button: true
-
+# Advanced and power-user settings
 # for API autodocs added to jupyter book
 sphinx:
   extra_extensions:
@@ -40,13 +44,13 @@ sphinx:
   - 'sphinx.ext.autosummary'
   - 'sphinx.ext.viewcode'
   config:
-    autosummary_generate: true
-    add_module_names: false
+    autosummary_generate    : true
+    add_module_names        : false
 
     # Autodoc config reference
     # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#configuration
     autodoc_default_options:
-      members: true
-      member-order: bysource
-      undoc-members: true
-      private-members: false
+      members               : true
+      member-order          : bysource
+      undoc-members         : true
+      private-members       : false
