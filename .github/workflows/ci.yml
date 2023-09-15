@@ -1,0 +1,74 @@
+name: continuous integration
+
+on:
+  push
+
+jobs:
+
+  styling:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup-python
+        uses: actions/setup-python@v3
+      - name: install-poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0
+          virtualenvs-in-project: false
+          virtualenvs-path: ~/.virtualenvs
+      - name: poetry install
+        run: poetry install --all-extras
+      - name: run isort and black
+        run: |
+          poetry run isort . --check
+          poetry run black . --check
+
+  testing:
+    needs: styling
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10']
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup-python
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: install-poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0
+          virtualenvs-in-project: false
+          virtualenvs-path: ~/.virtualenvs
+      - name: poetry install
+        run: poetry install --all-extras
+      - name: lint
+        run: poetry run flake8 buildingmotif
+      - name: type check
+        run: poetry run mypy
+      - name: unit tests
+        run: poetry run pytest tests/unit --cov=./ --cov-report=xml
+      - name: integration tests
+        run: poetry run pytest tests/integration
+      - name: bacnet tests
+        run: |
+          cd tests/integration/fixtures/bacnet
+          docker compose build device buildingmotif
+          docker compose run -d device
+          docker compose run buildingmotif poetry run pytest -m bacnet
+          docker compose down
+      - name: build tests
+        run: poetry build
+
+  coverage:
+    needs: testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml

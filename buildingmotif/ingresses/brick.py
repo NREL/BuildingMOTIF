@@ -28,7 +28,7 @@ class BACnetToBrickIngress(GraphIngressHandler):
         """
         super().__init__(bm)
         self.upstream = upstream
-        self.bacnet_lib = Library.load(directory="libraries/bacnet")
+        self.bacnet_lib = Library.load(directory="bacnet")
         self.device_template = self.bacnet_lib.get_template_by_name("brick-device")
         self.object_template = self.bacnet_lib.get_template_by_name("brick-point")
 
@@ -42,6 +42,9 @@ class BACnetToBrickIngress(GraphIngressHandler):
         :rtype: Graph
         """
         g = Graph()
+        # ensure 'ns' is a Namespace or URI forming won't work
+        if not isinstance(ns, Namespace):
+            ns = Namespace(ns)
         records = self.upstream.records
         assert records is not None
         for record in records:

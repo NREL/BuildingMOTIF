@@ -6,7 +6,7 @@ from rdflib.plugins.parsers.notation3 import BadSyntax
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.model import serialize
-from buildingmotif.dataclasses import Model
+from buildingmotif.dataclasses import Library, Model
 
 blueprint = Blueprint("models", __name__)
 
@@ -124,3 +124,58 @@ def update_model_graph(models_id: int) -> flask.Response:
     current_app.building_motif.session.commit()
 
     return model.graph.serialize(format="ttl")
+
+
+@blueprint.route("/<models_id>/validate", methods=(["POST"]))
+def validate_model(models_id: int) -> flask.Response:
+    # get model
+    try:
+        model = Model.load(models_id)
+    except NoResultFound:
+        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    shape_collections = []
+
+    # no body provided -- default to model manifest
+    if request.content_length is None:
+        shape_collections = [model.get_manifest()]
+    else:
+        # get body
+        if request.content_type != "application/json":
+            return flask.Response(
+                {"message": "request content type must be json"},
+                status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            body = request.json
+        except Exception as e:
+            return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
+
+        if body is not None and not isinstance(body, dict):
+            return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
+        shape_collections = []
+        body = body if body is not None else {}
+        nonexistent_libraries = []
+        for library_id in body.get("library_ids", []):
+            try:
+                shape_collection = Library.load(library_id).get_shape_collection()
+                shape_collections.append(shape_collection)
+            except NoResultFound:
+                nonexistent_libraries.append(library_id)
+        if len(nonexistent_libraries) > 0:
+            return {
+                "message": f"Libraries with ids {nonexistent_libraries} do not exist"
+            }, status.HTTP_400_BAD_REQUEST
+
+    # if shape_collections is empty, model.validate will default
+    # to the model's manifest
+    vaildation_context = model.validate(shape_collections)
+
+    return {
+        "message": vaildation_context.report_string,
+        "valid": vaildation_context.valid,
+        "reasons": {
+            focus_node: [gd.reason() for gd in grahdiffs]
+            for focus_node, grahdiffs in vaildation_context.diffset.items()
+        },
+    }, status.HTTP_200_OK

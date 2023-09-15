@@ -19,14 +19,27 @@ export class TemplateEvaluateService {
 
   constructor(private http: HttpClient) { }
 
-  evaluateTemplate(id: number, parameters: {[name: string]: string}) {
-    const body = Object.entries(parameters).reduce((acc, [name, value]) => {
+  evaluateTemplateBindings(templateId: number, modelId: number, parameters: {[name: string]: string}) {
+    const bindings = Object.entries(parameters).reduce((acc, [name, value]) => {
       return {...acc, [name]: {"@id": value}}
     }, {})
 
     return this.http.post(
-      `http://localhost:5000/templates/${id}/evaluate`,
-      body,
+      `http://localhost:5000/templates/${templateId}/evaluate/bindings`,
+      {model_id: modelId, bindings},
+      {responseType: 'text'}
+      )
+      .pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError) // then handle the error
+      );
+
+  }
+
+  evaluateTemplateIngress(templateId: number, modelId: number, file: File) {
+    return this.http.post(
+      `http://localhost:5000/templates/${templateId}/evaluate/ingress?model_id=${modelId}`,
+      file,
       {responseType: 'text'}
       )
       .pipe(

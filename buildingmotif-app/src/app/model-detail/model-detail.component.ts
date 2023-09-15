@@ -8,6 +8,8 @@ import {
   MatSnackBarHorizontalPosition,
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
+import {TemplateEvaluateComponent} from '../template-evaluate/template-evaluate.component'
 
 @Component({
   selector: 'app-model-detail',
@@ -30,14 +32,18 @@ export class ModelDetailComponent{
     matchBrackets: true,
     lint: true
   };
+  showFiller: boolean = true;
+  sideNaveOpen: boolean = false;
+  updatingGraphSpinner: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private ModelDetailService: ModelDetailService,
     private _snackBar: MatSnackBar,
+    public dialog: MatDialog,
   ) {
-    [this.model, this.graph] = route.snapshot.data["ModelDetailResolver"]
-    this.graphFormControl.setValue(this.graph)
+    [this.model, this.graph] = route.snapshot.data["ModelDetailResolver"];
+    this.graphFormControl.setValue(this.graph);
   }
 
   onSave(): void{
@@ -55,10 +61,41 @@ export class ModelDetailComponent{
   }
 
   openSnackBar(message: string) {
-    this._snackBar.open(message, "oh", {});
+    this._snackBar.open(message, "close", {});
   }
 
   undoChangesToGraph(): void {
     this.graphFormControl.setValue(this.graph)
+  }
+
+  openEvaulateEvent(templateId: number): void {
+    this.dialog.open(
+      TemplateEvaluateComponent,
+      {data: {templateId, modelId: this.model.id}}
+    );
+  }
+
+  updateGraphWithFile(event: Event) {
+    this.updatingGraphSpinner = true;
+    const element = event.currentTarget as HTMLInputElement;
+    let files: FileList | null = element.files;
+    const fileToUpload = files?.item(0) ?? null;
+
+    if (!fileToUpload) return;
+
+    this.ModelDetailService.updateModelGraph(this.model.id, fileToUpload, true)
+    .subscribe({
+      next: (data: string) => {
+        this.graph = data;
+        this.graphFormControl.setValue(this.graph);
+        this.openSnackBar("success")
+      }, // success path
+      error: (error) => {
+        this.openSnackBar("error")
+      }, // error path
+      complete: () => {
+        this.updatingGraphSpinner = false;
+      }
+    });
   }
 }

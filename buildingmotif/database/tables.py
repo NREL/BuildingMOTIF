@@ -1,7 +1,10 @@
 from typing import Dict, List
 
-from sqlalchemy import JSON, Column, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, declarative_base, relationship
+
+# from sqlalchemy.dialects.postgresql import JSON
+from buildingmotif.database.utils import JSONType
 
 Base = declarative_base()
 
@@ -14,6 +17,14 @@ class DBModel(Base):
     name: Mapped[str] = Column(String())
     description: Mapped[str] = Column(Text(), default="", nullable=False)
     graph_id: Mapped[str] = Column(String())
+    manifest_id: Mapped[int] = Column(
+        Integer, ForeignKey("shape_collection.id"), nullable=False
+    )
+    manifest: "DBShapeCollection" = relationship(
+        "DBShapeCollection",
+        uselist=False,
+        cascade="all,delete",
+    )
 
 
 class DBShapeCollection(Base):
@@ -24,8 +35,6 @@ class DBShapeCollection(Base):
     __tablename__ = "shape_collection"
     id: Mapped[int] = Column(Integer, primary_key=True)
     graph_id: Mapped[str] = Column(String())
-
-    library: "DBLibrary" = relationship("DBLibrary", back_populates="shape_collection")
 
 
 class DBLibrary(Base):
@@ -44,7 +53,6 @@ class DBLibrary(Base):
     )
     shape_collection: DBShapeCollection = relationship(
         "DBShapeCollection",
-        back_populates="library",
         uselist=False,
         cascade="all,delete",
     )
@@ -59,7 +67,7 @@ class DepsAssociation(Base):
     dependant_id: Mapped[int] = Column(ForeignKey("template.id"))
     dependee_id: Mapped[int] = Column(ForeignKey("template.id"))
     # args are a mapping of dependee args to dependant args
-    args: Mapped[Dict[str, str]] = Column(JSON)
+    args: Mapped[Dict[str, str]] = Column(JSONType)  # type: ignore
 
     __table_args__ = (
         UniqueConstraint(
@@ -79,7 +87,7 @@ class DBTemplate(Base):
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False)
     body_id: Mapped[str] = Column(String())
-    optional_args: Mapped[List[str]] = Column(JSON)
+    optional_args: Mapped[List[str]] = Column(JSONType)  # type: ignore
 
     library_id: Mapped[int] = Column(Integer, ForeignKey("library.id"), nullable=False)
     library: Mapped[DBLibrary] = relationship("DBLibrary", back_populates="templates")

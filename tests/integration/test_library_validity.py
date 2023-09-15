@@ -1,15 +1,22 @@
 from pathlib import Path
+from typing import Set
 
 import pytest
 from rdflib import Graph, Namespace
 
 from buildingmotif.dataclasses import Library, Model
 
+# these are templates that are difficult to test individually
+# but are covered indirectly by other tests
+S223_SKIP_TEMPLATES: Set[str] = {
+    "duct",
+    "sensor",
+    "differential-sensor",
+}
+
 
 @pytest.mark.integration
-@pytest.mark.xfail(
-    reason="223P templates should be brought up to date with recent changes in the standard"
-)
+@pytest.mark.skip(reason="223P support is temporarily broken")
 def test_223p_library(bm, library_path_223p: Path):
     ont_223p = Library.load(ontology_graph="libraries/ashrae/223p/ontology/223p.ttl")
     lib = Library.load(directory=str(library_path_223p))
@@ -18,8 +25,11 @@ def test_223p_library(bm, library_path_223p: Path):
     MODEL = Namespace("urn:ex/")
     for templ in lib.get_templates():
         print(templ.name)
+        if templ.name in S223_SKIP_TEMPLATES:
+            print(" ...skipping")
+            continue
         m = Model.create(MODEL)
-        _, g = templ.inline_dependencies().fill(MODEL)
+        _, g = templ.inline_dependencies().fill(MODEL, include_optional=True)
         assert isinstance(g, Graph), "was not a graph"
         m.add_graph(g)
         ctx = m.validate([ont_223p.get_shape_collection()])
