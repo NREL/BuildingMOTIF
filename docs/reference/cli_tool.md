@@ -1,4 +1,4 @@
-# Command Line Tool
+# Command Line Interface
 
 The `buildingmotif` command line tool will be available upon [installing BuildingMOTIF](/reference/developer_documentation). This provides several utilities for interacting with BuildingMOTIF:
 

@@ -1,4 +1,4 @@
-# Developer Documentation 
+# Developer Documentation
 
 ## Installing
 
@@ -36,7 +36,7 @@ poetry run alembic revision -m "Description of Changes." --autogenerate
 Additional changes may need to be made to the migration, so be sure to check it. [Read here](https://alembic.sqlalchemy.org/en/latest/autogenerate.html#auto-generating-migrations) for more information on alembic autogenerate migrations.
 
 Uping the API
-``` 
+```
 poetry run python buildingmotif/api/app.py
 ```
 API will run on localhost:5000
@@ -66,7 +66,7 @@ The command below will test files and generate fixes to formatting errors in fil
 pre-commit run -a
 ```
 
-Pre-commit commands can be run individually with the following commands. Configuration of `isort`, `black`, and `mypy` are done in [pyproject.toml](https://github.com/NREL/BuildingMOTIF/blob/develop/pyproject.toml) and configuration of `flake8` is done in [.flake8](https://github.com/NREL/BuildingMOTIF/blob/develop/.flake8). 
+Pre-commit commands can be run individually with the following commands. Configuration of `isort`, `black`, and `mypy` are done in [pyproject.toml](https://github.com/NREL/BuildingMOTIF/blob/develop/pyproject.toml) and configuration of `flake8` is done in [.flake8](https://github.com/NREL/BuildingMOTIF/blob/develop/.flake8).
 ```
 poetry run isort
 poetry run black
@@ -84,9 +84,10 @@ poetry run pytest
 Remote CI is done with a GitHub Action from the `ci.yml` workflow.
 
 ## Documenting
-Documentation can be built locally with the following command, which will make the HTML files in the `docs/build/html/` directory.
+Documentation can be built locally with the following commands, which will make the HTML files in the `docs/build/html/` directory.
 
 ```
+poetry run jupyter-book config sphinx ./docs/
 poetry run sphinx-build ./docs ./docs/_build/html -b html
 ```
 
@@ -103,11 +104,11 @@ poetry publish --build
 
 1. [Download Node.js](https://nodejs.org/en/download/)
 2. [Install Angular](https://angular.io/guide/setup-local)
-3. See [buildingmotif-app/README.md](buildingmotif-app/README.md)
+3. See [buildingmotif-app/README.md](https://github.com/NREL/BuildingMOTIF/blob/main/buildingmotif-app/README.md)
 
 
 ## Running on Docker
-1. Ensure `.env` contains the correct database information. 
+1. Ensure `.env` contains the correct database information.
 
 2. Up containers with docker-compose.
     ```
