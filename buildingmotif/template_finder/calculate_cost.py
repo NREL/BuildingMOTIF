@@ -7,8 +7,6 @@ import pandas as pd
 from rdflib import Graph, URIRef
 from scipy.optimize import linear_sum_assignment
 
-from buildingmotif.namespaces import BRICK
-
 BrickClass = URIRef  # not specific enough, but it gets the point across
 
 brick = Graph()
@@ -40,7 +38,7 @@ def get_edge_cost(
      - 2 to the power of the number of hops between the classes.
     """
     if token_class == param_class:
-        return 2**cost_power
+        return 2**cost_power - 1
 
     parent_class = get_parent_class(token_class)
     if parent_class is None:
@@ -58,13 +56,11 @@ def create_cost_matrix(
         columns=token_classes,
     )
 
-    for token_class in cost_matrix.columns:
-        for param_class, _ in cost_matrix[token_class].items():
-            cost_matrix.loc[param_class, token_class] = get_edge_cost(
-                token_class, param_class
-            )
+    for i, token_class in enumerate(cost_matrix.columns):
+        for j, param_class in enumerate(cost_matrix.index):
+            cost_matrix.iloc[j, i] = get_edge_cost(token_class, param_class)
 
-    print("\ncost matrix:")
+    print("cost matrix:")
     pprint(
         cost_matrix.rename(
             columns=lambda x: x[x.find("#") + 1 :],
@@ -79,6 +75,8 @@ def calculate_cost(
 ) -> float:
     """Get the cost of mapping token_classes to param_classes."""
     cost_matrix = create_cost_matrix(token_classes, param_classes)
+    # # uncomment / comment for v different results.
+    # cost_matrix = cost_matrix.replace(np.inf, np.nan).dropna(axis=0, how='all').replace(np.nan, np.inf)
     row_ind, col_ind = linear_sum_assignment(cost_matrix)
     kept_costs = list(zip(row_ind, col_ind))
 
