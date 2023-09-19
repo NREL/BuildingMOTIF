@@ -4,7 +4,7 @@ import numpy as np
 from rdflib import URIRef
 
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Library, Model, Template
+from buildingmotif.dataclasses import Library, Template
 from buildingmotif.namespaces import BACNET, BRICK
 from buildingmotif.template_finder.calculate_cost import calculate_cost
 
