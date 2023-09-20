@@ -5,8 +5,8 @@ from rdflib import URIRef
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library, Template
-from buildingmotif.namespaces import BACNET, BRICK
-from buildingmotif.template_finder.calculate_cost import calculate_cost
+from buildingmotif.namespaces import BACNET, BRICK, PARAM
+from buildingmotif.template_finder.calculate_cost import Param, Token, calculate_cost
 
 BrickClass = URIRef  # not specific enough, but it gets the point across
 
@@ -19,20 +19,33 @@ def get_templates_param_classes(template):
             FILTER (strstarts(str(?s), 'urn:___param___'))
         }
     """
-    param_classes = [c for (c,) in template.body.query(query)]
+    param_classes = sorted([c for (c,) in template.body.query(query)])
 
     return param_classes
 
 
-def calculate_template_cost(
-    token_classes: List[BrickClass], template: Template
-) -> float:
-    param_classes = get_templates_param_classes(template)
+def get_typed_params(template) -> List[Param]:
+    query = """
+        SELECT ?s ?o
+        WHERE {
+            ?s a ?o
+            FILTER (strstarts(str(?s), 'urn:___param___'))
+        }
+    """
+    params = []
+    for s, c in template.body.query(query):
+        params.append(Param(name=s[len(PARAM) :], classname=c))
+    return params
 
+
+def calculate_template_cost(
+    tokens: List[Token], template: Template, verbose=False
+) -> float:
+    params = get_typed_params(template)
     try:
-        cost = calculate_cost(token_classes, param_classes)
+        cost = calculate_cost(tokens, params, verbose=verbose)
     except ValueError:
-        cost = np.inf
+        cost = {"edge_cost": np.inf, "mapping": {}}
 
     return cost
 

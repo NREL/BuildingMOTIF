@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pathlib import Path
 from pprint import pprint
 from typing import List, Optional
@@ -12,6 +13,26 @@ BrickClass = URIRef  # not specific enough, but it gets the point across
 brick = Graph()
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 brick.parse(PROJECT_DIR / "libraries/brick/Brick.ttl")
+
+
+@dataclass(frozen=True, eq=True)
+class Token:
+    identifier: str
+    classname: BrickClass
+
+    @property
+    def class_(self):
+        return self.classname[self.classname.find("#") + 1 :]
+
+
+@dataclass(frozen=True, eq=True)
+class Param:
+    name: str
+    classname: BrickClass
+
+    @property
+    def class_(self):
+        return self.classname[self.classname.find("#") + 1 :]
 
 
 def get_parent_class(brick_class: BrickClass) -> Optional[BrickClass]:
@@ -48,48 +69,61 @@ def get_edge_cost(
 
 
 def create_cost_matrix(
-    token_classes: List[BrickClass], param_classes: List[BrickClass]
+    tokens: List[Token], params: List[Param], verbose=False
 ) -> pd.DataFrame:
     """Create cost matrix of the above classes."""
     cost_matrix = pd.DataFrame(
-        index=param_classes,
-        columns=token_classes,
+        index=params,
+        columns=tokens,
     )
 
-    for i, token_class in enumerate(cost_matrix.columns):
-        for j, param_class in enumerate(cost_matrix.index):
-            cost_matrix.iloc[j, i] = get_edge_cost(token_class, param_class)
+    for i, token in enumerate(cost_matrix.columns):
+        for j, param in enumerate(cost_matrix.index):
+            cost_matrix.iloc[j, i] = get_edge_cost(token.classname, param.classname)
 
-    print("cost matrix:")
-    pprint(
-        cost_matrix.rename(
-            columns=lambda x: x[x.find("#") + 1 :],
-            index=lambda x: x[x.find("#") + 1 :],
+    if verbose:
+        print("cost matrix:")
+        pprint(
+            cost_matrix.rename(
+                columns=lambda x: x.class_,
+                index=lambda x: x.class_,
+            )
         )
-    )
     return cost_matrix
 
 
-def calculate_cost(
-    token_classes: List[BrickClass], param_classes: List[BrickClass]
-) -> float:
+def calculate_cost(tokens: List[Token], params: List[Param], verbose=False) -> dict:
     """Get the cost of mapping token_classes to param_classes."""
-    cost_matrix = create_cost_matrix(token_classes, param_classes)
+    cost_matrix = create_cost_matrix(tokens, params, verbose=verbose)
     # # uncomment / comment for v different results.
-    # cost_matrix = cost_matrix.replace(np.inf, np.nan).dropna(axis=0, how='all').replace(np.nan, np.inf)
+    cost_matrix = (
+        cost_matrix.replace(np.inf, np.nan)
+        .dropna(axis=0, how="all")
+        .replace(np.nan, np.inf)
+    )
     row_ind, col_ind = linear_sum_assignment(cost_matrix)
     kept_costs = list(zip(row_ind, col_ind))
 
     print("\nkept edges:")
-    for x, y in kept_costs:
-        token = cost_matrix.index[x]
-        param = cost_matrix.columns[y]
+    for token_idx, param_idx in kept_costs:
+        token = cost_matrix.index[token_idx]
+        param = cost_matrix.columns[param_idx]
         print(
-            f"{token[token.find('#')+1:]} <- {cost_matrix.iloc[x, y]} -> {param[param.find('#')+1:]}"
+            f"{token.class_} <- {cost_matrix.iloc[token_idx, param_idx]} -> {param.class_}"
         )
+    # maps parameter indices to token indices
+    mapping = {cost_matrix.index[x]: cost_matrix.columns[y] for x, y in kept_costs}
 
+    # if the 1st dimension of the cost_matrix is 0 then we have dropped all of the parameters
+    # and the cost is infinite
+    edge_cost = (
+        cost_matrix.to_numpy()[row_ind, col_ind].sum()
+        if cost_matrix.shape[0] > 0
+        else float("inf")
+    )
     return {
-        "edge_cost": cost_matrix.to_numpy()[row_ind, col_ind].sum(),
-        "params_dropped": len(param_classes) - len(kept_costs),
-        "tokens_dropped": len(token_classes) - len(kept_costs),
+        "mapping": mapping,
+        "edge_cost": edge_cost,
+        "params_dropped": len(params) - len(kept_costs),
+        "tokens_dropped": len(tokens) - len(kept_costs),
     }
