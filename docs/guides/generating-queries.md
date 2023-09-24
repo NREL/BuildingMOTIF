@@ -22,6 +22,27 @@ Generating a SPARQL query for a shape allows these applications to *retrieve* th
 The figure above illustrates how the SHACL shape can be used to both validate a model as well as retreive information from it.
 The variables of the SPARQL query (i.e. the "columns" of the result) are derived from the PropertyShapes included in the SHACL shape.
 
+## Supported SHACL Features
+
+The following SHACL patterns can be translated into SPARQL equivalents
+
+```{list-table}
+:header-rows: 1
+* - SHACL Pattern
+  - SPARQL "Equivalent"
+* - `<shape> sh:targetClass <class>`
+  - `?target rdf:type/rdfs:subClassOf* <class>`
+* - `<shape> sh:property [ sh:path <path>; sh:class <class>; sh:name <name> ]`
+  - `?target <path> ?name . ?name rdf:type/rdfs:subClassOf* <class>`
+* - `<shape> sh:property [ sh:path <path>; sh:hasValue <value>]`
+  - `?target <path> <value>`
+```
+
+```{caution}
+Not all SHACL features are currently supported!
+If you need other patterns supported, please [file an issue](https://github.com/NREL/BuildingMOTIF/issues)
+```
+
 ## Generating a Query
 
 ### Setup
