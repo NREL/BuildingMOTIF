@@ -62,6 +62,7 @@ const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/api/views/model';</script>
+    <link rel="shortcut icon" href="../../../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -119,7 +120,7 @@ const thebe_selector_output = ".output, .cell_output"
 
 
   <div class="bd-header-announcement container-fluid bd-header-announcement">
-    <div class="bd-header-announcement__content">⚠️ This is an ALPHA release for testing purposes only ⚠️</div>
+    <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
   </div>
 
   
@@ -149,8 +150,14 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   
+    
+    
+      
+    
+    
+    <img src="../../../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
-    <p class="title logo__title">BuildingMOTIF Documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
@@ -166,7 +173,7 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../../reference/developer_documentation.html">Developer Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../reference/cli_tool.html">Command Line Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reference/cli_tool.html">Command Line Interface</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -562,7 +569,10 @@ document.write(`
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">report_string</span><span class="p">,</span>
         <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">valid</span><span class="p">,</span>
-        <span class="s2">&quot;reasons&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">diffset</span><span class="p">],</span>
+        <span class="s2">&quot;reasons&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="n">focus_node</span><span class="p">:</span> <span class="p">[</span><span class="n">gd</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span> <span class="k">for</span> <span class="n">gd</span> <span class="ow">in</span> <span class="n">grahdiffs</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">focus_node</span><span class="p">,</span> <span class="n">grahdiffs</span> <span class="ow">in</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">diffset</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">},</span>
     <span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
 </pre></div>
 
@@ -601,7 +611,7 @@ By NREL
     
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>

@@ -63,6 +63,7 @@ const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/apidoc/_autosummary/buildingmotif.database.table_connection';</script>
+    <link rel="shortcut icon" href="../../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="buildingmotif.database.tables" href="buildingmotif.database.tables.html" />
@@ -122,7 +123,7 @@ const thebe_selector_output = ".output, .cell_output"
 
 
   <div class="bd-header-announcement container-fluid bd-header-announcement">
-    <div class="bd-header-announcement__content">⚠️ This is an ALPHA release for testing purposes only ⚠️</div>
+    <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
   </div>
 
   
@@ -152,8 +153,14 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   
+    
+    
+      
+    
+    
+    <img src="../../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
-    <p class="title logo__title">BuildingMOTIF Documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
@@ -169,7 +176,7 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../developer_documentation.html">Developer Documentation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../cli_tool.html">Command Line Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli_tool.html">Command Line Interface</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Code Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="buildingmotif.html">buildingmotif</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -880,15 +887,12 @@ issues are found. Checks all templates in the database.</p>
 <span class="sig-name descname"><span class="pre">check_template_dependency_relationship</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.database.tables.html#buildingmotif.database.tables.DepsAssociation" title="buildingmotif.database.tables.DepsAssociation"><span class="pre">DepsAssociation</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/table_connection.html#TableConnection.check_template_dependency_relationship"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.table_connection.TableConnection.check_template_dependency_relationship" title="Permalink to this definition">#</a></dt>
 <dd><p>Verify that the dependency between two templates is well-formed. This involves
 a series of checks:
-- existence of the dependent and dependency templates is performed during the <a href="#id3"><span class="problematic" id="id4">add_</span></a> method
-- the args keys appear in the dependency, or recursively in a template that is a dependency</p>
-<blockquote>
-<div><p>of the named dependency</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>the args values appear in the dependent template</p></li>
-<li><p>there is a ‘name’ parameter in the dependent template</p></li>
-</ul>
+- existence of the dependent and dependency templates is performed during the
+<a href="#id3"><span class="problematic" id="id4">:py:method:`database.template_connection.`add_template_dependency_preliminary`</span></a> method
+- the args keys appear in the dependency, or recursively in a template that is a dependency
+of the named dependency
+- the args values appear in the dependent template
+- there is a ‘name’ parameter in the dependent template</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dep</strong> (<a class="reference internal" href="buildingmotif.database.tables.html#buildingmotif.database.tables.DepsAssociation" title="buildingmotif.database.tables.DepsAssociation"><em>DepsAssociation</em></a>) – the dependency object to check</p>
@@ -1019,7 +1023,7 @@ By NREL
     
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>

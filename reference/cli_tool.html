@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Command Line Tool &#8212; BuildingMOTIF Documentation</title>
+    <title>Command Line Interface &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -63,6 +63,7 @@ const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/cli_tool';</script>
+    <link rel="shortcut icon" href="../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Code Documentation" href="apidoc/index.html" />
@@ -122,7 +123,7 @@ const thebe_selector_output = ".output, .cell_output"
 
 
   <div class="bd-header-announcement container-fluid bd-header-announcement">
-    <div class="bd-header-announcement__content">⚠️ This is an ALPHA release for testing purposes only ⚠️</div>
+    <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
   </div>
 
   
@@ -152,8 +153,14 @@ const thebe_selector_output = ".output, .cell_output"
   
   
   
+    
+    
+      
+    
+    
+    <img src="../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
-    <p class="title logo__title">BuildingMOTIF Documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
@@ -169,7 +176,7 @@ const thebe_selector_output = ".output, .cell_output"
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="developer_documentation.html">Developer Documentation</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Command Line Tool</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Command Line Interface</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -424,7 +431,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Command Line Tool</h1>
+    <h1>Command Line Interface</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -447,6 +454,7 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Ontology</a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-scanning">BACnet Scanning</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-api-server">BuildingMOTIF API Server</a></li>
@@ -461,12 +469,13 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="command-line-tool">
-<h1>Command Line Tool<a class="headerlink" href="#command-line-tool" title="Permalink to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="command-line-interface">
+<h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this heading">#</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">buildingmotif</span></code> command line tool will be available upon <a class="reference internal" href="developer_documentation.html"><span class="doc std std-doc">installing BuildingMOTIF</span></a>. This provides several utilities for interacting with BuildingMOTIF:</p>
 <ul class="simple">
 <li><p>library loading</p></li>
 <li><p>running an API server</p></li>
+<li><p>BACnet Scanning</p></li>
 </ul>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -556,6 +565,26 @@ optional<span class="w"> </span>arguments:
 </pre></div>
 </div>
 </section>
+</section>
+<section id="bacnet-scanning">
+<h3>BACnet Scanning<a class="headerlink" href="#bacnet-scanning" title="Permalink to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>usage:<span class="w"> </span>buildingmotif<span class="w"> </span>scan<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span>-o<span class="w"> </span>OUTPUT_FILE<span class="w"> </span><span class="o">[</span>-ip<span class="w"> </span>IP<span class="o">]</span>
+
+Scans<span class="w"> </span>a<span class="w"> </span>BACnet<span class="w"> </span>network<span class="w"> </span>and<span class="w"> </span>generates<span class="w"> </span>a<span class="w"> </span>JSON<span class="w"> </span>file<span class="w"> </span><span class="k">for</span><span class="w"> </span>later<span class="w"> </span>processing
+
+optional<span class="w"> </span>arguments:
+<span class="w">  </span>-h,<span class="w"> </span>--help<span class="w">            </span>show<span class="w"> </span>this<span class="w"> </span><span class="nb">help</span><span class="w"> </span>message<span class="w"> </span>and<span class="w"> </span><span class="nb">exit</span>
+<span class="w">  </span>-o<span class="w"> </span>OUTPUT_FILE,<span class="w"> </span>--output_file<span class="w"> </span>OUTPUT_FILE
+<span class="w">                        </span>Output<span class="w"> </span>file<span class="w"> </span><span class="k">for</span><span class="w"> </span>BACnet<span class="w"> </span>scan
+<span class="w">  </span>-ip<span class="w"> </span>IP<span class="w">                </span>ip<span class="w"> </span>address<span class="w"> </span>of<span class="w"> </span>BACnet<span class="w"> </span>network<span class="w"> </span>to<span class="w"> </span>scan
+</pre></div>
+</div>
+<p>The BuildingMOTIF CLI includes a BACnet scanner, which can be accessed by invoking the <code class="docutils literal notranslate"><span class="pre">scan</span></code> subcommand. This command takes two inputs:</p>
+<ul class="simple">
+<li><p><strong>Output file</strong> - Where the scan information will be saved</p></li>
+<li><p><strong>IP address</strong> - The IP address to bind to and the subnet of the BACnet network. Example <code class="docutils literal notranslate"><span class="pre">172.24.0.2/32</span></code></p></li>
+</ul>
+<p>The output file generated by this command can be loaded into BuildingMOTIF by calling the <code class="docutils literal notranslate"><span class="pre">load()</span></code> function on the <code class="docutils literal notranslate"><span class="pre">BACnetNetwork</span></code> ingress.</p>
 </section>
 </section>
 <section id="buildingmotif-api-server">
@@ -651,6 +680,7 @@ optional arguments:
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Ontology</a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-scanning">BACnet Scanning</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-api-server">BuildingMOTIF API Server</a></li>
@@ -677,7 +707,7 @@ By NREL
     
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>
