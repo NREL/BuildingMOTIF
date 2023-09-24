@@ -137,6 +137,10 @@ def test_shape_to_query(clean_building_motif):
         "rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick/ref#BACnetReference> ."
         in query1
     ), query1
+    assert (
+        "<https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_F> ."
+        in query1
+    ), query1
     # assert this parses correctly
     g.query(query1)
 
