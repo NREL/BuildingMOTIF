@@ -438,9 +438,10 @@ class TableConnection:
     def check_template_dependency_relationship(self, dep: DepsAssociation):
         """Verify that the dependency between two templates is well-formed. This involves
         a series of checks:
-        - existence of the dependent and dependency templates is performed during the add_ method
+        - existence of the dependent and dependency templates is performed during the
+        :py:method:`database.template_connection.`add_template_dependency_preliminary` method
         - the args keys appear in the dependency, or recursively in a template that is a dependency
-          of the named dependency
+        of the named dependency
         - the args values appear in the dependent template
         - there is a 'name' parameter in the dependent template
 
