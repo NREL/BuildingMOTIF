@@ -236,6 +236,8 @@ class ShapeCollection:
         - `<shape> sh:targetClass <class>` -> `?target rdf:type/rdfs:subClassOf* <class>`
         - `<shape> sh:property [ sh:path <path>; sh:class <class>; sh:name <name> ]` ->
             ?target <path> ?name . ?name rdf:type/rdfs:subClassOf* <class>
+        - `<shape> sh:property [ sh:path <path>; sh:hasValue <value>]` ->
+            ?target <path> <value>
         """
         clauses, project = _shape_to_where(self.graph, shape)
         preamble = """PREFIX sh: <http://www.w3.org/ns/shacl#>
@@ -253,7 +255,7 @@ def _sh_path_to_path(graph: Graph, sh_path_value: Node):
     # check if sh:path points to a list
     if _is_list(graph, sh_path_value):
         components = list(
-            graph.objects(sh_path_value, (RDF.rest * ZeroOrMore) / RDF.first)
+            graph.objects(sh_path_value, (RDF.rest * ZeroOrMore) / RDF.first)  # type: ignore
         )
         return "/".join([_sh_path_to_path(graph, comp) for comp in components])
     part = graph.value(sh_path_value, SH.oneOrMorePath)
