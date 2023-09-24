@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Ingresses &#8212; BuildingMOTIF Documentation</title>
+    <title>Generating SPARQL Queries &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -62,11 +62,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'explanations/ingresses';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guides/generating-queries';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Bibliography" href="../bibliography.html" />
-    <link rel="prev" title="Generating SPARQL Queries" href="../guides/generating-queries.html" />
+    <link rel="next" title="Ingresses" href="../explanations/ingresses.html" />
+    <link rel="prev" title="BACnet to Brick" href="ingress-bacnet-to-brick.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -229,14 +229,14 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/template_writing.html">Template Writing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../guides/csv-import.html">CSV Import</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../guides/generating-queries.html">Generating SPARQL Queries</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="csv-import.html">CSV Import</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Generating SPARQL Queries</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Ingresses</a></li>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../explanations/ingresses.html">Ingresses</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -312,7 +312,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fexplanations/ingresses.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fguides/generating-queries.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -342,7 +342,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="../_sources/explanations/ingresses.md" target="_blank"
+      <li><a href="../_sources/guides/generating-queries.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -424,7 +424,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Ingresses</h1>
+    <h1>Generating SPARQL Queries</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -434,21 +434,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ingress-types">Ingress Types</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#record-ingress-handler">Record Ingress Handler</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graph-ingress-handler">Graph Ingress Handler</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#useful-built-in-ingress-handlers">Useful Built-in Ingress Handlers</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-networks">BACnet Networks</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-files">CSV Files</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xlsx-spreadsheet-files">XLSX / Spreadsheet Files</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-instantiation">Template Instantiation</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-to-brick">BACnet to Brick</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-import">CSV Import</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-shacl-features">Supported SHACL Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-a-query">Generating a Query</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-shapes">Finding Shapes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-queries-from-shapes">Generating Queries from Shapes</a></li>
 </ul>
 </li>
 </ul>
@@ -462,95 +452,209 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="ingresses">
-<h1>Ingresses<a class="headerlink" href="#ingresses" title="Permalink to this heading">#</a></h1>
-<p><em>Ingresses</em> are BuildingMOTIF’s mechanism for importing metadata from external sources.
-The <code class="docutils literal notranslate"><span class="pre">Ingress</span></code> APIs are deliberately general so that they can be easily extended to new metadata sources.</p>
-<p><code class="docutils literal notranslate"><span class="pre">IngressHandler</span></code> has two abstract subclasses:</p>
-<ul class="simple">
-<li><p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code></span>, which produces <code class="docutils literal notranslate"><span class="pre">Record</span></code>s</p></li>
-<li><p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code></span>, which produces <code class="docutils literal notranslate"><span class="pre">Graph</span></code>s</p></li>
-</ul>
-<p>Every concrete <code class="docutils literal notranslate"><span class="pre">IngressHandler</span></code> should inherit from one of these two classes.</p>
-<section id="ingress-types">
-<h2>Ingress Types<a class="headerlink" href="#ingress-types" title="Permalink to this heading">#</a></h2>
-<section id="record-ingress-handler">
-<h3>Record Ingress Handler<a class="headerlink" href="#record-ingress-handler" title="Permalink to this heading">#</a></h3>
-<p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code></span> defines one method: <code class="docutils literal notranslate"><span class="pre">records()</span> <span class="pre">-&gt;</span> <span class="pre">List[Record]</span></code>.</p>
-<p>A <code class="docutils literal notranslate"><span class="pre">Record</span></code> is a simple Python data structure:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Record</span><span class="p">:</span>
-    <span class="c1"># a &quot;type hint&quot; or other identifier for an application-defined category of Records</span>
-    <span class="n">rtype</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="c1"># key-value pairs of data from the underlying source. Application-defined structure</span>
-    <span class="n">fields</span><span class="p">:</span> <span class="nb">dict</span>
+  <section class="tex2jax_ignore mathjax_ignore" id="generating-sparql-queries">
+<h1>Generating SPARQL Queries<a class="headerlink" href="#generating-sparql-queries" title="Permalink to this heading">#</a></h1>
+<p>BuildingMOTIF contains support for generating SPARQL queries from SHACL shapes.
+Recall that SHACL shapes ensure that a given model contains sufficient metadata to support a given application or suite of applications.
+Generating a SPARQL query for a shape allows these applications to <em>retrieve</em> the metadata used to validate the graph, which is likely the same metadata the applications need for their own configuration and operation.</p>
+<p><img alt="" src="../_images/Query-Generation-Flow.png" /></p>
+<p>The figure above illustrates how the SHACL shape can be used to both validate a model as well as retreive information from it.
+The variables of the SPARQL query (i.e. the “columns” of the result) are derived from the PropertyShapes included in the SHACL shape.</p>
+<section id="supported-shacl-features">
+<h2>Supported SHACL Features<a class="headerlink" href="#supported-shacl-features" title="Permalink to this heading">#</a></h2>
+<p>The following SHACL patterns can be translated into SPARQL equivalents</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>SHACL Pattern</p></th>
+<th class="head"><p>SPARQL “Equivalent”</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;shape&gt;</span> <span class="pre">sh:targetClass</span> <span class="pre">&lt;class&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">rdf:type/rdfs:subClassOf*</span> <span class="pre">&lt;class&gt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;shape&gt;</span> <span class="pre">sh:property</span> <span class="pre">[</span> <span class="pre">sh:path</span> <span class="pre">&lt;path&gt;;</span> <span class="pre">sh:class</span> <span class="pre">&lt;class&gt;;</span> <span class="pre">sh:name</span> <span class="pre">&lt;name&gt;</span> <span class="pre">]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">&lt;path&gt;</span> <span class="pre">?name</span> <span class="pre">.</span> <span class="pre">?name</span> <span class="pre">rdf:type/rdfs:subClassOf*</span> <span class="pre">&lt;class&gt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;shape&gt;</span> <span class="pre">sh:property</span> <span class="pre">[</span> <span class="pre">sh:path</span> <span class="pre">&lt;path&gt;;</span> <span class="pre">sh:hasValue</span> <span class="pre">&lt;value&gt;]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">&lt;path&gt;</span> <span class="pre">&lt;value&gt;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Not all SHACL features are currently supported!
+If you need other patterns supported, please <a class="reference external" href="https://github.com/NREL/BuildingMOTIF/issues">file an issue</a></p>
+</div>
+</section>
+<section id="generating-a-query">
+<h2>Generating a Query<a class="headerlink" href="#generating-a-query" title="Permalink to this heading">#</a></h2>
+<section id="setup">
+<h3>Setup<a class="headerlink" href="#setup" title="Permalink to this heading">#</a></h3>
+<p>Before we can generate a query, we need a <code class="docutils literal notranslate"><span class="pre">ShapeCollection</span></code> with at least 1 shape in it.
+We can create a simple <code class="docutils literal notranslate"><span class="pre">ShapeCollection</span></code> as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span> <span class="c1"># import this to make writing URIs easier</span>
+
+<span class="c1"># in-memory instance</span>
+<span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span>
+
+<span class="n">sc</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">@prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .</span>
+<span class="s2">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
+<span class="s2">@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .</span>
+<span class="s2">@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .</span>
+<span class="s2">@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .</span>
+<span class="s2">@prefix bmotif: &lt;https://nrel.gov/BuildingMOTIF#&gt; .</span>
+<span class="s2">@prefix : &lt;urn:simpleapp/&gt; .</span>
+
+<span class="s2">: a owl:Ontology .</span>
+
+<span class="s2">:app1 a sh:NodeShape ;</span>
+<span class="s2">    sh:targetClass brick:Fan_Coil_Unit ;</span>
+<span class="s2">    sh:property [</span>
+<span class="s2">        sh:path brick:hasPoint ;</span>
+<span class="s2">        sh:qualifiedMinCount 1 ;</span>
+<span class="s2">        sh:qualifiedValueShape [ sh:class brick:Occupied_Cooling_Temperature_Setpoint ] ;</span>
+<span class="s2">        sh:name &quot;coolsp&quot; ;</span>
+<span class="s2">    ] ;</span>
+<span class="s2">    sh:property [</span>
+<span class="s2">        sh:path brick:hasPoint ;</span>
+<span class="s2">        sh:qualifiedMinCount 1 ;</span>
+<span class="s2">        sh:qualifiedValueShape [ sh:class brick:Occupied_Heating_Temperature_Setpoint ] ;</span>
+<span class="s2">        sh:name &quot;heatsp&quot; ;</span>
+<span class="s2">    ] ;</span>
+<span class="s2">    sh:property [</span>
+<span class="s2">        sh:path ( brick:feeds brick:hasPart brick:hasPoint ) ;</span>
+<span class="s2">        sh:qualifiedMinCount 1 ;</span>
+<span class="s2">        sh:qualifiedValueShape [ sh:class brick:Air_Temperature_Sensor ] ;</span>
+<span class="s2">        sh:name &quot;roomTemp&quot; ;</span>
+<span class="s2">    ] ;</span>
+<span class="s2">.</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The choice of values for the <code class="docutils literal notranslate"><span class="pre">Record</span></code> is up to each <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code> instance:</p>
-<ul class="simple">
-<li><p>the <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">BACnetIngressHandler</span></code></span> uses the <code class="docutils literal notranslate"><span class="pre">rtype</span></code> field to differentiate between BACnet Devices and BACnet Objects. The <code class="docutils literal notranslate"><span class="pre">fields</span></code> field contains key-value pairs of different BACnet properties like <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">units</span></code></p></li>
-<li><p>the <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">CSVIngressHandler</span></code></span> uses the <code class="docutils literal notranslate"><span class="pre">rtype</span></code> field to denote the CSV filename, and uses the <code class="docutils literal notranslate"><span class="pre">fields</span></code> field to store column-cell values from each row of the CSV file</p></li>
-</ul>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=c4a4b1c2-178d-46f8-9260-cc01b4551ed8 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+</pre></div>
+</div>
+</div>
+</div>
 </section>
-<section id="graph-ingress-handler">
-<h3>Graph Ingress Handler<a class="headerlink" href="#graph-ingress-handler" title="Permalink to this heading">#</a></h3>
-<p><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code></span> defines one method: <code class="docutils literal notranslate"><span class="pre">graph(ns:</span> <span class="pre">rdflib.Namespace)</span> <span class="pre">-&gt;</span> <span class="pre">rdflib.Graph</span></code>.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">rdflib.Graph</span></code> returned by this method contains RDF data (inferred, translated, computed, etc) from some underlying source.
-<code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code>s source their metadata from either an upstream <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code> or any other source provided in the instantiation of the <code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code> subclass.</p>
-<p>Any new entities/URIs/etc created or inferred by the <code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code> should be placed into the provided namespace (<code class="docutils literal notranslate"><span class="pre">ns</span></code>).
-An instance of <code class="docutils literal notranslate"><span class="pre">GraphIngressHandler</span></code> is typically at the <em>end</em> of a pipeline of <code class="docutils literal notranslate"><span class="pre">IngressHandler</span></code>s.</p>
+<section id="finding-shapes">
+<h3>Finding Shapes<a class="headerlink" href="#finding-shapes" title="Permalink to this heading">#</a></h3>
+<p>We can ask the <code class="docutils literal notranslate"><span class="pre">ShapeCollection</span></code> for what shapes it contains which target certain classes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">shape_name</span> <span class="ow">in</span> <span class="n">sc</span><span class="o">.</span><span class="n">get_shapes_about_class</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Fan_Coil_Unit</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">shape_name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:simpleapp/app1
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can also query the <code class="docutils literal notranslate"><span class="pre">ShapeCollection</span></code>’s graph directly:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shape_query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">PREFIX sh: &lt;http://www.w3.org/ns/shacl#&gt;</span>
+<span class="s2">SELECT ?shape WHERE { ?shape a sh:NodeShape }</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,)</span> <span class="ow">in</span> <span class="n">sc</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">shape_query</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is a NodeShape&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:simpleapp/app1 is a NodeShape
+</pre></div>
+</div>
+</div>
+</div>
 </section>
-</section>
-<section id="useful-built-in-ingress-handlers">
-<h2>Useful Built-in Ingress Handlers<a class="headerlink" href="#useful-built-in-ingress-handlers" title="Permalink to this heading">#</a></h2>
-<p>BuildingMOTIF provides several built-in ingress handlers.
-The full list can be found <span class="xref myst">here</span>.</p>
-<section id="bacnet-networks">
-<h3>BACnet Networks<a class="headerlink" href="#bacnet-networks" title="Permalink to this heading">#</a></h3>
-<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">BACnetIngressHandler</span></code></span> takes an IP subnet as an argument (e.g. <code class="docutils literal notranslate"><span class="pre">10.0.0.1/24</span></code>) and generates a set of <code class="docutils literal notranslate"><span class="pre">Record</span></code>s corresponding to the BACnet devices and objects found on that subnet.</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">rtype</span></code>: “object” if the <code class="docutils literal notranslate"><span class="pre">Record</span></code> represents a BACnet Object, else “device” if the <code class="docutils literal notranslate"><span class="pre">Record</span></code> represents a BACnet Device</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">fields</span></code>: key-value pairs that differ based on <code class="docutils literal notranslate"><span class="pre">rtype</span></code>:</p>
-<ul>
-<li><p>BACnet devices: <code class="docutils literal notranslate"><span class="pre">address</span></code> and <code class="docutils literal notranslate"><span class="pre">device_id</span></code> for BACnet devices</p></li>
-<li><p>BACnet objects: <code class="docutils literal notranslate"><span class="pre">device_id</span></code> (for owning BACnet device) and all properties on the object</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="csv-files">
-<h3>CSV Files<a class="headerlink" href="#csv-files" title="Permalink to this heading">#</a></h3>
-<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">CSVIngressHandler</span></code></span> takes a CSV filename as an argument  (e.g. <code class="docutils literal notranslate"><span class="pre">mydata.csv</span></code>) and generates a set of <code class="docutils literal notranslate"><span class="pre">Record</span></code>s corresponding to each row in the file.</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">rtype</span></code>: the filename that contained the row</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">fields</span></code>: key-value pairs for the row. The key is the column name; the value is the value of that column at the given row</p></li>
-</ul>
-</section>
-<section id="xlsx-spreadsheet-files">
-<h3>XLSX / Spreadsheet Files<a class="headerlink" href="#xlsx-spreadsheet-files" title="Permalink to this heading">#</a></h3>
-<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">XLSXIngressHandler</span></code></span> takes a path to an <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code> file as an argument and generates a set of <code class="docutils literal notranslate"><span class="pre">Records</span></code> for each row for each sheet in the spreadsheet file.</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">rtype</span></code>: the sheet name containing the row</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">fields</span></code>: key-value pairs for each row; the keys are the names of the columns and the values are the cell values at that column for the given row</p></li>
-</ul>
-</section>
-<section id="template-instantiation">
-<h3>Template Instantiation<a class="headerlink" href="#template-instantiation" title="Permalink to this heading">#</a></h3>
-<p>The <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code></span> class instantiates a given <code class="docutils literal notranslate"><span class="pre">Template</span></code> with each of the <code class="docutils literal notranslate"><span class="pre">Record</span></code>s generated by an upstream <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code>. Instantiating <code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code>  requires a <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">Template</span></code></span> instance (probably from a <code class="docutils literal notranslate"><span class="pre">Library</span></code>), an optional “mapper”, and an upstream <code class="docutils literal notranslate"><span class="pre">RecordIngressHandler</span></code>.</p>
-<p>A “mapper” is a function which maps the column names of the CSV file to the parameters of a template.
-If “mapper” is left as <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the <code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code> will use the column names as the parameter names.</p>
-<p>There is also a <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">TemplateIngressWithChooser</span></code></span> class which acts essentially the same as <code class="docutils literal notranslate"><span class="pre">TemplateIngress</span></code>, but uses an additional function to dynamically choose the <code class="docutils literal notranslate"><span class="pre">Template</span></code> to be instantiated for each <code class="docutils literal notranslate"><span class="pre">Record</span></code>.</p>
-</section>
-</section>
-<section id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">#</a></h2>
-<section id="bacnet-to-brick">
-<h3>BACnet to Brick<a class="headerlink" href="#bacnet-to-brick" title="Permalink to this heading">#</a></h3>
-<p>See <span class="xref myst">the BACnet to Brick guide</span></p>
-</section>
-<section id="csv-import">
-<h3>CSV Import<a class="headerlink" href="#csv-import" title="Permalink to this heading">#</a></h3>
-<p>See <a class="reference internal" href="../guides/csv-import.html"><span class="doc std std-doc">the CSV import guide</span></a></p>
+<section id="generating-queries-from-shapes">
+<h3>Generating Queries from Shapes<a class="headerlink" href="#generating-queries-from-shapes" title="Permalink to this heading">#</a></h3>
+<p>To generate a query, we call the <code class="docutils literal notranslate"><span class="pre">shape_to_query</span></code> function with the URI of a shape as the argument.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># refer to the shape by its URI</span>
+<span class="n">app1_shape</span> <span class="o">=</span> <span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;urn:simpleapp/app1&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PREFIX sh: &lt;http://www.w3.org/ns/shacl#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+         SELECT ?target ?heatsp ?coolsp ?roomTemp WHERE {
+?target rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Fan_Coil_Unit&gt; .
+?target &lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?coolsp .
+ ?coolsp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Occupied_Cooling_Temperature_Setpoint&gt; .
+?target &lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?heatsp .
+ ?heatsp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Occupied_Heating_Temperature_Setpoint&gt; .
+?target &lt;https://brickschema.org/schema/Brick#feeds&gt;/&lt;https://brickschema.org/schema/Brick#hasPart&gt;/&lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?roomTemp .
+ ?roomTemp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Air_Temperature_Sensor&gt; .
+
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p>The resulting string can be used to query a <code class="docutils literal notranslate"><span class="pre">Model</span></code> instance, e.g. using code like</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">app_query</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">app_query</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Below, we load a model from a file and use the generated query from above to
+create a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> object with the query results.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># generate and save the query string to a variable</span>
+<span class="n">app_query</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">)</span>
+
+<span class="c1"># Create the &#39;building1&#39; model and load the contents from a file</span>
+<span class="n">BLDG</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;urn:building1&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">BLDG</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;query_generation_example.ttl&quot;</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">app_query</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="c1"># generate and save the query string to a variable</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">app_query</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">)</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;pandas&#39;
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 </section>
 </section>
@@ -568,7 +672,7 @@ If “mapper” is left as <code class="docutils literal notranslate"><span clas
         },
         kernelOptions: {
             name: "python3",
-            path: "./explanations"
+            path: "./guides"
         },
         predefinedOutput: true
     }
@@ -586,20 +690,20 @@ If “mapper” is left as <code class="docutils literal notranslate"><span clas
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../guides/generating-queries.html"
+       href="ingress-bacnet-to-brick.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Generating SPARQL Queries</p>
+        <p class="prev-next-title">BACnet to Brick</p>
       </div>
     </a>
     <a class="right-next"
-       href="../bibliography.html"
+       href="../explanations/ingresses.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Bibliography</p>
+        <p class="prev-next-title">Ingresses</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -618,21 +722,11 @@ If “mapper” is left as <code class="docutils literal notranslate"><span clas
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ingress-types">Ingress Types</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#record-ingress-handler">Record Ingress Handler</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graph-ingress-handler">Graph Ingress Handler</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#useful-built-in-ingress-handlers">Useful Built-in Ingress Handlers</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-networks">BACnet Networks</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-files">CSV Files</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#xlsx-spreadsheet-files">XLSX / Spreadsheet Files</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-instantiation">Template Instantiation</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bacnet-to-brick">BACnet to Brick</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csv-import">CSV Import</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-shacl-features">Supported SHACL Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-a-query">Generating a Query</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup">Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#finding-shapes">Finding Shapes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-queries-from-shapes">Generating Queries from Shapes</a></li>
 </ul>
 </li>
 </ul>
