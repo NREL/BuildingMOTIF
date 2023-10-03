@@ -232,7 +232,39 @@
     ] ;
     sh:property [
         sh:path brick:feeds ;
-        sh:qualifiedValueShape [ sh:node :wse-loop ] ;
+        sh:qualifiedValueShape [
+            sh:node :wse-loop ;
+            # 4.10.9
+            # Temperature and relative humidity sensors are necessary for calculating wet bulb temperature for waterside
+            # economizer sequences. Sensors are optional for plants without waterside economizers.
+            sh:property [
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1
+            ] ;
+            sh:property [
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Outside_Air_Humidity_Sensor ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1
+            ]
+        ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    # 4.10.9
+    # Temperature and relative humidity sensors are necessary for calculating wet bulb temperature for waterside
+    # economizer sequences. Sensors are optional for plants without waterside economizers.
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Humidity_Sensor ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1
     ] .
@@ -357,6 +389,14 @@
         rdfs:label "Chiller local/auto switch" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Manual_Auto_Status ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    # optional per 4.10.9
+    sh:property [
+        rdfs:label "Emergency Chiller Off Switch" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Off_Status ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1
     ] .
@@ -919,7 +959,7 @@
     sh:property [
         rdfs:label "Fan Speed" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Frequency_Command ] ;
+        sh:qualifiedValueShape [ sh:class brick:Speed_Command ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1
     ] ;
