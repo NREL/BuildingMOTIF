@@ -53,7 +53,7 @@ def calculate_best_bindings_for_template_and_tokens(
         print("Template costs:")
     for template in templates:
         template = template.inline_dependencies()
-        mapping, cost = calculate_bindings_for_template_and_tokens(tokens, template)
+        mapping, cost = calculate_bindings_for_template_and_tokens(tokens, template, verbose=True)
 
         if verbose:
             print(f"- {template.name} {cost.scalar}")

@@ -9,17 +9,6 @@ BrickClass = URIRef  # not specific enough, but it gets the point across
 
 
 @dataclass(frozen=True, eq=True)
-class Cost:
-    edge_cost: float
-    params_dropped: int
-    tokens_dropped: int
-
-    @property
-    def scalar(self):
-        return self.edge_cost + self.params_dropped + self.tokens_dropped
-
-
-@dataclass(frozen=True, eq=True)
 class SegmentedLabel:
     label: str
     identifiers: List[str]
@@ -39,7 +28,7 @@ class Cost:
 
     @property
     def scalar(self):
-        return self.edge_cost + self.params_dropped + self.tokens_dropped
+        return self.edge_cost + self.tokens_dropped #self.params_dropped + self.tokens_dropped
 
 
 @dataclass(frozen=True, eq=True)
