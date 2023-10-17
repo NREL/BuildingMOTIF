@@ -9,6 +9,7 @@ from buildingmotif.label_parsing import (
     choice,
     constant,
     ensure_token,
+    first_true,
     many,
     parse,
     parse_list,
@@ -230,3 +231,21 @@ def test_parse_list():
     results, failed = parse_list(parser, points)
     assert len(results) == 3, "Should parse 3 of the points"
     assert len(failed) == 2, "Should fail to parse 2 of the points"
+
+
+def test_first_true():
+    # test that it returns the first true value
+    assert first_true(["a", "b", "c"], pred=lambda x: x == "b") == "b"
+
+    # test default value works
+    assert (
+        first_true(["a", "b", "c"], pred=lambda x: x == "d", default="default")
+        == "default"
+    )
+
+    # test that it consumes the iterator
+    values = iter(["abc", "def", "abd", "aef", "fgi", "lmno"])
+    assert first_true(values, pred=lambda x: x.startswith("a")) == "abc"
+    assert first_true(values, pred=lambda x: x.startswith("a")) == "abd"
+    assert first_true(values, pred=lambda x: x.startswith("a")) == "aef"
+    assert first_true(values, pred=lambda x: x.startswith("a")) is None
