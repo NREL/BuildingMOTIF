@@ -179,6 +179,8 @@ def test_many():
         TokenResult("AHU", Constant(BRICK.Air_Handling_Unit), 3),
         TokenResult("1", Identifier("1"), 1),
         TokenResult("/", Delimiter("/"), 1),
+        TokenResult("SP", Constant(BRICK.Setpoint), 2),
+        TokenResult("2", Identifier("2"), 1),
     ]
     # test that it parses multiple sequences
     assert parser("AHU1/SP2/") == [

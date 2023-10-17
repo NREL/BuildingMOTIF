@@ -156,7 +156,9 @@ def many(seq_parser):
             if not part:
                 break
             results.extend(part)
-            target = target[part[-1].length :]
+            # add up the length of all the tokens
+            total_length = sum([r.length for r in part])
+            target = target[total_length:]
         return results
 
     return parser
