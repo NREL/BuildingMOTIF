@@ -1,9 +1,11 @@
+from pathlib import Path
+
 from rdflib import Graph, Namespace, URIRef
 from rdflib.compare import isomorphic, to_isomorphic
 from rdflib.namespace import RDF
 
 from buildingmotif.dataclasses import Library, Model
-from buildingmotif.namespaces import BRICK, A
+from buildingmotif.namespaces import BMOTIF, BRICK, A
 
 graph_data = """
     @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -25,6 +27,8 @@ default_graph = Graph()
 default_graph.add(
     (URIRef("urn:my_model"), RDF.type, URIRef("http://www.w3.org/2002/07/owl#Ontology"))
 )
+
+PROJECT_DIR = Path(__file__).resolve().parents[3]
 
 
 def test_get_all_models(client, building_motif):
@@ -404,3 +408,62 @@ def test_validate_model_bad_args(client, building_motif):
 
     # Assert 2
     assert results.status_code == 400
+
+
+def test_test_model_against_shapes(client, building_motif):
+    brick = Library.load(
+        ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick-subset.ttl")
+    )
+    ashrae_g36 = Library.load(
+        directory=str(PROJECT_DIR / "libraries/ashrae/guideline36/")
+    )
+    constraints = Library.load(
+        ontology_graph=str(
+            PROJECT_DIR / "buildingmotif/libraries/constraints/constraints.ttl"
+        )
+    )  # builtin library
+    manifest = Graph().parse(
+        PROJECT_DIR
+        / "notebooks/mediumOffice-validation/constraints/mediumOffice_constraints.ttl"
+    )
+
+    BLDG = Namespace("http://example.org/building/")
+    medium_office_model = Model.create(BLDG)
+    medium_office_model.graph.parse(
+        PROJECT_DIR
+        / "notebooks/mediumOffice-validation/mediumOffice_brick_compiled.ttl",
+        format="ttl",
+    )
+    medium_office_model.get_manifest().add_graph(manifest)
+
+    shape_collections = [
+        brick.get_shape_collection(),
+        ashrae_g36.get_shape_collection(),
+    ]
+    shapes_to_test = ashrae_g36.get_shape_collection().get_shapes_of_definition_type(
+        BMOTIF["Analytics_Application"]
+    )
+
+    print(
+        {
+            "shape_collection_ids": [sc.id for sc in shape_collections],
+            "shape_uris": [str(s) for s in shapes_to_test],
+            "target_class": str(BRICK["AHU"]),
+        }
+    )
+
+    results = client.post(
+        f"/models/{medium_office_model.id}/validate_shape",
+        headers={"Content-Type": "application/json"},
+        json={
+            "shape_collection_ids": [sc.id for sc in shape_collections],
+            "shape_uris": [str(s) for s in shapes_to_test],
+            "target_class": str(BRICK["AHU"]),
+        },
+    )
+
+    for a, b in results.json.items():
+        print(a)
+        print(b)
+
+    assert False

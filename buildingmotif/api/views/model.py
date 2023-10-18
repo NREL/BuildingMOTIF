@@ -6,7 +6,8 @@ from rdflib.plugins.parsers.notation3 import BadSyntax
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.model import serialize
-from buildingmotif.dataclasses import Library, Model
+from buildingmotif.dataclasses import Library, Model, ShapeCollection
+from buildingmotif.namespaces import BMOTIF, BRICK, RDFS, SH
 
 blueprint = Blueprint("models", __name__)
 
@@ -55,6 +56,20 @@ def get_model_graph(models_id: int) -> Graph:
         return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
 
     return model.graph.serialize(format="ttl"), status.HTTP_200_OK
+
+
+@blueprint.route("/<models_id>/target_nodes", methods=(["GET"]))
+def get_target_nodes(models_id: int) -> Graph:
+    """Get model graph by id.
+
+    :param models_id: model id
+    :type models_id: int
+    :return: requested model graph
+    :rtype: rdflib.Graph
+    """
+    result = [BRICK["AHU"], BRICK["Point"], BRICK["Supply_Fan"]]
+
+    return result, status.HTTP_200_OK
 
 
 @blueprint.route("", methods=(["POST"]))
@@ -179,3 +194,53 @@ def validate_model(models_id: int) -> flask.Response:
             for focus_node, grahdiffs in vaildation_context.diffset.items()
         },
     }, status.HTTP_200_OK
+
+
+@blueprint.route("/<models_id>/validate_shape", methods=(["POST"]))
+def validate_shape(models_id: int) -> flask.Response:
+    # get model
+    try:
+        model = Model.load(models_id)
+    except NoResultFound:
+        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    # get body
+    if request.content_type != "application/json":
+        return flask.Response(
+            {"message": "request content type must be json"},
+            status.HTTP_400_BAD_REQUEST,
+        )
+    try:
+        body = request.json
+    except Exception as e:
+        return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
+
+    if body is not None and not isinstance(body, dict):
+        return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
+
+    # shape collections
+    shape_collections = []
+    nonexistent_shape_collections = []
+    for shape_collection_id in body.get("shape_collection_ids", []):
+        try:
+            shape_collection = ShapeCollection.load(shape_collection_id)
+            shape_collections.append(shape_collection)
+        except NoResultFound:
+            nonexistent_shape_collections.append(shape_collection_id)
+    if len(nonexistent_shape_collections) > 0:
+        return {
+            "message": f"shape collections with ids {nonexistent_shape_collections} do not exist"
+        }, status.HTTP_400_BAD_REQUEST
+
+    # test
+    conformance = model.test_model_against_shapes(
+        shape_collections=shape_collections,
+        shapes_to_test=body.get("shape_uris", []),
+        target_class=body.get("target_class", None),
+    )
+    result = {
+        shape_uri: validation_context.report_string
+        for shape_uri, validation_context in conformance.items()
+    }
+
+    return result, status.HTTP_200_OK

@@ -83,14 +83,14 @@ class BuildingMOTIF(metaclass=Singleton):
         return not len(filename[0])
 
     def setup_logging(self, log_level):
-        """Create log file with DEBUG level and stdout handler with specified
+        """Create log file with ERROR level and stdout handler with specified
         logging level.
 
         :param log_level: logging level of detail
         :type log_level: int
         """
         root_logger = logging.getLogger()
-        root_logger.setLevel(logging.DEBUG)
+        root_logger.setLevel(logging.ERROR)
         formatter = logging.Formatter(
             "%(asctime)s | %(name)s |  %(levelname)s: %(message)s"
         )
@@ -98,7 +98,7 @@ class BuildingMOTIF(metaclass=Singleton):
         log_file_handler = logging.FileHandler(
             os.path.join(os.getcwd(), "BuildingMOTIF.log"), mode="w"
         )
-        log_file_handler.setLevel(logging.DEBUG)
+        log_file_handler.setLevel(logging.ERROR)
         log_file_handler.setFormatter(formatter)
 
         engine_logger = logging.getLogger("sqlalchemy.engine")

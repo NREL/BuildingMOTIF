@@ -1,0 +1,33 @@
+<div class="container">
+    <mat-progress-bar *ngIf="showGettingShapesSpinner" mode="query"></mat-progress-bar>
+
+    <div class="title">Shapes</div>
+    <mat-list *ngFor="let item of shapes | keyvalue">
+        <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{item.key}}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-list *ngFor="let shape of item.value">
+                <mat-checkbox (change)="toggle_selected(shape)">
+                    <b>{{shape.shape_uri}}</b> - {{shape.library_name}}
+                </mat-checkbox>
+            </mat-list>
+        </mat-expansion-panel>
+    </mat-list>
+
+    <div class="title">Target Node</div>
+    <mat-form-field>
+        <mat-label>Favorite food</mat-label>
+        <mat-select [(ngModel)]="selectedTargetNode">
+          <mat-option *ngFor="let targetNode of targetNodes" [value]="targetNode">
+            {{targetNode}}
+          </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button (click)="validate()" color="primary">Validate</button>
+
+    <div *ngIf="response !== undefined">{{response.message}}</div>
+</div>

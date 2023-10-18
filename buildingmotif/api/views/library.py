@@ -1,10 +1,12 @@
 import flask
 from flask import Blueprint, current_app, jsonify
 from flask_api import status
+from rdflib import URIRef
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.library import serialize
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
+from buildingmotif.namespaces import BMOTIF
 
 blueprint = Blueprint("libraries", __name__)
 
@@ -41,22 +43,28 @@ def get_all_shapes() -> flask.Response:
     :return: all shapes
     :rtype: flask.Response
     """
-    results = []
+    definition_types = [
+        URIRef("https://nrel.gov/BuildingMOTIF#Sequence_Of_Operations"),
+        URIRef("https://nrel.gov/BuildingMOTIF#Analytics_Application"),
+        URIRef("https://nrel.gov/BuildingMOTIF#System_Specification"),
+    ]
+    results = {dt: [] for dt in definition_types}
 
     db_libs = current_app.building_motif.table_connection.get_all_db_libraries()
     for db_lib in db_libs:
         shape_collection = ShapeCollection.load(db_lib.shape_collection.id)
-        shapes = shape_collection.graph.query(get_shape_query)
-        results += [
-            {
-                "library_name": db_lib.name,
-                "library_id": db_lib.id,
-                "label": label,
-                "uri": uri,
-                "description": description,
-            }
-            for uri, label, description in shapes
-        ]
+        print(db_lib.name)
+        print(shape_collection.id)
+        for dt in definition_types:
+            print()
+            results[dt] += [
+                {
+                    "shape_uri": str(shape),
+                    "library_name": db_lib.name,
+                    "shape_collection_id": shape_collection.id,
+                }
+                for shape in shape_collection.get_shapes_of_definition_type(dt)
+            ]
 
     return jsonify(results), status.HTTP_200_OK
 
