@@ -1,7 +1,7 @@
 import flask
 from flask import Blueprint, current_app, jsonify, request
 from flask_api import status
-from rdflib import Graph
+from rdflib import Graph, URIRef
 from rdflib.plugins.parsers.notation3 import BadSyntax
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -67,7 +67,19 @@ def get_target_nodes(models_id: int) -> Graph:
     :return: requested model graph
     :rtype: rdflib.Graph
     """
-    result = [BRICK["AHU"], BRICK["Point"], BRICK["Supply_Fan"]]
+    try:
+        model = Model.load(models_id)
+    except NoResultFound:
+        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    result = model.graph.query(
+        """
+        SELECT ?type WHERE {
+        ?target rdf:type ?type
+        }
+    """
+    )
+    result = list({r for r in result})
 
     return result, status.HTTP_200_OK
 
@@ -232,15 +244,25 @@ def validate_shape(models_id: int) -> flask.Response:
             "message": f"shape collections with ids {nonexistent_shape_collections} do not exist"
         }, status.HTTP_400_BAD_REQUEST
 
+    if body.get("target_class", None) is None:
+        return {
+            "message": "target class is required to execute this endpoint"
+        }, status.HTTP_400_BAD_REQUEST
+
+    shape_uris = [URIRef(shape_uri) for shape_uri in body.get("shape_uris", [])]
+    target_class = URIRef(body.get("target_class"))
+
     # test
     conformance = model.test_model_against_shapes(
         shape_collections=shape_collections,
-        shapes_to_test=body.get("shape_uris", []),
-        target_class=body.get("target_class", None),
+        shapes_to_test=shape_uris,
+        target_class=target_class,
     )
-    result = {
-        shape_uri: validation_context.report_string
-        for shape_uri, validation_context in conformance.items()
-    }
+
+    result = {}
+    for shape_uri, validation_context in conformance.items():
+        diffsets = validation_context.diffset.values()
+        reasons = [diff.reason() for diffset in diffsets for diff in diffset]
+        result[shape_uri] = reasons
 
     return result, status.HTTP_200_OK

@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 import pyshacl
 import rdflib
 import rfc3987
+from rdflib import URIRef
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
@@ -273,10 +274,28 @@ class Model:
         results = {}
 
         for shape_uri in shapes_to_test:
-            targets = model_graph.triples((None, A, target_class))
+            print(target_class)
+            print(
+                f"""
+                SELECT ?target 
+                WHERE {{
+                    ?target a {target_class}
+
+                }} 
+            """
+            )
+            targets = model_graph.query(
+                f"""
+                SELECT ?target 
+                WHERE {{
+                    ?target a <{target_class}>
+
+                }} 
+            """
+            )
             temp_model_graph = copy_graph(model_graph)
-            for s, _, _ in targets:
-                temp_model_graph.add((s, A, shape_uri))
+            for s in targets:
+                temp_model_graph.add((URIRef(s), A, shape_uri))
 
             temp_model_graph += ontology_graph.cbd(shape_uri)
 

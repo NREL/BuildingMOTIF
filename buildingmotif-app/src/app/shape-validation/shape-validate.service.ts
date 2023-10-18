@@ -15,7 +15,7 @@ export class ShapeValidationService {
   validateModelShape(modelId: number, shape_collection_ids: number[], shape_uris: string[], target_class: string) {
     const headers = {'Content-Type': "application/json"}
 
-    return this.http.post<ValidationResponse>(`http://localhost:5000/models/${modelId}/validate`,
+    return this.http.post<Record<string, string[]>>(`http://localhost:5000/models/${modelId}/validate_shape`,
         {shape_collection_ids, shape_uris, target_class},
         {headers, responseType: 'json'}
       )

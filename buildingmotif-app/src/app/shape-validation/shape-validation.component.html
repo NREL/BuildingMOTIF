@@ -17,9 +17,8 @@
         </mat-expansion-panel>
     </mat-list>
 
-    <div class="title">Target Node</div>
     <mat-form-field>
-        <mat-label>Favorite food</mat-label>
+        <mat-label>Target Node</mat-label>
         <mat-select [(ngModel)]="selectedTargetNode">
           <mat-option *ngFor="let targetNode of targetNodes" [value]="targetNode">
             {{targetNode}}
@@ -27,7 +26,19 @@
         </mat-select>
     </mat-form-field>
 
-    <button mat-raised-button (click)="validate()" color="primary">Validate</button>
+    <button *ngIf="!showValidatingSpinner" mat-raised-button (click)="validate()" color="primary">Validate</button>
+    <mat-progress-bar *ngIf="showValidatingSpinner" mode="query"></mat-progress-bar>
 
-    <div *ngIf="response !== undefined">{{response.message}}</div>
+    <div *ngIf="response !== undefined">
+      <mat-list *ngFor="let item of response | keyvalue">
+        <mat-card class="example-card">
+          <mat-card-header>
+            <mat-card-title>{{item.key}}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div *ngFor="let reason of item.value">{{reason}}</div>
+          </mat-card-content>
+        </mat-card>
+      </mat-list>
+    </div>
 </div>

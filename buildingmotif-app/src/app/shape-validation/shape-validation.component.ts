@@ -13,11 +13,12 @@ import { ValidationResponse } from '../model-validate/model-validate.service';
 export class ShapeValidationComponent implements OnInit {
   @Input() modelId: number | undefined;
   showGettingShapesSpinner = false;
+  showValidatingSpinner = false;
   shapes?:  {[definition_type: string]: Shape[]} = undefined;
   selected: Record<number, Set<string>> = {};
   targetNodes?: string[] = undefined;
   selectedTargetNode?: string = undefined;
-  response?: ValidationResponse = undefined;
+  response?: Record<string, string[]> = undefined;
 
 
   constructor(private libraryService: LibraryService, private modelDetailService: ModelDetailService, private shapeValidationService: ShapeValidationService) {}
@@ -74,13 +75,16 @@ export class ShapeValidationComponent implements OnInit {
       (a, c) => a.concat([...c]), 
       [] as string[]
     );
-    const target_class = this.selectedTargetNode
+    const target_class = this.selectedTargetNode[0]
 
+    this.showValidatingSpinner = true;
     this.shapeValidationService.validateModelShape(modelId, shape_collection_ids, shape_uris, target_class).subscribe(
       res => {
         this.response = res;
+        console.log(this.response)
       },
       err => {},
+      () => {this.showValidatingSpinner = false}
     );
   }
 }
