@@ -7,7 +7,6 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.model import serialize
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
-from buildingmotif.namespaces import BMOTIF, BRICK, RDFS, SH
 
 blueprint = Blueprint("models", __name__)
 

@@ -6,7 +6,6 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.library import serialize
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
-from buildingmotif.namespaces import BMOTIF
 
 blueprint = Blueprint("libraries", __name__)
 
