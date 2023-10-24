@@ -36,7 +36,8 @@
             <mat-card-title>{{item.key}}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <div *ngFor="let reason of item.value">{{reason}}</div>
+            <button class="passes" [disableRipple]="true" button mat-button *ngIf="!item.value.length"> Passes</button>
+            <div *ngFor="let reason of item.value"> - {{reason}}</div>
           </mat-card-content>
         </mat-card>
       </mat-list>
