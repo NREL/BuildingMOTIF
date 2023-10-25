@@ -6,6 +6,8 @@
 @prefix components: <urn:ashrae/g36/components/> .
 @prefix : <urn:ashrae/g36/4.10/chilled-water-plant/> .
 
+: a owl:Ontology .
+
 # 4.10 Chilled Water Plant
 
 :chilled-water-plant a sh:NodeShape, owl:Class, bmotif:System_Specification ;
@@ -583,6 +585,7 @@
     sh:property [
         rdfs:label "CHW supply temperature" ;
         rdfs:comment "CHW supply temperature sensor required for primary-only plants." ;
+        sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Leaving_Chilled_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1
@@ -1206,6 +1209,7 @@
     sh:property [
         rdfs:label "WSE entering CHW temperature" ;
         rdfs:comment "Note: WSE entering CHW temperatures is located in the pipe entering the HX, not the CHWR main upstream of the WSE." ;
+        sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Entering_Chilled_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1
@@ -1248,6 +1252,7 @@
     # applications
     sh:property [
         rdfs:label "WSE CHW bypass valve" ;
+        sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:node brick:Valve_Position_Command ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1
@@ -1255,6 +1260,7 @@
     # applications
     sh:property [
         rdfs:label "WSE CHW differential pressure" ;
+        sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:node brick:Differential_Pressure_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1
