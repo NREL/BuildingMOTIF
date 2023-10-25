@@ -7,21 +7,10 @@
 
 : a owl:Ontology .
 
-:vav_shape a owl:Class, sh:NodeShape ;
+:vav_shape a sh:NodeShape ;
     sh:targetClass brick:VAV ;
     sh:property [
-        sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Air_Flow_Sensor ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:minCount 1;
-    ] ;
-.
-
-:tu_shape a sh:NodeShape ;
-    sh:targetClass brick:Terminal_Unit ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:minCount 1;
     ] ;

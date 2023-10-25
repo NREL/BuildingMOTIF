@@ -76,6 +76,17 @@ def test_load_library_from_ontology(bm: BuildingMOTIF):
     assert len(shapeg.graph) > 1
 
 
+def test_load_library_from_ontology_with_error(bm: BuildingMOTIF):
+    with pytest.raises(Exception):
+        Library.load(ontology_graph="tests/unit/fixtures/bad_shape_template.ttl")
+
+
+def test_load_shapes_with_directory_library(bm: BuildingMOTIF):
+    lib = Library.load(directory="tests/unit/fixtures/shapes")
+    assert lib is not None
+    assert len(lib.get_templates()) == 1
+
+
 def test_load_library_from_directory(bm: BuildingMOTIF):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     assert lib is not None
