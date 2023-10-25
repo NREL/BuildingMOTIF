@@ -54,7 +54,9 @@ def get_model_graph(models_id: int) -> Graph:
     except NoResultFound:
         return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
 
-    return model.graph.serialize(format="ttl"), status.HTTP_200_OK
+    g = Graph() + model.graph
+
+    return g.serialize(format="ttl"), status.HTTP_200_OK
 
 
 @blueprint.route("/<models_id>/target_nodes", methods=(["GET"]))
@@ -79,6 +81,7 @@ def get_target_nodes(models_id: int) -> Graph:
     """
     )
     result = list({r for r in result})
+    result.sort()
 
     return result, status.HTTP_200_OK
 
