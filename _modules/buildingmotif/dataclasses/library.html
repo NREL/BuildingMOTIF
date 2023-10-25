@@ -240,6 +240,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -654,24 +655,8 @@ document.write(`
 
         <span class="n">lib</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ontology_name</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
 
-        <span class="n">class_candidates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ontology</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">Class</span><span class="p">))</span>
-        <span class="n">shape_candidates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ontology</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">))</span>
-        <span class="n">candidates</span> <span class="o">=</span> <span class="n">class_candidates</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">shape_candidates</span><span class="p">)</span>
-
-        <span class="c1"># stores the lookup from template *names* to template *ids*</span>
-        <span class="c1"># this is necessary because while we know the *name* of the dependee templates</span>
-        <span class="c1"># for each dependent template, we don&#39;t know the *id* of the dependee templates,</span>
-        <span class="c1"># which is necessary to populate the dependencies</span>
-        <span class="n">template_id_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">dependency_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">)</span>
-            <span class="n">partial_body</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="n">get_template_parts_from_shape</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
-            <span class="n">templ</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">create_template</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate</span><span class="p">),</span> <span class="n">partial_body</span><span class="p">)</span>
-            <span class="n">dependency_cache</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">deps</span>
-            <span class="n">template_id_lookup</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate</span><span class="p">)]</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">id</span>
-
-        <span class="n">lib</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
+        <span class="c1"># infer shapes from any class/nodeshape candidates in the graph</span>
+        <span class="n">lib</span><span class="o">.</span><span class="n">_infer_shapes_from_graph</span><span class="p">(</span><span class="n">ontology</span><span class="p">)</span>
 
         <span class="c1"># load the ontology graph as a shape_collection</span>
         <span class="n">shape_col_id</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
@@ -680,6 +665,26 @@ document.write(`
         <span class="n">shape_col</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">ontology</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">lib</span>
+
+    <span class="k">def</span> <span class="nf">_infer_shapes_from_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer shapes from a graph and add them to this library.</span>
+
+<span class="sd">        :param graph: graph to infer shapes from</span>
+<span class="sd">        :type graph: rdflib.Graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">class_candidates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">Class</span><span class="p">))</span>
+        <span class="n">shape_candidates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">))</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="n">class_candidates</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">shape_candidates</span><span class="p">)</span>
+        <span class="n">template_id_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">dependency_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">)</span>
+            <span class="n">partial_body</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="n">get_template_parts_from_shape</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
+            <span class="n">templ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_template</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate</span><span class="p">),</span> <span class="n">partial_body</span><span class="p">)</span>
+            <span class="n">dependency_cache</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">deps</span>
+            <span class="n">template_id_lookup</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate</span><span class="p">)]</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_load_shapes_from_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method to read all graphs in the given directory into this</span>
@@ -699,6 +704,8 @@ document.write(`
                     <span class="sa">f</span><span class="s2">&quot;Could not parse file </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="n">e</span>
+        <span class="c1"># infer shapes from any class/nodeshape candidates in the graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infer_shapes_from_graph</span><span class="p">(</span><span class="n">shape_col</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_load_from_directory</span><span class="p">(</span>
