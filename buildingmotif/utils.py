@@ -207,6 +207,8 @@ def get_template_parts_from_shape(
     pshapes = shape_graph.objects(subject=shape_name, predicate=SH["property"])
     for pshape in pshapes:
         property_path = shape_graph.value(pshape, SH["path"])
+        if property_path is None:
+            raise Exception(f"no sh:path detected on {shape_name}")
         # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
