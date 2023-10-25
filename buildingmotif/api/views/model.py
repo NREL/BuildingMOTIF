@@ -174,5 +174,8 @@ def validate_model(models_id: int) -> flask.Response:
     return {
         "message": vaildation_context.report_string,
         "valid": vaildation_context.valid,
-        "reasons": [x.reason() for x in vaildation_context.diffset],
+        "reasons": {
+            focus_node: [gd.reason() for gd in grahdiffs]
+            for focus_node, grahdiffs in vaildation_context.diffset.items()
+        },
     }, status.HTTP_200_OK
