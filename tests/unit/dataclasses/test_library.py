@@ -82,7 +82,7 @@ def test_load_library_from_ontology_with_error(bm: BuildingMOTIF):
 
 
 def test_load_shapes_with_directory_library(bm: BuildingMOTIF):
-    lib = Library.load(directory="tests/unit/fixtures/shapes")
+    lib = Library.load(directory="tests/unit/fixtures/libary-shape-test")
     assert lib is not None
     assert len(lib.get_templates()) == 1
 

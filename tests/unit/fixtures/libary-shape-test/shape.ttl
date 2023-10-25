@@ -3,11 +3,11 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix : <urn:shape1/> .
+@prefix : <urn:shape/> .
 
 : a owl:Ontology .
 
-:vav_shape a sh:NodeShape ;
+:vav_shape a owl:Class, sh:NodeShape ;
     sh:targetClass brick:VAV ;
     sh:property [
         sh:path brick:hasPoint ;
@@ -17,7 +17,7 @@
     ] ;
 .
 
-:tu_shape a sh:NodeShape ;
+:tu_shape a owl:Class, sh:NodeShape ;
     sh:targetClass brick:Terminal_Unit ;
     sh:property [
         sh:path brick:hasPoint ;
@@ -26,3 +26,4 @@
         sh:minCount 1;
     ] ;
 .
+
