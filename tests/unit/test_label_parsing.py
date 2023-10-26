@@ -4,6 +4,7 @@ from buildingmotif.label_parsing import (
     Constant,
     Delimiter,
     Identifier,
+    Null,
     TokenResult,
     abbreviations,
     choice,
@@ -11,6 +12,7 @@ from buildingmotif.label_parsing import (
     ensure_token,
     first_true,
     many,
+    maybe,
     parse,
     parse_list,
     regex,
@@ -192,6 +194,67 @@ def test_many():
         TokenResult("2", Identifier("2"), 1),
         TokenResult("/", Delimiter("/"), 1),
     ]
+
+
+def test_maybe():
+    parser = sequence(
+        maybe(string("abc", Identifier)),
+        string("def", Identifier),
+    )
+    # test that it parses the whole sequence
+    assert parser("abcdef") == [
+        TokenResult("abc", Identifier("abc"), 3),
+        TokenResult("def", Identifier("def"), 3),
+    ], "Should parse the string"
+    assert parser("def") == [
+        TokenResult(None, Null(), 0),
+        TokenResult("def", Identifier("def"), 3),
+    ], "Should parse the string"
+
+    # test sequence inside maybe
+    parser = sequence(
+        maybe(
+            sequence(
+                string("abc", Identifier),
+                string("def", Identifier),
+            )
+        ),
+        string("ghi", Identifier),
+    )
+    assert parser("ghi") == [
+        TokenResult(None, Null(), 0),
+        TokenResult("ghi", Identifier("ghi"), 3),
+    ], "Should parse the string"
+
+    assert parser("abcdefghi") == [
+        TokenResult("abc", Identifier("abc"), 3),
+        TokenResult("def", Identifier("def"), 3),
+        TokenResult("ghi", Identifier("ghi"), 3),
+    ], "Should parse the string"
+
+    # test maybe inside sequence
+    parser = sequence(
+        string("abc", Identifier),
+        maybe(
+            sequence(
+                string("def", Identifier),
+                string("ghi", Identifier),
+            )
+        ),
+        string("jkl", Identifier),
+    )
+    assert parser("abcjkl") == [
+        TokenResult("abc", Identifier("abc"), 3),
+        TokenResult(None, Null(), 0),
+        TokenResult("jkl", Identifier("jkl"), 3),
+    ], "Should parse the string"
+
+    assert parser("abcdefghijkl") == [
+        TokenResult("abc", Identifier("abc"), 3),
+        TokenResult("def", Identifier("def"), 3),
+        TokenResult("ghi", Identifier("ghi"), 3),
+        TokenResult("jkl", Identifier("jkl"), 3),
+    ], "Should parse the string"
 
 
 def test_parse():

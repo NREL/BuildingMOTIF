@@ -7,8 +7,11 @@ from rdflib import URIRef
 
 from buildingmotif.namespaces import BRICK
 
+# TODO: programming by example?
+# TODO: get LLM to write a parser for the point labels, given a human description
+
 # Token is a union of the different types of tokens
-Token = Union["Identifier", "Constant", "Delimiter"]
+Token = Union["Identifier", "Constant", "Delimiter", "Null"]
 TokenOrConstructor = Union[Token, type]
 
 
@@ -38,6 +41,13 @@ class Delimiter:
     """A delimiter token."""
 
     value: str
+
+
+@dataclass(frozen=True)
+class Null:
+    """A null token."""
+
+    value: None = None
 
 
 @dataclass(frozen=True)
@@ -139,8 +149,9 @@ def sequence(*parsers):
             if not result:
                 return results
             results.extend(result)
-            target = target[result[0].length :]
-            total_length += result[0].length
+            consumed_length = sum([r.length for r in result])
+            target = target[consumed_length:]
+            total_length += sum([r.length for r in result])
         return results
 
     return parser
@@ -162,6 +173,18 @@ def many(seq_parser):
         return results
 
     return parser
+
+
+def maybe(parser):
+    """Applies the given parser, but does not fail if it does not match."""
+
+    def maybe_parser(target):
+        result = parser(target)
+        if result:
+            return result
+        return [TokenResult(None, Null(), 0)]
+
+    return maybe_parser
 
 
 COMMON_EQUIP_ABBREVIATIONS_BRICK = {
@@ -225,6 +248,8 @@ def parse(parser: Parser, target: str) -> ParseResult:
     :rtype: ParseResult
     """
     result = parser(target)
+    # remove Null tokens from result
+    result = [r for r in result if not isinstance(r.token, Null)]
     # check length of target vs length of all results
     total_length = sum([r.length for r in result])
     return ParseResult(result, total_length == len(target))
