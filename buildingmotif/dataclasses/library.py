@@ -209,7 +209,7 @@ class Library:
         :rtype: Library
         """
         bm = get_building_motif()
-        db_library = bm.table_connection.get_db_library_by_id(id)
+        db_library = bm.table_connection.get_db_library(id)
 
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
@@ -497,7 +497,7 @@ class Library:
         :return: list of templates
         :rtype: List[Template]
         """
-        db_library = self._bm.table_connection.get_db_library_by_id(self._id)
+        db_library = self._bm.table_connection.get_db_library(self._id)
         templates: List[DBTemplate] = db_library.templates
         return [Template.load(t.id) for t in templates]
 
@@ -509,7 +509,7 @@ class Library:
         """
         # TODO: we should save the libraries shape_collection to a class attr on load/create. That
         # way we wont need an additional db query each time we call this function.
-        db_library = self._bm.table_connection.get_db_library_by_id(self._id)
+        db_library = self._bm.table_connection.get_db_library(self._id)
 
         return ShapeCollection.load(db_library.shape_collection.id)
 
