@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from rdflib import URIRef
@@ -65,6 +65,19 @@ class TokenResult:
 class ParseResult:
     tokens: List[TokenResult]
     success: bool
+    _errors: List[str] = field(default_factory=list)
+
+    @property
+    def errors(self):
+        """Return a list of errors and the offset into the string
+        where the error occurred."""
+        errors = []
+        offset = 0
+        for t in self.tokens:
+            if t.error:
+                errors.append((t.error, offset))
+            offset += t.length
+        return errors
 
 
 # type definition for the parser functions.
@@ -245,6 +258,15 @@ COMMON_ABBREVIATIONS = abbreviations(
 )
 
 
+# common parser combinators
+equip_abbreviations = abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK)
+point_abbreviations = abbreviations(COMMON_POINT_ABBREVIATIONS)
+delimiters = regex(r"[._:/\- ]", Delimiter)
+identifier = regex(r"[a-zA-Z0-9]+", Identifier)
+named_equip = sequence(equip_abbreviations, maybe(delimiters), identifier)
+named_point = sequence(point_abbreviations, maybe(delimiters), identifier)
+
+
 # wrapper function for a parser that does the following:
 # - apply the parser to the target
 # - if the parser does not consume all the target, raise an error
@@ -262,14 +284,12 @@ def parse(parser: Parser, target: str) -> ParseResult:
     """
     result = parser(target)
     # remove empty Null tokens from result
-    # result = [r for r in result if r.error or (not isinstance(r.token, Null))]
+    result = [r for r in result if r.error or (not isinstance(r.token, Null))]
     # check length of target vs length of all results
     total_length = sum([r.length for r in result])
-    if total_length != len(target) and any(r.error for r in result):
-        # Handle error here, e.g. print it or log it
-        first_error = next((r.error for r in result if r.error), None)
-        print(f"Error parsing {target}: {first_error}")
-    return ParseResult(result, total_length == len(target))
+    return ParseResult(
+        result, total_length == len(target), [r.error for r in result if r.error]
+    )
 
 
 # wrapper function for reading a list of strings
