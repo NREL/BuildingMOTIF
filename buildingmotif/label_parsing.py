@@ -52,11 +52,12 @@ class Null:
 
 @dataclass(frozen=True)
 class TokenResult:
-    """A token result. Contains a token, the type of the token, and the length of the token."""
+    """A token result. Contains a token, the type of the token, the length of the token, and a possible error."""
 
     value: Optional[str]
     token: Token
     length: int
+    error: Optional[str] = None
 
 
 # type definition for the output of a parser function
@@ -80,7 +81,7 @@ def string(s, type_name: TokenOrConstructor):
     def parser(target: str) -> List[TokenResult]:
         if target.startswith(s):
             return [TokenResult(s, ensure_token(type_name, s), len(s))]
-        return []
+        return [TokenResult(None, Null(), 0, f"Expected {s}, got {target[:len(s)]}")]
 
     return parser
 
@@ -92,7 +93,11 @@ def substring_n(length, type_name: TokenOrConstructor):
         if len(target) >= length:
             value = target[:length]
             return [TokenResult(value, ensure_token(type_name, value), length)]
-        return []
+        return [
+            TokenResult(
+                None, Null(), 0, f"Expected {length} characters, got {target[:length]}"
+            )
+        ]
 
     return parser
 
@@ -105,7 +110,7 @@ def regex(r, type_name: TokenOrConstructor):
         if match:
             value = match.group()
             return [TokenResult(value, ensure_token(type_name, value), len(value))]
-        return []
+        return [TokenResult(None, Null(), 0, f"Expected {r}, got {target[:len(r)]}")]
 
     return parser
 
@@ -114,11 +119,14 @@ def choice(*parsers):
     """Constructs a choice combinator of parsers."""
 
     def parser(target: str) -> List[TokenResult]:
+        errors = []
         for p in parsers:
             result = p(target)
-            if result:
+            if result and not any(r.error for r in result):
                 return result
-        return []
+            if result:
+                errors.append(result[0].error)
+        return [TokenResult(None, Null(), 0, " | ".join(errors))]
 
     return parser
 
@@ -147,8 +155,12 @@ def sequence(*parsers):
         for p in parsers:
             result = p(target)
             if not result:
-                return results
+                raise Exception("Expected result")
             results.extend(result)
+            # if there are any errors, return the results
+            if any(r.error for r in result):
+                return results
+            # TODO: how to handle error?
             consumed_length = sum([r.length for r in result])
             target = target[consumed_length:]
             total_length += sum([r.length for r in result])
@@ -180,7 +192,8 @@ def maybe(parser):
 
     def maybe_parser(target):
         result = parser(target)
-        if result:
+        # if the result is not empty and there are no errors, return the result, otherwise return a null token
+        if result and not any(r.error for r in result):
             return result
         return [TokenResult(None, Null(), 0)]
 
@@ -248,10 +261,14 @@ def parse(parser: Parser, target: str) -> ParseResult:
     :rtype: ParseResult
     """
     result = parser(target)
-    # remove Null tokens from result
-    result = [r for r in result if not isinstance(r.token, Null)]
+    # remove empty Null tokens from result
+    # result = [r for r in result if r.error or (not isinstance(r.token, Null))]
     # check length of target vs length of all results
     total_length = sum([r.length for r in result])
+    if total_length != len(target) and any(r.error for r in result):
+        # Handle error here, e.g. print it or log it
+        first_error = next((r.error for r in result if r.error), None)
+        print(f"Error parsing {target}: {first_error}")
     return ParseResult(result, total_length == len(target))
 
 
