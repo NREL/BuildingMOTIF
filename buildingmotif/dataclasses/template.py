@@ -409,7 +409,7 @@ class Template:
             for param in self.parameters
             if include_optional or param not in self.optional_args
         }
-        res = self.evaluate(bindings)
+        res = self.evaluate(bindings, require_optional_args=include_optional)
         assert isinstance(res, rdflib.Graph)
         return bindings, res
 
