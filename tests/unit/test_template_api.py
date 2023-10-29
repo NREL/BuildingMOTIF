@@ -174,7 +174,12 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     templ = lib.get_template_by_name("opt-vav")
     assert templ.parameters == {"name", "occ", "zone"}
-    assert templ.optional_args == ["occ"]
+    assert templ.optional_args == ["occ", "zone"]
+
+    g = templ.evaluate({"name": BLDG["vav"]})
+    assert isinstance(g, Graph)
+    assert graph_size(g) == 1
+
     g = templ.evaluate({"name": BLDG["vav"], "zone": BLDG["zone1"]})
     assert isinstance(g, Graph)
     assert graph_size(g) == 1
