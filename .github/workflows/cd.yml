@@ -1,6 +1,6 @@
 name: continuous deployment
 
-on: 
+on:
   pull_request:
     branches:
     - develop
@@ -24,6 +24,8 @@ jobs:
           ref: ${{github.event.pull_request.head.ref}}
       - name: setup-python
         uses: actions/setup-python@v3
+        with:
+          python-version: '3.11'
       # # update repo visualization for docs
       # - name: repo-visualizer
       #   uses: githubocto/repo-visualizer@0.8.2
@@ -47,7 +49,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/_build/html      
+          publish_dir: ./docs/_build/html
 
   # deploy distribution if a new release and tag are created
   deploy-dist:
