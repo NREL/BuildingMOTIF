@@ -19,11 +19,11 @@ jobs:
     steps:
       # setup, checkout pull_request.head.ref for repo-vis
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{github.event.pull_request.head.ref}}
       - name: setup-python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
       # # update repo visualization for docs
@@ -64,9 +64,9 @@ jobs:
     steps:
       # setup
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: setup-python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
       # install poetry and build dist
       - name: install-poetry
         uses: snok/install-poetry@v1
