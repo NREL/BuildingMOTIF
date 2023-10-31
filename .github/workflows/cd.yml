@@ -34,8 +34,13 @@ jobs:
       #     excluded_paths: ".github"
       #     commit_message: "repo-visualizer [skip actions]"
       # install project, which is required for autodoc of code
+      - name: install-poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0
+          virtualenvs-create: false
       - name: install buildingmotif
-        run: pip install .
+        run: poetry install --all-extras
       # install jupyter-book, which for some reason isn't available with poetry install
       - name: install jupyter book
         run: pip install jupyter-book
