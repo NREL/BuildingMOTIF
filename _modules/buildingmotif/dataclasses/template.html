@@ -445,7 +445,7 @@ document.write(`
 <span class="sd">        :rtype: Template</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
-        <span class="n">db_template</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_template_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">db_template</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_template</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
         <span class="n">body</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">graph_connection</span><span class="o">.</span><span class="n">get_graph</span><span class="p">(</span><span class="n">db_template</span><span class="o">.</span><span class="n">body_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
@@ -532,7 +532,7 @@ document.write(`
 <span class="sd">        :param dependency: dependency to remove</span>
 <span class="sd">        :type dependency: Template</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">remove_template_dependency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">delete_template_dependency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">all_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>

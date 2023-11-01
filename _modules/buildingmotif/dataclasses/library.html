@@ -604,7 +604,7 @@ document.write(`
 <span class="sd">        :rtype: Library</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
-        <span class="n">db_library</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="n">db_library</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">)</span>
 
@@ -892,7 +892,7 @@ document.write(`
 <span class="sd">        :return: list of templates</span>
 <span class="sd">        :rtype: List[Template]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">db_library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
+        <span class="n">db_library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
         <span class="n">templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DBTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="n">db_library</span><span class="o">.</span><span class="n">templates</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">]</span></div>
 
@@ -904,7 +904,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># TODO: we should save the libraries shape_collection to a class attr on load/create. That</span>
         <span class="c1"># way we wont need an additional db query each time we call this function.</span>
-        <span class="n">db_library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
+        <span class="n">db_library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">db_library</span><span class="o">.</span><span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
 
