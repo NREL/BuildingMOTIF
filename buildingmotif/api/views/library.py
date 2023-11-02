@@ -71,9 +71,7 @@ def get_library(library_id: int) -> flask.Response:
     :rtype: flask.Response
     """
     try:
-        db_lib = current_app.building_motif.table_connection.get_db_library_by_id(
-            library_id
-        )
+        db_lib = current_app.building_motif.table_connection.get_db_library(library_id)
     except NoResultFound:
         return {
             "message": f"No library with id {library_id}"
