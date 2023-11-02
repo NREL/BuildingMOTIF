@@ -352,3 +352,39 @@ def XONE(*nodes: Node) -> Shape:
     :type nodes: Union[List[Node], Tuple[Node, ...]]
     """
     return Shape().XONE(*nodes)
+
+
+def shape_from_graph(graph: Graph, shape_uri: URIRef, depth: int = 20) -> "Shape":
+    """Extract Shape from Graph by URIRef.
+    This method extracts the shape and all associated shapes into a Shape object which maintains most context needed to
+    run the shape in isolation.
+
+    Returns subgraph of "graph" containing triples relevant to the shape.
+
+    Algorithm:
+    1. Create empty shape with uri of shape_uri
+    2. Add cbd of shape_uri to empty shape
+    3. For each object in cbd check if it is of type NodeShape or PropertyShape
+    4. If object is a shape call this function on it and add it to this shape
+
+    :param graph: graph from which to extract shape
+    :type graph: Graph
+    :param shape_uri: URIRef of shape to extract
+    :type shape_uri: URIRef
+    :param depth: maximum recursive depth
+    :type depth: int"""
+    shape = Shape(shape_uri)
+    if depth < 0:
+        return shape
+    shape += graph.cbd(shape_uri)
+    triples = shape.triples((None, None, None))
+
+    def is_node_shape(uri: URIRef) -> bool:
+        types = [type for _, _, type in graph.triples((uri, A, None))]
+        return SH["NodeShape"] in types or SH["PropertyShape"] in types
+
+    for _, _, o in triples:
+        if is_node_shape(o):
+            shape += shape_from_graph(graph, o, depth - 1)
+
+    return shape
