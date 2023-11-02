@@ -17,6 +17,7 @@ buildingmotif.shape\_builder.shape
       NOT
       OR
       XONE
+      shape_from_graph
    
    
 
