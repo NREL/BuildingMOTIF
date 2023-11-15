@@ -7,7 +7,7 @@ import rfc3987
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
-from buildingmotif.dataclasses.validation import ValidationContext
+from buildingmotif.dataclasses.validation_context import ValidationContext
 from buildingmotif.namespaces import A
 from buildingmotif.utils import Triple, copy_graph, rewrite_shape_graph
 
