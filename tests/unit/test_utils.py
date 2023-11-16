@@ -9,6 +9,7 @@ from buildingmotif.utils import (
     _param_name,
     get_parameters,
     get_template_parts_from_shape,
+    hash_graph,
     replace_nodes,
     rewrite_shape_graph,
     shacl_validate,
@@ -332,3 +333,22 @@ def test_skip_uri():
     assert skip_uri(XSD.integer)
     assert skip_uri(SH.NodeShape)
     assert not skip_uri(BRICK.Sensor)
+
+
+def test_hash():
+    graph = Graph()
+    graph.parse(data=PREAMBLE)
+
+    graph.add((MODEL["a"], A, BRICK["AHU"]))
+    before_hash = hash_graph(graph)
+
+    triple_to_add = (MODEL["b"], A, BRICK["Sensor"])
+    graph.add(triple_to_add)
+
+    after_hash = hash_graph(graph)
+    assert before_hash != after_hash, "Graph changed, but hashes did not"
+
+    graph.remove(triple_to_add)
+
+    after_hash = hash_graph(graph)
+    assert before_hash == after_hash, "Graph with same state resulted in different hash"

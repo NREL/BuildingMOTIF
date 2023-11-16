@@ -690,3 +690,21 @@ def skolemize_shapes(g: Graph) -> Graph:
     # apply the replacements
     replace_nodes(g, replacements)
     return g
+def hash_graph(graph: Graph) -> int:
+    """
+    Returns a cryptographic hash of the graph contents
+
+    :param graph: graph to hash
+    :type graph: graph
+
+    :return: integer hash
+    :rtype: int
+    """
+    # Copy graph to memory (improved performance if graph is backed by a DB store)
+    graph_prime = copy_graph(graph)
+
+    # nt is the best performing serialization format I tested.
+    # For medium-office-compiled it takes 0.03s vs 0.5 for ttl
+    graph_string = graph_prime.serialize(format="nt")
+
+    return hash(graph_string)
