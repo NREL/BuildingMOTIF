@@ -1,6 +1,15 @@
 from typing import Dict, List
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import (
+    TEXT,
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, declarative_base, relationship
 
 # from sqlalchemy.dialects.postgresql import JSON
@@ -24,6 +33,10 @@ class DBModel(Base):
         "DBShapeCollection",
         uselist=False,
         cascade="all,delete",
+    )
+
+    validation_contexts: Mapped[List["DBValidationContext"]] = relationship(
+        "DBValidationContext", back_populates="model", cascade="all,delete"
     )
 
 
@@ -112,4 +125,39 @@ class DBTemplate(Base):
             "library_id",
             name="name_library_unique_constraint",
         ),
+    )
+
+
+class ValidationContextShapeCollectionAssociation(Base):
+    """Many-to-many relationship between DBValidationContexts and DBShapeCollection."""
+
+    __tablename__ = "validation_context_shape_collection_association"
+
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    shape_collection_id: Mapped[int] = Column(ForeignKey("shape_collection.id"))
+    validation_context_id: Mapped[int] = Column(ForeignKey("validation_context.id"))
+
+    __table_args__ = (
+        UniqueConstraint(
+            "shape_collection_id",
+            "validation_context_id",
+            name="validation_context_shape_collection_unique_constraint",
+        ),
+    )
+
+
+class DBValidationContext(Base):
+    __tablename__ = "validation_context"
+
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    valid: Mapped[bool] = Column(Boolean, nullable=False)
+    report_string: Mapped[str] = Column(TEXT, nullable=False)
+    report_id: Mapped[str] = Column(String(), nullable=False)
+
+    shape_collections: Mapped[List[DBShapeCollection]] = relationship(
+        "DBShapeCollection", secondary="validation_context_shape_collection_association"
+    )
+    model_id: Mapped[int] = Column(Integer, ForeignKey("models.id"), nullable=False)
+    model: Mapped[DBModel] = relationship(
+        "DBModel", back_populates="validation_contexts"
     )

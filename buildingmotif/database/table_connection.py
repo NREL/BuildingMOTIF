@@ -11,6 +11,7 @@ from buildingmotif.database.tables import (
     DBModel,
     DBShapeCollection,
     DBTemplate,
+    DBValidationContext,
     DepsAssociation,
 )
 
@@ -536,3 +537,54 @@ class TableConnection:
         self.logger.debug(f"Deleting template: '{db_template.name}'")
 
         self.bm.session.delete(db_template)
+
+    def get_all_db_validation_contexts(self) -> List[DBValidationContext]:
+        """Get all database validation contexts.
+
+        :return: all DBValidationContext
+        :rtype: List[DBValidationContext]
+        """
+        return self.bm.session.query(DBValidationContext).all()
+
+    def create_db_validation_context(self, valid, report_string, model_id):
+        """_summary_"""
+        report_id = str(uuid.uuid4())
+
+        db_validation_context = DBValidationContext(
+            valid=valid,
+            report_string=report_string,
+            report_id=report_id,
+            model_id=model_id,
+        )
+
+        self.bm.session.add(db_validation_context)
+
+        self.bm.session.flush()
+
+        return db_validation_context
+
+    def get_db_validation_context(self, id: int) -> DBValidationContext:
+        """Get database validation_context by id.
+
+        :param id: id of DBValidationContext
+        :type id: int
+        :return: DBValidationContext
+        :rtype: DBValidationContext
+        """
+        db_validation_context = (
+            self.bm.session.query(DBValidationContext)
+            .filter(DBValidationContext.id == id)
+            .one()
+        )
+        return db_validation_context
+
+    def delete_db_validation_context(self, id: int) -> None:
+        """Delete database validation_context.
+
+        :param id: id of deleted DBValidationContext
+        :type id: int
+        """
+
+        db_validation_context = self.get_db_validation_context(id)
+        self.logger.debug(f"Deleting validation_context: '{db_validation_context.id}'")
+        self.bm.session.delete(db_validation_context)
