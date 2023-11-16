@@ -460,9 +460,6 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.shape_builder.shape.XONE" title="buildingmotif.shape_builder.shape.XONE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XONE</span></code></a>(*nodes)</p></td>
 <td><p>add XONE property</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.shape_builder.shape.shape_from_graph" title="buildingmotif.shape_builder.shape.shape_from_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape_from_graph</span></code></a>(graph, shape_uri[, depth])</p></td>
-<td><p>Extract Shape from Graph by URIRef.</p></td>
-</tr>
 </tbody>
 </table>
 <p class="rubric">Classes</p>
@@ -727,29 +724,6 @@ zero_or_one, zero_or_more, and one_or_more flags are mutually exclusive</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>nodes</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>Node</em><em>]</em><em>, </em><em>Tuple</em><em>[</em><em>Node</em><em>, </em><em>...</em><em>]</em><em>]</em>) – list of nodes to XONE</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="buildingmotif.shape_builder.shape.shape_from_graph">
-<span class="sig-name descname"><span class="pre">shape_from_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">URIRef</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#buildingmotif.shape_builder.shape.Shape" title="buildingmotif.shape_builder.shape.Shape"><span class="pre">Shape</span></a></span></span><a class="reference internal" href="../../../_modules/buildingmotif/shape_builder/shape.html#shape_from_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.shape_builder.shape.shape_from_graph" title="Permalink to this definition">#</a></dt>
-<dd><p>Extract Shape from Graph by URIRef.
-This method extracts the shape and all associated shapes into a Shape object which maintains most context needed to
-run the shape in isolation.</p>
-<p>Returns subgraph of “graph” containing triples relevant to the shape.</p>
-<p>Algorithm:
-1. Create empty shape with uri of shape_uri
-2. Add cbd of shape_uri to empty shape
-3. For each object in cbd check if it is of type NodeShape or PropertyShape
-4. If object is a shape call this function on it and add it to this shape</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>graph</strong> (<em>Graph</em>) – graph from which to extract shape</p></li>
-<li><p><strong>shape_uri</strong> (<em>URIRef</em>) – URIRef of shape to extract</p></li>
-<li><p><strong>depth</strong> (<em>int</em>) – maximum recursive depth</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>

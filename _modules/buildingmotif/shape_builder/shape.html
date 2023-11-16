@@ -747,42 +747,6 @@ document.write(`
 <span class="sd">    :type nodes: Union[List[Node], Tuple[Node, ...]]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">Shape</span><span class="p">()</span><span class="o">.</span><span class="n">XONE</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="shape_from_graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.shape_from_graph">[docs]</a><span class="k">def</span> <span class="nf">shape_from_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">shape_uri</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Shape&quot;</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract Shape from Graph by URIRef.</span>
-<span class="sd">    This method extracts the shape and all associated shapes into a Shape object which maintains most context needed to</span>
-<span class="sd">    run the shape in isolation.</span>
-
-<span class="sd">    Returns subgraph of &quot;graph&quot; containing triples relevant to the shape.</span>
-
-<span class="sd">    Algorithm:</span>
-<span class="sd">    1. Create empty shape with uri of shape_uri</span>
-<span class="sd">    2. Add cbd of shape_uri to empty shape</span>
-<span class="sd">    3. For each object in cbd check if it is of type NodeShape or PropertyShape</span>
-<span class="sd">    4. If object is a shape call this function on it and add it to this shape</span>
-
-<span class="sd">    :param graph: graph from which to extract shape</span>
-<span class="sd">    :type graph: Graph</span>
-<span class="sd">    :param shape_uri: URIRef of shape to extract</span>
-<span class="sd">    :type shape_uri: URIRef</span>
-<span class="sd">    :param depth: maximum recursive depth</span>
-<span class="sd">    :type depth: int&quot;&quot;&quot;</span>
-    <span class="n">shape</span> <span class="o">=</span> <span class="n">Shape</span><span class="p">(</span><span class="n">shape_uri</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">depth</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">shape</span>
-    <span class="n">shape</span> <span class="o">+=</span> <span class="n">graph</span><span class="o">.</span><span class="n">cbd</span><span class="p">(</span><span class="n">shape_uri</span><span class="p">)</span>
-    <span class="n">triples</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">triples</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">is_node_shape</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="nb">type</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="nb">type</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">triples</span><span class="p">((</span><span class="n">uri</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="kc">None</span><span class="p">))]</span>
-        <span class="k">return</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;NodeShape&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">types</span> <span class="ow">or</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;PropertyShape&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">types</span>
-
-    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">triples</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">is_node_shape</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
-            <span class="n">shape</span> <span class="o">+=</span> <span class="n">shape_from_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">shape</span></div>
 </pre></div>
 
                 </article>

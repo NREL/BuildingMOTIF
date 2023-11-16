@@ -908,6 +908,26 @@ document.write(`
         <span class="k">if</span> <span class="n">uri</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="hash_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.hash_graph">[docs]</a><span class="k">def</span> <span class="nf">hash_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a cryptographic hash of the graph contents</span>
+
+<span class="sd">    :param graph: graph to hash</span>
+<span class="sd">    :type graph: graph</span>
+
+<span class="sd">    :return: integer hash</span>
+<span class="sd">    :rtype: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Copy graph to memory (improved performance if graph is backed by a DB store)</span>
+    <span class="n">graph_prime</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+
+    <span class="c1"># nt is the best performing serialization format I tested.</span>
+    <span class="c1"># For medium-office-compiled it takes 0.03s vs 0.5 for ttl</span>
+    <span class="n">graph_string</span> <span class="o">=</span> <span class="n">graph_prime</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;nt&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="n">graph_string</span><span class="p">)</span></div>
 </pre></div>
 
                 </article>

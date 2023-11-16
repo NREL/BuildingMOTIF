@@ -466,25 +466,28 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.graph_size" title="buildingmotif.utils.graph_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">graph_size</span></code></a>(g)</p></td>
 <td><p>Returns the number of triples in a graph.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.inline_sh_nodes" title="buildingmotif.utils.inline_sh_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inline_sh_nodes</span></code></a>(g)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.hash_graph" title="buildingmotif.utils.hash_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash_graph</span></code></a>(graph)</p></td>
+<td><p>Returns a cryptographic hash of the graph contents</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.inline_sh_nodes" title="buildingmotif.utils.inline_sh_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inline_sh_nodes</span></code></a>(g)</p></td>
 <td><p>Recursively inlines all sh:node properties and objects on the graph.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.new_temporary_graph" title="buildingmotif.utils.new_temporary_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_temporary_graph</span></code></a>([more_namespaces])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.new_temporary_graph" title="buildingmotif.utils.new_temporary_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_temporary_graph</span></code></a>([more_namespaces])</p></td>
 <td><p>Creates a new in-memory RDF graph with common and additional namespace bindings.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.remove_triples_with_node" title="buildingmotif.utils.remove_triples_with_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_triples_with_node</span></code></a>(g, node)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.remove_triples_with_node" title="buildingmotif.utils.remove_triples_with_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_triples_with_node</span></code></a>(g, node)</p></td>
 <td><p>Remove all triples that include the given node.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.replace_nodes" title="buildingmotif.utils.replace_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_nodes</span></code></a>(g, replace)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.replace_nodes" title="buildingmotif.utils.replace_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_nodes</span></code></a>(g, replace)</p></td>
 <td><p>Replace nodes in a graph.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.rewrite_shape_graph" title="buildingmotif.utils.rewrite_shape_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rewrite_shape_graph</span></code></a>(g)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.rewrite_shape_graph" title="buildingmotif.utils.rewrite_shape_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rewrite_shape_graph</span></code></a>(g)</p></td>
 <td><p>Rewrites the input graph to make the resulting validation report more useful.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.skip_uri" title="buildingmotif.utils.skip_uri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skip_uri</span></code></a>(uri)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.skip_uri" title="buildingmotif.utils.skip_uri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skip_uri</span></code></a>(uri)</p></td>
 <td><p>Returns True if the URI should be skipped during processing because it is axiomatic or not expected to be imported.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.template_to_shape" title="buildingmotif.utils.template_to_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">template_to_shape</span></code></a>(template)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.template_to_shape" title="buildingmotif.utils.template_to_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">template_to_shape</span></code></a>(template)</p></td>
 <td><p>Turn this template into a SHACL shape.</p></td>
 </tr>
 </tbody>
@@ -718,6 +721,23 @@ because it is axiomatic or not expected to be imported.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.utils.hash_graph">
+<span class="sig-name descname"><span class="pre">hash_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#hash_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.hash_graph" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a cryptographic hash of the graph contents</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graph</strong> (<em>graph</em>) – graph to hash</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>integer hash</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
