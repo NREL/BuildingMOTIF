@@ -40,7 +40,7 @@ def test_get_db_library(table_connection):
     db_library = table_connection.create_db_library(name="my_library")
     table_connection.create_db_template("my_db_template", library_id=db_library.id)
 
-    db_library = table_connection.get_db_library_by_id(id=db_library.id)
+    db_library = table_connection.get_db_library(id=db_library.id)
     assert db_library.name == "my_library"
     assert len(db_library.templates) == 1
     assert type(db_library.templates[0]) == DBTemplate
@@ -49,7 +49,7 @@ def test_get_db_library(table_connection):
 
 def test_get_db_library_does_not_exist(table_connection):
     with pytest.raises(NoResultFound):
-        table_connection.get_db_library_by_id("I don't exist")
+        table_connection.get_db_library("I don't exist")
 
 
 def test_get_db_library_by_name(table_connection):
@@ -72,13 +72,11 @@ def test_get_db_library_by_name_not_found(table_connection):
 def test_update_db_library_name(table_connection):
     db_library_id = table_connection.create_db_library(name="my_db_library").id
 
-    assert table_connection.get_db_library_by_id(db_library_id).name == "my_db_library"
+    assert table_connection.get_db_library(db_library_id).name == "my_db_library"
 
     table_connection.update_db_library_name(db_library_id, "your_db_library")
 
-    assert (
-        table_connection.get_db_library_by_id(db_library_id).name == "your_db_library"
-    )
+    assert table_connection.get_db_library(db_library_id).name == "your_db_library"
 
 
 def test_update_db_library_name_does_not_exist(table_connection):
@@ -96,10 +94,10 @@ def test_delete_db_library(table_connection):
     table_connection.delete_db_library(db_library.id)
 
     with pytest.raises(NoResultFound):
-        table_connection.get_db_library_by_id(db_library.id)
+        table_connection.get_db_library(db_library.id)
 
     with pytest.raises(NoResultFound):
-        table_connection.get_db_template_by_id(db_template.id)
+        table_connection.get_db_template(db_template.id)
 
     with pytest.raises(NoResultFound):
         table_connection.get_db_shape_collection(db_shape_collection.id)

@@ -84,7 +84,7 @@ def test_get_library(client, building_motif):
     # Assert
     assert results.status_code == 200
 
-    db_library = building_motif.table_connection.get_db_library_by_id(lib.id)
+    db_library = building_motif.table_connection.get_db_library(lib.id)
     assert results.json == {
         "id": db_library.id,
         "name": db_library.name,
