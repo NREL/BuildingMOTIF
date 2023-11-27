@@ -50,7 +50,7 @@ class Template:
         :rtype: Template
         """
         bm = get_building_motif()
-        db_template = bm.table_connection.get_db_template_by_id(id)
+        db_template = bm.table_connection.get_db_template(id)
         body = bm.graph_connection.get_graph(db_template.body_id)
 
         return cls(
@@ -137,7 +137,7 @@ class Template:
         :param dependency: dependency to remove
         :type dependency: Template
         """
-        self._bm.table_connection.remove_template_dependency(self.id, dependency.id)
+        self._bm.table_connection.delete_template_dependency(self.id, dependency.id)
 
     @property
     def all_parameters(self) -> Set[str]:
