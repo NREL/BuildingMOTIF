@@ -207,6 +207,8 @@ def get_template_parts_from_shape(
     pshapes = shape_graph.objects(subject=shape_name, predicate=SH["property"])
     for pshape in pshapes:
         property_path = shape_graph.value(pshape, SH["path"])
+        if property_path is None:
+            raise Exception(f"no sh:path detected on {shape_name}")
         # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
@@ -232,11 +234,16 @@ def get_template_parts_from_shape(
         (path, otype, mincount) = property_path, otypes[0], mincounts[0]
         assert isinstance(mincount, Literal)
 
-        for _ in range(int(mincount)):
-            param = _gensym()
+        param_name = shape_graph.value(pshape, SH["name"])
+
+        for num in range(int(mincount)):
+            if param_name is not None:
+                param = PARAM[f"{param_name}{num}"]
+            else:
+                param = _gensym()
             body.add((root_param, path, param))
-            deps.append({"template": otype, "args": {"name": param}})
-            # body.add((param, RDF.type, otype))
+            deps.append({"template": str(otype), "args": {"name": param}})
+            body.add((param, RDF.type, otype))
 
     if (shape_name, RDF.type, OWL.Class) in shape_graph:
         body.add((root_param, RDF.type, shape_name))
@@ -245,9 +252,15 @@ def get_template_parts_from_shape(
     for cls in classes:
         body.add((root_param, RDF.type, cls))
 
+    classes = shape_graph.objects(shape_name, SH["targetClass"])
+    for cls in classes:
+        body.add((root_param, RDF.type, cls))
+
     nodes = shape_graph.objects(shape_name, SH["node"])
     for node in nodes:
-        deps.append({"template": node, "args": {"name": "name"}})  # tie to root param
+        deps.append(
+            {"template": str(node), "args": {"name": "name"}}
+        )  # tie to root param
 
     return body, deps
 
