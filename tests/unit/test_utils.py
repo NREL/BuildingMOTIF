@@ -7,9 +7,9 @@ from buildingmotif.namespaces import BRICK, SH, XSD, A
 from buildingmotif.utils import (
     PARAM,
     _param_name,
+    approximate_graph_hash,
     get_parameters,
     get_template_parts_from_shape,
-    hash_graph,
     replace_nodes,
     rewrite_shape_graph,
     shacl_validate,
@@ -337,18 +337,22 @@ def test_skip_uri():
 
 def test_hash():
     graph = Graph()
-    graph.parse(data=PREAMBLE)
+    graph.parse("tests/unit/fixtures/smallOffice_brick.ttl")
 
     graph.add((MODEL["a"], A, BRICK["AHU"]))
-    before_hash = hash_graph(graph)
+    before_hash = approximate_graph_hash(graph)
+
+    assert (
+        approximate_graph_hash(graph) == before_hash
+    ), "Graph did not change but hash did"
 
     triple_to_add = (MODEL["b"], A, BRICK["Sensor"])
     graph.add(triple_to_add)
 
-    after_hash = hash_graph(graph)
+    after_hash = approximate_graph_hash(graph)
     assert before_hash != after_hash, "Graph changed, but hashes did not"
 
     graph.remove(triple_to_add)
 
-    after_hash = hash_graph(graph)
+    after_hash = approximate_graph_hash(graph)
     assert before_hash == after_hash, "Graph with same state resulted in different hash"

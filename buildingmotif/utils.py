@@ -690,9 +690,16 @@ def skolemize_shapes(g: Graph) -> Graph:
     # apply the replacements
     replace_nodes(g, replacements)
     return g
-def hash_graph(graph: Graph) -> int:
+
+
+def approximate_graph_hash(graph: Graph) -> int:
     """
-    Returns a cryptographic hash of the graph contents
+    Returns a cryptographic hash of the graph contents.
+    This method does not currently guarrantee that two isomorphic graphs will produce the same graph.
+    It is intended to differentiate between a graph and a modified version of that graph.
+
+    In the future canonicalization (https://www.w3.org/TR/rdf-canon/) may allow for graph isomorphism to be reflected
+    in a graph's hash.
 
     :param graph: graph to hash
     :type graph: graph
