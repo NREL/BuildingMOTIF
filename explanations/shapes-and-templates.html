@@ -1,0 +1,871 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Shapes and Templates &#8212; BuildingMOTIF Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'explanations/shapes-and-templates';</script>
+    <link rel="shortcut icon" href="../_static/BuildingMOTIF-icon-rev.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Bibliography" href="../bibliography.html" />
+    <link rel="prev" title="Ingresses" href="ingresses.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+
+  <div class="bd-header-announcement container-fluid bd-header-announcement">
+    <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
+  </div>
+
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-light" alt="BuildingMOTIF Documentation - Home"/>
+    <script>document.write(`<img src="../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-dark" alt="BuildingMOTIF Documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../README.html">
+                    BuildingMOTIF
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reference/developer_documentation.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/cli_tool.html">Command Line Interface</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.app.html">buildingmotif.api.app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.views.html">buildingmotif.api.views</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.html">buildingmotif.building_motif</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.building_motif.html">buildingmotif.building_motif.building_motif</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html">buildingmotif.building_motif.singleton</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.utils.html">buildingmotif.database.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html">buildingmotif.dataclasses.library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html">buildingmotif.dataclasses.model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html">buildingmotif.dataclasses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html">buildingmotif.dataclasses.validation</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.html">buildingmotif.ingresses</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.html">buildingmotif.ingresses.csvingress</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/model_creation.html">Model Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/model_validation.html">Model Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/model_correction.html">Model Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/template_writing.html">Template Writing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../guides/csv-import.html">CSV Import</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ingresses.html">Ingresses</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Shapes and Templates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fexplanations/shapes-and-templates.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/explanations/shapes-and-templates.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Shapes and Templates</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-shapes-to-templates">Converting Shapes to Templates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="shapes-and-templates">
+<h1>Shapes and Templates<a class="headerlink" href="#shapes-and-templates" title="Permalink to this heading">#</a></h1>
+<p>Shapes and Templates interact in interesting ways in BuildingMOTIF.
+In this document, we explain the utility and function of these interactions.</p>
+<p>Recall that a <strong>Shape</strong> (SHACL shape) is a set of conditions and constraints over RDF graphs, and
+a <strong>Template</strong> is a function that generates an RDF graph.</p>
+<section id="converting-shapes-to-templates">
+<h2>Converting Shapes to Templates<a class="headerlink" href="#converting-shapes-to-templates" title="Permalink to this heading">#</a></h2>
+<p>BuildingMOTIF automatically converts shapes to templates.
+Evaluating the resulting template will generate a graph that validates against the shape.</p>
+<p>When BuildingMOTIF loads a Library, it makes an attempt to find any shapes defined within it.
+The way this happens depends on how the library is loaded:</p>
+<ul class="simple">
+<li><p><em>Loading library from directory or git repository</em>: BuildingMOTIF searches for any RDF files in the directory (recursively) and loads them into a Shape Collection; loads any instances of <code class="docutils literal notranslate"><span class="pre">sh:NodeShape</span></code> in the union of these RDF files</p></li>
+<li><p><em>Loading library from ontology file</em>: loads all instances of <code class="docutils literal notranslate"><span class="pre">sh:NodeShape</span></code> in the provided graphc</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>BuildingMOTIF <em>only</em> loads shapes which are instances of <em>both</em> <code class="docutils literal notranslate"><span class="pre">sh:NodeShape</span></code> <strong>and</strong> <code class="docutils literal notranslate"><span class="pre">owl:Class</span></code>. The assumption is that <code class="docutils literal notranslate"><span class="pre">owl:Class</span></code>-ified shapes could be “instantiated”.</p>
+</div>
+<p>Each shape is “decompiled” into components from which a Template can be constructed.
+The implementation of this decompilation is in the <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">get_template_parts_from_shape</span></code></span> method.
+BuildingMOTIF currently recognizes the following SHACL properties:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sh:property</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sh:qualifiedValueShape</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sh:node</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sh:class</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sh:targetClass</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sh:datatype</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sh:minCount</span></code> / <code class="docutils literal notranslate"><span class="pre">sh:qualifiedMinCount</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sh:maxCount</span></code> / <code class="docutils literal notranslate"><span class="pre">sh:qualifiedMaxCount</span></code></p></li>
+</ul>
+<p>BuildingMOTIF currently uses the name of the SHACL shape as the name of the generated Template.
+All other parameters (i.e., nodes corresponding to <code class="docutils literal notranslate"><span class="pre">sh:property</span></code>) are given invented names <em>unless</em>
+there is a <code class="docutils literal notranslate"><span class="pre">sh:name</span></code> attribute on the property shape.</p>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h3>
+<p>Consider the following shape which has been loaded into BuildingMOTIF as part of a Library:</p>
+<div class="highlight-ttl notranslate"><div class="highlight"><pre><span></span>#<span class="w"> </span><span class="nv">myshapes</span>.<span class="nv">ttl</span>
+@<span class="nv">prefix</span><span class="w"> </span><span class="nv">brick</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">brickschema</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">schema</span><span class="o">/</span><span class="nv">Brick</span>#<span class="o">&gt;</span><span class="w"> </span>.
+@<span class="nv">prefix</span><span class="w"> </span><span class="nv">sh</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">http</span>:<span class="o">//</span><span class="nv">www</span>.<span class="nv">w3</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">ns</span><span class="o">/</span><span class="nv">shacl</span>#<span class="o">&gt;</span><span class="w"> </span>.
+@<span class="nv">prefix</span><span class="w"> </span><span class="nv">owl</span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">http</span>:<span class="o">//</span><span class="nv">www</span>.<span class="nv">w3</span>.<span class="nv">org</span><span class="o">/</span><span class="mi">2002</span><span class="o">/</span><span class="mi">07</span><span class="o">/</span><span class="nv">owl</span>#<span class="o">&gt;</span><span class="w"> </span>.
+@<span class="nv">prefix</span><span class="w"> </span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">urn</span>:<span class="nv">example</span><span class="o">/&gt;</span><span class="w"> </span>.
+
+:<span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">owl</span>:<span class="nv">Ontology</span><span class="w"> </span>.
+
+<span class="nl">:vav</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span>,<span class="w"> </span><span class="nv">owl</span>:<span class="nv">Class</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetClass</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Terminal_Unit</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">property</span><span class="w"> </span>[
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">path</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">hasPart</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">qualifiedValueShape</span><span class="w"> </span>[<span class="w"> </span><span class="nv">sh</span>:<span class="nv">node</span><span class="w"> </span>:<span class="nv">heating</span><span class="o">-</span><span class="nv">coil</span><span class="w"> </span>]<span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">name</span><span class="w"> </span><span class="s2">&quot;hc&quot;</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">qualifiedMinCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span>]<span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">property</span><span class="w"> </span>[
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">path</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">hasPoint</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">qualifiedValueShape</span><span class="w"> </span>[<span class="w"> </span><span class="nv">sh</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Supply_Air_Flow_Sensor</span><span class="w"> </span>]<span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">qualifiedMinCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span>]<span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">property</span><span class="w"> </span>[
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">path</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">hasPoint</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">qualifiedValueShape</span><span class="w"> </span>[<span class="w"> </span><span class="nv">sh</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Supply_Air_Temperature_Sensor</span><span class="w"> </span>]<span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">name</span><span class="w"> </span><span class="s2">&quot;sat&quot;</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">qualifiedMinCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span>]<span class="w"> </span><span class="c1">;</span>
+.
+
+<span class="nl">:heating</span><span class="o">-</span><span class="nv">coil</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">sh</span>:<span class="nv">NodeShape</span>,<span class="w"> </span><span class="nv">owl</span>:<span class="nv">Class</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">targetClass</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Heating_Coil</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span><span class="nv">sh</span>:<span class="nv">property</span><span class="w"> </span>[
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">path</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">hasPoint</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">qualifiedValueShape</span><span class="w"> </span>[<span class="w"> </span><span class="nv">sh</span>:<span class="nv">class</span><span class="w"> </span><span class="nv">brick</span>:<span class="nv">Position_Command</span><span class="w"> </span>]<span class="w"> </span><span class="c1">;</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">name</span><span class="w"> </span><span class="s2">&quot;damper_pos&quot;</span><span class="w"> </span><span class="c1">; # will be used as the parameter name</span>
+<span class="w">        </span><span class="nv">sh</span>:<span class="nv">qualifiedMinCount</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">;</span>
+<span class="w">    </span>]<span class="w"> </span><span class="c1">;</span>
+.
+</pre></div>
+</div>
+<details>
+<p>This code creates <code class="docutils literal notranslate"><span class="pre">myshapes.ttl</span></code> for you in the current directory.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;myshapes.ttl&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
+<span class="s2">@prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .</span>
+<span class="s2">@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .</span>
+<span class="s2">@prefix : &lt;urn:example/&gt; .</span>
+
+<span class="s2">: a owl:Ontology .</span>
+
+<span class="s2">:vav a sh:NodeShape, owl:Class ;</span>
+<span class="s2">    sh:targetClass brick:Terminal_Unit ;</span>
+<span class="s2">    sh:property [</span>
+<span class="s2">        sh:path brick:hasPart ;</span>
+<span class="s2">        sh:qualifiedValueShape [ sh:node :heating-coil ] ;</span>
+<span class="s2">        sh:name &quot;hc&quot; ;</span>
+<span class="s2">        sh:qualifiedMinCount 1 ;</span>
+<span class="s2">    ] ;</span>
+<span class="s2">    sh:property [</span>
+<span class="s2">        sh:path brick:hasPoint ;</span>
+<span class="s2">        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Flow_Sensor ] ;</span>
+<span class="s2">        sh:qualifiedMinCount 1 ;</span>
+<span class="s2">    ] ;</span>
+<span class="s2">    sh:property [</span>
+<span class="s2">        sh:path brick:hasPoint ;</span>
+<span class="s2">        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;</span>
+<span class="s2">        sh:name &quot;sat&quot; ;</span>
+<span class="s2">        sh:qualifiedMinCount 1 ;</span>
+<span class="s2">    ] ;</span>
+<span class="s2">.</span>
+
+<span class="s2">:heating-coil a sh:NodeShape, owl:Class ;</span>
+<span class="s2">    sh:targetClass brick:Heating_Coil ;</span>
+<span class="s2">    sh:property [</span>
+<span class="s2">        sh:path brick:hasPoint ;</span>
+<span class="s2">        sh:qualifiedValueShape [ sh:class brick:Position_Command ] ;</span>
+<span class="s2">        sh:name &quot;damper_pos&quot; ; # will be used as the parameter name</span>
+<span class="s2">        sh:qualifiedMinCount 1 ;</span>
+<span class="s2">    ] ;</span>
+<span class="s2">.</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</details>
+<p>If this was in a file <code class="docutils literal notranslate"><span class="pre">myshapes.ttl</span></code>, we would load it into BuildingMOTIF as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span>
+
+<span class="c1"># in-memory instance</span>
+<span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span>
+
+<span class="c1"># load library</span>
+<span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl&quot;</span><span class="p">)</span>
+<span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;myshapes.ttl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,532 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7011
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,532 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7013
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,533 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7015
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,533 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7017
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,534 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7019
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,534 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6972
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,534 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6974
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,535 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6976
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,535 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6978
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,536 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6980
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,536 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7045
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,537 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7047
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,537 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7049
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,537 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7051
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,538 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b7053
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,538 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6922
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,538 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6924
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,539 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6926
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,540 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6928
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,541 | root |  WARNING: Warning: could not find dependee nfd8e396995f64f1d889880e47fbb0c82b6930
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:36:59,541 | root |  WARNING: Warning: could not find dependee http://data.ashrae.org/bacnet/2020#BACnetDevice
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:37:01,363 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Position_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:37:01,364 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2023-11-28 15:37:01,365 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+</pre></div>
+</div>
+</div>
+</div>
+<p>Once the library has been loaded, all of the shapes have been turned into templates.
+We can load the template by name (using its <em>full URI</em> from the shape) as if it were
+defined explicitly:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reading the template out by name</span>
+<span class="n">template</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="s2">&quot;urn:example/vav&quot;</span><span class="p">)</span>
+
+<span class="c1"># dump the body of the template</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix ns1: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:___param___#name&gt; a ns1:Terminal_Unit,
+        &lt;urn:example/vav&gt; ;
+    ns1:hasPart &lt;urn:___param___#hc0&gt; ;
+    ns1:hasPoint &lt;urn:___param___#p13&gt;,
+        &lt;urn:___param___#sat0&gt; .
+
+&lt;urn:___param___#hc0&gt; a &lt;urn:example/heating-coil&gt; .
+
+&lt;urn:___param___#p13&gt; a ns1:Supply_Air_Flow_Sensor .
+
+&lt;urn:___param___#sat0&gt; a ns1:Supply_Air_Temperature_Sensor .
+</pre></div>
+</div>
+</div>
+</div>
+<p>As with other templates, we often want to <em>inline</em> all dependencies to get a sense of what metadata will be added to the graph.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># reading the template out by name</span>
+<span class="n">template</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="s2">&quot;urn:example/vav&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span>
+
+<span class="c1"># dump the body of the template</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix ns1: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:___param___#name&gt; a ns1:Terminal_Unit,
+        &lt;urn:example/vav&gt; ;
+    ns1:hasPart &lt;urn:___param___#hc0&gt; ;
+    ns1:hasPoint &lt;urn:___param___#p13&gt;,
+        &lt;urn:___param___#sat0&gt; .
+
+&lt;urn:___param___#urn:___param___#hc0&gt; a ns1:Heating_Coil,
+        &lt;urn:example/heating-coil&gt; ;
+    ns1:hasPoint &lt;urn:___param___#urn:___param___#hc0-damper_pos0&gt; .
+
+&lt;urn:___param___#hc0&gt; a &lt;urn:example/heating-coil&gt; .
+
+&lt;urn:___param___#p13&gt; a ns1:Supply_Air_Flow_Sensor .
+
+&lt;urn:___param___#sat0&gt; a ns1:Supply_Air_Temperature_Sensor .
+
+&lt;urn:___param___#urn:___param___#hc0-damper_pos0&gt; a ns1:Position_Command .
+</pre></div>
+</div>
+</div>
+</div>
+<p>Observe that the generated template uses the <code class="docutils literal notranslate"><span class="pre">sh:name</span></code> property of each property shape to inform the paramter name. If this is not provided (e.g. for the <code class="docutils literal notranslate"><span class="pre">brick:Supply_Air_Flow_Sensor</span></code> property shape), then a generated parameter will be used.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./explanations"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ingresses.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Ingresses</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../bibliography.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bibliography</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-shapes-to-templates">Converting Shapes to Templates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By NREL
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
