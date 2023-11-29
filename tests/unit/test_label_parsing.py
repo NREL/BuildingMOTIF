@@ -1,8 +1,11 @@
+from typing import List
+
 from buildingmotif.label_parsing import (
     COMMON_ABBREVIATIONS,
     COMMON_EQUIP_ABBREVIATIONS_BRICK,
     Constant,
     Delimiter,
+    ErrorTokenResult,
     Identifier,
     Null,
     TokenResult,
@@ -21,6 +24,13 @@ from buildingmotif.label_parsing import (
     substring_n,
 )
 from buildingmotif.namespaces import BRICK
+
+
+def _parse_result_empty(result: List[TokenResult]):
+    if len(result) == 0:
+        return True
+    if len(result) == 1 and result[0].value is None:
+        return True
 
 
 def test_ensure_token():
@@ -43,7 +53,9 @@ def test_string_parser():
         TokenResult("abc", Identifier("abc"), 3)
     ], "Should parse the string"
     # test that it does not parse the string if it is not at the beginning
-    assert parser("0abc") == [], "Should not parse the string"
+    assert parser("0abc") == [
+        ErrorTokenResult
+    ], f"Should not parse the string {parser('0abc')}"
 
 
 def test_substring_n_parser():
@@ -53,7 +65,7 @@ def test_substring_n_parser():
         TokenResult("ab", Identifier("ab"), 2)
     ], "Should parse the string"
     # test that it pulls the correct number of characters when there are less than it needs
-    assert parser("a") == [], "Should not parse the string"
+    assert parser("a") == [ErrorTokenResult], "Should not parse the string"
     # test that it pulls the correct number of characters when there are exactly the number it needs
     assert parser("ab") == [
         TokenResult("ab", Identifier("ab"), 2)
@@ -159,7 +171,8 @@ def test_sequence():
         TokenResult("1", Identifier("1"), 1),
     ], "Should parse the string"
     assert parser("AHU1-") == [
-        TokenResult("AHU", Constant(BRICK.Air_Handling_Unit), 3)
+        TokenResult("AHU", Constant(BRICK.Air_Handling_Unit), 3),
+        ErrorTokenResult,
     ], "Should not parse all of the string"
 
 
@@ -176,6 +189,7 @@ def test_many():
     assert parser("AHU1") == [
         TokenResult("AHU", Constant(BRICK.Air_Handling_Unit), 3),
         TokenResult("1", Identifier("1"), 1),
+        ErrorTokenResult,
     ]
     # no delimiter at the end, so it should not parse the whole thing
     assert parser("AHU1/SP2") == [
@@ -184,6 +198,7 @@ def test_many():
         TokenResult("/", Delimiter("/"), 1),
         TokenResult("SP", Constant(BRICK.Setpoint), 2),
         TokenResult("2", Identifier("2"), 1),
+        ErrorTokenResult,
     ]
     # test that it parses multiple sequences
     assert parser("AHU1/SP2/") == [
@@ -273,7 +288,8 @@ def test_parse():
 
     result = parse(parser, "AHU1-")
     assert result.tokens == [
-        TokenResult("AHU", Constant(BRICK.Air_Handling_Unit), 3)
+        TokenResult("AHU", Constant(BRICK.Air_Handling_Unit), 3),
+        ErrorTokenResult,
     ], "Should not parse all of the string"
     assert not result.success, "Should not parse the string"
 

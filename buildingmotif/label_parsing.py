@@ -59,6 +59,23 @@ class TokenResult:
     length: int
     error: Optional[str] = None
 
+    def __eq__(self, other):
+        """
+        Compare two token results on every
+        field except for the error field.
+        """
+        if not isinstance(other, TokenResult):
+            return False
+        return (
+            self.value == other.value
+            and self.token == other.token
+            and self.length == other.length
+        )
+
+
+# null token result
+ErrorTokenResult = TokenResult(None, Null(), 0, None)
+
 
 # type definition for the output of a parser function
 @dataclass(frozen=True)
@@ -189,7 +206,7 @@ def many(seq_parser):
         results = []
         while True:
             part = seq_parser(target)
-            if not part:
+            if not part or part[0].value is None:
                 break
             results.extend(part)
             # add up the length of all the tokens
