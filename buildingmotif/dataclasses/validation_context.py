@@ -29,11 +29,53 @@ class ValidationContext:
     validation.
     """
 
-    shape_collections: List[ShapeCollection]
-    valid: bool
-    report: rdflib.Graph
-    report_string: str
-    model: "Model"
+    _shape_collections: List[ShapeCollection]
+    _valid: bool
+    _report: rdflib.Graph
+    _report_string: str
+    _model: "Model"
+
+    def get_shape_collections(self):
+        return self._shape_collections.copy()
+
+    @property
+    def valid(self) -> bool:
+        return self._valid
+
+    @valid.setter
+    def valid(self, new_valid):
+        raise AttributeError("ValidationContext is immutable")
+
+    def get_report(self):
+        return self._report
+
+    @property
+    def report_string(self) -> str:
+        return self._report_string
+
+    @report_string.setter
+    def report_string(self, new_report_string):
+        raise AttributeError("ValidationContext is immutable")
+
+    def get_model(self):
+        return self._model
+
+    @classmethod
+    def create(
+        cls,
+        shape_collections: List[ShapeCollection],
+        valid: bool,
+        report: rdflib.Graph,
+        report_string: str,
+        model: "Model",
+    ) -> "ValidationContext":
+        return ValidationContext(
+            _shape_collections=shape_collections,
+            _valid=valid,
+            _report=report,
+            _report_string=report_string,
+            _model=model,
+        )
 
     @cached_property
     def diffset(self) -> Dict[Optional[URIRef], Set[GraphDiff]]:
@@ -44,7 +86,7 @@ class ValidationContext:
 
     @cached_property
     def _context(self) -> Graph:
-        return sum((sc.graph for sc in self.shape_collections), start=Graph())  # type: ignore
+        return sum((sc.graph for sc in self.get_shape_collections()), start=Graph())  # type: ignore
 
     def as_templates(self) -> List["Template"]:
         """Produces the set of templates that reconcile the GraphDiffs from the
@@ -66,7 +108,7 @@ class ValidationContext:
         # TODO: for future use
         # proppath = SH["property"] | (SH.qualifiedValueShape / SH["property"])  # type: ignore
 
-        g = self.report + self._context
+        g = self.get_report() + self._context
         diffs: Dict[Optional[URIRef], Set[GraphDiff]] = defaultdict(set)
         for result in g.objects(predicate=SH.result):
             # check if the failure is due to our count constraint component

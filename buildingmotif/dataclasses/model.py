@@ -185,12 +185,12 @@ class Model:
             # inplace=True,
         )
         assert isinstance(report_g, rdflib.Graph)
-        return ValidationContext(
-            shape_collections,
-            valid,
-            report_g,
-            report_str,
-            self,
+        return ValidationContext.create(
+            shape_collections=shape_collections,
+            valid=valid,
+            report=report_g,
+            report_string=report_str,
+            model=self,
         )
 
     def compile(self, shape_collections: List["ShapeCollection"]):
@@ -287,12 +287,12 @@ class Model:
                 advanced=True,
                 js=True,
             )
-            results[shape_uri] = ValidationContext(
-                shape_collections,
-                valid,
-                report_g,
-                report_str,
-                self,
+            results[shape_uri] = ValidationContext.create(
+                shape_collections=shape_collections,
+                valid=valid,
+                report=report_g,
+                report_string=report_str,
+                model=self,
             )
 
         return results
