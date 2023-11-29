@@ -13,7 +13,6 @@ buildingmotif.utils
 
    .. autosummary::
    
-      approximate_graph_hash
       combine_graphs
       copy_graph
       get_ontology_files

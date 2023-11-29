@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>buildingmotif.building_motif.singleton &#8212; BuildingMOTIF Documentation</title>
+    <title>buildingmotif.ingresses.naming_convention &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -61,7 +61,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/building_motif/singleton';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/ingresses/naming_convention';</script>
     <link rel="shortcut icon" href="../../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -319,7 +319,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/building_motif/singleton.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/ingresses/naming_convention.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -395,28 +395,58 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>Source code for buildingmotif.building_motif.singleton</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="Singleton"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html#buildingmotif.building_motif.singleton.Singleton">[docs]</a><span></span><span class="k">class</span> <span class="nc">Singleton</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Metaclass that makes a class into a singleton.&quot;&quot;&quot;</span>
+  <h1>Source code for buildingmotif.ingresses.naming_convention</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">cls_dict</span><span class="p">):</span>
-        <span class="n">singleton_cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">cls_dict</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">clean</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">singleton_cls</span><span class="p">,</span> <span class="s2">&quot;instance&quot;</span><span class="p">):</span>
-                <span class="nb">delattr</span><span class="p">(</span><span class="n">singleton_cls</span><span class="p">,</span> <span class="s2">&quot;instance&quot;</span><span class="p">)</span>
-
-        <span class="nb">setattr</span><span class="p">(</span><span class="n">singleton_cls</span><span class="p">,</span> <span class="s2">&quot;clean&quot;</span><span class="p">,</span> <span class="n">clean</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">singleton_cls</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;instance&quot;</span><span class="p">):</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Singleton</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instance</span></div>
+<span class="kn">from</span> <span class="nn">buildingmotif.ingresses.base</span> <span class="kn">import</span> <span class="n">Record</span><span class="p">,</span> <span class="n">RecordIngressHandler</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.label_parsing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Parser</span><span class="p">,</span>
+    <span class="n">analyze_failures</span><span class="p">,</span>
+    <span class="n">parse_list</span><span class="p">,</span>
+    <span class="n">results_to_tokens</span><span class="p">,</span>
+<span class="p">)</span>
 
 
-<div class="viewcode-block" id="SingletonNotInstantiatedException"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html#buildingmotif.building_motif.singleton.SingletonNotInstantiatedException">[docs]</a><span class="k">class</span> <span class="nc">SingletonNotInstantiatedException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a singelton is accessed without being initialized.&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="NamingConventionIngress"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.naming_convention.html#buildingmotif.ingresses.naming_convention.NamingConventionIngress">[docs]</a><span class="k">class</span> <span class="nc">NamingConventionIngress</span><span class="p">(</span><span class="n">RecordIngressHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">upstream</span><span class="p">:</span> <span class="n">RecordIngressHandler</span><span class="p">,</span>
+        <span class="n">naming_convention</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upstream</span> <span class="o">=</span> <span class="n">upstream</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">naming_convention</span> <span class="o">=</span> <span class="n">naming_convention</span>
+
+<div class="viewcode-block" id="NamingConventionIngress.dump_failed_labels"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.naming_convention.html#buildingmotif.ingresses.naming_convention.NamingConventionIngress.dump_failed_labels">[docs]</a>    <span class="k">def</span> <span class="nf">dump_failed_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sorted_groups</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">analyze_failures</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">failures</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">group</span><span class="p">,</span> <span class="n">failures</span> <span class="ow">in</span> <span class="n">sorted_groups</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unparsed label: </span><span class="si">{</span><span class="n">group</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">failures</span><span class="p">)</span><span class="si">}</span><span class="s2"> failures)&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">failure</span> <span class="ow">in</span> <span class="n">failures</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">failure</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span></div>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Record</span><span class="p">]:</span>
+        <span class="n">results</span><span class="p">,</span> <span class="n">failures</span> <span class="o">=</span> <span class="n">parse_list</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">naming_convention</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">upstream</span><span class="o">.</span><span class="n">records</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failures</span> <span class="o">=</span> <span class="n">failures</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">results</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">results_to_tokens</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">Record</span><span class="p">(</span>
+                <span class="n">rtype</span><span class="o">=</span><span class="s2">&quot;token&quot;</span><span class="p">,</span>
+                <span class="n">fields</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;tokens&quot;</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">],</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span>
+        <span class="p">]</span></div>
 </pre></div>
 
                 </article>

@@ -1,0 +1,887 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>buildingmotif.label_parsing &#8212; BuildingMOTIF Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/label_parsing';</script>
+    <link rel="shortcut icon" href="../../_static/BuildingMOTIF-icon-rev.svg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+
+  <div class="bd-header-announcement container-fluid bd-header-announcement">
+    <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
+  </div>
+
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-light" alt="BuildingMOTIF Documentation - Home"/>
+    <script>document.write(`<img src="../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-dark" alt="BuildingMOTIF Documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../README.html">
+                    BuildingMOTIF
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../reference/developer_documentation.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/cli_tool.html">Command Line Interface</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.api.app.html">buildingmotif.api.app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.api.views.html">buildingmotif.api.views</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.building_motif.html">buildingmotif.building_motif</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.building_motif.building_motif.html">buildingmotif.building_motif.building_motif</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html">buildingmotif.building_motif.singleton</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.database.utils.html">buildingmotif.database.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html">buildingmotif.dataclasses.library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html">buildingmotif.dataclasses.model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html">buildingmotif.dataclasses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html">buildingmotif.dataclasses.validation</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.ingresses.html">buildingmotif.ingresses</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.html">buildingmotif.ingresses.csvingress</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/model_creation.html">Model Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/model_validation.html">Model Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/model_correction.html">Model Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/template_writing.html">Template Writing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../guides/csv-import.html">CSV Import</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/label_parsing.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <h1>Source code for buildingmotif.label_parsing</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
+
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span>
+
+<span class="c1"># TODO: programming by example?</span>
+<span class="c1"># TODO: get LLM to write a parser for the point labels, given a human description</span>
+
+<span class="c1"># Token is a union of the different types of tokens</span>
+<span class="n">Token</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Constant&quot;</span><span class="p">,</span> <span class="s2">&quot;Delimiter&quot;</span><span class="p">,</span> <span class="s2">&quot;Null&quot;</span><span class="p">]</span>
+<span class="n">TokenOrConstructor</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Token</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ensure_token"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.ensure_token">[docs]</a><span class="k">def</span> <span class="nf">ensure_token</span><span class="p">(</span><span class="n">token_or_constructor</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ensure a value is a token or constructs one from a given value.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token_or_constructor</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">token_or_constructor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">token_or_constructor</span></div>
+
+
+<div class="viewcode-block" id="Identifier"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.Identifier">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Identifier</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An identifier token. Contains a string.&quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="Constant"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.Constant">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Constant</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A constant token. Contains a URI, probably some sort of Class&quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="n">URIRef</span></div>
+
+
+<div class="viewcode-block" id="Delimiter"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.Delimiter">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Delimiter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A delimiter token.&quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="Null"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.Null">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Null</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A null token.&quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TokenResult"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.TokenResult">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TokenResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A token result. Contains a token, the type of the token, the length of the token, and a possible error.&quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Token</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compare two token results on every</span>
+<span class="sd">        field except for the error field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TokenResult</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">token</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">length</span>
+        <span class="p">)</span></div>
+
+
+<span class="c1"># null token result</span>
+<span class="n">ErrorTokenResult</span> <span class="o">=</span> <span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+<span class="c1"># type definition for the output of a parser function</span>
+<div class="viewcode-block" id="ParseResult"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.ParseResult">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">ParseResult</span><span class="p">:</span>
+    <span class="n">tokens</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]</span>
+    <span class="n">success</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">_errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">errors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of errors and the offset into the string</span>
+<span class="sd">        where the error occurred.&quot;&quot;&quot;</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">t</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="n">offset</span><span class="p">))</span>
+            <span class="n">offset</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">length</span>
+        <span class="k">return</span> <span class="n">errors</span></div>
+
+
+<span class="c1"># type definition for the parser functions.</span>
+<span class="c1"># A parser function takes a string and returns a list of tuples</span>
+<span class="c1"># each tuple is a token, the type of the token, and the length of the token</span>
+<span class="c1"># the length of the token is used to keep track of how much of the string</span>
+<span class="c1"># has been parsed</span>
+<span class="n">Parser</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="string"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.string">[docs]</a><span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a parser that matches a string.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parser</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="n">type_name</span><span class="p">,</span> <span class="n">s</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">))]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<div class="viewcode-block" id="substring_n"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.substring_n">[docs]</a><span class="k">def</span> <span class="nf">substring_n</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a parser that matches a substring of length n.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parser</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">length</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">target</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="n">type_name</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">length</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">TokenResult</span><span class="p">(</span>
+                <span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2"> characters, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<div class="viewcode-block" id="regex"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.regex">[docs]</a><span class="k">def</span> <span class="nf">regex</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a parser that matches a regular expression.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parser</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="n">type_name</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">))]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<div class="viewcode-block" id="choice"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.choice">[docs]</a><span class="k">def</span> <span class="nf">choice</span><span class="p">(</span><span class="o">*</span><span class="n">parsers</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a choice combinator of parsers.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parser</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parsers</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">p</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">error</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">))]</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<div class="viewcode-block" id="constant"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.constant">[docs]</a><span class="k">def</span> <span class="nf">constant</span><span class="p">(</span><span class="n">type_name</span><span class="p">:</span> <span class="n">Token</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches a constant token.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parser</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">type_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<div class="viewcode-block" id="abbreviations"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.abbreviations">[docs]</a><span class="k">def</span> <span class="nf">abbreviations</span><span class="p">(</span><span class="n">patterns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a choice combinator of string matching based on a dictionary.&quot;&quot;&quot;</span>
+    <span class="n">parsers</span> <span class="o">=</span> <span class="p">[</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Constant</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">patterns</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="n">choice</span><span class="p">(</span><span class="o">*</span><span class="n">parsers</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="sequence"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.sequence">[docs]</a><span class="k">def</span> <span class="nf">sequence</span><span class="p">(</span><span class="o">*</span><span class="n">parsers</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies parsers in sequence. All parsers must match consecutively.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parser</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">total_length</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parsers</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">p</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Expected result&quot;</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="c1"># if there are any errors, return the results</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">error</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">results</span>
+            <span class="c1"># TODO: how to handle error?</span>
+            <span class="n">consumed_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">])</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">consumed_length</span><span class="p">:]</span>
+            <span class="n">total_length</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<div class="viewcode-block" id="many"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.many">[docs]</a><span class="k">def</span> <span class="nf">many</span><span class="p">(</span><span class="n">seq_parser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the given sequence parser repeatedly until it stops matching.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parser</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">part</span> <span class="o">=</span> <span class="n">seq_parser</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span> <span class="ow">or</span> <span class="n">part</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+            <span class="c1"># add up the length of all the tokens</span>
+            <span class="n">total_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">part</span><span class="p">])</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">total_length</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+<div class="viewcode-block" id="maybe"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.maybe">[docs]</a><span class="k">def</span> <span class="nf">maybe</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the given parser, but does not fail if it does not match.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">maybe_parser</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">parser</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="c1"># if the result is not empty and there are no errors, return the result, otherwise return a null token</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">error</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">maybe_parser</span></div>
+
+
+<span class="n">COMMON_EQUIP_ABBREVIATIONS_BRICK</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;AHU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Handling_Unit</span><span class="p">,</span>
+    <span class="s2">&quot;FCU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Fan_Coil_Unit</span><span class="p">,</span>
+    <span class="s2">&quot;VAV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Variable_Air_Volume_Box</span><span class="p">,</span>
+    <span class="s2">&quot;CRAC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Computer_Room_Air_Conditioner</span><span class="p">,</span>
+    <span class="s2">&quot;HX&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Exchanger</span><span class="p">,</span>
+    <span class="s2">&quot;PMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Pump</span><span class="p">,</span>
+    <span class="s2">&quot;RVAV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Variable_Air_Volume_Box_With_Reheat</span><span class="p">,</span>
+    <span class="s2">&quot;HP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Pump</span><span class="p">,</span>
+    <span class="s2">&quot;RTU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Rooftop_Unit</span><span class="p">,</span>
+    <span class="s2">&quot;DMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Damper</span><span class="p">,</span>
+    <span class="s2">&quot;STS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Status</span><span class="p">,</span>
+    <span class="s2">&quot;VLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Valve</span><span class="p">,</span>
+    <span class="s2">&quot;CHVLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Valve</span><span class="p">,</span>
+    <span class="s2">&quot;HWVLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_Valve</span><span class="p">,</span>
+    <span class="s2">&quot;VFD&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Variable_Frequency_Drive</span><span class="p">,</span>
+    <span class="s2">&quot;CT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Cooling_Tower</span><span class="p">,</span>
+    <span class="s2">&quot;MAU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Makeup_Air_Unit</span><span class="p">,</span>
+    <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Room</span><span class="p">,</span>
+    <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Handling_Unit</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">COMMON_POINT_ABBREVIATIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;ART&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Room_Temperature_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;TSP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Temperature_Setpoint</span><span class="p">,</span>
+    <span class="s2">&quot;HSP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Temperature_Heating_Setpoint</span><span class="p">,</span>
+    <span class="s2">&quot;CSP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Temperature_Cooling_Setpoint</span><span class="p">,</span>
+    <span class="s2">&quot;SP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Setpoint</span><span class="p">,</span>
+    <span class="s2">&quot;CHWST&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Leaving_Chilled_Water_Temperature_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;CHWRT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Entering_Chilled_Water_Temperature_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;HWST&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Leaving_Hot_Water_Temperature_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;HWRT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Entering_Hot_Water_Temperature_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;CO&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">CO_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;CO2&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">CO2_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Temperature_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;FS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Flow_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;PS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Pressure_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;DPS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Differential_Pressure_Sensor</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">COMMON_ABBREVIATIONS</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">(</span>
+    <span class="p">{</span><span class="o">**</span><span class="n">COMMON_EQUIP_ABBREVIATIONS_BRICK</span><span class="p">,</span> <span class="o">**</span><span class="n">COMMON_POINT_ABBREVIATIONS</span><span class="p">}</span>
+<span class="p">)</span>
+
+
+<span class="c1"># common parser combinators</span>
+<span class="n">equip_abbreviations</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">(</span><span class="n">COMMON_EQUIP_ABBREVIATIONS_BRICK</span><span class="p">)</span>
+<span class="n">point_abbreviations</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">(</span><span class="n">COMMON_POINT_ABBREVIATIONS</span><span class="p">)</span>
+<span class="n">delimiters</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[._:/\- ]&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">)</span>
+<span class="n">identifier</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[a-zA-Z0-9]+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)</span>
+<span class="n">named_equip</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">equip_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">)</span>
+<span class="n">named_point</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">point_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">)</span>
+
+
+<span class="c1"># wrapper function for a parser that does the following:</span>
+<span class="c1"># - apply the parser to the target</span>
+<span class="c1"># - if the parser does not consume all the target, raise an error</span>
+<span class="c1"># - return the result of the parser</span>
+<div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.parse">[docs]</a><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParseResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse the given target string using the given parser.</span>
+
+<span class="sd">    :param parser: the parsing combinator function</span>
+<span class="sd">    :type parser: Parser</span>
+<span class="sd">    :param target: the target string to parse</span>
+<span class="sd">    :type target: str</span>
+<span class="sd">    :return: the result of the parser</span>
+<span class="sd">    :rtype: ParseResult</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">parser</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="c1"># remove empty Null tokens from result</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">error</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">Null</span><span class="p">))]</span>
+    <span class="c1"># check length of target vs length of all results</span>
+    <span class="n">total_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">ParseResult</span><span class="p">(</span>
+        <span class="n">result</span><span class="p">,</span> <span class="n">total_length</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">),</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">error</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">error</span><span class="p">]</span>
+    <span class="p">)</span></div>
+
+
+<span class="c1"># wrapper function for reading a list of strings</span>
+<span class="c1"># applies a given parser to each string in the list</span>
+<span class="c1"># returns a dictionary of the input strings to the result of the parser</span>
+<span class="c1"># Keep track of all strings that fail to parse and return them in a list</span>
+<div class="viewcode-block" id="parse_list"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.parse_list">[docs]</a><span class="k">def</span> <span class="nf">parse_list</span><span class="p">(</span>
+    <span class="n">parser</span><span class="p">,</span> <span class="n">target_list</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse a list of strings using the given parser.</span>
+
+<span class="sd">    :param parser: the parsing combinator function</span>
+<span class="sd">    :type parser: Parser</span>
+<span class="sd">    :param target_list: the list of strings to parse</span>
+<span class="sd">    :type target_list: List[str]</span>
+<span class="sd">    :return: a tuple of the results and failures</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">failed</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">target_list</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">tokens</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">failed</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">tokens</span>
+    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">failed</span></div>
+
+
+<span class="c1"># from itertools documentation</span>
+<div class="viewcode-block" id="first_true"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.first_true">[docs]</a><span class="k">def</span> <span class="nf">first_true</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the first true value in the iterable.</span>
+
+<span class="sd">    If no true value is found, returns *default*</span>
+
+<span class="sd">    If *pred* is not None, returns the first item</span>
+<span class="sd">    for which pred(item) is true.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># first_true([a,b,c], x) --&gt; a or b or c or x</span>
+    <span class="c1"># first_true([a,b], x, f) --&gt; a if f(a) else b if f(b) else x</span>
+    <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">iterable</span><span class="p">),</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+<span class="c1"># function which takes the results of parse_list and turns all of the</span>
+<span class="c1"># results (not failures) into token dictionaries.</span>
+<span class="c1"># A token dictionary has an &#39;identifier&#39; key which is the label (the keys</span>
+<span class="c1"># of the results dictionary), and then a list of tokens. A token is a dictionary</span>
+<span class="c1"># with &#39;identifier&#39; (the substring part of the result) and &#39;type&#39; (the type of</span>
+<span class="c1"># the result if it is a constant)</span>
+<div class="viewcode-block" id="results_to_tokens"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.results_to_tokens">[docs]</a><span class="k">def</span> <span class="nf">results_to_tokens</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">,</span> <span class="s2">&quot;tokens&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># get first constant token using itertools</span>
+                <span class="n">constant</span> <span class="o">=</span> <span class="n">first_true</span><span class="p">(</span>
+                    <span class="n">parts</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">Constant</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="c1"># get the next identifier token</span>
+                <span class="n">identifier</span> <span class="o">=</span> <span class="n">first_true</span><span class="p">(</span>
+                    <span class="n">parts</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">constant</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">identifier</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="c1"># add the constant and identifier to the token dictionary</span>
+                <span class="n">res</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">identifier</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">constant</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">toPython</span><span class="p">(),</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">constant</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># if there are any constants left, add them to the token dictionary with the label</span>
+            <span class="n">constant</span> <span class="o">=</span> <span class="n">first_true</span><span class="p">(</span><span class="n">parts</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">Constant</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">constant</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="s2">&quot;tokens&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">constant</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">toPython</span><span class="p">()}</span>
+            <span class="p">)</span>
+        <span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tokens</span></div>
+
+
+<span class="c1"># Analyzes the failures of a parser to capture all point labels.</span>
+<span class="c1"># For each label in the failures, compute the length of the found tokens.</span>
+<span class="c1"># Create a dictionary keyed with the label. The value should have two keys.</span>
+<span class="c1"># The first key is the remaining &quot;unparsed&quot; part of the string, the second key</span>
+<span class="c1"># is the set of tokens that were found.</span>
+<div class="viewcode-block" id="analyze_failures"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.analyze_failures">[docs]</a><span class="k">def</span> <span class="nf">analyze_failures</span><span class="p">(</span><span class="n">failures</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze the failures of a parser.&quot;&quot;&quot;</span>
+    <span class="n">analyzed</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">failure</span> <span class="ow">in</span> <span class="n">failures</span><span class="p">:</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">failures</span><span class="p">[</span><span class="n">failure</span><span class="p">]</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">])</span>
+        <span class="n">analyzed</span><span class="p">[</span><span class="n">failure</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;unparsed&quot;</span><span class="p">:</span> <span class="n">failure</span><span class="p">[</span><span class="n">length</span><span class="p">:],</span>
+            <span class="s2">&quot;tokens&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">}</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+    <span class="c1"># group the points by the unparsed portion</span>
+    <span class="n">grouped</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">analyzed</span><span class="p">:</span>
+        <span class="n">grouped</span><span class="p">[</span><span class="n">analyzed</span><span class="p">[</span><span class="n">f</span><span class="p">][</span><span class="s2">&quot;unparsed&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="c1"># for each group, add the tokens to the first point in the group</span>
+    <span class="k">return</span> <span class="n">grouped</span></div>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By NREL
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
