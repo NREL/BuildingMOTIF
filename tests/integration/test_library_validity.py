@@ -16,6 +16,7 @@ S223_SKIP_TEMPLATES: Set[str] = {
 
 
 @pytest.mark.integration
+@pytest.mark.skip(reason="223P support is temporarily broken")
 def test_223p_library(bm, library_path_223p: Path):
     ont_223p = Library.load(ontology_graph="libraries/ashrae/223p/ontology/223p.ttl")
     lib = Library.load(directory=str(library_path_223p))

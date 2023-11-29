@@ -272,7 +272,11 @@ def test_validate_model(client, building_motif):
 
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
-    assert isinstance(results.get_json()["reasons"], list)
+    assert results.get_json()["reasons"] == {
+        "urn:building/vav1": [
+            "urn:building/vav1 needs between 1 and None instances of https://brickschema.org/schema/Brick#Air_Flow_Sensor on path https://brickschema.org/schema/Brick#hasPoint"
+        ]
+    }
     assert not results.get_json()["valid"]
 
     # Set up
@@ -295,7 +299,7 @@ def test_validate_model(client, building_motif):
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
     assert results.get_json()["valid"]
-    assert isinstance(results.get_json()["reasons"], list)
+    assert results.get_json()["reasons"] == {}
 
 
 def test_validate_model_bad_model_id(client, building_motif):
@@ -330,7 +334,7 @@ def test_validate_model_no_args(client, building_motif):
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
     assert results.get_json()["valid"]
-    assert isinstance(results.get_json()["reasons"], list)
+    assert results.get_json()["reasons"] == {}
 
 
 def test_validate_model_no_library_ids(client, building_motif):
@@ -350,7 +354,7 @@ def test_validate_model_no_library_ids(client, building_motif):
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
     assert results.get_json()["valid"]
-    assert isinstance(results.get_json()["reasons"], list)
+    assert results.get_json()["reasons"] == {}
 
 
 def test_validate_model_bad_library_ids(client, building_motif):

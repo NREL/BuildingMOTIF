@@ -78,7 +78,6 @@ def get_db_uri(args) -> str:
         "--libraries",
         help="Filename of the libraries YAML file specifying what "
         "should be loaded into BuildingMOTIF",
-        default="libraries.yml",
         nargs="+",
         dest="library_manifest_file",
     ),

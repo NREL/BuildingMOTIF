@@ -49,7 +49,7 @@ def test_get_template(client, building_motif):
     # Assert
     assert results.status_code == 200
 
-    db_template = building_motif.table_connection.get_db_template_by_id(template.id)
+    db_template = building_motif.table_connection.get_db_template(template.id)
     assert results.json == {
         "id": db_template.id,
         "name": db_template.name,
