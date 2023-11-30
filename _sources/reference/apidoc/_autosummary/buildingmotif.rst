@@ -32,7 +32,6 @@
    buildingmotif.database
    buildingmotif.dataclasses
    buildingmotif.ingresses
-   buildingmotif.label_parsing
    buildingmotif.libraries
    buildingmotif.namespaces
    buildingmotif.schemas
