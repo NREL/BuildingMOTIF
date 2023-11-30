@@ -219,7 +219,7 @@ sensor:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Sensor ;
-      s223:hasMeasurementLocation P:where ;
+      s223:hasObservationLocation P:where ;
       s223:observes P:property .
   optional: ["where"]
 
@@ -228,7 +228,7 @@ differential-sensor:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Sensor ;
-    s223:hasMeasurementLocation P:whereA, P:whereB ;
+    s223:hasObservationLocation P:whereA, P:whereB ;
       s223:observes P:property .
   optional: ["whereA", "whereB"]
 
@@ -237,7 +237,7 @@ evaporative-cooler:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:HeatExchanger ;
-      s223:hasRole s223:HeatExchanger-Evaporator ;
+      s223:hasRole s223:Role-Evaporator ;
       s223:hasConnectionPoint P:in, P:out, P:water-in, P:water-out ;
       s223:hasProperty P:entering-air-temp, P:leaving-air-temp, P:leaving-air-humidity ;
       s223:contains P:evap-cool-pump-2stage, P:evap-cool-sump-tank, P:evap-cool-fill-valve .
