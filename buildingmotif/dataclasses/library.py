@@ -260,24 +260,8 @@ class Library:
 
         lib = cls.create(ontology_name, overwrite=overwrite)
 
-        class_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.OWL.Class))
-        shape_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
-        candidates = class_candidates.intersection(shape_candidates)
-
-        # stores the lookup from template *names* to template *ids*
-        # this is necessary because while we know the *name* of the dependee templates
-        # for each dependent template, we don't know the *id* of the dependee templates,
-        # which is necessary to populate the dependencies
-        template_id_lookup: Dict[str, int] = {}
-        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
-        for candidate in candidates:
-            assert isinstance(candidate, rdflib.URIRef)
-            partial_body, deps = get_template_parts_from_shape(candidate, ontology)
-            templ = lib.create_template(str(candidate), partial_body)
-            dependency_cache[templ.id] = deps
-            template_id_lookup[str(candidate)] = templ.id
-
-        lib._resolve_template_dependencies(template_id_lookup, dependency_cache)
+        # infer shapes from any class/nodeshape candidates in the graph
+        lib._infer_shapes_from_graph(ontology)
 
         # load the ontology graph as a shape_collection
         shape_col_id = lib.get_shape_collection().id
@@ -286,6 +270,26 @@ class Library:
         shape_col.add_graph(ontology)
 
         return lib
+
+    def _infer_shapes_from_graph(self, graph: rdflib.Graph):
+        """Infer shapes from a graph and add them to this library.
+
+        :param graph: graph to infer shapes from
+        :type graph: rdflib.Graph
+        """
+        class_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.OWL.Class))
+        shape_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
+        candidates = class_candidates.intersection(shape_candidates)
+        template_id_lookup: Dict[str, int] = {}
+        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
+        for candidate in candidates:
+            assert isinstance(candidate, rdflib.URIRef)
+            partial_body, deps = get_template_parts_from_shape(candidate, graph)
+            templ = self.create_template(str(candidate), partial_body)
+            dependency_cache[templ.id] = deps
+            template_id_lookup[str(candidate)] = templ.id
+
+        self._resolve_template_dependencies(template_id_lookup, dependency_cache)
 
     def _load_shapes_from_directory(self, directory: pathlib.Path):
         """Helper method to read all graphs in the given directory into this
@@ -305,6 +309,8 @@ class Library:
                     f"Could not parse file {filename}: {e}"
                 )
                 raise e
+        # infer shapes from any class/nodeshape candidates in the graph
+        self._infer_shapes_from_graph(shape_col.graph)
 
     @classmethod
     def _load_from_directory(
