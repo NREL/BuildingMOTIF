@@ -394,9 +394,12 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.api.views.library</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">flask</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">flask</span>
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span>
 <span class="kn">from</span> <span class="nn">flask_api</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.orm.exc</span> <span class="kn">import</span> <span class="n">NoResultFound</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.library</span> <span class="kn">import</span> <span class="n">serialize</span>
@@ -437,22 +440,28 @@ document.write(`
 <span class="sd">    :return: all shapes</span>
 <span class="sd">    :rtype: flask.Response</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">definition_types</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;https://nrel.gov/BuildingMOTIF#Sequence_Of_Operations&quot;</span><span class="p">),</span>
+        <span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;https://nrel.gov/BuildingMOTIF#Analytics_Application&quot;</span><span class="p">),</span>
+        <span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;https://nrel.gov/BuildingMOTIF#System_Specification&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">URIRef</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="n">dt</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">definition_types</span><span class="p">}</span>
 
     <span class="n">db_libs</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">building_motif</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_all_db_libraries</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">db_lib</span> <span class="ow">in</span> <span class="n">db_libs</span><span class="p">:</span>
         <span class="n">shape_collection</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">db_lib</span><span class="o">.</span><span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-        <span class="n">shapes</span> <span class="o">=</span> <span class="n">shape_collection</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">get_shape_query</span><span class="p">)</span>
-        <span class="n">results</span> <span class="o">+=</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;library_name&quot;</span><span class="p">:</span> <span class="n">db_lib</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="s2">&quot;library_id&quot;</span><span class="p">:</span> <span class="n">db_lib</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
-                <span class="s2">&quot;uri&quot;</span><span class="p">:</span> <span class="n">uri</span><span class="p">,</span>
-                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
-            <span class="p">}</span>
-            <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">description</span> <span class="ow">in</span> <span class="n">shapes</span>
-        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">definition_types</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;shape_uri&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span>
+                    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
+                    <span class="s2">&quot;library_name&quot;</span><span class="p">:</span> <span class="n">db_lib</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">&quot;shape_collection_id&quot;</span><span class="p">:</span> <span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="n">shape_collection</span><span class="o">.</span><span class="n">get_shapes_of_definition_type</span><span class="p">(</span>
+                    <span class="n">dt</span><span class="p">,</span> <span class="n">include_labels</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
 
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
 
