@@ -197,8 +197,15 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     assert isinstance(t, Template)
     assert t.parameters == {"occ"}
 
+    # assert no warning is raised when optional args are not required
+    with pytest.warns(None) as record:
+        t = templ.evaluate({"name": BLDG["vav"]})
+    assert len(record) == 0
+
     with pytest.warns():
-        partial_templ = templ.evaluate({"name": BLDG["vav"]})
+        partial_templ = templ.evaluate(
+            {"name": BLDG["vav"]}, require_optional_args=True
+        )
     assert isinstance(partial_templ, Template)
     g = partial_templ.evaluate({"zone": BLDG["zone1"]})
     assert isinstance(g, Graph)
