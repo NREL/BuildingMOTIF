@@ -335,24 +335,27 @@ def test_skip_uri():
     assert not skip_uri(BRICK.Sensor)
 
 
-def test_hash():
+def test_hash(bm: BuildingMOTIF):
     graph = Graph()
     graph.parse("tests/unit/fixtures/smallOffice_brick.ttl")
 
     graph.add((MODEL["a"], A, BRICK["AHU"]))
-    before_hash = approximate_graph_hash(graph)
+
+    model = Model.create(MODEL)
+    model.add_graph(graph)
+    before_hash = approximate_graph_hash(model.graph)
 
     assert (
         approximate_graph_hash(graph) == before_hash
     ), "Graph did not change but hash did"
 
     triple_to_add = (MODEL["b"], A, BRICK["Sensor"])
-    graph.add(triple_to_add)
+    model.graph.add(triple_to_add)
 
-    after_hash = approximate_graph_hash(graph)
+    after_hash = approximate_graph_hash(model.graph)
     assert before_hash != after_hash, "Graph changed, but hashes did not"
 
-    graph.remove(triple_to_add)
+    model.graph.remove(triple_to_add)
 
-    after_hash = approximate_graph_hash(graph)
+    after_hash = approximate_graph_hash(model.graph)
     assert before_hash == after_hash, "Graph with same state resulted in different hash"
