@@ -188,22 +188,21 @@ class ShapeCollection:
 
         results = []
         for definition_type in definition_types:
-            results += self.graph.subjects(RDF.type, definition_type)
-            q = self.graph.query(
-                f"""
-                SELECT ?shape ?label
-                WHERE {{
-                    ?shape  <http://www.w3.org/2000/01/rdf-schema#label> ?label .
-                    ?shape  a  <{definition_type}> .
-                }}
-            """
-            )
+            if include_labels:
+                q = self.graph.query(
+                    f"""
+                    SELECT ?shape ?label
+                    WHERE {{
+                        OPTIONAL {{ ?shape  <http://www.w3.org/2000/01/rdf-schema#label> ?label }} .
+                        ?shape  a  <{definition_type}> .
+                    }}
+                """
+                )
+                results += [(shape, label) for (shape, label) in q]
+            else:
+                results += self.graph.subjects(RDF.type, definition_type)
 
-        if include_labels:
-            return [(shape, label) for (shape, label) in q]
-
-        else:
-            return [shape for (shape, _) in q]
+        return results
 
     def get_shapes_of_domain(self, domain: URIRef) -> List[URIRef]:
         """Get subjects present in shape of domain type.
