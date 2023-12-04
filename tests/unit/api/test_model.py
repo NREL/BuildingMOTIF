@@ -404,3 +404,42 @@ def test_validate_model_bad_args(client, building_motif):
 
     # Assert 2
     assert results.status_code == 400
+
+
+def test_get_validation_contexts(client, building_motif):
+    # Set up
+    library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    assert library_1 is not None
+    library_2 = Library.load(directory="tests/unit/fixtures/templates")
+    assert library_2 is not None
+
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+    model.add_triples((BLDG["vav1"], A, BRICK.VAV))
+
+    # Action
+    results = client.post(
+        f"/models/{model.id}/validate",
+        headers={"Content-Type": "application/json"},
+        json={"library_ids": [library_1.id, library_2.id]},
+    )
+
+    # Action
+    results = client.get(
+        f"/models/{model.id}/validation_contexts",
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Assert
+    assert results.status_code == 200
+    assert results.get_json() == [
+        {
+            "message": 'Validation Report\nConforms: False\nResults (1):\nConstraint Violation in MinCountConstraintComponent (http://www.w3.org/ns/shacl#MinCountConstraintComponent):\n\tSeverity: sh:Violation\n\tSource Shape: [ sh:minCount Literal("1", datatype=xsd:integer) ; sh:path <https://brickschema.org/schema/Brick#hasPoint> ; sh:qualifiedMinCount Literal("1", datatype=xsd:integer) ; sh:qualifiedValueShape [ sh:class <https://brickschema.org/schema/Brick#Air_Flow_Sensor> ] ]\n\tFocus Node: <urn:building/vav1>\n\tResult Path: <https://brickschema.org/schema/Brick#hasPoint>\n\tMessage: Less than 1 values on <urn:building/vav1>-><https://brickschema.org/schema/Brick#hasPoint>\n',
+            "valid": False,
+            "reasons": {
+                "urn:building/vav1": [
+                    "urn:building/vav1 needs between 1 and None instances of https://brickschema.org/schema/Brick#Air_Flow_Sensor on path https://brickschema.org/schema/Brick#hasPoint"
+                ]
+            },
+        }
+    ]

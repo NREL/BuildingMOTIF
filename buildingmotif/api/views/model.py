@@ -6,7 +6,7 @@ from rdflib.plugins.parsers.notation3 import BadSyntax
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.model import serialize
-from buildingmotif.dataclasses import Library, Model
+from buildingmotif.dataclasses import Library, Model, ValidationContext
 
 blueprint = Blueprint("models", __name__)
 
@@ -179,3 +179,28 @@ def validate_model(models_id: int) -> flask.Response:
             for focus_node, grahdiffs in vaildation_context.diffset.items()
         },
     }, status.HTTP_200_OK
+
+
+@blueprint.route("/<model_id>/validation_contexts", methods=(["GET"]))
+def get_validation_contexts(model_id: int) -> flask.Response:
+    # get model
+    try:
+        model = current_app.building_motif.table_connection.get_db_model(model_id)
+    except NoResultFound:
+        return {"message": f"No model with id {model_id}"}, status.HTTP_404_NOT_FOUND
+
+    validation_contexts = [
+        ValidationContext.load(vc.id) for vc in model.validation_contexts
+    ]
+
+    return [
+        {
+            "message": validation_context.report_string,
+            "valid": validation_context.valid,
+            "reasons": {
+                focus_node: [gd.reason() for gd in grahdiffs]
+                for focus_node, grahdiffs in validation_context.diffset.items()
+            },
+        }
+        for validation_context in validation_contexts
+    ], status.HTTP_200_OK

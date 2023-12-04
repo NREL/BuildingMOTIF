@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Set
 import rdflib
 from rdflib import Graph, URIRef
 
+from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.namespaces import CONSTRAINT, SH
 from buildingmotif.utils import get_template_parts_from_shape
@@ -29,6 +30,7 @@ class ValidationContext:
     validation.
     """
 
+    _id: Optional[int]
     _shape_collections: List[ShapeCollection]
     _valid: bool
     _report: rdflib.Graph
@@ -37,6 +39,14 @@ class ValidationContext:
 
     def get_shape_collections(self):
         return self._shape_collections.copy()
+
+    @property
+    def id(self) -> Optional[int]:
+        return self._id
+
+    @id.setter
+    def id(self, new_id):
+        raise AttributeError("ValidationContext is immutable")
 
     @property
     def valid(self) -> bool:
@@ -69,11 +79,51 @@ class ValidationContext:
         report_string: str,
         model: "Model",
     ) -> "ValidationContext":
+        bm = get_building_motif()
+
+        db_validation_context = bm.table_connection.create_db_validation_context(
+            valid=valid, report_string=report_string, model_id=model.id
+        )
+
+        bm.graph_connection.create_graph(db_validation_context.report_id, report)
+        for shape_collection in shape_collections:
+            if shape_collection.id:
+                db_shape_collection = bm.table_connection.get_db_shape_collection(
+                    shape_collection.id
+                )
+                db_validation_context.shape_collections.append(db_shape_collection)
+
+        bm.session.commit()
+
         return ValidationContext(
+            _id=db_validation_context.id,
             _shape_collections=shape_collections,
             _valid=valid,
             _report=report,
             _report_string=report_string,
+            _model=model,
+        )
+
+    @classmethod
+    def load(cls, id: int):
+        from buildingmotif.dataclasses.model import Model
+
+        bm = get_building_motif()
+        db_validation_context = bm.table_connection.get_db_validation_context(id)
+
+        model = Model.load(db_validation_context.model_id)
+        report = bm.graph_connection.get_graph(db_validation_context.report_id)
+        shape_collections = [
+            ShapeCollection.load(sc.id)
+            for sc in db_validation_context.shape_collections
+        ]
+
+        return ValidationContext(
+            _id=db_validation_context.id,
+            _shape_collections=shape_collections,
+            _valid=db_validation_context.valid,
+            _report=report,
+            _report_string=db_validation_context.report_string,
             _model=model,
         )
 
