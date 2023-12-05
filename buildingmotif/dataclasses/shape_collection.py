@@ -188,19 +188,13 @@ class ShapeCollection:
 
         results = []
         for definition_type in definition_types:
+            instances = self.graph.subjects(RDF.type, definition_type)
             if include_labels:
-                q = self.graph.query(
-                    f"""
-                    SELECT ?shape ?label
-                    WHERE {{
-                        OPTIONAL {{ ?shape  <http://www.w3.org/2000/01/rdf-schema#label> ?label }} .
-                        ?shape  a  <{definition_type}> .
-                    }}
-                """
-                )
-                results += [(shape, label) for (shape, label) in q]
+                results += [
+                    (shape, self.graph.value(shape, RDFS.label)) for shape in instances
+                ]
             else:
-                results += self.graph.subjects(RDF.type, definition_type)
+                results += instances
 
         return results
 
