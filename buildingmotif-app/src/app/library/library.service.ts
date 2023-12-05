@@ -24,10 +24,9 @@ export interface Template {
 
 export interface Shape {
   library_name: string;
-  library_id: number;
-  uri: string;
+  shape_uri: string;
+  shape_collection_id: number
   label: string;
-  description: string;
 }
 
 @Injectable()
@@ -44,7 +43,7 @@ export class LibraryService {
   }
 
   getAllShapes() {
-    return this.http.get<Shape[]>("http://localhost:5000/libraries/shapes")
+    return this.http.get<{[definition_type: string]: Shape[]}>("http://localhost:5000/libraries/shapes")
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error
@@ -75,10 +74,3 @@ export class LibraryService {
   }
 
 }
-
-
-/*
-Copyright Google LLC. All Rights Reserved.
-Use of this source code is governed by an MIT-style license that
-can be found in the LICENSE file at https://angular.io/license
-*/
