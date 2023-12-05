@@ -584,19 +584,13 @@ document.write(`
 
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">definition_type</span> <span class="ow">in</span> <span class="n">definition_types</span><span class="p">:</span>
+            <span class="n">instances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">definition_type</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">include_labels</span><span class="p">:</span>
-                <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                    SELECT ?shape ?label</span>
-<span class="s2">                    WHERE </span><span class="se">{{</span>
-<span class="s2">                        OPTIONAL </span><span class="se">{{</span><span class="s2"> ?shape  &lt;http://www.w3.org/2000/01/rdf-schema#label&gt; ?label </span><span class="se">}}</span><span class="s2"> .</span>
-<span class="s2">                        ?shape  a  &lt;</span><span class="si">{</span><span class="n">definition_type</span><span class="si">}</span><span class="s2">&gt; .</span>
-<span class="s2">                    </span><span class="se">}}</span>
-<span class="s2">                &quot;&quot;&quot;</span>
-                <span class="p">)</span>
-                <span class="n">results</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">shape</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="n">q</span><span class="p">]</span>
+                <span class="n">results</span> <span class="o">+=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">RDFS</span><span class="o">.</span><span class="n">label</span><span class="p">))</span> <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">instances</span>
+                <span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">results</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">definition_type</span><span class="p">)</span>
+                <span class="n">results</span> <span class="o">+=</span> <span class="n">instances</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
