@@ -33,10 +33,10 @@ services:
       dockerfile: buildingmotif/api/Dockerfile
     image: buildingmotif-api:latest
     # UNCOMMENT this if you want to preserve local builds for debugging
-    # volumes:
-    #   - type: bind
-    #     source: ./buildingmotif
-    #     target: /opt/buildingmotif
+    volumes:
+      - type: bind
+        source: ./buildingmotif
+        target: /opt/buildingmotif
     ports:
       - target: 5000
         published: 5000
@@ -50,10 +50,10 @@ services:
     build: ./buildingmotif-app
     image: buildingmotif-app:latest
     # UNCOMMENT this if you want to preserve local builds for debugging
-    # volumes:
-    #   - type: bind
-    #     source: ./buildingmotif-app
-    #     target: /buildingmotif-app
+    volumes:
+      - type: bind
+        source: ./buildingmotif-app
+        target: /buildingmotif-app
     ports:
       - target: 4200
         published: 4200
