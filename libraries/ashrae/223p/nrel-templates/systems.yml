@@ -8,37 +8,41 @@ makeup-air-unit:
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
 
-    P:name a s223:MAU ;
-      s223:contains P:oad, P:pre-filter, P:final-filter, P:HRC, P:supply-fan,
-                    P:evaporative-cooler,
-                    P:cooling-coil, P:heating-coil, P:sa_pressure_sensor;
+    P:name a s223:AirHandlingUnit ;
+      s223:contains P:oad, P:pre-filter, P:final-filter, P:MAU-HRC, P:supply-fan,
+                    P:heating-coil,
+                    P:cooling-coil, P:evaporative-cooler, P:sa_pressure_sensor ;
       s223:hasProperty P:oa_rh, P:sa_sp ;
       s223:hasConnectionPoint P:air-supply, P:outside-air .
     P:oad-in s223:mapsTo P:outside-air .
 
-    P:oad-out s223:connectsThrough P:c1 .
-    P:pre-filter-in s223:connectsThrough P:c1 .
+    P:oad-out s223:cnx P:c1 .
+    P:pre-filter-in s223:cnx P:c1 .
 
-    P:pre-filter-out s223:connectsThrough P:c2 .
-    P:final-filter-in s223:connectsThrough P:c2 .
+    P:pre-filter-out s223:cnx P:c2 .
+    P:final-filter-in s223:cnx P:c2 .
 
-    P:final-filter-out s223:connectsThrough P:c3 .
-    P:HRC-air-in s223:connectsThrough P:c3 .
+    P:final-filter-out s223:cnx P:c3 .
+    P:MAU-HRC-air-in s223:cnx P:c3 .
 
-    P:HRC-air-out s223:connectsThrough P:c4 .
-    P:supply-fan-in s223:connectsThrough P:c4 .
+    P:MAU-HRC-air-out s223:cnx P:c4 .
+    P:supply-fan-in s223:cnx P:c4 .
 
-    P:supply-fan-out s223:connectsThrough P:c5 .
-    P:cooling-coil-air-in s223:connectsThrough P:c5 .
+    P:supply-fan-out s223:cnx P:c5 .
+    P:heating-coil-air-in s223:cnx P:c5 .
 
-    P:cooling-coil-air-out s223:connectsThrough P:c6 .
-    P:heating-coil-air-in s223:connectsThrough P:c6 .
+    P:heating-coil-air-out s223:cnx P:c6 .
+    P:cooling-coil-air-in s223:cnx P:c6 .
 
-    P:heating-coil-air-out s223:connectsThrough P:c7 .
-    P:evaporative-cooler-in s223:connectsThrough P:c7 .
+    P:cooling-coil-air-out s223:cnx P:c7 .
+    P:evaporative-cooler-in s223:cnx P:c7 .
 
     P:evaporative-cooler-out s223:mapsTo P:air-supply .
-      # s223:servesVAV P:vav
+
+    P:air-supply a s223:OutletConnectionPoint ;
+      s223:hasMedium s223:Medium-Air .
+    P:outside-air a s223:InletConnectionPoint ;
+      s223:hasMedium s223:Medium-Air .
       # TODO: building static pressure?
       # TODO: outside air dry bulb temp
       # TODO: outside air differential pressure
@@ -48,15 +52,15 @@ makeup-air-unit:
     - template: duct
       args: {"name": "c2", "a": "pre-filter-out", "b": "final-filter-in"}
     - template: duct
-      args: {"name": "c3", "a": "final-filter-out", "b": "HRC-air-in"}
+      args: {"name": "c3", "a": "final-filter-out", "b": "MAU-HRC-air-in"}
     - template: duct
-      args: {"name": "c4", "a": "HRC-air-out", "b": "supply-fan-in"}
+      args: {"name": "c4", "a": "MAU-HRC-air-out", "b": "supply-fan-in"}
     - template: duct
-      args: {"name": "c5", "a": "supply-fan-out", "b": "cooling-coil-air-in"}
+      args: {"name": "c5", "a": "supply-fan-out", "b": "heating-coil-air-in"}
     - template: duct
-      args: {"name": "c6", "a": "cooling-coil-air-out", "b": "heating-coil-air-in"}
+      args: {"name": "c6", "a": "heating-coil-air-out", "b": "cooling-coil-air-in"}
     - template: duct
-      args: {"name": "c7", "a": "heating-coil-air-out", "b": "evaporative-cooler-in"}
+      args: {"name": "c7", "a": "cooling-coil-air-out", "b": "evaporative-cooler-in"}
     - template: damper
       args: {"name": "oad", "in-mapsto": "outside-air"}
     - template: evaporative-cooler
@@ -66,7 +70,7 @@ makeup-air-unit:
     - template: filter
       args: {"name": "final-filter"}
     - template: heat-recovery-coil
-      args: {"name": "HRC"}
+      args: {"name": "MAU-HRC"}
     - template: fan
       args: {"name": "supply-fan"}
     - template: chilled-water-coil
@@ -77,6 +81,8 @@ makeup-air-unit:
       args: {"name": "sa_pressure_sensor", "property": "sa_sp", "where": "air-supply"}
     - template: static-pressure
       args: {"name": "sa_sp"}
+    - template: relative-humidity
+      args: {"name": "oa_rh"}
     - template: air-outlet-cp
       args: {"name": "air-supply"}
     - template: air-inlet-cp
@@ -86,24 +92,24 @@ vav-reheat:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
-    P:name a s223:VAV ;
+    P:name a s223:TerminalUnit ;
       s223:contains P:rhc, P:dmp, P:sup-air-flow-sensor,
                     P:sup-air-temp-sensor, P:sup-air-pressure-sensor ;
       s223:hasProperty P:sup-air-temp, P:sup-air-flow, P:sup-air-pressure ;
       s223:hasConnectionPoint P:air-in, P:air-out .
 
-    P:rhc-air-in s223:mapsTo P:air-in .
-    P:rhc-air-out s223:connectsThrough P:c0 .
-    P:dmp-in s223:connectsThrough P:c0 .
-    P:dmp-out s223:mapsTo P:air-out .
+    P:air-in a s223:InletConnectionPoint ;
+      s223:hasMedium s223:Medium-Air .
+    P:air-out a s223:OutletConnectionPoint ;
+      s223:hasMedium s223:Medium-Air .
 
   dependencies:
     - template: duct
-      args: {"name": "c0", "a": "rhc-air-out", "b": "dmp-in"}
+      args: {"name": "c0", "a": "dmp-air-out", "b": "rhc-air-in"}
     - template: hot-water-coil
-      args: {"name": "rhc", "air-in-mapsto": "air-in"}
+      args: {"name": "rhc"}
     - template: damper
-      args: {"name": "dmp", "out-mapsto": "air-out"}
+      args: {"name": "dmp"}
     - template: air-inlet-cp
       args: {"name": "air-in"}
     - template: air-outlet-cp
@@ -130,7 +136,7 @@ chilled-water-system:
       rdfs:label "Chilled Water System" ;
       s223:contains P:bypass-valve, P:lead-chw-pump, P:standby-chw-pump,
                     P:lead-chw-booster-pump, P:standby-chw-booster-pump,
-                    P:chw-hx . # TODO:, P:chw-btu-meter .
+                    P:chw-hx .
   dependencies:
     - template: chw-valve
       args: {"name": "bypass-valve"}
@@ -154,7 +160,7 @@ hot-water-system:
       rdfs:label "Hot Water System" ;
       s223:contains P:bypass-valve, P:lead-hw-pump, P:standby-hw-pump,
                     P:lead-hw-booster-pump, P:standby-hw-booster-pump,
-                    P:hw-hx . # TODO:, P:hw-btu-meter .
+                    P:hw-hx, P:dwh .
   dependencies:
     - template: hw-valve
       args: {"name": "bypass-valve"}
@@ -168,3 +174,178 @@ hot-water-system:
       args: {"name": "standby-hw-booster-pump"}
     - template: heat-exchanger
       args: {"name": "hw-hx"}
+    - template: domestic-water-heater
+      args: {"name": "dwh"}
+
+
+
+#Selam
+lab-vav-reheat:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:TerminalUnit ;
+      s223:contains P:rhc, P:vlv-dmp, P:sup-air-flow-sensor,
+                    P:sup-air-temp-sensor, P:sup-air-pressure-sensor ;
+      s223:hasProperty P:sup-air-temp, P:sup-air-flow, P:sup-air-pressure ;
+      s223:hasConnectionPoint P:air-in, P:air-out .
+
+    # damper, then coil
+    # - vlv-dmp-in maps to air-in
+    P:vlv-dmp-in s223:mapsTo P:air-in .
+    # - vlv-dmp-out (a) -> duct -> rhc-air-in (b)
+    # (in deps)
+    P:rhc-air-out s223:maspTo P:air-out .
+
+  dependencies:
+    - template: duct
+      args: {"name": "c0", "a": "vlv-dmp-out", "b": "rhc-air-in"}
+    - template: vlv-dmp
+      args: {"name": "vlv-dmp", "in-mapsto": "air-in"}
+    - template: hot-water-coil
+      args: {"name": "rhc", "air-out-mapsto": "air-out"}
+    - template: air-inlet-cp
+      args: {"name": "air-in"}
+    - template: air-outlet-cp
+      args: {"name": "air-out"}
+    - template: air-temperature
+      args: {"name": "sup-air-temp"}
+    - template: sensor
+      args: {"name": "sup-air-temp-sensor", "property": "sup-air-temp", "where": "air-out"}
+    - template: air-flow
+      args: {"name": "sup-air-flow"}
+    - template: sensor
+      args: {"name": "sup-air-flow-sensor", "property": "sup-air-flow", "where": "air-out"}
+    - template: static-pressure
+      args: {"name": "sup-air-pressure"}
+    - template: sensor
+      args: {"name": "sup-air-pressure-sensor", "property": "sup-air-pressure", "where": "air-out"}
+
+
+exhaust-air-unit:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+
+    P:name a s223:EAU, s223:Equipment ;
+      s223:contains P:pre-filter, P:evaporative-cooler, P:EAU-HRC, P:final-filter, P:isolation-damper, P:exhaust-fan,
+                    P:ea-pressure-sensor, P:low-pressure-sensor ;
+      s223:hasProperty P:low-sp, P:ea-sp ;
+      s223:hasConnectionPoint P:return-air, P:air-exhaust .
+    P:pre-filter-in s223:mapsTo P:return-air .
+
+    P:pre-filter-out s223:cnx P:c10 .
+    P:evaporative-cooler-in s223:cnx P:c10 .
+
+    P:evaporative-cooler-out s223:cnx P:c11 .
+    P:EAU-HRC-air-in s223:cnx P:c11 .
+
+    P:EAU-HRC-air-out s223:cnx P:c12 .
+    P:final-filter-in s223:cnx P:c12 .
+
+    P:final-filter-out s223:cnx P:c13 .
+    P:isolation-damper-in s223:cnx P:c13 .
+
+    P:isolation-damper-out s223:cnx P:c14 .
+    P:exhaust-fan-in s223:cnx P:c14 .
+
+    P:exhaust-fan-out s223:mapsTo P:air-exhaust .
+    P:pre-filter-in s223:mapsTo P:return-air .
+
+  dependencies:
+    - template: duct
+      args: {"name": "c10", "a": "pre-filter-out", "b": "evaporative-cooler-in"}
+    - template: duct
+      args: {"name": "c11", "a": "evaporative-cooler-out", "b": "EAU-HRC-air-in"}
+    - template: duct
+      args: {"name": "c12", "a": "EAU-HRC-air-out", "b": "final-filter-in"}
+    - template: duct
+      args: {"name": "c13", "a": "final-filter-out", "b": "isolation-damper-in"}
+    - template: duct
+      args: {"name": "c14", "a": "isolation-damper-out", "b": "exhaust-fan-in"}
+    - template: exhaust-fan
+      args: {"name": "exhaust-fan", "out-mapsto": "air-exhaust"}
+    - template: evaporative-cooler
+      args: {"name": "evaporative-cooler"}
+    - template: filter
+      args: {"name": "pre-filter"}
+    - template: filter
+      args: {"name": "final-filter"}
+    - template: heat-recovery-coil
+      args: {"name": "EAU-HRC"}
+    - template: sensor
+      args: {"name": "ea-pressure-sensor", "property": "ea-sp", "where": "return-air"}
+    - template: sensor
+      args: {"name": "low-pressure-sensor", "property": "low-sp", "where": "air-exhaust"}
+    - template: static-pressure
+      args: {"name": "ea-sp"}
+    - template: low-static-pressure
+      args: {"name": "low-sp"}
+    - template: air-outlet-cp
+      args: {"name": "air-exhaust"}
+    - template: air-inlet-cp
+      args: {"name": "return-air"}
+    - template: vlv-dmp
+      args: {"name": "isolation-damper"}
+
+
+heat-recovery-system:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+
+    P:name a s223:HRS, s223:System ;
+      rdfs:label "heat recovery system" ;
+      s223:contains P:MAU-HRC, P:EAU-HRC, P:HR-pmp, P:hrw-meter,
+                    P:water-pressure-sensor ;
+      s223:hasProperty P:hrw_p .
+  dependencies:
+    - template: heat-recovery-coil
+      args: {"name": "MAU-HRC", "water-out": "EAU-HRC-water-in"}
+    - template: HR-pump
+      args: {"name": "HR-pmp"}
+    - template: HRC-BTU-meter
+      args: {"name": "hrw-meter"}
+    - template: heat-recovery-coil
+      args: {"name": "EAU-HRC"}
+    - template: sensor
+      args: {"name": "water-pressure-sensor", "property": "hrw-p"}
+
+process-chilled-water-system:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    P:name a s223:System ;
+      rdfs:label "Chilled Water System" ;
+      s223:contains P:bypass-valve, P:lead-pchw-pump, P:standby-pchw-pump,
+                    P:water-sp-sensor, P:water-diff-press_sensor,
+                    P:chw-hx ;
+      s223:hasProperty P:water-sp, P:water-diff-press .
+  dependencies:
+    - template: chw-valve
+      args: {"name": "bypass-valve"}
+    - template: chw-pump
+      args: {"name": "lead-pchw-pump"}
+    - template: chw-pump
+      args: {"name": "standby-pchw-pump"}
+    - template: heat-exchanger
+      args: {"name": "chw-hx"}
+    - template: sensor
+      args: {"name": "water-sp-sensor", "property": "water-sp"}
+    - template: water-static-pressure
+      args: {"name": "water-sp"}
+    - template: sensor
+      args: {"name": "water-diff-press-sensor", "property": "water-diff-press"}
+    - template: water-differential-pressure
+      args: {"name": "water-diff-press"}

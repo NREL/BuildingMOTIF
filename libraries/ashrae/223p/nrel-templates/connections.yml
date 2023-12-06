@@ -48,7 +48,7 @@ duct:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Duct ;
       s223:hasMedium s223:Medium-Air ;
-      s223:connectsAt P:a, P:b .
+      s223:cnx P:a, P:b .
     # issue here is that 'connectsAt' requires a,b to be conn points
     # but we can't instantiate that class directly *and* being a conn point
     # involves other properties that must be included (e.g. hasmedium).
@@ -56,24 +56,55 @@ duct:
     # P:a a s223:ConnectionPoint .
     # P:b a s223:ConnectionPoint .
 
-zone-air-inlet-cp:
+junction:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
-    P:name a s223:InletZoneConnectionPoint ;
-      s223:mapsTo P:mapsto ;
-      s223:hasMedium s223:Medium-Air .
-    P:mapsto a s223:InletConnectionPoint ;
-      s223:hasMedium s223:Medium-Air .
-  optional: ["mapsto"]
-
-zone-air-outlet-cp:
-  body: >
-    @prefix P: <urn:___param___#> .
-    @prefix s223: <http://data.ashrae.org/standard223#> .
-    P:name a s223:OutletZoneConnectionPoint ;
-      s223:mapsTo P:mapsto ;
-      s223:hasMedium s223:Medium-Air .
-    P:mapsto a s223:OutletConnectionPoint ;
-      s223:hasMedium s223:Medium-Air .
-  optional: ["mapsto"]
+    P:name a s223:Junction ;
+      s223:hasMedium s223:Medium-Air ;
+      s223:cnx P:in1, P:in2, P:out1, P:out2, P:out3, P:out4, P:out5, P:out6, P:out7,
+      P:out8, P:out9, P:out10, P:out11, P:out12, P:out13, P:out14, P:out15, P:out16 .
+  optional: ["in2","in3","in4","in5","out2", "out3", "out4", "out5", "out6", "out7", "out8", "out9","out10","out11","out12","out13","out14","out15", "out16"]
+  dependencies:
+    - template: air-inlet-cp
+      args: {"name": "in1"}
+    - template: air-inlet-cp
+      args: {"name": "in2"}
+    - template: air-inlet-cp
+      args: {"name": "in3"}
+    - template: air-inlet-cp
+      args: {"name": "in4"}
+    - template: air-inlet-cp
+      args: {"name": "in5"}
+    - template: air-outlet-cp
+      args: {"name": "out1"}
+    - template: air-outlet-cp
+      args: {"name": "out2"}
+    - template: air-outlet-cp
+      args: {"name": "out3"}
+    - template: air-outlet-cp
+      args: {"name": "out4"}
+    - template: air-outlet-cp
+      args: {"name": "out5"}
+    - template: air-outlet-cp
+      args: {"name": "out6"}
+    - template: air-outlet-cp
+      args: {"name": "out7"}
+    - template: air-outlet-cp
+      args: {"name": "out8"}
+    - template: air-outlet-cp
+      args: {"name": "out9"}
+    - template: air-outlet-cp
+      args: {"name": "out10"}
+    - template: air-outlet-cp
+      args: {"name": "out11"}
+    - template: air-outlet-cp
+      args: {"name": "out12"}
+    - template: air-outlet-cp
+      args: {"name": "out13"}
+    - template: air-outlet-cp
+      args: {"name": "out14"}
+    - template: air-outlet-cp
+      args: {"name": "out15"}
+    - template: air-outlet-cp
+      args: {"name": "out16"}
