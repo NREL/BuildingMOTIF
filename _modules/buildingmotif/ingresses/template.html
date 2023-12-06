@@ -212,6 +212,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -456,8 +457,9 @@ document.write(`
         <span class="k">assert</span> <span class="n">records</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
             <span class="n">bindings</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">_get_term</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rec</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-            <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">bindings</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">Graph</span><span class="p">)</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">bindings</span><span class="p">,</span> <span class="n">require_optional_args</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>
+                <span class="n">bindings</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">include_optional</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">g</span> <span class="o">+=</span> <span class="n">graph</span>
         <span class="k">return</span> <span class="n">g</span></div></div>
 
@@ -517,7 +519,8 @@ document.write(`
                 <span class="n">template</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span>
             <span class="n">bindings</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mapper</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">_get_term</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rec</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
             <span class="n">graph</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">bindings</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">Graph</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
             <span class="n">g</span> <span class="o">+=</span> <span class="n">graph</span>
         <span class="k">return</span> <span class="n">g</span></div></div>
 
