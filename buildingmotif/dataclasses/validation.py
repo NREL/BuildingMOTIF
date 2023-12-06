@@ -34,6 +34,11 @@ class GraphDiff:
     validation_result: Graph
     graph: Graph
 
+    def __eq__(self, other):
+        if not isinstance(other, GraphDiff):
+            return False
+        return self.reason() == other.reason()
+
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
 
@@ -82,7 +87,7 @@ class GraphDiff:
         return hash(self.reason())
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class PathClassCount(GraphDiff):
     """Represents an entity missing paths to objects of a given type:
     $this <path> <object> .
@@ -116,7 +121,7 @@ class PathClassCount(GraphDiff):
         return [lib.create_template(f"resolve_{token_hex(4)}", body)]
 
 
-@dataclass(frozen=True, unsafe_hash=True)
+@dataclass(frozen=True, unsafe_hash=True, eq=False)
 class PathShapeCount(GraphDiff):
     """Represents an entity missing paths to objects that match a given shape.
     $this <path> <object> .
@@ -163,7 +168,7 @@ class PathShapeCount(GraphDiff):
         return generated
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class RequiredPath(GraphDiff):
     """Represents an entity missing a required property."""
 
@@ -192,7 +197,7 @@ of path {self.path}"
         return [lib.create_template(f"resolve{token_hex(4)}", body)]
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class RequiredClass(GraphDiff):
     """Represents an entity that should be an instance of the class."""
 
@@ -216,7 +221,7 @@ class RequiredClass(GraphDiff):
         return [lib.create_template(f"resolve{token_hex(4)}", body)]
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=False)
 class GraphClassCardinality(GraphDiff):
     """Represents a graph that is missing an expected number of instances of
     the given class.
