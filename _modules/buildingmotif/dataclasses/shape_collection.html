@@ -397,7 +397,7 @@ document.write(`
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span>
 
 <span class="kn">import</span> <span class="nn">rdflib</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">RDFS</span><span class="p">,</span> <span class="n">URIRef</span>
@@ -570,9 +570,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">results</span>
 
-<div class="viewcode-block" id="ShapeCollection.get_shapes_of_definition_type"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.get_shapes_of_definition_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_shapes_of_definition_type</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">definition_type</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">include_labels</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">URIRef</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
+<div class="viewcode-block" id="ShapeCollection.get_shapes_of_definition_type"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.get_shapes_of_definition_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_shapes_of_definition_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">definition_type</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get subjects present in shape of the definition type.</span>
 
 <span class="sd">        :param definition_type: desired definition type</span>
@@ -584,13 +582,7 @@ document.write(`
 
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">definition_type</span> <span class="ow">in</span> <span class="n">definition_types</span><span class="p">:</span>
-            <span class="n">instances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">definition_type</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">include_labels</span><span class="p">:</span>
-                <span class="n">results</span> <span class="o">+=</span> <span class="p">[</span>
-                    <span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">RDFS</span><span class="o">.</span><span class="n">label</span><span class="p">))</span> <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">instances</span>
-                <span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">results</span> <span class="o">+=</span> <span class="n">instances</span>
+            <span class="n">results</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">definition_type</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
 
