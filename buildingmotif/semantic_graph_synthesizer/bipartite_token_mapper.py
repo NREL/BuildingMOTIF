@@ -20,6 +20,9 @@ logger = logging.getLogger()
 
 
 def get_typed_params(template) -> List[Param]:
+    """
+    Get the parameters of the template that have a type
+    """
     query = """
             SELECT ?s ?o
             WHERE {
@@ -72,11 +75,16 @@ class BipartiteTokenMapper:
     @staticmethod
     def _create_cost_matrix(tokens: List[Token], params: List[Param]) -> pd.DataFrame:
         """Create cost matrix of the above classes."""
+
+        # a cost matrix is a matrix where the rows are the tokens and the columns are the params
         cost_matrix = pd.DataFrame(
             index=params,
             columns=tokens,
         )
 
+        # populate the cost matrix with the "distance" between each parameter class and
+        # each token class. The distance is the number of hops between the classes
+        # in the given ontology
         for i, token in enumerate(cost_matrix.columns):
             for j, param in enumerate(cost_matrix.index):
                 cost_matrix.iloc[j, i] = BipartiteTokenMapper._get_edge_cost(
@@ -98,15 +106,29 @@ class BipartiteTokenMapper:
         params: List[Param],
     ) -> Tuple[Dict[URIRef, Token], Cost]:
         """Get the cost of mapping token_classes to param_classes."""
+        # create cost matrix based on the distances between the classes of the tokens
+        # and the classes of the parameters. The params come from a template.
         cost_matrix = BipartiteTokenMapper._create_cost_matrix(tokens, params)
-        # # uncomment / comment for v different results.
+
+        # This code replaces all occurrences of positive infinity (np.inf) in
+        # the cost_matrix with NaN (Not a Number), drops any rows that are all
+        # NaN values, and finally replaces the remaining NaN values with
+        # positive infinity.
+        # The result is that the cost_matrix will have no rows that are all
+        # positive infinity, and no NaN values. This reduces the number of
+        # possible assignments that the linear_sum_assignment algorithm has to
+        # consider, and therefore reduces the runtime of the algorithm.
+
+        # TODO: determine if this is the right preprocessing step to take
         cost_matrix = (
             cost_matrix.replace(np.inf, np.nan)
             .dropna(axis=0, how="all")
             .replace(np.nan, np.inf)
         )
+        # computes the optimal assignment between the tokens and the params
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
         kept_costs = list(zip(row_ind, col_ind))
+        # turns the optimal assignment into a dictionary of bindings
         bindings = {
             cost_matrix.index[x].name: cost_matrix.columns[y] for x, y in kept_costs
         }
@@ -119,7 +141,7 @@ class BipartiteTokenMapper:
                 f"{token.class_} <- {cost_matrix.iloc[token_idx, param_idx]} -> {param.class_}"
             )
 
-        # if no edges
+        # if no edges, give the cost as infinity
         if len(kept_costs) <= 0:
             edge_cost = np.Inf
         else:
@@ -140,6 +162,7 @@ class BipartiteTokenMapper:
         template: Template,
     ) -> Tuple[Dict[Param, Token], Cost]:
         """Finds the bindings for tokens and template"""
+        # get the parameters of the template that have a type
         params = get_typed_params(template)
         try:
             mapping, cost = BipartiteTokenMapper.find_bindings_for_tokens_and_params(

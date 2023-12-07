@@ -73,15 +73,20 @@ class SemanticGraphSynthesizer:
         )
 
         logger.debug("Template costs:")
+        # find the best template for the label
         for template in templates:
             if self.should_inline_dependencies:
                 template = template.inline_dependencies()
 
+            # compute the best bindings for using the tokens of the label with the template
+            # and the cost of the bindings
             bindings, cost = BipartiteTokenMapper.find_bindings_for_tokens_and_template(
                 label.tokens, template
             )
             logger.debug(f"- {template.name} {cost.scalar}")
 
+            # if the cost is better than the current best cost, and it is below the
+            # threshold, then update the best bindings
             if (
                 self.cost_loss_function(cost)
                 < self.cost_loss_function(best_bindings.cost)

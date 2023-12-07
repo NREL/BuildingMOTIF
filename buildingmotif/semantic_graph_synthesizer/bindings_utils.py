@@ -11,10 +11,6 @@ BLDG = Namespace("urn:building/")
 def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
     """
     Combine all the bindings for the same template with the same name.
-    
-    This function takes a list of Bindings objects and combines those that have the same template and name.
-    The result is a list of UnifiedBindings objects, where each object represents a unique combination of template and name.
-    The labels and bindings of the original Bindings objects are merged into the corresponding UnifiedBindings object.
     """
     unified_bindings_list: List[UnifiedBindings] = []
     for bindings in bindings_list:
