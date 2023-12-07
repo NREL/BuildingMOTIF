@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, List, Optional, Set
+from typing import TYPE_CHECKING, List, Optional, Set, Tuple, Union
 
 import rdflib
 from rdflib import RDF, RDFS, URIRef
@@ -174,7 +174,9 @@ class ShapeCollection:
 
         return results
 
-    def get_shapes_of_definition_type(self, definition_type: URIRef) -> List[URIRef]:
+    def get_shapes_of_definition_type(
+        self, definition_type: URIRef, include_labels=False
+    ) -> Union[List[URIRef], List[Tuple[URIRef, str]]]:
         """Get subjects present in shape of the definition type.
 
         :param definition_type: desired definition type
@@ -186,7 +188,13 @@ class ShapeCollection:
 
         results = []
         for definition_type in definition_types:
-            results += self.graph.subjects(RDF.type, definition_type)
+            instances = self.graph.subjects(RDF.type, definition_type)
+            if include_labels:
+                results += [
+                    (shape, self.graph.value(shape, RDFS.label)) for shape in instances
+                ]
+            else:
+                results += instances
 
         return results
 

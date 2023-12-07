@@ -39,7 +39,7 @@ def get_template(templates_id: int) -> flask.Response:
     include_parameters = request.args.get("parameters", False)
 
     try:
-        template = current_app.building_motif.table_connection.get_db_template_by_id(
+        template = current_app.building_motif.table_connection.get_db_template(
             templates_id
         )
     except NoResultFound:

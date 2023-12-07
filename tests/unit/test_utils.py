@@ -53,7 +53,7 @@ def test_get_template_parts_from_shape():
     )
     body, deps = get_template_parts_from_shape(MODEL["shape1"], shape_graph)
     assert len(deps) == 1
-    assert deps[0]["template"] == BRICK.Temperature_Sensor
+    assert deps[0]["template"] == str(BRICK.Temperature_Sensor)
     assert list(deps[0]["args"].keys()) == ["name"]
     assert (PARAM["name"], A, MODEL["shape1"]) in body
     # assert (PARAM['name'], BRICK.hasPoint,
