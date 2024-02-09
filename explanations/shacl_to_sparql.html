@@ -7,8 +7,9 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Overview: module code &#8212; BuildingMOTIF Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>SHACL to SPARQL Conversion &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -61,10 +62,12 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'explanations/shacl_to_sparql';</script>
     <link rel="shortcut icon" href="../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Bibliography" href="../bibliography.html" />
+    <link rel="prev" title="Shapes and Templates" href="shapes-and-templates.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -240,10 +243,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../guides/generating-queries.html">Generating SPARQL Queries</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../explanations/ingresses.html">Ingresses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shapes-and-templates.html">Shapes and Templates</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">SHACL to SPARQL Conversion</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -319,7 +322,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/index.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fexplanations/shacl_to_sparql.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -331,6 +334,54 @@ const thebe_selector_output = ".output, .cell_output"
   </span>
 <span class="btn__text-container">Open issue</span>
 </a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/explanations/shacl_to_sparql.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
 </li>
       
   </ul>
@@ -370,7 +421,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -381,11 +434,23 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1></h1>
+    <h1>SHACL to SPARQL Conversion</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shape-to-query-algorithm">Shape-to-query Algorithm</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#select-clause-generation"><code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause generation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-clause-generation"><code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause generation</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -395,35 +460,96 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>All modules for which code is available</h1>
-<ul><li><a href="buildingmotif/api/app.html">buildingmotif.api.app</a></li>
-<li><a href="buildingmotif/api/views/library.html">buildingmotif.api.views.library</a></li>
-<li><a href="buildingmotif/api/views/model.html">buildingmotif.api.views.model</a></li>
-<li><a href="buildingmotif/api/views/template.html">buildingmotif.api.views.template</a></li>
-<li><a href="buildingmotif/building_motif/building_motif.html">buildingmotif.building_motif.building_motif</a></li>
-<li><a href="buildingmotif/building_motif/singleton.html">buildingmotif.building_motif.singleton</a></li>
-<li><a href="buildingmotif/database/graph_connection.html">buildingmotif.database.graph_connection</a></li>
-<li><a href="buildingmotif/database/table_connection.html">buildingmotif.database.table_connection</a></li>
-<li><a href="buildingmotif/database/tables.html">buildingmotif.database.tables</a></li>
-<li><a href="buildingmotif/database/utils.html">buildingmotif.database.utils</a></li>
-<li><a href="buildingmotif/dataclasses/library.html">buildingmotif.dataclasses.library</a></li>
-<li><a href="buildingmotif/dataclasses/model.html">buildingmotif.dataclasses.model</a></li>
-<li><a href="buildingmotif/dataclasses/shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
-<li><a href="buildingmotif/dataclasses/template.html">buildingmotif.dataclasses.template</a></li>
-<li><a href="buildingmotif/dataclasses/validation.html">buildingmotif.dataclasses.validation</a></li>
-<li><a href="buildingmotif/ingresses/bacnet.html">buildingmotif.ingresses.bacnet</a></li>
-<li><a href="buildingmotif/ingresses/base.html">buildingmotif.ingresses.base</a></li>
-<li><a href="buildingmotif/ingresses/brick.html">buildingmotif.ingresses.brick</a></li>
-<li><a href="buildingmotif/ingresses/csv.html">buildingmotif.ingresses.csv</a></li>
-<li><a href="buildingmotif/ingresses/template.html">buildingmotif.ingresses.template</a></li>
-<li><a href="buildingmotif/ingresses/xlsx.html">buildingmotif.ingresses.xlsx</a></li>
-<li><a href="buildingmotif/namespaces.html">buildingmotif.namespaces</a></li>
-<li><a href="buildingmotif/schemas.html">buildingmotif.schemas</a></li>
-<li><a href="buildingmotif/shape_builder/shape.html">buildingmotif.shape_builder.shape</a></li>
-<li><a href="buildingmotif/template_compilation.html">buildingmotif.template_compilation</a></li>
-<li><a href="buildingmotif/template_matcher.html">buildingmotif.template_matcher</a></li>
-<li><a href="buildingmotif/utils.html">buildingmotif.utils</a></li>
-</ul>
+  <section class="tex2jax_ignore mathjax_ignore" id="shacl-to-sparql-conversion">
+<h1>SHACL to SPARQL Conversion<a class="headerlink" href="#shacl-to-sparql-conversion" title="Permalink to this heading">#</a></h1>
+<p>BuildingMOTIF uses SHACL shapes to ensure that a metadata model contains the required metadata to support a given set of applications.
+SHACL validation only yields whether or not a given node in the model passes or fails validation.
+To aid in the execution of applications dependent on a SHACL shape, BuildingMOTIF provides functionality to extract from the model the nodes/edges that were used to validate the shape.</p>
+<p>See <a class="reference internal" href="../guides/generating-queries.html"><span class="doc std std-doc">Generating SPARQL Queries</span></a> for how to use the <code class="docutils literal notranslate"><span class="pre">shape_to_query</span></code> function. This page gives an overview of the algorithm.</p>
+<section id="shape-to-query-algorithm">
+<h2>Shape-to-query Algorithm<a class="headerlink" href="#shape-to-query-algorithm" title="Permalink to this heading">#</a></h2>
+<p>The main method, <code class="docutils literal notranslate"><span class="pre">shape_to_query</span></code>, takes a SHACL shape represented as a URI and generates a SPARQL query to select information from an RDF graph that satisfies the constraints defined by the SHACL shape.
+At a high level, the method works by first transforming the SHACL shape into a set of WHERE clauses, and then assembling these clauses into a complete SPARQL query.</p>
+<p>The shape-to-query algorithm takes as input a definition of a SHACL Node Shape.</p>
+<section id="select-clause-generation">
+<h3><code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause generation<a class="headerlink" href="#select-clause-generation" title="Permalink to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause of the resulting SPARQL query is generated as follows.
+Each query has at least a <code class="docutils literal notranslate"><span class="pre">?target</span></code> variable in the generated <code class="docutils literal notranslate"><span class="pre">SELECT</span></code>  clause.
+This variable represents a target node of the SHACL shape.</p>
+<p>The algorithm adds one variable to the <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause for each Property Shape associated
+with the Node Shape through <code class="docutils literal notranslate"><span class="pre">sh:property</span></code>.
+The variable name is pulled from a <code class="docutils literal notranslate"><span class="pre">sh:name</span></code> annotation on the Property Shape if one exists;
+otherwise, it is assigned a generated variable name.</p>
+<p>If a <code class="docutils literal notranslate"><span class="pre">UNION</span></code> clause exists within the SPARQL query, the algorithm generates variable names independently for each branch of the <code class="docutils literal notranslate"><span class="pre">UNION</span></code> clause.
+The resulting <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause contains the union of the different sets of variable names.</p>
+</section>
+<section id="where-clause-generation">
+<h3><code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause generation<a class="headerlink" href="#where-clause-generation" title="Permalink to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">WHERE</span></code>  clause of the resulting SPARQL query is generated from each of the Property Shapes associated with the input Node Shape, and a few annotations directly on the NodeShape.</p>
+<p>The Node Shape target definition is converted to a SPARQL query clause as follows:</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Target Definition</p></th>
+<th class="head"><p>Query Pattern</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sh:targetClass</span> <span class="pre">&lt;c&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">rdf:type/rdfs:subClassOf*</span> <span class="pre">&lt;c&gt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sh:targetSubjectsOf</span> <span class="pre">&lt;p&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">&lt;p&gt;</span> <span class="pre">?ignore</span> </code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sh:targetObjectsOf</span> <span class="pre">&lt;p&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">?ignore</span> <span class="pre">&lt;p&gt;</span> <span class="pre">?target?</span> </code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sh:targetNode</span> <span class="pre">&lt;n&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BIND(&lt;n&gt;</span> <span class="pre">AS</span> <span class="pre">?target)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Additionally, any <code class="docutils literal notranslate"><span class="pre">sh:class</span> <span class="pre">&lt;c&gt;</span></code> constraint on the Node Shape is also transformed into <code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">rdf:type/rdfs:subClassOf*</span> <span class="pre">&lt;c&gt;</span></code>.
+Except for <code class="docutils literal notranslate"><span class="pre">sh:targetNode</span></code>, if more than one of the target clauses exists (e.g., <code class="docutils literal notranslate"><span class="pre">sh:targetClass</span> <span class="pre">brick:VAV,</span> <span class="pre">brick:RVAV</span></code>) then the algorithm uses a <code class="docutils literal notranslate"><span class="pre">UNION</span></code> clause to combine the independent query patterns.</p>
+<p>The algorithm currently interprets a set of Property Shape-based constraint components into SPARQL query patterns.
+At this stage, only the following clauses are supported:</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property Shape pattern</p></th>
+<th class="head"><p>SPARQL query pattern</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;shape&gt;</span> <span class="pre">sh:property</span> <span class="pre">[</span> <span class="pre">sh:path</span> <span class="pre">&lt;path&gt;;</span> <span class="pre">sh:class</span> <span class="pre">&lt;class&gt;;</span> <span class="pre">sh:name</span> <span class="pre">&lt;name&gt;</span> <span class="pre">]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">&lt;path&gt;</span> <span class="pre">?name</span> <span class="pre">.</span> <span class="pre">?name</span> <span class="pre">rdf:type/rdfs:subClassOf*</span> <span class="pre">&lt;class&gt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;shape&gt;</span> <span class="pre">sh:property</span> <span class="pre">[</span> <span class="pre">sh:path</span> <span class="pre">&lt;path&gt;;</span> <span class="pre">sh:hasValue</span> <span class="pre">&lt;value&gt;]</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">&lt;path&gt;</span> <span class="pre">&lt;value&gt;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./explanations"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
 
                 </article>
               
@@ -435,12 +561,48 @@ document.write(`
                 <footer class="prev-next-footer">
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="shapes-and-templates.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Shapes and Templates</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../bibliography.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bibliography</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shape-to-query-algorithm">Shape-to-query Algorithm</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#select-clause-generation"><code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause generation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-clause-generation"><code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause generation</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

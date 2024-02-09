@@ -246,6 +246,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../explanations/ingresses.html">Ingresses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -550,7 +551,7 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=fcd7c143-6cc1-4b52-9bc4-71f6db0ca394 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=21e8136d-6f78-4983-80a3-c7fdbc8a8960 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -604,19 +605,38 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PREFIX sh: &lt;http://www.w3.org/ns/shacl#&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-         SELECT ?roomTemp ?heatsp ?coolsp ?target WHERE {
-?target rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Fan_Coil_Unit&gt; .
-?target &lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?coolsp .
- ?coolsp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Occupied_Cooling_Temperature_Setpoint&gt; .
-?target &lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?heatsp .
- ?heatsp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Occupied_Heating_Temperature_Setpoint&gt; .
-?target &lt;https://brickschema.org/schema/Brick#feeds&gt;/&lt;https://brickschema.org/schema/Brick#hasPart&gt;/&lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?roomTemp .
- ?roomTemp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Air_Temperature_Sensor&gt; .
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TypeError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1"># refer to the shape by its URI</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">app1_shape</span> <span class="o">=</span> <span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;urn:simpleapp/app1&quot;</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="nb">print</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">))</span>
 
-}
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:270,</span> in <span class="ni">ShapeCollection.shape_to_query</span><span class="nt">(self, shape)</span>
+<span class="g g-Whitespace">    </span><span class="mi">259</span>     <span class="k">def</span> <span class="nf">shape_to_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">260</span><span class="w">         </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">261</span><span class="sd">         This method takes a URI representing a SHACL shape as an argument and returns</span>
+<span class="g g-Whitespace">    </span><span class="mi">262</span><span class="sd">         a SPARQL query selecting the information which would be used to satisfy that</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">    </span><span class="mi">268</span><span class="sd">             ?target &lt;path&gt; &lt;value&gt;</span>
+<span class="g g-Whitespace">    </span><span class="mi">269</span><span class="sd">         &quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">270</span>         <span class="n">clauses</span><span class="p">,</span> <span class="n">project</span> <span class="o">=</span> <span class="n">_shape_to_where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">271</span>         <span class="n">preamble</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;PREFIX sh: &lt;http://www.w3.org/ns/shacl#&gt;</span>
+<span class="g g-Whitespace">    </span><span class="mi">272</span><span class="s2"> PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</span>
+<span class="g g-Whitespace">    </span><span class="mi">273</span><span class="s2"> PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</span>
+<span class="g g-Whitespace">    </span><span class="mi">274</span><span class="s2">         &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">275</span>         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">preamble</span><span class="si">}</span><span class="s2"> SELECT </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project</span><span class="p">)</span><span class="si">}</span><span class="s2"> WHERE </span><span class="se">{{\n</span><span class="si">{</span><span class="n">clauses</span><span class="si">}</span><span class="se">\n}}</span><span class="s2">&quot;</span>
+
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:340,</span> in <span class="ni">_shape_to_where</span><span class="nt">(graph, shape)</span>
+<span class="g g-Whitespace">    </span><span class="mi">338</span> <span class="c1"># handle targetNode</span>
+<span class="g g-Whitespace">    </span><span class="mi">339</span> <span class="n">targetNode</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">targetNode</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">340</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targetNode</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">341</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">342</span>         <span class="s2">&quot;Cannot currently have more than one sh:targetNode in shacl-to-sparql conversion&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">343</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">344</span> <span class="k">if</span> <span class="n">targetNode</span><span class="p">:</span>
+
+<span class="ne">TypeError</span>: object of type &#39;generator&#39; has no len()
 </pre></div>
 </div>
 </div>
@@ -646,20 +666,6 @@ create a pandas <code class="docutils literal notranslate"><span class="pre">Dat
 <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">app_query</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="c1"># generate and save the query string to a variable</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">app_query</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">)</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;pandas&#39;
 </pre></div>
 </div>
 </div>

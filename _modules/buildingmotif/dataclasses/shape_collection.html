@@ -243,6 +243,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -717,6 +718,30 @@ document.write(`
         <span class="sa">f</span><span class="s2">&quot;?target rdf:type/rdfs:subClassOf* </span><span class="si">{</span><span class="n">tc</span><span class="o">.</span><span class="n">n3</span><span class="p">()</span><span class="si">}</span><span class="s2"> .</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">targetClasses</span>  <span class="c1"># type: ignore</span>
     <span class="p">]</span>
     <span class="n">clauses</span> <span class="o">+=</span> <span class="s2">&quot; UNION &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tc_clauses</span><span class="p">)</span>
+
+    <span class="c1"># handle targetSubjectsOf</span>
+    <span class="n">targetSubjectsOf</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">targetSubjectsOf</span><span class="p">)</span>
+    <span class="n">tso_clauses</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">&quot;?target </span><span class="si">{</span><span class="n">tso</span><span class="o">.</span><span class="n">n3</span><span class="p">()</span><span class="si">}</span><span class="s2"> ?ignore .</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">tso</span> <span class="ow">in</span> <span class="n">targetSubjectsOf</span>  <span class="c1"># type: ignore</span>
+    <span class="p">]</span>
+    <span class="n">clauses</span> <span class="o">+=</span> <span class="s2">&quot; UNION &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tso_clauses</span><span class="p">)</span>
+
+    <span class="c1"># handle targetObjectsOf</span>
+    <span class="n">targetObjectsOf</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">targetObjectsOf</span><span class="p">)</span>
+    <span class="n">too_clauses</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">&quot;?ignore </span><span class="si">{</span><span class="n">too</span><span class="o">.</span><span class="n">n3</span><span class="p">()</span><span class="si">}</span><span class="s2"> ?target .</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">too</span> <span class="ow">in</span> <span class="n">targetObjectsOf</span>  <span class="c1"># type: ignore</span>
+    <span class="p">]</span>
+    <span class="n">clauses</span> <span class="o">+=</span> <span class="s2">&quot; UNION &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">too_clauses</span><span class="p">)</span>
+
+    <span class="c1"># handle targetNode</span>
+    <span class="n">targetNode</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">targetNode</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targetNode</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Cannot currently have more than one sh:targetNode in shacl-to-sparql conversion&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">targetNode</span><span class="p">:</span>
+        <span class="n">targetNode</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">targetNode</span><span class="p">)</span>
+        <span class="n">clauses</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;BIND(</span><span class="si">{</span><span class="n">targetNode</span><span class="o">.</span><span class="n">n3</span><span class="p">()</span><span class="si">}</span><span class="s2"> AS ?target) .</span><span class="se">\n</span><span class="s2">&quot;</span>
 
     <span class="c1"># find all of the non-qualified property shapes. All of these will use the same variable</span>
     <span class="c1"># for all uses of the same sh:path value</span>
