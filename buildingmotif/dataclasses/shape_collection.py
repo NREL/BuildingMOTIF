@@ -313,6 +313,30 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
     ]
     clauses += " UNION ".join(tc_clauses)
 
+    # handle targetSubjectsOf
+    targetSubjectsOf = graph.objects(shape, SH.targetSubjectsOf)
+    tso_clauses = [
+        f"?target {tso.n3()} ?ignore .\n" for tso in targetSubjectsOf  # type: ignore
+    ]
+    clauses += " UNION ".join(tso_clauses)
+
+    # handle targetObjectsOf
+    targetObjectsOf = graph.objects(shape, SH.targetObjectsOf)
+    too_clauses = [
+        f"?ignore {too.n3()} ?target .\n" for too in targetObjectsOf  # type: ignore
+    ]
+    clauses += " UNION ".join(too_clauses)
+
+    # handle targetNode
+    targetNode = graph.objects(shape, SH.targetNode)
+    if len(targetNode) > 1:
+        raise ValueError(
+            "Cannot currently have more than one sh:targetNode in shacl-to-sparql conversion"
+        )
+    if targetNode:
+        targetNode = next(targetNode)
+        clauses += f"BIND({targetNode.n3()} AS ?target) .\n"
+
     # find all of the non-qualified property shapes. All of these will use the same variable
     # for all uses of the same sh:path value
     pshapes_by_path: Dict[Node, List[Node]] = defaultdict(list)
