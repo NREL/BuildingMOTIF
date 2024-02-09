@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" >
 
   <head>
     <meta charset="utf-8" />
@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
-  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -146,7 +146,6 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
-
   
 
 <a class="navbar-brand logo" href="../README.html">
@@ -241,6 +240,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../guides/csv-import.html">CSV Import</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guides/generating-queries.html">Generating SPARQL Queries</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
@@ -403,7 +403,6 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
-
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -413,7 +412,6 @@ document.write(`
   </button>
 `);
 </script>
-
 
 <script>
 document.write(`
@@ -569,23 +567,17 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.6/x64/lib/python3.11/site-packages/pyshacl/extras/__init__.py:46: Warning: Extra &quot;js&quot; is not satisfied because requirement pyduktape2 is not installed.
-  warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Enable_Differential_Temperature_Command
-  - https://brickschema.org/schema/Brick#Discharge_Air_Static_Pressure_Deadband_Setpoint
-  - https://brickschema.org/schema/Brick#Heating_Supply_Air_Flow_Setpoint
-  - https://brickschema.org/schema/Brick#Differential_Air_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#Outside_Air_Humidity_Sensor
-  - https://brickschema.org/schema/Brick#Time_Parameter
-  - https://brickschema.org/schema/Brick#Load_Shed_Command
-  - https://brickschema.org/schema/Brick#Close_Limit
-  - https://brickschema.org/schema/Brick#Disable_Hot_Water_System_Outside_Air_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#Motor_Current_Sensor
+  - https://brickschema.org/schema/Brick#Low_Air_Flow_Alarm
+  - https://brickschema.org/schema/Brick#Load_Current_Sensor
+  - https://brickschema.org/schema/Brick#Sensor_Failure_Alarm
+  - https://brickschema.org/schema/Brick#Air_Enthalpy_Sensor
+  - https://brickschema.org/schema/Brick#Hot_Water_Supply_Temperature_Sensor
+  - https://brickschema.org/schema/Brick#Frost_Sensor
+  - https://brickschema.org/schema/Brick#Differential_Pressure_Sensor
+  - https://brickschema.org/schema/Brick#Return_Air_Enthalpy_Sensor
+  - https://brickschema.org/schema/Brick#PM10_Sensor
+  - https://brickschema.org/schema/Brick#Min_Outside_Air_Flow_Setpoint_Limit
 </pre></div>
 </div>
 </div>
@@ -609,7 +601,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=59382436-d55b-4889-a055-5778da397a24 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=f929d189-362e-462d-93b7-09884e5f6235 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -655,7 +647,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=59382436-d55b-4889-a055-5778da397a24 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=f929d189-362e-462d-93b7-09884e5f6235 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -692,7 +684,9 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The template has the following parameters:
-  name
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  name
 </pre></div>
 </div>
 </div>
@@ -877,7 +871,7 @@ bldg:A1 a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=59382436-d55b-4889-a055-5778da397a24 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=f929d189-362e-462d-93b7-09884e5f6235 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -931,7 +925,7 @@ bldg:A1 a brick:Air_Handler_Unit .
               
               
                 <footer class="prev-next-footer">
-                  
+                  <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
        href="../reference/apidoc/_autosummary/buildingmotif.utils.html"
@@ -1000,7 +994,6 @@ By NREL
   
   <div class="footer-item">
     
-
   <p class="copyright">
     
       © Copyright 2023.
@@ -1027,8 +1020,8 @@ By NREL
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
 
   <footer class="bd-footer">
   </footer>
