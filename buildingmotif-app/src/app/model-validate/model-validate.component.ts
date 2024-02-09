@@ -1,13 +1,13 @@
 import { Component, Input, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, FormGroup, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { ModelValidateService, ValidationResponse } from './model-validate.service';
 import { LibraryService, Library } from '../library/library.service';
 
 // verify that at least one checkbox is checked in the FormGroup
 function NoneSelectedValidator(): ValidatorFn {
     return (control: AbstractControl) => {
-        const formGroup = control as FormGroup;
+        const formGroup = control as UntypedFormGroup;
         const checkedKeys = Object.keys(formGroup.controls).filter((key) => formGroup.controls[key].value);
 
         if (checkedKeys.length === 0) { return { noneSelected: {value: true}}; }
@@ -25,7 +25,7 @@ function NoneSelectedValidator(): ValidatorFn {
 export class ModelValidateComponent implements OnInit{
   @Input() modelId: number | undefined;
   libraries?: Library[] = undefined;
-  selectedLibrariesForm: FormGroup = new FormGroup({});
+  selectedLibrariesForm: UntypedFormGroup = new UntypedFormGroup({});
   validationResponse?: ValidationResponse = undefined;
   showGettingLibrariesSpinner = false;
   showValidatingSpinner = false;
@@ -58,10 +58,10 @@ export class ModelValidateComponent implements OnInit{
   }
 
   populateSelectedLibrariesControls(libraries: Library[]): void {
-    const selectedLibrariesControls: { [library_index: number]: FormControl } = libraries.reduce((acc, _, i) => {
-      return { ...acc, [i]: new FormControl(false) }
+    const selectedLibrariesControls: { [library_index: number]: UntypedFormControl } = libraries.reduce((acc, _, i) => {
+      return { ...acc, [i]: new UntypedFormControl(false) }
     }, {});
-    this.selectedLibrariesForm = new FormGroup(selectedLibrariesControls, {validators: NoneSelectedValidator()})
+    this.selectedLibrariesForm = new UntypedFormGroup(selectedLibrariesControls, {validators: NoneSelectedValidator()})
   }
 
   validate(): void {
