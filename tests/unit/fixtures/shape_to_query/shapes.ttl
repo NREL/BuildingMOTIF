@@ -45,3 +45,36 @@
         # optional
     ] ;
 .
+
+:multiple_targets a sh:NodeShape, owl:Class ;
+    sh:targetNode brick:ABC, brick:DEF ;
+    sh:property [
+        sh:name "sensor" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:node :sensor ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
+
+:subjectTarget a sh:NodeShape, owl:Class ;
+    sh:targetSubjectsOf brick:hasPoint ;
+    sh:property [
+        sh:name "sensor" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:node :sensor ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
+
+:objectTarget a sh:NodeShape, owl:Class ;
+    sh:targetObjectsOf brick:hasPoint ;
+    sh:property [
+        sh:name "equip" ;
+        sh:path brick:isPointOf ;
+        sh:qualifiedValueShape [ sh:node :vav ] ;
+        sh:qualifiedMaxCount 1 ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.

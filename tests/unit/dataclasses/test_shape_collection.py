@@ -1,5 +1,6 @@
 import random
 
+import pytest
 import rdflib
 from rdflib import RDF, Graph, URIRef
 from rdflib.compare import isomorphic
@@ -160,3 +161,19 @@ def test_shape_to_query(clean_building_motif):
     )
     # assert this parses correctly
     g.query(query2)
+
+    # test that we handle multiple target nodes
+    with pytest.raises(ValueError):
+        sc.shape_to_query(URIRef("urn:shapes_to_query/multiple_targets"))
+
+    # handle targetSubjectsOf
+    query3 = sc.shape_to_query(URIRef("urn:shapes_to_query/subjectTarget"))
+    assert (
+        "?target <https://brickschema.org/schema/Brick#hasPoint> ?ignore ."
+    ) in query3, query3
+
+    # handle targetObjectsOf
+    query4 = sc.shape_to_query(URIRef("urn:shapes_to_query/objectTarget"))
+    assert (
+        "?ignore <https://brickschema.org/schema/Brick#hasPoint> ?target ."
+    ) in query4, query4

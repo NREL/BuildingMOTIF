@@ -336,14 +336,13 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
     clauses += " UNION ".join(too_clauses)
 
     # handle targetNode
-    targetNode = graph.objects(shape, SH.targetNode)
-    if len(targetNode) > 1:
+    targetNode = list(graph.objects(shape, SH.targetNode))
+    if len(targetNode) == 1:
+        clauses += f"BIND({targetNode[0].n3()} AS ?target) .\n"
+    elif len(targetNode) > 1:
         raise ValueError(
-            "Cannot currently have more than one sh:targetNode in shacl-to-sparql conversion"
+            "More than one targetNode found. This is not currently supported"
         )
-    if targetNode:
-        targetNode = next(targetNode)
-        clauses += f"BIND({targetNode.n3()} AS ?target) .\n"
 
     # find all of the non-qualified property shapes. All of these will use the same variable
     # for all uses of the same sh:path value
