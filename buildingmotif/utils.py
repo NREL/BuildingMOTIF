@@ -245,6 +245,12 @@ def get_template_parts_from_shape(
             deps.append({"template": str(otype), "args": {"name": param}})
             body.add((param, RDF.type, otype))
 
+        # add 'hasValue'
+
+        pvalue = shape_graph.value(pshape, SH["hasValue"])
+        if pvalue:
+            body.add((root_param, path, pvalue))
+
     if (shape_name, RDF.type, OWL.Class) in shape_graph:
         body.add((root_param, RDF.type, shape_name))
 
