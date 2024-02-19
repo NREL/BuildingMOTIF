@@ -278,28 +278,44 @@ class Template:
             replace_nodes(
                 deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
             )
+            # rename the optional_args in the dependency template too
+            deptempl.optional_args = [
+                rename_params.get(arg, arg) for arg in deptempl.optional_args
+            ]
 
+            # at this point, deptempl's parameters are all unique with respect to
+            # the parent template. They are either renamed explicitly via the dependency's
+            # args or implicitly via prefixing with the 'name' parameter.
+
+            # Next, we need to determine which of deptempl's parameters are optional
+            # and add these to the parent template's optional_args list.
+
+            # get the parent template's optional args
             templ_optional_args = set(templ.optional_args)
-            # figure out which of deptempl's parameters are encoded as 'optional' by the
-            # parent (depending) template
-            deptempl_opt_args = deptempl.parameters.intersection(templ.optional_args)
-            # if the 'name' of the deptempl is optional, then all the arguments inside deptempl
-            # become optional
+
+            # represents the optional parameters of the dependency template
+            deptempl_opt_args: Set[str] = set()
+
+            # these optional parameters come from two places.
+            # 1. the dependency template itself (its optional_args)
+            deptempl_opt_args.update(deptempl.optional_args)
+            # 1a. remove any parameters that have the same name as a parameter in the
+            #     parent but are not optional in the parent
+            deptempl_opt_args.difference_update(templ.parameters)
+            # 2. having the same name as an optional parameter in the parent template
+            #    (templ_optional_args)
+            deptempl_opt_args.update(
+                templ_optional_args.intersection(deptempl.parameters)
+            )
+            # 2a. if the 'name' of the deptempl is optional (given by the parent template),
+            #   then all the arguments inside deptempl become optional
+            #   (deptempl.parameters)
             if rename_params["name"] in deptempl_opt_args:
                 # mark all of deptempl's parameters as optional
-                templ_optional_args.update(deptempl.parameters)
-            else:
-                # otherwise, only add the parameters that are explicitly
-                # marked as optional *and* appear in this dependency
-                templ_optional_args.update(deptempl_opt_args)
-            # ensure that the optional_args includes all params marked as
-            # optional by the dependency
-            templ_optional_args.update(
-                [rename_params[n] for n in deptempl.optional_args]
-            )
+                deptempl_opt_args.update(deptempl.parameters)
 
             # convert our set of optional params to a list and assign to the parent template
-            templ.optional_args = list(templ_optional_args)
+            templ.optional_args = list(templ_optional_args.union(deptempl_opt_args))
 
             # append the inlined template into the parent's body
             templ.body += deptempl.body
@@ -356,7 +372,8 @@ class Template:
         )
         # true if all parameters are now bound or only optional args are unbound
         if len(templ.parameters) == 0 or (
-            not require_optional_args and templ.parameters == set(self.optional_args)
+            not require_optional_args
+            and templ.parameters.issubset(set(self.optional_args))
         ):
             bind_prefixes(templ.body)
             if namespaces:
@@ -392,7 +409,7 @@ class Template:
             for param in self.parameters
             if include_optional or param not in self.optional_args
         }
-        res = self.evaluate(bindings)
+        res = self.evaluate(bindings, require_optional_args=include_optional)
         assert isinstance(res, rdflib.Graph)
         return bindings, res
 
