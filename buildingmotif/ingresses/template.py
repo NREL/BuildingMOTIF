@@ -60,8 +60,9 @@ class TemplateIngress(GraphIngressHandler):
         assert records is not None
         for rec in records:
             bindings = {self.mapper(k): _get_term(v, ns) for k, v in rec.fields.items()}
-            graph = self.template.evaluate(bindings)
-            assert isinstance(graph, Graph)
+            graph = self.template.evaluate(bindings, require_optional_args=True)
+            if not isinstance(graph, Graph):
+                bindings, graph = graph.fill(ns, include_optional=True)
             g += graph
         return g
 
@@ -121,7 +122,8 @@ class TemplateIngressWithChooser(GraphIngressHandler):
                 template = template.inline_dependencies()
             bindings = {self.mapper(k): _get_term(v, ns) for k, v in rec.fields.items()}
             graph = template.evaluate(bindings)
-            assert isinstance(graph, Graph)
+            if not isinstance(graph, Graph):
+                _, graph = graph.fill(ns)
             g += graph
         return g
 
