@@ -1,0 +1,68 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+@prefix components: <urn:ashrae/g36/components/> .
+@prefix : <urn:ashrae/g36/4.12/fan-coil-unit/> .
+
+:fan-coil-unit a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "Fan Coil Unit" ;
+    sh:class brick:Fan_Coil_Unit ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:supply-fan ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Supply air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Return air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    # optional
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:filter ] ;
+        sh:qualifiedMinCount 0 ; 
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # application-specific
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:cooling-coil ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # application-specific
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:heating-coil ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:thermostat] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # must feed a zone
+    sh:property [
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:node components:zone ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
