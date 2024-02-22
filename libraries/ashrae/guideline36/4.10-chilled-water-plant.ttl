@@ -114,6 +114,30 @@
         sh:qualifiedValueShape [ sh:node :condenser-water-plant ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1
+    ] ;
+    # 4.10.8
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :waterside-economizer ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    # 4.10.9
+    # Temperature and relative humidity sensors are necessary for calculating wet bulb temperature for waterside
+    # economizer sequences. Sensors are optional for plants without waterside economizers.
+    sh:property [
+        dfs:label "Outdoor Air Temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    sh:property [
+        rdfs:label "Relative humidity sensor" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Humidity_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
     ] .
 
 :air-cooled-primary-secondary-plant a sh:NodeShape, owl:Class, bmotif:System_Specification ;
@@ -166,7 +190,7 @@
 
 :wtr-cooled-primary-secondary-plant a sh:NodeShape, owl:Class, bmotif:System_Specification ;
     rdfs:label "Water-Cooled Primary-Secondary CHW Plant" ;
-    sh:node :primary-secondary-plant ;
+    sh:class brick:Chilled_Water_System ;
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [
@@ -216,6 +240,30 @@
         sh:qualifiedValueShape [ sh:node :condenser-water-plant ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1
+    ] ;
+    # 4.10.8
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :waterside-economizer ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    # 4.10.9
+    # Temperature and relative humidity sensors are necessary for calculating wet bulb temperature for waterside
+    # economizer sequences. Sensors are optional for plants without waterside economizers.
+    sh:property [
+        dfs:label "Outdoor Air Temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    sh:property [
+        rdfs:label "Relative humidity sensor" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Humidity_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1
     ] .
 
 :condenser-water-plant a sh:NodeShape, owl:Class, bmotif:System_Specification ;
@@ -230,44 +278,6 @@
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node :condenser-water-loop ] ;
         sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1
-    ] ;
-    sh:property [
-        sh:path brick:feeds ;
-        sh:qualifiedValueShape [
-            sh:node :wse-loop ;
-            # 4.10.9
-            # Temperature and relative humidity sensors are necessary for calculating wet bulb temperature for waterside
-            # economizer sequences. Sensors are optional for plants without waterside economizers.
-            sh:property [
-                sh:path brick:hasPoint ;
-                sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
-                sh:qualifiedMinCount 1 ;
-                sh:qualifiedMaxCount 1
-            ] ;
-            sh:property [
-                sh:path brick:hasPoint ;
-                sh:qualifiedValueShape [ sh:class brick:Outside_Air_Humidity_Sensor ] ;
-                sh:qualifiedMinCount 1 ;
-                sh:qualifiedMaxCount 1
-            ]
-        ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1
-    ] ;
-    # 4.10.9
-    # Temperature and relative humidity sensors are necessary for calculating wet bulb temperature for waterside
-    # economizer sequences. Sensors are optional for plants without waterside economizers.
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1
-    ] ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Humidity_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1
     ] .
 
@@ -344,6 +354,7 @@
     # applications
     sh:property [
         rdfs:label "CH CHW supply temperature" ;
+        sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Leaving_Chilled_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1
@@ -490,7 +501,8 @@
         sh:qualifiedMaxCount 1
     ] .
 
-# TODO see comment
+# TODO combine?
+#TODO see comment
 :ch-chw-bypass-valve a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Chiller CHW Bypass Valve" ;
     rdfs:comment "Required for series piped chillers and primary-only parallel CHW plants with waterside economizers. Delete otherwise." ;
@@ -666,6 +678,7 @@
     sh:property [
         rdfs:label "CHW supply temperature" ;
         rdfs:comment "Optional for primary-secondary Plants." ;
+        sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Leaving_Chilled_Water_Temperature_Sensor ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1
@@ -939,6 +952,7 @@
         sh:qualifiedMaxCount 1
     ] .
 
+# TODO consider moving to components if there's overlap with air-side fans
 :variable-speed-fan-motor a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Variable Speed Fan Motor" ;
     sh:class brick:Variable_Frequency_Drive ;
@@ -984,6 +998,7 @@
         sh:qualifiedMinCount 1
     ] .
 
+#TODO combine with outlet?
 :ct-inlet-isolation-valve a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Cooling Tower Inlet Isolation Valve" ;
     sh:class brick:Isolation_Valve ;
@@ -1137,34 +1152,16 @@
 # Retain the following points if the plant has a waterside economizer. Delete otherwise. “R” in this section should
 # be interpreted as required for waterside economizer operation.
 
-:chilled-water-loop-without-wse a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Condenser Water Loop without Waterside Economizer" ;
-    sh:node :chilled-water-loop .
-
-:wse-loop a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Waterside Economizer Loop" ;
-    sh:class brick:Chilled_Water_Loop ;
-    sh:property [
-        rdfs:label "Waterside Economizer" ;
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [
-            sh:class brick:Heat_Exchanger ;
-            sh:property [
-                sh:path brick:isFedBy ;
-                sh:qualifiedValueShape [ sh:node :cooling-tower ] ;
-                sh:qualifiedMinCount 1
-            ]
-        ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1
-    ] ;
+:waterside-economizer a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Waterside Economizer" ;
+    sh:class brick:Heat_Exchanger ;
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node :wse-isolation-valve ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1
     ] ;
-    # required
+    # required TODO check
     sh:property [
         rdfs:label "WSE CW return temperature" ;
         sh:path brick:hasPoint ;
@@ -1211,6 +1208,23 @@
         rdfs:comment "Note: WSE entering CHW temperatures is located in the pipe entering the HX, not the CHWR main upstream of the WSE." ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Entering_Chilled_Water_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    # 4.10.9
+    # Temperature and relative humidity sensors are necessary for calculating wet bulb temperature for waterside
+    # economizer sequences. Sensors are optional for plants without waterside economizers.
+    sh:property [
+        rdfs:label "Outdoor Air Temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1
+    ] ;
+    sh:property [
+        rdfs:label "Relative humidity sensor" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Humidity_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1
     ] .
