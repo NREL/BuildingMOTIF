@@ -42,6 +42,9 @@ class BACnetToBrickIngress(GraphIngressHandler):
         :rtype: Graph
         """
         g = Graph()
+        # ensure 'ns' is a Namespace or URI forming won't work
+        if not isinstance(ns, Namespace):
+            ns = Namespace(ns)
         records = self.upstream.records
         assert records is not None
         for record in records:

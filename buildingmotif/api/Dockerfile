@@ -3,7 +3,6 @@ FROM python:3.8
 # Copy project
 ADD buildingmotif /opt/buildingmotif
 ADD libraries /opt/libraries
-COPY configs.py /opt/
 ADD migrations /opt/migrations
 COPY alembic.ini /opt/
 COPY pyproject.toml /opt/
@@ -14,7 +13,7 @@ WORKDIR /opt/
 
 # Install dpeendencies
 RUN pip install poetry==1.4.0 && poetry config virtualenvs.create false
-RUN ls /opt && poetry install --no-dev
+RUN ls /opt && poetry install
 RUN chmod +x /opt/start.sh
 
 CMD /opt/start.sh

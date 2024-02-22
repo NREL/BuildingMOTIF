@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Model } from '../types';
-import {FormControl} from '@angular/forms';
+import {UntypedFormControl} from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
@@ -13,7 +13,7 @@ import {Observable} from 'rxjs';
 export class ModelSearchComponent implements OnInit{
   models: Model[] = [];
   filteredModels: Observable<Model[]> = new Observable();
-  fitlerStringControl: FormControl = new FormControl('')
+  fitlerStringControl: UntypedFormControl = new UntypedFormControl('')
 
   constructor(private route: ActivatedRoute) {
     this.models = this.route.snapshot.data["ModelSearchResolver"]

@@ -131,7 +131,7 @@ def test_get_db_template(bm: BuildingMOTIF, monkeypatch):
         library_id=db_library.id,
     )
 
-    db_template = bm.table_connection.get_db_template_by_id(id=db_template.id)
+    db_template = bm.table_connection.get_db_template(id=db_template.id)
 
     assert db_template.name == "my_db_template"
     assert db_template.body_id == str(mocked_uuid)
@@ -140,7 +140,7 @@ def test_get_db_template(bm: BuildingMOTIF, monkeypatch):
 
 def test_get_db_template_does_not_exist(bm: BuildingMOTIF):
     with pytest.raises(NoResultFound):
-        bm.table_connection.get_db_template_by_id(-999)
+        bm.table_connection.get_db_template(-999)
 
 
 def test_update_db_template_name(bm: BuildingMOTIF):
@@ -149,16 +149,12 @@ def test_update_db_template_name(bm: BuildingMOTIF):
         name="my_db_template", library_id=db_library.id
     )
 
-    assert (
-        bm.table_connection.get_db_template_by_id(db_template.id).name
-        == "my_db_template"
-    )
+    assert bm.table_connection.get_db_template(db_template.id).name == "my_db_template"
 
     bm.table_connection.update_db_template_name(db_template.id, "your_db_template")
 
     assert (
-        bm.table_connection.get_db_template_by_id(db_template.id).name
-        == "your_db_template"
+        bm.table_connection.get_db_template(db_template.id).name == "your_db_template"
     )
 
 
@@ -296,7 +292,7 @@ def test_remove_dependencies(bm: BuildingMOTIF):
     assert dep_assoc.dependee_id == dependee_template.id
     assert dep_assoc.args == {"name": "ding", "h2": "dong"}
 
-    bm.table_connection.remove_template_dependency(
+    bm.table_connection.delete_template_dependency(
         dependant_template.id, dependee_template.id
     )
 
@@ -311,7 +307,7 @@ def test_remove_dependencies_does_not_exist(bm: BuildingMOTIF):
     ) = create_dependency_test_fixtures(bm)
 
     with pytest.raises(NoResultFound):
-        bm.table_connection.remove_template_dependency(
+        bm.table_connection.delete_template_dependency(
             dependant_template.id, dependee_template.id
         )
 
@@ -325,11 +321,11 @@ def test_update_optional_args(bm: BuildingMOTIF):
         library_id=db_library.id,
     )
 
-    assert bm.table_connection.get_db_template_by_id(db_template.id).optional_args == []
+    assert bm.table_connection.get_db_template(db_template.id).optional_args == []
 
     bm.table_connection.update_db_template_optional_args(db_template.id, ["a", "b"])
 
-    assert bm.table_connection.get_db_template_by_id(db_template.id).optional_args == [
+    assert bm.table_connection.get_db_template(db_template.id).optional_args == [
         "a",
         "b",
     ]

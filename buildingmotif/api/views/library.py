@@ -1,6 +1,9 @@
+from typing import Dict, List
+
 import flask
 from flask import Blueprint, current_app, jsonify
 from flask_api import status
+from rdflib import URIRef
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.library import serialize
@@ -41,22 +44,28 @@ def get_all_shapes() -> flask.Response:
     :return: all shapes
     :rtype: flask.Response
     """
-    results = []
+    definition_types = [
+        URIRef("https://nrel.gov/BuildingMOTIF#Sequence_Of_Operations"),
+        URIRef("https://nrel.gov/BuildingMOTIF#Analytics_Application"),
+        URIRef("https://nrel.gov/BuildingMOTIF#System_Specification"),
+    ]
+    results: Dict[URIRef, List[Dict]] = {dt: [] for dt in definition_types}
 
     db_libs = current_app.building_motif.table_connection.get_all_db_libraries()
     for db_lib in db_libs:
         shape_collection = ShapeCollection.load(db_lib.shape_collection.id)
-        shapes = shape_collection.graph.query(get_shape_query)
-        results += [
-            {
-                "library_name": db_lib.name,
-                "library_id": db_lib.id,
-                "label": label,
-                "uri": uri,
-                "description": description,
-            }
-            for uri, label, description in shapes
-        ]
+        for dt in definition_types:
+            results[dt] += [
+                {
+                    "shape_uri": str(shape),
+                    "label": label,
+                    "library_name": db_lib.name,
+                    "shape_collection_id": shape_collection.id,
+                }
+                for (shape, label) in shape_collection.get_shapes_of_definition_type(
+                    dt, include_labels=True
+                )
+            ]
 
     return jsonify(results), status.HTTP_200_OK
 
@@ -71,9 +80,7 @@ def get_library(library_id: int) -> flask.Response:
     :rtype: flask.Response
     """
     try:
-        db_lib = current_app.building_motif.table_connection.get_db_library_by_id(
-            library_id
-        )
+        db_lib = current_app.building_motif.table_connection.get_db_library(library_id)
     except NoResultFound:
         return {
             "message": f"No library with id {library_id}"
