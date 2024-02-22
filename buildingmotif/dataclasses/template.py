@@ -1,7 +1,12 @@
+import csv
+import logging
 import warnings
 from collections import Counter
+from copy import copy
 from dataclasses import dataclass
+from io import BytesIO, StringIO
 from itertools import chain
+from os import PathLike
 from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
@@ -45,7 +50,7 @@ class Template:
         :rtype: Template
         """
         bm = get_building_motif()
-        db_template = bm.table_connection.get_db_template_by_id(id)
+        db_template = bm.table_connection.get_db_template(id)
         body = bm.graph_connection.get_graph(db_template.body_id)
 
         return cls(
@@ -132,7 +137,7 @@ class Template:
         :param dependency: dependency to remove
         :type dependency: Template
         """
-        self._bm.table_connection.remove_template_dependency(self.id, dependency.id)
+        self._bm.table_connection.delete_template_dependency(self.id, dependency.id)
 
     @property
     def all_parameters(self) -> Set[str]:
@@ -273,28 +278,44 @@ class Template:
             replace_nodes(
                 deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
             )
+            # rename the optional_args in the dependency template too
+            deptempl.optional_args = [
+                rename_params.get(arg, arg) for arg in deptempl.optional_args
+            ]
 
+            # at this point, deptempl's parameters are all unique with respect to
+            # the parent template. They are either renamed explicitly via the dependency's
+            # args or implicitly via prefixing with the 'name' parameter.
+
+            # Next, we need to determine which of deptempl's parameters are optional
+            # and add these to the parent template's optional_args list.
+
+            # get the parent template's optional args
             templ_optional_args = set(templ.optional_args)
-            # figure out which of deptempl's parameters are encoded as 'optional' by the
-            # parent (depending) template
-            deptempl_opt_args = deptempl.parameters.intersection(templ.optional_args)
-            # if the 'name' of the deptempl is optional, then all the arguments inside deptempl
-            # become optional
+
+            # represents the optional parameters of the dependency template
+            deptempl_opt_args: Set[str] = set()
+
+            # these optional parameters come from two places.
+            # 1. the dependency template itself (its optional_args)
+            deptempl_opt_args.update(deptempl.optional_args)
+            # 1a. remove any parameters that have the same name as a parameter in the
+            #     parent but are not optional in the parent
+            deptempl_opt_args.difference_update(templ.parameters)
+            # 2. having the same name as an optional parameter in the parent template
+            #    (templ_optional_args)
+            deptempl_opt_args.update(
+                templ_optional_args.intersection(deptempl.parameters)
+            )
+            # 2a. if the 'name' of the deptempl is optional (given by the parent template),
+            #   then all the arguments inside deptempl become optional
+            #   (deptempl.parameters)
             if rename_params["name"] in deptempl_opt_args:
                 # mark all of deptempl's parameters as optional
-                templ_optional_args.update(deptempl.parameters)
-            else:
-                # otherwise, only add the parameters that are explicitly
-                # marked as optional *and* appear in this dependency
-                templ_optional_args.update(deptempl_opt_args)
-            # ensure that the optional_args includes all params marked as
-            # optional by the dependency
-            templ_optional_args.update(
-                [rename_params[n] for n in deptempl.optional_args]
-            )
+                deptempl_opt_args.update(deptempl.parameters)
 
             # convert our set of optional params to a list and assign to the parent template
-            templ.optional_args = list(templ_optional_args)
+            templ.optional_args = list(templ_optional_args.union(deptempl_opt_args))
 
             # append the inlined template into the parent's body
             templ.body += deptempl.body
@@ -351,7 +372,8 @@ class Template:
         )
         # true if all parameters are now bound or only optional args are unbound
         if len(templ.parameters) == 0 or (
-            not require_optional_args and templ.parameters == set(self.optional_args)
+            not require_optional_args
+            and templ.parameters.issubset(set(self.optional_args))
         ):
             bind_prefixes(templ.body)
             if namespaces:
@@ -387,7 +409,7 @@ class Template:
             for param in self.parameters
             if include_optional or param not in self.optional_args
         }
-        res = self.evaluate(bindings)
+        res = self.evaluate(bindings, require_optional_args=include_optional)
         assert isinstance(res, rdflib.Graph)
         return bindings, res
 
@@ -439,6 +461,89 @@ class Template:
         matcher = TemplateMatcher(model.graph, self, ontology)
         for mapping, sg in matcher.building_mapping_subgraphs_iter():
             yield mapping, sg, matcher.remaining_template(mapping)
+
+    def generate_csv(self, path: Optional[PathLike] = None) -> Optional[StringIO]:
+        """
+        Generate a CSV for this template which contains a column for each template parameter.
+        Once filled out, the resulting CSV file can be passed to a Template Ingress to populate a model.
+        Returns a 'io.BytesIO' object which can be written to a file or sent to another program/function.
+
+        :param path: if not None, writes the CSV to the indicated file
+        :type path: PathLike, optional
+        :return: String buffer containing the resulting CSV file
+        :rtype: StringIO
+        """
+        all_parameters = copy(self.parameters)
+        mandatory_parameters = all_parameters - set(self.optional_args)
+        row_data = list(mandatory_parameters) + list(self.optional_args)
+
+        if path is not None:
+            # write directly to file
+            with open(path, "w") as f:
+                writer = csv.writer(f)
+                writer.writerow(row_data)
+            return None
+
+        # write to in-memory file
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(row_data)
+        return output
+
+    def generate_spreadsheet(
+        self, path: Optional[PathLike] = None
+    ) -> Optional[BytesIO]:
+        """
+        Generate a spreadsheet for this template which contains a column for each template parameter.
+        Once filled out, the resulting spreadsheet can be passed to a Template Ingress to populate a model.
+        Returns a 'io.BytesIO' object which can be written to a file or sent to another program/function.
+
+        :param path: if not None, writes the CSV to the indicated file
+        :type path: PathLike, optional
+        :return: Byte buffer containing the resulting spreadsheet file
+        :rtype: BytesIO
+        """
+        try:
+            from openpyxl import Workbook
+            from openpyxl.utils import get_column_letter
+            from openpyxl.worksheet.table import Table, TableStyleInfo
+        except ImportError:
+            logging.critical(
+                "Install the 'xlsx-ingress' module, e.g. 'pip install buildingmotif[xlsx-ingress]'"
+            )
+            return None
+        all_parameters = copy(self.parameters)
+        mandatory_parameters = all_parameters - set(self.optional_args)
+
+        workbook = Workbook()
+        sheet = workbook.active
+        if sheet is None:
+            raise Exception("Could not open active sheet in Workbook")
+
+        row_data = list(mandatory_parameters) + list(self.optional_args)
+        for column_index, cell_value in enumerate(row_data, 1):
+            column_letter = get_column_letter(column_index)
+            sheet[f"{column_letter}1"] = cell_value  # type: ignore
+            # Adjust column width based on cell content
+            column_dimensions = sheet.column_dimensions[column_letter]  # type: ignore
+            column_dimensions.width = max(column_dimensions.width, len(str(cell_value)))
+
+        tab = Table(
+            displayName="Table1", ref=f"A1:{get_column_letter(len(row_data))}10"
+        )
+        style = TableStyleInfo(name="TableStyleMedium9", showRowStripes=True)
+        tab.tableStyleInfo = style
+        sheet.add_table(tab)
+
+        if path is not None:
+            # write directly to file
+            workbook.save(path)
+            return None
+
+        # save the file in-memory and return the resulting buffer
+        f = BytesIO()
+        workbook.save(f)
+        return f
 
 
 @dataclass

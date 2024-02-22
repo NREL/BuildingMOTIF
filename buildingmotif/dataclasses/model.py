@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 import pyshacl
 import rdflib
 import rfc3987
+from rdflib import URIRef
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
@@ -137,7 +138,9 @@ class Model:
         self.graph += graph
 
     def validate(
-        self, shape_collections: Optional[List[ShapeCollection]] = None
+        self,
+        shape_collections: Optional[List[ShapeCollection]] = None,
+        error_on_missing_imports: bool = True,
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
@@ -150,6 +153,10 @@ class Model:
             graph should be validated. If an empty list or None is provided, the
             model will be validated against the model's manifest.
         :type shape_collections: List[ShapeCollection]
+        :param error_on_missing_imports: if True, raises an error if any of the dependency
+            ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
+            to True
+        :type error_on_missing_imports: bool, optional
         :return: An object containing useful properties/methods to deal with
             the validation results
         :rtype: ValidationContext
@@ -162,8 +169,10 @@ class Model:
             shape_collections = [self.get_manifest()]
         # aggregate shape graphs
         for sc in shape_collections:
-            # inline sh:node for interpretability
-            shapeg += sc.graph
+            shapeg += sc.resolve_imports(
+                error_on_missing_imports=error_on_missing_imports
+            ).graph
+        # inline sh:node for interpretability
         shapeg = rewrite_shape_graph(shapeg)
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
@@ -265,10 +274,20 @@ class Model:
         results = {}
 
         for shape_uri in shapes_to_test:
-            targets = model_graph.triples((None, A, target_class))
+            targets = model_graph.query(
+                f"""
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?target
+                WHERE {{
+                    ?target rdf:type/rdfs:subClassOf* <{target_class}>
+
+                }}
+            """
+            )
             temp_model_graph = copy_graph(model_graph)
-            for s, _, _ in targets:
-                temp_model_graph.add((s, A, shape_uri))
+            for (s,) in targets:
+                temp_model_graph.add((URIRef(s), A, shape_uri))
 
             temp_model_graph += ontology_graph.cbd(shape_uri)
 
@@ -296,3 +315,12 @@ class Model:
         :rtype: ShapeCollection
         """
         return ShapeCollection.load(self._manifest_id)
+
+    def update_manifest(self, manifest: ShapeCollection):
+        """Updates the manifest for this model by adding in the contents
+        of the shape graph inside the provided SHapeCollection
+
+        :param manifest: the ShapeCollection containing additional shapes against which to validate this model
+        :type manifest: ShapeCollection
+        """
+        self.get_manifest().graph += manifest.graph

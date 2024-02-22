@@ -1,3 +1,4 @@
+from io import StringIO
 from typing import Dict
 
 import flask
@@ -9,6 +10,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.template import serialize
 from buildingmotif.dataclasses import Model, Template
+from buildingmotif.ingresses import CSVIngress, TemplateIngress
 
 blueprint = Blueprint("templates", __name__)
 
@@ -37,7 +39,7 @@ def get_template(templates_id: int) -> flask.Response:
     include_parameters = request.args.get("parameters", False)
 
     try:
-        template = current_app.building_motif.table_connection.get_db_template_by_id(
+        template = current_app.building_motif.table_connection.get_db_template(
             templates_id
         )
     except NoResultFound:
@@ -48,8 +50,54 @@ def get_template(templates_id: int) -> flask.Response:
     return jsonify(serialize(template, include_parameters)), status.HTTP_200_OK
 
 
-@blueprint.route("/<template_id>/evaluate", methods=(["POST"]))
-def evaluate(template_id: int) -> flask.Response:
+@blueprint.route("/<template_id>/evaluate/ingress", methods=(["POST"]))
+def evaluate_ingress(template_id: int) -> flask.Response:
+    # get template
+    try:
+        template = Template.load(template_id)
+    except NoResultFound:
+        return {
+            "message": f"No template with id {template_id}"
+        }, status.HTTP_404_NOT_FOUND
+
+    # get model
+    model_id = request.args.get("model_id")
+    if model_id is None:
+        return {
+            "message": "must contain query param 'model_id'"
+        }, status.HTTP_400_BAD_REQUEST
+    try:
+        model = Model.load(model_id)
+    except NoResultFound:
+        return {"message": f"No model with id {model_id}"}, status.HTTP_404_NOT_FOUND
+
+    # get file
+    raw_data = flask.request.get_data()
+    if raw_data is None:
+        return {"message": "no file recieved."}, status.HTTP_404_NOT_FOUND
+
+    # evaluate template
+    try:
+        data = StringIO(raw_data.decode("utf-8"))
+        csv_ingress = CSVIngress(data=data)
+        template_ingress = TemplateIngress(
+            template.inline_dependencies(), None, csv_ingress
+        )
+        graph_or_template = template_ingress.graph(model.name)
+    except Exception:
+        return {"message": "Invalid csv."}, status.HTTP_400_BAD_REQUEST
+
+    # parse bindings from input JSON
+    if isinstance(graph_or_template, Template):
+        graph = graph_or_template.body
+    else:
+        graph = graph_or_template
+
+    return graph.serialize(format="ttl"), status.HTTP_200_OK
+
+
+@blueprint.route("/<template_id>/evaluate/bindings", methods=(["POST"]))
+def evaluate_bindings(template_id: int) -> flask.Response:
     """evaluate template with giving binding
 
     :param template_id: id of template

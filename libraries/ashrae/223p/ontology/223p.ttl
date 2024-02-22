@@ -1363,8 +1363,6 @@ FILTER (?system != ?homeSystem) .
     sh:returnType xsd:boolean .
 
 <http://data.ashrae.org/standard223/1.0/extension/function/shacl> rdfs:comment "This graph contains some SPARQLFunction definitions, which are part of SHACL Advanced Features (SHACL AF). Thus, they may not be supported by all SHACL implementations." ;
-    owl:imports <http://data.ashrae.org/standard223/1.0/model/all>,
-        sh: ;
     owl:versionInfo "Created with TopBraid Composer" .
 
 g36:AirFlowStationAnnotation a sh:NodeShape ;
@@ -1426,36 +1424,6 @@ g36:VAV_4-1 a s223:Class,
                             sh:minCount 1 ;
                             sh:path [ sh:inversePath s223:contains ] ] ] ;
             sh:path s223:connectedTo ] .
-
-<http://data.ashrae.org/standard223/1.0/extensions/settings> rdfs:comment """This file can be used to control which extensions are to be loaded with the 223 ontology by importing the appropriate graph(s). Options include:
-For access to magic properties and other SPIN functions - http://data.ashraw.org/standard223/1.0/function/spin.  
-For validation of the schema, model, or data - http://data.ashrae.org/standard223/1.0/validation/schema (or model or data).  
-For inferred properties - http://data.ashrae.org/standard223/1.0/inference/model-rules (and/or schema-rules, data-rules)""" ;
-    owl:imports <http://data.ashrae.org/standard223/1.0/extension/equipments>,
-        <http://data.ashrae.org/standard223/1.0/extension/equipments-extensions-rules>,
-        <http://data.ashrae.org/standard223/1.0/extension/g36>,
-        <http://data.ashrae.org/standard223/1.0/inference/data-rules>,
-        <http://data.ashrae.org/standard223/1.0/inference/model-rules>,
-        <http://data.ashrae.org/standard223/1.0/inference/owl-subset>,
-        <http://data.ashrae.org/standard223/1.0/validation/data>,
-        <http://data.ashrae.org/standard223/1.0/validation/model>,
-        <http://data.ashrae.org/standard223/1.0/validation/schema> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
-<http://data.ashrae.org/standard223/1.0/function/spin> owl:imports <http://spinrdf.org/spl> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
-<http://data.ashrae.org/standard223/1.0/model/core> spin:imports <http://topbraid.org/spin/owlrl-all> ;
-    owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
-<http://data.ashrae.org/standard223/1.0/model/device> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
-<http://data.ashrae.org/standard223/1.0/model/fnblck> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> .
-
-<http://data.ashrae.org/standard223/1.0/vocab/enumeration> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
 
 spin:allProperties a spin:MagicProperty ;
     rdfs:label "Find all Properties" ;
@@ -1676,13 +1644,6 @@ s223:produces a rdf:Property ;
 
 s223:scp a rdf:Property .
 
-<http://data.ashrae.org/standard223/1.0/extension/equipments> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> .
-
-<http://data.ashrae.org/standard223/1.0/extension/equipments-extensions-rules> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> .
-
-<http://data.ashrae.org/standard223/1.0/extension/g36> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
 g36:AirFlowStation a s223:Class,
         sh:NodeShape ;
     rdfs:label "Air Flow Station" ;
@@ -1770,23 +1731,6 @@ g36:ZoneRule a sh:NodeShape ;
                                                     sh:path [ sh:inversePath s223:hasMeasurementLocation ] ] ] ;
                                     sh:path s223:connectedTo ] ] ] ] .
 
-<http://data.ashrae.org/standard223/1.0/inference/data-rules> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
-<http://data.ashrae.org/standard223/1.0/inference/model-rules> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
-<http://data.ashrae.org/standard223/1.0/inference/owl-subset> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
-<http://data.ashrae.org/standard223/1.0/validation/data> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
-<http://data.ashrae.org/standard223/1.0/validation/model> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
-
-<http://data.ashrae.org/standard223/1.0/validation/schema> owl:imports <http://data.ashrae.org/standard223/1.0/model/all> ;
-    owl:versionInfo "Created with TopBraid Composer" .
 
 rdfs:comment a rdf:Property ;
     rdfs:label "Description of constraints for s223" ;
