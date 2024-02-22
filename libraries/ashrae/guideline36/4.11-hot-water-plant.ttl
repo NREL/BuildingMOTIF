@@ -63,11 +63,7 @@
 
 :boiler a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Boiler" ;
-    sh:or (
-        sh:class brick:Electric_Boiler
-        sh:class brick:Condensing_Natural_Gas_Boiler
-        sh:class brick:Noncondensing_Natural_Gas_Boiler
-    ) ;
+    sh:class brick:Boiler ;
     # required
     sh:property [
         rdfs:label "Boiler enable" ;
@@ -93,6 +89,7 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
+    # applications
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node :isolation-valve ] ;
@@ -118,8 +115,8 @@
         rdfs:label "Boiler isolation valve" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:On_Off_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
     ] ;
     # Retain the following two points for optional valve end switch status feedback.
     # optional
@@ -183,7 +180,7 @@
 
 :constant-primary-only-loop a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Constant Primary-Only HW Loop" ;
-    sh:class :primary-only-loop ;
+    sh:node :primary-only-loop ;
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:constant-speed-pump ] ;
@@ -281,7 +278,7 @@
     sh:node :primary-loop ;
     sh:property [
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:constant-speed-pump ] ;
+        sh:qualifiedValueShape [ sh:node components:variable-speed-pump ] ;
         sh:qualifiedMinCount 1 ;
     ] .
 
