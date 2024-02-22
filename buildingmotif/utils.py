@@ -532,3 +532,28 @@ def skip_uri(uri: URIRef) -> bool:
         if uri.startswith(ns):
             return True
     return False
+
+
+def approximate_graph_hash(graph: Graph) -> int:
+    """
+    Returns a cryptographic hash of the graph contents.
+    This method does not currently guarrantee that two isomorphic graphs will produce the same graph.
+    It is intended to differentiate between a graph and a modified version of that graph.
+
+    In the future canonicalization (https://www.w3.org/TR/rdf-canon/) may allow for graph isomorphism to be reflected
+    in a graph's hash.
+
+    :param graph: graph to hash
+    :type graph: graph
+
+    :return: integer hash
+    :rtype: int
+    """
+    # Copy graph to memory (improved performance if graph is backed by a DB store)
+    graph_prime = copy_graph(graph)
+
+    # nt is the best performing serialization format I tested.
+    # For medium-office-compiled it takes 0.03s vs 0.5 for ttl
+    graph_string = graph_prime.serialize(format="nt")
+
+    return hash(graph_string)
