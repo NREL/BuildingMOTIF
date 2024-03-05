@@ -1,5 +1,5 @@
 import secrets
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
 from rdflib.term import Node
@@ -26,6 +26,18 @@ class TemplateBuilderContext:
         self.templates: Dict[str, Template] = {}
         self.wrappers: List[TemplateWrapper] = []
         self.ns: Namespace = ns
+        # stores triples outside of the templates
+        self._g: Graph = Graph()
+
+    def add(self, triple: Tuple):
+        """
+        Adds a triple to the context
+
+        :param s: The subject of the triple
+        :param p: The predicate of the triple
+        :param o: The object of the triple
+        """
+        self._g.add(triple)
 
     def add_template(self, template: Template):
         """
@@ -61,6 +73,7 @@ class TemplateBuilderContext:
         :return: A graph containing all of the compiled templates
         """
         graph = Graph()
+        graph += self._g
         for wrapper in self.wrappers:
             graph += wrapper.compile()
         # add a label to every instance if it doesn't have one. Make
