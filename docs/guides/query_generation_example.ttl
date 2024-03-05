@@ -1,0 +1,42 @@
+@prefix ns1: <https://brickschema.org/schema/Brick#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<urn:building1/> a owl:Ontology .
+
+<urn:building1/FCU048> a ns1:Fan_Coil_Unit ;
+    ns1:feeds <urn:building1/zone_9f11860a> ;
+    ns1:hasPart <urn:building1/chw_coil_95d8a485>,
+        <urn:building1/hw_coil_b7c81d9f> ;
+    ns1:hasPoint <urn:building1/:BuildingName_01:FCU048_UI22_SaTmp>,
+        <urn:building1/:BuildingName_01:FCU048_UnoccClgSpt>,
+        <urn:building1/:BuildingName_01:FCU048_UnoccHtgSpt>,
+        <urn:building1/occ_clg_sp_8c1848b7>,
+        <urn:building1/occ_cmd_5ac79e87>,
+        <urn:building1/occ_htg_sp_461c60c5>,
+        <urn:building1/occ_status_6a8ed025> .
+
+<urn:building1/zone_9f11860a> a ns1:HVAC_Zone ;
+    ns1:hasPart <urn:building1/048> .
+
+<urn:building1/048> a ns1:Space ;
+    ns1:hasPoint <urn:building1/:BuildingName_01:FCU048_RoomTmp>,
+        <urn:building1/:BuildingName_01:FCU048_Room_RH> .
+
+<urn:building1/:BuildingName_01:FCU048_RoomTmp> a ns1:Air_Temperature_Sensor ;
+    rdfs:label ":BuildingName_01:FCU048_RoomTmp" .
+
+<urn:building1/:BuildingName_01:FCU048_Room_RH> a ns1:Relative_Humidity_Sensor ;
+    rdfs:label ":BuildingName_01:FCU048_Room_RH" .
+
+<urn:building1/chw_coil_95d8a485> a ns1:Cooling_Coil ;
+    ns1:hasPart <urn:building1/chw_coil-chw_vlv_df118645> .
+
+<urn:building1/chw_coil-chw_vlv_df118645> a ns1:Chilled_Water_Valve ;
+    ns1:hasPoint <urn:building1/:BuildingName_01:FCU048_ChwVlvPos> .
+
+<urn:building1/:BuildingName_01:FCU048_ChwVlvPos> a ns1:Valve_Position_Command ;
+    rdfs:label ":BuildingName_01:FCU048_ChwVlvPos" .
+
+<urn:building1/occ_clg_sp_8c1848b7> a ns1:Occupied_Cooling_Temperature_Setpoint .
+<urn:building1/occ_htg_sp_461c60c5> a ns1:Occupied_Heating_Temperature_Setpoint .
