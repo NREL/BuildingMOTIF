@@ -215,6 +215,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -508,110 +509,205 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-02-22 21:16:17,792 | root |  WARNING: Warning: could not resolve dependency dep&lt;name=fan bindings={&#39;name&#39;: &#39;fan&#39;} library=guideline36 id=None&gt;
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,962 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Occupancy_Sensor
 </pre></div>
 </div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NoResultFound</span><span class="g g-Whitespace">                             </span>Traceback (most recent call last)
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:316,</span> in <span class="ni">TableConnection.get_db_template_by_name</span><span class="nt">(self, name)</span>
-<span class="g g-Whitespace">    </span><span class="mi">314</span> <span class="k">try</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">315</span>     <span class="n">db_template</span> <span class="o">=</span> <span class="p">(</span>
-<span class="ne">--&gt; </span><span class="mi">316</span>         <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBTemplate</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBTemplate</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">317</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">318</span> <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/sqlalchemy/orm/query.py:2870,</span> in <span class="ni">Query.one</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2853</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Return exactly one result or raise an exception.</span>
-<span class="g g-Whitespace">   </span><span class="mi">2854</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">2855</span><span class="sd"> Raises ``sqlalchemy.orm.exc.NoResultFound`` if the query selects</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2868</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">2869</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">2870</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">()</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:1522,</span> in <span class="ni">ScalarResult.one</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1515</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Return exactly one object or raise an exception.</span>
-<span class="g g-Whitespace">   </span><span class="mi">1516</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">1517</span><span class="sd"> Equivalent to :meth:`_engine.Result.one` except that</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1520</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">1521</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">1522</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_only_one_row</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1523</span>     <span class="n">raise_for_second_row</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">raise_for_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span>
-<span class="g g-Whitespace">   </span><span class="mi">1524</span> <span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:562,</span> in <span class="ni">ResultInternal._only_one_row</span><span class="nt">(self, raise_for_second_row, raise_for_none, scalar)</span>
-<span class="g g-Whitespace">    </span><span class="mi">561</span> <span class="k">if</span> <span class="n">raise_for_none</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">562</span>     <span class="k">raise</span> <span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">563</span>         <span class="s2">&quot;No row was found when one was required&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">564</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">565</span> <span class="k">else</span><span class="p">:</span>
-
-<span class="ne">NoResultFound</span>: No row was found when one was required
-
-<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
-
-<span class="ne">NoResultFound</span><span class="g g-Whitespace">                             </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">24</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="c1"># load libraries excluded from the python package (available from the repository)</span>
-<span class="g g-Whitespace">     </span><span class="mi">23</span> <span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">24</span> <span class="n">g36</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../libraries/ashrae/guideline36&quot;</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:194,</span> in <span class="ni">Library.load</span><span class="nt">(cls, db_id, ontology_graph, directory, name, overwrite)</span>
-<span class="g g-Whitespace">    </span><span class="mi">192</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">src</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-<span class="g g-Whitespace">    </span><span class="mi">193</span>         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">194</span>     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_from_directory</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">195</span> <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">196</span>     <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:352,</span> in <span class="ni">Library._load_from_directory</span><span class="nt">(cls, directory, overwrite)</span>
-<span class="g g-Whitespace">    </span><span class="mi">350</span>     <span class="n">lib</span><span class="o">.</span><span class="n">_read_yml_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">351</span> <span class="c1"># now that we have all the templates, we can populate the dependencies</span>
-<span class="ne">--&gt; </span><span class="mi">352</span> <span class="n">lib</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">353</span> <span class="c1"># load shape collections from all ontology files in the directory</span>
-<span class="g g-Whitespace">    </span><span class="mi">354</span> <span class="n">lib</span><span class="o">.</span><span class="n">_load_shapes_from_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:412,</span> in <span class="ni">Library._resolve_template_dependencies</span><span class="nt">(self, template_id_lookup, dependency_cache)</span>
-<span class="g g-Whitespace">    </span><span class="mi">410</span>             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">411</span>                 <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: could not resolve dependency </span><span class="si">{</span><span class="n">dep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">412</span>                 <span class="k">raise</span> <span class="n">e</span>
-<span class="g g-Whitespace">    </span><span class="mi">413</span> <span class="c1"># check that all dependencies are valid (use parameters that exist, etc)</span>
-<span class="g g-Whitespace">    </span><span class="mi">414</span> <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:408,</span> in <span class="ni">Library._resolve_template_dependencies</span><span class="nt">(self, template_id_lookup, dependency_cache)</span>
-<span class="g g-Whitespace">    </span><span class="mi">406</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">_template_dependency</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">407</span>     <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">408</span>         <span class="n">dependee</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_template</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">409</span>         <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">410</span>     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:87,</span> in <span class="ni">_template_dependency.to_template</span><span class="nt">(self, id_lookup)</span>
-<span class="g g-Whitespace">     </span><span class="mi">84</span> <span class="c1"># if not in the local cache, then search the database for the template</span>
-<span class="g g-Whitespace">     </span><span class="mi">85</span> <span class="c1"># within the given library</span>
-<span class="g g-Whitespace">     </span><span class="mi">86</span> <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">87</span> <span class="k">return</span> <span class="n">library</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_name</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:531,</span> in <span class="ni">Library.get_template_by_name</span><span class="nt">(self, name)</span>
-<span class="g g-Whitespace">    </span><span class="mi">522</span> <span class="k">def</span> <span class="nf">get_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">523</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Get template by name from library.</span>
-<span class="g g-Whitespace">    </span><span class="mi">524</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">525</span><span class="sd">     :param name: template name</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">529</span><span class="sd">     :rtype: Template</span>
-<span class="g g-Whitespace">    </span><span class="mi">530</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">531</span>     <span class="n">dbt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_template_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">532</span>     <span class="k">if</span> <span class="n">dbt</span><span class="o">.</span><span class="n">library_id</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">533</span>         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Template </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not in library </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:319,</span> in <span class="ni">TableConnection.get_db_template_by_name</span><span class="nt">(self, name)</span>
-<span class="g g-Whitespace">    </span><span class="mi">315</span>     <span class="n">db_template</span> <span class="o">=</span> <span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">316</span>         <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBTemplate</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBTemplate</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">317</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">318</span> <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">319</span>     <span class="k">raise</span> <span class="n">NoResultFound</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No template found with name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">320</span> <span class="k">return</span> <span class="n">db_template</span>
-
-<span class="ne">NoResultFound</span>: No template found with name fan
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,963 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,964 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Operating_Mode_Status
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,966 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,967 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,967 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,968 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Damper_Position_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,968 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Valve_Position_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,969 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Frequency_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,969 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Start_Stop_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,970 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Fan_Status
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,970 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#CO2_Level_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,971 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Occupancy_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,971 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,972 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#CO2_Level_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,972 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/box-damper-position
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,973 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,974 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/occupancy-sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,975 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-co2-level
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,975 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/window-switch
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,976 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/discharge-airflow
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,976 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Damper_Position_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,977 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/hot-deck
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,977 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/cold-deck
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,978 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,978 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-co2-level
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,979 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/occupancy-sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,980 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Valve_Position_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,980 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,981 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,981 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Damper_Position_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,981 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Frequency_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,982 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Start_Stop_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,982 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Fan_Status
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,983 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,983 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,983 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/hot-deck
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,984 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/cold-deck
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,984 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Discharge_Air_Flow_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,985 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,985 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-co2-level
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,985 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/occupancy-sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,986 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Damper_Position_Command
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,992 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,992 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,993 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,993 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,994 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,994 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,994 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,995 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,995 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,996 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,996 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,996 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,997 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-ra-damper
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,997 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,998 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,998 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,998 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,999 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/clg-signal
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,999 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/htg-signal
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:56,999 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/zone-temperature
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:57,000 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/occupancy-sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:57,002 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/zone-co2-level
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:57,003 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-05 21:54:57,003 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Temperature_Setpoint
 </pre></div>
 </div>
 </div>
@@ -641,6 +737,15 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
+ - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Supply_Fan
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="model-correction-with-templates">
@@ -662,6 +767,41 @@ document.write(`
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Template body (autogenerated):&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="mi">79</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Name (autogenerated): resolve66bd2aeb
+Parameters (autogenerated): {&#39;name&#39;, &#39;p45&#39;, &#39;p47&#39;, &#39;p46&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+@prefix default4: &lt;urn:ashrae/g36/4.8/sz-vav-ahu/&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPart &lt;urn:___param___#name&gt; .
+
+&lt;urn:___param___#name&gt; a brick:Supply_Fan,
+        default4:sa-fan ;
+    brick:hasPoint &lt;urn:___param___#p45&gt;,
+        &lt;urn:___param___#p46&gt;,
+        &lt;urn:___param___#p47&gt; .
+
+&lt;urn:___param___#p45&gt; a brick:Frequency_Command .
+
+&lt;urn:___param___#p46&gt; a brick:Start_Stop_Command .
+
+&lt;urn:___param___#p47&gt; a brick:Fan_Status .
+
+
+-------------------------------------------------------------------------------
+Name (autogenerated): resolvefbd88a8f
+Parameters (autogenerated): {&#39;name&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:___param___#name&gt; a brick:Supply_Fan .
+
+
+-------------------------------------------------------------------------------
 </pre></div>
 </div>
 </div>
@@ -704,12 +844,25 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p45
+p47
+p46
+Added supply fan urn:bldg/Core_ZN-PSC_AC-Fan
+</pre></div>
+</div>
+</div>
 </div>
 <p>We use the same code as before to ask BuildingMOTIF if the model is now valid:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
 </pre></div>
 </div>
 </div>
@@ -722,6 +875,42 @@ document.write(`
 
 <span class="c1">#save model</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial3_model.ttl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+@prefix default4: &lt;urn:ashrae/g36/4.8/sz-vav-ahu/&gt; .
+@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+
+&lt;urn:bldg/&gt; a owl:Ontology .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
+    brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Supply_Fan,
+        default4:sa-fan ;
+    brick:hasPoint &lt;urn:bldg/Core_ZN-PSC_AC-Fanp45&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Fanp46&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Fanp47&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Fanp45&gt; a brick:Frequency_Command .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Fanp46&gt; a brick:Start_Stop_Command .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Fanp47&gt; a brick:Fan_Status .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; a brick:Heating_Coil .
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=383b80e7-2b73-48c1-89b3-eb8627a98527 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
