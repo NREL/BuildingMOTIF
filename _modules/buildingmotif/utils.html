@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
@@ -18,12 +18,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -37,9 +37,9 @@
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
-  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -143,6 +143,7 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="../../README.html">
@@ -353,6 +354,7 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -362,6 +364,7 @@ document.write(`
   </button>
 `);
 </script>
+
 
 <script>
 document.write(`
@@ -640,10 +643,24 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">param</span> <span class="o">=</span> <span class="n">_gensym</span><span class="p">()</span>
             <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">param</span><span class="p">))</span>
-            <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">otype</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
-            <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">otype</span><span class="p">))</span>
 
-        <span class="c1"># add &#39;hasValue&#39;</span>
+            <span class="c1"># if otype is object of sh:class and it&#39;s also a shape, add it to the deps</span>
+            <span class="k">if</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">otype</span><span class="p">)</span> <span class="ow">in</span> <span class="n">shape_graph</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">otype</span><span class="p">,</span>
+                <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+                <span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">,</span>
+            <span class="p">)</span> <span class="ow">in</span> <span class="n">shape_graph</span><span class="p">:</span>
+                <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">otype</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
+                <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">otype</span><span class="p">))</span>
+
+            <span class="c1"># if otype is a shape, add it to the deps</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">otype</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">)</span> <span class="ow">in</span> <span class="n">shape_graph</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="kc">None</span><span class="p">,</span>
+                <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">],</span>
+                <span class="n">otype</span><span class="p">,</span>
+            <span class="p">)</span> <span class="ow">in</span> <span class="n">shape_graph</span><span class="p">:</span>
+                <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">otype</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
+                <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">otype</span><span class="p">))</span>
 
         <span class="n">pvalue</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;hasValue&quot;</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">pvalue</span><span class="p">:</span>
@@ -660,8 +677,13 @@ document.write(`
     <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
         <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">cls</span><span class="p">))</span>
 
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">shape_name</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">])</span>
+    <span class="c1"># for all objects of sh:node, add them to the deps if they haven&#39;t been added</span>
+    <span class="c1"># already through the property shapes above</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">cbd</span><span class="p">(</span><span class="n">shape_name</span><span class="p">)</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">],</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="c1"># if node is already in deps, skip it</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">==</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">deps</span><span class="p">):</span>
+            <span class="k">continue</span>
         <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="p">{</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">}}</span>
         <span class="p">)</span>  <span class="c1"># tie to root param</span>
@@ -940,7 +962,7 @@ document.write(`
               
               
                 <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                  
 <div class="prev-next-area">
 </div>
                 </footer>
@@ -965,6 +987,7 @@ By NREL
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
       © Copyright 2023.
@@ -991,8 +1014,8 @@ By NREL
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>
