@@ -112,7 +112,7 @@ class Library:
             if overwrite:
                 cls._clear_library(db_library)
             else:
-                logging.warn(
+                logging.warning(
                     f'Library {name} already exists in database. To ovewrite load library with "overwrite=True"'  # noqa
                 )
         except sqlalchemy.exc.NoResultFound:
@@ -334,7 +334,7 @@ class Library:
 
         if not overwrite:
             if cls._library_exists(directory.name):
-                logging.warn(
+                logging.warning(
                     f'Library "{directory.name}" already exists in database and "overwrite=False". Returning existing library.'  # noqa
                 )
                 return Library.load(name=directory.name)
@@ -422,16 +422,18 @@ class Library:
         # if the dependency is not in the local cache, then search through this library's imports
         # for the template
         for imp in self.graph_imports:
-            library = Library.load(name=imp)
             try:
+                library = Library.load(name=imp)
                 dependee = library.get_template_by_name(dep["template"])
                 template.add_dependency(dependee, dep["args"])
                 return
             except Exception as e:
                 logging.debug(
-                    f"Could not find dependee {dep['template']} in library {library.name}: {e}"
+                    f"Could not find dependee {dep['template']} in library {imp}: {e}"
                 )
-        logging.warn(f"Warning: could not find dependee {dep['template']}")
+        logging.warning(
+            f"Warning: could not find dependee {dep['template']} in libraries {self.graph_imports}"
+        )
 
     def _resolve_template_dependencies(
         self,
