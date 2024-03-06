@@ -105,6 +105,9 @@ The name of the template is the IRI of the SHACL Node Shape.
 
 Dependencies between templates can be done explicitly (for YAML-based templates) or implicitly (for SHACL-based templates).
 
+**Remember to load libraries containing dependencies before loading in libraries containing the dependents**.
+For example, it is generally recommended to import your base ontologies (Brick, ASHRAE 223P, etc) before any application libraries, as the application libraries will depend on concepts defined in the ontologies.
+
 ### Explicit Template Dependencies
 
 A template dependency is a dictionary with the following keys:
@@ -157,7 +160,6 @@ Because `:Air_Flow_Sensor` is defined in the same graph as `vav_shape`, Building
 Because `brick:Air_Temperature_Sensor` is not defined in the graph below, BuildingMOTIF searches the imported graph `https://brickschema.org/schema/1.3/Brick` for
 the definition.
 
-**Remember to load libraries containing dependencies before loading in libraries containing the dependents**.
 
 ```ttl
 @prefix brick: <https://brickschema.org/schema/Brick#> .
