@@ -200,7 +200,9 @@ the definition.
 (template-inline)=
 ## Template Inlining
 
+Coming soon...
+
 (template-eval)=
 ## Template Evaluation
 
-All templates must have a `name` parameter.
+Coming soon...
