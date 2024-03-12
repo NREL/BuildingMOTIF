@@ -952,6 +952,10 @@ document.write(`
 <span class="sd">    :type data_graph: Graph</span>
 <span class="sd">    :param shape_graph: the shape graph to validate against</span>
 <span class="sd">    :type shape_graph: Graph, optional</span>
+<span class="sd">    :param engine: the SHACL engine to use, defaults to &quot;topquadrant&quot;</span>
+<span class="sd">    :type engine: str, optional</span>
+<span class="sd">    :return: a tuple containing the validation result, the validation report, and the validation report string</span>
+<span class="sd">    :rtype: Tuple[bool, Graph, str]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;topquadrant&quot;</span><span class="p">:</span>
@@ -976,8 +980,8 @@ document.write(`
 
 
 <div class="viewcode-block" id="shacl_inference"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.shacl_inference">[docs]</a><span class="k">def</span> <span class="nf">shacl_inference</span><span class="p">(</span>
-    <span class="n">data_graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">shape_graph</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Graph</span><span class="p">],</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;topquadrant&quot;</span>
-<span class="p">):</span>
+    <span class="n">data_graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">shape_graph</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Graph</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;topquadrant&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Infer new triples in the data graph using the shape graph.</span>
 <span class="sd">    Edits the data graph in place. Uses the fastest inference method available.</span>
@@ -990,6 +994,8 @@ document.write(`
 <span class="sd">    :type shape_graph: Optional[Graph]</span>
 <span class="sd">    :param engine: the SHACL engine to use, defaults to &quot;topquadrant&quot;</span>
 <span class="sd">    :type engine: str, optional</span>
+<span class="sd">    :return: the data graph with inferred triples</span>
+<span class="sd">    :rtype: Graph</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;topquadrant&quot;</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1010,7 +1016,8 @@ document.write(`
         <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_graph</span></div>
 </pre></div>
 
                 </article>
