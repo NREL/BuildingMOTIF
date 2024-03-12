@@ -547,6 +547,10 @@ def shacl_validate(
     :type data_graph: Graph
     :param shape_graph: the shape graph to validate against
     :type shape_graph: Graph, optional
+    :param engine: the SHACL engine to use, defaults to "topquadrant"
+    :type engine: str, optional
+    :return: a tuple containing the validation result, the validation report, and the validation report string
+    :rtype: Tuple[bool, Graph, str]
     """
 
     if engine == "topquadrant":
@@ -571,8 +575,8 @@ def shacl_validate(
 
 
 def shacl_inference(
-    data_graph: Graph, shape_graph: Optional[Graph], engine="topquadrant"
-):
+    data_graph: Graph, shape_graph: Optional[Graph] = None, engine="topquadrant"
+) -> Graph:
     """
     Infer new triples in the data graph using the shape graph.
     Edits the data graph in place. Uses the fastest inference method available.
@@ -585,6 +589,8 @@ def shacl_inference(
     :type shape_graph: Optional[Graph]
     :param engine: the SHACL engine to use, defaults to "topquadrant"
     :type engine: str, optional
+    :return: the data graph with inferred triples
+    :rtype: Graph
     """
     if engine == "topquadrant":
         try:
@@ -606,3 +612,4 @@ def shacl_inference(
         js=True,
         allow_warnings=True,
     )
+    return data_graph
