@@ -10,7 +10,13 @@ from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.namespaces import A
-from buildingmotif.utils import Triple, copy_graph, rewrite_shape_graph
+from buildingmotif.utils import (
+    Triple,
+    copy_graph,
+    rewrite_shape_graph,
+    shacl_inference,
+    shacl_validate,
+)
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -141,6 +147,7 @@ class Model:
         self,
         shape_collections: Optional[List[ShapeCollection]] = None,
         error_on_missing_imports: bool = True,
+        engine: str = "pyshacl",
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
@@ -157,6 +164,10 @@ class Model:
             ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
             to True
         :type error_on_missing_imports: bool, optional
+        :param engine: the engine to use for validation. "pyshacl" or "topquadrant". Using topquadrant
+            requires Java to be installed on this machine, and the "topquadrant" feature on BuildingMOTIF,
+            defaults to "pyshacl"
+        :type engine: str, optional
         :return: An object containing useful properties/methods to deal with
             the validation results
         :rtype: ValidationContext
@@ -176,16 +187,12 @@ class Model:
         shapeg = rewrite_shape_graph(shapeg)
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
-        valid, report_g, report_str = pyshacl.validate(
-            data_graph,
-            shacl_graph=shapeg,
-            ont_graph=shapeg,
-            advanced=True,
-            js=True,
-            allow_warnings=True,
-            # inplace=True,
-        )
-        assert isinstance(report_g, rdflib.Graph)
+
+        # perform inference on the data graph
+        shacl_inference(data_graph, shapeg)
+
+        # validate the data graph
+        valid, report_g, report_str = shacl_validate(data_graph, shapeg, engine)
         return ValidationContext(
             shape_collections,
             valid,

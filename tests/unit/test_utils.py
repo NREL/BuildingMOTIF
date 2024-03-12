@@ -1,4 +1,3 @@
-import pyshacl  # type: ignore
 import pytest
 from rdflib import Graph, Namespace, URIRef
 
@@ -12,6 +11,7 @@ from buildingmotif.utils import (
     get_template_parts_from_shape,
     replace_nodes,
     rewrite_shape_graph,
+    shacl_validate,
     skip_uri,
 )
 
@@ -112,7 +112,7 @@ def test_get_parameters():
     assert get_parameters(body) == {"name", "1", "2", "3", "4"}
 
 
-def test_inline_sh_nodes():
+def test_inline_sh_nodes(shacl_engine):
     shape_g = Graph()
     shape_g.parse(
         data="""@prefix sh: <http://www.w3.org/ns/shacl#> .
@@ -143,21 +143,23 @@ def test_inline_sh_nodes():
     .
     """
     )
-    # should not raise an exception
-    pyshacl.validate(shape_g)
+    # should pass
+    valid, _, report = shacl_validate(shape_g, engine=shacl_engine)
+    assert valid, report
 
     shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
     assert len(shape1_cbd) == 3
 
     shape_g = rewrite_shape_graph(shape_g)
-    # should not raise an exception
-    pyshacl.validate(shape_g)
+    # should pass
+    valid, _, report = shacl_validate(shape_g, engine=shacl_engine)
+    assert valid, report
 
     shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
     assert len(shape1_cbd) == 8
 
 
-def test_inline_sh_and(bm: BuildingMOTIF):
+def test_inline_sh_and(bm: BuildingMOTIF, shacl_engine):
     sg = Graph()
     sg.parse(
         data=PREAMBLE
@@ -192,7 +194,7 @@ def test_inline_sh_and(bm: BuildingMOTIF):
     sc = ShapeCollection.create()
     sc.add_graph(new_sg)
 
-    ctx = model.validate([sc])
+    ctx = model.validate([sc], engine=shacl_engine)
     assert not ctx.valid
     assert (
         "Value class is not in classes (brick:Class2, brick:Class3)"
@@ -211,7 +213,7 @@ def test_inline_sh_and(bm: BuildingMOTIF):
     )
 
 
-def test_inline_sh_node(bm: BuildingMOTIF):
+def test_inline_sh_node(bm: BuildingMOTIF, shacl_engine):
     sg = Graph()
     sg.parse(
         data=PREAMBLE
@@ -246,7 +248,7 @@ def test_inline_sh_node(bm: BuildingMOTIF):
     sc = ShapeCollection.create()
     sc.add_graph(new_sg)
 
-    ctx = model.validate([sc])
+    ctx = model.validate([sc], engine=shacl_engine)
     assert not ctx.valid, ctx.report_string
     assert (
         "Value class is not in classes (brick:Class2, brick:Class3)"

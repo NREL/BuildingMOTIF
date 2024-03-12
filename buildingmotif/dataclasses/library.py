@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 import pygit2
-import pyshacl
 import rdflib
 import sqlalchemy
 import yaml
@@ -23,6 +22,7 @@ from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import (
     get_ontology_files,
     get_template_parts_from_shape,
+    shacl_inference,
     skip_uri,
 )
 
@@ -248,15 +248,7 @@ class Library:
         # expand the ontology graph before we insert it into the database. This will ensure
         # that the output of compiled models will not contain triples that really belong to
         # the ontology
-        pyshacl.validate(
-            data_graph=ontology,
-            shacl_graph=ontology,
-            ont_graph=ontology,
-            advanced=True,
-            inplace=True,
-            js=True,
-            allow_warnings=True,
-        )
+        shacl_inference(ontology, ontology)
 
         lib = cls.create(ontology_name, overwrite=overwrite)
 

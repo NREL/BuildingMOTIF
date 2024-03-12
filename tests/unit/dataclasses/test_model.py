@@ -53,7 +53,7 @@ def test_update_model_manifest(clean_building_motif):
     assert len(list(m.get_manifest().graph.subjects(RDF.type, SH.NodeShape))) == 2
 
 
-def test_validate_model_manifest(clean_building_motif):
+def test_validate_model_manifest(clean_building_motif, shacl_engine):
     m = Model.create(name="https://example.com", description="a very good model")
     m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
 
@@ -63,7 +63,7 @@ def test_validate_model_manifest(clean_building_motif):
     m.update_manifest(lib.get_shape_collection())
 
     # validate against manifest -- should fail
-    result = m.validate()
+    result = m.validate(engine=shacl_engine)
     assert not result.valid
 
     # add triples to graph to validate
@@ -85,11 +85,11 @@ def test_validate_model_manifest(clean_building_motif):
     m.graph.add((URIRef("https://example.com/temp"), A, BRICK.Temperature_Sensor))
 
     # validate against manifest -- should pass
-    result = m.validate()
+    result = m.validate(engine=shacl_engine)
     assert result.valid
 
 
-def test_validate_model_manifest_with_imports(clean_building_motif):
+def test_validate_model_manifest_with_imports(clean_building_motif, shacl_engine):
     m = Model.create(name="https://example.com", description="a very good model")
     m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
 
@@ -124,11 +124,11 @@ def test_validate_model_manifest_with_imports(clean_building_motif):
     )
 
     # validate against manifest -- should pass now
-    result = m.validate(error_on_missing_imports=False)
+    result = m.validate(engine=shacl_engine)
     assert result.valid, result.report_string
 
 
-def test_validate_model_explicit_shapes(clean_building_motif):
+def test_validate_model_explicit_shapes(clean_building_motif, shacl_engine):
     # load library
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
@@ -137,7 +137,7 @@ def test_validate_model_explicit_shapes(clean_building_motif):
     m = Model.create(name=BLDG)
     m.add_triples((BLDG["vav1"], A, BRICK.VAV))
 
-    ctx = m.validate([lib.get_shape_collection()])
+    ctx = m.validate([lib.get_shape_collection()], engine=shacl_engine)
     assert not ctx.valid
 
     m.add_triples((BLDG["vav1"], A, BRICK.VAV))
@@ -146,13 +146,13 @@ def test_validate_model_explicit_shapes(clean_building_motif):
     m.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["flow_sensor"]))
     m.add_triples((BLDG["flow_sensor"], A, BRICK.Air_Flow_Sensor))
 
-    ctx = m.validate([lib.get_shape_collection()])
+    ctx = m.validate([lib.get_shape_collection()], engine=shacl_engine)
     assert ctx.valid
 
     assert len(ctx.diffset) == 0
 
 
-def test_validate_model_with_failure(bm: BuildingMOTIF):
+def test_validate_model_with_failure(bm: BuildingMOTIF, shacl_engine):
     """
     Test that a model correctly validates
     """
@@ -184,7 +184,7 @@ def test_validate_model_with_failure(bm: BuildingMOTIF):
     model.add_graph(hvac_zone_instance)
 
     # validate the graph (should fail because there are no labels)
-    ctx = model.validate([shape_lib.get_shape_collection()])
+    ctx = model.validate([shape_lib.get_shape_collection()], engine=shacl_engine)
     assert isinstance(ctx, ValidationContext)
     assert not ctx.valid
     assert len(ctx.diffset) == 1
@@ -197,7 +197,7 @@ def test_validate_model_with_failure(bm: BuildingMOTIF):
 
     model.add_triples((bindings["name"], RDFS.label, Literal("hvac zone 1")))
     # validate the graph (should now be valid)
-    ctx = model.validate([shape_lib.get_shape_collection()])
+    ctx = model.validate([shape_lib.get_shape_collection()], engine=shacl_engine)
     assert isinstance(ctx, ValidationContext)
     assert ctx.valid
 
@@ -230,7 +230,7 @@ def test_get_manifest(clean_building_motif):
     assert isomorphic(manifest.load(manifest.id).graph, manifest.graph)
 
 
-def test_validate_with_manifest(clean_building_motif):
+def test_validate_with_manifest(clean_building_motif, shacl_engine):
     g = Graph()
     g.parse(
         data="""
@@ -267,5 +267,5 @@ def test_validate_with_manifest(clean_building_motif):
     manifest = model.get_manifest()
     manifest.add_graph(manifest_g)
 
-    ctx = model.validate(None)
+    ctx = model.validate(None, engine=shacl_engine)
     assert not ctx.valid, "Model validated but it should throw an error"

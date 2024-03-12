@@ -7,6 +7,7 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
+import pyshacl
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
@@ -532,3 +533,76 @@ def skip_uri(uri: URIRef) -> bool:
         if uri.startswith(ns):
             return True
     return False
+
+
+def shacl_validate(
+    data_graph: Graph, shape_graph: Optional[Graph] = None, engine="topquadrant"
+) -> Tuple[bool, Graph, str]:
+    """
+    Validate the data graph against the shape graph.
+    Uses the fastest validation method available. Use the 'topquadrant' feature
+    to use TopQuadrant's SHACL engine. Defaults to using PySHACL.
+
+    :param data_graph: the graph to validate
+    :type data_graph: Graph
+    :param shape_graph: the shape graph to validate against
+    :type shape_graph: Graph, optional
+    """
+
+    if engine == "topquadrant":
+        try:
+            from brick_tq_shacl.topquadrant_shacl import validate as tq_validate
+
+            return tq_validate(data_graph, shape_graph or Graph())  # type: ignore
+        except ImportError:
+            logging.info(
+                "TopQuadrant SHACL engine not available. Using PySHACL instead."
+            )
+            pass
+
+    return pyshacl.validate(
+        data_graph,
+        shacl_graph=shape_graph,
+        ont_graph=shape_graph,
+        advanced=True,
+        js=True,
+        allow_warnings=True,
+    )  # type: ignore
+
+
+def shacl_inference(
+    data_graph: Graph, shape_graph: Optional[Graph], engine="topquadrant"
+):
+    """
+    Infer new triples in the data graph using the shape graph.
+    Edits the data graph in place. Uses the fastest inference method available.
+    Use the 'topquadrant' feature to use TopQuadrant's SHACL engine. Defaults to
+    using PySHACL.
+
+    :param data_graph: the graph to infer new triples in
+    :type data_graph: Graph
+    :param shape_graph: the shape graph to use for inference
+    :type shape_graph: Optional[Graph]
+    :param engine: the SHACL engine to use, defaults to "topquadrant"
+    :type engine: str, optional
+    """
+    if engine == "topquadrant":
+        try:
+            from brick_tq_shacl.topquadrant_shacl import infer as tq_infer
+
+            return tq_infer(data_graph, shape_graph or Graph())
+        except ImportError:
+            logging.info(
+                "TopQuadrant SHACL engine not available. Using PySHACL instead."
+            )
+            pass
+
+    pyshacl.validate(
+        data_graph=data_graph,
+        shacl_graph=shape_graph,
+        ont_graph=shape_graph,
+        advanced=True,
+        inplace=True,
+        js=True,
+        allow_warnings=True,
+    )
