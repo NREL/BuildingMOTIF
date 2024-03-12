@@ -1,0 +1,118 @@
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/nbclient/client.py", line 1269, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/nbclient/util.py", line 85, in wrapped
+    return just_run(coro(*args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/nbclient/util.py", line 60, in just_run
+    return loop.run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/nbclient/client.py", line 707, in async_execute
+    await self.async_execute_cell(
+  File "/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/nbclient/client.py", line 1025, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/nbclient/client.py", line 919, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# load a library
+from buildingmotif.dataclasses import Library
+brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
+
+# print the first 10 templates
+print("The Brick library contains the following templates:")
+for template in brick.get_templates()[:10]:
+    print(f"  - {template.name}")
+------------------
+
+Traceback [0;36m(most recent call last)[0m:
+
+[0;36m  File [0;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1232[0;36m in [0;35muri_ref2[0;36m
+[0;31m    ns = self._bindings[pfx][0;36m
+
+[0;31mKeyError[0m[0;31m:[0m 'Error'
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback [0;36m(most recent call last)[0m:
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/IPython/core/interactiveshell.py:3550[0m in [1;35mrun_code[0m
+    exec(code_obj, self.user_global_ns, self.user_ns)[0m
+
+[0m  Cell [1;32mIn[4], line 3[0m
+    brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")[0m
+
+[0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:183[0m in [1;35mload[0m
+    return cls._load_from_ontology(ontology_graph, overwrite=overwrite)[0m
+
+[0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:251[0m in [1;35m_load_from_ontology[0m
+    shacl_inference(ontology, ontology)[0m
+
+[0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/utils.py:593[0m in [1;35mshacl_inference[0m
+    return tq_infer(data_graph, shape_graph or Graph())[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/brick_tq_shacl/topquadrant_shacl.py:103[0m in [1;35minfer[0m
+    inferred_triples.parse(inferred_file_path, format="turtle")[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/graph.py:1501[0m in [1;35mparse[0m
+    raise se[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/graph.py:1492[0m in [1;35mparse[0m
+    parser.parse(source, self, **args)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:2021[0m in [1;35mparse[0m
+    p.loadStream(stream)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:479[0m in [1;35mloadStream[0m
+    return self.loadBuf(stream.read())  # Not ideal[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:485[0m in [1;35mloadBuf[0m
+    self.feed(buf)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:511[0m in [1;35mfeed[0m
+    i = self.directiveOrStatement(s, j)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:530[0m in [1;35mdirectiveOrStatement[0m
+    j = self.statement(argstr, i)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:774[0m in [1;35mstatement[0m
+    i = self.object(argstr, i, r)  # Allow literal for subject - extends RDF[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1487[0m in [1;35mobject[0m
+    j = self.subject(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:785[0m in [1;35msubject[0m
+    return self.item(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:877[0m in [1;35mitem[0m
+    return self.path(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:884[0m in [1;35mpath[0m
+    j = self.nodeOrLiteral(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1515[0m in [1;35mnodeOrLiteral[0m
+    j = self.node(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1102[0m in [1;35mnode[0m
+    j = self.uri_ref2(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1240[0m in [1;35muri_ref2[0m
+    self.BadSyntax(argstr, i, 'Prefix "%s:" not bound' % (pfx))[0m
+
+[0;36m  File [0;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1730[0;36m in [0;35mBadSyntax[0;36m
+[0;31m    raise BadSyntax(self._thisDoc, self.lines, argstr, i, msg)[0;36m
+
+[0;36m  File [0;32m<string>[0;36m[0m
+[0;31mBadSyntax[0m
+
+BadSyntax: at line 1 of <>:
+Bad syntax (Prefix "Error:" not bound) at ^ in:
+"b''^b'Error: Could not find or load main class org.topbraid.shacl.'..."
+

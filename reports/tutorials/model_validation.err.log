@@ -21,29 +21,113 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-# load manifest into BuildingMOTIF as its own library!
-manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
-# set it as the manifest for the model
-model.update_manifest(manifest)
+from rdflib import Namespace
+from buildingmotif import BuildingMOTIF
+from buildingmotif.dataclasses import Model, Library
+from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
+
+# in-memory instance
+bm = BuildingMOTIF("sqlite://")
+
+# create the namespace for the building
+BLDG = Namespace('urn:bldg/')
+
+# create the building model
+model = Model.create(BLDG, description="This is a test model for a simple building")
+
+# load tutorial 1 model
+model.graph.parse("tutorial1_model.ttl", format="ttl")
+
+# load libraries included with the python package
+constraints = Library.load(ontology_graph="../../buildingmotif/libraries/constraints/constraints.ttl")
+
+# load libraries excluded from the python package (available from the repository)
+brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
+g36 = Library.load(directory="../../libraries/ashrae/guideline36")
 ------------------
 
-[0;31m---------------------------------------------------------------------------[0m
-[0;31mAttributeError[0m                            Traceback (most recent call last)
-Cell [0;32mIn[4], line 4[0m
-[1;32m      2[0m manifest [38;5;241m=[39m Library[38;5;241m.[39mload(ontology_graph[38;5;241m=[39m[38;5;124m"[39m[38;5;124mtutorial2_manifest.ttl[39m[38;5;124m"[39m)
-[1;32m      3[0m [38;5;66;03m# set it as the manifest for the model[39;00m
-[0;32m----> 4[0m [43mmodel[49m[38;5;241;43m.[39;49m[43mupdate_manifest[49m[43m([49m[43mmanifest[49m[43m)[49m
+Traceback [0;36m(most recent call last)[0m:
 
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:326[0m, in [0;36mModel.update_manifest[0;34m(self, manifest)[0m
-[1;32m    319[0m [38;5;28;01mdef[39;00m [38;5;21mupdate_manifest[39m([38;5;28mself[39m, manifest: ShapeCollection):
-[1;32m    320[0m [38;5;250m    [39m[38;5;124;03m"""Updates the manifest for this model by adding in the contents[39;00m
-[1;32m    321[0m [38;5;124;03m    of the shape graph inside the provided SHapeCollection[39;00m
-[1;32m    322[0m 
-[1;32m    323[0m [38;5;124;03m    :param manifest: the ShapeCollection containing additional shapes against which to validate this model[39;00m
-[1;32m    324[0m [38;5;124;03m    :type manifest: ShapeCollection[39;00m
-[1;32m    325[0m [38;5;124;03m    """[39;00m
-[0;32m--> 326[0m     [38;5;28mself[39m[38;5;241m.[39mget_manifest()[38;5;241m.[39mgraph [38;5;241m+[39m[38;5;241m=[39m [43mmanifest[49m[38;5;241;43m.[39;49m[43mgraph[49m
+[0;36m  File [0;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1232[0;36m in [0;35muri_ref2[0;36m
+[0;31m    ns = self._bindings[pfx][0;36m
 
-[0;31mAttributeError[0m: 'Library' object has no attribute 'graph'
-AttributeError: 'Library' object has no attribute 'graph'
+[0;31mKeyError[0m[0;31m:[0m 'Error'
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback [0;36m(most recent call last)[0m:
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/IPython/core/interactiveshell.py:3550[0m in [1;35mrun_code[0m
+    exec(code_obj, self.user_global_ns, self.user_ns)[0m
+
+[0m  Cell [1;32mIn[1], line 19[0m
+    constraints = Library.load(ontology_graph="../../buildingmotif/libraries/constraints/constraints.ttl")[0m
+
+[0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:183[0m in [1;35mload[0m
+    return cls._load_from_ontology(ontology_graph, overwrite=overwrite)[0m
+
+[0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:251[0m in [1;35m_load_from_ontology[0m
+    shacl_inference(ontology, ontology)[0m
+
+[0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/utils.py:593[0m in [1;35mshacl_inference[0m
+    return tq_infer(data_graph, shape_graph or Graph())[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/brick_tq_shacl/topquadrant_shacl.py:103[0m in [1;35minfer[0m
+    inferred_triples.parse(inferred_file_path, format="turtle")[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/graph.py:1501[0m in [1;35mparse[0m
+    raise se[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/graph.py:1492[0m in [1;35mparse[0m
+    parser.parse(source, self, **args)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:2021[0m in [1;35mparse[0m
+    p.loadStream(stream)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:479[0m in [1;35mloadStream[0m
+    return self.loadBuf(stream.read())  # Not ideal[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:485[0m in [1;35mloadBuf[0m
+    self.feed(buf)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:511[0m in [1;35mfeed[0m
+    i = self.directiveOrStatement(s, j)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:530[0m in [1;35mdirectiveOrStatement[0m
+    j = self.statement(argstr, i)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:774[0m in [1;35mstatement[0m
+    i = self.object(argstr, i, r)  # Allow literal for subject - extends RDF[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1487[0m in [1;35mobject[0m
+    j = self.subject(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:785[0m in [1;35msubject[0m
+    return self.item(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:877[0m in [1;35mitem[0m
+    return self.path(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:884[0m in [1;35mpath[0m
+    j = self.nodeOrLiteral(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1515[0m in [1;35mnodeOrLiteral[0m
+    j = self.node(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1102[0m in [1;35mnode[0m
+    j = self.uri_ref2(argstr, i, res)[0m
+
+[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1240[0m in [1;35muri_ref2[0m
+    self.BadSyntax(argstr, i, 'Prefix "%s:" not bound' % (pfx))[0m
+
+[0;36m  File [0;32m/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/rdflib/plugins/parsers/notation3.py:1730[0;36m in [0;35mBadSyntax[0;36m
+[0;31m    raise BadSyntax(self._thisDoc, self.lines, argstr, i, msg)[0;36m
+
+[0;36m  File [0;32m<string>[0;36m[0m
+[0;31mBadSyntax[0m
+
+BadSyntax: at line 1 of <>:
+Bad syntax (Prefix "Error:" not bound) at ^ in:
+"b''^b'Error: Could not find or load main class org.topbraid.shacl.'..."
 
