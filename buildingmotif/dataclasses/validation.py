@@ -277,7 +277,7 @@ class ValidationContext:
         return diffset_to_templates(self.diffset)
 
     def get_reasons_with_severity(
-        self, severity: Union[URIRef | str]
+        self, severity: Union[URIRef, str]
     ) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """
         Like diffset, but only includes ValidationResults with the given severity.
