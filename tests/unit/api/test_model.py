@@ -253,7 +253,7 @@ def test_create_model_bad_name(client, building_motif):
     assert len(building_motif.table_connection.get_all_db_models()) == 0
 
 
-def test_validate_model(client, building_motif):
+def test_validate_model(client, building_motif, shacl_engine):
     # Set up
     library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert library_1 is not None
@@ -268,7 +268,7 @@ def test_validate_model(client, building_motif):
     results = client.post(
         f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        json={"library_ids": [library_1.id, library_2.id]},
+        json={"library_ids": [library_1.id, library_2.id], "shacl_engine": shacl_engine},
     )
 
     # Assert

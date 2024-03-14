@@ -1,5 +1,6 @@
-import pytest
 import warnings
+
+import pytest
 from rdflib import Graph, Namespace
 
 from buildingmotif import BuildingMOTIF

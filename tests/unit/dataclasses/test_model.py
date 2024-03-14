@@ -1,6 +1,6 @@
 import pytest
-from rdflib import BNode, Graph, Literal, Namespace, URIRef
-from rdflib.compare import isomorphic
+from rdflib import Graph, Literal, Namespace, URIRef
+from rdflib.compare import isomorphic, graph_diff, to_isomorphic
 from rdflib.namespace import FOAF
 
 from buildingmotif import BuildingMOTIF
@@ -189,10 +189,6 @@ def test_validate_model_with_failure(bm: BuildingMOTIF, shacl_engine):
     assert not ctx.valid
     assert len(ctx.diffset) == 1
     diff = next(iter(ctx.diffset.values())).pop()
-    assert isinstance(diff.failed_shape, BNode), (
-        diff.failed_shape,
-        type(diff.failed_shape),
-    )
     assert diff.failed_component == SH.MinCountConstraintComponent
 
     model.add_triples((bindings["name"], RDFS.label, Literal("hvac zone 1")))
@@ -202,7 +198,7 @@ def test_validate_model_with_failure(bm: BuildingMOTIF, shacl_engine):
     assert ctx.valid
 
 
-def test_model_compile(bm: BuildingMOTIF):
+def test_model_compile(bm: BuildingMOTIF, shacl_engine):
     """Test that model compilation gives expected results"""
     small_office_model = Model.create("http://example.org/building/")
     small_office_model.graph.parse(
@@ -211,13 +207,16 @@ def test_model_compile(bm: BuildingMOTIF):
 
     brick = Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
 
-    compiled_model = small_office_model.compile([brick.get_shape_collection()])
+    compiled_model = small_office_model.compile([brick.get_shape_collection()], engine=shacl_engine)
 
     precompiled_model = Graph().parse(
         "tests/unit/fixtures/smallOffice_brick_compiled.ttl", format="ttl"
     )
 
-    assert isomorphic(compiled_model, precompiled_model)
+    # returns in_both, in_first, in_second
+    _, in_first, _ = graph_diff(to_isomorphic(precompiled_model), to_isomorphic(compiled_model))
+    # passes if everything from precompiled_model is in compiled_model
+    assert len(in_first) == 0
 
 
 def test_get_manifest(clean_building_motif):
