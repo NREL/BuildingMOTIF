@@ -871,7 +871,7 @@ document.write(`
 <span class="s2">                sh:node ?child .</span>
 <span class="s2">        }&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
-        <span class="n">parent</span><span class="p">,</span> <span class="n">child</span> <span class="o">=</span> <span class="n">row</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">child</span> <span class="o">=</span> <span class="n">row</span>  <span class="c1"># type: ignore</span>
         <span class="n">sg</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">child</span><span class="p">))</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">predicate_objects</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">:</span>
@@ -891,7 +891,7 @@ document.write(`
 <span class="s2">        ?andnode rdf:rest*/rdf:first ?child .</span>
 <span class="s2">        }&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
-        <span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">to_remove</span> <span class="o">=</span> <span class="n">row</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">to_remove</span> <span class="o">=</span> <span class="n">row</span>  <span class="c1"># type: ignore</span>
         <span class="n">sg</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;and&quot;</span><span class="p">],</span> <span class="n">to_remove</span><span class="p">))</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">predicate_objects</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">:</span>
