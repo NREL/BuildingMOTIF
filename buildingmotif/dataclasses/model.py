@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, List, Optional
 
-import pyshacl
 import rdflib
 import rfc3987
 from rdflib import URIRef
