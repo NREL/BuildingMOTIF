@@ -391,8 +391,12 @@ class Library:
     ):
         """Resolve a dependency to a template.
 
+        :param template: template to resolve dependency for
+        :type template: Template
         :param dep: dependency
         :type dep: Union[_template_dependency, dict]
+        :param template_id_lookup: a local cache of {name: id} for uncommitted templates
+        :type template_id_lookup: Dict[str, int]
         :return: the template instance this dependency points to
         :rtype: Template
         """
@@ -423,7 +427,7 @@ class Library:
         # for the template
         for imp in self.graph_imports:
             try:
-                library = Library.load(name=imp)
+                library = Library.load(name=str(imp))
                 dependee = library.get_template_by_name(dep["template"])
                 template.add_dependency(dependee, dep["args"])
                 return
@@ -499,12 +503,16 @@ class Library:
         self._name = new_name
 
     @property
-    def graph_imports(self) -> List[str]:
+    def graph_imports(self) -> List[rdflib.URIRef]:
         """
         Get the list of owl:imports for this library's shape collection
         """
         shape_col = self.get_shape_collection()
-        return list(map(str, shape_col.graph.objects(None, rdflib.OWL.imports)))
+        return [
+            i
+            for i in shape_col.graph.objects(None, rdflib.OWL.imports)
+            if isinstance(i, rdflib.URIRef)
+        ]
 
     def create_template(
         self,
