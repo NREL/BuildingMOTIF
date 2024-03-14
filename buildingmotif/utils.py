@@ -466,7 +466,7 @@ def _inline_sh_node(sg: Graph):
                 sh:node ?child .
         }"""
     for row in sg.query(q):
-        parent, child = row
+        parent, child = row  # type: ignore
         sg.remove((parent, SH.node, child))
         pos = sg.predicate_objects(child)
         for (p, o) in pos:
@@ -486,7 +486,7 @@ def _inline_sh_and(sg: Graph):
         ?andnode rdf:rest*/rdf:first ?child .
         }"""
     for row in sg.query(q):
-        parent, child, to_remove = row
+        parent, child, to_remove = row  # type: ignore
         sg.remove((parent, SH["and"], to_remove))
         pos = sg.predicate_objects(child)
         for (p, o) in pos:
