@@ -276,6 +276,7 @@ class Library:
         dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
+            # TODO: mincount 0 (or unspecified) should be optional args on the generated template
             partial_body, deps = get_template_parts_from_shape(candidate, graph)
             templ = self.create_template(str(candidate), partial_body)
             dependency_cache[templ.id] = deps
