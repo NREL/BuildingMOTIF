@@ -557,7 +557,7 @@ def shacl_validate(
         try:
             from brick_tq_shacl.topquadrant_shacl import validate as tq_validate
 
-            return tq_validate(data_graph, shape_graph or Graph())  # type: ignore
+            return tq_validate(data_graph.skolemize(), (shape_graph or Graph()).skolemize())  # type: ignore
         except ImportError:
             logging.info(
                 "TopQuadrant SHACL engine not available. Using PySHACL instead."
@@ -596,13 +596,21 @@ def shacl_inference(
         try:
             from brick_tq_shacl.topquadrant_shacl import infer as tq_infer
 
-            return tq_infer(data_graph, shape_graph or Graph())
+            return tq_infer(
+                data_graph.skolemize(), (shape_graph or Graph()).skolemize()
+            )
         except ImportError:
             logging.info(
                 "TopQuadrant SHACL engine not available. Using PySHACL instead."
             )
             pass
 
+    # We use a fixed-point computation approach to 'compiling' RDF models.
+    # We accomlish this by keeping track of the size of the graph before and after
+    # the inference step. If the size of the graph changes, then we know that the
+    # inference has had some effect. We do this at most 3 times to avoid looping
+    # forever.
+    pre_compile_length = len(data_graph)  # type: ignore
     pyshacl.validate(
         data_graph=data_graph,
         shacl_graph=shape_graph,
@@ -612,4 +620,20 @@ def shacl_inference(
         js=True,
         allow_warnings=True,
     )
-    return data_graph
+    post_compile_length = len(data_graph)  # type: ignore
+
+    attempts = 3
+    while attempts > 0 and post_compile_length != pre_compile_length:
+        pre_compile_length = len(data_graph)  # type: ignore
+        pyshacl.validate(
+            data_graph=data_graph,
+            shacl_graph=shape_graph,
+            ont_graph=shape_graph,
+            advanced=True,
+            inplace=True,
+            js=True,
+            allow_warnings=True,
+        )
+        post_compile_length = len(data_graph)  # type: ignore
+        attempts -= 1
+    return data_graph - (shape_graph or Graph())

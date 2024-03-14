@@ -147,7 +147,7 @@ class Model:
         self,
         shape_collections: Optional[List[ShapeCollection]] = None,
         error_on_missing_imports: bool = True,
-        engine: str = "pyshacl",
+        engine: Optional[str] = "pyshacl",
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
@@ -185,28 +185,40 @@ class Model:
             ).graph
         # inline sh:node for interpretability
         shapeg = rewrite_shape_graph(shapeg)
+
+        # skolemize the shape graph so we have consistent identifiers across
+        # validation through the interpretation of the validation report
+        shapeg = shapeg.skolemize()
+
+        shapeg.serialize("/tmp/shapeg.ttl", format="turtle")
+
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
-
-        # perform inference on the data graph
-        shacl_inference(data_graph, shapeg)
+        data_graph.serialize("/tmp/data_graph.ttl", format="turtle")
 
         # validate the data graph
         valid, report_g, report_str = shacl_validate(data_graph, shapeg, engine)
         return ValidationContext(
             shape_collections,
+            shapeg,
             valid,
             report_g,
             report_str,
             self,
         )
 
-    def compile(self, shape_collections: List["ShapeCollection"]):
+    def compile(
+        self, shape_collections: List["ShapeCollection"], engine: str = "pyshacl"
+    ):
         """Compile the graph of a model against a set of ShapeCollections.
 
         :param shape_collections: list of ShapeCollections to compile the model
             against
         :type shape_collections: List[ShapeCollection]
+        :param engine: the engine to use for validation. "pyshacl" or "topquadrant". Using topquadrant
+            requires Java to be installed on this machine, and the "topquadrant" feature on BuildingMOTIF,
+            defaults to "pyshacl"
+        :type engine: str
         :return: copy of model's graph that has been compiled against the
             ShapeCollections
         :rtype: Graph
@@ -219,39 +231,7 @@ class Model:
 
         model_graph = copy_graph(self.graph).skolemize()
 
-        # We use a fixed-point computation approach to 'compiling' RDF models.
-        # We accomlish this by keeping track of the size of the graph before and after
-        # the inference step. If the size of the graph changes, then we know that the
-        # inference has had some effect. We do this at most 3 times to avoid looping
-        # forever.
-        pre_compile_length = len(model_graph)  # type: ignore
-        pyshacl.validate(
-            data_graph=model_graph,
-            shacl_graph=ontology_graph,
-            ont_graph=ontology_graph,
-            advanced=True,
-            inplace=True,
-            js=True,
-            allow_warnings=True,
-        )
-        post_compile_length = len(model_graph)  # type: ignore
-
-        attempts = 3
-        while attempts > 0 and post_compile_length != pre_compile_length:
-            pre_compile_length = len(model_graph)  # type: ignore
-            pyshacl.validate(
-                data_graph=model_graph,
-                shacl_graph=ontology_graph,
-                ont_graph=ontology_graph,
-                advanced=True,
-                inplace=True,
-                js=True,
-                allow_warnings=True,
-            )
-            post_compile_length = len(model_graph)  # type: ignore
-            attempts -= 1
-        model_graph -= ontology_graph
-        return model_graph.de_skolemize()
+        return shacl_inference(model_graph, ontology_graph, engine)
 
     def test_model_against_shapes(
         self,
@@ -298,15 +278,17 @@ class Model:
 
             temp_model_graph += ontology_graph.cbd(shape_uri)
 
-            valid, report_g, report_str = pyshacl.validate(
-                data_graph=temp_model_graph,
-                ont_graph=ontology_graph,
-                allow_warnings=True,
-                advanced=True,
-                js=True,
+            # skolemize the shape graph so we have consistent identifiers across
+            # validation through the interpretation of the validation report
+            ontology_graph = ontology_graph.skolemize()
+
+            valid, report_g, report_str = shacl_validate(
+                temp_model_graph, ontology_graph
             )
+
             results[shape_uri] = ValidationContext(
                 shape_collections,
+                ontology_graph,
                 valid,
                 report_g,
                 report_str,
