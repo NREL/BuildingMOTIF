@@ -412,7 +412,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">pyshacl</span>
+<span class="kn">import</span> <span class="nn">pyshacl</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
 <span class="kn">from</span> <span class="nn">rdflib.paths</span> <span class="kn">import</span> <span class="n">ZeroOrOne</span>
 <span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
@@ -960,7 +960,9 @@ document.write(`
 
     <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;topquadrant&quot;</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">brick_tq_shacl.topquadrant_shacl</span> <span class="kn">import</span> <span class="n">validate</span> <span class="k">as</span> <span class="n">tq_validate</span>
+            <span class="kn">from</span> <span class="nn">brick_tq_shacl.topquadrant_shacl</span> <span class="kn">import</span> <span class="p">(</span>
+                <span class="n">validate</span> <span class="k">as</span> <span class="n">tq_validate</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="p">)</span>
 
             <span class="k">return</span> <span class="n">tq_validate</span><span class="p">(</span><span class="n">data_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">(),</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span><span class="o">.</span><span class="n">skolemize</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
