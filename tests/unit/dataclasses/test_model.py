@@ -1,6 +1,6 @@
 import pytest
 from rdflib import Graph, Literal, Namespace, URIRef
-from rdflib.compare import isomorphic, graph_diff, to_isomorphic
+from rdflib.compare import graph_diff, isomorphic, to_isomorphic
 from rdflib.namespace import FOAF
 
 from buildingmotif import BuildingMOTIF
@@ -207,14 +207,18 @@ def test_model_compile(bm: BuildingMOTIF, shacl_engine):
 
     brick = Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
 
-    compiled_model = small_office_model.compile([brick.get_shape_collection()], engine=shacl_engine)
+    compiled_model = small_office_model.compile(
+        [brick.get_shape_collection()], engine=shacl_engine
+    )
 
     precompiled_model = Graph().parse(
         "tests/unit/fixtures/smallOffice_brick_compiled.ttl", format="ttl"
     )
 
     # returns in_both, in_first, in_second
-    _, in_first, _ = graph_diff(to_isomorphic(precompiled_model), to_isomorphic(compiled_model))
+    _, in_first, _ = graph_diff(
+        to_isomorphic(precompiled_model), to_isomorphic(compiled_model)
+    )
     # passes if everything from precompiled_model is in compiled_model
     assert len(in_first) == 0
 

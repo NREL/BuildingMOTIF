@@ -268,7 +268,10 @@ def test_validate_model(client, building_motif, shacl_engine):
     results = client.post(
         f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        json={"library_ids": [library_1.id, library_2.id], "shacl_engine": shacl_engine},
+        json={
+            "library_ids": [library_1.id, library_2.id],
+            "shacl_engine": shacl_engine,
+        },
     )
 
     # Assert
