@@ -19,15 +19,15 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -77,9 +77,10 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
+
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -126,14 +127,11 @@ const thebe_selector_output = ".output, .cell_output"
   </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
-    </header>
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
   
-
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
-      
-      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -248,6 +246,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
 </ul>
@@ -472,7 +471,7 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article">
+                <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="model-validation">
 <h1>Model Validation<a class="headerlink" href="#model-validation" title="Permalink to this heading">#</a></h1>
@@ -545,205 +544,110 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,584 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Damper_Position_Command
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pyshacl/extras/__init__.py:46: Warning: Extra &quot;js&quot; is not satisfied because requirement pyduktape2 is not installed.
+  warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,585 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Frequency_Command
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,174 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,586 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Start_Stop_Command
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,179 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,586 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Fan_Status
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,183 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,586 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#CO2_Level_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,188 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,587 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,192 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,587 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,196 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,588 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,201 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,588 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Damper_Position_Command
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,205 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,589 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Damper_Position_Command
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,210 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-co2-level in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,592 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,214 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/occupancy-sensor in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,592 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,219 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,593 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,223 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,593 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Valve_Position_Command
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,228 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-ra-damper in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,593 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,233 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,594 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,237 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,594 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,242 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,595 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Occupancy_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,246 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,595 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,250 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/clg-signal in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,595 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,255 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/htg-signal in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,596 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,259 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/zone-temperature in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,596 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Frequency_Command
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,264 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/occupancy-sensor in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,597 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Start_Stop_Command
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,268 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/zone-co2-level in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,597 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Fan_Status
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,273 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/box-damper-position in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,597 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Occupancy_Sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,277 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,598 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,281 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/occupancy-sensor in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,598 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,286 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-co2-level in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,599 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-ra-damper
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,290 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/window-switch in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,599 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,295 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/discharge-airflow in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,599 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,299 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,600 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,304 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,600 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,308 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,601 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/clg-signal
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,313 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-co2-level in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,601 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/htg-signal
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,317 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/occupancy-sensor in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,601 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/zone-temperature
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,602 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/occupancy-sensor
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,602 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/zone-co2-level
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,603 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,603 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,603 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#CO2_Level_Sensor
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,604 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Valve_Position_Command
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,604 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/box-damper-position
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,604 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,605 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/occupancy-sensor
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,605 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-co2-level
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,606 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/window-switch
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,606 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/discharge-airflow
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,606 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,607 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Supply_Air_Temperature_Setpoint
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,607 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/hot-deck
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,608 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/cold-deck
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,608 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Discharge_Air_Flow_Sensor
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,609 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,609 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-co2-level
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,610 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/occupancy-sensor
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,610 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Operating_Mode_Status
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,610 | root |  WARNING: Warning: could not find dependee https://brickschema.org/schema/Brick#Damper_Position_Command
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,618 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,618 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,619 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,619 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,620 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,620 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/hot-deck
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,621 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/cold-deck
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,623 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,623 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-co2-level
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 05:27:41,624 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/occupancy-sensor
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-03-14 23:05:33,323 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/zone-temperature in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
 </div>
@@ -762,10 +666,6 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pyshacl/extras/__init__.py:46: Warning: Extra &quot;js&quot; is not satisfied because requirement pyduktape2 is not installed.
-  warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
 </div>
@@ -931,15 +831,15 @@ the most common use case, so this is treated specially in BuildingMOTIF.</p>
 <span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="c1"># set it as the manifest for the model</span>
 <span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">model</span><span class="o">.</span><span class="n">update_manifest</span><span class="p">(</span><span class="n">manifest</span><span class="p">)</span>
 
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:314,</span> in <span class="ni">Model.update_manifest</span><span class="nt">(self, manifest)</span>
-<span class="g g-Whitespace">    </span><span class="mi">307</span> <span class="k">def</span> <span class="nf">update_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">ShapeCollection</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">308</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Updates the manifest for this model by adding in the contents</span>
-<span class="g g-Whitespace">    </span><span class="mi">309</span><span class="sd">     of the shape graph inside the provided SHapeCollection</span>
-<span class="g g-Whitespace">    </span><span class="mi">310</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">311</span><span class="sd">     :param manifest: the ShapeCollection containing additional shapes against which to validate this model</span>
-<span class="g g-Whitespace">    </span><span class="mi">312</span><span class="sd">     :type manifest: ShapeCollection</span>
-<span class="g g-Whitespace">    </span><span class="mi">313</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">314</span>     <span class="bp">self</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()</span><span class="o">.</span><span class="n">graph</span> <span class="o">+=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">graph</span>
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:326,</span> in <span class="ni">Model.update_manifest</span><span class="nt">(self, manifest)</span>
+<span class="g g-Whitespace">    </span><span class="mi">319</span> <span class="k">def</span> <span class="nf">update_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">ShapeCollection</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">320</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Updates the manifest for this model by adding in the contents</span>
+<span class="g g-Whitespace">    </span><span class="mi">321</span><span class="sd">     of the shape graph inside the provided SHapeCollection</span>
+<span class="g g-Whitespace">    </span><span class="mi">322</span><span class="sd"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">323</span><span class="sd">     :param manifest: the ShapeCollection containing additional shapes against which to validate this model</span>
+<span class="g g-Whitespace">    </span><span class="mi">324</span><span class="sd">     :type manifest: ShapeCollection</span>
+<span class="g g-Whitespace">    </span><span class="mi">325</span><span class="sd">     &quot;&quot;&quot;</span>
+<span class="ne">--&gt; </span><span class="mi">326</span>     <span class="bp">self</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()</span><span class="o">.</span><span class="n">graph</span> <span class="o">+=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">graph</span>
 
 <span class="ne">AttributeError</span>: &#39;Library&#39; object has no attribute &#39;graph&#39;
 </pre></div>
@@ -1173,7 +1073,6 @@ print(f"Model is valid? {validation_result.valid}")
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> Contents
@@ -1242,8 +1141,8 @@ By NREL
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>

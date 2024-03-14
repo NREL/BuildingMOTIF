@@ -18,15 +18,15 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
@@ -37,9 +37,9 @@
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -74,9 +74,10 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
+
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -123,16 +124,11 @@ const thebe_selector_output = ".output, .cell_output"
   </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
-    </header>
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
   
-
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
-      
-      
-      
-        
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -247,6 +243,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
 </ul>
@@ -400,7 +397,7 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article">
+                <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
@@ -412,7 +409,6 @@ document.write(`
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">pyshacl</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
 <span class="kn">from</span> <span class="nn">rdflib.paths</span> <span class="kn">import</span> <span class="n">ZeroOrOne</span>
 <span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
@@ -648,10 +644,14 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">param</span> <span class="o">=</span> <span class="n">_gensym</span><span class="p">()</span>
             <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">param</span><span class="p">))</span>
-            <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">otype</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
-            <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">otype</span><span class="p">))</span>
 
-        <span class="c1"># add &#39;hasValue&#39;</span>
+            <span class="n">otype_as_class</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">otype</span><span class="p">)</span> <span class="ow">in</span> <span class="n">shape_graph</span>
+            <span class="n">otype_as_node</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">],</span> <span class="n">otype</span><span class="p">)</span> <span class="ow">in</span> <span class="n">shape_graph</span>
+            <span class="n">otype_is_nodeshape</span> <span class="o">=</span> <span class="p">(</span><span class="n">otype</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">)</span> <span class="ow">in</span> <span class="n">shape_graph</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">otype_as_class</span> <span class="ow">and</span> <span class="n">otype_is_nodeshape</span><span class="p">)</span> <span class="ow">or</span> <span class="n">otype_as_node</span><span class="p">:</span>
+                <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">otype</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
+                <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">otype</span><span class="p">))</span>
 
         <span class="n">pvalue</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;hasValue&quot;</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">pvalue</span><span class="p">:</span>
@@ -668,8 +668,13 @@ document.write(`
     <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
         <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">root_param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">cls</span><span class="p">))</span>
 
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">shape_name</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">])</span>
+    <span class="c1"># for all objects of sh:node, add them to the deps if they haven&#39;t been added</span>
+    <span class="c1"># already through the property shapes above</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">cbd</span><span class="p">(</span><span class="n">shape_name</span><span class="p">)</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">],</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="c1"># if node is already in deps, skip it</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">==</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">deps</span><span class="p">):</span>
+            <span class="k">continue</span>
         <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="p">{</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">node</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;name&quot;</span><span class="p">}}</span>
         <span class="p">)</span>  <span class="c1"># tie to root param</span>
@@ -871,7 +876,7 @@ document.write(`
 <span class="s2">                sh:node ?child .</span>
 <span class="s2">        }&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
-        <span class="n">parent</span><span class="p">,</span> <span class="n">child</span> <span class="o">=</span> <span class="n">row</span>  <span class="c1"># type: ignore</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">child</span> <span class="o">=</span> <span class="n">row</span>
         <span class="n">sg</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">child</span><span class="p">))</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">predicate_objects</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">:</span>
@@ -891,7 +896,7 @@ document.write(`
 <span class="s2">        ?andnode rdf:rest*/rdf:first ?child .</span>
 <span class="s2">        }&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
-        <span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">to_remove</span> <span class="o">=</span> <span class="n">row</span>  <span class="c1"># type: ignore</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">to_remove</span> <span class="o">=</span> <span class="n">row</span>
         <span class="n">sg</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;and&quot;</span><span class="p">],</span> <span class="n">to_remove</span><span class="p">))</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">predicate_objects</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">:</span>
@@ -938,112 +943,6 @@ document.write(`
         <span class="k">if</span> <span class="n">uri</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
     <span class="k">return</span> <span class="kc">False</span></div>
-
-
-<div class="viewcode-block" id="shacl_validate"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.shacl_validate">[docs]</a><span class="k">def</span> <span class="nf">shacl_validate</span><span class="p">(</span>
-    <span class="n">data_graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">shape_graph</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Graph</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;topquadrant&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validate the data graph against the shape graph.</span>
-<span class="sd">    Uses the fastest validation method available. Use the &#39;topquadrant&#39; feature</span>
-<span class="sd">    to use TopQuadrant&#39;s SHACL engine. Defaults to using PySHACL.</span>
-
-<span class="sd">    :param data_graph: the graph to validate</span>
-<span class="sd">    :type data_graph: Graph</span>
-<span class="sd">    :param shape_graph: the shape graph to validate against</span>
-<span class="sd">    :type shape_graph: Graph, optional</span>
-<span class="sd">    :param engine: the SHACL engine to use, defaults to &quot;topquadrant&quot;</span>
-<span class="sd">    :type engine: str, optional</span>
-<span class="sd">    :return: a tuple containing the validation result, the validation report, and the validation report string</span>
-<span class="sd">    :rtype: Tuple[bool, Graph, str]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;topquadrant&quot;</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">brick_tq_shacl.topquadrant_shacl</span> <span class="kn">import</span> <span class="p">(</span>
-                <span class="n">validate</span> <span class="k">as</span> <span class="n">tq_validate</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-            <span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">tq_validate</span><span class="p">(</span><span class="n">data_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">(),</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span><span class="o">.</span><span class="n">skolemize</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;TopQuadrant SHACL engine not available. Using PySHACL instead.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">pass</span>
-
-    <span class="k">return</span> <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
-        <span class="n">data_graph</span><span class="p">,</span>
-        <span class="n">shacl_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
-        <span class="n">ont_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
-        <span class="n">advanced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>  <span class="c1"># type: ignore</span></div>
-
-
-<div class="viewcode-block" id="shacl_inference"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.shacl_inference">[docs]</a><span class="k">def</span> <span class="nf">shacl_inference</span><span class="p">(</span>
-    <span class="n">data_graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">shape_graph</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Graph</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;topquadrant&quot;</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Infer new triples in the data graph using the shape graph.</span>
-<span class="sd">    Edits the data graph in place. Uses the fastest inference method available.</span>
-<span class="sd">    Use the &#39;topquadrant&#39; feature to use TopQuadrant&#39;s SHACL engine. Defaults to</span>
-<span class="sd">    using PySHACL.</span>
-
-<span class="sd">    :param data_graph: the graph to infer new triples in</span>
-<span class="sd">    :type data_graph: Graph</span>
-<span class="sd">    :param shape_graph: the shape graph to use for inference</span>
-<span class="sd">    :type shape_graph: Optional[Graph]</span>
-<span class="sd">    :param engine: the SHACL engine to use, defaults to &quot;topquadrant&quot;</span>
-<span class="sd">    :type engine: str, optional</span>
-<span class="sd">    :return: the data graph with inferred triples</span>
-<span class="sd">    :rtype: Graph</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;topquadrant&quot;</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">brick_tq_shacl.topquadrant_shacl</span> <span class="kn">import</span> <span class="n">infer</span> <span class="k">as</span> <span class="n">tq_infer</span>
-
-            <span class="k">return</span> <span class="n">tq_infer</span><span class="p">(</span>
-                <span class="n">data_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">(),</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;TopQuadrant SHACL engine not available. Using PySHACL instead.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">pass</span>
-
-    <span class="c1"># We use a fixed-point computation approach to &#39;compiling&#39; RDF models.</span>
-    <span class="c1"># We accomlish this by keeping track of the size of the graph before and after</span>
-    <span class="c1"># the inference step. If the size of the graph changes, then we know that the</span>
-    <span class="c1"># inference has had some effect. We do this at most 3 times to avoid looping</span>
-    <span class="c1"># forever.</span>
-    <span class="n">pre_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-    <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
-        <span class="n">data_graph</span><span class="o">=</span><span class="n">data_graph</span><span class="p">,</span>
-        <span class="n">shacl_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
-        <span class="n">ont_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
-        <span class="n">advanced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">post_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-    <span class="n">attempts</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="k">while</span> <span class="n">attempts</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">post_compile_length</span> <span class="o">!=</span> <span class="n">pre_compile_length</span><span class="p">:</span>
-        <span class="n">pre_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-        <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
-            <span class="n">data_graph</span><span class="o">=</span><span class="n">data_graph</span><span class="p">,</span>
-            <span class="n">shacl_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
-            <span class="n">ont_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
-            <span class="n">advanced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">post_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-        <span class="n">attempts</span> <span class="o">-=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">data_graph</span> <span class="o">-</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span></div>
 </pre></div>
 
                 </article>
@@ -1062,8 +961,6 @@ document.write(`
             </div>
             
             
-              
-                <div class="bd-sidebar-secondary bd-toc"></div>
               
             
           </div>
@@ -1108,8 +1005,8 @@ By NREL
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>
