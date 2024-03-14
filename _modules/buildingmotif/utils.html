@@ -962,7 +962,7 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">brick_tq_shacl.topquadrant_shacl</span> <span class="kn">import</span> <span class="n">validate</span> <span class="k">as</span> <span class="n">tq_validate</span>
 
-            <span class="k">return</span> <span class="n">tq_validate</span><span class="p">(</span><span class="n">data_graph</span><span class="p">,</span> <span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
+            <span class="k">return</span> <span class="n">tq_validate</span><span class="p">(</span><span class="n">data_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">(),</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span><span class="o">.</span><span class="n">skolemize</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">&quot;TopQuadrant SHACL engine not available. Using PySHACL instead.&quot;</span>
@@ -1001,13 +1001,21 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">brick_tq_shacl.topquadrant_shacl</span> <span class="kn">import</span> <span class="n">infer</span> <span class="k">as</span> <span class="n">tq_infer</span>
 
-            <span class="k">return</span> <span class="n">tq_infer</span><span class="p">(</span><span class="n">data_graph</span><span class="p">,</span> <span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">tq_infer</span><span class="p">(</span>
+                <span class="n">data_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">(),</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
+            <span class="p">)</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">&quot;TopQuadrant SHACL engine not available. Using PySHACL instead.&quot;</span>
             <span class="p">)</span>
             <span class="k">pass</span>
 
+    <span class="c1"># We use a fixed-point computation approach to &#39;compiling&#39; RDF models.</span>
+    <span class="c1"># We accomlish this by keeping track of the size of the graph before and after</span>
+    <span class="c1"># the inference step. If the size of the graph changes, then we know that the</span>
+    <span class="c1"># inference has had some effect. We do this at most 3 times to avoid looping</span>
+    <span class="c1"># forever.</span>
+    <span class="n">pre_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
     <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
         <span class="n">data_graph</span><span class="o">=</span><span class="n">data_graph</span><span class="p">,</span>
         <span class="n">shacl_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
@@ -1017,7 +1025,23 @@ document.write(`
         <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">data_graph</span></div>
+    <span class="n">post_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">attempts</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">while</span> <span class="n">attempts</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">post_compile_length</span> <span class="o">!=</span> <span class="n">pre_compile_length</span><span class="p">:</span>
+        <span class="n">pre_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+            <span class="n">data_graph</span><span class="o">=</span><span class="n">data_graph</span><span class="p">,</span>
+            <span class="n">shacl_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
+            <span class="n">ont_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
+            <span class="n">advanced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">post_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">attempts</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">data_graph</span> <span class="o">-</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span></div>
 </pre></div>
 
                 </article>

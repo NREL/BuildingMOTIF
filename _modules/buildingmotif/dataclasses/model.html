@@ -406,7 +406,6 @@ document.write(`
 <span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">pyshacl</span>
 <span class="kn">import</span> <span class="nn">rdflib</span>
 <span class="kn">import</span> <span class="nn">rfc3987</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
@@ -552,7 +551,7 @@ document.write(`
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">shape_collections</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ShapeCollection</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">error_on_missing_imports</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pyshacl&quot;</span><span class="p">,</span>
+        <span class="n">engine</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pyshacl&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValidationContext&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates this model against the given list of ShapeCollections.</span>
 <span class="sd">        If no list is provided, the model will be validated against the model&#39;s &quot;manifest&quot;.</span>
@@ -590,28 +589,40 @@ document.write(`
             <span class="p">)</span><span class="o">.</span><span class="n">graph</span>
         <span class="c1"># inline sh:node for interpretability</span>
         <span class="n">shapeg</span> <span class="o">=</span> <span class="n">rewrite_shape_graph</span><span class="p">(</span><span class="n">shapeg</span><span class="p">)</span>
+
+        <span class="c1"># skolemize the shape graph so we have consistent identifiers across</span>
+        <span class="c1"># validation through the interpretation of the validation report</span>
+        <span class="n">shapeg</span> <span class="o">=</span> <span class="n">shapeg</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
+
+        <span class="n">shapeg</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="s2">&quot;/tmp/shapeg.ttl&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;turtle&quot;</span><span class="p">)</span>
+
         <span class="c1"># TODO: do we want to preserve the materialized triples added to data_graph via reasoning?</span>
         <span class="n">data_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
-
-        <span class="c1"># perform inference on the data graph</span>
-        <span class="n">shacl_inference</span><span class="p">(</span><span class="n">data_graph</span><span class="p">,</span> <span class="n">shapeg</span><span class="p">)</span>
+        <span class="n">data_graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="s2">&quot;/tmp/data_graph.ttl&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;turtle&quot;</span><span class="p">)</span>
 
         <span class="c1"># validate the data graph</span>
         <span class="n">valid</span><span class="p">,</span> <span class="n">report_g</span><span class="p">,</span> <span class="n">report_str</span> <span class="o">=</span> <span class="n">shacl_validate</span><span class="p">(</span><span class="n">data_graph</span><span class="p">,</span> <span class="n">shapeg</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ValidationContext</span><span class="p">(</span>
             <span class="n">shape_collections</span><span class="p">,</span>
+            <span class="n">shapeg</span><span class="p">,</span>
             <span class="n">valid</span><span class="p">,</span>
             <span class="n">report_g</span><span class="p">,</span>
             <span class="n">report_str</span><span class="p">,</span>
             <span class="bp">self</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.compile"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;ShapeCollection&quot;</span><span class="p">]):</span>
+<div class="viewcode-block" id="Model.compile"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;ShapeCollection&quot;</span><span class="p">],</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pyshacl&quot;</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compile the graph of a model against a set of ShapeCollections.</span>
 
 <span class="sd">        :param shape_collections: list of ShapeCollections to compile the model</span>
 <span class="sd">            against</span>
 <span class="sd">        :type shape_collections: List[ShapeCollection]</span>
+<span class="sd">        :param engine: the engine to use for validation. &quot;pyshacl&quot; or &quot;topquadrant&quot;. Using topquadrant</span>
+<span class="sd">            requires Java to be installed on this machine, and the &quot;topquadrant&quot; feature on BuildingMOTIF,</span>
+<span class="sd">            defaults to &quot;pyshacl&quot;</span>
+<span class="sd">        :type engine: str</span>
 <span class="sd">        :return: copy of model&#39;s graph that has been compiled against the</span>
 <span class="sd">            ShapeCollections</span>
 <span class="sd">        :rtype: Graph</span>
@@ -624,39 +635,7 @@ document.write(`
 
         <span class="n">model_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
 
-        <span class="c1"># We use a fixed-point computation approach to &#39;compiling&#39; RDF models.</span>
-        <span class="c1"># We accomlish this by keeping track of the size of the graph before and after</span>
-        <span class="c1"># the inference step. If the size of the graph changes, then we know that the</span>
-        <span class="c1"># inference has had some effect. We do this at most 3 times to avoid looping</span>
-        <span class="c1"># forever.</span>
-        <span class="n">pre_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-        <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
-            <span class="n">data_graph</span><span class="o">=</span><span class="n">model_graph</span><span class="p">,</span>
-            <span class="n">shacl_graph</span><span class="o">=</span><span class="n">ontology_graph</span><span class="p">,</span>
-            <span class="n">ont_graph</span><span class="o">=</span><span class="n">ontology_graph</span><span class="p">,</span>
-            <span class="n">advanced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">post_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-        <span class="n">attempts</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="k">while</span> <span class="n">attempts</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">post_compile_length</span> <span class="o">!=</span> <span class="n">pre_compile_length</span><span class="p">:</span>
-            <span class="n">pre_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-            <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
-                <span class="n">data_graph</span><span class="o">=</span><span class="n">model_graph</span><span class="p">,</span>
-                <span class="n">shacl_graph</span><span class="o">=</span><span class="n">ontology_graph</span><span class="p">,</span>
-                <span class="n">ont_graph</span><span class="o">=</span><span class="n">ontology_graph</span><span class="p">,</span>
-                <span class="n">advanced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">post_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">model_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-            <span class="n">attempts</span> <span class="o">-=</span> <span class="mi">1</span>
-        <span class="n">model_graph</span> <span class="o">-=</span> <span class="n">ontology_graph</span>
-        <span class="k">return</span> <span class="n">model_graph</span><span class="o">.</span><span class="n">de_skolemize</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="n">shacl_inference</span><span class="p">(</span><span class="n">model_graph</span><span class="p">,</span> <span class="n">ontology_graph</span><span class="p">,</span> <span class="n">engine</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.test_model_against_shapes"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.test_model_against_shapes">[docs]</a>    <span class="k">def</span> <span class="nf">test_model_against_shapes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -703,15 +682,17 @@ document.write(`
 
             <span class="n">temp_model_graph</span> <span class="o">+=</span> <span class="n">ontology_graph</span><span class="o">.</span><span class="n">cbd</span><span class="p">(</span><span class="n">shape_uri</span><span class="p">)</span>
 
-            <span class="n">valid</span><span class="p">,</span> <span class="n">report_g</span><span class="p">,</span> <span class="n">report_str</span> <span class="o">=</span> <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
-                <span class="n">data_graph</span><span class="o">=</span><span class="n">temp_model_graph</span><span class="p">,</span>
-                <span class="n">ont_graph</span><span class="o">=</span><span class="n">ontology_graph</span><span class="p">,</span>
-                <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">advanced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="c1"># skolemize the shape graph so we have consistent identifiers across</span>
+            <span class="c1"># validation through the interpretation of the validation report</span>
+            <span class="n">ontology_graph</span> <span class="o">=</span> <span class="n">ontology_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
+
+            <span class="n">valid</span><span class="p">,</span> <span class="n">report_g</span><span class="p">,</span> <span class="n">report_str</span> <span class="o">=</span> <span class="n">shacl_validate</span><span class="p">(</span>
+                <span class="n">temp_model_graph</span><span class="p">,</span> <span class="n">ontology_graph</span>
             <span class="p">)</span>
+
             <span class="n">results</span><span class="p">[</span><span class="n">shape_uri</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span>
                 <span class="n">shape_collections</span><span class="p">,</span>
+                <span class="n">ontology_graph</span><span class="p">,</span>
                 <span class="n">valid</span><span class="p">,</span>
                 <span class="n">report_g</span><span class="p">,</span>
                 <span class="n">report_str</span><span class="p">,</span>

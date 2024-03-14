@@ -657,6 +657,9 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ShapeCollection</span><span class="p">]</span>
+    <span class="c1"># the shapes graph that was used to validate the model</span>
+    <span class="c1"># This will be skolemized!</span>
+    <span class="n">shapes_graph</span><span class="p">:</span> <span class="n">Graph</span>
     <span class="n">valid</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">report</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span>
     <span class="n">report_string</span><span class="p">:</span> <span class="nb">str</span>
@@ -668,10 +671,6 @@ document.write(`
 <span class="sd">        SHACL validation report.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_report_to_diffset</span><span class="p">()</span>
-
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">sc</span><span class="o">.</span><span class="n">graph</span> <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape_collections</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="n">Graph</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
 
 <div class="viewcode-block" id="ValidationContext.as_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.ValidationContext.as_templates">[docs]</a>    <span class="k">def</span> <span class="nf">as_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces the set of templates that reconcile the GraphDiffs from the</span>
@@ -730,7 +729,7 @@ document.write(`
         <span class="c1"># TODO: for future use</span>
         <span class="c1"># proppath = SH[&quot;property&quot;] | (SH.qualifiedValueShape / SH[&quot;property&quot;])  # type: ignore</span>
 
-        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">report</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">report</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes_graph</span>
         <span class="n">diffs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">SH</span><span class="o">.</span><span class="n">result</span><span class="p">):</span>
             <span class="c1"># check if the failure is due to our count constraint component</span>
