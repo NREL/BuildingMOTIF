@@ -7,7 +7,7 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
-import pyshacl
+import pyshacl  # type: ignore
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
@@ -555,7 +555,9 @@ def shacl_validate(
 
     if engine == "topquadrant":
         try:
-            from brick_tq_shacl.topquadrant_shacl import validate as tq_validate
+            from brick_tq_shacl.topquadrant_shacl import (
+                validate as tq_validate,  # type: ignore
+            )
 
             return tq_validate(data_graph.skolemize(), (shape_graph or Graph()).skolemize())  # type: ignore
         except ImportError:
