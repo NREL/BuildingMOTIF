@@ -243,7 +243,6 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
 </ul>
@@ -407,7 +406,6 @@ document.write(`
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pygit2</span>
-<span class="kn">import</span> <span class="nn">pyshacl</span>
 <span class="kn">import</span> <span class="nn">rdflib</span>
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
@@ -425,6 +423,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_ontology_files</span><span class="p">,</span>
     <span class="n">get_template_parts_from_shape</span><span class="p">,</span>
+    <span class="n">shacl_inference</span><span class="p">,</span>
     <span class="n">skip_uri</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -514,7 +513,7 @@ document.write(`
             <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
                 <span class="bp">cls</span><span class="o">.</span><span class="n">_clear_library</span><span class="p">(</span><span class="n">db_library</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s1">&#39;Library </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> already exists in database. To ovewrite load library with &quot;overwrite=True&quot;&#39;</span>  <span class="c1"># noqa</span>
                 <span class="p">)</span>
         <span class="k">except</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span><span class="p">:</span>
@@ -650,15 +649,7 @@ document.write(`
         <span class="c1"># expand the ontology graph before we insert it into the database. This will ensure</span>
         <span class="c1"># that the output of compiled models will not contain triples that really belong to</span>
         <span class="c1"># the ontology</span>
-        <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
-            <span class="n">data_graph</span><span class="o">=</span><span class="n">ontology</span><span class="p">,</span>
-            <span class="n">shacl_graph</span><span class="o">=</span><span class="n">ontology</span><span class="p">,</span>
-            <span class="n">ont_graph</span><span class="o">=</span><span class="n">ontology</span><span class="p">,</span>
-            <span class="n">advanced</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">js</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">allow_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">ontology</span> <span class="o">=</span> <span class="n">shacl_inference</span><span class="p">(</span><span class="n">ontology</span><span class="p">)</span>
 
         <span class="n">lib</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ontology_name</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
 
@@ -686,6 +677,7 @@ document.write(`
         <span class="n">dependency_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">)</span>
+            <span class="c1"># TODO: mincount 0 (or unspecified) should be optional args on the generated template</span>
             <span class="n">partial_body</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="n">get_template_parts_from_shape</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
             <span class="n">templ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_template</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate</span><span class="p">),</span> <span class="n">partial_body</span><span class="p">)</span>
             <span class="n">dependency_cache</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">deps</span>
@@ -736,7 +728,7 @@ document.write(`
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_library_exists</span><span class="p">(</span><span class="n">directory</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s1">&#39;Library &quot;</span><span class="si">{</span><span class="n">directory</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; already exists in database and &quot;overwrite=False&quot;. Returning existing library.&#39;</span>  <span class="c1"># noqa</span>
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">directory</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -785,75 +777,33 @@ document.write(`
         <span class="k">except</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_resolve_dependency</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">template</span><span class="p">:</span> <span class="n">Template</span><span class="p">,</span>
-        <span class="n">dep</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_template_dependency</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
-        <span class="n">template_id_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve a dependency to a template.</span>
-
-<span class="sd">        :param template: template to resolve dependency for</span>
-<span class="sd">        :type template: Template</span>
-<span class="sd">        :param dep: dependency</span>
-<span class="sd">        :type dep: Union[_template_dependency, dict]</span>
-<span class="sd">        :param template_id_lookup: a local cache of {name: id} for uncommitted templates</span>
-<span class="sd">        :type template_id_lookup: Dict[str, int]</span>
-<span class="sd">        :return: the template instance this dependency points to</span>
-<span class="sd">        :rtype: Template</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># if dep is a _template_dependency, turn it into a template</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">_template_dependency</span><span class="p">):</span>
-            <span class="n">dependee</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_template</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">)</span>
-            <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
-            <span class="k">return</span>
-
-        <span class="c1"># now, we know that dep is a dict</span>
-
-        <span class="c1"># if dependency names a library explicitly, load that library and get the template by name</span>
-        <span class="k">if</span> <span class="s2">&quot;library&quot;</span> <span class="ow">in</span> <span class="n">dep</span><span class="p">:</span>
-            <span class="n">dependee</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;library&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span>
-                <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-            <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
-            <span class="k">return</span>
-        <span class="c1"># if no library is provided, try to resolve the dependency from this library</span>
-        <span class="k">if</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">template_id_lookup</span><span class="p">:</span>
-            <span class="n">dependee</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">[</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]])</span>
-            <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
-            <span class="k">return</span>
-        <span class="c1"># check documentation for skip_uri for what URIs get skipped</span>
-        <span class="k">if</span> <span class="n">skip_uri</span><span class="p">(</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]):</span>
-            <span class="k">return</span>
-        <span class="c1"># if the dependency is not in the local cache, then search through this library&#39;s imports</span>
-        <span class="c1"># for the template</span>
-        <span class="k">for</span> <span class="n">imp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_imports</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">imp</span><span class="p">))</span>
-                <span class="n">dependee</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">])</span>
-                <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
-                <span class="k">return</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in library </span><span class="si">{</span><span class="n">imp</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Warning: could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in libraries </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_imports</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-
     <span class="k">def</span> <span class="nf">_resolve_template_dependencies</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">template_id_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
         <span class="n">dependency_cache</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">_template_dependency</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve all dependencies for all templates in this library&quot;&quot;&quot;</span>
         <span class="c1"># two phases here: first, add all of the templates and their dependencies</span>
         <span class="c1"># to the database but *don&#39;t* check that the dependencies are valid yet</span>
         <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">template</span><span class="o">.</span><span class="n">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dependency_cache</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">dependency_cache</span><span class="p">[</span><span class="n">template</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_dependency</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">dep</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">template_id_lookup</span><span class="p">:</span>
+                        <span class="n">dependee</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">[</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]])</span>
+                        <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
+                    <span class="c1"># check documentation for skip_uri for what URIs get skipped</span>
+                    <span class="k">elif</span> <span class="ow">not</span> <span class="n">skip_uri</span><span class="p">(</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]):</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Warning: could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">_template_dependency</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">dependee</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_template</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">)</span>
+                        <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: could not resolve dependency </span><span class="si">{</span><span class="n">dep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="n">e</span>
         <span class="c1"># check that all dependencies are valid (use parameters that exist, etc)</span>
         <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
             <span class="n">template</span><span class="o">.</span><span class="n">check_dependencies</span><span class="p">()</span>
@@ -903,18 +853,6 @@ document.write(`
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">update_db_library_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">new_name</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">graph_imports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the list of owl:imports for this library&#39;s shape collection</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">shape_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="n">i</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shape_col</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">imports</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">)</span>
-        <span class="p">]</span>
 
 <div class="viewcode-block" id="Library.create_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.create_template">[docs]</a>    <span class="k">def</span> <span class="nf">create_template</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
