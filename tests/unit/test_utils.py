@@ -52,6 +52,23 @@ def test_get_template_parts_from_shape():
     """
     )
     body, deps = get_template_parts_from_shape(MODEL["shape1"], shape_graph)
+    assert len(deps) == 0
+    assert (PARAM["name"], A, MODEL["shape1"]) in body
+
+    shape_graph = Graph()
+    shape_graph.parse(
+        data=PREAMBLE
+        + """
+    :shape1 a owl:Class, sh:NodeShape ;
+        sh:property [
+            sh:path brick:hasPoint ;
+            sh:node brick:Temperature_Sensor ;
+            sh:minCount 1 ;
+        ] .
+    """
+    )
+
+    body, deps = get_template_parts_from_shape(MODEL["shape1"], shape_graph)
     assert len(deps) == 1
     assert deps[0]["template"] == str(BRICK.Temperature_Sensor)
     assert list(deps[0]["args"].keys()) == ["name"]

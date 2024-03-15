@@ -199,6 +199,18 @@ def test_get_library_dependencies(clean_building_motif):
     }
 
 
+def test_get_library_dependencies_from_ttl(clean_building_motif):
+    Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    lib = Library.load(directory="tests/unit/fixtures/shape-deps")
+    for templ in lib.get_templates():
+        print(templ.name)
+    templ = lib.get_template_by_name("urn:shape/vav_shape")
+    assert len(templ.get_dependencies()) == 2, "Expected 2 dependencies"
+    dep_names = [d.template.name for d in templ.get_dependencies()]
+    assert "urn:shape/Air_Flow_Sensor" in dep_names
+    assert "https://brickschema.org/schema/Brick#Air_Temperature_Sensor" in dep_names
+
+
 def test_template_compilation(clean_building_motif):
     spec = {
         "hasPoint": {

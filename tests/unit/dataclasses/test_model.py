@@ -57,6 +57,7 @@ def test_validate_model_manifest(clean_building_motif):
     m = Model.create(name="https://example.com", description="a very good model")
     m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
 
+    Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
 
@@ -130,6 +131,7 @@ def test_validate_model_manifest_with_imports(clean_building_motif):
 
 def test_validate_model_explicit_shapes(clean_building_motif):
     # load library
+    Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
 
