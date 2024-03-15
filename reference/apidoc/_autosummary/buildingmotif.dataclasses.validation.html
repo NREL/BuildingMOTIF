@@ -246,6 +246,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
 </ul>
@@ -480,7 +481,7 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.RequiredPath" title="buildingmotif.dataclasses.validation.RequiredPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RequiredPath</span></code></a>(focus, validation_result, ...)</p></td>
 <td><p>Represents an entity missing a required property.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.ValidationContext" title="buildingmotif.dataclasses.validation.ValidationContext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValidationContext</span></code></a>(shape_collections, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.ValidationContext" title="buildingmotif.dataclasses.validation.ValidationContext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValidationContext</span></code></a>(shape_collections, valid, ...)</p></td>
 <td><p>Holds the necessary information for processing the results of SHACL validation.</p></td>
 </tr>
 </tbody>
@@ -766,17 +767,12 @@ the given class.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ValidationContext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape_collections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">ShapeCollection</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapes_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model" title="buildingmotif.dataclasses.model.Model"><span class="pre">Model</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#ValidationContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ValidationContext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape_collections</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">ShapeCollection</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model" title="buildingmotif.dataclasses.model.Model"><span class="pre">Model</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#ValidationContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext" title="Permalink to this definition">#</a></dt>
 <dd><p>Holds the necessary information for processing the results of SHACL
 validation.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext.shape_collections">
 <span class="sig-name descname"><span class="pre">shape_collections</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection" title="buildingmotif.dataclasses.shape_collection.ShapeCollection"><span class="pre">ShapeCollection</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext.shape_collections" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext.shapes_graph">
-<span class="sig-name descname"><span class="pre">shapes_graph</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Graph</span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext.shapes_graph" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -817,27 +813,6 @@ SHACL validation report.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>List[<a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template">Template</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.ValidationContext.get_reasons_with_severity">
-<span class="sig-name descname"><span class="pre">get_reasons_with_severity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">severity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">URIRef</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">URIRef</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.dataclasses.validation.GraphDiff" title="buildingmotif.dataclasses.validation.GraphDiff"><span class="pre">GraphDiff</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#ValidationContext.get_reasons_with_severity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.ValidationContext.get_reasons_with_severity" title="Permalink to this definition">#</a></dt>
-<dd><p>Like diffset, but only includes ValidationResults with the given severity.
-Permitted values are:
-- SH.Violation or “Violation” for violations
-- SH.Warning or “Warning” for warnings
-- SH.Info or “Info” for info</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>severity</strong> (<em>Union</em><em>[</em><em>URIRef</em><em>|</em><em>str</em><em>]</em>) – the severity to filter by</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a dictionary of focus nodes to the reasons with the given severity</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dict[Optional[URIRef], Set[<a class="reference internal" href="#buildingmotif.dataclasses.validation.GraphDiff" title="buildingmotif.dataclasses.validation.GraphDiff">GraphDiff</a>]]</p>
 </dd>
 </dl>
 </dd></dl>

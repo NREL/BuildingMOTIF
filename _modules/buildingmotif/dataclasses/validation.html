@@ -243,6 +243,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
 </ul>
@@ -404,7 +405,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_hex</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">rdflib</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
@@ -653,9 +654,6 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ShapeCollection</span><span class="p">]</span>
-    <span class="c1"># the shapes graph that was used to validate the model</span>
-    <span class="c1"># This will be skolemized!</span>
-    <span class="n">shapes_graph</span><span class="p">:</span> <span class="n">Graph</span>
     <span class="n">valid</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">report</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span>
     <span class="n">report_string</span><span class="p">:</span> <span class="nb">str</span>
@@ -668,6 +666,10 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_report_to_diffset</span><span class="p">()</span>
 
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">sc</span><span class="o">.</span><span class="n">graph</span> <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape_collections</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="n">Graph</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
+
 <div class="viewcode-block" id="ValidationContext.as_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.ValidationContext.as_templates">[docs]</a>    <span class="k">def</span> <span class="nf">as_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces the set of templates that reconcile the GraphDiffs from the</span>
 <span class="sd">        SHACL validation report.</span>
@@ -676,43 +678,6 @@ document.write(`
 <span class="sd">        :rtype: List[Template]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">diffset_to_templates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diffset</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ValidationContext.get_reasons_with_severity"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.ValidationContext.get_reasons_with_severity">[docs]</a>    <span class="k">def</span> <span class="nf">get_reasons_with_severity</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">severity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">URIRef</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Like diffset, but only includes ValidationResults with the given severity.</span>
-<span class="sd">        Permitted values are:</span>
-<span class="sd">        - SH.Violation or &quot;Violation&quot; for violations</span>
-<span class="sd">        - SH.Warning or &quot;Warning&quot; for warnings</span>
-<span class="sd">        - SH.Info or &quot;Info&quot; for info</span>
-
-<span class="sd">        :param severity: the severity to filter by</span>
-<span class="sd">        :type severity: Union[URIRef|str]</span>
-<span class="sd">        :return: a dictionary of focus nodes to the reasons with the given severity</span>
-<span class="sd">        :rtype: Dict[Optional[URIRef], Set[GraphDiff]]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">severity</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">severity</span> <span class="o">=</span> <span class="n">SH</span><span class="p">[</span><span class="n">severity</span><span class="p">]</span>
-
-        <span class="c1"># check if the severity is a valid SHACL severity</span>
-        <span class="k">if</span> <span class="n">severity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="n">SH</span><span class="o">.</span><span class="n">Violation</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">Warning</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">Info</span><span class="p">}:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Invalid severity: </span><span class="si">{</span><span class="n">severity</span><span class="si">}</span><span class="s2">. Must be one of SH.Violation, SH.Warning, or SH.Info&quot;</span>
-            <span class="p">)</span>
-
-        <span class="c1"># for each value in the diffset, filter out the diffs that don&#39;t have the given severity</span>
-        <span class="c1"># in the diffset.graph</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">focus</span><span class="p">:</span> <span class="p">{</span>
-                <span class="n">diff</span>
-                <span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">diffs</span>
-                <span class="k">if</span> <span class="n">diff</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">_result_uri</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">resultSeverity</span><span class="p">)</span>
-                <span class="o">==</span> <span class="n">severity</span>
-            <span class="p">}</span>
-            <span class="k">for</span> <span class="n">focus</span><span class="p">,</span> <span class="n">diffs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffset</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span></div>
 
     <span class="k">def</span> <span class="nf">_report_to_diffset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Interpret a SHACL validation report and say what is missing.</span>
@@ -725,7 +690,7 @@ document.write(`
         <span class="c1"># TODO: for future use</span>
         <span class="c1"># proppath = SH[&quot;property&quot;] | (SH.qualifiedValueShape / SH[&quot;property&quot;])  # type: ignore</span>
 
-        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">report</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">shapes_graph</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">report</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span>
         <span class="n">diffs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">Set</span><span class="p">[</span><span class="n">GraphDiff</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">g</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">SH</span><span class="o">.</span><span class="n">result</span><span class="p">):</span>
             <span class="c1"># check if the failure is due to our count constraint component</span>

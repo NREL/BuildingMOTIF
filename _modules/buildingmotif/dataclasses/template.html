@@ -243,6 +243,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
 </ul>
@@ -757,7 +758,6 @@ document.write(`
 <span class="sd">            parameters were provided</span>
 <span class="sd">        :rtype: Union[Template, rdflib.Graph]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># TODO: handle datatype properties</span>
         <span class="n">templ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_memory_copy</span><span class="p">()</span>
         <span class="c1"># put all of the parameter names into the PARAM namespace so they can be</span>
         <span class="c1"># directly subsituted in the template body</span>
@@ -789,7 +789,8 @@ document.write(`
             <span class="k">return</span> <span class="n">templ</span><span class="o">.</span><span class="n">body</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">leftover_params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">warn_unused</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Parameters </span><span class="se">\&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">leftover_params</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> were not provided during evaluation&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Parameters </span><span class="se">\&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">leftover_params</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> were not provided during evaluation&quot;</span><span class="p">,</span>
+                <span class="ne">UserWarning</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">templ</span></div>
 

@@ -246,6 +246,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
 </ul>
@@ -487,12 +488,6 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.rewrite_shape_graph" title="buildingmotif.utils.rewrite_shape_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rewrite_shape_graph</span></code></a>(g)</p></td>
 <td><p>Rewrites the input graph to make the resulting validation report more useful.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.shacl_inference" title="buildingmotif.utils.shacl_inference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shacl_inference</span></code></a>(data_graph[, shape_graph, ...])</p></td>
-<td><p>Infer new triples in the data graph using the shape graph.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.shacl_validate" title="buildingmotif.utils.shacl_validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shacl_validate</span></code></a>(data_graph[, shape_graph, engine])</p></td>
-<td><p>Validate the data graph against the shape graph.</p></td>
-</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.skip_uri" title="buildingmotif.utils.skip_uri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skip_uri</span></code></a>(uri)</p></td>
 <td><p>Returns True if the URI should be skipped during processing because it is axiomatic or not expected to be imported.</p></td>
 </tr>
@@ -730,53 +725,6 @@ because it is axiomatic or not expected to be imported.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="buildingmotif.utils.shacl_validate">
-<span class="sig-name descname"><span class="pre">shacl_validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Graph</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'topquadrant'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Graph</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#shacl_validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.shacl_validate" title="Permalink to this definition">#</a></dt>
-<dd><p>Validate the data graph against the shape graph.
-Uses the fastest validation method available. Use the ‘topquadrant’ feature
-to use TopQuadrant’s SHACL engine. Defaults to using PySHACL.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_graph</strong> (<em>Graph</em>) – the graph to validate</p></li>
-<li><p><strong>shape_graph</strong> (<em>Graph</em><em>, </em><em>optional</em>) – the shape graph to validate against</p></li>
-<li><p><strong>engine</strong> (<em>str</em><em>, </em><em>optional</em>) – the SHACL engine to use, defaults to “topquadrant”</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a tuple containing the validation result, the validation report, and the validation report string</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[bool, Graph, str]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="buildingmotif.utils.shacl_inference">
-<span class="sig-name descname"><span class="pre">shacl_inference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Graph</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'topquadrant'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Graph</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#shacl_inference"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.shacl_inference" title="Permalink to this definition">#</a></dt>
-<dd><p>Infer new triples in the data graph using the shape graph.
-Edits the data graph in place. Uses the fastest inference method available.
-Use the ‘topquadrant’ feature to use TopQuadrant’s SHACL engine. Defaults to
-using PySHACL.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data_graph</strong> (<em>Graph</em>) – the graph to infer new triples in</p></li>
-<li><p><strong>shape_graph</strong> (<em>Optional</em><em>[</em><em>Graph</em><em>]</em>) – the shape graph to use for inference</p></li>
-<li><p><strong>engine</strong> (<em>str</em><em>, </em><em>optional</em>) – the SHACL engine to use, defaults to “topquadrant”</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>the data graph with inferred triples</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Graph</p>
 </dd>
 </dl>
 </dd></dl>
