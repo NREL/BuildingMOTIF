@@ -242,10 +242,14 @@ def get_template_parts_from_shape(
             else:
                 param = _gensym()
             body.add((root_param, path, param))
-            deps.append({"template": str(otype), "args": {"name": param}})
-            body.add((param, RDF.type, otype))
 
-        # add 'hasValue'
+            otype_as_class = (None, SH["class"], otype) in shape_graph
+            otype_as_node = (None, SH["node"], otype) in shape_graph
+            otype_is_nodeshape = (otype, RDF.type, SH.NodeShape) in shape_graph
+
+            if (otype_as_class and otype_is_nodeshape) or otype_as_node:
+                deps.append({"template": str(otype), "args": {"name": param}})
+                body.add((param, RDF.type, otype))
 
         pvalue = shape_graph.value(pshape, SH["hasValue"])
         if pvalue:
@@ -262,8 +266,13 @@ def get_template_parts_from_shape(
     for cls in classes:
         body.add((root_param, RDF.type, cls))
 
-    nodes = shape_graph.objects(shape_name, SH["node"])
+    # for all objects of sh:node, add them to the deps if they haven't been added
+    # already through the property shapes above
+    nodes = shape_graph.cbd(shape_name).objects(predicate=SH["node"], unique=True)
     for node in nodes:
+        # if node is already in deps, skip it
+        if any(str(node) == dep["template"] for dep in deps):
+            continue
         deps.append(
             {"template": str(node), "args": {"name": "name"}}
         )  # tie to root param
