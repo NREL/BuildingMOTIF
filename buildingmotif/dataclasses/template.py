@@ -388,7 +388,8 @@ class Template:
             return templ.body
         if len(leftover_params) > 0 and warn_unused:
             warnings.warn(
-                f"Parameters \"{', '.join(leftover_params)}\" were not provided during evaluation"
+                f"Parameters \"{', '.join(leftover_params)}\" were not provided during evaluation",
+                UserWarning,
             )
         return templ
 
