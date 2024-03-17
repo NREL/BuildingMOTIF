@@ -274,3 +274,87 @@ def test_validate_with_manifest(clean_building_motif, shacl_engine):
 
     ctx = model.validate(None, engine=shacl_engine)
     assert not ctx.valid, "Model validated but it should throw an error"
+
+
+def test_get_validation_severity(clean_building_motif, shacl_engine):
+    NS = Namespace("urn:ex/")
+    g = Graph()
+    g.parse(
+        data="""
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix : <urn:ex/> .
+    :a a :Class . # will fail all shapes
+    """
+    )
+
+    manifest_g = Graph()
+    manifest_g.parse(
+        data="""
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix : <urn:ex/> .
+    :shape_warning a sh:NodeShape ;
+        sh:targetClass :Class ;
+        sh:property [
+            sh:path rdfs:label ;
+            sh:minCount 1  ;
+            sh:severity sh:Warning ;
+        ] .
+    :shape_violation1 a sh:NodeShape ;
+        sh:targetClass :Class ;
+        sh:property [
+            sh:path brick:hasPoint ;
+            sh:minCount 1  ;
+            sh:severity sh:Violation ;
+        ] .
+    :shape_violation2 a sh:NodeShape ;
+        sh:targetClass :Class ;
+        sh:property [
+            sh:path brick:feeds ;
+            sh:minCount 1  ;
+            sh:severity sh:Violation ;
+        ] .
+    :shape_info a sh:NodeShape ;
+        sh:targetClass :Class ;
+        sh:property [
+            sh:path brick:hasPart ;
+            sh:minCount 1  ;
+            sh:severity sh:Info ;
+        ] .
+
+    """
+    )
+
+    model = Model.create(name=NS)
+    model.add_graph(g)
+    manifest = model.get_manifest()
+    manifest.add_graph(manifest_g)
+
+    ctx = model.validate(None, engine=shacl_engine)
+    assert not ctx.valid, "Model validated but it should throw an error"
+
+    # check that only valid severity values are accepted
+    with pytest.raises(ValueError):
+        reasons = ctx.get_reasons_with_severity("Nonexist")
+
+    for severity in ["Violation", SH.Violation]:
+        reasons = ctx.get_reasons_with_severity(severity)
+        assert set(reasons.keys()) == {NS["a"]}
+        assert len(reasons[NS["a"]]) == 2, f"Expected 2 violations, got {reasons}"
+
+    for severity in ["Info", SH.Info]:
+        reasons = ctx.get_reasons_with_severity(severity)
+        assert set(reasons.keys()) == {NS["a"]}
+        assert len(reasons[NS["a"]]) == 1, f"Expected 1 info, got {reasons}"
+
+    for severity in ["Warning", SH.Warning]:
+        reasons = ctx.get_reasons_with_severity(severity)
+        assert set(reasons.keys()) == {NS["a"]}
+        assert len(reasons[NS["a"]]) == 1, f"Expected 1 warning, got {reasons}"

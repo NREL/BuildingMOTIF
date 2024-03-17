@@ -292,7 +292,7 @@ class ValidationContext:
         :rtype: Dict[Optional[URIRef], Set[GraphDiff]]
         """
 
-        if isinstance(severity, str):
+        if not isinstance(severity, URIRef):
             severity = SH[severity]
 
         # check if the severity is a valid SHACL severity
