@@ -189,11 +189,8 @@ class Model:
         # validation through the interpretation of the validation report
         shapeg = shapeg.skolemize()
 
-        shapeg.serialize("/tmp/shapeg.ttl", format="turtle")
-
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
-        data_graph.serialize("/tmp/data_graph.ttl", format="turtle")
 
         # validate the data graph
         valid, report_g, report_str = shacl_validate(data_graph, shapeg, engine=engine)
