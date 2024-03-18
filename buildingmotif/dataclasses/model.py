@@ -196,7 +196,7 @@ class Model:
         data_graph.serialize("/tmp/data_graph.ttl", format="turtle")
 
         # validate the data graph
-        valid, report_g, report_str = shacl_validate(data_graph, shapeg, engine)
+        valid, report_g, report_str = shacl_validate(data_graph, shapeg, engine=engine)
         return ValidationContext(
             shape_collections,
             shapeg,

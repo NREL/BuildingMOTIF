@@ -545,7 +545,9 @@ def skip_uri(uri: URIRef) -> bool:
 
 
 def shacl_validate(
-    data_graph: Graph, shape_graph: Optional[Graph] = None, engine="topquadrant"
+    data_graph: Graph,
+    shape_graph: Optional[Graph] = None,
+    engine: Optional[str] = "topquadrant",
 ) -> Tuple[bool, Graph, str]:
     """
     Validate the data graph against the shape graph.
