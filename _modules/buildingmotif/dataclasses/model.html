@@ -410,13 +410,14 @@ document.write(`
 <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.validation</span> <span class="kn">import</span> <span class="n">ValidationContext</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">A</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">A</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Triple</span><span class="p">,</span>
     <span class="n">copy_graph</span><span class="p">,</span>
     <span class="n">rewrite_shape_graph</span><span class="p">,</span>
     <span class="n">shacl_inference</span><span class="p">,</span>
     <span class="n">shacl_validate</span><span class="p">,</span>
+    <span class="n">skolemize_shapes</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -587,9 +588,12 @@ document.write(`
         <span class="c1"># inline sh:node for interpretability</span>
         <span class="n">shapeg</span> <span class="o">=</span> <span class="n">rewrite_shape_graph</span><span class="p">(</span><span class="n">shapeg</span><span class="p">)</span>
 
+        <span class="c1"># remove imports from sg</span>
+        <span class="n">shapeg</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="n">OWL</span><span class="o">.</span><span class="n">imports</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
         <span class="c1"># skolemize the shape graph so we have consistent identifiers across</span>
         <span class="c1"># validation through the interpretation of the validation report</span>
-        <span class="n">shapeg</span> <span class="o">=</span> <span class="n">shapeg</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
+        <span class="n">shapeg</span> <span class="o">=</span> <span class="n">skolemize_shapes</span><span class="p">(</span><span class="n">shapeg</span><span class="p">)</span>
 
         <span class="c1"># TODO: do we want to preserve the materialized triples added to data_graph via reasoning?</span>
         <span class="n">data_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
@@ -625,7 +629,7 @@ document.write(`
         <span class="k">for</span> <span class="n">shape_collection</span> <span class="ow">in</span> <span class="n">shape_collections</span><span class="p">:</span>
             <span class="n">ontology_graph</span> <span class="o">+=</span> <span class="n">shape_collection</span><span class="o">.</span><span class="n">graph</span>
 
-        <span class="n">ontology_graph</span> <span class="o">=</span> <span class="n">ontology_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
+        <span class="n">ontology_graph</span> <span class="o">=</span> <span class="n">skolemize_shapes</span><span class="p">(</span><span class="n">ontology_graph</span><span class="p">)</span>
 
         <span class="n">model_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
 

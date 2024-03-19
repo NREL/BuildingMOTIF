@@ -27,6 +27,7 @@ buildingmotif.utils
       shacl_inference
       shacl_validate
       skip_uri
+      skolemize_shapes
       template_to_shape
    
    

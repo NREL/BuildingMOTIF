@@ -972,7 +972,7 @@ document.write(`
                 <span class="n">validate</span> <span class="k">as</span> <span class="n">tq_validate</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
 
-            <span class="k">return</span> <span class="n">tq_validate</span><span class="p">(</span><span class="n">data_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">(),</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span><span class="o">.</span><span class="n">skolemize</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
+            <span class="k">return</span> <span class="n">tq_validate</span><span class="p">(</span><span class="n">data_graph</span><span class="p">,</span> <span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">&quot;TopQuadrant SHACL engine not available. Using PySHACL instead.&quot;</span>
@@ -1011,9 +1011,7 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">brick_tq_shacl.topquadrant_shacl</span> <span class="kn">import</span> <span class="n">infer</span> <span class="k">as</span> <span class="n">tq_infer</span>
 
-            <span class="k">return</span> <span class="n">tq_infer</span><span class="p">(</span>
-                <span class="n">data_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">(),</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
-            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">tq_infer</span><span class="p">(</span><span class="n">data_graph</span><span class="p">,</span> <span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="s2">&quot;TopQuadrant SHACL engine not available. Using PySHACL instead.&quot;</span>
@@ -1052,6 +1050,48 @@ document.write(`
         <span class="n">post_compile_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_graph</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="n">attempts</span> <span class="o">-=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">data_graph</span> <span class="o">-</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="skolemize_shapes"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.skolemize_shapes">[docs]</a><span class="k">def</span> <span class="nf">skolemize_shapes</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Skolemize the shapes in the graph.</span>
+
+<span class="sd">    :param g: the graph to skolemize</span>
+<span class="sd">    :type g: Graph</span>
+<span class="sd">    :return: the skolemized graph</span>
+<span class="sd">    :rtype: Graph</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># write a query to update agraph by changing all PropertyShape blank nodes</span>
+    <span class="c1"># to URIRefs</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="n">property_shapes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="nb">object</span><span class="o">=</span><span class="n">SH</span><span class="o">.</span><span class="n">PropertyShape</span><span class="p">))</span>
+    <span class="n">property_shapes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">SH</span><span class="o">.</span><span class="n">property</span><span class="p">)))</span>
+    <span class="n">replacements</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">ps</span> <span class="ow">in</span> <span class="n">property_shapes</span><span class="p">:</span>
+        <span class="c1"># if not bnode, skip</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span> <span class="n">BNode</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="c1"># create a new URIRef</span>
+        <span class="n">new_ps</span> <span class="o">=</span> <span class="n">URIRef</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;urn:well-known/</span><span class="si">{</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># replace the old BNode with the new URIRef</span>
+        <span class="n">replacements</span><span class="p">[</span><span class="n">ps</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_ps</span>
+    <span class="c1"># apply the replacements</span>
+    <span class="n">replace_nodes</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">replacements</span><span class="p">)</span>
+
+    <span class="c1"># name all objects of qualifiedValueShape</span>
+    <span class="n">qvs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">SH</span><span class="o">.</span><span class="n">qualifiedValueShape</span><span class="p">))</span>
+    <span class="n">replacements</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">qv</span> <span class="ow">in</span> <span class="n">qvs</span><span class="p">:</span>
+        <span class="c1"># if not bnode, skip</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">qv</span><span class="p">,</span> <span class="n">BNode</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="c1"># create a new URIRef</span>
+        <span class="n">new_qv</span> <span class="o">=</span> <span class="n">URIRef</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;urn:well-known/</span><span class="si">{</span><span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># replace the old BNode with the new URIRef</span>
+        <span class="n">replacements</span><span class="p">[</span><span class="n">qv</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_qv</span>
+    <span class="c1"># apply the replacements</span>
+    <span class="n">replace_nodes</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">replacements</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">g</span></div>
 </pre></div>
 
                 </article>
