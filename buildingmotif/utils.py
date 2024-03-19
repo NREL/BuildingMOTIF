@@ -570,7 +570,7 @@ def shacl_validate(
                 validate as tq_validate,  # type: ignore
             )
 
-            return tq_validate(data_graph.skolemize(), (shape_graph or Graph()).skolemize())  # type: ignore
+            return tq_validate(data_graph, shape_graph or Graph())  # type: ignore
         except ImportError:
             logging.info(
                 "TopQuadrant SHACL engine not available. Using PySHACL instead."
@@ -609,9 +609,7 @@ def shacl_inference(
         try:
             from brick_tq_shacl.topquadrant_shacl import infer as tq_infer
 
-            return tq_infer(
-                data_graph.skolemize(), (shape_graph or Graph()).skolemize()
-            )
+            return tq_infer(data_graph, shape_graph or Graph())  # type: ignore
         except ImportError:
             logging.info(
                 "TopQuadrant SHACL engine not available. Using PySHACL instead."
@@ -650,3 +648,45 @@ def shacl_inference(
         post_compile_length = len(data_graph)  # type: ignore
         attempts -= 1
     return data_graph - (shape_graph or Graph())
+
+
+def skolemize_shapes(g: Graph) -> Graph:
+    """
+    Skolemize the shapes in the graph.
+
+    :param g: the graph to skolemize
+    :type g: Graph
+    :return: the skolemized graph
+    :rtype: Graph
+    """
+    # write a query to update agraph by changing all PropertyShape blank nodes
+    # to URIRefs
+    g = copy_graph(g)
+    property_shapes = list(g.subjects(predicate=RDF.type, object=SH.PropertyShape))
+    property_shapes.extend(list(g.objects(predicate=SH.property)))
+    replacements = {}
+    for ps in property_shapes:
+        # if not bnode, skip
+        if not isinstance(ps, BNode):
+            continue
+        # create a new URIRef
+        new_ps = URIRef(f"urn:well-known/{secrets.token_hex(4)}")
+        # replace the old BNode with the new URIRef
+        replacements[ps] = new_ps
+    # apply the replacements
+    replace_nodes(g, replacements)
+
+    # name all objects of qualifiedValueShape
+    qvs = list(g.objects(predicate=SH.qualifiedValueShape))
+    replacements = {}
+    for qv in qvs:
+        # if not bnode, skip
+        if not isinstance(qv, BNode):
+            continue
+        # create a new URIRef
+        new_qv = URIRef(f"urn:well-known/{secrets.token_hex(4)}")
+        # replace the old BNode with the new URIRef
+        replacements[qv] = new_qv
+    # apply the replacements
+    replace_nodes(g, replacements)
+    return g

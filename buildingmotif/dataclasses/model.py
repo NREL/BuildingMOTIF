@@ -8,13 +8,14 @@ from rdflib import URIRef
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
-from buildingmotif.namespaces import A
+from buildingmotif.namespaces import OWL, A
 from buildingmotif.utils import (
     Triple,
     copy_graph,
     rewrite_shape_graph,
     shacl_inference,
     shacl_validate,
+    skolemize_shapes,
 )
 
 if TYPE_CHECKING:
@@ -185,9 +186,12 @@ class Model:
         # inline sh:node for interpretability
         shapeg = rewrite_shape_graph(shapeg)
 
+        # remove imports from sg
+        shapeg.remove((None, OWL.imports, None))
+
         # skolemize the shape graph so we have consistent identifiers across
         # validation through the interpretation of the validation report
-        shapeg = shapeg.skolemize()
+        shapeg = skolemize_shapes(shapeg)
 
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
@@ -223,7 +227,7 @@ class Model:
         for shape_collection in shape_collections:
             ontology_graph += shape_collection.graph
 
-        ontology_graph = ontology_graph.skolemize()
+        ontology_graph = skolemize_shapes(ontology_graph)
 
         model_graph = copy_graph(self.graph).skolemize()
 
