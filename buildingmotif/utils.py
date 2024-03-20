@@ -243,21 +243,11 @@ def get_template_parts_from_shape(
                 param = _gensym()
             body.add((root_param, path, param))
 
-            # if otype is object of sh:class and it's also a shape, add it to the deps
-            if (None, SH["class"], otype) in shape_graph and (
-                otype,
-                RDF.type,
-                SH.NodeShape,
-            ) in shape_graph:
-                deps.append({"template": str(otype), "args": {"name": param}})
-                body.add((param, RDF.type, otype))
+            otype_as_class = (None, SH["class"], otype) in shape_graph
+            otype_as_node = (None, SH["node"], otype) in shape_graph
+            otype_is_nodeshape = (otype, RDF.type, SH.NodeShape) in shape_graph
 
-            # if otype is a shape, add it to the deps
-            elif (otype, RDF.type, SH.NodeShape) in shape_graph or (
-                None,
-                SH["node"],
-                otype,
-            ) in shape_graph:
+            if (otype_as_class and otype_is_nodeshape) or otype_as_node:
                 deps.append({"template": str(otype), "args": {"name": param}})
                 body.add((param, RDF.type, otype))
 

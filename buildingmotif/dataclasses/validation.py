@@ -277,7 +277,9 @@ class ValidationContext:
         """
         return diffset_to_templates(self.diffset)
 
-    def get_reasons_with_severity(self, severity: Union[URIRef|str]) -> Dict[Optional[URIRef], Set[GraphDiff]]:
+    def get_reasons_with_severity(
+        self, severity: Union[URIRef, str]
+    ) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """
         Like diffset, but only includes ValidationResults with the given severity.
         Permitted values are:
@@ -303,10 +305,14 @@ class ValidationContext:
         # for each value in the diffset, filter out the diffs that don't have the given severity
         # in the diffset.graph
         return {
-            focus: {diff for diff in diffs if diff.validation_result.value(diff._result_uri, SH.resultSeverity) == severity}
+            focus: {
+                diff
+                for diff in diffs
+                if diff.validation_result.value(diff._result_uri, SH.resultSeverity)
+                == severity
+            }
             for focus, diffs in self.diffset.items()
         }
-
 
     def _report_to_diffset(self) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """Interpret a SHACL validation report and say what is missing.
@@ -449,7 +455,7 @@ def diffset_to_templates(
             continue
 
         templ_lists = (diff.resolve(lib) for diff in diffset)
-        templs = list(filter(None, chain.from_iterable(templ_lists)))
+        templs: List[Template] = list(filter(None, chain.from_iterable(templ_lists)))
         if len(templs) <= 1:
             templates.extend(templs)
             continue
