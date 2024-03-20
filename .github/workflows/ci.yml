@@ -51,7 +51,7 @@ jobs:
       - name: lint
         run: poetry run flake8 buildingmotif
       - name: type check
-        run: poetry run mypy
+        run: poetry run mypy --ignore-missing-imports
       - name: unit tests
         run: poetry run pytest tests/unit --cov=./ --cov-report=xml
       - name: integration tests

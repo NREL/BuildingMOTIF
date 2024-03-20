@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 import pygit2
-import pyshacl
 import rdflib
 import sqlalchemy
 import yaml
@@ -23,6 +22,7 @@ from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import (
     get_ontology_files,
     get_template_parts_from_shape,
+    shacl_inference,
     skip_uri,
 )
 
@@ -248,15 +248,7 @@ class Library:
         # expand the ontology graph before we insert it into the database. This will ensure
         # that the output of compiled models will not contain triples that really belong to
         # the ontology
-        pyshacl.validate(
-            data_graph=ontology,
-            shacl_graph=ontology,
-            ont_graph=ontology,
-            advanced=True,
-            inplace=True,
-            js=True,
-            allow_warnings=True,
-        )
+        ontology = shacl_inference(ontology)
 
         lib = cls.create(ontology_name, overwrite=overwrite)
 
@@ -284,6 +276,7 @@ class Library:
         dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
+            # TODO: mincount 0 (or unspecified) should be optional args on the generated template
             partial_body, deps = get_template_parts_from_shape(candidate, graph)
             templ = self.create_template(str(candidate), partial_body)
             dependency_cache[templ.id] = deps
