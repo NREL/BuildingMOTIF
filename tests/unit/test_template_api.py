@@ -1,3 +1,5 @@
+import warnings
+
 import pytest
 from rdflib import Graph, Namespace
 
@@ -198,9 +200,9 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     assert t.parameters == {"occ"}
 
     # assert no warning is raised when optional args are not required
-    with pytest.warns(None) as record:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
         t = templ.evaluate({"name": BLDG["vav"]})
-    assert len(record) == 0
 
     with pytest.warns():
         partial_templ = templ.evaluate(
