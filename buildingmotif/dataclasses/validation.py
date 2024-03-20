@@ -252,6 +252,9 @@ class ValidationContext:
     """
 
     shape_collections: List[ShapeCollection]
+    # the shapes graph that was used to validate the model
+    # This will be skolemized!
+    shapes_graph: Graph
     valid: bool
     report: rdflib.Graph
     report_string: str
@@ -263,10 +266,6 @@ class ValidationContext:
         SHACL validation report.
         """
         return self._report_to_diffset()
-
-    @cached_property
-    def _context(self) -> Graph:
-        return sum((sc.graph for sc in self.shape_collections), start=Graph())  # type: ignore
 
     def as_templates(self) -> List["Template"]:
         """Produces the set of templates that reconcile the GraphDiffs from the
@@ -293,7 +292,7 @@ class ValidationContext:
         :rtype: Dict[Optional[URIRef], Set[GraphDiff]]
         """
 
-        if isinstance(severity, str):
+        if not isinstance(severity, URIRef):
             severity = SH[severity]
 
         # check if the severity is a valid SHACL severity
@@ -325,7 +324,7 @@ class ValidationContext:
         # TODO: for future use
         # proppath = SH["property"] | (SH.qualifiedValueShape / SH["property"])  # type: ignore
 
-        g = self.report + self._context
+        g = self.report + self.shapes_graph
         diffs: Dict[Optional[URIRef], Set[GraphDiff]] = defaultdict(set)
         for result in g.objects(predicate=SH.result):
             # check if the failure is due to our count constraint component
