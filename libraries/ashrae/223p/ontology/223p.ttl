@@ -1052,10 +1052,10 @@ s223:ConcentrationSensor a s223:Class,
 s223:Controller a s223:Class,
         sh:NodeShape ;
     rdfs:label "Controller" ;
-    rdfs:comment "A device for regulation of a system or component in normal operation, which executes a FunctionBlock." ;
+    rdfs:comment "A device for regulation of a system or component in normal operation, which executes a Function." ;
     rdfs:subClassOf s223:Equipment ;
-    sh:property [ rdfs:comment "If the relation executes is present it must associate the Controller with a FunctionBlock." ;
-            sh:class s223:FunctionBlock ;
+    sh:property [ rdfs:comment "If the relation executes is present it must associate the Controller with a Function." ;
+            sh:class s223:Function ;
             sh:path s223:executes ] ;
     sh:rule [ a sh:TripleRule ;
             rdfs:comment "Infer the hasRole s223:Role-Controller relation for every instance of Controller" ;
@@ -1064,10 +1064,10 @@ s223:Controller a s223:Class,
             sh:subject sh:this ] .
 
 s223:ControllerRoleShape a sh:NodeShape ;
-    rdfs:comment "Equipment that executes a FunctionBlock must have a s223:hasRole relation to s223:Role-Controller." ;
+    rdfs:comment "Equipment that executes a Function must have a s223:hasRole relation to s223:Role-Controller." ;
     sh:property [ a sh:PropertyShape ;
             sh:hasValue s223:Role-Controller ;
-            sh:message "Equipment that executes a FunctionBlock must have a s223:hasRole relation to s223:Role-Controller." ;
+            sh:message "Equipment that executes a Function must have a s223:hasRole relation to s223:Role-Controller." ;
             sh:minCount 1 ;
             sh:path s223:hasRole ] ;
     sh:targetSubjectsOf s223:executes .
@@ -19545,7 +19545,7 @@ s223:hasFrequency a rdf:Property ;
 
 s223:hasInput a rdf:Property ;
     rdfs:label "has function input" ;
-    rdfs:comment "The relation hasInput is used to relate a FunctionBlock (see `s223:FunctionBlock`) to a Property (see `s223:Property`) that is used as input." .
+    rdfs:comment "The relation hasInput is used to relate a Function (see `s223:Function`) to a Property (see `s223:Property`) that is used as input." .
 
 s223:hasMeasurementResolution a rdf:Property ;
     rdfs:label "has measurement resolution" ;
@@ -39680,7 +39680,7 @@ s223:hasElectricalPhase a rdf:Property ;
 
 s223:hasOutput a rdf:Property ;
     rdfs:label "has function output" ;
-    rdfs:comment "The relation hasOutput is used to relate a FunctionBlock (see `s223:FunctionBlock`) to a Property (see `s223:Property`) that is calculated by the FunctionBlock." .
+    rdfs:comment "The relation hasOutput is used to relate a Function (see `s223:Function`) to a Property (see `s223:Property`) that is calculated by the Function." .
 
 qudt:BitEncoding a qudt:BitEncodingType ;
     rdfs:label "Bit Encoding" ;
@@ -45756,10 +45756,10 @@ s223:EnumeratedObservableProperty a s223:Class,
     rdfs:subClassOf s223:EnumerableProperty,
         s223:ObservableProperty .
 
-s223:FunctionBlock a s223:Class,
+s223:Function a s223:Class,
         sh:NodeShape ;
     rdfs:label "Function block" ;
-    rdfs:comment "A FunctionBlock is used to model transfer and/or transformation of information (i.e. Property). It has relations to input Properties and output Properties. The actual algorithms that perform the transformations are described in CDL and are out of scope of the 223 standard." ;
+    rdfs:comment "A Function is used to model transfer and/or transformation of information (i.e. Property). It has relations to input Properties and output Properties. The actual algorithms that perform the transformations are described in CDL and are out of scope of the 223 standard." ;
     rdfs:subClassOf s223:Concept ;
     sh:or ( [ sh:property [ rdfs:comment "A Function block must be associated with at least one Property using the relation hasInput." ;
                         sh:class s223:Property ;
@@ -45922,7 +45922,7 @@ s223:connected a s223:SymmetricProperty,
 
 s223:executes a rdf:Property ;
     rdfs:label "executes" ;
-    rdfs:comment "The relation executes is used to specify that a Controller (see `s223:Controller`) is responsible for the execution of a FunctionBlock (see `s223:FunctionBlock`). " .
+    rdfs:comment "The relation executes is used to specify that a Controller (see `s223:Controller`) is responsible for the execution of a Function (see `s223:Function`). " .
 
 s223:hasDomainSpace a rdf:Property ;
     rdfs:label "has domain space" ;
@@ -63294,10 +63294,10 @@ Enumerable properties must be associated with an EnumerationKind.
             sh:class s223:EnumerationKind-Substance ;
             sh:maxCount 1 ;
             sh:path s223:ofSubstance ],
-        [ rdfs:comment "A Property can be associated with at most one FunctionBlock using the inverse relation hasOutput." ;
-            sh:class s223:FunctionBlock ;
+        [ rdfs:comment "A Property can be associated with at most one Function using the inverse relation hasOutput." ;
+            sh:class s223:Function ;
             sh:maxCount 1 ;
-            sh:message "A Property can be associated with at most one FunctionBlock using the inverse relation hasOutput." ;
+            sh:message "A Property can be associated with at most one Function using the inverse relation hasOutput." ;
             sh:path [ sh:inversePath s223:hasOutput ] ],
         [ rdfs:comment "" ;
             sh:path s223:ofSubstance ;
@@ -70894,8 +70894,8 @@ The graphical depiction of Equipment used in this standard is a rounded cornered
         [ rdfs:comment "If the relation commandedByProperty is present it must associate the Equipment with a ActuatableProperty." ;
             sh:class s223:ActuatableProperty ;
             sh:path s223:commandedByProperty ],
-        [ rdfs:comment "If the relation executes is present it must associate the Equipment with a FunctionBlock." ;
-            sh:class s223:FunctionBlock ;
+        [ rdfs:comment "If the relation executes is present it must associate the Equipment with a Function." ;
+            sh:class s223:Function ;
             sh:path s223:executes ],
         [ rdfs:comment "If the relation hasPhysicalLocation is present it must associate the Equipment with a PhysicalSpace." ;
             sh:class s223:PhysicalSpace ;
@@ -72031,22 +72031,8 @@ unit:CentiM a qudt:DerivedUnit,
     owl:versionInfo "Created with TopBraid Composer" ;
     sh:declare [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
             sh:prefix "s223" ],
-        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
-            sh:prefix "qudt" ],
-        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
-            sh:prefix "s223" ],
         [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
             sh:prefix "rdfs" ],
-        [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
-            sh:prefix "rdfs" ],
-        [ sh:namespace "http://www.w3.org/ns/shacl#"^^xsd:anyURI ;
-            sh:prefix "sh" ],
-        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
-            sh:prefix "s223" ],
-        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
-            sh:prefix "qudt" ],
-        [ sh:namespace "http://qudt.org/vocab/quantitykind/"^^xsd:anyURI ;
-            sh:prefix "quantitykind" ],
         [ a sh:PrefixDeclaration ;
             sh:namespace "http://purl.org/dc/terms/"^^xsd:anyURI ;
             sh:prefix "dcterms" ],
@@ -72074,6 +72060,14 @@ unit:CentiM a qudt:DerivedUnit,
         [ a sh:PrefixDeclaration ;
             sh:namespace "http://www.w3.org/2004/02/skos/core#"^^xsd:anyURI ;
             sh:prefix "skos" ],
+        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
+            sh:prefix "qudt" ],
+        [ sh:namespace "http://qudt.org/vocab/quantitykind/"^^xsd:anyURI ;
+            sh:prefix "quantitykind" ],
+        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
+            sh:prefix "s223" ],
+        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
+            sh:prefix "qudt" ],
         [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
             sh:prefix "s223" ],
         [ sh:namespace "http://data.ashrae.org/standard223/1.0/vocab/role#"^^xsd:anyURI ;
@@ -72096,6 +72090,12 @@ unit:CentiM a qudt:DerivedUnit,
             sh:prefix "rdfs" ],
         [ sh:namespace "http://www.w3.org/ns/shacl#"^^xsd:anyURI ;
             sh:prefix "sh" ],
+        [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
+            sh:prefix "rdfs" ],
+        [ sh:namespace "http://www.w3.org/ns/shacl#"^^xsd:anyURI ;
+            sh:prefix "sh" ],
+        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
+            sh:prefix "s223" ],
         [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
             sh:prefix "s223" ] .
 
