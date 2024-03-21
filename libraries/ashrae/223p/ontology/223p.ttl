@@ -4,6 +4,7 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix dtype: <http://www.linkedmodel.org/schema/dtype#> .
+@prefix g36: <http://data.ashrae.org/standard223/1.0/extensions/g36#> .
 @prefix org: <http://www.w3.org/ns/org#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix prefix1: <http://qudt.org/vocab/prefix/> .
@@ -34,6 +35,334 @@ s223:SymmetricProperty a rdfs:Class,
     rdfs:label "Symmetric property" ;
     rdfs:comment "A SymmetricProperty is modeling construct used to define symmetric behavior for certain properties in the standard such as cnx and connected." ;
     rdfs:subClassOf rdf:Property .
+
+g36:ChilledWaterCoil a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "ChilledWaterCoil" ;
+    rdfs:comment "A cooling element made of pipe or tube that may or may not be finned and formed into helical or serpentine shape." ;
+    rdfs:subClassOf s223:CoolingCoil ;
+    sh:property [ rdfs:comment "The ChilledWaterCoil shall be connected to a ChilledWaterValve using the relation connectedTo." ;
+            sh:path s223:connectedTo ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class g36:ChilledWaterValve ] ;
+            sh:severity s223:g36 ] ;
+    sh:severity s223:g36 .
+
+g36:ChilledWaterValve a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "Chilled Water Valve" ;
+    rdfs:comment "A device to regulate or stop the flow of cold fluid in a pipe or a duct by throttling." ;
+    rdfs:subClassOf s223:Valve ;
+    sh:or ( [ sh:property [ rdfs:comment "A ChilledWaterValve shall have at least one analog valve command property or at least two binary valve command properties using the relation hasProperty." ;
+                        sh:minCount 1 ;
+                        sh:path s223:hasProperty ;
+                        sh:qualifiedMinCount 1 ;
+                        sh:qualifiedValueShape [ sh:class s223:QuantifiableActuatableProperty ;
+                                sh:node [ sh:property [ sh:hasValue quantitykind:DimensionlessRatio ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path qudt:hasQuantityKind ],
+                                            [ sh:hasValue s223:EnumerationKind-Position ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path s223:hasAspect ] ] ] ;
+                        sh:severity s223:g36 ] ] [ sh:property [ rdfs:comment "A ChilledWaterValve shall have at least one analog valve command property or at least two binary valve command properties using the relation hasProperty." ;
+                        sh:minCount 2 ;
+                        sh:path s223:hasProperty ;
+                        sh:qualifiedMinCount 2 ;
+                        sh:qualifiedValueShape [ sh:class s223:EnumeratedActuatableProperty ;
+                                sh:node [ sh:property [ sh:hasValue s223:EnumerationKind-Binary ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path s223:hasEnumerationKind ],
+                                            [ sh:hasValue s223:EnumerationKind-Position ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path s223:hasAspect ] ] ] ;
+                        sh:severity s223:g36 ] ] ) ;
+    sh:property [ rdfs:comment "A chilled water valve shall have medium Water-ChilledWater using the relation hasMedium." ;
+            sh:hasValue s223:Water-ChilledWater ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path s223:hasMedium ;
+            sh:severity s223:g36 ] ;
+    sh:severity s223:g36 .
+
+g36:Damper a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "Damper" ;
+    rdfs:comment "An element inserted into an air-distribution system or element of an air-distribution system permitting modification of the air resistance of the system and consequently changing the airflow rate or shutting off the airflow." ;
+    rdfs:subClassOf s223:Damper ;
+    sh:or ( [ sh:property [ rdfs:comment "A damper shall have at least one analog damper command property or at least two binary damper command properties using the relation hasProperty." ;
+                        sh:minCount 1 ;
+                        sh:path s223:hasProperty ;
+                        sh:qualifiedMinCount 1 ;
+                        sh:qualifiedValueShape [ sh:class s223:QuantifiableActuatableProperty ;
+                                sh:node [ sh:property [ sh:hasValue quantitykind:DimensionlessRatio ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path qudt:hasQuantityKind ],
+                                            [ sh:hasValue s223:EnumerationKind-Position ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path s223:hasAspect ] ] ] ;
+                        sh:severity s223:g36 ] ] [ sh:property [ rdfs:comment "A damper shall have at least one analog damper command property or at least two binary damper command properties using the relation hasProperty." ;
+                        sh:minCount 2 ;
+                        sh:path s223:hasProperty ;
+                        sh:qualifiedMinCount 2 ;
+                        sh:qualifiedValueShape [ sh:class s223:EnumeratedActuatableProperty ;
+                                sh:node [ sh:property [ sh:hasValue s223:EnumerationKind-Binary ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path s223:hasEnumerationKind ],
+                                            [ sh:hasValue s223:EnumerationKind-Position ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path s223:hasAspect ] ] ] ;
+                        sh:severity s223:g36 ] ] ) ;
+    sh:severity s223:g36 .
+
+g36:ElectricHeatingCoil a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "Electric Heating Coil" ;
+    rdfs:comment "A heating element that forms into a helical or serpentine shape and uses electricity to perform heating." ;
+    rdfs:subClassOf s223:ResistanceHeater ;
+    sh:property [ rdfs:comment "An electric heating coil shall have at least one analog heating command property using a relation hasProperty." ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:QuantifiableActuatableProperty ;
+                    sh:node [ sh:property [ sh:hasValue quantitykind:DimensionlessRatio ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path qudt:hasQuantityKind ] ] ] ;
+            sh:severity s223:g36 ] ;
+    sh:severity s223:g36 .
+
+g36:Fan a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "Fan" ;
+    rdfs:comment "A machine used to create flow within a gas such as air." ;
+    rdfs:subClassOf s223:Fan ;
+    sh:property [ rdfs:comment "A Fan shall have at least one Start/Stop command using the relation hasProperty." ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:EnumeratedActuatableProperty ;
+                    sh:node [ sh:property [ sh:class s223:EnumerationKind-OnOff ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path s223:hasEnumerationKind ] ] ] ;
+            sh:severity s223:g36 ] ;
+    sh:severity s223:g36 .
+
+g36:FanWithVFD a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "FanWithVFD" ;
+    rdfs:comment "A machine used to create flow within a gas such as air. This machine can be controlled to vary in speed." ;
+    rdfs:subClassOf g36:Fan ;
+    sh:property [ rdfs:comment "A fan with VFD shall have at least one fan speed command using the relation hasProperty." ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:QuantifiableActuatableProperty ;
+                    sh:node [ sh:property [ sh:hasValue quantitykind:DimensionlessRatio ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path qudt:hasQuantityKind ],
+                                [ sh:hasValue s223:EnumerationKind-Speed ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path s223:hasAspect ] ] ] ;
+            sh:severity s223:g36 ] ;
+    sh:severity s223:g36 .
+
+g36:HotWaterCoil a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "HotWater/ReheatCoil" ;
+    rdfs:comment "A heating element made of pipe or tube that may or may not be finned and formed into helical or serpentine shape." ;
+    rdfs:subClassOf s223:HeatingCoil ;
+    sh:property [ rdfs:comment "The HotWaterCoil shall be connected to a HotWaterValve using the relation connectedTo." ;
+            sh:minCount 1 ;
+            sh:path s223:connectedTo ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class g36:HotWaterValve ] ;
+            sh:severity s223:g36 ] ;
+    sh:severity s223:g36 .
+
+g36:HotWaterValve a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "Hot Water Valve" ;
+    rdfs:comment "A device to regulate or stop the flow of hot fluid in a pipe or a duct by throttling." ;
+    rdfs:subClassOf s223:Valve ;
+    sh:or ( [ sh:property [ rdfs:comment "A HotWaterValve shall have at least one analog valve command property or at least two binary valve command properties using the relation hasProperty." ;
+                        sh:minCount 1 ;
+                        sh:path s223:hasProperty ;
+                        sh:qualifiedMinCount 1 ;
+                        sh:qualifiedValueShape [ sh:class s223:QuantifiableActuatableProperty ;
+                                sh:node [ sh:property [ sh:hasValue quantitykind:DimensionlessRatio ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path qudt:hasQuantityKind ],
+                                            [ sh:hasValue s223:EnumerationKind-Position ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path s223:hasAspect ] ] ] ;
+                        sh:severity s223:g36 ] ] [ sh:property [ rdfs:comment "A HotWaterValve shall have at least one analog valve command property or at least two binary valve command properties using the relation hasProperty." ;
+                        sh:minCount 2 ;
+                        sh:path s223:hasProperty ;
+                        sh:qualifiedMinCount 2 ;
+                        sh:qualifiedValueShape [ sh:class s223:EnumeratedActuatableProperty ;
+                                sh:node [ sh:property [ sh:hasValue s223:EnumerationKind-Binary ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path s223:hasEnumerationKind ],
+                                            [ sh:hasValue s223:EnumerationKind-Position ;
+                                                sh:maxCount 1 ;
+                                                sh:minCount 1 ;
+                                                sh:path s223:hasAspect ] ] ] ;
+                        sh:severity s223:g36 ] ] ) ;
+    sh:property [ rdfs:comment "A hot water shall have medium Water-HotWater using the relation hasMedium." ;
+            sh:hasValue s223:Water-HotWater ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path s223:hasMedium ;
+            sh:severity s223:g36 ] ;
+    sh:severity s223:g36 .
+
+g36:TwoPositionDamper a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "Two Position Damper" ;
+    rdfs:comment "An element inserted into an air-distribution system or element of an air-distribution system permitting modification of the air resistance of the system and consequently changing the airflow rate or shutting off the airflow. This element only has two positions: fully open and fully closed." ;
+    rdfs:subClassOf s223:Damper ;
+    sh:property [ rdfs:comment "A Two Position Damper shall have at least one open-and-close damper command property using the relation hasProperty." ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:EnumeratedActuatableProperty ;
+                    sh:node [ sh:property [ sh:class s223:EnumerationKind-Binary ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path s223:hasEnumerationKind ],
+                                [ sh:hasValue s223:EnumerationKind-Position ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path s223:hasAspect ] ] ] ;
+            sh:severity s223:g36 ] ;
+    sh:severity s223:g36 .
+
+g36:Zone a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "Zone" ;
+    rdfs:comment "A Zone is a generic thermal zone, with the points required for Guideline 36 controls. It is a collection of s223:DomainSpace instances." ;
+    rdfs:subClassOf s223:Zone ;
+    sh:property [ rdfs:comment "A Zone shall have at least one Domain-HVAC using the relation hasDomain. " ;
+            sh:hasValue s223:Domain-HVAC ;
+            sh:minCount 1 ;
+            sh:path s223:hasDomain ;
+            sh:severity s223:g36 ],
+        [ rdfs:comment "A Zone shall have at least one zone temperature property using the relation hasProperty. " ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:QuantifiableObservableProperty ;
+                    sh:node [ sh:property [ sh:hasValue quantitykind:Temperature ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path qudt:hasQuantityKind ] ] ] ;
+            sh:qualifiedValueShapesDisjoint true ;
+            sh:severity s223:g36 ],
+        [ rdfs:comment "A Zone shall have a zone temperature setpoint adjustment property using the relation hasProperty, if applicable." ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:QuantifiableObservableProperty ;
+                    sh:node [ sh:property [ sh:hasValue quantitykind:Temperature ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path qudt:hasQuantityKind ],
+                                [ sh:hasValue s223:Dimensioned-Delta ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path s223:hasAspect ] ] ] ;
+            sh:qualifiedValueShapesDisjoint true ;
+            sh:severity sh:Info ],
+        [ rdfs:comment "A Zone shall have at least a zone CO2 concentration property using the relation hasProperty, if applicable control is used." ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:QuantifiableObservableProperty ;
+                    sh:node [ sh:property [ sh:hasValue quantitykind:DimensionlessRatio ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path qudt:hasQuantityKind ],
+                                [ sh:hasValue s223:Substance-CO2 ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path s223:ofSubstance ] ] ] ;
+            sh:severity sh:Info ],
+        [ rdfs:comment "A Zone shall have at least one binary zone occupancy property using the relation hasProperty" ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:EnumeratedObservableProperty ;
+                    sh:node [ sh:property [ sh:class s223:EnumerationKind-Occupancy ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path s223:hasEnumerationKind ] ] ] ;
+            sh:severity sh:Info ],
+        [ rdfs:comment "A Zone shall have at least one window switch on-off property using the relation hasProperty." ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:EnumeratedObservableProperty ;
+                    sh:node [ sh:property [ sh:class s223:EnumerationKind-OnOff ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path s223:hasEnumerationKind ],
+                                [ rdfs:comment "Property shall be measured at a window." ;
+                                    sh:class s223:Window ;
+                                    sh:path [ sh:alternativePath ( ( [ sh:inversePath s223:observes ] s223:hasMeasurementLocation ) [ sh:inversePath s223:hasProperty ] ) ] ] ] ] ;
+            sh:severity sh:Info ],
+        [ rdfs:comment "A Zone shall have at least one zone thermostat override switch property using the relation hasProperty." ;
+            sh:minCount 1 ;
+            sh:path s223:hasProperty ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:EnumeratedObservableProperty ;
+                    sh:node [ sh:property [ sh:class s223:EnumerationKind-Override ;
+                                    sh:maxCount 1 ;
+                                    sh:minCount 1 ;
+                                    sh:path s223:hasEnumerationKind ] ] ] ;
+            sh:severity sh:Info ] ;
+    sh:severity s223:g36 .
+
+g36:ZoneGroup a s223:Class,
+        rdfs:Class,
+        sh:NodeShape ;
+    rdfs:label "Zone Group" ;
+    rdfs:comment "A ZoneGroup is a grouping of zones that may be scheduled together. Zone groupings must be assigned based on rules in section 3.1.3 of Guideline 36." ;
+    rdfs:subClassOf s223:ZoneGroup ;
+    sh:property [ rdfs:comment "A ZoneGroup shall have the Domain HVAC using the relation hasDomain." ;
+            sh:hasValue s223:Domain-HVAC ;
+            sh:minCount 1 ;
+            sh:path s223:hasDomain ;
+            sh:severity s223:g36 ],
+        [ rdfs:comment "A ZoneGroup shall contain at least one Zone using the relation contains." ;
+            sh:class g36:Zone ;
+            sh:minCount 1 ;
+            sh:path s223:contains ;
+            sh:severity s223:g36 ] ;
+    sh:severity s223:g36 .
 
 qudt:AbstractQuantityKind a rdfs:Class,
         sh:NodeShape ;
@@ -1072,21 +1401,6 @@ s223:ControllerRoleShape a sh:NodeShape ;
             sh:path s223:hasRole ] ;
     sh:targetSubjectsOf s223:executes .
 
-s223:CoolingCoil a s223:Class,
-        sh:NodeShape ;
-    rdfs:label "Cooling coil" ;
-    rdfs:comment "A coil that provides cooling." ;
-    rdfs:subClassOf s223:Coil ;
-    sh:property [ rdfs:comment "A cooling coil must be related to the role 'Role-Cooling' using the relation 'hasRole'." ;
-            sh:hasValue s223:Role-Cooling ;
-            sh:minCount 1 ;
-            sh:path s223:hasRole ] ;
-    sh:rule [ a sh:TripleRule ;
-            rdfs:comment "Cooling coils will always have the role Role-Cooling" ;
-            sh:object s223:Role-Cooling ;
-            sh:predicate s223:hasRole ;
-            sh:subject sh:this ] .
-
 s223:CoolingTower a s223:Class,
         sh:NodeShape ;
     rdfs:label "Cooling tower" ;
@@ -1288,13 +1602,6 @@ s223:ElectricWire a s223:Class,
             sh:minCount 1 ;
             sh:path s223:hasMedium ] .
 
-s223:EnumeratedActuatableProperty a s223:Class,
-        sh:NodeShape ;
-    rdfs:label "Enumerated actuatable property" ;
-    rdfs:comment "An EnumeratedActuatableProperty is a property with an enumerated (fixed) set of possible values that can be changed (actuated)." ;
-    rdfs:subClassOf s223:ActuatableProperty,
-        s223:EnumerableProperty .
-
 s223:EthernetSwitch a s223:Class,
         sh:NodeShape ;
     rdfs:label "Ethernet switch" ;
@@ -1477,21 +1784,6 @@ s223:HeatPump a s223:Class,
             sh:qualifiedValueShape [ sh:class s223:OutletConnectionPoint ;
                     sh:node [ sh:property [ sh:class s223:Medium-Air ;
                                     sh:path s223:hasMedium ] ] ] ] .
-
-s223:HeatingCoil a s223:Class,
-        sh:NodeShape ;
-    rdfs:label "Heating coil" ;
-    rdfs:comment "A coil that provides heating." ;
-    rdfs:subClassOf s223:Coil ;
-    sh:property [ rdfs:comment "A heating coil must be related to the role 'Role-Heating' using the relation 'hasRole'." ;
-            sh:hasValue s223:Role-Heating ;
-            sh:minCount 1 ;
-            sh:path s223:hasRole ] ;
-    sh:rule [ a sh:TripleRule ;
-            rdfs:comment "Heating coils will always have the role Role-Heating" ;
-            sh:object s223:Role-Heating ;
-            sh:predicate s223:hasRole ;
-            sh:subject sh:this ] .
 
 s223:Humidifier a s223:Class,
         sh:NodeShape ;
@@ -1743,13 +2035,6 @@ WHERE {
 }
 """ ] ] .
 
-s223:QuantifiableActuatableProperty a s223:Class,
-        sh:NodeShape ;
-    rdfs:label "Quantifiable Actuatable Property" ;
-    rdfs:comment "This class is for quantifiable properties of which numerical values are specified to be modifiable by a user or a machine outside of the model, like a setpoint." ;
-    rdfs:subClassOf s223:ActuatableProperty,
-        s223:QuantifiableProperty .
-
 s223:RadiantPanel a s223:Class,
         sh:NodeShape ;
     rdfs:label "Radiant panel" ;
@@ -1913,24 +2198,6 @@ FILTER NOT EXISTS {?rule rdfs:comment ?comment} .
 """ ] ;
     sh:targetClass s223:Class .
 
-s223:ResistanceHeater a s223:Class,
-        sh:NodeShape ;
-    rdfs:label "Electrical resistance heater" ;
-    rdfs:comment "Resistance heaters provide electrical resistance heating, for example an electric heating coil within a Fan Coil Unit." ;
-    rdfs:subClassOf s223:Equipment ;
-    sh:property [ rdfs:comment "A ResistanceHeater shall have at least one inlet using the medium Electricity." ;
-            sh:minCount 1 ;
-            sh:path s223:hasConnectionPoint ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ;
-                    sh:node [ sh:property [ sh:class s223:Medium-Electricity ;
-                                    sh:path s223:hasMedium ] ] ] ],
-        [ rdfs:comment "ResistanceHeaters must have the role Role-Heating." ;
-            sh:minCount 1 ;
-            sh:path s223:hasRole ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class s223:Role-Heating ] ] .
-
 s223:SingleDuctTerminal a s223:Class,
         sh:NodeShape ;
     rdfs:label "Single Duct Terminal." ;
@@ -2069,51 +2336,11 @@ s223:VariableFrequencyDrive a s223:Class,
                     sh:node [ sh:property [ sh:class s223:Medium-Electricity ;
                                     sh:path s223:hasMedium ] ] ] ] .
 
-s223:Window a s223:Class,
-        sh:NodeShape ;
-    rdfs:label "Window" ;
-    rdfs:comment "A daylight opening on a vertical or nearly vertical area of a room envelope." ;
-    rdfs:subClassOf s223:Equipment ;
-    sh:property [ rdfs:comment "A Window shall have at least one inlet using the medium Light." ;
-            sh:minCount 1 ;
-            sh:path s223:hasConnectionPoint ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ;
-                    sh:node [ sh:property [ sh:class s223:EM-Light ;
-                                    sh:path s223:hasMedium ] ] ] ],
-        [ rdfs:comment "A Window shall have at least one outlet using the medium Light." ;
-            sh:minCount 1 ;
-            sh:path s223:hasConnectionPoint ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class s223:OutletConnectionPoint ;
-                    sh:node [ sh:property [ sh:class s223:EM-Light ;
-                                    sh:path s223:hasMedium ] ] ] ] .
-
 s223:WindowShade a s223:Class,
         sh:NodeShape ;
     rdfs:label "Window shade" ;
     rdfs:comment "A window covering that can be moved to block out or allow in light. " ;
     rdfs:subClassOf s223:Equipment .
-
-s223:ZoneGroup a s223:Class,
-        sh:NodeShape ;
-    rdfs:label "Zone group" ;
-    rdfs:comment "A ZoneGroup is a logical grouping (collection) of Zones for some functional or system reason, to identify a domain of control, such as a Lighting Zone, or a heating zone." ;
-    rdfs:subClassOf s223:Concept ;
-    sh:property [ rdfs:comment "A ZoneGroup must be associated with exactly one EnumerationKind-Domain using the relation hasDomain." ;
-            sh:class s223:EnumerationKind-Domain ;
-            sh:maxCount 1 ;
-            sh:minCount 1 ;
-            sh:path s223:hasDomain ],
-        [ rdfs:comment "A ZoneGroup must be associated with at least one Zone using the relation hasZone." ;
-            sh:class s223:Zone ;
-            sh:minCount 1 ;
-            sh:path s223:hasZone ] ;
-    sh:rule [ a sh:TripleRule ;
-            rdfs:comment "Infer a hasDomain relation by checking any enclosed Zones to determine the domain." ;
-            sh:object [ sh:path ( s223:hasZone s223:hasDomain ) ] ;
-            sh:predicate s223:hasDomain ;
-            sh:subject sh:this ] .
 
 s223:abstract a rdf:Property ;
     rdfs:label "abstract" ;
@@ -2127,6 +2354,113 @@ s223:hasSetpoint a rdf:Property ;
 s223:inverseOf a rdf:Property ;
     rdfs:label "inverse of" ;
     rdfs:comment "The relation inverseOf is a modeling construct to associate relations that are inverses of one another, such as connectedTo and connectedFrom." .
+
+g36:ChilledWaterCoilAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:CoolingCoil matches the constraints defined by g36:ChilledWaterCoil, it will be declared as an instance of that class." ;
+            sh:condition g36:ChilledWaterCoil ;
+            sh:object g36:ChilledWaterCoil ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:CoolingCoil .
+
+g36:ChilledWaterValveAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:Valve matches the constraints defined by g36:ChilledWaterValve, it will be declared as an instance of that class." ;
+            sh:condition g36:ChilledWaterValve ;
+            sh:object g36:ChilledWaterValve ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:Valve .
+
+g36:DamperAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:Damper matches the constraints defined by g36:Damper, it will be declared as an instance of that class." ;
+            sh:condition g36:Damper ;
+            sh:object g36:Damper ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:Damper .
+
+g36:ElectricHeatingCoilAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:ResistanceHeater matches the constraints defined by g36:ElectricHeatingCoil, it will be declared as an instance of that class." ;
+            sh:condition g36:ElectricHeatingCoil ;
+            sh:object g36:ElectricHeatingCoil ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:ResistanceHeater .
+
+g36:FanAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:Fan matches the constraints defined by g36:Fan, it will be declared as an instance of that class." ;
+            sh:condition g36:Fan ;
+            sh:object g36:Fan ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:Fan .
+
+g36:FanWithVFDAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:Fan matches the constraints defined by g36:FanWithVFD, it will be declared as an instance of that class." ;
+            sh:condition g36:FanWithVFD ;
+            sh:object g36:FanWithVFD ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:Fan .
+
+g36:FilterAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            sh:condition g36:Filter ;
+            sh:object g36:Filter ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:AirFilter .
+
+g36:HotWaterCoilAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:HeatingCoil matches the constraints defined by g36:HotWaterCoil, it will be declared as an instance of that class." ;
+            sh:condition g36:HotWaterCoil ;
+            sh:object g36:HotWaterCoil ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:HeatingCoil .
+
+g36:HotWaterValveAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:Valve matches the constraints defined by g36:HotWaterValve, it will be declared as an instance of that class." ;
+            sh:condition g36:HotWaterValve ;
+            sh:object g36:HotWaterValve ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:Valve .
+
+g36:TwoPositionDamperAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:Damper matches the constraints defined by g36:TwoPositionDamper, it will be declared as an instance of that class." ;
+            sh:condition g36:TwoPositionDamper ;
+            sh:object g36:TwoPositionDamper ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:Damper .
+
+g36:ZoneAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:Zone matches the constraints defined by g36:Zone, it will be declared as an instance of that class." ;
+            sh:condition g36:Zone ;
+            sh:object g36:Zone ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:Zone .
+
+g36:ZoneGroupAnnotation a sh:NodeShape ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "If an instance of s223:ZoneGroup matches the constraints defined by g36:ZoneGroup, it will be declared as an instance of that class." ;
+            sh:condition g36:ZoneGroup ;
+            sh:object g36:ZoneGroup ;
+            sh:predicate rdf:type ;
+            sh:subject sh:this ] ;
+    sh:targetClass s223:ZoneGroup .
 
 qudt:AbstractQuantityKind-qudt_latexSymbol rdfs:isDefinedBy <http://qudt.org/2.1/schema/shacl/overlay/qudt> ;
     sh:group qudt:IdentifiersAndDescriptionsPropertyGroup ;
@@ -18537,27 +18871,6 @@ s223:Binary-Unknown a s223:Binary-Unknown,
     rdfs:comment "Binary Unknown" ;
     rdfs:subClassOf s223:EnumerationKind-Binary .
 
-s223:Damper a s223:Class,
-        sh:NodeShape ;
-    rdfs:label "Damper" ;
-    rdfs:comment "An element inserted into an air-distribution system or element of an air-distribution system permitting modification of the air resistance of the system and consequently changing the airflow rate or shutting off the airflow." ;
-    rdfs:subClassOf s223:Equipment ;
-    sh:property [ rdfs:comment "A Damper shall have at least one inlet using the medium Air.",
-                "Does this need to allow bidirectional connection points?" ;
-            sh:minCount 1 ;
-            sh:path s223:hasConnectionPoint ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ;
-                    sh:node [ sh:property [ sh:class s223:Medium-Air ;
-                                    sh:path s223:hasMedium ] ] ] ],
-        [ rdfs:comment "A Damper shall have at least one outlet using the medium Air." ;
-            sh:minCount 1 ;
-            sh:path s223:hasConnectionPoint ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class s223:OutletConnectionPoint ;
-                    sh:node [ sh:property [ sh:class s223:Medium-Air ;
-                                    sh:path s223:hasMedium ] ] ] ] .
-
 s223:Direction-Bidirectional a s223:Class,
         s223:Direction-Bidirectional,
         sh:NodeShape ;
@@ -18599,13 +18912,6 @@ s223:Domain-Fire a s223:Class,
         sh:NodeShape ;
     rdfs:label "Domain-Fire" ;
     rdfs:comment "The domain Fire represents equipment used to provide fire detection and protection within a building. Example equipment that might be fall within a Fire domain include smoke detectors, alarm annunciators, and emergency public address systems. " ;
-    rdfs:subClassOf s223:EnumerationKind-Domain .
-
-s223:Domain-HVAC a s223:Class,
-        s223:Domain-HVAC,
-        sh:NodeShape ;
-    rdfs:label "Domain-HVAC" ;
-    rdfs:comment "The domain HVAC represents equipment used to provide space conditioning and ventilation within a building. Example equipment that might fall within an HVAC domain include fans, pumps, air-handling units, and variable air volume boxes. " ;
     rdfs:subClassOf s223:EnumerationKind-Domain .
 
 s223:Domain-Lighting a s223:Class,
@@ -19379,13 +19685,6 @@ s223:Substance-CO a s223:Class,
     rdfs:comment "Substance-CO" ;
     rdfs:subClassOf s223:EnumerationKind-Substance .
 
-s223:Substance-CO2 a s223:Class,
-        s223:Substance-CO2,
-        sh:NodeShape ;
-    rdfs:label "Substance-CO2" ;
-    rdfs:comment "Substance-CO2" ;
-    rdfs:subClassOf s223:EnumerationKind-Substance .
-
 s223:Substance-Soot a s223:Class,
         s223:Substance-Soot,
         sh:NodeShape ;
@@ -19407,20 +19706,6 @@ s223:System a s223:Class,
         [ rdfs:comment "If the relation hasRole is present, it must associate the System with an EnumerationKind-Role." ;
             sh:class s223:EnumerationKind-Role ;
             sh:path s223:hasRole ] .
-
-s223:Water-ChilledWater a s223:Class,
-        s223:Water-ChilledWater,
-        sh:NodeShape ;
-    rdfs:label "Water-Chilled water" ;
-    rdfs:comment "Water-Chilled water" ;
-    rdfs:subClassOf s223:Medium-Water .
-
-s223:Water-HotWater a s223:Class,
-        s223:Water-HotWater,
-        sh:NodeShape ;
-    rdfs:label "Water-Hot water" ;
-    rdfs:comment "Water-Hot water" ;
-    rdfs:subClassOf s223:Medium-Water .
 
 s223:Water-Steam a s223:Class,
         s223:Water-Steam,
@@ -19478,46 +19763,25 @@ s223:Weekend-Sunday a s223:Class,
     rdfs:comment "Sunday" ;
     rdfs:subClassOf s223:DayOfWeek-Weekend .
 
-s223:Zone a s223:Class,
+s223:Window a s223:Class,
         sh:NodeShape ;
-    rdfs:label "Zone" ;
-    rdfs:comment "A Zone is a logical grouping (collection) of domain spaces for some functional or system reason, to identify a domain of control, such as a Lighting Zone, or a heating zone" ;
-    rdfs:subClassOf s223:Concept ;
-    sh:property [ rdfs:comment "A Zone must be associated with exactly one EnumerationKind-Domain using the relation hasDomain." ;
-            sh:class s223:EnumerationKind-Domain ;
-            sh:maxCount 1 ;
+    rdfs:label "Window" ;
+    rdfs:comment "A daylight opening on a vertical or nearly vertical area of a room envelope." ;
+    rdfs:subClassOf s223:Equipment ;
+    sh:property [ rdfs:comment "A Window shall have at least one inlet using the medium Light." ;
             sh:minCount 1 ;
-            sh:path s223:hasDomain ],
-        [ rdfs:comment "A Zone must be associated with at least one DomainSpace using the relation hasDomainSpace." ;
-            sh:class s223:DomainSpace ;
+            sh:path s223:hasConnectionPoint ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ;
+                    sh:node [ sh:property [ sh:class s223:EM-Light ;
+                                    sh:path s223:hasMedium ] ] ] ],
+        [ rdfs:comment "A Window shall have at least one outlet using the medium Light." ;
             sh:minCount 1 ;
-            sh:path s223:hasDomainSpace ],
-        [ rdfs:comment "The associated Domain of a Zone and the Domain of the DomainSpaces it contains must be the same." ;
-            sh:path s223:hasDomain ;
-            sh:sparql [ a sh:SPARQLConstraint ;
-                    rdfs:comment "The associated Domain of a Zone and the Domain of the DomainSpaces it contains must be the same." ;
-                    sh:message "Zone {$this} has a Domain of {?domain}, but it contains a DomainSpace {?ds} which has a Domain of {?dsdomain}. These should be the same." ;
-                    sh:prefixes <http://data.ashrae.org/standard223/1.0/model/all> ;
-                    sh:select """
-SELECT DISTINCT $this ?domain ?ds ?dsdomain
-WHERE {
-$this a s223:Zone .
-$this s223:hasDomain ?domain .
-$this s223:contains ?ds .
-?ds s223:hasDomain ?dsdomain .
-FILTER (?domain != ?dsdomain)
-}
-""" ] ] ;
-    sh:rule [ a sh:TripleRule ;
-            rdfs:comment "Infer a hasDomain relation by checking any enclosed DomainSpaces to determine the domain." ;
-            sh:object [ sh:path ( s223:hasDomainSpace s223:hasDomain ) ] ;
-            sh:predicate s223:hasDomain ;
-            sh:subject sh:this ],
-        [ a sh:TripleRule ;
-            rdfs:comment "Infer a hasDomain relation by checking any enclosing ZoneGroup to determine the domain." ;
-            sh:object [ sh:path ( [ sh:inversePath s223:hasZone ] s223:hasDomain ) ] ;
-            sh:predicate s223:hasDomain ;
-            sh:subject sh:this ] .
+            sh:path s223:hasConnectionPoint ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:OutletConnectionPoint ;
+                    sh:node [ sh:property [ sh:class s223:EM-Light ;
+                                    sh:path s223:hasMedium ] ] ] ] .
 
 s223:actuates a rdf:Property ;
     rdfs:label "actuates" ;
@@ -19530,10 +19794,6 @@ s223:connectsFrom a rdf:Property ;
 s223:connectsTo a rdf:Property ;
     rdfs:label "connects to" ;
     rdfs:comment "The relation connectsTo binds a Connection to a Connectable thing to a Connection with an implied directionality. A connectsTo B indicates a flow from A to B." .
-
-s223:hasAspect a rdf:Property ;
-    rdfs:label "has aspect" ;
-    rdfs:comment "hasAspect is used to establish the context of a Property. The value must be an instance of EnumerationKind. For example, if a Property has a Temperature value of 45.3, the hasAspect relation is used to state what that represents, such as a Temperature limit during working hours, etc. A Property can have any number of hasAspect relations, as needed to establish the context." .
 
 s223:hasExternalReference a rdf:Property ;
     rdfs:label "has external reference" ;
@@ -39132,6 +39392,21 @@ s223:Aspect-Effectiveness a s223:Aspect-Effectiveness,
     rdfs:comment "This class enumerates the possible states of effectiveness" ;
     rdfs:subClassOf s223:EnumerationKind-Aspect .
 
+s223:CoolingCoil a s223:Class,
+        sh:NodeShape ;
+    rdfs:label "Cooling coil" ;
+    rdfs:comment "A coil that provides cooling." ;
+    rdfs:subClassOf s223:Coil ;
+    sh:property [ rdfs:comment "A cooling coil must be related to the role 'Role-Cooling' using the relation 'hasRole'." ;
+            sh:hasValue s223:Role-Cooling ;
+            sh:minCount 1 ;
+            sh:path s223:hasRole ] ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "Cooling coils will always have the role Role-Cooling" ;
+            sh:object s223:Role-Cooling ;
+            sh:predicate s223:hasRole ;
+            sh:subject sh:this ] .
+
 s223:DCNegativeVoltage-190.0V a s223:Class,
         s223:DCNegativeVoltage-190.0V,
         sh:NodeShape ;
@@ -39305,25 +39580,20 @@ s223:ExternalReference a s223:Class,
     rdfs:comment "ExternalReference is an abstract class that represents a thing that contains API or protocol parameter values necessary to associate a property with a value." ;
     rdfs:subClassOf s223:Concept .
 
-s223:Fan a s223:Class,
+s223:HeatingCoil a s223:Class,
         sh:NodeShape ;
-    rdfs:label "Fan" ;
-    rdfs:comment "A machine used to create flow within a gas such as air. " ;
-    rdfs:subClassOf s223:Equipment ;
-    sh:property [ rdfs:comment "A Fan shall have at least one inlet using the medium Air." ;
+    rdfs:label "Heating coil" ;
+    rdfs:comment "A coil that provides heating." ;
+    rdfs:subClassOf s223:Coil ;
+    sh:property [ rdfs:comment "A heating coil must be related to the role 'Role-Heating' using the relation 'hasRole'." ;
+            sh:hasValue s223:Role-Heating ;
             sh:minCount 1 ;
-            sh:path s223:hasConnectionPoint ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ;
-                    sh:node [ sh:property [ sh:class s223:Medium-Air ;
-                                    sh:path s223:hasMedium ] ] ] ],
-        [ rdfs:comment "A Fan shall have at least one outlet using the medium Air." ;
-            sh:minCount 1 ;
-            sh:path s223:hasConnectionPoint ;
-            sh:qualifiedMinCount 1 ;
-            sh:qualifiedValueShape [ sh:class s223:OutletConnectionPoint ;
-                    sh:node [ sh:property [ sh:class s223:Medium-Air ;
-                                    sh:path s223:hasMedium ] ] ] ] .
+            sh:path s223:hasRole ] ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "Heating coils will always have the role Role-Heating" ;
+            sh:object s223:Role-Heating ;
+            sh:predicate s223:hasRole ;
+            sh:subject sh:this ] .
 
 s223:Medium-NaturalGas a s223:Class,
         s223:Medium-NaturalGas,
@@ -39346,35 +39616,30 @@ s223:Phase-Liquid a s223:Class,
     rdfs:comment "This class has enumerated subclasses of liquid in various thermodynamic states." ;
     rdfs:subClassOf s223:EnumerationKind-Phase .
 
-s223:QuantifiableObservableProperty a s223:Class,
+s223:ResistanceHeater a s223:Class,
         sh:NodeShape ;
-    rdfs:label "Quantifiable Observable Property" ;
-    rdfs:comment "This class is for quantifiable properties of which numerical values cannot be modified by a user or a machine outside of the model, but only observed, like a temperature reading or a voltage measure." ;
-    rdfs:subClassOf s223:ObservableProperty,
-        s223:QuantifiableProperty .
-
-s223:Valve a s223:Class,
-        sh:NodeShape ;
-    rdfs:label "Valve" ;
-    rdfs:comment "A device to regulate or stop the flow of fluid in a pipe or a duct by throttling." ;
+    rdfs:label "Electrical resistance heater" ;
+    rdfs:comment "Resistance heaters provide electrical resistance heating, for example an electric heating coil within a Fan Coil Unit." ;
     rdfs:subClassOf s223:Equipment ;
-    sh:or ( [ sh:property [ rdfs:comment "A Valve shall have at least one inlet and one outlet or two bidirectional connection points." ;
-                        sh:minCount 1 ;
-                        sh:path s223:hasConnectionPoint ;
-                        sh:qualifiedMinCount 1 ;
-                        sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ] ;
-                        sh:qualifiedValueShapesDisjoint true ],
-                    [ rdfs:comment "A Valve shall have at least one inlet and one outlet or two bidirectional connection points." ;
-                        sh:minCount 1 ;
-                        sh:path s223:hasConnectionPoint ;
-                        sh:qualifiedMinCount 1 ;
-                        sh:qualifiedValueShape [ sh:class s223:OutletConnectionPoint ] ;
-                        sh:qualifiedValueShapesDisjoint true ] ] [ sh:property [ rdfs:comment "A Valve shall have at least one inlet and one outlet or two bidirectional connection points." ;
-                        sh:minCount 2 ;
-                        sh:path s223:hasConnectionPoint ;
-                        sh:qualifiedMinCount 2 ;
-                        sh:qualifiedValueShape [ sh:class s223:BidirectionalConnectionPoint ] ;
-                        sh:qualifiedValueShapesDisjoint true ] ] ) .
+    sh:property [ rdfs:comment "A ResistanceHeater shall have at least one inlet using the medium Electricity." ;
+            sh:minCount 1 ;
+            sh:path s223:hasConnectionPoint ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ;
+                    sh:node [ sh:property [ sh:class s223:Medium-Electricity ;
+                                    sh:path s223:hasMedium ] ] ] ],
+        [ rdfs:comment "ResistanceHeaters must have the role Role-Heating." ;
+            sh:minCount 1 ;
+            sh:path s223:hasRole ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:Role-Heating ] ] .
+
+s223:Substance-CO2 a s223:Class,
+        s223:Substance-CO2,
+        sh:NodeShape ;
+    rdfs:label "Substance-CO2" ;
+    rdfs:comment "Substance-CO2" ;
+    rdfs:subClassOf s223:EnumerationKind-Substance .
 
 s223:Voltage-0V a s223:Class,
         s223:Voltage-0V,
@@ -39661,6 +39926,40 @@ s223:Voltage-6600V a s223:Class,
     rdfs:comment "6600V Voltage" ;
     rdfs:subClassOf s223:Numerical-Voltage,
         s223:QuantifiableProperty .
+
+s223:Water-ChilledWater a s223:Class,
+        s223:Water-ChilledWater,
+        sh:NodeShape ;
+    rdfs:label "Water-Chilled water" ;
+    rdfs:comment "Water-Chilled water" ;
+    rdfs:subClassOf s223:Medium-Water .
+
+s223:Water-HotWater a s223:Class,
+        s223:Water-HotWater,
+        sh:NodeShape ;
+    rdfs:label "Water-Hot water" ;
+    rdfs:comment "Water-Hot water" ;
+    rdfs:subClassOf s223:Medium-Water .
+
+s223:ZoneGroup a s223:Class,
+        sh:NodeShape ;
+    rdfs:label "Zone group" ;
+    rdfs:comment "A ZoneGroup is a logical grouping (collection) of Zones for some functional or system reason, to identify a domain of control, such as a Lighting Zone, or a heating zone." ;
+    rdfs:subClassOf s223:Concept ;
+    sh:property [ rdfs:comment "A ZoneGroup must be associated with exactly one EnumerationKind-Domain using the relation hasDomain." ;
+            sh:class s223:EnumerationKind-Domain ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path s223:hasDomain ],
+        [ rdfs:comment "A ZoneGroup must be associated with at least one Zone using the relation hasZone." ;
+            sh:class s223:Zone ;
+            sh:minCount 1 ;
+            sh:path s223:hasZone ] ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "Infer a hasDomain relation by checking any enclosed Zones to determine the domain." ;
+            sh:object [ sh:path ( s223:hasZone s223:hasDomain ) ] ;
+            sh:predicate s223:hasDomain ;
+            sh:subject sh:this ] .
 
 s223:commandedByProperty a rdf:Property ;
     rdfs:label "commanded by Property" ;
@@ -45749,12 +46048,12 @@ s223:DayOfWeek-Weekend a s223:Class,
     rdfs:comment "This class defines the EnumerationKind values of Saturday and Sunday" ;
     rdfs:subClassOf s223:Aspect-DayOfWeek .
 
-s223:EnumeratedObservableProperty a s223:Class,
+s223:Domain-HVAC a s223:Class,
+        s223:Domain-HVAC,
         sh:NodeShape ;
-    rdfs:label "Enumerated observable property" ;
-    rdfs:comment "An EnumeratedObservableProperty is a property with an enumerated (fixed) set of possible values that cannot be changed (can only be observed)." ;
-    rdfs:subClassOf s223:EnumerableProperty,
-        s223:ObservableProperty .
+    rdfs:label "Domain-HVAC" ;
+    rdfs:comment "The domain HVAC represents equipment used to provide space conditioning and ventilation within a building. Example equipment that might fall within an HVAC domain include fans, pumps, air-handling units, and variable air volume boxes. " ;
+    rdfs:subClassOf s223:EnumerationKind-Domain .
 
 s223:Function a s223:Class,
         sh:NodeShape ;
@@ -45915,6 +46214,47 @@ s223:Water-GlycolSolution a s223:Class,
             sh:minCount 2 ;
             sh:path s223:hasConstituent ] .
 
+s223:Zone a s223:Class,
+        sh:NodeShape ;
+    rdfs:label "Zone" ;
+    rdfs:comment "A Zone is a logical grouping (collection) of domain spaces for some functional or system reason, to identify a domain of control, such as a Lighting Zone, or a heating zone" ;
+    rdfs:subClassOf s223:Concept ;
+    sh:property [ rdfs:comment "A Zone must be associated with exactly one EnumerationKind-Domain using the relation hasDomain." ;
+            sh:class s223:EnumerationKind-Domain ;
+            sh:maxCount 1 ;
+            sh:minCount 1 ;
+            sh:path s223:hasDomain ],
+        [ rdfs:comment "A Zone must be associated with at least one DomainSpace using the relation hasDomainSpace." ;
+            sh:class s223:DomainSpace ;
+            sh:minCount 1 ;
+            sh:path s223:hasDomainSpace ],
+        [ rdfs:comment "The associated Domain of a Zone and the Domain of the DomainSpaces it contains must be the same." ;
+            sh:path s223:hasDomain ;
+            sh:sparql [ a sh:SPARQLConstraint ;
+                    rdfs:comment "The associated Domain of a Zone and the Domain of the DomainSpaces it contains must be the same." ;
+                    sh:message "Zone {$this} has a Domain of {?domain}, but it contains a DomainSpace {?ds} which has a Domain of {?dsdomain}. These should be the same." ;
+                    sh:prefixes <http://data.ashrae.org/standard223/1.0/model/all> ;
+                    sh:select """
+SELECT DISTINCT $this ?domain ?ds ?dsdomain
+WHERE {
+$this a s223:Zone .
+$this s223:hasDomain ?domain .
+$this s223:contains ?ds .
+?ds s223:hasDomain ?dsdomain .
+FILTER (?domain != ?dsdomain)
+}
+""" ] ] ;
+    sh:rule [ a sh:TripleRule ;
+            rdfs:comment "Infer a hasDomain relation by checking any enclosed DomainSpaces to determine the domain." ;
+            sh:object [ sh:path ( s223:hasDomainSpace s223:hasDomain ) ] ;
+            sh:predicate s223:hasDomain ;
+            sh:subject sh:this ],
+        [ a sh:TripleRule ;
+            rdfs:comment "Infer a hasDomain relation by checking any enclosing ZoneGroup to determine the domain." ;
+            sh:object [ sh:path ( [ sh:inversePath s223:hasZone ] s223:hasDomain ) ] ;
+            sh:predicate s223:hasDomain ;
+            sh:subject sh:this ] .
+
 s223:connected a s223:SymmetricProperty,
         rdf:Property ;
     rdfs:label "connected" ;
@@ -45928,18 +46268,10 @@ s223:hasDomainSpace a rdf:Property ;
     rdfs:label "has domain space" ;
     rdfs:comment "The relation hasDomainSpace is used to associate a Zone with the DomainSpace(s) that make up that Zone." .
 
-s223:hasEnumerationKind a rdf:Property ;
-    rdfs:label "has enumeration kind" ;
-    rdfs:comment "The relation hasEnumerationKind associates an EnumerableProperty with a class of enumeration values. This is used to, for example, identify what kind of substance is transported along a Connection or which day of the week a setpoint is active." .
-
 s223:hasObservationLocationLow a rdf:Property ;
     rdfs:label "has observation location low" ;
     rdfs:comment "The relation hasObservationLocationLow associates a differential sensor to one of the topological locations where a differential property is observed (see `s223:observes`)." ;
     rdfs:subPropertyOf s223:hasObservationLocation .
-
-s223:hasProperty a rdf:Property ;
-    rdfs:label "has Property" ;
-    rdfs:comment "The relation hasProperty associates any 223 Concept with a Property." .
 
 s223:hasZone a rdf:Property ;
     rdfs:label "has zone" ;
@@ -52706,32 +53038,11 @@ s223:DC-6V a s223:Class,
     rdfs:comment "This class has enumerated instances of all polarities of 6 volt electricity." ;
     rdfs:subClassOf s223:Electricity-DC .
 
-s223:EnumerationKind-Binary a s223:Class,
-        s223:EnumerationKind-Binary,
-        sh:NodeShape ;
-    rdfs:label "EnumerationKind Binary" ;
-    rdfs:comment "This class has enumerated subclasses of True, False and Unknown used to describe the possible values of a binary property" ;
-    rdfs:subClassOf s223:EnumerationKind .
-
 s223:EnumerationKind-Direction a s223:Class,
         s223:EnumerationKind-Direction,
         sh:NodeShape ;
     rdfs:label "Direction" ;
     rdfs:comment "This class has enumerated subclasses of Bidirectional, Inlet and Outlet used to qualify ConnectionPoints." ;
-    rdfs:subClassOf s223:EnumerationKind .
-
-s223:EnumerationKind-OnOff a s223:Class,
-        s223:EnumerationKind-OnOff,
-        sh:NodeShape ;
-    rdfs:label "OnOff enumeration" ;
-    rdfs:comment "This class has enumerated subclasses of states of either on or off." ;
-    rdfs:subClassOf s223:EnumerationKind .
-
-s223:EnumerationKind-Position a s223:Class,
-        s223:EnumerationKind-Position,
-        sh:NodeShape ;
-    rdfs:label "Position" ;
-    rdfs:comment "This class has enumerated subclasses of position such as closed or open." ;
     rdfs:subClassOf s223:EnumerationKind .
 
 s223:EnumerationKind-RunStatus a s223:Class,
@@ -55792,12 +56103,53 @@ The abvolt is another option for a unit of voltage in the cgs system."""^^rdf:HT
     qudt:symbol "statV/cm" ;
     rdfs:isDefinedBy <http://qudt.org/2.1/vocab/unit> .
 
-s223:EnumerationKind-Speed a s223:Class,
-        s223:EnumerationKind-Speed,
+s223:Damper a s223:Class,
         sh:NodeShape ;
-    rdfs:label "Speed" ;
-    rdfs:comment "This class has enumerated subclasses of speed settings of High, Medium, Low (plus Off)." ;
-    rdfs:subClassOf s223:EnumerationKind .
+    rdfs:label "Damper" ;
+    rdfs:comment "An element inserted into an air-distribution system or element of an air-distribution system permitting modification of the air resistance of the system and consequently changing the airflow rate or shutting off the airflow." ;
+    rdfs:subClassOf s223:Equipment ;
+    sh:property [ rdfs:comment "A Damper shall have at least one inlet using the medium Air.",
+                "Does this need to allow bidirectional connection points?" ;
+            sh:minCount 1 ;
+            sh:path s223:hasConnectionPoint ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ;
+                    sh:node [ sh:property [ sh:class s223:Medium-Air ;
+                                    sh:path s223:hasMedium ] ] ] ],
+        [ rdfs:comment "A Damper shall have at least one outlet using the medium Air." ;
+            sh:minCount 1 ;
+            sh:path s223:hasConnectionPoint ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:OutletConnectionPoint ;
+                    sh:node [ sh:property [ sh:class s223:Medium-Air ;
+                                    sh:path s223:hasMedium ] ] ] ] .
+
+s223:EnumeratedActuatableProperty a s223:Class,
+        sh:NodeShape ;
+    rdfs:label "Enumerated actuatable property" ;
+    rdfs:comment "An EnumeratedActuatableProperty is a property with an enumerated (fixed) set of possible values that can be changed (actuated)." ;
+    rdfs:subClassOf s223:ActuatableProperty,
+        s223:EnumerableProperty .
+
+s223:Fan a s223:Class,
+        sh:NodeShape ;
+    rdfs:label "Fan" ;
+    rdfs:comment "A machine used to create flow within a gas such as air. " ;
+    rdfs:subClassOf s223:Equipment ;
+    sh:property [ rdfs:comment "A Fan shall have at least one inlet using the medium Air." ;
+            sh:minCount 1 ;
+            sh:path s223:hasConnectionPoint ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ;
+                    sh:node [ sh:property [ sh:class s223:Medium-Air ;
+                                    sh:path s223:hasMedium ] ] ] ],
+        [ rdfs:comment "A Fan shall have at least one outlet using the medium Air." ;
+            sh:minCount 1 ;
+            sh:path s223:hasConnectionPoint ;
+            sh:qualifiedMinCount 1 ;
+            sh:qualifiedValueShape [ sh:class s223:OutletConnectionPoint ;
+                    sh:node [ sh:property [ sh:class s223:Medium-Air ;
+                                    sh:path s223:hasMedium ] ] ] ] .
 
 s223:LineLineVoltage-10000V a s223:Class,
         s223:LineLineVoltage-10000V,
@@ -55991,6 +56343,20 @@ s223:Numerical-NumberOfElectricalPhases a s223:Class,
     rdfs:comment "This class has enumerated instances of number of electrical phases. The s223:hasNumberOfElectricalPhases relation points to one of the values of this enumeration." ;
     rdfs:subClassOf s223:EnumerationKind-Numerical .
 
+s223:QuantifiableActuatableProperty a s223:Class,
+        sh:NodeShape ;
+    rdfs:label "Quantifiable Actuatable Property" ;
+    rdfs:comment "This class is for quantifiable properties of which numerical values are specified to be modifiable by a user or a machine outside of the model, like a setpoint." ;
+    rdfs:subClassOf s223:ActuatableProperty,
+        s223:QuantifiableProperty .
+
+s223:QuantifiableObservableProperty a s223:Class,
+        sh:NodeShape ;
+    rdfs:label "Quantifiable Observable Property" ;
+    rdfs:comment "This class is for quantifiable properties of which numerical values cannot be modified by a user or a machine outside of the model, but only observed, like a temperature reading or a voltage measure." ;
+    rdfs:subClassOf s223:ObservableProperty,
+        s223:QuantifiableProperty .
+
 s223:Role-Cooling a s223:Class,
         s223:Role-Cooling,
         sh:NodeShape ;
@@ -56027,12 +56393,6 @@ s223:Voltage-380V a s223:Class,
     rdfs:subClassOf s223:Numerical-Voltage,
         s223:QuantifiableProperty .
 
-s223:connectedTo a rdf:Property ;
-    rdfs:label "connected to" ;
-    s223:inverseOf s223:connectedFrom ;
-    rdfs:comment "The relation connectedTo indicates that connectable things are connected with a specific flow direction. A is connectedTo B, means a directionality beginning at A and ending at B.  The inverse direction is indicated by connectedFrom (see `s223:connectedFrom`)." ;
-    rdfs:domain s223:Equipment .
-
 s223:connectsThrough a rdf:Property ;
     rdfs:label "connects through" ;
     s223:inverseOf s223:connectsAt ;
@@ -56045,10 +56405,6 @@ s223:hasConstituent a rdf:Property ;
 s223:hasVoltage a rdf:Property ;
     rdfs:label "hasVoltage" ;
     rdfs:comment "The relation hasVoltage is used to identify the voltage of an electricity enumeration kind. " .
-
-s223:ofSubstance a rdf:Property ;
-    rdfs:label "of substance" ;
-    rdfs:comment "The relation ofSubstance is used to associate a Property with a specific Substance." .
 
 qudt:UnitEquivalencePropertyGroup a sh:PropertyGroup ;
     rdfs:label "Equivalent Units" ;
@@ -57417,6 +57773,13 @@ s223:Electricity-Signal a s223:Class,
     rdfs:comment "This class has enumerated subclasses of common communication protocols." ;
     rdfs:subClassOf s223:Medium-Electricity .
 
+s223:EnumeratedObservableProperty a s223:Class,
+        sh:NodeShape ;
+    rdfs:label "Enumerated observable property" ;
+    rdfs:comment "An EnumeratedObservableProperty is a property with an enumerated (fixed) set of possible values that cannot be changed (can only be observed)." ;
+    rdfs:subClassOf s223:EnumerableProperty,
+        s223:ObservableProperty .
+
 s223:EnumerationKind-HVACOperatingMode a s223:Class,
         s223:EnumerationKind-HVACOperatingMode,
         sh:NodeShape ;
@@ -57431,11 +57794,11 @@ s223:EnumerationKind-HVACOperatingStatus a s223:Class,
     rdfs:comment "HVACOperatingStatus has enumerated subclasses of the HVAC system/equipment operating status." ;
     rdfs:subClassOf s223:EnumerationKind .
 
-s223:EnumerationKind-Occupancy a s223:Class,
-        s223:EnumerationKind-Occupancy,
+s223:EnumerationKind-OnOff a s223:Class,
+        s223:EnumerationKind-OnOff,
         sh:NodeShape ;
-    rdfs:label "Occupancy status" ;
-    rdfs:comment "This class has enumerated subclasses of occupancy status, i.e. the state of being used or occupied. Some Occupancy enumerations have subclasses for more specific use." ;
+    rdfs:label "OnOff enumeration" ;
+    rdfs:comment "This class has enumerated subclasses of states of either on or off." ;
     rdfs:subClassOf s223:EnumerationKind .
 
 s223:EnumerationKind-Phase a s223:Class,
@@ -57445,9 +57808,43 @@ s223:EnumerationKind-Phase a s223:Class,
     rdfs:comment "This class has enumerated subclasses of thermodynamic phase, i.e. states of matter." ;
     rdfs:subClassOf s223:EnumerationKind .
 
+s223:EnumerationKind-Speed a s223:Class,
+        s223:EnumerationKind-Speed,
+        sh:NodeShape ;
+    rdfs:label "Speed" ;
+    rdfs:comment "This class has enumerated subclasses of speed settings of High, Medium, Low (plus Off)." ;
+    rdfs:subClassOf s223:EnumerationKind .
+
+s223:Valve a s223:Class,
+        sh:NodeShape ;
+    rdfs:label "Valve" ;
+    rdfs:comment "A device to regulate or stop the flow of fluid in a pipe or a duct by throttling." ;
+    rdfs:subClassOf s223:Equipment ;
+    sh:or ( [ sh:property [ rdfs:comment "A Valve shall have at least one inlet and one outlet or two bidirectional connection points." ;
+                        sh:minCount 1 ;
+                        sh:path s223:hasConnectionPoint ;
+                        sh:qualifiedMinCount 1 ;
+                        sh:qualifiedValueShape [ sh:class s223:InletConnectionPoint ] ;
+                        sh:qualifiedValueShapesDisjoint true ],
+                    [ rdfs:comment "A Valve shall have at least one inlet and one outlet or two bidirectional connection points." ;
+                        sh:minCount 1 ;
+                        sh:path s223:hasConnectionPoint ;
+                        sh:qualifiedMinCount 1 ;
+                        sh:qualifiedValueShape [ sh:class s223:OutletConnectionPoint ] ;
+                        sh:qualifiedValueShapesDisjoint true ] ] [ sh:property [ rdfs:comment "A Valve shall have at least one inlet and one outlet or two bidirectional connection points." ;
+                        sh:minCount 2 ;
+                        sh:path s223:hasConnectionPoint ;
+                        sh:qualifiedMinCount 2 ;
+                        sh:qualifiedValueShape [ sh:class s223:BidirectionalConnectionPoint ] ;
+                        sh:qualifiedValueShapesDisjoint true ] ] ) .
+
 s223:hasObservationLocation a rdf:Property ;
     rdfs:label "has observation location" ;
     rdfs:comment "The relation hasObservationLocation associates a sensor to the topological location where it is observing the property (see `s223:observes`). The observation location can be a Connectable (see `s223:Connectable`), Connection (see `s223:Connection`), or ConnectionPoint (see `s223:ConnectioPoint`)." .
+
+s223:ofSubstance a rdf:Property ;
+    rdfs:label "of substance" ;
+    rdfs:comment "The relation ofSubstance is used to associate a Property with a specific Substance." .
 
 constant:MagneticConstant a qudt:PhysicalConstant ;
     rdfs:label "Magnetic Constant"@en ;
@@ -58649,6 +59046,13 @@ s223:EnumerationKind-Numerical a s223:Class,
             sh:path qudt:hasUnit ;
             sh:severity sh:Info ] .
 
+s223:EnumerationKind-Occupancy a s223:Class,
+        s223:EnumerationKind-Occupancy,
+        sh:NodeShape ;
+    rdfs:label "Occupancy status" ;
+    rdfs:comment "This class has enumerated subclasses of occupancy status, i.e. the state of being used or occupied. Some Occupancy enumerations have subclasses for more specific use." ;
+    rdfs:subClassOf s223:EnumerationKind .
+
 s223:EnumerationKind-Substance a s223:Class,
         s223:EnumerationKind-Substance,
         sh:NodeShape ;
@@ -58689,9 +59093,11 @@ s223:Role-Heating a s223:Class,
     rdfs:comment "Role-Heating" ;
     rdfs:subClassOf s223:EnumerationKind-Role .
 
-s223:contains a rdf:Property ;
-    rdfs:label "contains" ;
-    rdfs:comment "The relation contains associates a PhysicalSpace or a piece of Equipment to a PhysicalSpace or another piece of Equipment, respectively." .
+s223:connectedTo a rdf:Property ;
+    rdfs:label "connected to" ;
+    s223:inverseOf s223:connectedFrom ;
+    rdfs:comment "The relation connectedTo indicates that connectable things are connected with a specific flow direction. A is connectedTo B, means a directionality beginning at A and ending at B.  The inverse direction is indicated by connectedFrom (see `s223:connectedFrom`)." ;
+    rdfs:domain s223:Equipment .
 
 qkdv:A-1E0L2I0M1H-1T-2D0 a qudt:QuantityKindDimensionVector_ISO,
         qudt:QuantityKindDimensionVector_Imperial,
@@ -59929,6 +60335,13 @@ unit:V_Stat a qudt:Unit ;
     qudt:symbol "statV" ;
     rdfs:isDefinedBy <http://qudt.org/2.1/vocab/unit> .
 
+s223:EnumerationKind-Binary a s223:Class,
+        s223:EnumerationKind-Binary,
+        sh:NodeShape ;
+    rdfs:label "EnumerationKind Binary" ;
+    rdfs:comment "This class has enumerated subclasses of True, False and Unknown used to describe the possible values of a binary property" ;
+    rdfs:subClassOf s223:EnumerationKind .
+
 s223:Sensor a s223:Class,
         sh:NodeShape ;
     rdfs:label "Sensor" ;
@@ -59981,6 +60394,10 @@ UNION
                         sh:maxCount 1 ;
                         sh:minCount 1 ;
                         sh:path s223:observes ] ] ) .
+
+s223:contains a rdf:Property ;
+    rdfs:label "contains" ;
+    rdfs:comment "The relation contains associates a PhysicalSpace or a piece of Equipment to a PhysicalSpace or another piece of Equipment, respectively." .
 
 qudt:Verifiable a qudt:AspectClass,
         sh:NodeShape ;
@@ -61181,6 +61598,10 @@ s223:LineLineVoltage-240V a s223:Class,
     rdfs:comment "240V Line-Line Voltage" ;
     rdfs:subClassOf s223:Numerical-LineLineVoltage .
 
+s223:hasAspect a rdf:Property ;
+    rdfs:label "has aspect" ;
+    rdfs:comment "hasAspect is used to establish the context of a Property. The value must be an instance of EnumerationKind. For example, if a Property has a Temperature value of 45.3, the hasAspect relation is used to state what that represents, such as a Temperature limit during working hours, etc. A Property can have any number of hasAspect relations, as needed to establish the context." .
+
 qudt:HTMLOrStringOrLangStringOrLatexString a rdf:List ;
     rdfs:label "HTML or string or langString or LatexString" ;
     rdf:first [ sh:datatype rdf:HTML ] ;
@@ -62380,6 +62801,17 @@ unit:YR_Sidereal a qudt:Unit ;
     qudt:uneceCommonCode "L96" ;
     rdfs:isDefinedBy <http://qudt.org/2.1/vocab/unit> .
 
+s223:EnumerationKind-Position a s223:Class,
+        s223:EnumerationKind-Position,
+        sh:NodeShape ;
+    rdfs:label "Position" ;
+    rdfs:comment "This class has enumerated subclasses of position such as closed or open." ;
+    rdfs:subClassOf s223:EnumerationKind .
+
+s223:hasEnumerationKind a rdf:Property ;
+    rdfs:label "has enumeration kind" ;
+    rdfs:comment "The relation hasEnumerationKind associates an EnumerableProperty with a class of enumeration values. This is used to, for example, identify what kind of substance is transported along a Connection or which day of the week a setpoint is active." .
+
 qkdv:A0E0L2I0M0H0T-3D0 a qudt:QuantityKindDimensionVector_ISO,
         qudt:QuantityKindDimensionVector_Imperial,
         qudt:QuantityKindDimensionVector_SI ;
@@ -63328,10 +63760,6 @@ $this a/rdfs:subClassOf* s223:ObservableProperty .
 }
 """ ] .
 
-s223:hasDomain a rdf:Property ;
-    rdfs:label "has domain" ;
-    rdfs:comment "The relation hasDomain is used to indicate what domain a Zone or DomainSpace pertains to (e.g. HVAC, lighting, electrical, etc.). Possible values are defined in EnumerationKind-Domain (see `s223:EnumerationKind-Domain`)." .
-
 qkdv:A0E0L3I0M-1H0T0D0 a qudt:QuantityKindDimensionVector_ISO,
         qudt:QuantityKindDimensionVector_Imperial,
         qudt:QuantityKindDimensionVector_SI ;
@@ -64022,10 +64450,6 @@ s223:Substance-Medium a s223:Class,
     rdfs:comment "This class has enumerated subclasses of a physical substance or anything that allows for the transfer of energy or information." ;
     rdfs:subClassOf s223:EnumerationKind-Substance .
 
-s223:observes a rdf:Property ;
-    rdfs:label "observes" ;
-    rdfs:comment "The relation observes binds a sensor to one ObservableProperty `see s223:ObservableProperty` which is used by the sensor to generate a measurement value (ex. a temperature) or a simple observation of a stimulus causing a reaction (a current binary switch that closes a dry contact when a fan is powered on)." .
-
 qudt:hasUnit a rdf:Property ;
     rdfs:label "has unit" ;
     dcterms:description "This property relates a system of units with a unit of measure that is either a) defined by the system, or b) accepted for use by the system and is convertible to a unit of equivalent dimension that is defined by the system. Systems of units may distinguish between base and derived units. Base units are the units which measure the base quantities for the corresponding system of quantities. The base units are used to define units for all other quantities as products of powers of the base units. Such units are called derived units for the system. Thirdly, c) a reference to the unit of measure of a quantity (variable or constant) of interest"^^rdf:HTML ;
@@ -64664,6 +65088,14 @@ s223:EnumerationKind-Domain a s223:Class,
     rdfs:label "EnumerationKind Domain" ;
     rdfs:comment "A Domain represents a categorization of building services or specialization used to characterize equipment or spaces in a building. Example domains include HVAC, Lighting, and Plumbing." ;
     rdfs:subClassOf s223:EnumerationKind .
+
+s223:hasDomain a rdf:Property ;
+    rdfs:label "has domain" ;
+    rdfs:comment "The relation hasDomain is used to indicate what domain a Zone or DomainSpace pertains to (e.g. HVAC, lighting, electrical, etc.). Possible values are defined in EnumerationKind-Domain (see `s223:EnumerationKind-Domain`)." .
+
+s223:observes a rdf:Property ;
+    rdfs:label "observes" ;
+    rdfs:comment "The relation observes binds a sensor to one ObservableProperty `see s223:ObservableProperty` which is used by the sensor to generate a measurement value (ex. a temperature) or a simple observation of a stimulus causing a reaction (a current binary switch that closes a dry contact when a fan is powered on)." .
 
 qkdv:A0E-1L0I0M1H0T-2D0 a qudt:QuantityKindDimensionVector_ISO,
         qudt:QuantityKindDimensionVector_Imperial,
@@ -66010,21 +66442,6 @@ quantitykind:SpecificHeatCapacity a qudt:QuantityKind ;
         quantitykind:SpecificHeatCapacityAtConstantVolume,
         quantitykind:SpecificHeatCapacityAtSaturation .
 
-quantitykind:Temperature a qudt:QuantityKind ;
-    rdfs:label "Temperature"@en ;
-    dcterms:description "Temperature is a physical property of matter that quantitatively expresses the common notions of hot and cold. Objects of low temperature are cold, while various degrees of higher temperatures are referred to as warm or hot. Heat spontaneously flows from bodies of a higher temperature to bodies of lower temperature, at a rate that increases with the temperature difference and the thermal conductivity."^^rdf:HTML ;
-    qudt:applicableUnit unit:DEG_C,
-        unit:DEG_F,
-        unit:DEG_R,
-        unit:K,
-        unit:MilliDEG_C,
-        unit:PlanckTemperature ;
-    qudt:dbpediaMatch "http://dbpedia.org/resource/Temperature"^^xsd:anyURI ;
-    qudt:hasDimensionVector qkdv:A0E0L0I0M0H1T0D0 ;
-    qudt:plainTextDescription "Temperature is a physical property of matter that quantitatively expresses the common notions of hot and cold. Objects of low temperature are cold, while various degrees of higher temperatures are referred to as warm or hot. Heat spontaneously flows from bodies of a higher temperature to bodies of lower temperature, at a rate that increases with the temperature difference and the thermal conductivity." ;
-    rdfs:isDefinedBy <http://qudt.org/2.1/vocab/quantitykind> ;
-    rdfs:seeAlso quantitykind:ThermodynamicTemperature .
-
 quantitykind:ThermalConductivity a qudt:QuantityKind ;
     rdfs:label "Thermal Conductivity"@en ;
     dcterms:description "In physics, thermal conductivity, \\(k\\) (also denoted as \\(\\lambda\\)), is the property of a material's ability to conduct heat. It appears primarily in Fourier's Law for heat conduction and is the areic heat flow rate divided by temperature gradient."^^qudt:LatexString ;
@@ -66815,11 +67232,6 @@ s223:Numerical-LineNeutralVoltage a s223:Class,
             sh:minCount 1 ;
             sh:path s223:hasVoltage ] .
 
-qudt:hasQuantityKind a rdf:Property ;
-    rdfs:label "has quantity kind" ;
-    rdfs:comment "A reference to the QuantityKind of a QuantifiableProperty of interest, e.g. quantitykind:Temperature." ;
-    rdfs:isDefinedBy <http://qudt.org/2.1/schema/shacl/qudt> .
-
 quantitykind:MagneticFieldStrength_H a qudt:QuantityKind ;
     rdfs:label "حقل مغناطيسي"@ar,
         "Magnetické pole"@cs,
@@ -66855,6 +67267,21 @@ quantitykind:MagneticFieldStrength_H a qudt:QuantityKind ;
     qudt:latexSymbol "\\(\\mathbf{H} \\)"^^qudt:LatexString ;
     rdfs:isDefinedBy <http://qudt.org/2.1/vocab/quantitykind> ;
     skos:broader quantitykind:ElectricCurrentPerUnitLength .
+
+quantitykind:Temperature a qudt:QuantityKind ;
+    rdfs:label "Temperature"@en ;
+    dcterms:description "Temperature is a physical property of matter that quantitatively expresses the common notions of hot and cold. Objects of low temperature are cold, while various degrees of higher temperatures are referred to as warm or hot. Heat spontaneously flows from bodies of a higher temperature to bodies of lower temperature, at a rate that increases with the temperature difference and the thermal conductivity."^^rdf:HTML ;
+    qudt:applicableUnit unit:DEG_C,
+        unit:DEG_F,
+        unit:DEG_R,
+        unit:K,
+        unit:MilliDEG_C,
+        unit:PlanckTemperature ;
+    qudt:dbpediaMatch "http://dbpedia.org/resource/Temperature"^^xsd:anyURI ;
+    qudt:hasDimensionVector qkdv:A0E0L0I0M0H1T0D0 ;
+    qudt:plainTextDescription "Temperature is a physical property of matter that quantitatively expresses the common notions of hot and cold. Objects of low temperature are cold, while various degrees of higher temperatures are referred to as warm or hot. Heat spontaneously flows from bodies of a higher temperature to bodies of lower temperature, at a rate that increases with the temperature difference and the thermal conductivity." ;
+    rdfs:isDefinedBy <http://qudt.org/2.1/vocab/quantitykind> ;
+    rdfs:seeAlso quantitykind:ThermodynamicTemperature .
 
 quantitykind:VolumeFraction a qudt:QuantityKind ;
     rdfs:label "Volume Fraction"@en ;
@@ -66924,6 +67351,10 @@ unit:N a qudt:DerivedUnit,
     qudt:udunitsCode "N" ;
     qudt:uneceCommonCode "NEW" ;
     rdfs:isDefinedBy <http://qudt.org/2.1/vocab/unit> .
+
+s223:hasProperty a rdf:Property ;
+    rdfs:label "has Property" ;
+    rdfs:comment "The relation hasProperty associates any 223 Concept with a Property." .
 
 quantitykind:HeatFlowRate a qudt:QuantityKind ;
     rdfs:label "Heat Flow Rate"@en ;
@@ -68415,6 +68846,11 @@ qudt:IdentifiersAndDescriptionsPropertyGroup a sh:PropertyGroup ;
     rdfs:label "Identifiers and Descriptions" ;
     rdfs:isDefinedBy <http://qudt.org/2.1/schema/shacl/overlay/qudt> ;
     sh:order 10.0 .
+
+qudt:hasQuantityKind a rdf:Property ;
+    rdfs:label "has quantity kind" ;
+    rdfs:comment "A reference to the QuantityKind of a QuantifiableProperty of interest, e.g. quantitykind:Temperature." ;
+    rdfs:isDefinedBy <http://qudt.org/2.1/schema/shacl/qudt> .
 
 qkdv:A0E0L-2I0M1H0T0D0 a qudt:QuantityKindDimensionVector_CGS,
         qudt:QuantityKindDimensionVector_ISO,
@@ -72029,10 +72465,48 @@ unit:CentiM a qudt:DerivedUnit,
 
 <http://data.ashrae.org/standard223/1.0/model/all> a owl:Ontology ;
     owl:versionInfo "Created with TopBraid Composer" ;
-    sh:declare [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
+    sh:declare [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
+            sh:prefix "qudt" ],
+        [ sh:namespace "http://qudt.org/vocab/quantitykind/"^^xsd:anyURI ;
+            sh:prefix "quantitykind" ],
+        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
+            sh:prefix "s223" ],
+        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
+            sh:prefix "qudt" ],
+        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
+            sh:prefix "s223" ],
+        [ sh:namespace "http://data.ashrae.org/standard223/1.0/vocab/role#"^^xsd:anyURI ;
+            sh:prefix "role" ],
+        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
+            sh:prefix "qudt" ],
+        [ sh:namespace "http://qudt.org/vocab/quantitykind/"^^xsd:anyURI ;
+            sh:prefix "qudtqk" ],
+        [ sh:namespace "http://qudt.org/vocab/unit/"^^xsd:anyURI ;
+            sh:prefix "unit" ],
+        [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
+            sh:prefix "rdfs" ],
+        [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
+            sh:prefix "rdfs" ],
+        [ sh:namespace "http://www.w3.org/ns/shacl#"^^xsd:anyURI ;
+            sh:prefix "sh" ],
+        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
+            sh:prefix "s223" ],
+        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
+            sh:prefix "s223" ],
+        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
             sh:prefix "s223" ],
         [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
             sh:prefix "rdfs" ],
+        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
+            sh:prefix "s223" ],
+        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
+            sh:prefix "qudt" ],
+        [ sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ;
+            sh:prefix "rdf" ],
+        [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
+            sh:prefix "rdfs" ],
+        [ sh:namespace "http://www.w3.org/ns/shacl#"^^xsd:anyURI ;
+            sh:prefix "sh" ],
         [ a sh:PrefixDeclaration ;
             sh:namespace "http://purl.org/dc/terms/"^^xsd:anyURI ;
             sh:prefix "dcterms" ],
@@ -72059,45 +72533,7 @@ unit:CentiM a qudt:DerivedUnit,
             sh:prefix "owl" ],
         [ a sh:PrefixDeclaration ;
             sh:namespace "http://www.w3.org/2004/02/skos/core#"^^xsd:anyURI ;
-            sh:prefix "skos" ],
-        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
-            sh:prefix "qudt" ],
-        [ sh:namespace "http://qudt.org/vocab/quantitykind/"^^xsd:anyURI ;
-            sh:prefix "quantitykind" ],
-        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
-            sh:prefix "s223" ],
-        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
-            sh:prefix "qudt" ],
-        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
-            sh:prefix "s223" ],
-        [ sh:namespace "http://data.ashrae.org/standard223/1.0/vocab/role#"^^xsd:anyURI ;
-            sh:prefix "role" ],
-        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
-            sh:prefix "qudt" ],
-        [ sh:namespace "http://qudt.org/vocab/quantitykind/"^^xsd:anyURI ;
-            sh:prefix "qudtqk" ],
-        [ sh:namespace "http://qudt.org/vocab/unit/"^^xsd:anyURI ;
-            sh:prefix "unit" ],
-        [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
-            sh:prefix "rdfs" ],
-        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
-            sh:prefix "s223" ],
-        [ sh:namespace "http://qudt.org/schema/qudt/"^^xsd:anyURI ;
-            sh:prefix "qudt" ],
-        [ sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ;
-            sh:prefix "rdf" ],
-        [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
-            sh:prefix "rdfs" ],
-        [ sh:namespace "http://www.w3.org/ns/shacl#"^^xsd:anyURI ;
-            sh:prefix "sh" ],
-        [ sh:namespace "http://www.w3.org/2000/01/rdf-schema#"^^xsd:anyURI ;
-            sh:prefix "rdfs" ],
-        [ sh:namespace "http://www.w3.org/ns/shacl#"^^xsd:anyURI ;
-            sh:prefix "sh" ],
-        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
-            sh:prefix "s223" ],
-        [ sh:namespace "http://data.ashrae.org/standard223#"^^xsd:anyURI ;
-            sh:prefix "s223" ] .
+            sh:prefix "skos" ] .
 
 unit:NUM a qudt:CountingUnit,
         qudt:Unit ;
@@ -72324,10 +72760,6 @@ qkdv:A0E0L1I0M0H0T-1D0 a qudt:QuantityKindDimensionVector_CGS,
     qudt:latexDefinition "\\(L T^-1\\)"^^qudt:LatexString ;
     rdfs:isDefinedBy <http://qudt.org/2.1/vocab/dimensionvector> .
 
-s223:hasMedium a rdf:Property ;
-    rdfs:label "has Medium" ;
-    rdfs:comment "The relation hasMedium is used to indicate what medium is flowing through the connection (e.g., air, water, electricity). The possible values are defined in EnumerationKind-Medium (see `s223:EnumerationKind-Medium`)." .
-
 qkdv:A0E0L3I0M0H0T0D0 a qudt:QuantityKindDimensionVector_CGS,
         qudt:QuantityKindDimensionVector_ISO,
         qudt:QuantityKindDimensionVector_Imperial,
@@ -72344,6 +72776,10 @@ qkdv:A0E0L3I0M0H0T0D0 a qudt:QuantityKindDimensionVector_CGS,
     qudt:hasReferenceQuantityKind quantitykind:Volume ;
     qudt:latexDefinition "\\(L^3\\)"^^qudt:LatexString ;
     rdfs:isDefinedBy <http://qudt.org/2.1/vocab/dimensionvector> .
+
+s223:hasMedium a rdf:Property ;
+    rdfs:label "has Medium" ;
+    rdfs:comment "The relation hasMedium is used to indicate what medium is flowing through the connection (e.g., air, water, electricity). The possible values are defined in EnumerationKind-Medium (see `s223:EnumerationKind-Medium`)." .
 
 sou:CGS-ESU a qudt:SystemOfUnits ;
     rdfs:label "CGS System of Units ESU"@en ;

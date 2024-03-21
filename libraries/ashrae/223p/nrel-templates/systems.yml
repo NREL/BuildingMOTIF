@@ -105,7 +105,7 @@ vav-reheat:
 
   dependencies:
     - template: duct
-      args: {"name": "c0", "a": "dmp-air-out", "b": "rhc-air-in"}
+      args: {"name": "c0", "a": "dmp-out", "b": "rhc-air-in"}
     - template: hot-water-coil
       args: {"name": "rhc"}
     - template: damper
@@ -311,7 +311,7 @@ heat-recovery-system:
       s223:hasProperty P:hrw_p .
   dependencies:
     - template: heat-recovery-coil
-      args: {"name": "MAU-HRC", "water-out": "EAU-HRC-water-in"}
+      args: {"name": "MAU-HRC"}
     - template: HR-pump
       args: {"name": "HR-pmp"}
     - template: HRC-BTU-meter
@@ -319,7 +319,9 @@ heat-recovery-system:
     - template: heat-recovery-coil
       args: {"name": "EAU-HRC"}
     - template: sensor
-      args: {"name": "water-pressure-sensor", "property": "hrw-p"}
+      args: {"name": "water-pressure-sensor", "property": "hrw_p", "where": "name"}
+    - template: water-static-pressure
+      args: {"name": "hrw_p"}
 
 process-chilled-water-system:
   body: >
