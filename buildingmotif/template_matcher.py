@@ -42,7 +42,7 @@ class _ontology_lookup_cache:
         cache = self.sc_cache[id(ontology)]
         # populate cache if necessary
         if ntype not in cache:
-            cache[ntype] = set(ontology.transitive_objects(ntype, RDFS.subClassOf))
+            cache[ntype] = set(ontology.transitive_objects(ntype, RDFS.subClassOf))  # type: ignore
         return cache[ntype]
 
     def superproperties(self, ntype: Node, ontology: Graph) -> Set[Node]:
@@ -428,7 +428,7 @@ class TemplateMatcher:
             subgraph = self.building_subgraph_from_mapping(mapping)
             if not subgraph.connected():
                 continue
-            key = tuple(sorted(subgraph.all_nodes()))
+            key = tuple(sorted(subgraph.all_nodes()))  # type: ignore
             if key in cache:
                 continue
             cache.add(key)

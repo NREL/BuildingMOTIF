@@ -29,6 +29,7 @@ BACNET = Namespace("http://data.ashrae.org/bacnet/2020#")
 
 BM = Namespace("https://nrel.gov/BuildingMOTIF#")
 CONSTRAINT = Namespace("https://nrel.gov/BuildingMOTIF/constraints#")
+S223 = Namespace("http://data.ashrae.org/standard223#")
 
 A = RDF.type
 
