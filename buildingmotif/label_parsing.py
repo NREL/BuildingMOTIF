@@ -116,6 +116,15 @@ def string(s, type_name: TokenOrConstructor):
     return parser
 
 
+def rest(type_name: TokenOrConstructor):
+    """Constructs a parser that matches the rest of the string."""
+
+    def parser(target: str) -> List[TokenResult]:
+        return [TokenResult(target, ensure_token(type_name, target), len(target))]
+
+    return parser
+
+
 def substring_n(length, type_name: TokenOrConstructor):
     """Constructs a parser that matches a substring of length n."""
 
@@ -228,6 +237,58 @@ def maybe(parser):
         return [TokenResult(None, Null(), 0)]
 
     return maybe_parser
+
+
+def until(parser, type_name: TokenOrConstructor):
+    """
+    Constructs a parser that matches everything until the given parser matches.
+    STarts with a string length of 1 and increments it until the parser matches.
+    """
+
+    def until_parser(target):
+        length = 1
+        while length <= len(target):
+            result = parser(target[length:])
+            if result and not any(r.error for r in result):
+                return [TokenResult(target[:length], ensure_token(type_name, target[:length]), length)]
+            length += 1
+        return [TokenResult(None, Null(), 0, f"Expected {type_name}, got {target[:length]}")]
+
+    return until_parser
+
+
+def extend_if_match(parser, type_name: Token):
+    """Adds the type to the token result."""
+    def extend_with(target):
+        result = parser(target)
+        if result and not any(r.error for r in result):
+            result.extend([TokenResult(None, type_name, 0)])
+            return result
+        return result
+
+    return extend_with
+
+
+def as_identifier(parser):
+    """
+    If the parser matches, add a new Identifier token after
+    every Constant token in the result. The Identifier token
+    has the same string value as the Constant token.
+    """
+    def as_identifier_parser(target):
+        result = parser(target)
+        if result and not any(r.error for r in result):
+            new_result = []
+            for r in result:
+                new_result.append(r)
+                if isinstance(r.token, Constant):
+                    # length of the new token must be given as 0 so that the substring
+                    # is not double counted
+                    new_result.append(TokenResult(r.value, Identifier(r.value), 0))
+            return new_result
+        return result
+
+    return as_identifier_parser
 
 
 COMMON_EQUIP_ABBREVIATIONS_BRICK = {
@@ -362,20 +423,22 @@ def results_to_tokens(results):
     for r in results:
         res = {"label": r, "tokens": []}
         parts = iter(results[r])
-        constant = None
+        first = None
         while True:
             try:
-                # get first constant token using itertools
-                constant = first_true(
-                    parts, pred=lambda x: isinstance(x.token, Constant)
+                # get first constant or identifier token using itertools
+                first = first_true(
+                    parts, pred=lambda x: isinstance(x.token, (Constant, Identifier))
                 )
-                # get the next identifier token
-                identifier = first_true(
-                    parts, pred=lambda x: isinstance(x.token, Identifier)
+                # get the next constant or identifier token
+                second = first_true(
+                    parts, pred=lambda x: isinstance(x.token, (Constant, Identifier))
                 )
-                if not constant or not identifier:
+                if not first or not second:
                     break
                 # add the constant and identifier to the token dictionary
+                identifier = first if isinstance(first.token, Identifier) else second
+                constant = first if isinstance(first.token, Constant) else second
                 res["tokens"].append(
                     {
                         "identifier": identifier.token.value,
@@ -384,12 +447,12 @@ def results_to_tokens(results):
                 )
             except StopIteration:
                 break
-        if constant is None:
+        if first is None:
             # if there are any constants left, add them to the token dictionary with the label
-            constant = first_true(parts, pred=lambda x: isinstance(x.token, Constant))
-        if constant:
+            first = first_true(parts, pred=lambda x: isinstance(x.token, Constant))
+        if first:
             res["tokens"].append(
-                {"identifier": r, "type": constant.token.value.toPython()}
+                {"identifier": r, "type": first.token.value.toPython()}
             )
         tokens.append(res)
 
