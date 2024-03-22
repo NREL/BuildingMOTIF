@@ -161,7 +161,7 @@ def test_inline_sh_nodes(shacl_engine):
     """
     )
     # should pass
-    valid, _, report = shacl_validate(shape_g, engine=shacl_engine)
+    valid, _, report = shacl_validate(shape_g)
     assert valid, report
 
     shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
@@ -169,7 +169,7 @@ def test_inline_sh_nodes(shacl_engine):
 
     shape_g = rewrite_shape_graph(shape_g)
     # should pass
-    valid, _, report = shacl_validate(shape_g, engine=shacl_engine)
+    valid, _, report = shacl_validate(shape_g)
     assert valid, report
 
     shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
@@ -177,6 +177,7 @@ def test_inline_sh_nodes(shacl_engine):
 
 
 def test_inline_sh_and(bm: BuildingMOTIF, shacl_engine):
+    bm.shacl_engine = shacl_engine
     sg = Graph()
     sg.parse(
         data=PREAMBLE
@@ -211,7 +212,7 @@ def test_inline_sh_and(bm: BuildingMOTIF, shacl_engine):
     sc = ShapeCollection.create()
     sc.add_graph(new_sg)
 
-    ctx = model.validate([sc], engine=shacl_engine)
+    ctx = model.validate([sc])
     assert not ctx.valid
 
     if shacl_engine == "pyshacl":
@@ -248,6 +249,7 @@ def test_inline_sh_and(bm: BuildingMOTIF, shacl_engine):
 
 
 def test_inline_sh_node(bm: BuildingMOTIF, shacl_engine):
+    bm.shacl_engine = shacl_engine
     sg = Graph()
     sg.parse(
         data=PREAMBLE
@@ -282,7 +284,7 @@ def test_inline_sh_node(bm: BuildingMOTIF, shacl_engine):
     sc = ShapeCollection.create()
     sc.add_graph(new_sg)
 
-    ctx = model.validate([sc], engine=shacl_engine)
+    ctx = model.validate([sc])
     assert not ctx.valid, ctx.report_string
     if shacl_engine == "pyshacl":
         assert (

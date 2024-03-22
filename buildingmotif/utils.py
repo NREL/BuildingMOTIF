@@ -588,7 +588,9 @@ def shacl_validate(
 
 
 def shacl_inference(
-    data_graph: Graph, shape_graph: Optional[Graph] = None, engine="topquadrant"
+    data_graph: Graph,
+    shape_graph: Optional[Graph] = None,
+    engine: Optional[str] = "topquadrant",
 ) -> Graph:
     """
     Infer new triples in the data graph using the shape graph.
