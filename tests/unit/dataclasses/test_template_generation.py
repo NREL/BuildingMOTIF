@@ -8,7 +8,7 @@ from rdflib import Namespace
 from rdflib.compare import isomorphic
 
 from buildingmotif.dataclasses import Library
-from buildingmotif.ingresses.csv import CSVIngress
+from buildingmotif.ingresses.csvingress import CSVIngress
 from buildingmotif.ingresses.template import TemplateIngress
 from buildingmotif.ingresses.xlsx import XLSXIngress
 

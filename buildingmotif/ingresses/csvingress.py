@@ -25,6 +25,9 @@ class CSVIngress(RecordIngressHandler):
             self.rtype = str(filename)
 
         elif data:
+            # if data is a string, convert to StringIO
+            if isinstance(data, str):
+                data = StringIO(data)
             self.dict_reader = DictReader(data, delimiter=",")
             self.rtype = "data stream"
 
