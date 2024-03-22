@@ -356,6 +356,7 @@ class Template:
             parameters were provided
         :rtype: Union[Template, rdflib.Graph]
         """
+        # TODO: handle datatype properties
         templ = self.in_memory_copy()
         # put all of the parameter names into the PARAM namespace so they can be
         # directly subsituted in the template body

@@ -165,7 +165,7 @@ def validate_model(models_id: int) -> flask.Response:
 
     shape_collections = []
 
-    # no body provided -- default to model manifest
+    # no body provided -- default to model manifest and default SHACL engine
     if request.content_length is None:
         shape_collections = [model.get_manifest()]
     else:
@@ -204,7 +204,7 @@ def validate_model(models_id: int) -> flask.Response:
         "message": vaildation_context.report_string,
         "valid": vaildation_context.valid,
         "reasons": {
-            focus_node: [gd.reason() for gd in grahdiffs]
+            focus_node: list(set(gd.reason() for gd in grahdiffs))
             for focus_node, grahdiffs in vaildation_context.diffset.items()
         },
     }, status.HTTP_200_OK
