@@ -48,7 +48,7 @@ A `Model` is an RDF graph representing part or all of a building.
 Now that we have a BuildingMOTIF instance, we can create a `Model`. Creating a model requires importing the `Model` class, creating an RDF namespace to hold all of the entities in the model, and telling BuildingMOTIF to create a new model with that namespace. The namespace is a URL used to uniquely identify the model.
 
 ```{code-cell}
-from rdflib import Namespace
+from rdflib import Namespace, RDF
 from buildingmotif.dataclasses import Model
 
 # create the namespace
@@ -85,7 +85,7 @@ Currently, libraries in `../../buildingmotif/libraries/` are *included* and libr
 ```{code-cell}
 # load a library
 from buildingmotif.dataclasses import Library
-brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
+brick = Library.load(ontology_graph="../../libraries/brick/Brick-full.ttl")
 
 # print the first 10 templates
 print("The Brick library contains the following templates:")
@@ -108,7 +108,7 @@ To add an RDF triple to a model, use the `Model.graph.add()` method:
 # import this to make writing URIs easier
 from buildingmotif.namespaces import BRICK, RDF
 
-model.graph.add((BLDG["abc"], RDF.type, BRICK.Temperature_Sensor))
+model.graph.add((BLDG["zone-temp"], RDF.type, BRICK.Zone_Air_Temperature_Sensor))
 ```
 
 ### Importing RDF Graphs Into a Model
@@ -221,7 +221,8 @@ Next, we'll add some of the AHU's components (a fan, a damper, and a cooling coi
 
 ```{code-cell}
 # templates
-oa_ra_damper_template = brick.get_template_by_name(BRICK.Damper)
+oa_ra_damper_template = brick.get_template_by_name(BRICK.Outside_Damper)
+damper_template = brick.get_template_by_name(BRICK.Damper)
 fan_template = brick.get_template_by_name(BRICK.Supply_Fan)
 clg_coil_template = brick.get_template_by_name(BRICK.Cooling_Coil)
 
@@ -232,10 +233,16 @@ fan_graph = fan_template.evaluate(fan_binding_dict)
 model.add_graph(fan_graph)
 
 # add outdoor air/return air damper
-oa_ra_damper_name = f"{ahu_name}-Damper"
+oa_ra_damper_name = f"{ahu_name}-OutsideDamper"
 oa_ra_damper_binding_dict = {"name": BLDG[oa_ra_damper_name]}
 oa_ra_damper_graph = oa_ra_damper_template.evaluate(oa_ra_damper_binding_dict)
 model.add_graph(oa_ra_damper_graph)
+
+# add other damper
+damper_name = f"{ahu_name}-Damper"
+damper_binding_dict = {"name": BLDG[damper_name]}
+damper_graph = damper_template.evaluate(damper_binding_dict)
+model.add_graph(damper_graph)
 
 # add clg coil
 clg_coil_name = f"{ahu_name}-Clg_Coil"
@@ -243,10 +250,16 @@ clg_coil_binding_dict = {"name": BLDG[clg_coil_name]}
 clg_coil_graph = clg_coil_template.evaluate(clg_coil_binding_dict)
 model.add_graph(clg_coil_graph)
 
-# connect fan, damper, and clg coil to AHU
+# connect zone-temp, fan, dampers, and clg coil to AHU
+model.graph.add((BLDG[ahu_name], BRICK.hasPoint, BLDG["zone-temp"]))
 model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[oa_ra_damper_name]))
+model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[damper_name]))
 model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[fan_name]))
 model.graph.add((BLDG[ahu_name], BRICK.hasPart, BLDG[clg_coil_name]))
+
+# you can add triples directly too
+model.graph.add((BLDG[oa_ra_damper_name], BRICK.hasPoint, BLDG[oa_ra_damper_name + "Position"]))
+model.graph.add((BLDG[oa_ra_damper_name + "Position"], RDF.type, BRICK.Damper_Position_Command))
 
 # print model to confirm components were added and connected
 print(model.graph.serialize())

@@ -1,3 +1,4 @@
+@prefix bldg: <urn:ex/> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix vav48: <urn:ashrae/g36/4.8/sz-vav-ahu/> .
@@ -9,16 +10,17 @@
         <urn:bldg/Core_ZN-PSC_AC-Damper>,
         <urn:bldg/Core_ZN-PSC_AC-Fan>,
         <urn:bldg/Core_ZN-PSC_AC-Htg_Coil>,
-        <urn:bldg/Core_ZN-PSC_AC-OAD> ;
+        <urn:bldg/Core_ZN-PSC_AC-OutsideDamper> ;
     brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-CCmd>,
         <urn:bldg/Core_ZN-PSC_AC-FilterDPS>,
         <urn:bldg/Core_ZN-PSC_AC-HCmd>,
         <urn:bldg/Core_ZN-PSC_AC-MAT>,
         <urn:bldg/Core_ZN-PSC_AC-OAT>,
         <urn:bldg/Core_ZN-PSC_AC-RAT>,
-        <urn:bldg/Core_ZN-PSC_AC-SAT> .
+        <urn:bldg/Core_ZN-PSC_AC-SAT>,
+        <urn:bldg/zone-temp> .
 
-<urn:bldg/abc> a brick:Temperature_Sensor .
+bldg:A1 a brick:Air_Handler_Unit .
 
 <urn:bldg/Core_ZN-PSC_AC-CCmd> a brick:Cooling_Command .
 
@@ -46,14 +48,16 @@
 
 <urn:bldg/Core_ZN-PSC_AC-MAT> a brick:Mixed_Air_Temperature_Sensor .
 
-<urn:bldg/Core_ZN-PSC_AC-OAD> a brick:Outside_Damper ;
-    brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-OAD-Pos> .
-
-<urn:bldg/Core_ZN-PSC_AC-OAD-Pos> a brick:Damper_Position_Command .
-
 <urn:bldg/Core_ZN-PSC_AC-OAT> a brick:Outside_Air_Temperature_Sensor .
+
+<urn:bldg/Core_ZN-PSC_AC-OutsideDamper> a brick:Outside_Damper ;
+    brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition> .
+
+<urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition> a brick:Damper_Position_Command .
 
 <urn:bldg/Core_ZN-PSC_AC-RAT> a brick:Return_Air_Temperature_Sensor .
 
 <urn:bldg/Core_ZN-PSC_AC-SAT> a brick:Supply_Air_Temperature_Sensor .
+
+<urn:bldg/zone-temp> a brick:Zone_Air_Temperature_Sensor .
 
