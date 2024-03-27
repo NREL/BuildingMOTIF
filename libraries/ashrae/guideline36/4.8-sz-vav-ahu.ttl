@@ -4,6 +4,8 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix : <urn:ashrae/g36/4.8/sz-vav-ahu/> .
+@prefix vav41: <urn:ashrae/g36/4.1/vav-cooling-only/> .
+@prefix components: <urn:ashrae/g36/components/> .
 @prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 
 :sz-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
@@ -14,12 +16,62 @@
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    sh:node :sa-temp, :oa-ra-damper, :oa-temp, :ma-temp, :ra-temp, :filter-pd,
-            :clg-signal, :htg-signal, :zone-temperature, :occupancy-sensor, :zone-co2-level ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # outside air temp
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # mixed air temp
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # return air temp
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # outside air damper
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Outside_Damper ;
+            sh:property [
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Damper_Position_Command ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # differential filter pressure
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Filter_Differential_Pressure_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+
+    sh:node components:clg-signal, components:htg-signal, vav41:zone-temperature, vav41:occupancy-sensor, vav41:zone-co2-level ;
     bmotif:domain bmotif:HVAC ;
 .
 
-:sa-fan a sh:NodeShape ;
+
+:sa-fan a sh:NodeShape, owl:Class ;
     sh:class brick:Supply_Fan ;
     sh:property [
         sh:qualifiedMinCount 1 ;
