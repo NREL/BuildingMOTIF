@@ -30,10 +30,10 @@ Currently, libraries in `../../buildingmotif/libraries/` are *included* and libr
 ```
 
 ```{code-cell}
-from rdflib import Namespace
+from rdflib import Namespace, URIRef
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Model, Library
-from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
+from buildingmotif.namespaces import BRICK, RDF # import this to make writing URIs easier
 
 # in-memory instance
 bm = BuildingMOTIF("sqlite://")

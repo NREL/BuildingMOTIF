@@ -131,7 +131,7 @@ my_graph = rdflib.Graph()
 my_graph.parse(data='''
 @prefix bldg: <urn:ex/> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
-bldg:A1 a brick:Air_Handler_Unit .
+bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 ''')
 model.add_graph(my_graph)
 ```
@@ -142,7 +142,7 @@ You can also use the `Model.graph.parse` method directly:
 model.graph.parse(data='''
 @prefix bldg: <urn:ex/> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
-bldg:A1 a brick:Air_Handler_Unit .
+bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 ''')
 ```
 
