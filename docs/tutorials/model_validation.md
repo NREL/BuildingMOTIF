@@ -169,12 +169,12 @@ As an exercise, try writing shapes that require the model to contain the followi
     sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .
 ``` -->
 
-Put all of the above in a new file called `tutorial2_manifest.ttl`. We'll also add a shape called `sz-vav-ahu-control-sequences`, which is a use case shape to validate the model against in the next section.
+Put all of the above in a new file called `tutorial1_manifest.ttl`. We'll also add a shape called `sz-vav-ahu-control-sequences`, which is a use case shape to validate the model against in the next section.
 
-The following block of code puts all of the above in the `tutorial2_manifest.ttl` file for you:
+The following block of code puts all of the above in the `tutorial1_manifest.ttl` file for you:
 
 ```{code-cell}
-with open("tutorial2_manifest.ttl", "w") as f:
+with open("tutorial1_manifest.ttl", "w") as f:
     f.write("""
 @prefix brick: <https://brickschema.org/schema/Brick#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -229,7 +229,7 @@ the most common use case, so this is treated specially in BuildingMOTIF.
 
 ```{code-cell}
 # load manifest into BuildingMOTIF as its own library!
-manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
+manifest = Library.load(ontology_graph="tutorial1_manifest.ttl")
 # set it as the manifest for the model
 model.update_manifest(manifest.get_shape_collection())
 ```
@@ -356,7 +356,7 @@ model.get_manifest().graph.parse(data="""
 
 ```{code-cell}
 # load manifest into BuildingMOTIF as its own library!
-manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
+manifest = Library.load(ontology_graph="tutorial1_manifest.ttl")
 
 # gather these into a list for ease of use
 shape_collections = [
@@ -378,7 +378,7 @@ print(f"Model is valid? {validation_result.valid}")
 ```
 
 The AHU fails validation because it doesn't match the `sz-vav-ahu-control-sequences` requirements.
-Take a look at the first bit of output, which is the official SHACL validation report text format. These aren't very understandable but BuildingMOTIF can make this output more interpretable!
+Take a look at the first bit of output, which is the official SHACL validation report text format. This can be difficult to interpret without a background in SHACL, so BuildingMOTIF provides a more easily understood version of the same information.
 
 ```{code-cell}
 # SHACL validation report
