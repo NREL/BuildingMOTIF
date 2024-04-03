@@ -42,19 +42,19 @@ jobs:
       - name: install buildingmotif
         run: poetry install --all-extras
       # install jupyter-book, which for some reason isn't available with poetry install
-      - name: install jupyter book
-        run: pip install jupyter-book
-      # build docs, which are deployed by repo settings
-      - name: build docs
-        run: |
-          jupyter-book config sphinx ./docs/
-          sphinx-build ./docs/ docs/_build/html -b html
-      # TODO can we use an official GitHub Action? https://github.com/actions/deploy-pages
-      - name: deploy docs
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/_build/html
+      # - name: install jupyter book
+      #   run: pip install jupyter-book
+      # # build docs, which are deployed by repo settings
+      # - name: build docs
+      #   run: |
+      #     jupyter-book config sphinx ./docs/
+      #     sphinx-build ./docs/ docs/_build/html -b html
+      # # TODO can we use an official GitHub Action? https://github.com/actions/deploy-pages
+      # - name: deploy docs
+      #   uses: peaceiris/actions-gh-pages@v3
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./docs/_build/html
 
   # deploy distribution if a new release and tag are created
   deploy-dist:
