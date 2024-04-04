@@ -1,6 +1,7 @@
 from typing import Callable, Optional
+import logging
 
-from rdflib import Graph, Literal, Namespace, URIRef
+from rdflib import Graph, Literal, Namespace, URIRef, BNode
 from rdflib.term import Node
 
 from buildingmotif.dataclasses import Template
@@ -25,6 +26,7 @@ class TemplateIngress(GraphIngressHandler):
         mapper: Optional[Callable[[str], str]],
         upstream: RecordIngressHandler,
         inline: bool = False,
+        require_optional_args: bool = True,
     ):
         """
         Create a new TemplateIngress handler
@@ -44,6 +46,8 @@ class TemplateIngress(GraphIngressHandler):
         """
         self.mapper = mapper if mapper else lambda x: x
         self.upstream = upstream
+        self.inline = inline
+        self.require_optional_args = require_optional_args
         if inline:
             self.template = template.inline_dependencies()
         else:
@@ -60,9 +64,9 @@ class TemplateIngress(GraphIngressHandler):
         assert records is not None
         for rec in records:
             bindings = {self.mapper(k): _get_term(v, ns) for k, v in rec.fields.items()}
-            graph = self.template.evaluate(bindings, require_optional_args=True)
+            graph = self.template.evaluate(bindings, require_optional_args=self.require_optional_args)
             if not isinstance(graph, Graph):
-                bindings, graph = graph.fill(ns, include_optional=True)
+                bindings, graph = graph.fill(ns, include_optional=self.require_optional_args)
             g += graph
         return g
 
@@ -82,6 +86,7 @@ class TemplateIngressWithChooser(GraphIngressHandler):
         mapper: Optional[Callable[[str], str]],
         upstream: RecordIngressHandler,
         inline=False,
+        require_optional_args: bool = True,
     ):
         """
         Create a new TemplateIngress handler
@@ -106,6 +111,7 @@ class TemplateIngressWithChooser(GraphIngressHandler):
         self.mapper = mapper if mapper else lambda x: x
         self.upstream = upstream
         self.inline = inline
+        self.require_optional_args = require_optional_args
 
     def graph(self, ns: Namespace) -> Graph:
         g = Graph()
@@ -118,10 +124,13 @@ class TemplateIngressWithChooser(GraphIngressHandler):
         assert records is not None
         for rec in records:
             template = self.chooser(rec)
+            if template is None:
+                logging.warning(f"Chooser function does not give a template for {rec}")
+                continue
             if self.inline:
                 template = template.inline_dependencies()
             bindings = {self.mapper(k): _get_term(v, ns) for k, v in rec.fields.items()}
-            graph = template.evaluate(bindings)
+            graph = template.evaluate(bindings, require_optional_args=self.require_optional_args)
             if not isinstance(graph, Graph):
                 _, graph = graph.fill(ns)
             g += graph
@@ -130,6 +139,8 @@ class TemplateIngressWithChooser(GraphIngressHandler):
 
 def _get_term(field_value: str, ns: Namespace) -> Node:
     assert isinstance(ns, Namespace), f"{ns} must be a rdflib.Namespace instance"
+    if isinstance(field_value, (URIRef, Literal, BNode)):
+        return field_value
     try:
         uri = URIRef(ns[field_value])
         uri.n3()  # raises an exception if invalid URI
