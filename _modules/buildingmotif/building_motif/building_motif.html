@@ -403,6 +403,7 @@ document.write(`
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span>
 <span class="kn">from</span> <span class="nn">rdflib.namespace</span> <span class="kn">import</span> <span class="n">NamespaceManager</span>
@@ -426,16 +427,26 @@ document.write(`
 <div class="viewcode-block" id="BuildingMOTIF"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.building_motif.html#buildingmotif.building_motif.building_motif.BuildingMOTIF">[docs]</a><span class="k">class</span> <span class="nc">BuildingMOTIF</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">Singleton</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Manages BuildingMOTIF data classes.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">db_uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">shacl_engine</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pyshacl&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Class constructor.</span>
 
 <span class="sd">        :param db_uri: database URI</span>
 <span class="sd">        :type db_uri: str</span>
+<span class="sd">        :param shacl_engine: the name of the engine to use for validation: &quot;pyshacl&quot; or &quot;topquadrant&quot;. Using topquadrant</span>
+<span class="sd">            requires Java to be installed on this machine, and the &quot;topquadrant&quot; feature on BuildingMOTIF,</span>
+<span class="sd">            defaults to &quot;pyshacl&quot;</span>
+<span class="sd">        :type shacl_engine: str, optional</span>
 <span class="sd">        :param log_level: logging level of detail</span>
 <span class="sd">        :type log_level: int</span>
 <span class="sd">        :default log_level: INFO</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db_uri</span> <span class="o">=</span> <span class="n">db_uri</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shacl_engine</span> <span class="o">=</span> <span class="n">shacl_engine</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
             <span class="n">db_uri</span><span class="p">,</span>
             <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
