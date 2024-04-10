@@ -512,7 +512,7 @@ document.write(`
 <p>Now that we have a BuildingMOTIF instance, we can create a <code class="docutils literal notranslate"><span class="pre">Model</span></code>. Creating a model requires importing the <code class="docutils literal notranslate"><span class="pre">Model</span></code> class, creating an RDF namespace to hold all of the entities in the model, and telling BuildingMOTIF to create a new model with that namespace. The namespace is a URL used to uniquely identify the model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">RDF</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
 
 <span class="c1"># create the namespace</span>
@@ -562,7 +562,7 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load a library</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span>
-<span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-full.ttl&quot;</span><span class="p">)</span>
+<span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
 
 <span class="c1"># print the first 10 templates</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The Brick library contains the following templates:&quot;</span><span class="p">)</span>
@@ -572,23 +572,17 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.8/x64/lib/python3.11/site-packages/pyshacl/extras/__init__.py:46: Warning: Extra &quot;js&quot; is not satisfied because requirement pyduktape2 is not installed.
-  warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
-</pre></div>
-</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#On_Status
-  - https://brickschema.org/schema/Brick#Hot_Water_Meter
-  - https://brickschema.org/schema/Brick#Reset_Setpoint
-  - https://brickschema.org/schema/Brick#Liquid_Detection_Alarm
-  - https://brickschema.org/schema/Brick#Hospitality_Box
-  - https://brickschema.org/schema/Brick#Unoccupied_Cooling_Supply_Air_Flow_Setpoint
-  - https://brickschema.org/schema/Brick#Dedicated_Outdoor_Air_System_Unit
-  - https://brickschema.org/schema/Brick#Damper_Position_Sensor
-  - https://brickschema.org/schema/Brick#Freeze_Status
+  - https://brickschema.org/schema/Brick#Medium_Temperature_Hot_Water_Supply_Temperature_Load_Shed_Status
+  - https://brickschema.org/schema/Brick#Occupied_Heating_Supply_Air_Flow_Setpoint
+  - https://brickschema.org/schema/Brick#High_Temperature_Alarm_Parameter
+  - https://brickschema.org/schema/Brick#Max_Water_Temperature_Setpoint
+  - https://brickschema.org/schema/Brick#Occupied_Mode_Status
+  - https://brickschema.org/schema/Brick#Overload_Alarm
+  - https://brickschema.org/schema/Brick#Lead_Lag_Status
+  - https://brickschema.org/schema/Brick#Air_Flow_Sensor
+  - https://brickschema.org/schema/Brick#Max_Position_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Room_Air_Temperature_Setpoint
 </pre></div>
 </div>
 </div>
@@ -607,12 +601,12 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import this to make writing URIs easier</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span><span class="p">,</span> <span class="n">RDF</span>
 
-<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="s2">&quot;zone-temp&quot;</span><span class="p">],</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Zone_Air_Temperature_Sensor</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="s2">&quot;abc&quot;</span><span class="p">],</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Temperature_Sensor</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=cbb9e3ec-8aae-4c08-9177-c2de448cd6e0 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=db554712-9959-4bf9-a953-e4f24292a136 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -639,7 +633,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <span class="n">my_graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">@prefix bldg: &lt;urn:ex/&gt; .</span>
 <span class="s1">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
-<span class="s1">bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .</span>
+<span class="s1">bldg:A1 a brick:Air_Handler_Unit .</span>
 <span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">my_graph</span><span class="p">)</span>
 </pre></div>
@@ -652,13 +646,13 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">@prefix bldg: &lt;urn:ex/&gt; .</span>
 <span class="s1">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
-<span class="s1">bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .</span>
+<span class="s1">bldg:A1 a brick:Air_Handler_Unit .</span>
 <span class="s1">&#39;&#39;&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=cbb9e3ec-8aae-4c08-9177-c2de448cd6e0 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=db554712-9959-4bf9-a953-e4f24292a136 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -695,7 +689,9 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The template has the following parameters:
-  name
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  name
 </pre></div>
 </div>
 </div>
@@ -780,9 +776,9 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 
 &lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU .
 
-&lt;urn:bldg/zone-temp&gt; a brick:Zone_Air_Temperature_Sensor .
+&lt;urn:bldg/abc&gt; a brick:Temperature_Sensor .
 
-bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
+bldg:A1 a brick:Air_Handler_Unit .
 </pre></div>
 </div>
 </div>
@@ -791,8 +787,7 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># templates</span>
-<span class="n">oa_ra_damper_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Outside_Damper</span><span class="p">)</span>
-<span class="n">damper_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Damper</span><span class="p">)</span>
+<span class="n">oa_ra_damper_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Damper</span><span class="p">)</span>
 <span class="n">fan_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Supply_Fan</span><span class="p">)</span>
 <span class="n">clg_coil_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Cooling_Coil</span><span class="p">)</span>
 
@@ -803,16 +798,10 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 <span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">fan_graph</span><span class="p">)</span>
 
 <span class="c1"># add outdoor air/return air damper</span>
-<span class="n">oa_ra_damper_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ahu_name</span><span class="si">}</span><span class="s2">-OutsideDamper&quot;</span>
+<span class="n">oa_ra_damper_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ahu_name</span><span class="si">}</span><span class="s2">-Damper&quot;</span>
 <span class="n">oa_ra_damper_binding_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">oa_ra_damper_name</span><span class="p">]}</span>
 <span class="n">oa_ra_damper_graph</span> <span class="o">=</span> <span class="n">oa_ra_damper_template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">oa_ra_damper_binding_dict</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">oa_ra_damper_graph</span><span class="p">)</span>
-
-<span class="c1"># add other damper</span>
-<span class="n">damper_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ahu_name</span><span class="si">}</span><span class="s2">-Damper&quot;</span>
-<span class="n">damper_binding_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">damper_name</span><span class="p">]}</span>
-<span class="n">damper_graph</span> <span class="o">=</span> <span class="n">damper_template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">damper_binding_dict</span><span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">damper_graph</span><span class="p">)</span>
 
 <span class="c1"># add clg coil</span>
 <span class="n">clg_coil_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ahu_name</span><span class="si">}</span><span class="s2">-Clg_Coil&quot;</span>
@@ -820,16 +809,10 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 <span class="n">clg_coil_graph</span> <span class="o">=</span> <span class="n">clg_coil_template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clg_coil_binding_dict</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">clg_coil_graph</span><span class="p">)</span>
 
-<span class="c1"># connect zone-temp, fan, dampers, and clg coil to AHU</span>
-<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPoint</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="s2">&quot;zone-temp&quot;</span><span class="p">]))</span>
+<span class="c1"># connect fan, damper, and clg coil to AHU</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">oa_ra_damper_name</span><span class="p">]))</span>
-<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">damper_name</span><span class="p">]))</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">fan_name</span><span class="p">]))</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">ahu_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPart</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">clg_coil_name</span><span class="p">]))</span>
-
-<span class="c1"># you can add triples directly too</span>
-<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">oa_ra_damper_name</span><span class="p">],</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">hasPoint</span><span class="p">,</span> <span class="n">BLDG</span><span class="p">[</span><span class="n">oa_ra_damper_name</span> <span class="o">+</span> <span class="s2">&quot;Position&quot;</span><span class="p">]))</span>
-<span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="n">oa_ra_damper_name</span> <span class="o">+</span> <span class="s2">&quot;Position&quot;</span><span class="p">],</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Damper_Position_Command</span><span class="p">))</span>
 
 <span class="c1"># print model to confirm components were added and connected</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">())</span>
@@ -846,24 +829,17 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 &lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
     brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
         &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
-        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt;,
-        &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt; ;
-    brick:hasPoint &lt;urn:bldg/zone-temp&gt; .
+        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; .
 
-bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
+&lt;urn:bldg/abc&gt; a brick:Temperature_Sensor .
+
+bldg:A1 a brick:Air_Handler_Unit .
 
 &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
 
 &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
 
 &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Supply_Fan .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt; a brick:Outside_Damper ;
-    brick:hasPoint &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; .
-
-&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; a brick:Damper_Position_Command .
-
-&lt;urn:bldg/zone-temp&gt; a brick:Zone_Air_Temperature_Sensor .
 </pre></div>
 </div>
 </div>
@@ -900,7 +876,7 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=cbb9e3ec-8aae-4c08-9177-c2de448cd6e0 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=db554712-9959-4bf9-a953-e4f24292a136 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>

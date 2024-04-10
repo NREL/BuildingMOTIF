@@ -24,7 +24,10 @@ buildingmotif.utils
       remove_triples_with_node
       replace_nodes
       rewrite_shape_graph
+      shacl_inference
+      shacl_validate
       skip_uri
+      skolemize_shapes
       template_to_shape
    
    
