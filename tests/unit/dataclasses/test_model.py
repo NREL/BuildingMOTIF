@@ -54,6 +54,7 @@ def test_update_model_manifest(clean_building_motif):
 
 
 def test_validate_model_manifest(clean_building_motif, shacl_engine):
+    clean_building_motif.shacl_engine = shacl_engine
     m = Model.create(name="https://example.com", description="a very good model")
     m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
 
@@ -64,7 +65,7 @@ def test_validate_model_manifest(clean_building_motif, shacl_engine):
     m.update_manifest(lib.get_shape_collection())
 
     # validate against manifest -- should fail
-    result = m.validate(engine=shacl_engine)
+    result = m.validate()
     assert not result.valid
 
     # add triples to graph to validate
@@ -86,11 +87,12 @@ def test_validate_model_manifest(clean_building_motif, shacl_engine):
     m.graph.add((URIRef("https://example.com/temp"), A, BRICK.Temperature_Sensor))
 
     # validate against manifest -- should pass
-    result = m.validate(engine=shacl_engine)
+    result = m.validate()
     assert result.valid
 
 
 def test_validate_model_manifest_with_imports(clean_building_motif, shacl_engine):
+    clean_building_motif.shacl_engine = shacl_engine
     m = Model.create(name="https://example.com", description="a very good model")
     m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
 
@@ -125,11 +127,12 @@ def test_validate_model_manifest_with_imports(clean_building_motif, shacl_engine
     )
 
     # validate against manifest -- should pass now
-    result = m.validate(engine=shacl_engine)
+    result = m.validate()
     assert result.valid, result.report_string
 
 
 def test_validate_model_explicit_shapes(clean_building_motif, shacl_engine):
+    clean_building_motif.shacl_engine = shacl_engine
     # load library
     Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
@@ -139,7 +142,7 @@ def test_validate_model_explicit_shapes(clean_building_motif, shacl_engine):
     m = Model.create(name=BLDG)
     m.add_triples((BLDG["vav1"], A, BRICK.VAV))
 
-    ctx = m.validate([lib.get_shape_collection()], engine=shacl_engine)
+    ctx = m.validate([lib.get_shape_collection()])
     assert not ctx.valid
 
     m.add_triples((BLDG["vav1"], A, BRICK.VAV))
@@ -148,7 +151,7 @@ def test_validate_model_explicit_shapes(clean_building_motif, shacl_engine):
     m.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["flow_sensor"]))
     m.add_triples((BLDG["flow_sensor"], A, BRICK.Air_Flow_Sensor))
 
-    ctx = m.validate([lib.get_shape_collection()], engine=shacl_engine)
+    ctx = m.validate([lib.get_shape_collection()])
     assert ctx.valid
 
     assert len(ctx.diffset) == 0
@@ -158,6 +161,7 @@ def test_validate_model_with_failure(bm: BuildingMOTIF, shacl_engine):
     """
     Test that a model correctly validates
     """
+    bm.shacl_engine = shacl_engine
     shape_graph_data = """
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -186,7 +190,7 @@ def test_validate_model_with_failure(bm: BuildingMOTIF, shacl_engine):
     model.add_graph(hvac_zone_instance)
 
     # validate the graph (should fail because there are no labels)
-    ctx = model.validate([shape_lib.get_shape_collection()], engine=shacl_engine)
+    ctx = model.validate([shape_lib.get_shape_collection()])
     assert isinstance(ctx, ValidationContext)
     assert not ctx.valid
     assert len(ctx.diffset) == 1
@@ -195,13 +199,14 @@ def test_validate_model_with_failure(bm: BuildingMOTIF, shacl_engine):
 
     model.add_triples((bindings["name"], RDFS.label, Literal("hvac zone 1")))
     # validate the graph (should now be valid)
-    ctx = model.validate([shape_lib.get_shape_collection()], engine=shacl_engine)
+    ctx = model.validate([shape_lib.get_shape_collection()])
     assert isinstance(ctx, ValidationContext)
     assert ctx.valid
 
 
 def test_model_compile(bm: BuildingMOTIF, shacl_engine):
     """Test that model compilation gives expected results"""
+    bm.shacl_engine = shacl_engine
     small_office_model = Model.create("http://example.org/building/")
     small_office_model.graph.parse(
         "tests/unit/fixtures/smallOffice_brick.ttl", format="ttl"
@@ -209,9 +214,7 @@ def test_model_compile(bm: BuildingMOTIF, shacl_engine):
 
     brick = Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
 
-    compiled_model = small_office_model.compile(
-        [brick.get_shape_collection()], engine=shacl_engine
-    )
+    compiled_model = small_office_model.compile([brick.get_shape_collection()])
 
     precompiled_model = Graph().parse(
         "tests/unit/fixtures/smallOffice_brick_compiled.ttl", format="ttl"
@@ -236,6 +239,7 @@ def test_get_manifest(clean_building_motif):
 
 
 def test_validate_with_manifest(clean_building_motif, shacl_engine):
+    clean_building_motif.shacl_engine = shacl_engine
     g = Graph()
     g.parse(
         data="""
@@ -272,12 +276,13 @@ def test_validate_with_manifest(clean_building_motif, shacl_engine):
     manifest = model.get_manifest()
     manifest.add_graph(manifest_g)
 
-    ctx = model.validate(None, engine=shacl_engine)
+    ctx = model.validate()
     assert not ctx.valid, "Model validated but it should throw an error"
 
 
 def test_get_validation_severity(clean_building_motif, shacl_engine):
     NS = Namespace("urn:ex/")
+    clean_building_motif.shacl_engine = shacl_engine
     g = Graph()
     g.parse(
         data="""
@@ -337,7 +342,7 @@ def test_get_validation_severity(clean_building_motif, shacl_engine):
     manifest = model.get_manifest()
     manifest.add_graph(manifest_g)
 
-    ctx = model.validate(None, engine=shacl_engine)
+    ctx = model.validate()
     assert not ctx.valid, "Model validated but it should throw an error"
 
     # check that only valid severity values are accepted

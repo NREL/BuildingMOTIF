@@ -1,6 +1,7 @@
 import logging
 import os
 from contextlib import contextmanager
+from typing import Optional
 
 from rdflib import Graph
 from rdflib.namespace import NamespaceManager
@@ -24,16 +25,26 @@ from buildingmotif.namespaces import bind_prefixes
 class BuildingMOTIF(metaclass=Singleton):
     """Manages BuildingMOTIF data classes."""
 
-    def __init__(self, db_uri: str, log_level=logging.WARNING) -> None:
+    def __init__(
+        self,
+        db_uri: str,
+        shacl_engine: Optional[str] = "pyshacl",
+        log_level=logging.WARNING,
+    ) -> None:
         """Class constructor.
 
         :param db_uri: database URI
         :type db_uri: str
+        :param shacl_engine: the name of the engine to use for validation: "pyshacl" or "topquadrant". Using topquadrant
+            requires Java to be installed on this machine, and the "topquadrant" feature on BuildingMOTIF,
+            defaults to "pyshacl"
+        :type shacl_engine: str, optional
         :param log_level: logging level of detail
         :type log_level: int
         :default log_level: INFO
         """
         self.db_uri = db_uri
+        self.shacl_engine = shacl_engine
         self.engine = create_engine(
             db_uri,
             echo=False,
