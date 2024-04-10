@@ -567,7 +567,7 @@ document.write(`
 
     <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c1"># no body provided -- default to model manifest and default SHACL engine</span>
+    <span class="c1"># no body provided -- default to model manifest</span>
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">content_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -606,7 +606,7 @@ document.write(`
         <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">report_string</span><span class="p">,</span>
         <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">valid</span><span class="p">,</span>
         <span class="s2">&quot;reasons&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="n">focus_node</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">gd</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span> <span class="k">for</span> <span class="n">gd</span> <span class="ow">in</span> <span class="n">grahdiffs</span><span class="p">))</span>
+            <span class="n">focus_node</span><span class="p">:</span> <span class="p">[</span><span class="n">gd</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span> <span class="k">for</span> <span class="n">gd</span> <span class="ow">in</span> <span class="n">grahdiffs</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">focus_node</span><span class="p">,</span> <span class="n">grahdiffs</span> <span class="ow">in</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">diffset</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">},</span>
     <span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
