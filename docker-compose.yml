@@ -1,0 +1,65 @@
+version: "3.9"
+services:
+  db:
+    container_name: buildingmotif-db
+    image: postgres
+    volumes:
+      - buildingmotif-db:/var/lib/postgresql/data
+    environment:
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+      - "POSTGRES_USER=${POSTGRES_USER}"
+      - "POSTGRES_DB=${POSTGRES_DB}"
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${DB_URI}"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 5s
+
+  api:
+    container_name: buildingmotif-api
+    environment:
+      - "DB_URI=${DB_URI}"
+    depends_on: # require that the db is up and listening
+      db:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: buildingmotif/api/Dockerfile
+    image: buildingmotif-api:latest
+    # UNCOMMENT this if you want to preserve local builds for debugging
+    volumes:
+      - type: bind
+        source: ./buildingmotif
+        target: /opt/buildingmotif
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+        mode: host 
+
+  app:
+    container_name: buildingmotif-app
+    depends_on: # require that the api server has started
+      - api
+    build: ./buildingmotif-app
+    image: buildingmotif-app:latest
+    # UNCOMMENT this if you want to preserve local builds for debugging
+    volumes:
+      - type: bind
+        source: ./buildingmotif-app
+        target: /buildingmotif-app
+    ports:
+      - target: 4200
+        published: 4200
+        protocol: tcp
+        mode: host
+
+volumes:
+  buildingmotif-db:
+    external: true

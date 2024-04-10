@@ -1,7 +1,7 @@
 # BuildingMOTIF
 
-[![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF) 
-[![Jupyter Book Badge](https://jupyterbook.org/badge.svg)](https://nrel.github.io/BuildingMOTIF/)
+[![codecov](https://codecov.io/gh/NREL/BuildingMOTIF/branch/main/graph/badge.svg?token=HAFSYH45NX)](https://codecov.io/gh/NREL/BuildingMOTIF)
+[![Documentation Status](https://readthedocs.org/projects/buildingmotif/badge/?version=latest)](https://buildingmotif.readthedocs.io/en/latest/?badge=latest)
 ![PyPI](https://img.shields.io/pypi/v/buildingmotif)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/buildingmotif)
 
@@ -24,6 +24,7 @@ The documentation uses Diataxis[^1] as a framework for its structure, which is o
 ## Reference
 
 - [Developer Documentation](https://nrel.github.io/BuildingMOTIF/reference/developer_documentation.html)
+- [Command Line Interface](https://nrel.github.io/BuildingMOTIF/reference/cli_tool.html)
 - [Code Documentation](https://nrel.github.io/BuildingMOTIF/reference/apidoc/index.html)
 
 ## Tutorials
@@ -35,8 +36,13 @@ The documentation uses Diataxis[^1] as a framework for its structure, which is o
 
 ## Guides
 
-🏗️ under construction
+- [CSV Import](https://nrel.github.io/BuildingMOTIF/guides/csv-import.html)
+- [Brick model from BACnet network guide](https://nrel.github.io/BuildingMOTIF/guides/bacnet-to-brick.html)
 
-## Explanation
+## Explanations
 
-🏗️ under construction
+- [Ingresses](https://nrel.github.io/BuildingMOTIF/explainations/ingresses.html)
+
+## Appendix
+
+- [Bibiography](https://nrel.github.io/BuildingMOTIF/bibliography.html)

@@ -52,12 +52,17 @@ class TemplateIngress(GraphIngressHandler):
     def graph(self, ns: Namespace) -> Graph:
         g = Graph()
 
+        # ensure 'ns' is a Namespace or URI forming won't work
+        if not isinstance(ns, Namespace):
+            ns = Namespace(ns)
+
         records = self.upstream.records
         assert records is not None
         for rec in records:
             bindings = {self.mapper(k): _get_term(v, ns) for k, v in rec.fields.items()}
-            graph = self.template.evaluate(bindings)
-            assert isinstance(graph, Graph)
+            graph = self.template.evaluate(bindings, require_optional_args=True)
+            if not isinstance(graph, Graph):
+                bindings, graph = graph.fill(ns, include_optional=True)
             g += graph
         return g
 
@@ -105,6 +110,10 @@ class TemplateIngressWithChooser(GraphIngressHandler):
     def graph(self, ns: Namespace) -> Graph:
         g = Graph()
 
+        # ensure 'ns' is a Namespace or URI forming won't work
+        if not isinstance(ns, Namespace):
+            ns = Namespace(ns)
+
         records = self.upstream.records
         assert records is not None
         for rec in records:
@@ -113,12 +122,14 @@ class TemplateIngressWithChooser(GraphIngressHandler):
                 template = template.inline_dependencies()
             bindings = {self.mapper(k): _get_term(v, ns) for k, v in rec.fields.items()}
             graph = template.evaluate(bindings)
-            assert isinstance(graph, Graph)
+            if not isinstance(graph, Graph):
+                _, graph = graph.fill(ns)
             g += graph
         return g
 
 
 def _get_term(field_value: str, ns: Namespace) -> Node:
+    assert isinstance(ns, Namespace), f"{ns} must be a rdflib.Namespace instance"
     try:
         uri = URIRef(ns[field_value])
         uri.n3()  # raises an exception if invalid URI

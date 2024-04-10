@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, current_app
 from flask_api import status
 from sqlalchemy.exc import SQLAlchemyError
@@ -66,8 +68,9 @@ def create_app(DB_URI):
 
 if __name__ == "__main__":
     """Run API."""
-    # If config doesn't exist, this is considered a third party import and module cant be found.
-    import configs as building_motif_configs  # type: ignore # isort:skip
+    db_uri = os.getenv("DB_URI")
+    if db_uri is None:
+        raise ValueError("Environment variable DB_URI not set.")
 
-    app = create_app(building_motif_configs.DB_URI)
-    app.run(debug=True, threaded=False)
+    app = create_app(db_uri)
+    app.run(debug=True, host="0.0.0.0", threaded=False)

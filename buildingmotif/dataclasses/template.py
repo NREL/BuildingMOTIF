@@ -1,6 +1,12 @@
+import csv
+import logging
+import warnings
 from collections import Counter
+from copy import copy
 from dataclasses import dataclass
+from io import BytesIO, StringIO
 from itertools import chain
+from os import PathLike
 from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
@@ -44,7 +50,7 @@ class Template:
         :rtype: Template
         """
         bm = get_building_motif()
-        db_template = bm.table_connection.get_db_template_by_id(id)
+        db_template = bm.table_connection.get_db_template(id)
         body = bm.graph_connection.get_graph(db_template.body_id)
 
         return cls(
@@ -109,7 +115,21 @@ class Template:
         :param args: dictionary of dependency arguments
         :type args: Dict[str, str]
         """
-        self._bm.table_connection.add_template_dependency(self.id, dependency.id, args)
+        self._bm.table_connection.add_template_dependency_preliminary(
+            self.id, dependency.id, args
+        )
+
+    def check_dependencies(self):
+        """
+        Verifies that all dependencies have valid references to the parameters
+        in the dependency or (recursively) its dependencies. Raises an exception if any
+        issues are found.
+
+        It is recommended to call this after *all* templates in a library have been
+        loaded in to the DB, else this might falsely raise an error.
+        """
+        for dep in self._bm.table_connection.get_db_template_dependencies(self.id):
+            self._bm.table_connection.check_template_dependency_relationship(dep)
 
     def remove_dependency(self, dependency: "Template") -> None:
         """Remove dependency from template.
@@ -117,12 +137,12 @@ class Template:
         :param dependency: dependency to remove
         :type dependency: Template
         """
-        self._bm.table_connection.remove_template_dependency(self.id, dependency.id)
+        self._bm.table_connection.delete_template_dependency(self.id, dependency.id)
 
     @property
     def all_parameters(self) -> Set[str]:
         """The set of all parameters used in this template *including* its
-        dependencies.
+        dependencies. Includes optional parameters.
 
         :return: set of parameters *with* dependencies
         :rtype: Set[str]
@@ -138,7 +158,7 @@ class Template:
     @property
     def parameters(self) -> Set[str]:
         """The set of all parameters used in this template *excluding* its
-        dependencies.
+        dependencies. Includes optional parameters.
 
         :return: set of parameters *without* dependencies
         :rtype: Set[str]
@@ -150,7 +170,8 @@ class Template:
 
     @property
     def dependency_parameters(self) -> Set[str]:
-        """The set of all parameters used in this demplate's dependencies.
+        """The set of all parameters used in this template's dependencies, including
+        optional parameters.
 
         :return: set of parameters used in dependencies
         :rtype: Set[str]
@@ -230,7 +251,8 @@ class Template:
         if not self.get_dependencies():
             return templ
 
-        # start with this template's parameters; if there is
+        # start with this template's parameters; this recurses into each
+        # dependency to inline dependencies
         for dep in self.get_dependencies():
             # get the inlined version of the dependency
             deptempl = dep.template.inline_dependencies()
@@ -256,15 +278,47 @@ class Template:
             replace_nodes(
                 deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
             )
-            # be sure to rename optional arguments too
-            unused_optional_args = set(deptempl.optional_args) - set(dep.args.keys())
-            dep_optional_args = [
-                rename_params.get(arg, arg) for arg in unused_optional_args
+            # rename the optional_args in the dependency template too
+            deptempl.optional_args = [
+                rename_params.get(arg, arg) for arg in deptempl.optional_args
             ]
 
-            # append into the dependant body
+            # at this point, deptempl's parameters are all unique with respect to
+            # the parent template. They are either renamed explicitly via the dependency's
+            # args or implicitly via prefixing with the 'name' parameter.
+
+            # Next, we need to determine which of deptempl's parameters are optional
+            # and add these to the parent template's optional_args list.
+
+            # get the parent template's optional args
+            templ_optional_args = set(templ.optional_args)
+
+            # represents the optional parameters of the dependency template
+            deptempl_opt_args: Set[str] = set()
+
+            # these optional parameters come from two places.
+            # 1. the dependency template itself (its optional_args)
+            deptempl_opt_args.update(deptempl.optional_args)
+            # 1a. remove any parameters that have the same name as a parameter in the
+            #     parent but are not optional in the parent
+            deptempl_opt_args.difference_update(templ.parameters)
+            # 2. having the same name as an optional parameter in the parent template
+            #    (templ_optional_args)
+            deptempl_opt_args.update(
+                templ_optional_args.intersection(deptempl.parameters)
+            )
+            # 2a. if the 'name' of the deptempl is optional (given by the parent template),
+            #   then all the arguments inside deptempl become optional
+            #   (deptempl.parameters)
+            if rename_params["name"] in deptempl_opt_args:
+                # mark all of deptempl's parameters as optional
+                deptempl_opt_args.update(deptempl.parameters)
+
+            # convert our set of optional params to a list and assign to the parent template
+            templ.optional_args = list(templ_optional_args.union(deptempl_opt_args))
+
+            # append the inlined template into the parent's body
             templ.body += deptempl.body
-            templ.optional_args += dep_optional_args
 
         return templ
 
@@ -273,6 +327,7 @@ class Template:
         bindings: Dict[str, Node],
         namespaces: Optional[Dict[str, rdflib.Namespace]] = None,
         require_optional_args: bool = False,
+        warn_unused: bool = True,
     ) -> Union["Template", rdflib.Graph]:
         """Evaluate the template with the provided bindings.
 
@@ -292,16 +347,34 @@ class Template:
         :param require_optional_args: whether to require all optional arguments
             to be bound, defaults to False
         :type require_optional_args: bool
+        :param warn_unused: if True, print a warning if there were any parameters left
+            unbound during evaluation. If 'require_optional_args' is True,
+            then this will consider optional parameters when producing the warning;
+            otherwise, optional paramters will be ignored; defaults to True
+        :type warn_unused: bool
         :return: either a template or a graph, depending on whether all
             parameters were provided
         :rtype: Union[Template, rdflib.Graph]
         """
+        # TODO: handle datatype properties
         templ = self.in_memory_copy()
+        # put all of the parameter names into the PARAM namespace so they can be
+        # directly subsituted in the template body
         uri_bindings: Dict[Node, Node] = {PARAM[k]: v for k, v in bindings.items()}
+        # replace the param:<name> URIs in the template body with the bindings
+        # provided in the call to evaluate()
         replace_nodes(templ.body, uri_bindings)
+        leftover_params = (
+            templ.parameters.difference(bindings.keys())
+            if not require_optional_args
+            else (templ.parameters.union(self.optional_args)).difference(
+                bindings.keys()
+            )
+        )
         # true if all parameters are now bound or only optional args are unbound
         if len(templ.parameters) == 0 or (
-            not require_optional_args and templ.parameters == set(self.optional_args)
+            not require_optional_args
+            and templ.parameters.issubset(set(self.optional_args))
         ):
             bind_prefixes(templ.body)
             if namespaces:
@@ -313,23 +386,32 @@ class Template:
                 for arg in unbound_optional_args:
                     remove_triples_with_node(templ.body, PARAM[arg])
             return templ.body
+        if len(leftover_params) > 0 and warn_unused:
+            warnings.warn(
+                f"Parameters \"{', '.join(leftover_params)}\" were not provided during evaluation",
+                UserWarning,
+            )
         return templ
 
-    def fill(self, ns: rdflib.Namespace) -> Tuple[Dict[str, Node], rdflib.Graph]:
+    def fill(
+        self, ns: rdflib.Namespace, include_optional: bool = False
+    ) -> Tuple[Dict[str, Node], rdflib.Graph]:
         """Evaluates the template with autogenerated bindings within the given
         namespace.
 
         :param ns: namespace to contain the autogenerated entities
         :type ns: rdflib.Namespace
+        :param include_optional: if True, invent URIs for optional parameters; ignore if False
+        :type include_optional: bool
         :return: a tuple of the bindings used and the resulting graph
         :rtype: Tuple[Dict[str, Node], rdflib.Graph]
         """
         bindings: Dict[str, Node] = {
             param: ns[f"{param}_{token_hex(4)}"]
             for param in self.parameters
-            if param not in self.optional_args
+            if include_optional or param not in self.optional_args
         }
-        res = self.evaluate(bindings)
+        res = self.evaluate(bindings, require_optional_args=include_optional)
         assert isinstance(res, rdflib.Graph)
         return bindings, res
 
@@ -380,10 +462,90 @@ class Template:
 
         matcher = TemplateMatcher(model.graph, self, ontology)
         for mapping, sg in matcher.building_mapping_subgraphs_iter():
-            print(mapping)
-            print(sg.serialize())
-            print("*" * 80)
             yield mapping, sg, matcher.remaining_template(mapping)
+
+    def generate_csv(self, path: Optional[PathLike] = None) -> Optional[StringIO]:
+        """
+        Generate a CSV for this template which contains a column for each template parameter.
+        Once filled out, the resulting CSV file can be passed to a Template Ingress to populate a model.
+        Returns a 'io.BytesIO' object which can be written to a file or sent to another program/function.
+
+        :param path: if not None, writes the CSV to the indicated file
+        :type path: PathLike, optional
+        :return: String buffer containing the resulting CSV file
+        :rtype: StringIO
+        """
+        all_parameters = copy(self.parameters)
+        mandatory_parameters = all_parameters - set(self.optional_args)
+        row_data = list(mandatory_parameters) + list(self.optional_args)
+
+        if path is not None:
+            # write directly to file
+            with open(path, "w") as f:
+                writer = csv.writer(f)
+                writer.writerow(row_data)
+            return None
+
+        # write to in-memory file
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(row_data)
+        return output
+
+    def generate_spreadsheet(
+        self, path: Optional[PathLike] = None
+    ) -> Optional[BytesIO]:
+        """
+        Generate a spreadsheet for this template which contains a column for each template parameter.
+        Once filled out, the resulting spreadsheet can be passed to a Template Ingress to populate a model.
+        Returns a 'io.BytesIO' object which can be written to a file or sent to another program/function.
+
+        :param path: if not None, writes the CSV to the indicated file
+        :type path: PathLike, optional
+        :return: Byte buffer containing the resulting spreadsheet file
+        :rtype: BytesIO
+        """
+        try:
+            from openpyxl import Workbook
+            from openpyxl.utils import get_column_letter
+            from openpyxl.worksheet.table import Table, TableStyleInfo
+        except ImportError:
+            logging.critical(
+                "Install the 'xlsx-ingress' module, e.g. 'pip install buildingmotif[xlsx-ingress]'"
+            )
+            return None
+        all_parameters = copy(self.parameters)
+        mandatory_parameters = all_parameters - set(self.optional_args)
+
+        workbook = Workbook()
+        sheet = workbook.active
+        if sheet is None:
+            raise Exception("Could not open active sheet in Workbook")
+
+        row_data = list(mandatory_parameters) + list(self.optional_args)
+        for column_index, cell_value in enumerate(row_data, 1):
+            column_letter = get_column_letter(column_index)
+            sheet[f"{column_letter}1"] = cell_value  # type: ignore
+            # Adjust column width based on cell content
+            column_dimensions = sheet.column_dimensions[column_letter]  # type: ignore
+            column_dimensions.width = max(column_dimensions.width, len(str(cell_value)))
+
+        tab = Table(
+            displayName="Table1", ref=f"A1:{get_column_letter(len(row_data))}10"
+        )
+        style = TableStyleInfo(name="TableStyleMedium9", showRowStripes=True)
+        tab.tableStyleInfo = style
+        sheet.add_table(tab)
+
+        if path is not None:
+            # write directly to file
+            workbook.save(path)
+            return None
+
+        # save the file in-memory and return the resulting buffer
+        f = BytesIO()
+        workbook.save(f)
+        return f
 
 
 @dataclass

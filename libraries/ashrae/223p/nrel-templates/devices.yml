@@ -5,7 +5,7 @@ damper:
 
     P:name a s223:Damper ;
       s223:hasProperty P:command, P:feedback ;
-      s223:cnx P:in, P:out .
+      s223:hasConnectionPoint P:in, P:out .
   dependencies:
     - template: air-inlet-cp
       args: {"name": "in"}
@@ -16,13 +16,32 @@ damper:
     - template: damper-feedback
       args: {"name": "feedback"}
 
+#Selam
+vlv-dmp:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Valve ;
+      s223:hasConnectionPoint P:in, P:out ;
+      #s223:hasMedium s223:Medium-Air ;
+      s223:hasProperty P:command, P:feedback .
+  dependencies:
+    - template: air-inlet-cp
+      args: {"name": "in"}
+    - template: air-outlet-cp
+      args: {"name": "out"}
+    - template: start-command
+      args: {"name": "command"}
+    - template: run-status
+      args: {"name": "feedback"}
+
 fan:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Fan ;
-      s223:hasProperty P:start-cmd, P:motor-status, P:oa-flow-switch ;
-      s223:cnx P:in, P:out .
+      s223:hasProperty P:start-cmd, P:motor-status, P:oa-flow-switch, P:vfd-cur, P:vfd-energy, P:vfd-volt, P:vfd-frq, P:vfd-flt, P:vfd-pwr, P:vfd-spd, P:vfd-fb ;
+      s223:hasConnectionPoint P:in, P:out .
   dependencies:
     - template: air-inlet-cp
       args: {"name": "in"}
@@ -34,6 +53,22 @@ fan:
       args: {"name": "motor-status"}
     - template: flow-status
       args: {"name": "oa-flow-switch"}
+    - template: vfd-current
+      args: {"name": "vfd-cur"}
+    - template: vfd-energy
+      args: {"name": "vfd-energy"}
+    - template: vfd-voltage
+      args: {"name": "vfd-volt"}
+    - template: vfd-frequency
+      args: {"name": "vfd-frq"}
+    - template: vfd-fault
+      args: {"name": "vfd-flt"}
+    - template: vfd-power
+      args: {"name": "vfd-pwr"}
+    - template: vfd-speed
+      args: {"name": "vfd-spd"}
+    - template: vfd-feedback
+      args: {"name": "vfd-fb"}
 
 filter:
   body: >
@@ -41,7 +76,7 @@ filter:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Filter ;
       s223:hasProperty P:differential-pressure ;
-      s223:cnx P:in, P:out .
+      s223:hasConnectionPoint P:in, P:out .
   dependencies:
     - template: air-inlet-cp
       args: {"name": "in"}
@@ -56,10 +91,12 @@ heat-recovery-coil:
     @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
     @prefix qudt: <http://qudt.org/schema/qudt/> .
     @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
+    s223:HeatRecoveryCoil rdfs:subClassOf s223:Coil .
     P:name a s223:HeatRecoveryCoil ;
       s223:hasProperty P:entering-air-temp, P:leaving-air-temp, P:supply-water-temp, P:return-water-temp ;
-      s223:cnx P:air-in, P:air-out, P:water-in, P:water-out .
+      s223:hasConnectionPoint P:air-in, P:air-out, P:water-in, P:water-out .
   dependencies:
     - template: air-inlet-cp
       args: {"name": "air-in"}
@@ -83,7 +120,7 @@ chilled-water-coil:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:CoolingCoil ;
-      s223:cnx P:air-in, P:air-out, P:water-in, P:water-out ;
+      s223:hasConnectionPoint P:air-in, P:air-out, P:water-in, P:water-out ;
       s223:contains P:pump, P:valve ;
       s223:hasProperty P:entering-air-temp, P:leaving-air-temp, P:supply-water-temp,
                        P:return-water-temp, P:leaving-air-wetbulb-temp .
@@ -116,7 +153,7 @@ hot-water-coil:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:HeatingCoil ;
-      s223:cnx P:air-in, P:air-out, P:water-in, P:water-out ;
+      s223:hasConnectionPoint P:air-in, P:air-out, P:water-in, P:water-out ;
       s223:contains P:valve, P:supply-water-temp-sensor, P:return-water-temp-sensor ;
       s223:hasProperty P:supply-water-temp, P:return-water-temp .
   dependencies:
@@ -144,10 +181,14 @@ chw-pump:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Pump ;
-      s223:cnx P:in, P:out ;
-      s223:hasMedium s223:Water-ChilledWater ;
-      s223:hasProperty P:onoff-cmd, P:onoff-sts .
-  optional: ["in", "out"]
+      s223:hasConnectionPoint P:in, P:out ;
+      #s223:hasMedium s223:Water-ChilledWater ;
+      s223:hasProperty P:onoff-cmd, P:onoff-sts, P:vfd-cur, 
+                       P:vfd-energy, P:vfd-volt, P:vfd-frq, P:vfd-flt,
+                       P:vfd-pwr, P:vfd-spd, P:vfd-fb,
+                       P:vfd-cur, P:vfd-energy .
+                       
+  #optional: ["in", "out"]
   dependencies:
     - template: start-command
       args: {"name": "onoff-cmd"}
@@ -157,16 +198,32 @@ chw-pump:
       args: {"name": "in"}
     - template: water-outlet-cp
       args: {"name": "out"}
+    - template: vfd-current
+      args: {"name": "vfd-cur"}
+    - template: vfd-energy
+      args: {"name": "vfd-energy"}
+    - template: vfd-voltage
+      args: {"name": "vfd-volt"}
+    - template: vfd-frequency
+      args: {"name": "vfd-frq"}
+    - template: vfd-fault
+      args: {"name": "vfd-flt"}
+    - template: vfd-power
+      args: {"name": "vfd-pwr"}
+    - template: vfd-speed
+      args: {"name": "vfd-spd"}
+    - template: vfd-feedback
+      args: {"name": "vfd-fb"}
 
 hw-pump:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Pump ;
-      s223:cnx P:in, P:out ;
-      s223:hasMedium s223:Water-HotWater ;
-      s223:hasProperty P:onoff-cmd, P:onoff-sts .
-  optional: ["in", "out"]
+      s223:hasConnectionPoint P:in, P:out ;
+      #s223:hasMedium s223:Water-HotWater ;
+      s223:hasProperty P:onoff-cmd, P:onoff-sts, P:vfd-cur, P:vfd-energy, P:vfd-volt, P:vfd-frq, P:vfd-flt, P:vfd-pwr, P:vfd-spd, P:vfd-fb .
+  #optional: ["in", "out"]
   dependencies:
     - template: start-command
       args: {"name": "onoff-cmd"}
@@ -176,16 +233,71 @@ hw-pump:
       args: {"name": "in"}
     - template: water-outlet-cp
       args: {"name": "out"}
+    - template: vfd-current
+      args: {"name": "vfd-cur"}
+    - template: vfd-energy
+      args: {"name": "vfd-energy"}
+    - template: vfd-voltage
+      args: {"name": "vfd-volt"}
+    - template: vfd-frequency
+      args: {"name": "vfd-frq"}
+    - template: vfd-fault
+      args: {"name": "vfd-flt"}
+    - template: vfd-power
+      args: {"name": "vfd-pwr"}
+    - template: vfd-speed
+      args: {"name": "vfd-spd"}
+    - template: vfd-feedback
+      args: {"name": "vfd-fb"}
 
+HR-pump:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Pump ;
+      s223:hasConnectionPoint P:in, P:out ;
+      #s223:hasMedium s223:Water ;
+      s223:hasProperty P:onoff-cmd, P:onoff-sts, P:vfd-cur, P:vfd-energy, P:vfd-volt, P:vfd-frq, P:vfd-flt, P:vfd-pwr, P:vfd-spd, P:vfd-fb .
+  #optional: ["in", "out"]
+  dependencies:
+    - template: start-command
+      args: {"name": "onoff-cmd"}
+    - template: run-status
+      args: {"name": "onoff-sts"}
+    - template: water-inlet-cp
+      args: {"name": "in"}
+    - template: water-outlet-cp
+      args: {"name": "out"}
+    - template: vfd-current
+      args: {"name": "vfd-cur"}
+    - template: vfd-energy
+      args: {"name": "vfd-energy"}
+    - template: vfd-voltage
+      args: {"name": "vfd-volt"}
+    - template: vfd-frequency
+      args: {"name": "vfd-frq"}
+    - template: vfd-fault
+      args: {"name": "vfd-flt"}
+    - template: vfd-power
+      args: {"name": "vfd-pwr"}
+    - template: vfd-speed
+      args: {"name": "vfd-spd"}
+    - template: vfd-feedback
+      args: {"name": "vfd-fb"}
 
 chw-valve:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Valve ;
-      s223:hasMedium s223:Water-ChilledWater ;
+      s223:hasConnectionPoint P:in, P:out ;
+      #      s223:hasMedium s223:Water-ChilledWater ;
       s223:hasProperty P:command, P:feedback .
   dependencies:
+    - template: water-inlet-cp
+      args: {"name": "in"}
+    - template: water-outlet-cp
+      args: {"name": "out"}
     - template: start-command
       args: {"name": "command"}
     - template: run-status
@@ -196,9 +308,14 @@ hw-valve:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Valve ;
-      s223:hasMedium s223:Water-HotWater ;
+      s223:hasConnectionPoint P:in, P:out ;
+      #s223:hasMedium s223:Water-HotWater ;
       s223:hasProperty P:command, P:feedback .
   dependencies:
+    - template: water-inlet-cp
+      args: {"name": "in"}
+    - template: water-outlet-cp
+      args: {"name": "out"}
     - template: start-command
       args: {"name": "command"}
     - template: run-status
@@ -209,8 +326,8 @@ sensor:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Sensor ;
-      s223:hasMeasurementLocation P:where ;
-      s223:observesProperty P:property .
+      s223:hasObservationLocation P:where ;
+      s223:observes P:property .
   optional: ["where"]
 
 differential-sensor:
@@ -218,8 +335,9 @@ differential-sensor:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Sensor ;
-    s223:hasMeasurementLocation P:whereA, P:whereB ;
-      s223:observesProperty P:property .
+      s223:hasObservationLocationHigh P:whereA ;
+      s223:hasObservationLocationLow P:whereB ;
+      s223:observes P:property .
   optional: ["whereA", "whereB"]
 
 evaporative-cooler:
@@ -227,17 +345,21 @@ evaporative-cooler:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:HeatExchanger ;
-      s223:hasRole s223:HeatExchanger-Evaporator ;
-      s223:cnx P:in, P:out ;
+      s223:hasRole s223:Role-Evaporator ;
+      s223:hasConnectionPoint P:in, P:out, P:water-in, P:water-out ;
       s223:hasProperty P:entering-air-temp, P:leaving-air-temp, P:leaving-air-humidity ;
       s223:contains P:evap-cool-pump-2stage, P:evap-cool-sump-tank, P:evap-cool-fill-valve .
     P:in s223:hasProperty P:entering-air-temp .
     P:out s223:hasProperty P:leaving-air-temp, P:leaving-air-humidity .
   dependencies:
-    - template: air-outlet-cp
-      args: {"name": "in"}
     - template: air-inlet-cp
+      args: {"name": "in"}
+    - template: air-outlet-cp
       args: {"name": "out"}
+    - template: water-outlet-cp
+      args: {"name": "water-in"}
+    - template: water-inlet-cp
+      args: {"name": "water-out"}
     - template: air-temperature
       args: {"name": "entering-air-temp"}
     - template: air-temperature
@@ -268,7 +390,7 @@ heat-exchanger:
     P:name a s223:HeatExchanger ;
       s223:contains P:chw-flow-sensor, P:A-chw-diff-press-sensor,
                     P:B-chw-diff-press-sensor ;
-      s223:cnx P:A-in, P:A-out, P:B-in, P:B-out ;
+      s223:hasConnectionPoint P:A-in, P:A-out, P:B-in, P:B-out ;
       s223:hasProperty P:A-chw-diff-press, P:B-chw-diff-press,
                        P:chw-supply-temperature,
                        P:chw-return-temperature, P:chw-flow .
@@ -287,6 +409,8 @@ heat-exchanger:
       args: {"name": "B-chw-diff-press"}
     - template: water-temperature
       args: {"name": "chw-supply-temperature"}
+    - template: water-temperature
+      args: {"name": "chw-return-temperature"}
     - template: water-flow
       args: {"name": "chw-flow"}
     - template: differential-sensor
@@ -294,4 +418,175 @@ heat-exchanger:
     - template: differential-sensor
       args: {"name": "B-chw-diff-press-sensor", "property": "B-chw-diff-press", "whereA": "B-in", "whereB": "B-out"}
     - template: sensor
-      args: {"name": "chw-flow-sensor", "property": "chw-flow"}
+      args: {"name": "chw-flow-sensor", "property": "chw-flow", "where": "B-out"}
+
+fcu:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:FanCoilUnit ;
+      s223:hasRole s223:Role-Cooling, s223:Role-Heating ;
+      s223:contains P:fan, P:cooling-coil, P:heating-coil ;
+      s223:hasProperty P:cond-overflow, P:DA-temp, P:occ-override, P:zone-temp, P:zone-humidity ;
+      s223:hasConnectionPoint P:in, P:out .
+  dependencies:
+    - template: chilled-water-coil
+      args: {"name": "cooling-coil"}
+    - template: hot-water-coil
+      args: {"name": "heating-coil"}
+    - template: fan
+      args: {"name": "fan"}
+    - template: condensate-overflow
+      args: {"name": "cond-overflow"}
+    - template: air-temperature
+      args: {"name": "DA-temp"}
+    - template: occupancy-override
+      args: {"name": "occ-override"}
+    - template: air-temperature
+      args: {"name": "zone-temp"}
+    - template: relative-humidity
+      args: {"name": "zone-humidity"}
+    - template: air-outlet-cp
+      args: {"name": "out"}
+    - template: air-inlet-cp
+      args: {"name": "in"}
+
+unit-heater:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    P:name a s223:UnitHeater, s223:Equipment ;
+      rdfs:label "Unit Heater" ;
+      s223:contains P:fan, P:heating-coil ;
+      s223:hasConnectionPoint P:in, P:out .
+  dependencies:
+    - template: hot-water-coil
+      args: {"name": "heating-coil"}
+    - template: fan
+      args: {"name": "fan"}
+    - template: air-outlet-cp
+      args: {"name": "out"}
+    - template: air-inlet-cp
+      args: {"name": "in"}
+
+domestic-water-heater:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    P:name a s223:DomesticWaterHeater, s223:Equipment ;
+      rdfs:label "domestic water heater" ;
+      s223:contains P:dw-hwp, P:dw-hx ;
+      s223:hasConnectionPoint P:in, P:out .
+  dependencies:
+    - template: heat-exchanger
+      args: {"name": "dw-hx"}
+    - template: hw-pump
+      args: {"name": "dw-hwp"}
+    - template: water-outlet-cp
+      args: {"name": "out"}
+    - template: water-inlet-cp
+      args: {"name": "in"}
+
+
+HRC-BTU-meter:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:ElectricMeter ;
+      s223:hasProperty P:HRW-energy, P:HRW-energy-rate, P:HRW-flow, P:HRW-vol, P:return-water-temp, P:supply-water-temp .
+  dependencies:
+    - template: BTU-Meter-energy
+      args: {"name": "HRW-energy"}
+    - template: BTU-Meter-energy-rate
+      args: {"name": "HRW-energy-rate"}
+    - template: BTU-Meter-water-flow
+      args: {"name": "HRW-flow"}
+    - template: BTU-Meter-water-volume
+      args: {"name": "HRW-vol"}
+    - template: water-temperature
+      args: {"name": "supply-water-temp"}
+    - template: water-temperature
+      args: {"name": "return-water-temp"}
+
+hot-water-system-BTU-meter:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:ElectricMeter ;
+      s223:hasProperty P:HW-energy, P:HW-energy-rate, P:HW-flow, P:HW-vol, P:HWS-temp, P:HWR-temp .
+  dependencies:
+    - template: BTU-Meter-energy
+      args: {"name": "HW-energy"}
+    - template: BTU-Meter-energy-rate
+      args: {"name": "HW-energy-rate"}
+    - template: BTU-Meter-water-flow
+      args: {"name": "HW-flow"}
+    - template: BTU-Meter-water-volume
+      args: {"name": "HW-vol"}
+    - template: water-temperature
+      args: {"name": "HWS-temp"}
+    - template: water-temperature
+      args: {"name": "HWR-temp"}
+
+chilled-water-system-BTU-meter:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:ElectricMeter ;
+      s223:hasProperty P:CHW-energy, P:CHW-energy-rate, P:CHW-flow, P:CHW-vol, P:CHWS-temp, P:CHWR-temp .
+  dependencies:
+    - template: BTU-Meter-energy
+      args: {"name": "CHW-energy"}
+    - template: BTU-Meter-energy-rate
+      args: {"name": "CHW-energy-rate"}
+    - template: BTU-Meter-water-flow
+      args: {"name": "CHW-flow"}
+    - template: BTU-Meter-water-volume
+      args: {"name": "CHW-vol"}
+    - template: water-temperature
+      args: {"name": "CHWS-temp"}
+    - template: water-temperature
+      args: {"name": "CHWR-temp"}
+
+
+exhaust-fan:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Fan ;
+      s223:contains P:iso-dmp, P:low-sp-sensor ;
+      s223:hasProperty P:start-cmd, P:motor-status, P:low-sp, P:vfd-cur, P:vfd-energy, P:vfd-volt, P:vfd-frq, P:vfd-flt, P:vfd-pwr, P:vfd-spd, P:vfd-fb ;
+      s223:hasConnectionPoint P:in, P:out .
+  dependencies:
+    - template: air-inlet-cp
+      args: {"name": "in"}
+    - template: air-outlet-cp
+      args: {"name": "out"}
+    - template: start-command
+      args: {"name": "start-cmd"}
+    - template: run-status
+      args: {"name": "motor-status"}
+    - template: low-static-pressure
+      args: {"name": "low-sp"}
+    - template: sensor
+      args: {"name": "low-sp-sensor", "property": "low-sp", "where": "out"}
+    - template: vfd-current
+      args: {"name": "vfd-cur"}
+    - template: vfd-energy
+      args: {"name": "vfd-energy"}
+    - template: vfd-voltage
+      args: {"name": "vfd-volt"}
+    - template: vfd-frequency
+      args: {"name": "vfd-frq"}
+    - template: vfd-fault
+      args: {"name": "vfd-flt"}
+    - template: vfd-power
+      args: {"name": "vfd-pwr"}
+    - template: vfd-speed
+      args: {"name": "vfd-spd"}
+    - template: vfd-feedback
+      args: {"name": "vfd-fb"}
+    - template: damper
+      args: {"name": "iso-dmp"}

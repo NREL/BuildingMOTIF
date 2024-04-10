@@ -2,7 +2,7 @@ from typing import List, Optional, Union
 
 from typing_extensions import TypedDict
 
-from buildingmotif.database.tables import DBLibrary
+from buildingmotif.database.tables import DBLibrary, DBTemplate
 
 LibraryDict = TypedDict(
     "LibraryDict",
@@ -43,9 +43,11 @@ def _serialize(library: DBLibrary) -> LibraryDict:
     :return: serialized library
     :rtype: LibraryDict
     """
+    templates: List[DBTemplate] = library.templates  # apleasing the type checker.
+
     return {
         "id": library.id,
         "name": library.name,
-        "template_ids": library.templates,
+        "template_ids": [t.id for t in templates],
         "shape_collection_id": library.shape_collection_id,
     }

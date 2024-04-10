@@ -1,14 +1,45 @@
-<div class="container">
-    <div class="title">{{model.name}}</div>
+<mat-drawer-container class="container">
+    <div class="main-content-and-button">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="title">{{model.name}}</div>
+            <mat-progress-bar mode="indeterminate" *ngIf="updatingGraphSpinner"></mat-progress-bar>
+            <div class="graph-info" *ngIf="!updatingGraphSpinner">
+                <ngx-codemirror #codemirror class="graph" [options]="codeMirrorOptions" [formControl]="graphFormControl">
+                </ngx-codemirror>
 
-    <ngx-codemirror #codemirror
-        class="graph"
-        [options]="codeMirrorOptions"
-        [formControl]="graphFormControl">
-    </ngx-codemirror>
+                <!-- Buttons -->
+                <div class="buttons">
+                    <button mat-raised-button (click)="onSave()" color="primary">Save</button>
+                    <button mat-raised-button (click)="undoChangesToGraph()" color="primary">Undo</button>
+                    <button mat-raised-button color="primary" (click)="fileInput.click()">
+                        <div>Update with file</div>
+                        <input type="file" id="file" hidden #fileInput (change)="updateGraphWithFile($event)">
+                    </button>
+                </div>
+            </div>
+        </div>
 
-    <div class="buttons">
-        <button mat-raised-button (click)="onSave()" color="primary">Save</button>
-        <button mat-raised-button (click)="undoChangesToGraph()" color="primary">Undo</button>
+        <!-- Side Nav Handle -->
+        <button class="side-nav-button" mat-flat-button (click)="drawer.toggle()" color="basic">
+            <mat-icon *ngIf="!drawer.opened"> arrow_backward </mat-icon>
+            <mat-icon *ngIf="drawer.opened"> arrow_forward </mat-icon>
+        </button>
     </div>
-</div>
+
+
+    <!-- Side Nav Content-->
+    <mat-drawer #drawer class="sidenav-content" mode="side" position="end">
+        <mat-tab-group>
+            <mat-tab label="Evaluate">
+                <app-template-search [evaulateModelId]=model.id (openEvaulateEvent)="openEvaulateEvent($event)"></app-template-search>
+            </mat-tab>
+            <mat-tab label="Validate">
+                <app-model-validate [modelId]=model.id></app-model-validate>
+            </mat-tab>
+            <mat-tab label="Application Explorer">
+                <app-shape-validation [modelId]=model.id></app-shape-validation>
+            </mat-tab>         
+        </mat-tab-group>
+    </mat-drawer>
+</mat-drawer-container>

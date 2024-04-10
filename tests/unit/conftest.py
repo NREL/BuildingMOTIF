@@ -100,3 +100,7 @@ def pytest_generate_tests(metafunc):
     if "builtin_ontology" in metafunc.fixturenames:
         builtin_ontology = {"brick/Brick.ttl", "constraints/constraints.ttl"}
         metafunc.parametrize("builtin_ontology", builtin_ontology)
+
+    if "shacl_engine" in metafunc.fixturenames:
+        shacl_engine = {"pyshacl", "topquadrant"}
+        metafunc.parametrize("shacl_engine", shacl_engine)

@@ -28,7 +28,15 @@ export class ModelDetailService {
       );
   }
 
-  updateModelGraph(id: number, newGraph: string, append: boolean = false) {
+  getTargetNodes(id: number) {
+    return this.http.get<string[]>(`http://localhost:5000/models/${id}/target_nodes`)
+      .pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError) // then handle the error
+      );
+  }
+
+  updateModelGraph(id: number, newGraph: string | File, append: boolean = false) {
     const headers = {'Content-Type': "application/xml"}
 
     return this.http[append? "patch": "put"](`http://localhost:5000/models/${id}/graph`, newGraph, {headers, responseType: 'text'})

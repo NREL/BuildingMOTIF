@@ -103,6 +103,7 @@ def test_add_dependency(clean_building_motif):
     assert dependant.get_dependencies() == (
         Dependency(dependee.id, {"name": "1", "param": "2"}),
     )
+    dependant.check_dependencies()
 
 
 def test_add_multiple_dependencies(clean_building_motif):
@@ -122,6 +123,7 @@ def test_add_multiple_dependencies(clean_building_motif):
         in dependant.get_dependencies()
     )
     assert len(dependant.get_dependencies()) == 2
+    dependant.check_dependencies()
 
 
 def test_add_dependency_bad_args(clean_building_motif):
@@ -131,6 +133,7 @@ def test_add_dependency_bad_args(clean_building_motif):
 
     with pytest.raises(ValueError):
         dependant.add_dependency(dependee, {"bad": "xyz"})
+        dependant.check_dependencies()
 
 
 def test_add_dependency_already_exist(clean_building_motif):
@@ -194,6 +197,18 @@ def test_get_library_dependencies(clean_building_motif):
         "sample-lib-1",
         "https://brickschema.org/schema/1.3/Brick",
     }
+
+
+def test_get_library_dependencies_from_ttl(clean_building_motif):
+    Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    lib = Library.load(directory="tests/unit/fixtures/shape-deps")
+    for templ in lib.get_templates():
+        print(templ.name)
+    templ = lib.get_template_by_name("urn:shape/vav_shape")
+    assert len(templ.get_dependencies()) == 2, "Expected 2 dependencies"
+    dep_names = [d.template.name for d in templ.get_dependencies()]
+    assert "urn:shape/Air_Flow_Sensor" in dep_names
+    assert "https://brickschema.org/schema/Brick#Air_Temperature_Sensor" in dep_names
 
 
 def test_template_compilation(clean_building_motif):

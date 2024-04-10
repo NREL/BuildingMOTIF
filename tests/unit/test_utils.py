@@ -1,15 +1,18 @@
-import pyshacl  # type: ignore
-from rdflib import Graph, Namespace, URIRef
+import pytest
+from rdflib import Graph, Literal, Namespace, URIRef
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Model, ShapeCollection
-from buildingmotif.namespaces import BRICK, A
+from buildingmotif.namespaces import BRICK, SH, XSD, A
 from buildingmotif.utils import (
     PARAM,
+    _param_name,
     get_parameters,
     get_template_parts_from_shape,
     replace_nodes,
     rewrite_shape_graph,
+    shacl_validate,
+    skip_uri,
 )
 
 PREAMBLE = """@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
@@ -49,8 +52,25 @@ def test_get_template_parts_from_shape():
     """
     )
     body, deps = get_template_parts_from_shape(MODEL["shape1"], shape_graph)
+    assert len(deps) == 0
+    assert (PARAM["name"], A, MODEL["shape1"]) in body
+
+    shape_graph = Graph()
+    shape_graph.parse(
+        data=PREAMBLE
+        + """
+    :shape1 a owl:Class, sh:NodeShape ;
+        sh:property [
+            sh:path brick:hasPoint ;
+            sh:node brick:Temperature_Sensor ;
+            sh:minCount 1 ;
+        ] .
+    """
+    )
+
+    body, deps = get_template_parts_from_shape(MODEL["shape1"], shape_graph)
     assert len(deps) == 1
-    assert deps[0]["template"] == BRICK.Temperature_Sensor
+    assert deps[0]["template"] == str(BRICK.Temperature_Sensor)
     assert list(deps[0]["args"].keys()) == ["name"]
     assert (PARAM["name"], A, MODEL["shape1"]) in body
     # assert (PARAM['name'], BRICK.hasPoint,
@@ -109,7 +129,7 @@ def test_get_parameters():
     assert get_parameters(body) == {"name", "1", "2", "3", "4"}
 
 
-def test_inline_sh_nodes():
+def test_inline_sh_nodes(shacl_engine):
     shape_g = Graph()
     shape_g.parse(
         data="""@prefix sh: <http://www.w3.org/ns/shacl#> .
@@ -140,21 +160,23 @@ def test_inline_sh_nodes():
     .
     """
     )
-    # should not raise an exception
-    pyshacl.validate(shape_g)
+    # should pass
+    valid, _, report = shacl_validate(shape_g, engine=shacl_engine)
+    assert valid, report
 
     shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
     assert len(shape1_cbd) == 3
 
     shape_g = rewrite_shape_graph(shape_g)
-    # should not raise an exception
-    pyshacl.validate(shape_g)
+    # should pass
+    valid, _, report = shacl_validate(shape_g, engine=shacl_engine)
+    assert valid, report
 
     shape1_cbd = shape_g.cbd(URIRef("urn:ex/shape1"))
     assert len(shape1_cbd) == 8
 
 
-def test_inline_sh_and(bm: BuildingMOTIF):
+def test_inline_sh_and(bm: BuildingMOTIF, shacl_engine):
     sg = Graph()
     sg.parse(
         data=PREAMBLE
@@ -189,20 +211,43 @@ def test_inline_sh_and(bm: BuildingMOTIF):
     sc = ShapeCollection.create()
     sc.add_graph(new_sg)
 
-    ctx = model.validate([sc])
+    ctx = model.validate([sc], engine=shacl_engine)
     assert not ctx.valid
-    assert (
-        "Value class is not in classes (brick:Class2, brick:Class3)"
-        in ctx.report_string
-        or "Value class is not in classes (brick:Class3, brick:Class2)"
-        in ctx.report_string
-    ), ctx.report_string
-    assert (
-        "Less than 1 values on <urn:model#x>->brick:relationship" in ctx.report_string
-    )
+
+    if shacl_engine == "pyshacl":
+        assert (
+            "Value class is not in classes (brick:Class2, brick:Class3)"
+            in ctx.report_string
+            or "Value class is not in classes (brick:Class3, brick:Class2)"
+            in ctx.report_string
+            or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class3>, <https://brickschema.org/schema/Brick#Class2>)"
+            in ctx.report_string
+            or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class2>, <https://brickschema.org/schema/Brick#Class3>)"
+            in ctx.report_string
+        ), ctx.report_string
+        assert (
+            "Less than 1 values on <urn:model#x>->brick:relationship"
+            in ctx.report_string
+            or "Less than 1 values on <urn:model#x>-><https://brickschema.org/schema/Brick#relationship>"
+            in ctx.report_string
+        )
+    elif shacl_engine == "topquadrant":
+        assert (None, SH.resultPath, BRICK.relationship) in ctx.report
+        assert (
+            None,
+            SH.resultMessage,
+            Literal("Property needs to have at least 1 value"),
+        ) in ctx.report
+
+        assert (
+            None,
+            SH.resultMessage,
+            Literal("Value must be an instance of brick:Class3"),
+        ) in ctx.report
+        assert (None, SH.sourceShape, URIRef("urn:model#shape1")) in ctx.report
 
 
-def test_inline_sh_node(bm: BuildingMOTIF):
+def test_inline_sh_node(bm: BuildingMOTIF, shacl_engine):
     sg = Graph()
     sg.parse(
         data=PREAMBLE
@@ -237,14 +282,51 @@ def test_inline_sh_node(bm: BuildingMOTIF):
     sc = ShapeCollection.create()
     sc.add_graph(new_sg)
 
-    ctx = model.validate([sc])
-    assert not ctx.valid
-    assert (
-        "Value class is not in classes (brick:Class2, brick:Class3)"
-        in ctx.report_string
-        or "Value class is not in classes (brick:Class3, brick:Class2)"
-        in ctx.report_string
-    )
-    assert (
-        "Less than 1 values on <urn:model#x>->brick:relationship" in ctx.report_string
-    )
+    ctx = model.validate([sc], engine=shacl_engine)
+    assert not ctx.valid, ctx.report_string
+    if shacl_engine == "pyshacl":
+        assert (
+            "Value class is not in classes (brick:Class2, brick:Class3)"
+            in ctx.report_string
+            or "Value class is not in classes (brick:Class3, brick:Class2)"
+            in ctx.report_string
+            or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class3>, <https://brickschema.org/schema/Brick#Class2>)"
+            in ctx.report_string
+            or "Value class is not in classes (<https://brickschema.org/schema/Brick#Class2>, <https://brickschema.org/schema/Brick#Class3>)"
+            in ctx.report_string
+        )
+        assert (
+            "Less than 1 values on <urn:model#x>->brick:relationship"
+            in ctx.report_string
+            or "Less than 1 values on <urn:model#x>-><https://brickschema.org/schema/Brick#relationship>"
+            in ctx.report_string
+        )
+    elif shacl_engine == "topquadrant":
+        assert (None, SH.resultPath, BRICK.relationship) in ctx.report
+        assert (
+            None,
+            SH.resultMessage,
+            Literal("Property needs to have at least 1 value"),
+        ) in ctx.report
+
+        assert (
+            None,
+            SH.resultMessage,
+            Literal("Value must be an instance of brick:Class3"),
+        ) in ctx.report
+        assert (None, SH.sourceShape, URIRef("urn:model#shape1")) in ctx.report
+
+
+def test_param_name():
+    good_p = PARAM["abc"]
+    assert _param_name(good_p) == "abc"
+
+    bad_p = BRICK["abc"]
+    with pytest.raises(AssertionError):
+        _param_name(bad_p)
+
+
+def test_skip_uri():
+    assert skip_uri(XSD.integer)
+    assert skip_uri(SH.NodeShape)
+    assert not skip_uri(BRICK.Sensor)

@@ -1,0 +1,24 @@
+version: "3.4"
+services:
+  device:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      bacnet:
+        ipv4_address: 172.24.0.3
+    command: "python3 virtual_bacnet.py"
+  buildingmotif:
+    build:
+      context: ../../../../
+      dockerfile: tests/integration/fixtures/buildingmotif/Dockerfile
+    networks:
+      bacnet:
+        ipv4_address: 172.24.0.2
+networks:
+  bacnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.24.0.0/16"
+          gateway: "172.24.0.1"

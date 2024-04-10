@@ -1,0 +1,27 @@
+<div class="container">
+    <mat-progress-bar *ngIf="showGettingLibrariesSpinner" mode="query"></mat-progress-bar>
+    <mat-list *ngFor="let library of libraries; let i = index" [formGroup]="selectedLibrariesForm">
+        <mat-checkbox [formControlName]="i" [formGroupName]="i">
+            <b>{{library.name}}</b>
+        </mat-checkbox>
+    </mat-list>
+
+    <button
+    (click)="validate()"
+    [disabled]="selectedLibrariesForm.invalid"
+    mat-raised-button
+    color="primary">
+        Validate
+    </button>
+
+    <mat-progress-bar *ngIf="showValidatingSpinner" mode="indeterminate"></mat-progress-bar>
+    <span><b *ngIf="validationResponse">Valid?</b> {{ validationResponse?.valid }}</span>
+    <ngx-codemirror #codemirror
+        *ngIf = "validationResponse"
+        [(ngModel)]="validationResponse.message"
+        [options]="codeMirrorOptions">
+    </ngx-codemirror>
+    <mat-list *ngFor="let reason of validationResponse?.reasons">
+        <span> {{ reason }} </span>
+    </mat-list>
+</div>

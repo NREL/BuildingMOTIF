@@ -1,9 +1,10 @@
 import logging
 import pathlib
+import tempfile
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
-import pyshacl
+import pygit2
 import rdflib
 import sqlalchemy
 import yaml
@@ -16,9 +17,14 @@ from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBLibrary, DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
-from buildingmotif.namespaces import XSD
+from buildingmotif.schemas import validate_libraries_yaml
 from buildingmotif.template_compilation import compile_template_spec
-from buildingmotif.utils import get_ontology_files, get_template_parts_from_shape
+from buildingmotif.utils import (
+    get_ontology_files,
+    get_template_parts_from_shape,
+    shacl_inference,
+    skip_uri,
+)
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -106,7 +112,7 @@ class Library:
             if overwrite:
                 cls._clear_library(db_library)
             else:
-                logging.warn(
+                logging.warning(
                     f'Library {name} already exists in database. To ovewrite load library with "overwrite=True"'  # noqa
                 )
         except sqlalchemy.exc.NoResultFound:
@@ -144,8 +150,8 @@ class Library:
         :param db_id: the unique id of the library in the database,
             defaults to None
         :type db_id: Optional[int], optional
-        :param ontology_graph: a path to a serialized RDF graph,
-            defaults to None
+        :param ontology_graph: a path to a serialized RDF graph.
+            Supports remote ontology URLs, defaults to None
         :type ontology_graph: Optional[str|rdflib.Graph], optional
         :param directory: a path to a directory containing a library,
             or an rdflib graph, defaults to None
@@ -203,7 +209,7 @@ class Library:
         :rtype: Library
         """
         bm = get_building_motif()
-        db_library = bm.table_connection.get_db_library_by_id(id)
+        db_library = bm.table_connection.get_db_library(id)
 
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
 
@@ -242,35 +248,12 @@ class Library:
         # expand the ontology graph before we insert it into the database. This will ensure
         # that the output of compiled models will not contain triples that really belong to
         # the ontology
-        pyshacl.validate(
-            data_graph=ontology,
-            shacl_graph=ontology,
-            ont_graph=ontology,
-            advanced=True,
-            inplace=True,
-            js=True,
-        )
+        ontology = shacl_inference(ontology)
 
         lib = cls.create(ontology_name, overwrite=overwrite)
 
-        class_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.OWL.Class))
-        shape_candidates = set(ontology.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
-        candidates = class_candidates.intersection(shape_candidates)
-
-        # stores the lookup from template *names* to template *ids*
-        # this is necessary because while we know the *name* of the dependee templates
-        # for each dependent template, we don't know the *id* of the dependee templates,
-        # which is necessary to populate the dependencies
-        template_id_lookup: Dict[str, int] = {}
-        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
-        for candidate in candidates:
-            assert isinstance(candidate, rdflib.URIRef)
-            partial_body, deps = get_template_parts_from_shape(candidate, ontology)
-            templ = lib.create_template(str(candidate), partial_body)
-            dependency_cache[templ.id] = deps
-            template_id_lookup[str(candidate)] = templ.id
-
-        lib._resolve_template_dependencies(template_id_lookup, dependency_cache)
+        # infer shapes from any class/nodeshape candidates in the graph
+        lib._infer_shapes_from_graph(ontology)
 
         # load the ontology graph as a shape_collection
         shape_col_id = lib.get_shape_collection().id
@@ -279,6 +262,27 @@ class Library:
         shape_col.add_graph(ontology)
 
         return lib
+
+    def _infer_shapes_from_graph(self, graph: rdflib.Graph):
+        """Infer shapes from a graph and add them to this library.
+
+        :param graph: graph to infer shapes from
+        :type graph: rdflib.Graph
+        """
+        class_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.OWL.Class))
+        shape_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
+        candidates = class_candidates.intersection(shape_candidates)
+        template_id_lookup: Dict[str, int] = {}
+        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
+        for candidate in candidates:
+            assert isinstance(candidate, rdflib.URIRef)
+            # TODO: mincount 0 (or unspecified) should be optional args on the generated template
+            partial_body, deps = get_template_parts_from_shape(candidate, graph)
+            templ = self.create_template(str(candidate), partial_body)
+            dependency_cache[templ.id] = deps
+            template_id_lookup[str(candidate)] = templ.id
+
+        self._resolve_template_dependencies(template_id_lookup, dependency_cache)
 
     def _load_shapes_from_directory(self, directory: pathlib.Path):
         """Helper method to read all graphs in the given directory into this
@@ -298,6 +302,8 @@ class Library:
                     f"Could not parse file {filename}: {e}"
                 )
                 raise e
+        # infer shapes from any class/nodeshape candidates in the graph
+        self._infer_shapes_from_graph(shape_col.graph)
 
     @classmethod
     def _load_from_directory(
@@ -321,7 +327,7 @@ class Library:
 
         if not overwrite:
             if cls._library_exists(directory.name):
-                logging.warn(
+                logging.warning(
                     f'Library "{directory.name}" already exists in database and "overwrite=False". Returning existing library.'  # noqa
                 )
                 return Library.load(name=directory.name)
@@ -342,6 +348,24 @@ class Library:
 
         return lib
 
+    @classmethod
+    def load_from_libraries_yml(cls, filename: str):
+        """
+        Loads *multiple* libraries from a properly-formatted 'libraries.yml'
+        file. Does not return a Library! You will need to load the libraries by
+        name in order to get the dataclasses.Library object. We recommend loading
+        libraries directly, one-by-one, in most cases. This method is here to support
+        the commandline tool.
+
+        :param filename: the filename of the YAML file to load library names from
+        :type filename: str
+        :rtype: None
+        """
+        libraries = yaml.load(open(filename, "r"), Loader=yaml.FullLoader)
+        validate_libraries_yaml(libraries)  # raises exception
+        for description in libraries:
+            _resolve_library_definition(description)
+
     @staticmethod
     def _library_exists(library_name: str) -> bool:
         """Checks whether a library with the given name exists in the database."""
@@ -352,35 +376,78 @@ class Library:
         except sqlalchemy.exc.NoResultFound:
             return False
 
+    def _resolve_dependency(
+        self,
+        template: Template,
+        dep: Union[_template_dependency, dict],
+        template_id_lookup: Dict[str, int],
+    ):
+        """Resolve a dependency to a template.
+
+        :param template: template to resolve dependency for
+        :type template: Template
+        :param dep: dependency
+        :type dep: Union[_template_dependency, dict]
+        :param template_id_lookup: a local cache of {name: id} for uncommitted templates
+        :type template_id_lookup: Dict[str, int]
+        :return: the template instance this dependency points to
+        :rtype: Template
+        """
+        # if dep is a _template_dependency, turn it into a template
+        if isinstance(dep, _template_dependency):
+            dependee = dep.to_template(template_id_lookup)
+            template.add_dependency(dependee, dep.bindings)
+            return
+
+        # now, we know that dep is a dict
+
+        # if dependency names a library explicitly, load that library and get the template by name
+        if "library" in dep:
+            dependee = Library.load(name=dep["library"]).get_template_by_name(
+                dep["template"]
+            )
+            template.add_dependency(dependee, dep["args"])
+            return
+        # if no library is provided, try to resolve the dependency from this library
+        if dep["template"] in template_id_lookup:
+            dependee = Template.load(template_id_lookup[dep["template"]])
+            template.add_dependency(dependee, dep["args"])
+            return
+        # check documentation for skip_uri for what URIs get skipped
+        if skip_uri(dep["template"]):
+            return
+        # if the dependency is not in the local cache, then search through this library's imports
+        # for the template
+        for imp in self.graph_imports:
+            try:
+                library = Library.load(name=str(imp))
+                dependee = library.get_template_by_name(dep["template"])
+                template.add_dependency(dependee, dep["args"])
+                return
+            except Exception as e:
+                logging.debug(
+                    f"Could not find dependee {dep['template']} in library {imp}: {e}"
+                )
+        logging.warning(
+            f"Warning: could not find dependee {dep['template']} in libraries {self.graph_imports}"
+        )
+
     def _resolve_template_dependencies(
         self,
         template_id_lookup: Dict[str, int],
         dependency_cache: Mapping[int, Union[List[_template_dependency], List[dict]]],
     ):
+        """Resolve all dependencies for all templates in this library"""
+        # two phases here: first, add all of the templates and their dependencies
+        # to the database but *don't* check that the dependencies are valid yet
         for template in self.get_templates():
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
-                if isinstance(dep, dict):
-                    if dep["template"] in template_id_lookup:
-                        dependee = Template.load(template_id_lookup[dep["template"]])
-                        template.add_dependency(dependee, dep["args"])
-                    # Now that we have all the templates, we can populate the dependencies.
-                    # IGNORES missing XSD imports --- there is really no reason to import the XSD
-                    # ontology because the handling is baked into the software processing the RDF
-                    # graph. Thus, XSD URIs will always yield import warnings. This is noisy, so we
-                    # suppress them.
-                    elif not dep["template"].startswith(XSD):
-                        logging.warn(
-                            f"Warning: could not find dependee {dep['template']}"
-                        )
-                elif isinstance(dep, _template_dependency):
-                    try:
-                        dependee = dep.to_template(template_id_lookup)
-                        template.add_dependency(dependee, dep.bindings)
-                    except Exception as e:
-                        logging.warn(f"Warning: could not resolve dependency {dep}")
-                        raise e
+                self._resolve_dependency(template, dep, template_id_lookup)
+        # check that all dependencies are valid (use parameters that exist, etc)
+        for template in self.get_templates():
+            template.check_dependencies()
 
     def _read_yml_file(
         self,
@@ -428,6 +495,18 @@ class Library:
         self._bm.table_connection.update_db_library_name(self._id, new_name)
         self._name = new_name
 
+    @property
+    def graph_imports(self) -> List[rdflib.URIRef]:
+        """
+        Get the list of owl:imports for this library's shape collection
+        """
+        shape_col = self.get_shape_collection()
+        return [
+            i
+            for i in shape_col.graph.objects(None, rdflib.OWL.imports)
+            if isinstance(i, rdflib.URIRef)
+        ]
+
     def create_template(
         self,
         name: str,
@@ -471,7 +550,7 @@ class Library:
         :return: list of templates
         :rtype: List[Template]
         """
-        db_library = self._bm.table_connection.get_db_library_by_id(self._id)
+        db_library = self._bm.table_connection.get_db_library(self._id)
         templates: List[DBTemplate] = db_library.templates
         return [Template.load(t.id) for t in templates]
 
@@ -481,7 +560,9 @@ class Library:
         :return: library's shape collection
         :rtype: ShapeCollection
         """
-        db_library = self._bm.table_connection.get_db_library_by_id(self._id)
+        # TODO: we should save the libraries shape_collection to a class attr on load/create. That
+        # way we wont need an additional db query each time we call this function.
+        db_library = self._bm.table_connection.get_db_library(self._id)
 
         return ShapeCollection.load(db_library.shape_collection.id)
 
@@ -498,3 +579,35 @@ class Library:
         if dbt.library_id != self._id:
             raise ValueError(f"Template {name} not in library {self._name}")
         return Template.load(dbt.id)
+
+
+def _resolve_library_definition(desc: Dict[str, Any]):
+    """
+    Loads a library from a description in libraries.yml
+    """
+    if "directory" in desc:
+        spath = pathlib.Path(desc["directory"]).absolute()
+        if spath.exists() and spath.is_dir():
+            logging.info(f"Load local library {spath} (directory)")
+            Library.load(directory=str(spath))
+        else:
+            raise Exception(f"{spath} is not an existing directory")
+    elif "ontology" in desc:
+        ont = desc["ontology"]
+        g = rdflib.Graph().parse(ont, format=rdflib.util.guess_format(ont))
+        logging.info(f"Load library {ont} as ontology graph")
+        Library.load(ontology_graph=g)
+    elif "git" in desc:
+        repo = desc["git"]["repo"]
+        branch = desc["git"]["branch"]
+        path = desc["git"]["path"]
+        logging.info(f"Load library {path} from git repository: {repo}@{branch}")
+        with tempfile.TemporaryDirectory() as temp_loc:
+            pygit2.clone_repository(
+                repo, temp_loc, checkout_branch=branch
+            )  # , depth=1)
+            new_path = pathlib.Path(temp_loc) / pathlib.Path(path)
+            if new_path.is_dir():
+                _resolve_library_definition({"directory": new_path})
+            else:
+                _resolve_library_definition({"ontology": new_path})

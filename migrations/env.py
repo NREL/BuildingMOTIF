@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from alembic import context
@@ -9,15 +10,15 @@ from buildingmotif.database.utils import (
     _custom_json_serializer,
 )
 
-# If config doesn't exist, this is considered a third party import and module cant be found.
-import configs as building_motif_configs  # type: ignore # isort:skip
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-# custom url from configs.
-config.set_main_option("sqlalchemy.url", building_motif_configs.DB_URI)
+# custom url from environment variable
+db_uri = os.getenv("DB_URI")
+if db_uri is None:
+    raise ValueError("envvar DB_URI not set.")
+config.set_main_option("sqlalchemy.url", db_uri)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
