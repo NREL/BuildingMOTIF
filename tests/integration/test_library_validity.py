@@ -46,22 +46,45 @@ def plug_223_connection_points(g: Graph):
 
 @pytest.mark.integration
 def test_223p_library(bm, library_path_223p: Path):
-    ont_223p = Library.load(ontology_graph="libraries/ashrae/223p/ontology/223p.ttl")
-    lib = Library.load(directory=str(library_path_223p))
+    Library.load(ontology_graph="libraries/ashrae/223p/ontology/223p.ttl")
+    Library.load(directory=str(library_path_223p))
     bm.session.commit()
 
+    # MODEL = Namespace("urn:ex/")
+    # for templ in lib.get_templates():
+    #    print(templ.name)
+    #    if templ.name in S223_SKIP_TEMPLATES:
+    #        print(" ...skipping")
+    #        continue
+    #    m = Model.create(MODEL)
+    #    _, g = templ.inline_dependencies().fill(MODEL, include_optional=False)
+    #    assert isinstance(g, Graph), "was not a graph"
+    #    bind_prefixes(g)
+    #    plug_223_connection_points(g)
+    #    m.add_graph(g)
+    #    m.graph.serialize("/tmp/model.ttl")
+    #    ctx = m.validate([ont_223p.get_shape_collection()], engine="topquadrant")
+    #    ctx.report.serialize("/tmp/report.ttl")
+    #    assert ctx.valid, ctx.report_string
+    #    bm.session.rollback()
+
+
+@pytest.mark.integration
+def test_223p_template(bm, library_path_223p, template_223p):
+    ont_223p = Library.load(ontology_graph="libraries/ashrae/223p/ontology/223p.ttl")
+
+    lib = Library.load(directory=str(library_path_223p))
+
+    template_223p = lib.get_template_by_name(template_223p)
+
     MODEL = Namespace("urn:ex/")
-    for templ in lib.get_templates():
-        print(templ.name)
-        if templ.name in S223_SKIP_TEMPLATES:
-            print(" ...skipping")
-            continue
-        m = Model.create(MODEL)
-        _, g = templ.inline_dependencies().fill(MODEL, include_optional=False)
-        assert isinstance(g, Graph), "was not a graph"
-        bind_prefixes(g)
-        plug_223_connection_points(g)
-        m.add_graph(g)
-        ctx = m.validate([ont_223p.get_shape_collection()], engine="topquadrant")
-        assert ctx.valid, ctx.report_string
-        bm.session.rollback()
+    m = Model.create(MODEL)
+    _, g = template_223p.inline_dependencies().fill(MODEL, include_optional=False)
+    assert isinstance(g, Graph), "was not a graph"
+    bind_prefixes(g)
+    plug_223_connection_points(g)
+    m.add_graph(g)
+    m.graph.serialize("/tmp/model.ttl")
+    ctx = m.validate([ont_223p.get_shape_collection()], engine="topquadrant")
+    ctx.report.serialize("/tmp/report.ttl")
+    assert ctx.valid, ctx.report_string

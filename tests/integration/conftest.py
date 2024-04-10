@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from buildingmotif import BuildingMOTIF
+from buildingmotif.dataclasses import Library
 
 
 def pytest_generate_tests(metafunc):
@@ -23,11 +24,29 @@ def pytest_generate_tests(metafunc):
 
         metafunc.parametrize("notebook", notebook_files)
 
+    libraries = ["libraries/ashrae/223p/nrel-templates"]
     # validates 223P libraries
     if "library_path_223p" in metafunc.fixturenames:
-        libraries = ["libraries/ashrae/223p/nrel-templates"]
 
         metafunc.parametrize("library_path_223p", libraries)
+
+    if (
+        "library_path_223p" in metafunc.fixturenames
+        and "template_223p" in metafunc.fixturenames
+    ):
+        bm = BuildingMOTIF("sqlite://")
+        bm.setup_tables()
+
+        templates = []
+        # load library
+        for library_path in libraries:
+            lib = Library.load(directory=library_path)
+            bm.session.commit()
+
+            for templ in lib.get_templates():
+                templates.append(templ.name)
+
+        metafunc.parametrize("template_223p", templates)
 
 
 @pytest.fixture
