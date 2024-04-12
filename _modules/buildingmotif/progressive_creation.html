@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>buildingmotif.schemas &#8212; BuildingMOTIF Documentation</title>
+    <title>buildingmotif.progressive_creation &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -61,7 +61,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/schemas';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/progressive_creation';</script>
     <link rel="shortcut icon" href="../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -323,7 +323,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/schemas.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/progressive_creation.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -401,54 +401,144 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>Source code for buildingmotif.schemas</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+  <h1>Source code for buildingmotif.progressive_creation</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_hex</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">import</span> <span class="nn">jsonschema</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span>
+<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
 
-<span class="n">LIBRARIES_YAML_SCHEMA</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;array&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;oneOf&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;directory&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">}},</span>
-                <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;directory&quot;</span><span class="p">],</span>
-            <span class="p">},</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ontology&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">}},</span>
-                <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ontology&quot;</span><span class="p">],</span>
-            <span class="p">},</span>
-            <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;git&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-                        <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="s2">&quot;repo&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
-                            <span class="s2">&quot;branch&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
-                            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">},</span>
-                        <span class="p">},</span>
-                        <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;branch&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">],</span>
-                    <span class="p">}</span>
-                <span class="p">},</span>
-                <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">],</span>
-            <span class="p">},</span>
-        <span class="p">],</span>
-    <span class="p">},</span>
-<span class="p">}</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Template</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">PARAM</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.template_matcher</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_ontology_lookup_cache</span><span class="p">,</span>
+    <span class="n">get_semantic_feasibility</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">Triple</span>
+
+<span class="c1"># from rdflib.compare import graph_diff</span>
 
 
-<div class="viewcode-block" id="validate_libraries_yaml"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.schemas.html#buildingmotif.schemas.validate_libraries_yaml">[docs]</a><span class="k">def</span> <span class="nf">validate_libraries_yaml</span><span class="p">(</span><span class="n">doc</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_is_parameterized_triple</span><span class="p">(</span><span class="n">triple</span><span class="p">:</span> <span class="n">Triple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validates a given document against the library.yml schema. Raises</span>
-<span class="sd">    a jsonschema.exceptions.ValidationError if errors are found</span>
-
-<span class="sd">    :param doc: a value retrieved from deserializing libraries.yml file</span>
+<span class="sd">    Returns true if a parameter appears in the triple</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">jsonschema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="n">LIBRARIES_YAML_SCHEMA</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="n">doc</span><span class="p">)</span></div>
+    <span class="n">st</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">triple</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">triple</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">triple</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="ow">or</span> <span class="n">st</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="ow">or</span> <span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_template_from_triples</span><span class="p">(</span><span class="n">lib</span><span class="p">:</span> <span class="n">Library</span><span class="p">,</span> <span class="n">triples</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Triple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">triples</span><span class="p">:</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lib</span><span class="o">.</span><span class="n">create_template</span><span class="p">(</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">g</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="compatible_triples"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.progressive_creation.html#buildingmotif.progressive_creation.compatible_triples">[docs]</a><span class="k">def</span> <span class="nf">compatible_triples</span><span class="p">(</span>
+    <span class="n">a</span><span class="p">:</span> <span class="n">Triple</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Triple</span><span class="p">,</span> <span class="n">sf_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two triples are compatible if:</span>
+<span class="sd">    - they are the same</span>
+<span class="sd">    - they are pairwise semantically feasible</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">a_term</span><span class="p">,</span> <span class="n">b_term</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sf_func</span><span class="p">(</span><span class="n">a_term</span><span class="p">,</span> <span class="n">b_term</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="progressive_plan"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.progressive_creation.html#buildingmotif.progressive_creation.progressive_plan">[docs]</a><span class="k">def</span> <span class="nf">progressive_plan</span><span class="p">(</span><span class="n">templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    We are given a list of templates; this is either a set of templates that</span>
+<span class="sd">    the model author supplies directly or are derived from sets of shapes that</span>
+<span class="sd">    need to be fulfilled.</span>
+
+<span class="sd">    We want to optimize the population of these templates: there may be</span>
+<span class="sd">    redundant information between them, or there may be some unique/rare parts</span>
+<span class="sd">    of templates whose populations can be postponed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># present result as a sequence of (parameterized) triples?</span>
+
+    <span class="c1"># greedy algorithm:</span>
+    <span class="c1"># start with the most common (substitutable) triple amongst all templates</span>
+    <span class="c1"># then choose the next most common triple, and so on.</span>
+    <span class="c1"># Yield triples that have parameters; automatically include</span>
+    <span class="c1"># non-parameterized triples</span>
+    <span class="n">templates</span> <span class="o">=</span> <span class="p">[</span><span class="n">template</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span> <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">]</span>
+    <span class="n">histogram</span><span class="p">:</span> <span class="n">Counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+    <span class="n">inv</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Triple</span><span class="p">,</span> <span class="n">Template</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">templ</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">:</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">_ontology_lookup_cache</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">body_triple</span> <span class="ow">in</span> <span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">triples</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">hist_triple</span> <span class="ow">in</span> <span class="n">histogram</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">sf_func</span> <span class="o">=</span> <span class="n">get_semantic_feasibility</span><span class="p">(</span>
+                    <span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">inv</span><span class="p">[</span><span class="n">hist_triple</span><span class="p">]</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">cache</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">compatible_triples</span><span class="p">(</span><span class="n">body_triple</span><span class="p">,</span> <span class="n">hist_triple</span><span class="p">,</span> <span class="n">sf_func</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">body_triple</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">hist_triple</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+                    <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">histogram</span><span class="p">[</span><span class="n">hist_triple</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                <span class="n">histogram</span><span class="p">[</span><span class="n">body_triple</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">inv</span><span class="p">[</span><span class="n">body_triple</span><span class="p">]</span> <span class="o">=</span> <span class="n">templ</span>
+
+    <span class="c1"># Start with the most common triple. We want to generate a sequence of triples</span>
+    <span class="c1"># that maximizes the number of templates that are included in the resulting graph.</span>
+    <span class="c1"># This is analogous to creating a left-biased CDF of (original) templates included</span>
+
+    <span class="c1"># idea 1: just iterate through most common histogram</span>
+    <span class="c1"># This has no guarantee that the sequence is optimal *or* connected.</span>
+    <span class="c1"># We probably want to prioritize creating a connected sequence..</span>
+    <span class="n">most_common</span> <span class="o">=</span> <span class="n">histogram</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span>
+    <span class="n">triples</span> <span class="o">=</span> <span class="p">[</span><span class="n">triple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="n">most_common</span><span class="p">]</span>
+
+    <span class="n">template_sequence</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;temporary&quot;</span><span class="p">)</span>
+    <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Triple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="n">triples</span><span class="p">:</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_is_parameterized_triple</span><span class="p">(</span><span class="n">triple</span><span class="p">):</span>
+            <span class="n">template_sequence</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_template_from_triples</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">buffer</span><span class="p">))</span>
+            <span class="n">buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">template_sequence</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_template_from_triples</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">buffer</span><span class="p">))</span>
+
+    <span class="c1"># TODO: need to mark when a new template is satisfied</span>
+
+    <span class="c1"># can look at the CDF for a site specification as part of paper evaluation</span>
+
+    <span class="c1"># stub of an alternative approach...</span>
+    <span class="c1"># for pair in combinations(templates, 2):</span>
+    <span class="c1"># for pair in permutations(templates, 2):</span>
+    <span class="c1">#    t1, t2 = pair[0].in_memory_copy(), pair[1].in_memory_copy()</span>
+    <span class="c1">#    print(t1.body.serialize())</span>
+    <span class="c1">#    print(&quot;-&quot; * 100)</span>
+    <span class="c1">#    print(t2.body.serialize())</span>
+    <span class="c1">#    print(&quot;-&quot; * 100)</span>
+    <span class="c1">#    tm = TemplateMatcher(t1.body, t2, context)</span>
+    <span class="c1">#    for mapping, subgraph in tm.building_mapping_subgraphs_iter(</span>
+    <span class="c1">#        size=tm.largest_mapping_size</span>
+    <span class="c1">#    ):</span>
+    <span class="c1">#        pprint(mapping)</span>
+    <span class="c1">#        print(subgraph.serialize())</span>
+
+    <span class="c1">#    # both, first, second = graph_diff(pair[0].body, pair[1].body)</span>
+    <span class="c1">#    # print(both.serialize())</span>
+    <span class="c1">#    print(&quot;*&quot; * 100)</span>
+    <span class="c1">#    print(&quot;*&quot; * 100)</span>
+
+    <span class="k">return</span> <span class="n">template_sequence</span></div>
 </pre></div>
 
                 </article>
