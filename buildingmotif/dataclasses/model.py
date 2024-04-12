@@ -197,7 +197,9 @@ class Model:
         data_graph = copy_graph(self.graph)
 
         # validate the data graph
-        valid, report_g, report_str = shacl_validate(data_graph, shapeg, engine=engine)
+        valid, report_g, report_str = shacl_validate(
+            data_graph, shapeg, engine=self._bm.shacl_engine
+        )
         return ValidationContext(
             shape_collections,
             shapeg,
@@ -231,7 +233,9 @@ class Model:
 
         model_graph = copy_graph(self.graph).skolemize()
 
-        return shacl_inference(model_graph, ontology_graph, engine)
+        return shacl_inference(
+            model_graph, ontology_graph, engine=self._bm.shacl_engine
+        )
 
     def test_model_against_shapes(
         self,
