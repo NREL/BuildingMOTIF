@@ -65,7 +65,7 @@ def test_validate_model_manifest(clean_building_motif, shacl_engine):
     m.update_manifest(lib.get_shape_collection())
 
     # validate against manifest -- should fail
-    result = m.validate(engine=shacl_engine)
+    result = m.validate()
     assert not result.valid
 
     # add triples to graph to validate
@@ -87,7 +87,7 @@ def test_validate_model_manifest(clean_building_motif, shacl_engine):
     m.graph.add((URIRef("https://example.com/temp"), A, BRICK.Temperature_Sensor))
 
     # validate against manifest -- should pass
-    result = m.validate(engine=shacl_engine)
+    result = m.validate()
     assert result.valid
 
 
@@ -142,7 +142,7 @@ def test_validate_model_explicit_shapes(clean_building_motif, shacl_engine):
     m = Model.create(name=BLDG)
     m.add_triples((BLDG["vav1"], A, BRICK.VAV))
 
-    ctx = m.validate([lib.get_shape_collection()], engine=shacl_engine)
+    ctx = m.validate([lib.get_shape_collection()])
     assert not ctx.valid
 
     m.add_triples((BLDG["vav1"], A, BRICK.VAV))
@@ -151,7 +151,7 @@ def test_validate_model_explicit_shapes(clean_building_motif, shacl_engine):
     m.add_triples((BLDG["vav1"], BRICK.hasPoint, BLDG["flow_sensor"]))
     m.add_triples((BLDG["flow_sensor"], A, BRICK.Air_Flow_Sensor))
 
-    ctx = m.validate([lib.get_shape_collection()], engine=shacl_engine)
+    ctx = m.validate([lib.get_shape_collection()])
     assert ctx.valid
 
     assert len(ctx.diffset) == 0
@@ -190,7 +190,7 @@ def test_validate_model_with_failure(bm: BuildingMOTIF, shacl_engine):
     model.add_graph(hvac_zone_instance)
 
     # validate the graph (should fail because there are no labels)
-    ctx = model.validate([shape_lib.get_shape_collection()], engine=shacl_engine)
+    ctx = model.validate([shape_lib.get_shape_collection()])
     assert isinstance(ctx, ValidationContext)
     assert not ctx.valid
     assert len(ctx.diffset) == 1
@@ -199,7 +199,7 @@ def test_validate_model_with_failure(bm: BuildingMOTIF, shacl_engine):
 
     model.add_triples((bindings["name"], RDFS.label, Literal("hvac zone 1")))
     # validate the graph (should now be valid)
-    ctx = model.validate([shape_lib.get_shape_collection()], engine=shacl_engine)
+    ctx = model.validate([shape_lib.get_shape_collection()])
     assert isinstance(ctx, ValidationContext)
     assert ctx.valid
 

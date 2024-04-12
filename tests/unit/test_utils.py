@@ -212,7 +212,7 @@ def test_inline_sh_and(bm: BuildingMOTIF, shacl_engine):
     sc = ShapeCollection.create()
     sc.add_graph(new_sg)
 
-    ctx = model.validate([sc], engine=shacl_engine)
+    ctx = model.validate([sc])
     assert not ctx.valid
 
     if shacl_engine == "pyshacl":
@@ -284,7 +284,7 @@ def test_inline_sh_node(bm: BuildingMOTIF, shacl_engine):
     sc = ShapeCollection.create()
     sc.add_graph(new_sg)
 
-    ctx = model.validate([sc], engine=shacl_engine)
+    ctx = model.validate([sc])
     assert not ctx.valid, ctx.report_string
     if shacl_engine == "pyshacl":
         assert (
