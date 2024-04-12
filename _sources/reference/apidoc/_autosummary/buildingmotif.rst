@@ -35,7 +35,6 @@
    buildingmotif.libraries
    buildingmotif.model_builder
    buildingmotif.namespaces
-   buildingmotif.progressive_creation
    buildingmotif.schemas
    buildingmotif.shape_builder
    buildingmotif.template_compilation
