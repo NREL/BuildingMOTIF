@@ -248,7 +248,7 @@ class Library:
         # expand the ontology graph before we insert it into the database. This will ensure
         # that the output of compiled models will not contain triples that really belong to
         # the ontology
-        ontology = shacl_inference(ontology)
+        ontology = shacl_inference(ontology, engine=get_building_motif().shacl_engine)
 
         lib = cls.create(ontology_name, overwrite=overwrite)
 
