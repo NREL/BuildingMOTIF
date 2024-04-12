@@ -147,7 +147,6 @@ class Model:
         self,
         shape_collections: Optional[List[ShapeCollection]] = None,
         error_on_missing_imports: bool = True,
-        engine: Optional[str] = "pyshacl",
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
@@ -164,10 +163,6 @@ class Model:
             ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
             to True
         :type error_on_missing_imports: bool, optional
-        :param engine: the engine to use for validation. "pyshacl" or "topquadrant". Using topquadrant
-            requires Java to be installed on this machine, and the "topquadrant" feature on BuildingMOTIF,
-            defaults to "pyshacl"
-        :type engine: str, optional
         :return: An object containing useful properties/methods to deal with
             the validation results
         :rtype: ValidationContext
@@ -209,18 +204,12 @@ class Model:
             self,
         )
 
-    def compile(
-        self, shape_collections: List["ShapeCollection"], engine: str = "pyshacl"
-    ):
+    def compile(self, shape_collections: List["ShapeCollection"]):
         """Compile the graph of a model against a set of ShapeCollections.
 
         :param shape_collections: list of ShapeCollections to compile the model
             against
         :type shape_collections: List[ShapeCollection]
-        :param engine: the engine to use for validation. "pyshacl" or "topquadrant". Using topquadrant
-            requires Java to be installed on this machine, and the "topquadrant" feature on BuildingMOTIF,
-            defaults to "pyshacl"
-        :type engine: str
         :return: copy of model's graph that has been compiled against the
             ShapeCollections
         :rtype: Graph
