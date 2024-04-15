@@ -121,6 +121,10 @@ class TemplateWrapper:
             raise TypeError(f"Invalid type for value: {type(value)}")
         self.bindings[param] = value
 
+    @property
+    def parameters(self):
+        return self.template.parameters
+
     def compile(self) -> Graph:
         """
         Compiles the template into a graph. If there are still parameters
