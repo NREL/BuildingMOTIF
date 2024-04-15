@@ -214,9 +214,7 @@ def test_model_compile(bm: BuildingMOTIF, shacl_engine):
 
     brick = Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
 
-    compiled_model = small_office_model.compile(
-        [brick.get_shape_collection()], engine=shacl_engine
-    )
+    compiled_model = small_office_model.compile([brick.get_shape_collection()])
 
     precompiled_model = Graph().parse(
         "tests/unit/fixtures/smallOffice_brick_compiled.ttl", format="ttl"
