@@ -213,8 +213,8 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.progressive_creation.html">buildingmotif.progressive_creation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
@@ -550,6 +550,7 @@ document.write(`
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">shape_collections</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ShapeCollection</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">error_on_missing_imports</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">engine</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pyshacl&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValidationContext&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates this model against the given list of ShapeCollections.</span>
 <span class="sd">        If no list is provided, the model will be validated against the model&#39;s &quot;manifest&quot;.</span>
@@ -566,6 +567,10 @@ document.write(`
 <span class="sd">            ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults</span>
 <span class="sd">            to True</span>
 <span class="sd">        :type error_on_missing_imports: bool, optional</span>
+<span class="sd">        :param engine: the engine to use for validation. &quot;pyshacl&quot; or &quot;topquadrant&quot;. Using topquadrant</span>
+<span class="sd">            requires Java to be installed on this machine, and the &quot;topquadrant&quot; feature on BuildingMOTIF,</span>
+<span class="sd">            defaults to &quot;pyshacl&quot;</span>
+<span class="sd">        :type engine: str, optional</span>
 <span class="sd">        :return: An object containing useful properties/methods to deal with</span>
 <span class="sd">            the validation results</span>
 <span class="sd">        :rtype: ValidationContext</span>
@@ -607,12 +612,18 @@ document.write(`
             <span class="bp">self</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.compile"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;ShapeCollection&quot;</span><span class="p">]):</span>
+<div class="viewcode-block" id="Model.compile"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;ShapeCollection&quot;</span><span class="p">],</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pyshacl&quot;</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compile the graph of a model against a set of ShapeCollections.</span>
 
 <span class="sd">        :param shape_collections: list of ShapeCollections to compile the model</span>
 <span class="sd">            against</span>
 <span class="sd">        :type shape_collections: List[ShapeCollection]</span>
+<span class="sd">        :param engine: the engine to use for validation. &quot;pyshacl&quot; or &quot;topquadrant&quot;. Using topquadrant</span>
+<span class="sd">            requires Java to be installed on this machine, and the &quot;topquadrant&quot; feature on BuildingMOTIF,</span>
+<span class="sd">            defaults to &quot;pyshacl&quot;</span>
+<span class="sd">        :type engine: str</span>
 <span class="sd">        :return: copy of model&#39;s graph that has been compiled against the</span>
 <span class="sd">            ShapeCollections</span>
 <span class="sd">        :rtype: Graph</span>

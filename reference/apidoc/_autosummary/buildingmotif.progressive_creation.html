@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>buildingmotif.model_builder &#8212; BuildingMOTIF Documentation</title>
+    <title>buildingmotif.progressive_creation &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -62,12 +62,12 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/apidoc/_autosummary/buildingmotif.model_builder';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/apidoc/_autosummary/buildingmotif.progressive_creation';</script>
     <link rel="shortcut icon" href="../../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="buildingmotif.namespaces" href="buildingmotif.namespaces.html" />
-    <link rel="prev" title="buildingmotif.libraries" href="buildingmotif.libraries.html" />
+    <link rel="next" title="buildingmotif.schemas" href="buildingmotif.schemas.html" />
+    <link rel="prev" title="buildingmotif.namespaces" href="buildingmotif.namespaces.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -216,8 +216,8 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.libraries.html">buildingmotif.libraries</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">buildingmotif.progressive_creation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
@@ -325,7 +325,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Freference/apidoc/_autosummary/buildingmotif.model_builder.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Freference/apidoc/_autosummary/buildingmotif.progressive_creation.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -355,7 +355,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="../../../_sources/reference/apidoc/_autosummary/buildingmotif.model_builder.rst" target="_blank"
+      <li><a href="../../../_sources/reference/apidoc/_autosummary/buildingmotif.progressive_creation.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -437,7 +437,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>buildingmotif.model_builder</h1>
+    <h1>buildingmotif.progressive_creation</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -451,102 +451,36 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="module-buildingmotif.model_builder">
-<span id="buildingmotif-model-builder"></span><h1>buildingmotif.model_builder<a class="headerlink" href="#module-buildingmotif.model_builder" title="Permalink to this heading">#</a></h1>
-<p class="rubric">Classes</p>
+  <section id="module-buildingmotif.progressive_creation">
+<span id="buildingmotif-progressive-creation"></span><h1>buildingmotif.progressive_creation<a class="headerlink" href="#module-buildingmotif.progressive_creation" title="Permalink to this heading">#</a></h1>
+<p class="rubric">Functions</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.model_builder.TemplateBuilderContext" title="buildingmotif.model_builder.TemplateBuilderContext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemplateBuilderContext</span></code></a>(ns)</p></td>
-<td><p>A context for building templates.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.progressive_creation.compatible_triples" title="buildingmotif.progressive_creation.compatible_triples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compatible_triples</span></code></a>(a, b, sf_func)</p></td>
+<td><p>Two triples are compatible if: - they are the same - they are pairwise semantically feasible</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.model_builder.TemplateWrapper" title="buildingmotif.model_builder.TemplateWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemplateWrapper</span></code></a>(template, ns)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.progressive_creation.progressive_plan" title="buildingmotif.progressive_creation.progressive_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">progressive_plan</span></code></a>(templates, context)</p></td>
+<td><p>We are given a list of templates; this is either a set of templates that the model author supplies directly or are derived from sets of shapes that need to be fulfilled.</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="py class">
-<dt class="sig sig-object py" id="buildingmotif.model_builder.TemplateBuilderContext">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TemplateBuilderContext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/model_builder.html#TemplateBuilderContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.model_builder.TemplateBuilderContext" title="Permalink to this definition">#</a></dt>
-<dd><p>A context for building templates. This class allows the user to
-add templates to the context and then access them by name. The
-context also allows the user to compile all of the templates in
-the context into a single graph.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.model_builder.TemplateBuilderContext.add">
-<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triple</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/model_builder.html#TemplateBuilderContext.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.model_builder.TemplateBuilderContext.add" title="Permalink to this definition">#</a></dt>
-<dd><p>Adds a triple to the context</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> – The subject of the triple</p></li>
-<li><p><strong>p</strong> – The predicate of the triple</p></li>
-<li><p><strong>o</strong> – The object of the triple</p></li>
-</ul>
-</dd>
-</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.progressive_creation.compatible_triples">
+<span class="sig-name descname"><span class="pre">compatible_triples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sf_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Node</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Node</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/progressive_creation.html#compatible_triples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.progressive_creation.compatible_triples" title="Permalink to this definition">#</a></dt>
+<dd><p>Two triples are compatible if:
+- they are the same
+- they are pairwise semantically feasible</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.model_builder.TemplateBuilderContext.add_template">
-<span class="sig-name descname"><span class="pre">add_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/model_builder.html#TemplateBuilderContext.add_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.model_builder.TemplateBuilderContext.add_template" title="Permalink to this definition">#</a></dt>
-<dd><p>Adds a template to the context with all of its dependencies
-inlined. Allows the user of the context to access the template
-by name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>template</strong> – The template to add to the context</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.model_builder.TemplateBuilderContext.add_templates_from_library">
-<span class="sig-name descname"><span class="pre">add_templates_from_library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">library</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library" title="buildingmotif.dataclasses.library.Library"><span class="pre">Library</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/model_builder.html#TemplateBuilderContext.add_templates_from_library"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.model_builder.TemplateBuilderContext.add_templates_from_library" title="Permalink to this definition">#</a></dt>
-<dd><p>Adds all of the templates from a library to the context</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>library</strong> – The library to add to the context</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.model_builder.TemplateBuilderContext.compile">
-<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Graph</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/model_builder.html#TemplateBuilderContext.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.model_builder.TemplateBuilderContext.compile" title="Permalink to this definition">#</a></dt>
-<dd><p>Compiles all of the template wrappers and concatenates them into a single Graph</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A graph containing all of the compiled templates</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="buildingmotif.model_builder.TemplateWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TemplateWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/model_builder.html#TemplateWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.model_builder.TemplateWrapper" title="Permalink to this definition">#</a></dt>
-<dd><dl class="py property">
-<dt class="sig sig-object py" id="buildingmotif.model_builder.TemplateWrapper.parameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#buildingmotif.model_builder.TemplateWrapper.parameters" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="buildingmotif.model_builder.TemplateWrapper.compile">
-<span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Graph</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/model_builder.html#TemplateWrapper.compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.model_builder.TemplateWrapper.compile" title="Permalink to this definition">#</a></dt>
-<dd><p>Compiles the template into a graph. If there are still parameters
-to be bound, then the template will be returned. Otherwise, the
-template will be filled and the resulting graph will be returned.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A graph containing the compiled template</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Graph</p>
-</dd>
-</dl>
-</dd></dl>
-
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.progressive_creation.progressive_plan">
+<span class="sig-name descname"><span class="pre">progressive_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">templates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/progressive_creation.html#progressive_plan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.progressive_creation.progressive_plan" title="Permalink to this definition">#</a></dt>
+<dd><p>We are given a list of templates; this is either a set of templates that
+the model author supplies directly or are derived from sets of shapes that
+need to be fulfilled.</p>
+<p>We want to optimize the population of these templates: there may be
+redundant information between them, or there may be some unique/rare parts
+of templates whose populations can be postponed.</p>
 </dd></dl>
 
 </section>
@@ -582,20 +516,20 @@ template will be filled and the resulting graph will be returned.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="buildingmotif.libraries.html"
+       href="buildingmotif.namespaces.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">buildingmotif.libraries</p>
+        <p class="prev-next-title">buildingmotif.namespaces</p>
       </div>
     </a>
     <a class="right-next"
-       href="buildingmotif.namespaces.html"
+       href="buildingmotif.schemas.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">buildingmotif.namespaces</p>
+        <p class="prev-next-title">buildingmotif.schemas</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

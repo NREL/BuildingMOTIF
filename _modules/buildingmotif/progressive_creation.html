@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>buildingmotif.model_builder &#8212; BuildingMOTIF Documentation</title>
+    <title>buildingmotif.progressive_creation &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -61,7 +61,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/model_builder';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/progressive_creation';</script>
     <link rel="shortcut icon" href="../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -213,8 +213,8 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.progressive_creation.html">buildingmotif.progressive_creation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
@@ -322,7 +322,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/model_builder.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/progressive_creation.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -400,151 +400,144 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>Source code for buildingmotif.model_builder</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">secrets</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+  <h1>Source code for buildingmotif.progressive_creation</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_hex</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span>
 <span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Template</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">RDFS</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">PARAM</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.template_matcher</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_ontology_lookup_cache</span><span class="p">,</span>
+    <span class="n">get_semantic_feasibility</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">Triple</span>
+
+<span class="c1"># from rdflib.compare import graph_diff</span>
 
 
-<div class="viewcode-block" id="TemplateBuilderContext"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext">[docs]</a><span class="k">class</span> <span class="nc">TemplateBuilderContext</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_is_parameterized_triple</span><span class="p">(</span><span class="n">triple</span><span class="p">:</span> <span class="n">Triple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A context for building templates. This class allows the user to</span>
-<span class="sd">    add templates to the context and then access them by name. The</span>
-<span class="sd">    context also allows the user to compile all of the templates in</span>
-<span class="sd">    the context into a single graph.</span>
+<span class="sd">    Returns true if a parameter appears in the triple</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new TemplateBuilderContext. The context will create</span>
-<span class="sd">        entities in the given namespace.</span>
-
-<span class="sd">        :param ns:  The namespace to use for the context</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">templates</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Template</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wrappers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TemplateWrapper</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span> <span class="o">=</span> <span class="n">ns</span>
-        <span class="c1"># stores triples outside of the templates</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_g</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
-
-<div class="viewcode-block" id="TemplateBuilderContext.add"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triple</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Adds a triple to the context</span>
-
-<span class="sd">        :param s: The subject of the triple</span>
-<span class="sd">        :param p: The predicate of the triple</span>
-<span class="sd">        :param o: The object of the triple</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_g</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="TemplateBuilderContext.add_template"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.add_template">[docs]</a>    <span class="k">def</span> <span class="nf">add_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Template</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Adds a template to the context with all of its dependencies</span>
-<span class="sd">        inlined. Allows the user of the context to access the template</span>
-<span class="sd">        by name.</span>
-
-<span class="sd">        :param template: The template to add to the context</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">templates</span><span class="p">[</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="TemplateBuilderContext.add_templates_from_library"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.add_templates_from_library">[docs]</a>    <span class="k">def</span> <span class="nf">add_templates_from_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">:</span> <span class="n">Library</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Adds all of the templates from a library to the context</span>
-
-<span class="sd">        :param library: The library to add to the context</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="n">library</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_template</span><span class="p">(</span><span class="n">template</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_name</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">template_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">templates</span><span class="p">:</span>
-            <span class="n">w</span> <span class="o">=</span> <span class="n">TemplateWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">templates</span><span class="p">[</span><span class="n">template_name</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">w</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid template name: </span><span class="si">{</span><span class="n">template_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="TemplateBuilderContext.compile"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compiles all of the template wrappers and concatenates them into a single Graph</span>
-
-<span class="sd">        :return: A graph containing all of the compiled templates</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
-        <span class="n">graph</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g</span>
-        <span class="k">for</span> <span class="n">wrapper</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrappers</span><span class="p">:</span>
-            <span class="n">graph</span> <span class="o">+=</span> <span class="n">wrapper</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
-        <span class="c1"># add a label to every instance if it doesn&#39;t have one. Make</span>
-        <span class="c1"># the label the same as the value part of the URI</span>
-        <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">triples</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">RDFS</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>
-                <span class="c1"># get the &#39;value&#39; part of the o URI using qname</span>
-                <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">namespace_manager</span><span class="o">.</span><span class="n">compute_qname</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">))</span>
-                <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">s</span><span class="p">,</span> <span class="n">RDFS</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">Literal</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
-        <span class="k">return</span> <span class="n">graph</span></div></div>
+    <span class="n">st</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">triple</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">triple</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">str</span><span class="p">(</span><span class="n">triple</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="ow">or</span> <span class="n">st</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="ow">or</span> <span class="n">st</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="TemplateWrapper"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateWrapper">[docs]</a><span class="k">class</span> <span class="nc">TemplateWrapper</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Template</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new TemplateWrapper. The wrapper is used to bind</span>
-<span class="sd">        parameters to a template and then compile the template into</span>
-<span class="sd">        a graph.</span>
+<span class="k">def</span> <span class="nf">_template_from_triples</span><span class="p">(</span><span class="n">lib</span><span class="p">:</span> <span class="n">Library</span><span class="p">,</span> <span class="n">triples</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Triple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">triples</span><span class="p">:</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lib</span><span class="o">.</span><span class="n">create_template</span><span class="p">(</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">g</span><span class="p">)</span>
 
-<span class="sd">        :param template: The template to wrap</span>
-<span class="sd">        :param ns: The namespace to use for the wrapper; all bindings will be added to this namespace</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">template</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">ns</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid parameter: </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="c1"># if the param is not bound, then invent a name</span>
-        <span class="c1"># by prepending the parameter name to a random string</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="n">param</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+<div class="viewcode-block" id="compatible_triples"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.progressive_creation.html#buildingmotif.progressive_creation.compatible_triples">[docs]</a><span class="k">def</span> <span class="nf">compatible_triples</span><span class="p">(</span>
+    <span class="n">a</span><span class="p">:</span> <span class="n">Triple</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Triple</span><span class="p">,</span> <span class="n">sf_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two triples are compatible if:</span>
+<span class="sd">    - they are the same</span>
+<span class="sd">    - they are pairwise semantically feasible</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">a_term</span><span class="p">,</span> <span class="n">b_term</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sf_func</span><span class="p">(</span><span class="n">a_term</span><span class="p">,</span> <span class="n">b_term</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
 
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid parameter: </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="c1"># if value is not a URIRef, Literal or BNode, then put it in the namespace</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">URIRef</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">BNode</span><span class="p">)):</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
-        <span class="c1"># check datatype of value is URIRef, Literal or BNode</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">URIRef</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">BNode</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type for value: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">parameters</span>
+<div class="viewcode-block" id="progressive_plan"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.progressive_creation.html#buildingmotif.progressive_creation.progressive_plan">[docs]</a><span class="k">def</span> <span class="nf">progressive_plan</span><span class="p">(</span><span class="n">templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">],</span> <span class="n">context</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    We are given a list of templates; this is either a set of templates that</span>
+<span class="sd">    the model author supplies directly or are derived from sets of shapes that</span>
+<span class="sd">    need to be fulfilled.</span>
 
-<div class="viewcode-block" id="TemplateWrapper.compile"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateWrapper.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compiles the template into a graph. If there are still parameters</span>
-<span class="sd">        to be bound, then the template will be returned. Otherwise, the</span>
-<span class="sd">        template will be filled and the resulting graph will be returned.</span>
+<span class="sd">    We want to optimize the population of these templates: there may be</span>
+<span class="sd">    redundant information between them, or there may be some unique/rare parts</span>
+<span class="sd">    of templates whose populations can be postponed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># present result as a sequence of (parameterized) triples?</span>
 
-<span class="sd">        :return: A graph containing the compiled template</span>
-<span class="sd">        :rtype: Graph</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
-        <span class="c1"># if this is true, there are still parameters to be bound</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">Template</span><span class="p">):</span>
-            <span class="n">bindings</span><span class="p">,</span> <span class="n">graph</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">,</span> <span class="n">include_optional</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bindings</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">graph</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">tmp</span></div></div>
+    <span class="c1"># greedy algorithm:</span>
+    <span class="c1"># start with the most common (substitutable) triple amongst all templates</span>
+    <span class="c1"># then choose the next most common triple, and so on.</span>
+    <span class="c1"># Yield triples that have parameters; automatically include</span>
+    <span class="c1"># non-parameterized triples</span>
+    <span class="n">templates</span> <span class="o">=</span> <span class="p">[</span><span class="n">template</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span> <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">]</span>
+    <span class="n">histogram</span><span class="p">:</span> <span class="n">Counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+    <span class="n">inv</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Triple</span><span class="p">,</span> <span class="n">Template</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">templ</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">:</span>
+        <span class="n">cache</span> <span class="o">=</span> <span class="n">_ontology_lookup_cache</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">body_triple</span> <span class="ow">in</span> <span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">triples</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">hist_triple</span> <span class="ow">in</span> <span class="n">histogram</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">sf_func</span> <span class="o">=</span> <span class="n">get_semantic_feasibility</span><span class="p">(</span>
+                    <span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">inv</span><span class="p">[</span><span class="n">hist_triple</span><span class="p">]</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">cache</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">compatible_triples</span><span class="p">(</span><span class="n">body_triple</span><span class="p">,</span> <span class="n">hist_triple</span><span class="p">,</span> <span class="n">sf_func</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">body_triple</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">hist_triple</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+                    <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">histogram</span><span class="p">[</span><span class="n">hist_triple</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                <span class="n">histogram</span><span class="p">[</span><span class="n">body_triple</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">inv</span><span class="p">[</span><span class="n">body_triple</span><span class="p">]</span> <span class="o">=</span> <span class="n">templ</span>
+
+    <span class="c1"># Start with the most common triple. We want to generate a sequence of triples</span>
+    <span class="c1"># that maximizes the number of templates that are included in the resulting graph.</span>
+    <span class="c1"># This is analogous to creating a left-biased CDF of (original) templates included</span>
+
+    <span class="c1"># idea 1: just iterate through most common histogram</span>
+    <span class="c1"># This has no guarantee that the sequence is optimal *or* connected.</span>
+    <span class="c1"># We probably want to prioritize creating a connected sequence..</span>
+    <span class="n">most_common</span> <span class="o">=</span> <span class="n">histogram</span><span class="o">.</span><span class="n">most_common</span><span class="p">()</span>
+    <span class="n">triples</span> <span class="o">=</span> <span class="p">[</span><span class="n">triple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="n">most_common</span><span class="p">]</span>
+
+    <span class="n">template_sequence</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;temporary&quot;</span><span class="p">)</span>
+    <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Triple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="n">triples</span><span class="p">:</span>
+        <span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_is_parameterized_triple</span><span class="p">(</span><span class="n">triple</span><span class="p">):</span>
+            <span class="n">template_sequence</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_template_from_triples</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">buffer</span><span class="p">))</span>
+            <span class="n">buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">template_sequence</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_template_from_triples</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">buffer</span><span class="p">))</span>
+
+    <span class="c1"># TODO: need to mark when a new template is satisfied</span>
+
+    <span class="c1"># can look at the CDF for a site specification as part of paper evaluation</span>
+
+    <span class="c1"># stub of an alternative approach...</span>
+    <span class="c1"># for pair in combinations(templates, 2):</span>
+    <span class="c1"># for pair in permutations(templates, 2):</span>
+    <span class="c1">#    t1, t2 = pair[0].in_memory_copy(), pair[1].in_memory_copy()</span>
+    <span class="c1">#    print(t1.body.serialize())</span>
+    <span class="c1">#    print(&quot;-&quot; * 100)</span>
+    <span class="c1">#    print(t2.body.serialize())</span>
+    <span class="c1">#    print(&quot;-&quot; * 100)</span>
+    <span class="c1">#    tm = TemplateMatcher(t1.body, t2, context)</span>
+    <span class="c1">#    for mapping, subgraph in tm.building_mapping_subgraphs_iter(</span>
+    <span class="c1">#        size=tm.largest_mapping_size</span>
+    <span class="c1">#    ):</span>
+    <span class="c1">#        pprint(mapping)</span>
+    <span class="c1">#        print(subgraph.serialize())</span>
+
+    <span class="c1">#    # both, first, second = graph_diff(pair[0].body, pair[1].body)</span>
+    <span class="c1">#    # print(both.serialize())</span>
+    <span class="c1">#    print(&quot;*&quot; * 100)</span>
+    <span class="c1">#    print(&quot;*&quot; * 100)</span>
+
+    <span class="k">return</span> <span class="n">template_sequence</span></div>
 </pre></div>
 
                 </article>
