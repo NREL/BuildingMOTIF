@@ -24,10 +24,9 @@ def pytest_generate_tests(metafunc):
 
         metafunc.parametrize("notebook", notebook_files)
 
+    # validate 223P libraries and templates
     libraries = ["libraries/ashrae/223p/nrel-templates"]
-    # validates 223P libraries
     if "library_path_223p" in metafunc.fixturenames:
-
         metafunc.parametrize("library_path_223p", libraries)
 
     if (
@@ -35,7 +34,6 @@ def pytest_generate_tests(metafunc):
         and "template_223p" in metafunc.fixturenames
     ):
         bm = BuildingMOTIF("sqlite://")
-        bm.setup_tables()
 
         templates = []
         # load library
@@ -45,8 +43,35 @@ def pytest_generate_tests(metafunc):
 
             for templ in lib.get_templates():
                 templates.append(templ.name)
+        bm.close()
+        BuildingMOTIF.clean()
 
         metafunc.parametrize("template_223p", templates)
+
+    # validate Brick libraries and temmplates
+    brick_libraries = ["libraries/ashrae/guideline36"]
+    if "library_path_brick" in metafunc.fixturenames:
+        metafunc.parametrize("library_path_brick", brick_libraries)
+
+    if (
+        "library_path_brick" in metafunc.fixturenames
+        and "template_brick" in metafunc.fixturenames
+    ):
+        bm = BuildingMOTIF("sqlite://")
+
+        Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
+        templates = []
+        # load library
+        for library_path in brick_libraries:
+            lib = Library.load(directory=library_path)
+            bm.session.commit()
+
+            for templ in lib.get_templates():
+                templates.append(templ.name)
+        bm.close()
+        BuildingMOTIF.clean()
+
+        metafunc.parametrize("template_brick", templates)
 
 
 @pytest.fixture
