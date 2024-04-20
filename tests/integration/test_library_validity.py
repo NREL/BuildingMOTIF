@@ -1,3 +1,4 @@
+import glob
 from pathlib import Path
 from typing import Set
 
@@ -77,8 +78,12 @@ def test_223p_library(bm, library_path_223p: Path):
 
 
 @pytest.mark.integration
-def test_223p_template(bm, library_path_223p, template_223p):
+def test_223p_template(bm, library_path_223p, template_223p, shacl_engine):
+    bm.shacl_engine = shacl_engine
     ont_223p = Library.load(ontology_graph="libraries/ashrae/223p/ontology/223p.ttl")
+    qudt_libs = []
+    for q in glob.glob("libraries/qudt/*.ttl"):
+        qudt_libs.append(Library.load(ontology_graph=q))
 
     lib = Library.load(directory=str(library_path_223p))
 
@@ -92,13 +97,20 @@ def test_223p_template(bm, library_path_223p, template_223p):
     plug_223_connection_points(g)
     m.add_graph(g)
     m.graph.serialize("/tmp/model.ttl")
-    ctx = m.validate([ont_223p.get_shape_collection()], engine="topquadrant")
+    ctx = m.validate(
+        [
+            ont_223p.get_shape_collection(),
+            *[q.get_shape_collection() for q in qudt_libs],
+        ],
+        error_on_missing_imports=False,
+    )
     ctx.report.serialize("/tmp/report.ttl")
     assert ctx.valid, ctx.report_string
 
 
 @pytest.mark.integration
-def test_brick_template(bm, library_path_brick, template_brick):
+def test_brick_template(bm, library_path_brick, template_brick, shacl_engine):
+    bm.shacl_engine = shacl_engine
     ont_brick = Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
 
     lib = Library.load(directory=str(library_path_brick))

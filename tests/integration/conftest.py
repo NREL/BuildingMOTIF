@@ -24,6 +24,10 @@ def pytest_generate_tests(metafunc):
 
         metafunc.parametrize("notebook", notebook_files)
 
+    if "shacl_engine" in metafunc.fixturenames:
+        shacl_engine = {"pyshacl", "topquadrant"}
+        metafunc.parametrize("shacl_engine", shacl_engine)
+
     # validate 223P libraries and templates
     libraries = ["libraries/ashrae/223p/nrel-templates"]
     if "library_path_223p" in metafunc.fixturenames:
