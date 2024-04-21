@@ -100,6 +100,11 @@ class TemplateWrapper:
         self.bindings: Dict[str, Node] = {}
         self.ns = ns
 
+    def __call__(self, **kwargs):
+        for k, v in kwargs.items():
+            self[k] = v
+        return self
+
     def __getitem__(self, param):
         if param in self.bindings:
             return self.bindings[param]
