@@ -213,8 +213,8 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.progressive_creation.html">buildingmotif.progressive_creation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
@@ -567,7 +567,6 @@ document.write(`
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No model with id </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
 
     <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">shacl_engine</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># no body provided -- default to model manifest and default SHACL engine</span>
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">content_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -600,12 +599,9 @@ document.write(`
                 <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Libraries with ids </span><span class="si">{</span><span class="n">nonexistent_libraries</span><span class="si">}</span><span class="s2"> do not exist&quot;</span>
             <span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
 
-        <span class="c1"># get shacl engine if it is provided</span>
-        <span class="n">shacl_engine</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;shacl_engine&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-
     <span class="c1"># if shape_collections is empty, model.validate will default</span>
     <span class="c1"># to the model&#39;s manifest</span>
-    <span class="n">vaildation_context</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">shacl_engine</span><span class="p">)</span>
+    <span class="n">vaildation_context</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">report_string</span><span class="p">,</span>
