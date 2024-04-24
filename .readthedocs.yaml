@@ -13,12 +13,9 @@ build:
   jobs:
     pre_build:
       # Generate the Sphinx configuration for this Jupyter Book so it builds.
-      - "jupyter-book config sphinx docs/"
-  jobs:
-    pre_build:
-      # Generate the Sphinx configuration for this Jupyter Book so it builds.
       - "pip install -U jupyter-book"
       - "jupyter-book config sphinx docs/"
+      # - "sphinx-build ./docs/ docs/_build/html -b html"
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
