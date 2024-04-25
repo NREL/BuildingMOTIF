@@ -319,7 +319,7 @@ heat-recovery-system:
     - template: heat-recovery-coil
       args: {"name": "EAU-HRC"}
     - template: sensor
-      args: {"name": "water-pressure-sensor", "property": "hrw_p", "where": "name"}
+      args: {"name": "water-pressure-sensor", "property": "hrw_p", "where": "HR-pmp"}
     - template: water-static-pressure
       args: {"name": "hrw_p"}
 
@@ -331,7 +331,7 @@ process-chilled-water-system:
     P:name a s223:System ;
       rdfs:label "Chilled Water System" ;
       s223:contains P:bypass-valve, P:lead-pchw-pump, P:standby-pchw-pump,
-                    P:water-sp-sensor, P:water-diff-press_sensor,
+                    P:water-sp-sensor, P:water-diff-press-sensor,
                     P:chw-hx ;
       s223:hasProperty P:water-sp, P:water-diff-press .
   dependencies:
@@ -344,10 +344,10 @@ process-chilled-water-system:
     - template: heat-exchanger
       args: {"name": "chw-hx"}
     - template: sensor
-      args: {"name": "water-sp-sensor", "property": "water-sp"}
+      args: {"name": "water-sp-sensor", "property": "water-sp", "where": "lead-pchw-pump"}
     - template: water-static-pressure
       args: {"name": "water-sp"}
-    - template: sensor
-      args: {"name": "water-diff-press-sensor", "property": "water-diff-press"}
+    - template: differential-sensor
+      args: {"name": "water-diff-press-sensor", "property": "water-diff-press", "whereA": "lead-pchw-pump", "whereB": "standby-pchw-pump"}
     - template: water-differential-pressure
       args: {"name": "water-diff-press"}
