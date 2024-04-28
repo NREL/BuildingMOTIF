@@ -328,7 +328,14 @@ sensor:
     P:name a s223:Sensor ;
       s223:hasObservationLocation P:where ;
       s223:observes P:property .
-  optional: ["where"]
+      #dependencies:
+      #  - template: http://data.ashrae.org/standard223#Property
+      #    library: http://data.ashrae.org/standard223/1.0/model/all
+      #    args: {"name": "property"}
+      #  - template: http://data.ashrae.org/standard223#Connectable
+      #    library: http://data.ashrae.org/standard223/1.0/model/all
+      #    args: {"name": "where"}
+      #    #optional: ["where"]
 
 differential-sensor:
   body: >
