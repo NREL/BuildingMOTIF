@@ -30,6 +30,22 @@ def pytest_generate_tests(metafunc):
 
     # validate 223P libraries and templates
     libraries = ["libraries/ashrae/223p/nrel-templates"]
+
+    # skip these templates because they require additional context to be loaded,
+    # and are covered by other template tests
+    to_skip = {
+        "nrel-templates": {
+            "sensor",
+            "differential-sensor",
+            "air-outlet-cp",
+            "air-inlet-cp",
+            "water-outlet-cp",
+            "water-inlet-cp",
+            "duct",
+            "junction",
+        }
+    }
+
     if "library_path_223p" in metafunc.fixturenames:
         metafunc.parametrize("library_path_223p", libraries)
 
@@ -46,6 +62,8 @@ def pytest_generate_tests(metafunc):
             bm.session.commit()
 
             for templ in lib.get_templates():
+                if templ.name in to_skip[lib.name]:
+                    continue
                 templates.append(templ.name)
         bm.close()
         BuildingMOTIF.clean()
