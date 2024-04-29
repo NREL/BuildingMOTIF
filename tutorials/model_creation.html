@@ -216,8 +216,8 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.progressive_creation.html">buildingmotif.progressive_creation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
@@ -573,17 +573,21 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/pyshacl/extras/__init__.py:46: Warning: Extra &quot;js&quot; is not satisfied because requirement pyduktape2 is not installed.
+  warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
+</pre></div>
+</div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
-  - https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#Velocity_Pressure_Sensor
-  - https://brickschema.org/schema/Brick#Average_Supply_Air_Flow_Sensor
-  - https://brickschema.org/schema/Brick#Hot_Water_Differential_Pressure_Load_Shed_Status
-  - https://brickschema.org/schema/Brick#Run_Enable_Command
-  - https://brickschema.org/schema/Brick#Air_Differential_Pressure_Sensor
-  - https://brickschema.org/schema/Brick#Discharge_Condenser_Water_Temperature_Sensor
-  - https://brickschema.org/schema/Brick#Unoccupied_Mode_Status
-  - https://brickschema.org/schema/Brick#Mixed_Air_Flow_Sensor
-  - https://brickschema.org/schema/Brick#Heating_Enable_Command
+  - https://brickschema.org/schema/Brick#Medium_Temperature_Hot_Water_Discharge_Temperature_Sensor
+  - https://brickschema.org/schema/Brick#Domestic_Hot_Water_Discharge_Temperature_Setpoint
+  - https://brickschema.org/schema/Brick#Heating_Command
+  - https://brickschema.org/schema/Brick#Alarm_Delay_Parameter
+  - https://brickschema.org/schema/Brick#On_Off_Status
+  - https://brickschema.org/schema/Brick#Motor_Direction_Status
+  - https://brickschema.org/schema/Brick#Min_Supply_Air_Temperature_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#High_Supply_Air_Temperature_Alarm
+  - https://brickschema.org/schema/Brick#Run_Status
+  - https://brickschema.org/schema/Brick#Low_Discharge_Air_Temperature_Alarm
 </pre></div>
 </div>
 </div>
@@ -607,7 +611,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=f24bd0bd-0942-454f-abbc-11bcc37f6a30 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=2044f3f7-5639-4bab-9260-c516be684359 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -653,7 +657,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=f24bd0bd-0942-454f-abbc-11bcc37f6a30 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=2044f3f7-5639-4bab-9260-c516be684359 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -690,9 +694,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The template has the following parameters:
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  name
+  name
 </pre></div>
 </div>
 </div>
@@ -877,7 +879,7 @@ bldg:A1 a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=f24bd0bd-0942-454f-abbc-11bcc37f6a30 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=2044f3f7-5639-4bab-9260-c516be684359 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
