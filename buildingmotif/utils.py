@@ -579,6 +579,7 @@ def shacl_validate(
             )
             pass
 
+    data_graph = data_graph + (shape_graph or Graph())
     return pyshacl.validate(
         data_graph,
         shacl_graph=shape_graph,
