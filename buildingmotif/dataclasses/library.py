@@ -416,6 +416,7 @@ class Library:
         # check documentation for skip_uri for what URIs get skipped
         if skip_uri(dep["template"]):
             return
+
         # if the dependency is not in the local cache, then search through this library's imports
         # for the template
         for imp in self.graph_imports:

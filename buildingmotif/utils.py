@@ -209,7 +209,9 @@ def get_template_parts_from_shape(
     for pshape in pshapes:
         property_path = shape_graph.value(pshape, SH["path"])
         if property_path is None:
-            raise Exception(f"no sh:path detected on {shape_name}")
+            raise Exception(
+                f"no sh:path detected on {shape_name} property shape {pshape}"
+            )
         # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
@@ -577,6 +579,7 @@ def shacl_validate(
             )
             pass
 
+    data_graph = data_graph + (shape_graph or Graph())
     return pyshacl.validate(
         data_graph,
         shacl_graph=shape_graph,
