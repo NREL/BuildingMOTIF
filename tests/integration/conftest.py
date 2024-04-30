@@ -33,7 +33,7 @@ def pytest_generate_tests(metafunc):
 
     # skip these templates because they require additional context to be loaded,
     # and are covered by other template tests
-    to_skip = {
+    to_skip_223p = {
         "nrel-templates": {
             "sensor",
             "differential-sensor",
@@ -62,7 +62,7 @@ def pytest_generate_tests(metafunc):
             bm.session.commit()
 
             for templ in lib.get_templates():
-                if templ.name in to_skip[lib.name]:
+                if templ.name in to_skip_223p[lib.name]:
                     continue
                 templates.append(templ.name)
         bm.close()
