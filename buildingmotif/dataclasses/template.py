@@ -4,6 +4,7 @@ import warnings
 from collections import Counter
 from copy import copy
 from dataclasses import dataclass
+from functools import cached_property
 from io import BytesIO, StringIO
 from itertools import chain
 from os import PathLike
@@ -139,7 +140,7 @@ class Template:
         """
         self._bm.table_connection.delete_template_dependency(self.id, dependency.id)
 
-    @property
+    @cached_property
     def all_parameters(self) -> Set[str]:
         """The set of all parameters used in this template *including* its
         dependencies. Includes optional parameters.
@@ -155,7 +156,7 @@ class Template:
             params.update(dep.template.parameters)
         return params
 
-    @property
+    @cached_property
     def parameters(self) -> Set[str]:
         """The set of all parameters used in this template *excluding* its
         dependencies. Includes optional parameters.
@@ -168,7 +169,7 @@ class Template:
         params = {str(p)[len(PARAM) :] for p in nodes if str(p).startswith(PARAM)}
         return params
 
-    @property
+    @cached_property
     def dependency_parameters(self) -> Set[str]:
         """The set of all parameters used in this template's dependencies, including
         optional parameters.
@@ -181,7 +182,7 @@ class Template:
             params = params.union(dep.template.parameters)
         return params
 
-    @property
+    @cached_property
     def parameter_counts(self) -> Counter:
         """An addressable histogram of the parameter name counts in this
         template and all of its transitive dependencies.
@@ -238,6 +239,7 @@ class Template:
         replace_nodes(templ.body, to_replace)
         return templ
 
+    @cached_property
     def transitive_parameters(self) -> Set[str]:
         """Get all parameters used in this template and its dependencies.
 
@@ -246,7 +248,7 @@ class Template:
         """
         params = set(self.parameters)
         for dep in self.get_dependencies():
-            transitive_params = dep.template.transitive_parameters()
+            transitive_params = dep.template.transitive_parameters
             rename_params: Dict[str, str] = {
                 ours: theirs for ours, theirs in dep.args.items()
             }

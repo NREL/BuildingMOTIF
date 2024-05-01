@@ -95,7 +95,7 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     templ = lib.get_template_by_name("single-zone-vav-ahu")
     assert len(templ.get_dependencies()) == 2
     inlined = templ.inline_dependencies()
-    transitive_params = templ.transitive_parameters()
+    transitive_params = templ.transitive_parameters
     assert len(inlined.get_dependencies()) == 0
     preserved_params = {
         "name",
@@ -127,7 +127,7 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     assert set(templ.optional_args) == {"d"}
     assert len(templ.get_dependencies()) == 3
     inlined = templ.inline_dependencies()
-    transitive_params = templ.transitive_parameters()
+    transitive_params = templ.transitive_parameters
     assert len(inlined.get_dependencies()) == 0
     assert inlined.parameters == {"name", "b", "c", "b-bp", "c-cp", "d", "d-dp"}
     assert transitive_params == inlined.parameters
@@ -140,7 +140,7 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     assert set(templ.optional_args) == {"b-bp"}
     assert len(templ.get_dependencies()) == 1
     inlined = templ.inline_dependencies()
-    transitive_params = templ.transitive_parameters()
+    transitive_params = templ.transitive_parameters
     assert len(inlined.get_dependencies()) == 0
     assert inlined.parameters == {"name", "b", "b-bp"}
     assert transitive_params == inlined.parameters
@@ -150,7 +150,7 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     parent = lib.get_template_by_name("Parent")
     assert parent.parameters == {"name", "level1"}
     inlined = parent.inline_dependencies()
-    transitive_params = parent.transitive_parameters()
+    transitive_params = parent.transitive_parameters
     assert inlined.parameters == {
         "name",
         "level1",
@@ -164,7 +164,7 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     parent = lib.get_template_by_name("Parent-opt")
     assert parent.parameters == {"name", "level1"}
     inlined = parent.inline_dependencies()
-    transitive_params = parent.transitive_parameters()
+    transitive_params = parent.transitive_parameters
     assert inlined.parameters == {
         "name",
         "level1",
