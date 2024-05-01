@@ -460,9 +460,9 @@ class TableConnection:
         from buildingmotif.dataclasses import Template
 
         templ = Template.load(template_id)
-        params = templ.inline_dependencies().parameters
+        params = templ.transitive_parameters()
         dep_templ = Template.load(dependency_id)
-        dep_params = dep_templ.inline_dependencies().parameters
+        dep_params = dep_templ.transitive_parameters()
 
         # check parameters are valid
         if not set(args.values()).issubset(params):
