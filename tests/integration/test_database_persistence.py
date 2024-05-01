@@ -12,7 +12,7 @@ def test_database_persistence(tmp_path):
     # create bm
     path = tmp_path / "db.db"
     print(path)
-    db_path = f"sqlite:///{path}"
+    db_path = "sqlite://"
     print(db_path)
     bm = BuildingMOTIF(db_path)
     print("setup tables")
