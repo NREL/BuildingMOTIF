@@ -8,11 +8,17 @@ from buildingmotif.dataclasses import Library, Model
 EXAMPLE_TRIPLE = (URIRef("http://example.org/alex"), RDF.type, FOAF.Person)
 
 
-def test_database_persistence():
+def test_database_persistence(tmp_path):
     # create bm
-    db_path = "sqlite:///db.db"
+    path = tmp_path / "db.db"
+    print(path)
+    db_path = f"sqlite:///{path}"
+    print(db_path)
     bm = BuildingMOTIF(db_path)
+    print("setup tables")
     bm.setup_tables()
+
+    print("make objects")
 
     # create objects
     library = Library.create("my_library")
