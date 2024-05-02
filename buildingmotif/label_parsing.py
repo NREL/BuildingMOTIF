@@ -1,4 +1,5 @@
 import re
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Callable, Dict, List, Optional, Tuple, Union
@@ -102,64 +103,92 @@ class ParseResult:
 # each tuple is a token, the type of the token, and the length of the token
 # the length of the token is used to keep track of how much of the string
 # has been parsed
-Parser = Callable[[str], List[TokenResult]]
+class Parser(ABC):
+    @abstractmethod
+    def __call__(self, *args) -> List[TokenResult]:
+        pass
 
 
-def string(s, type_name: TokenOrConstructor):
+class string(Parser):
     """Constructs a parser that matches a string."""
 
-    def parser(target: str) -> List[TokenResult]:
-        if target.startswith(s):
-            return [TokenResult(s, ensure_token(type_name, s), len(s))]
-        return [TokenResult(None, Null(), 0, f"Expected {s}, got {target[:len(s)]}")]
+    def __init__(self, s: str, type_name: TokenOrConstructor):
+        self.s = s
+        self.type_name = type_name
 
-    return parser
-
-
-def rest(type_name: TokenOrConstructor):
-    """Constructs a parser that matches the rest of the string."""
-
-    def parser(target: str) -> List[TokenResult]:
-        return [TokenResult(target, ensure_token(type_name, target), len(target))]
-
-    return parser
-
-
-def substring_n(length, type_name: TokenOrConstructor):
-    """Constructs a parser that matches a substring of length n."""
-
-    def parser(target: str) -> List[TokenResult]:
-        if len(target) >= length:
-            value = target[:length]
-            return [TokenResult(value, ensure_token(type_name, value), length)]
+    def __call__(self, target: str) -> List[TokenResult]:
+        if target.startswith(self.s):
+            return [
+                TokenResult(self.s, ensure_token(self.type_name, self.s), len(self.s))
+            ]
         return [
             TokenResult(
-                None, Null(), 0, f"Expected {length} characters, got {target[:length]}"
+                None, Null(), 0, f"Expected {self.s}, got {target[:len(self.s)]}"
             )
         ]
 
-    return parser
+
+class rest(Parser):
+    """Constructs a parser that matches the rest of the string."""
+
+    def __init__(self, type_name: TokenOrConstructor):
+        self.type_name = type_name
+
+    def __call__(self, target: str) -> List[TokenResult]:
+        return [TokenResult(target, ensure_token(self.type_name, target), len(target))]
 
 
-def regex(r, type_name: TokenOrConstructor):
+class substring_n(Parser):
+    """Constructs a parser that matches a substring of length n."""
+
+    def __init__(self, length, type_name: TokenOrConstructor):
+        self.length = length
+        self.type_name = type_name
+
+    def __call__(self, target: str) -> List[TokenResult]:
+        if len(target) >= self.length:
+            value = target[: self.length]
+            return [
+                TokenResult(value, ensure_token(self.type_name, value), self.length)
+            ]
+        return [
+            TokenResult(
+                None,
+                Null(),
+                0,
+                f"Expected {self.length} characters, got {target[:self.length]}",
+            )
+        ]
+
+
+class regex(Parser):
     """Constructs a parser that matches a regular expression."""
 
-    def parser(target: str) -> List[TokenResult]:
-        match = re.match(r, target)
+    def __init__(self, r, type_name: TokenOrConstructor):
+        self.r = r
+        self.type_name = type_name
+
+    def __call__(self, target: str) -> List[TokenResult]:
+        match = re.match(self.r, target)
         if match:
             value = match.group()
-            return [TokenResult(value, ensure_token(type_name, value), len(value))]
-        return [TokenResult(None, Null(), 0, f"Expected {r}, got {target[:len(r)]}")]
+            return [TokenResult(value, ensure_token(self.type_name, value), len(value))]
+        return [
+            TokenResult(
+                None, Null(), 0, f"Expected {self.r}, got {target[:len(self.r)]}"
+            )
+        ]
 
-    return parser
 
-
-def choice(*parsers):
+class choice(Parser):
     """Constructs a choice combinator of parsers."""
 
-    def parser(target: str) -> List[TokenResult]:
+    def __init__(self, *parsers):
+        self.parsers = parsers
+
+    def __call__(self, target: str) -> List[TokenResult]:
         errors = []
-        for p in parsers:
+        for p in self.parsers:
             result = p(target)
             if result and not any(r.error for r in result):
                 return result
@@ -167,31 +196,39 @@ def choice(*parsers):
                 errors.append(result[0].error)
         return [TokenResult(None, Null(), 0, " | ".join(errors))]
 
-    return parser
 
-
-def constant(type_name: Token):
+class constant(Parser):
     """Matches a constant token."""
 
-    def parser(target: str) -> List[TokenResult]:
-        return [TokenResult(None, type_name, 0)]
+    def __init__(self, type_name: Token):
+        self.type_name = type_name
 
-    return parser
+    def __call__(self, target: str) -> List[TokenResult]:
+        return [TokenResult(None, self.type_name, 0)]
 
 
-def abbreviations(patterns):
+class abbreviations(Parser):
     """Constructs a choice combinator of string matching based on a dictionary."""
-    parsers = [string(s, Constant(t)) for s, t in patterns.items()]
-    return choice(*parsers)
+
+    def __init__(self, patterns):
+        patterns = patterns
+        parsers = [string(s, Constant(t)) for s, t in patterns.items()]
+        self.choice = choice(*parsers)
+
+    def __call__(self, target):
+        return self.choice(target)
 
 
-def sequence(*parsers):
+class sequence(Parser):
     """Applies parsers in sequence. All parsers must match consecutively."""
 
-    def parser(target):
+    def __init__(self, *parsers):
+        self.parsers = parsers
+
+    def __call__(self, target: str) -> List[TokenResult]:
         results = []
         total_length = 0
-        for p in parsers:
+        for p in self.parsers:
             result = p(target)
             if not result:
                 raise Exception("Expected result")
@@ -205,16 +242,17 @@ def sequence(*parsers):
             total_length += sum([r.length for r in result])
         return results
 
-    return parser
 
-
-def many(seq_parser):
+class many(Parser):
     """Applies the given sequence parser repeatedly until it stops matching."""
 
-    def parser(target):
+    def __init__(self, seq_parser):
+        self.seq_parser = seq_parser
+
+    def __call__(self, target):
         results = []
         while True:
-            part = seq_parser(target)
+            part = self.seq_parser(target)
             if not part or part[0].value is None:
                 break
             results.extend(part)
@@ -223,50 +261,64 @@ def many(seq_parser):
             target = target[total_length:]
         return results
 
-    return parser
 
-
-def maybe(parser):
+class maybe(Parser):
     """Applies the given parser, but does not fail if it does not match."""
 
-    def maybe_parser(target):
-        result = parser(target)
+    def __init__(self, parser: Parser):
+        self.parser = parser
+
+    def __call__(self, target):
+        result = self.parser(target)
         # if the result is not empty and there are no errors, return the result, otherwise return a null token
         if result and not any(r.error for r in result):
             return result
         return [TokenResult(None, Null(), 0)]
 
-    return maybe_parser
 
-
-def until(parser, type_name: TokenOrConstructor):
+class until(Parser):
     """
     Constructs a parser that matches everything until the given parser matches.
     STarts with a string length of 1 and increments it until the parser matches.
     """
 
-    def until_parser(target):
+    def __init__(self, parser, type_name: TokenOrConstructor):
+        self.parser = parser
+        self.type_name = type_name
+
+    def __call__(self, target):
         length = 1
         while length <= len(target):
-            result = parser(target[length:])
+            result = self.parser(target[length:])
             if result and not any(r.error for r in result):
-                return [TokenResult(target[:length], ensure_token(type_name, target[:length]), length)]
+                return [
+                    TokenResult(
+                        target[:length],
+                        ensure_token(self.type_name, target[:length]),
+                        length,
+                    )
+                ]
             length += 1
-        return [TokenResult(None, Null(), 0, f"Expected {type_name}, got {target[:length]}")]
+        return [
+            TokenResult(
+                None, Null(), 0, f"Expected {self.type_name}, got {target[:length]}"
+            )
+        ]
 
-    return until_parser
 
-
-def extend_if_match(parser, type_name: Token):
+class extend_if_match(Parser):
     """Adds the type to the token result."""
-    def extend_with(target):
-        result = parser(target)
+
+    def __init__(self, parser, type_name: Token):
+        self.parser = parser
+        self.type_name = type_name
+
+    def __call__(self, target):
+        result = self.parser(target)
         if result and not any(r.error for r in result):
-            result.extend([TokenResult(None, type_name, 0)])
+            result.extend([TokenResult(None, self.type_name, 0)])
             return result
         return result
-
-    return extend_with
 
 
 def as_identifier(parser):
@@ -275,6 +327,7 @@ def as_identifier(parser):
     every Constant token in the result. The Identifier token
     has the same string value as the Constant token.
     """
+
     def as_identifier_parser(target):
         result = parser(target)
         if result and not any(r.error for r in result):
