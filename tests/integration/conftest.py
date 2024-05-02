@@ -29,7 +29,11 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize("shacl_engine", shacl_engine)
 
     # validate 223P libraries and templates
-    libraries = ["libraries/ashrae/223p/nrel-templates"]
+    libraries_223p = {
+        "libraries/ashrae/223p/nrel-templates": [
+            "makeup-air-unit",
+        ]
+    }
 
     # skip these templates because they require additional context to be loaded,
     # and are covered by other template tests
@@ -45,30 +49,18 @@ def pytest_generate_tests(metafunc):
             "junction",
         }
     }
+    _ = to_skip_223p
 
     if "library_path_223p" in metafunc.fixturenames:
-        metafunc.parametrize("library_path_223p", libraries)
+        metafunc.parametrize("library_path_223p", libraries_223p.keys())
 
     if (
         "library_path_223p" in metafunc.fixturenames
         and "template_223p" in metafunc.fixturenames
     ):
-        bm = BuildingMOTIF("sqlite://")
-
-        templates = []
-        # load library
-        for library_path in libraries:
-            lib = Library.load(directory=library_path)
-            bm.session.commit()
-
-            for templ in lib.get_templates():
-                if templ.name in to_skip_223p[lib.name]:
-                    continue
-                templates.append(templ.name)
-        bm.close()
-        BuildingMOTIF.clean()
-
-        metafunc.parametrize("template_223p", templates)
+        for library_path, template_list in libraries_223p.items():
+            metafunc.parametrize("library_path_223p", [library_path])
+            metafunc.parametrize("template_223p", template_list)
 
     # validate Brick libraries and temmplates
     brick_libraries = ["libraries/ashrae/guideline36"]
