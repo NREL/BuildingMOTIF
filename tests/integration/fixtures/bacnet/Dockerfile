@@ -9,7 +9,7 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN python3 -m pip install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt --break-system-packages
 
 COPY virtual_bacnet.py virtual_bacnet.py
 COPY BACpypes.ini .
