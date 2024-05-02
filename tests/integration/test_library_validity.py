@@ -117,6 +117,6 @@ def test_brick_template(bm, library_path_brick, template_brick, shacl_engine):
     bind_prefixes(g)
     m.add_graph(g)
     m.graph.serialize("/tmp/model.ttl")
-    ctx = m.validate([ont_brick.get_shape_collection()], engine="topquadrant")
+    ctx = m.validate([ont_brick.get_shape_collection()])
     ctx.report.serialize("/tmp/report.ttl")
     assert ctx.valid, ctx.report_string
