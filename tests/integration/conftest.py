@@ -59,7 +59,6 @@ def pytest_generate_tests(metafunc):
         and "template_223p" in metafunc.fixturenames
     ):
         for library_path, template_list in libraries_223p.items():
-            metafunc.parametrize("library_path_223p", [library_path])
             metafunc.parametrize("template_223p", template_list)
 
     # validate Brick libraries and temmplates
