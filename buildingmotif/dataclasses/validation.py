@@ -1,16 +1,15 @@
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import chain
 from secrets import token_hex
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple
 
-import re
 import rdflib
 from rdflib import Graph, URIRef
-from rdflib.term import Node, BNode
+from rdflib.term import BNode, Node
 
-import logging
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A
@@ -115,7 +114,7 @@ class PathClassCount(GraphDiff):
             { ?result sh:sourceConstraintComponent sh:QualifiedMinCountConstraintComponent }
             ?result sh:focusNode ?focus .
             ?shape sh:resultPath ?path .
-            { 
+            {
                 ?shape sh:class ?classname .
                 ?shape sh:minCount ?minc .
                 OPTIONAL { ?shape sh:maxCount ?maxc }
@@ -140,7 +139,6 @@ class PathClassCount(GraphDiff):
             )
             for focus, path, minc, maxc, classname in results
         ]
-
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
@@ -182,7 +180,9 @@ class PathShapeCount(GraphDiff):
     extra_deps: Optional[Tuple] = field(hash=False)
 
     @classmethod
-    def from_validation_report(cls, report: Graph) -> List["PathShapeCount"]:
+    def from_validation_report(
+        cls, report: Graph
+    ) -> Generator["PathShapeCount", None, None]:
         """Construct PathShapeCount objects from a SHACL validation report.
 
         :param report: the SHACL validation report
@@ -199,7 +199,7 @@ class PathShapeCount(GraphDiff):
             UNION
             { ?result sh:sourceConstraintComponent sh:QualifiedMinCountConstraintComponent }
             ?result sh:focusNode ?focus .
-            { 
+            {
                 ?shape sh:node ?shapename .
                 ?shape sh:minCount ?minc .
                 OPTIONAL { ?shape sh:maxCount ?maxc }
@@ -226,7 +226,6 @@ class PathShapeCount(GraphDiff):
                 extra_body,
                 tuple(deps),
             )
-
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
@@ -584,7 +583,7 @@ def diffset_to_templates(
             continue
 
         templ_lists = (diff.resolve(lib) for diff in diffset)
-        templs = list(filter(None, chain.from_iterable(templ_lists)))
+        templs: List[Template] = list(filter(None, chain.from_iterable(templ_lists)))
         if len(templs) <= 1:
             templates.extend(templs)
             continue
