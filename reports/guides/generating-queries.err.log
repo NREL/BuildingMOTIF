@@ -21,74 +21,32 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-from rdflib import Graph, URIRef
-from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import ShapeCollection
-from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
+from buildingmotif.dataclasses import Model
+from rdflib import Namespace
+import pandas as pd
 
-# in-memory instance
-bm = BuildingMOTIF("sqlite://")
+# generate and save the query string to a variable
+app_query = sc.shape_to_query(app1_shape)
 
-sc = ShapeCollection.create()
-sc.graph.parse(data="""
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix brick: <https://brickschema.org/schema/Brick#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
-@prefix : <urn:simpleapp/> .
+# Create the 'building1' model and load the contents from a file
+BLDG = Namespace("urn:building1")
+model = Model.create(BLDG)
+model.graph.parse("query_generation_example.ttl")
 
-: a owl:Ontology .
-
-:app1 a sh:NodeShape ;
-    sh:targetClass brick:Fan_Coil_Unit ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedValueShape [ sh:class brick:Occupied_Cooling_Temperature_Setpoint ] ;
-        sh:name "coolsp" ;
-    ] ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedValueShape [ sh:class brick:Occupied_Heating_Temperature_Setpoint ] ;
-        sh:name "heatsp" ;
-    ] ;
-    sh:property [
-        sh:path ( brick:feeds brick:hasPart brick:hasPoint ) ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedValueShape [ sh:class brick:Air_Temperature_Sensor ] ;
-        sh:name "roomTemp" ;
-    ] ;
-.
-""")
+res = model.graph.query(app_query)
+df = pd.DataFrame(res.bindings)
+print(df.iloc[0])
 ------------------
 
-Traceback [0;36m(most recent call last)[0m:
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
+Cell [0;32mIn[5], line 3[0m
+[1;32m      1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Model
+[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m [38;5;28;01mimport[39;00m Namespace
+[0;32m----> 3[0m [38;5;28;01mimport[39;00m [38;5;21;01mpandas[39;00m [38;5;28;01mas[39;00m [38;5;21;01mpd[39;00m
+[1;32m      5[0m [38;5;66;03m# generate and save the query string to a variable[39;00m
+[1;32m      6[0m app_query [38;5;241m=[39m sc[38;5;241m.[39mshape_to_query(app1_shape)
 
-[0m  File [1;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/IPython/core/interactiveshell.py:3508[0m in [1;35mrun_code[0m
-    exec(code_obj, self.user_global_ns, self.user_ns)[0m
-
-[0m  Cell [1;32mIn[1], line 3[0m
-    from buildingmotif.dataclasses import ShapeCollection[0m
-
-[0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/__init__.py:1[0m
-    from buildingmotif.dataclasses.library import Library  # noqa[0m
-
-[0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:19[0m
-    from buildingmotif.dataclasses.template import Template[0m
-
-[0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/template.py:17[0m
-    from buildingmotif.dataclasses.model import Model[0m
-
-[0;36m  File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:10[0;36m
-[0;31m    from buildingmotif.dataclasses.validation import ValidationContext[0;36m
-
-[0;36m  File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/validation.py:441[0;36m[0m
-[0;31m    def get_reasons_with_severity([0m
-[0m                                  ^[0m
-[0;31mIndentationError[0m[0;31m:[0m unindent does not match any outer indentation level
-
-IndentationError: unindent does not match any outer indentation level (validation.py, line 441)
+[0;31mModuleNotFoundError[0m: No module named 'pandas'
+ModuleNotFoundError: No module named 'pandas'
 
