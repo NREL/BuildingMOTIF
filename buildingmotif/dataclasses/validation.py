@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import chain
 from secrets import token_hex
-from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rdflib
 from rdflib import Graph, URIRef
@@ -438,7 +438,7 @@ class ValidationContext:
         """
         return self.diffset.get(entity, set())
 
-      def get_reasons_with_severity(
+    def get_reasons_with_severity(
         self, severity: Union[URIRef, str]
     ) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """
