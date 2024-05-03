@@ -2,7 +2,7 @@ import re
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from rdflib import URIRef
 
@@ -105,7 +105,7 @@ class ParseResult:
 # has been parsed
 class Parser(ABC):
     @abstractmethod
-    def __call__(self, *args) -> List[TokenResult]:
+    def __call__(self, target: str) -> List[TokenResult]:
         pass
 
 
