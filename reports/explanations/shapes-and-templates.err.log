@@ -21,29 +21,15 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-from rdflib import Namespace
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, Library
-from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
+from buildingmotif.dataclasses import Library
 
 # in-memory instance
 bm = BuildingMOTIF("sqlite://")
 
-# create the namespace for the building
-BLDG = Namespace('urn:bldg/')
-
-# create the building model
-model = Model.create(BLDG, description="This is a test model for a simple building")
-
-# load tutorial 1 model
-model.graph.parse("tutorial1_model.ttl", format="ttl")
-
-# load libraries included with the python package
-constraints = Library.load(ontology_graph="../../buildingmotif/libraries/constraints/constraints.ttl")
-
-# load libraries excluded from the python package (available from the repository)
-brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
-g36 = Library.load(directory="../../libraries/ashrae/guideline36")
+# load library
+brick = Library.load(ontology_graph="https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl")
+lib = Library.load(ontology_graph="myshapes.ttl")
 ------------------
 
 Traceback [0;36m(most recent call last)[0m:
@@ -51,8 +37,8 @@ Traceback [0;36m(most recent call last)[0m:
 [0m  File [1;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/IPython/core/interactiveshell.py:3508[0m in [1;35mrun_code[0m
     exec(code_obj, self.user_global_ns, self.user_ns)[0m
 
-[0m  Cell [1;32mIn[1], line 3[0m
-    from buildingmotif.dataclasses import Model, Library[0m
+[0m  Cell [1;32mIn[2], line 2[0m
+    from buildingmotif.dataclasses import Library[0m
 
 [0m  File [1;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/__init__.py:1[0m
     from buildingmotif.dataclasses.library import Library  # noqa[0m
