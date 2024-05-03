@@ -50,7 +50,7 @@ def plug_223_connection_points(g: Graph):
 
 @pytest.mark.integration
 def test_brick_library(bm, library_path_brick: Path):
-    Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
+    Library.load(ontology_graph="libraries/brick/Brick.ttl")
     Library.load(directory=str(library_path_brick))
     bm.session.commit()
 
@@ -104,7 +104,7 @@ def test_223p_template(bm, library_path_223p, template_223p, shacl_engine):
 @pytest.mark.integration
 def test_brick_template(bm, library_path_brick, template_brick, shacl_engine):
     bm.shacl_engine = shacl_engine
-    ont_brick = Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
+    ont_brick = Library.load(ontology_graph="libraries/brick/Brick.ttl")
 
     lib = Library.load(directory=str(library_path_brick))
 

@@ -1,4 +1,3 @@
-import pytest
 from rdflib import RDF, URIRef
 from rdflib.compare import isomorphic
 from rdflib.namespace import FOAF
@@ -9,11 +8,9 @@ from buildingmotif.dataclasses import Library, Model
 EXAMPLE_TRIPLE = (URIRef("http://example.org/alex"), RDF.type, FOAF.Person)
 
 
-def test_database_persistence(tmp_path):
+def test_database_persistence():
     # create bm
-    path = tmp_path / "db.db"
-    print(path)
-    db_path = f"sqlite://{path}"
+    db_path = "sqlite://db.db"
     print(db_path)
     bm = BuildingMOTIF(db_path)
     print("setup tables")
