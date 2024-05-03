@@ -396,6 +396,9 @@ class ValidationContext:
     """
 
     shape_collections: List[ShapeCollection]
+    # the shapes graph that was used to validate the model
+    # This will be skolemized!
+    shapes_graph: Graph
     valid: bool
     report: rdflib.Graph
     report_string: str
@@ -407,10 +410,6 @@ class ValidationContext:
         SHACL validation report.
         """
         return self._report_to_diffset()
-
-    @cached_property
-    def _context(self) -> Graph:
-        return sum((sc.graph for sc in self.shape_collections), start=Graph())  # type: ignore
 
     def as_templates(self) -> List["Template"]:
         """Produces the set of templates that reconcile the GraphDiffs from the
@@ -439,6 +438,43 @@ class ValidationContext:
         """
         return self.diffset.get(entity, set())
 
+      def get_reasons_with_severity(
+        self, severity: Union[URIRef, str]
+    ) -> Dict[Optional[URIRef], Set[GraphDiff]]:
+        """
+        Like diffset, but only includes ValidationResults with the given severity.
+        Permitted values are:
+        - SH.Violation or "Violation" for violations
+        - SH.Warning or "Warning" for warnings
+        - SH.Info or "Info" for info
+
+        :param severity: the severity to filter by
+        :type severity: Union[URIRef|str]
+        :return: a dictionary of focus nodes to the reasons with the given severity
+        :rtype: Dict[Optional[URIRef], Set[GraphDiff]]
+        """
+
+        if not isinstance(severity, URIRef):
+            severity = SH[severity]
+
+        # check if the severity is a valid SHACL severity
+        if severity not in {SH.Violation, SH.Warning, SH.Info}:
+            raise ValueError(
+                f"Invalid severity: {severity}. Must be one of SH.Violation, SH.Warning, or SH.Info"
+            )
+
+        # for each value in the diffset, filter out the diffs that don't have the given severity
+        # in the diffset.graph
+        return {
+            focus: {
+                diff
+                for diff in diffs
+                if diff.validation_result.value(diff._result_uri, SH.resultSeverity)
+                == severity
+            }
+            for focus, diffs in self.diffset.items()
+        }
+
     def _report_to_diffset(self) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """Interpret a SHACL validation report and say what is missing.
 
@@ -450,7 +486,7 @@ class ValidationContext:
         # TODO: for future use
         # proppath = SH["property"] | (SH.qualifiedValueShape / SH["property"])  # type: ignore
 
-        g = self.report + self._context
+        g = self.report + self.shapes_graph
         diffs: Dict[Optional[URIRef], Set[GraphDiff]] = defaultdict(set)
 
         for result in g.objects(predicate=SH.result):
