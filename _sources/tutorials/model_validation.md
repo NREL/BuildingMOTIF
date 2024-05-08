@@ -169,12 +169,12 @@ As an exercise, try writing shapes that require the model to contain the followi
     sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .
 ``` -->
 
-Put all of the above in a new file called `tutorial1_manifest.ttl`. We'll also add a shape called `sz-vav-ahu-control-sequences`, which is a use case shape to validate the model against in the next section.
+Put all of the above in a new file called `tutorial2_manifest.ttl`. We'll also add a shape called `sz-vav-ahu-control-sequences`, which is a use case shape to validate the model against in the next section.
 
-The following block of code puts all of the above in the `tutorial1_manifest.ttl` file for you:
+The following block of code puts all of the above in the `tutorial2_manifest.ttl` file for you:
 
 ```{code-cell}
-with open("tutorial1_manifest.ttl", "w") as f:
+with open("tutorial2_manifest.ttl", "w") as f:
     f.write("""
 @prefix brick: <https://brickschema.org/schema/Brick#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -217,6 +217,10 @@ with open("tutorial1_manifest.ttl", "w") as f:
     constraint:exactCount 1 ;
     constraint:class brick:Heating_Coil .
 
+:sz-vav-ahu-control-sequences a sh:NodeShape ;
+    sh:message "AHUs must match the single-zone VAV AHU shape" ;
+    sh:targetClass brick:AHU ;
+    sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .
 """)
 ```
 
@@ -229,9 +233,9 @@ the most common use case, so this is treated specially in BuildingMOTIF.
 
 ```{code-cell}
 # load manifest into BuildingMOTIF as its own library!
-manifest = Library.load(ontology_graph="tutorial1_manifest.ttl")
+manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
 # set it as the manifest for the model
-model.update_manifest(manifest.get_shape_collection())
+model.update_manifest(manifest)
 ```
 
 ### Validating the Model
@@ -247,10 +251,8 @@ validation_result = model.validate()
 print(f"Model is valid? {validation_result.valid}")
 
 # print reasons
-for entity, errors in validation_result.diffset.items():
-    print(entity)
-    for err in errors:
-        print(f" - {err.reason()}")
+for diff in validation_result.diffset:
+    print(f" - {diff.reason()}")
 ```
 
 ```{admonition} Tip on supplying extra shape collections
@@ -269,19 +271,17 @@ shape_collections = [
 ]
 
 # pass a list of shape collections to .validate()
-validation_result = model.validate(shape_collections)
+validation_result = model.validate()
 print(f"Model is valid? {validation_result.valid}")
 
 # print reasons
-for entity, errors in validation_result.diffset.items():
-    print(entity)
-    for err in errors:
-        print(f" - {err.reason()}")
+for diff in validation_result.diffset:
+    print(f" - {diff.reason()}")
 ```
 
 ### Fixing the Model
 
-One of the reasons the model is failing is we don't have a heating coil required by the manifest, which we forgot to add in the previous tutorial. It's also failing the use case validation, which we'll cover in the next section. To fix the manifest validation, use the equipment templates in the Brick library to create a heating coil, add it to the model, and connect it to the AHU using RDFLib's `graph.add()` method.
+The model is failing because we don't have a heating coil required by the manifest, which we forgot to add in the previous tutorial. It's also failing the use case validation, which we'll cover in the next section. To fix the manifest validation, use the equipment templates in the Brick library to create a heating coil, add it to the model, and connect it to the AHU using RDFLib's `graph.add()` method.
 
 ```{code-cell}
 # ahu name
@@ -310,13 +310,11 @@ validation_result = model.validate()
 print(f"Model is valid? {validation_result.valid}")
 
 # print reasons
-for entity, errors in validation_result.diffset.items():
-    print(entity)
-    for err in errors:
-        print(f" - {err.reason()}")
+for diff in validation_result.diffset:
+    print(f" - {diff.reason()}")
 ```
 
-Success! Our model is now valid.
+Success! The model is no longer failing the manifest validation.
 
 ## Model Validation - Use Case 
 
@@ -335,20 +333,16 @@ for shape in shapes.get_shapes_of_definition_type(BMOTIF["System_Specification"]
 
 The model represents the Small Office Commercial Prototype Building model, which has single zone packaged AHUs, so we're interested in validating it against Section 4.8 of Guideline 36 for single zone variable air volume (VAV) AHUs. 
 
-Let's update our manifest to include the requirement that AHUs must match the "single zone AHU" shape from G36:
-
+<!-- Let's append a reference to that shape in the manifest file.
 ```{code-cell}
-model.get_manifest().graph.parse(data="""
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix brick: <https://brickschema.org/schema/Brick#> .
-@prefix : <urn:my_site_constraints/> .
+with open("tutorial2_manifest.ttl", "a") as f:
+    f.write("""
 :sz-vav-ahu-control-sequences a sh:NodeShape ;
     sh:message "AHUs must match the single-zone VAV AHU shape" ;
     sh:targetClass brick:AHU ;
     sh:node <urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu> .
 """)
-```
-
+``` -->
 
 ### Validating the Model
 
@@ -356,7 +350,7 @@ model.get_manifest().graph.parse(data="""
 
 ```{code-cell}
 # load manifest into BuildingMOTIF as its own library!
-manifest = Library.load(ontology_graph="tutorial1_manifest.ttl")
+manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
 
 # gather these into a list for ease of use
 shape_collections = [
@@ -370,15 +364,7 @@ shape_collections = [
 validation_result = model.validate(shape_collections)
 print(f"Model is valid? {validation_result.valid}")
 ``` -->
-Now we can run validation to see if our AHU is ready to run the "single zone AHU" control sequence:
-
-```{code-cell}
-validation_result = model.validate()
-print(f"Model is valid? {validation_result.valid}")
-```
-
-The AHU fails validation because it doesn't match the `sz-vav-ahu-control-sequences` requirements.
-Take a look at the first bit of output, which is the official SHACL validation report text format. This can be difficult to interpret without a background in SHACL, so BuildingMOTIF provides a more easily understood version of the same information.
+As shown in the previous section, the AHU fails validation because it doesn't match the `sz-vav-ahu-control-sequences` requirements. Take a look at the first bit of output, which is the official SHACL validation report text format. These aren't very understandable but BuildingMOTIF can make this output more interpretable!
 
 ```{code-cell}
 # SHACL validation report
@@ -386,21 +372,14 @@ print(validation_result.report_string)
 
 # separator
 print("-"*79)
-```
 
-Here is BuildingMOTIF's interpretation of that report.
-
-```{code-cell}
 # BuildingMOTIF output
 print("Model is invalid for these reasons:")
-for entity, errors in validation_result.diffset.items():
-    print(entity)
-    for err in errors:
-        print(f" - {err.reason()}")
+for diff in validation_result.diffset:
+    print(f" - {diff.reason()}")
 ```
 
-The model is failing because the AHU doesn't have the required points. We could find those templates manually, evaluate them, and add the resulting graphs to the model. However, this can be a bit
-tedious. To address this issue, BuildingMOTIF can find those templates automatically for us. We'll cover this feature in the next tutorial so let's save the model.
+The model is failing because the AHU doesn't have the minimum number of supply fans associated with it. We *could* add the fan explicitly by adding those triples to the model like we've done previously, but we can also ask BuildingMOTIF to generate new templates that explicitly prompt us for the missing information. We'll cover this feature in the next tutorial so let's save the model.
 
 ```{code-cell}
 #save model
