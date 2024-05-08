@@ -333,7 +333,7 @@ class TableConnection:
         """Get a template's dependencies and its arguments.
 
         If you don't need the arguments, consider using
-        :py:method:`dataclasses.template.get_dependencies`.
+        :py:meth:`dataclasses.template.get_dependencies`.
 
         :param id: template id
         :type id: int
@@ -439,7 +439,7 @@ class TableConnection:
         """Verify that the dependency between two templates is well-formed. This involves
         a series of checks:
         - existence of the dependent and dependency templates is performed during the
-        :py:method:`database.template_connection.`add_template_dependency_preliminary` method
+        :py:meth:`database.table_connection.`add_template_dependency_preliminary` method
         - the args keys appear in the dependency, or recursively in a template that is a dependency
         of the named dependency
         - the args values appear in the dependent template
