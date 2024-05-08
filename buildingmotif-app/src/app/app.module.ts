@@ -38,6 +38,8 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatCheckboxModule} from '@angular/material/checkbox'; 
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatStepperModule} from '@angular/material/stepper';
+import { PointlabelParserComponent } from './pointlabel-parser/pointlabel-parser.component';
+import {MatGridListModule} from '@angular/material/grid-list'; 
 
 @NgModule({
   declarations: [
@@ -53,6 +55,7 @@ import {MatStepperModule} from '@angular/material/stepper';
     TemplateEvaluateResultComponent,
     ModelNewComponent,
     ModelValidateComponent,
+    PointlabelParserComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,6 +83,7 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatCheckboxModule,
     MatDialogModule,
     MatStepperModule,
+    MatGridListModule,
   ],
   providers: [TemplateDetailService, LibraryService],
   bootstrap: [AppComponent]

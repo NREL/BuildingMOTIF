@@ -24,6 +24,9 @@ export class ModelNewComponent {
     const name = this.newModelForm.value.nameControl
     const description = this.newModelForm.value.descriptionControl
 
+    if (!name) return;
+    if (!description) return;
+
     this.modelNewService.createModel(name, description).subscribe({
       next: (newModel: Model) => {
         this.router.navigate([`/models/${newModel.id}`])

@@ -1,0 +1,27 @@
+<div style="display: flex;">
+  <mat-card>
+    <mat-card-title>Point Labels</mat-card-title>
+    <mat-card-content>
+      <ngx-codemirror #codemirror [options]="codeMirrorOptions" [formControl]="pointLabelsFormControl"></ngx-codemirror>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-title>Parsers</mat-card-title>
+    <mat-card-content>
+      <ngx-codemirror #codemirror [options]="codeMirrorOptions" [formControl]="parsersFormControl"></ngx-codemirror>
+    </mat-card-content>
+  </mat-card>
+</div>
+<button mat-raised-button color="primary" (click)="parse()">Parse</button>
+
+<mat-list>
+  <mat-card *ngFor="let r of results">
+   <span *ngFor="let t of r.tokens">
+      <a *ngIf="t.token == 'Delimiter'" style="color:red">{{t.value}}</a>
+      <a *ngIf="t.token == 'Identifier'" style="color:blue">{{t.value}}</a>
+      <a *ngIf="t.token == 'Constant'" style="color:green">{{t.value}}</a>
+      <a *ngIf="t.token !== 'Delimiter' && t.token !== 'Identifier' && t.token !== 'Constant'" style="color: purple">{{t.value}}</a>
+   </span>
+  </mat-card>
+</mat-list>  
