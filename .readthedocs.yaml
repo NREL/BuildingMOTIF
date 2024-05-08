@@ -13,7 +13,7 @@ build:
   jobs:
     pre_build:
       # Generate the Sphinx configuration for this Jupyter Book so it builds.
-      - "pip install -U jupyter-book"
+      - "pip install -U jupyter-book==0.15.1"
       - "jupyter-book config sphinx docs/"
       - "sphinx-build ./docs/ docs/_build/html -b html"
 
@@ -21,7 +21,7 @@ build:
 sphinx:
   configuration: docs/conf.py
   builder: html
-  fail_on_warning: true   
+  fail_on_warning: true
 
 # If using Sphinx, optionally build your docs in additional formats such as PDF
 # formats:
