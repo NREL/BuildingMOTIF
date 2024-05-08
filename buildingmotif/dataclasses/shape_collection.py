@@ -263,9 +263,9 @@ class ShapeCollection:
         SHACL shape. This uses the following rules:
         - `<shape> sh:targetClass <class>` -> `?target rdf:type/rdfs:subClassOf* <class>`
         - `<shape> sh:property [ sh:path <path>; sh:class <class>; sh:name <name> ]` ->
-            ?target <path> ?name . ?name rdf:type/rdfs:subClassOf* <class>
+        ?target <path> ?name . ?name rdf:type/rdfs:subClassOf* <class>
         - `<shape> sh:property [ sh:path <path>; sh:hasValue <value>]` ->
-            ?target <path> <value>
+        ?target <path> <value>
         """
         clauses, project = _shape_to_where(self.graph, shape)
         preamble = """PREFIX sh: <http://www.w3.org/ns/shacl#>
