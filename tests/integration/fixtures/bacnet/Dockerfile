@@ -1,12 +1,6 @@
-FROM ubuntu:latest as base
+FROM python:3.9 as base
 
 WORKDIR /opt
-
-RUN apt update \
-    && apt install -y \
-    python3 \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt
