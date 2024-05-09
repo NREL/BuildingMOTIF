@@ -1,0 +1,81 @@
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/client.py", line 1269, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/util.py", line 85, in wrapped
+    return just_run(coro(*args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/util.py", line 60, in just_run
+    return loop.run_until_complete(coro)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/client.py", line 707, in async_execute
+    await self.async_execute_cell(
+  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/client.py", line 1025, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/nbclient/client.py", line 919, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# use the name of the AHU from above as the base of our template names
+ahu_name = "Core_ZN-PSC_AC"
+
+# lookup for the name of the template to the name of the point or part
+points_and_parts = {
+    "resolve_Core_ZN-PSC_ACMixed_Air_Temperature_Sensor": "-MAT",
+    "resolve_Core_ZN-PSC_ACFilter_Differential_Pressure_Sensor": "-FilterDPS",
+    "resolve_Core_ZN-PSC_ACCooling_Command": "-CCmd",
+    "resolve_Core_ZN-PSC_ACHeating_Command": "-HCmd",
+    "resolve_Core_ZN-PSC_ACOutside_Air_Temperature_Sensor": "-OAT",
+    "resolve_Core_ZN-PSC_ACSupply_Air_Temperature_Sensor": "-SAT",
+    "resolve_Core_ZN-PSC_ACReturn_Air_Temperature_Sensor": "-RAT",
+    "resolveCore_ZN-PSC_ACsa-fan": "-Fan", # this is an existing fan in the model!
+}
+
+for templ in generated_templates.get_templates():
+    templ = templ.inline_dependencies()
+
+    suffix = points_and_parts[templ.name]
+
+    # we know from the exploration above that each template has
+    # 1 parameter which is the name of the missing item
+    param = list(templ.parameters)[0]
+    bindings = {
+        param: BLDG[ahu_name + suffix],
+    }
+    thing = templ.evaluate(bindings)
+    model.add_graph(thing)
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mTypeError[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[6], line 28[0m
+[1;32m     24[0m bindings [38;5;241m=[39m {
+[1;32m     25[0m     param: BLDG[ahu_name [38;5;241m+[39m suffix],
+[1;32m     26[0m }
+[1;32m     27[0m thing [38;5;241m=[39m templ[38;5;241m.[39mevaluate(bindings)
+[0;32m---> 28[0m [43mmodel[49m[38;5;241;43m.[39;49m[43madd_graph[49m[43m([49m[43mthing[49m[43m)[49m
+
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:144[0m, in [0;36mModel.add_graph[0;34m(self, graph)[0m
+[1;32m    138[0m [38;5;28;01mdef[39;00m [38;5;21madd_graph[39m([38;5;28mself[39m, graph: rdflib[38;5;241m.[39mGraph) [38;5;241m-[39m[38;5;241m>[39m [38;5;28;01mNone[39;00m:
+[1;32m    139[0m [38;5;250m    [39m[38;5;124;03m"""Add the given graph to the model.[39;00m
+[1;32m    140[0m 
+[1;32m    141[0m [38;5;124;03m    :param graph: the graph to add to the model[39;00m
+[1;32m    142[0m [38;5;124;03m    :type graph: rdflib.Graph[39;00m
+[1;32m    143[0m [38;5;124;03m    """[39;00m
+[0;32m--> 144[0m     [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mgraph[49m[43m [49m[38;5;241;43m+[39;49m[38;5;241;43m=[39;49m[43m [49m[43mgraph[49m
+
+File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/rdflib/graph.py:722[0m, in [0;36mGraph.__iadd__[0;34m(self, other)[0m
+[1;32m    719[0m [38;5;28;01mdef[39;00m [38;5;21m__iadd__[39m([38;5;28mself[39m: [38;5;124m"[39m[38;5;124m_GraphT[39m[38;5;124m"[39m, other: Iterable[[38;5;124m"[39m[38;5;124m_TripleType[39m[38;5;124m"[39m]) [38;5;241m-[39m[38;5;241m>[39m [38;5;124m"[39m[38;5;124m_GraphT[39m[38;5;124m"[39m:
+[1;32m    720[0m [38;5;250m    [39m[38;5;124;03m"""Add all triples in Graph other to Graph.[39;00m
+[1;32m    721[0m [38;5;124;03m    BNode IDs are not changed."""[39;00m
+[0;32m--> 722[0m     [38;5;28mself[39m[38;5;241m.[39maddN[43m([49m[43m([49m[43ms[49m[43m,[49m[43m [49m[43mp[49m[43m,[49m[43m [49m[43mo[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[43m)[49m[43m [49m[38;5;28;43;01mfor[39;49;00m[43m [49m[43ms[49m[43m,[49m[43m [49m[43mp[49m[43m,[49m[43m [49m[43mo[49m[43m [49m[38;5;129;43;01min[39;49;00m[43m [49m[43mother[49m[43m)[49m
+[1;32m    723[0m     [38;5;28;01mreturn[39;00m [38;5;28mself[39m
+
+[0;31mTypeError[0m: 'Template' object is not iterable
+TypeError: 'Template' object is not iterable
+
