@@ -2,7 +2,7 @@
 
 Assume we have the following Template in a library called `csv-tutorial`:
 
-```yaml
+```yml
 my-thermostat:
   body: >
     @prefix P: <urn:___param___#> .
