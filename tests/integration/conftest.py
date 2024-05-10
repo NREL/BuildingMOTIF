@@ -72,7 +72,7 @@ def pytest_generate_tests(metafunc):
     ):
         bm = BuildingMOTIF("sqlite://")
 
-        Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
+        Library.load(ontology_graph="libraries/brick/Brick.ttl")
         templates = []
         # load library
         for library_path in brick_libraries:
