@@ -640,6 +640,26 @@ document.write(`
         <span class="n">replace_nodes</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">to_replace</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">templ</span></div>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">transitive_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all parameters used in this template and its dependencies.</span>
+
+<span class="sd">        :return: set of all parameters</span>
+<span class="sd">        :rtype: Set[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
+            <span class="n">transitive_params</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">transitive_parameters</span>
+            <span class="n">rename_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">ours</span><span class="p">:</span> <span class="n">theirs</span> <span class="k">for</span> <span class="n">ours</span><span class="p">,</span> <span class="n">theirs</span> <span class="ow">in</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+            <span class="n">name_prefix</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">transitive_params</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span> <span class="ow">and</span> <span class="n">param</span> <span class="o">!=</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span>
+                    <span class="n">rename_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name_prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rename_params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">params</span>
+
 <div class="viewcode-block" id="Template.inline_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.inline_dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">inline_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Template&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Copies this template with all dependencies recursively inlined.</span>
 
