@@ -33,7 +33,6 @@
    buildingmotif.dataclasses
    buildingmotif.ingresses
    buildingmotif.libraries
-   buildingmotif.model_builder
    buildingmotif.namespaces
    buildingmotif.schemas
    buildingmotif.shape_builder
