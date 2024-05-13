@@ -45,10 +45,10 @@
     ] ;
 .
 
-:zone-temperature a sh:NodeShape ;
+:zone-temperature a sh:NodeShape, owl:Class ;
     sh:or ( :zone-temperature1 :zone-temperature2 ) .
 
-:zone-temperature1 a sh:NodeShape ;
+:zone-temperature1 a sh:NodeShape, owl:Class ;
     sh:property [
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Zone_Air_Temperature_Sensor ] ;
@@ -79,17 +79,21 @@
     ] ;
 .
 
-:occupancy-sensor a sh:NodeShape ;
+:occupancy-sensor a sh:NodeShape, owl:Class ;
     sh:or ( :occupancy-sensor1 :occupancy-sensor2 ) .
-:occupancy-sensor1 a sh:PropertyShape ;
-    sh:path brick:hasPoint ;
-    sh:qualifiedValueShape [ sh:class brick:Occupancy_Sensor ] ;
-    sh:qualifiedMinCount 0 ;
+:occupancy-sensor1 a sh:NodeShape, owl:Class ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Occupancy_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+    ]
 .
-:occupancy-sensor2 a sh:PropertyShape ;
-    sh:path ( [ sh:oneOrMorePath brick:feeds ] [ sh:zeroOrOnePath brick:hasPart ] ) ;
-    sh:qualifiedValueShape [ sh:or ( :zone-with-occ-sensor :room-with-occ-sensor ) ] ;
-    sh:qualifiedMinCount 0 ;
+:occupancy-sensor2 a sh:NodeShape, owl:Class ;
+    sh:property [
+        sh:path ( [ sh:oneOrMorePath brick:feeds ] [ sh:zeroOrOnePath brick:hasPart ] ) ;
+        sh:qualifiedValueShape [ sh:or ( :zone-with-occ-sensor :room-with-occ-sensor ) ] ;
+        sh:qualifiedMinCount 0 ;
+    ]
 .
 :zone-with-occ-sensor a sh:NodeShape, owl:Class ;
     sh:class brick:HVAC_Zone ;
@@ -127,28 +131,33 @@
                 sh:path brick:hasPoint ;
                 sh:qualifiedMinCount 1 ;
                 sh:qualifiedValueShape [ sh:class brick:Open_Close_Status ] ;
-            ] ;
-        ] ;
+            ]
+        ]
     ]
 .
 
 
-:zone-co2-level ;
+:zone-co2-level a sh:NodeShape, owl:Class ;
     sh:or ( :zone-co2-level1 :zone-co2-level2 ) .
-:zone-co2-level1  a sh:PropertyShape ;
-    sh:path brick:hasPoint ;
-    sh:qualifiedValueShape [ sh:class brick:CO2_Level_Sensor ] ;
-    sh:qualifiedMinCount 0  ;
+
+:zone-co2-level1  a sh:NodeShape, owl:Class ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:CO2_Level_Sensor ] ;
+        sh:qualifiedMinCount 0  ;
+    ]
 .
-:zone-co2-level2 a sh:PropertyShape ;
-   sh:path (
-     [ sh:oneOrMorePath brick:feeds ]
-     [ sh:zeroOrOnePath brick:hasPart ]
-   ) ;
-   sh:qualifiedValueShape [
-     sh:or ( :zone-with-co2-sensor :space-with-co2-sensor )
-   ] ;
-   sh:qualifiedMinCount 0 ;
+:zone-co2-level2 a sh:NodeShape, owl:Class ;
+   sh:property [
+       sh:path (
+         [ sh:oneOrMorePath brick:feeds ]
+         [ sh:zeroOrOnePath brick:hasPart ]
+       ) ;
+       sh:qualifiedValueShape [
+         sh:or ( :zone-with-co2-sensor :space-with-co2-sensor )
+       ] ;
+       sh:qualifiedMinCount 0 ;
+    ]
 .
 
 :zone-with-co2-sensor a sh:NodeShape, owl:Class ;
