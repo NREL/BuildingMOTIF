@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>buildingmotif.ingresses.csv &#8212; BuildingMOTIF Documentation</title>
+    <title>buildingmotif.ingresses.csvingress &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -61,7 +61,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/ingresses/csv';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/ingresses/csvingress';</script>
     <link rel="shortcut icon" href="../../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -207,11 +207,13 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csv.html">buildingmotif.ingresses.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.html">buildingmotif.ingresses.csvingress</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
@@ -321,7 +323,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/ingresses/csv.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/ingresses/csvingress.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -399,7 +401,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>Source code for buildingmotif.ingresses.csv</h1><div class="highlight"><pre>
+  <h1>Source code for buildingmotif.ingresses.csvingress</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">csv</span> <span class="kn">import</span> <span class="n">DictReader</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
@@ -409,7 +411,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">buildingmotif.ingresses.base</span> <span class="kn">import</span> <span class="n">Record</span><span class="p">,</span> <span class="n">RecordIngressHandler</span>
 
 
-<div class="viewcode-block" id="CSVIngress"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csv.html#buildingmotif.ingresses.csv.CSVIngress">[docs]</a><span class="k">class</span> <span class="nc">CSVIngress</span><span class="p">(</span><span class="n">RecordIngressHandler</span><span class="p">):</span>
+<div class="viewcode-block" id="CSVIngress"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.html#buildingmotif.ingresses.csvingress.CSVIngress">[docs]</a><span class="k">class</span> <span class="nc">CSVIngress</span><span class="p">(</span><span class="n">RecordIngressHandler</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads rows from a CSV file and exposes them as records.</span>
 <span class="sd">    The type of the record is the name of the CSV file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -427,6 +429,9 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">rtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">data</span><span class="p">:</span>
+            <span class="c1"># if data is a string, convert to StringIO</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dict_reader</span> <span class="o">=</span> <span class="n">DictReader</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rtype</span> <span class="o">=</span> <span class="s2">&quot;data stream&quot;</span>
 

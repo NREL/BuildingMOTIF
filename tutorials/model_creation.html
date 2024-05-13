@@ -210,11 +210,13 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.csv.html">buildingmotif.ingresses.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.html">buildingmotif.ingresses.csvingress</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
@@ -579,16 +581,16 @@ document.write(`
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Collection_Basin_Water
-  - https://brickschema.org/schema/Brick#Supply_Air_Duct_Pressure_Status
-  - https://brickschema.org/schema/Brick#Electric_CurrentShape
-  - https://brickschema.org/schema/Brick#Battery_Voltage_Sensor
-  - https://brickschema.org/schema/Brick#Pre_Filter
-  - https://brickschema.org/schema/Brick#Energy_Sensor
-  - https://brickschema.org/schema/Brick#Video_Intercom
-  - https://brickschema.org/schema/Brick#Fire_Alarm_Pull_Station
-  - https://brickschema.org/schema/Brick#Air_Flow_Demand_Setpoint
-  - https://brickschema.org/schema/Brick#NVR
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Exhaust_Air_Static_Pressure_Sensor
+  - https://brickschema.org/schema/Brick#CO_Level_Sensor
+  - https://brickschema.org/schema/Brick#Max_Occupied_Cooling_Supply_Air_Flow_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Atmospheric_PressureShape
+  - https://brickschema.org/schema/Brick#Furniture
+  - https://brickschema.org/schema/Brick#Building
+  - https://brickschema.org/schema/Brick#Exhaust_Air_Flow_Proportional_Band_Parameter
+  - https://brickschema.org/schema/Brick#Fire_Alarm_Manual_Call_Point
+  - https://brickschema.org/schema/Brick#Stage_Enable_Command
+  - https://brickschema.org/schema/Brick#Electric_Baseboard_Radiator
 </pre></div>
 </div>
 </div>
@@ -612,7 +614,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=a83b8872-593d-4350-a62d-b7b4230d9fb1 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=3f87588d-93ee-49e4-95cc-7142d1194fe2 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -658,7 +660,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=a83b8872-593d-4350-a62d-b7b4230d9fb1 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=3f87588d-93ee-49e4-95cc-7142d1194fe2 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -900,7 +902,7 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=a83b8872-593d-4350-a62d-b7b4230d9fb1 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=3f87588d-93ee-49e4-95cc-7142d1194fe2 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>

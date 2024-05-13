@@ -1,0 +1,892 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>buildingmotif.label_parsing &#8212; BuildingMOTIF Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/apidoc/_autosummary/buildingmotif.label_parsing';</script>
+    <link rel="shortcut icon" href="../../../_static/BuildingMOTIF-icon-rev.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="buildingmotif.libraries" href="buildingmotif.libraries.html" />
+    <link rel="prev" title="buildingmotif.ingresses.xlsx" href="buildingmotif.ingresses.xlsx.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+
+  <div class="bd-header-announcement container-fluid bd-header-announcement">
+    <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
+  </div>
+
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-light" alt="BuildingMOTIF Documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-dark" alt="BuildingMOTIF Documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../README.html">
+                    BuildingMOTIF
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../developer_documentation.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli_tool.html">Command Line Interface</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Code Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="buildingmotif.html">buildingmotif</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.api.app.html">buildingmotif.api.app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.api.views.html">buildingmotif.api.views</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.building_motif.html">buildingmotif.building_motif</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.building_motif.building_motif.html">buildingmotif.building_motif.building_motif</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.building_motif.singleton.html">buildingmotif.building_motif.singleton</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.database.utils.html">buildingmotif.database.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.library.html">buildingmotif.dataclasses.library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.model.html">buildingmotif.dataclasses.model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.template.html">buildingmotif.dataclasses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.validation.html">buildingmotif.dataclasses.validation</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.ingresses.html">buildingmotif.ingresses</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.csvingress.html">buildingmotif.ingresses.csvingress</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">buildingmotif.label_parsing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.schemas.html">buildingmotif.schemas</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.utils.html">buildingmotif.utils</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_creation.html">Model Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_validation.html">Model Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_correction.html">Model Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/template_writing.html">Template Writing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/csv-import.html">CSV Import</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/generating-queries.html">Generating SPARQL Queries</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Freference/apidoc/_autosummary/buildingmotif.label_parsing.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/reference/apidoc/_autosummary/buildingmotif.label_parsing.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>buildingmotif.label_parsing</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="module-buildingmotif.label_parsing">
+<span id="buildingmotif-label-parsing"></span><h1>buildingmotif.label_parsing<a class="headerlink" href="#module-buildingmotif.label_parsing" title="Permalink to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.analyze_failures" title="buildingmotif.label_parsing.analyze_failures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">analyze_failures</span></code></a>(failures)</p></td>
+<td><p>Analyze the failures of a parser.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.as_identifier" title="buildingmotif.label_parsing.as_identifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_identifier</span></code></a>(parser)</p></td>
+<td><p>If the parser matches, add a new Identifier token after every Constant token in the result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.ensure_token" title="buildingmotif.label_parsing.ensure_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_token</span></code></a>(token_or_constructor, value)</p></td>
+<td><p>Ensure a value is a token or constructs one from a given value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.first_true" title="buildingmotif.label_parsing.first_true"><code class="xref py py-obj docutils literal notranslate"><span class="pre">first_true</span></code></a>(iterable[, default, pred])</p></td>
+<td><p>Returns the first true value in the iterable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.parse" title="buildingmotif.label_parsing.parse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse</span></code></a>(parser, target)</p></td>
+<td><p>Parse the given target string using the given parser.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.parse_list" title="buildingmotif.label_parsing.parse_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_list</span></code></a>(parser, target_list)</p></td>
+<td><p>Parse a list of strings using the given parser.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.results_to_tokens" title="buildingmotif.label_parsing.results_to_tokens"><code class="xref py py-obj docutils literal notranslate"><span class="pre">results_to_tokens</span></code></a>(results)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constant</span></code></a>(value)</p></td>
+<td><p>A constant token.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Delimiter</span></code></a>(value)</p></td>
+<td><p>A delimiter token.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Identifier</span></code></a>(value)</p></td>
+<td><p>An identifier token.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Null</span></code></a>([value])</p></td>
+<td><p>A null token.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.ParseResult" title="buildingmotif.label_parsing.ParseResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParseResult</span></code></a>(tokens, success, _errors)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.Parser" title="buildingmotif.label_parsing.Parser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Parser</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.TokenResult" title="buildingmotif.label_parsing.TokenResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TokenResult</span></code></a>(value, token, length[, error])</p></td>
+<td><p>A token result.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.abbreviations" title="buildingmotif.label_parsing.abbreviations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">abbreviations</span></code></a>(patterns)</p></td>
+<td><p>Constructs a choice combinator of string matching based on a dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.choice" title="buildingmotif.label_parsing.choice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">choice</span></code></a>(*parsers)</p></td>
+<td><p>Constructs a choice combinator of parsers.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.constant" title="buildingmotif.label_parsing.constant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">constant</span></code></a>(type_name)</p></td>
+<td><p>Matches a constant token.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.extend_if_match" title="buildingmotif.label_parsing.extend_if_match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extend_if_match</span></code></a>(parser, type_name)</p></td>
+<td><p>Adds the type to the token result.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.many" title="buildingmotif.label_parsing.many"><code class="xref py py-obj docutils literal notranslate"><span class="pre">many</span></code></a>(seq_parser)</p></td>
+<td><p>Applies the given sequence parser repeatedly until it stops matching.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.maybe" title="buildingmotif.label_parsing.maybe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">maybe</span></code></a>(parser)</p></td>
+<td><p>Applies the given parser, but does not fail if it does not match.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.regex" title="buildingmotif.label_parsing.regex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regex</span></code></a>(r, type_name)</p></td>
+<td><p>Constructs a parser that matches a regular expression.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.rest" title="buildingmotif.label_parsing.rest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rest</span></code></a>(type_name)</p></td>
+<td><p>Constructs a parser that matches the rest of the string.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.sequence" title="buildingmotif.label_parsing.sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sequence</span></code></a>(*parsers)</p></td>
+<td><p>Applies parsers in sequence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.string" title="buildingmotif.label_parsing.string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">string</span></code></a>(s, type_name)</p></td>
+<td><p>Constructs a parser that matches a string.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.substring_n" title="buildingmotif.label_parsing.substring_n"><code class="xref py py-obj docutils literal notranslate"><span class="pre">substring_n</span></code></a>(length, type_name)</p></td>
+<td><p>Constructs a parser that matches a substring of length n.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.label_parsing.until" title="buildingmotif.label_parsing.until"><code class="xref py py-obj docutils literal notranslate"><span class="pre">until</span></code></a>(parser, type_name)</p></td>
+<td><p>Constructs a parser that matches everything until the given parser matches.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.ensure_token">
+<span class="sig-name descname"><span class="pre">ensure_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token_or_constructor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#ensure_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.ensure_token" title="Permalink to this definition">#</a></dt>
+<dd><p>Ensure a value is a token or constructs one from a given value.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.Identifier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Identifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#Identifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.Identifier" title="Permalink to this definition">#</a></dt>
+<dd><p>An identifier token. Contains a string.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.Identifier.value">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#buildingmotif.label_parsing.Identifier.value" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.Constant">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">URIRef</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#Constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.Constant" title="Permalink to this definition">#</a></dt>
+<dd><p>A constant token. Contains a URI, probably some sort of Class</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.Constant.value">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">URIRef</span></em><a class="headerlink" href="#buildingmotif.label_parsing.Constant.value" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.Delimiter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Delimiter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#Delimiter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.Delimiter" title="Permalink to this definition">#</a></dt>
+<dd><p>A delimiter token.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.Delimiter.value">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#buildingmotif.label_parsing.Delimiter.value" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.Null">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Null</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#Null"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.Null" title="Permalink to this definition">#</a></dt>
+<dd><p>A null token.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.Null.value">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#buildingmotif.label_parsing.Null.value" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.TokenResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TokenResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#TokenResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.TokenResult" title="Permalink to this definition">#</a></dt>
+<dd><p>A token result. Contains a token, the type of the token, the length of the token, and a possible error.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.TokenResult.value">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.label_parsing.TokenResult.value" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.TokenResult.token">
+<span class="sig-name descname"><span class="pre">token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.label_parsing.TokenResult.token" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.TokenResult.length">
+<span class="sig-name descname"><span class="pre">length</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#buildingmotif.label_parsing.TokenResult.length" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.TokenResult.error">
+<span class="sig-name descname"><span class="pre">error</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#buildingmotif.label_parsing.TokenResult.error" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.ParseResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ParseResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">tokens:</span> <span class="pre">List[buildingmotif.label_parsing.TokenResult],</span> <span class="pre">success:</span> <span class="pre">bool,</span> <span class="pre">_errors:</span> <span class="pre">List[str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#ParseResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.ParseResult" title="Permalink to this definition">#</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.ParseResult.tokens">
+<span class="sig-name descname"><span class="pre">tokens</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.TokenResult" title="buildingmotif.label_parsing.TokenResult"><span class="pre">TokenResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.label_parsing.ParseResult.tokens" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.ParseResult.success">
+<span class="sig-name descname"><span class="pre">success</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#buildingmotif.label_parsing.ParseResult.success" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.ParseResult.errors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">errors</span></span><a class="headerlink" href="#buildingmotif.label_parsing.ParseResult.errors" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a list of errors and the offset into the string
+where the error occurred.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.Parser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Parser</span></span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#Parser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.Parser" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.string">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.string" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructs a parser that matches a string.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.rest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#rest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.rest" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructs a parser that matches the rest of the string.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.substring_n">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">substring_n</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#substring_n"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.substring_n" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructs a parser that matches a substring of length n.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.regex">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">regex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#regex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.regex" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructs a parser that matches a regular expression.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.choice">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">choice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">parsers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#choice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.choice" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructs a choice combinator of parsers.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.constant">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">constant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#constant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.constant" title="Permalink to this definition">#</a></dt>
+<dd><p>Matches a constant token.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.abbreviations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">abbreviations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patterns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#abbreviations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.abbreviations" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructs a choice combinator of string matching based on a dictionary.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.sequence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">parsers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.sequence" title="Permalink to this definition">#</a></dt>
+<dd><p>Applies parsers in sequence. All parsers must match consecutively.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.many">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#many"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.many" title="Permalink to this definition">#</a></dt>
+<dd><p>Applies the given sequence parser repeatedly until it stops matching.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.maybe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">maybe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#buildingmotif.label_parsing.Parser" title="buildingmotif.label_parsing.Parser"><span class="pre">Parser</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#maybe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.maybe" title="Permalink to this definition">#</a></dt>
+<dd><p>Applies the given parser, but does not fail if it does not match.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.until">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">until</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#until"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.until" title="Permalink to this definition">#</a></dt>
+<dd><p>Constructs a parser that matches everything until the given parser matches.
+STarts with a string length of 1 and increments it until the parser matches.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.extend_if_match">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extend_if_match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.Identifier" title="buildingmotif.label_parsing.Identifier"><span class="pre">Identifier</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Constant" title="buildingmotif.label_parsing.Constant"><span class="pre">Constant</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Delimiter" title="buildingmotif.label_parsing.Delimiter"><span class="pre">Delimiter</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#buildingmotif.label_parsing.Null" title="buildingmotif.label_parsing.Null"><span class="pre">Null</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#extend_if_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.extend_if_match" title="Permalink to this definition">#</a></dt>
+<dd><p>Adds the type to the token result.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.as_identifier">
+<span class="sig-name descname"><span class="pre">as_identifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#as_identifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.as_identifier" title="Permalink to this definition">#</a></dt>
+<dd><p>If the parser matches, add a new Identifier token after
+every Constant token in the result. The Identifier token
+has the same string value as the Constant token.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#buildingmotif.label_parsing.Parser" title="buildingmotif.label_parsing.Parser"><span class="pre">Parser</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#buildingmotif.label_parsing.ParseResult" title="buildingmotif.label_parsing.ParseResult"><span class="pre">ParseResult</span></a></span></span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.parse" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse the given target string using the given parser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parser</strong> (<a class="reference internal" href="#buildingmotif.label_parsing.Parser" title="buildingmotif.label_parsing.Parser"><em>Parser</em></a>) – the parsing combinator function</p></li>
+<li><p><strong>target</strong> (<em>str</em>) – the target string to parse</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the result of the parser</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#buildingmotif.label_parsing.ParseResult" title="buildingmotif.label_parsing.ParseResult">ParseResult</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.parse_list">
+<span class="sig-name descname"><span class="pre">parse_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.TokenResult" title="buildingmotif.label_parsing.TokenResult"><span class="pre">TokenResult</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.TokenResult" title="buildingmotif.label_parsing.TokenResult"><span class="pre">TokenResult</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#parse_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.parse_list" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse a list of strings using the given parser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parser</strong> (<a class="reference internal" href="#buildingmotif.label_parsing.Parser" title="buildingmotif.label_parsing.Parser"><em>Parser</em></a>) – the parsing combinator function</p></li>
+<li><p><strong>target_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – the list of strings to parse</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a tuple of the results and failures</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.first_true">
+<span class="sig-name descname"><span class="pre">first_true</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#first_true"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.first_true" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the first true value in the iterable.</p>
+<p>If no true value is found, returns <em>default</em></p>
+<p>If <em>pred</em> is not None, returns the first item
+for which pred(item) is true.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.results_to_tokens">
+<span class="sig-name descname"><span class="pre">results_to_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#results_to_tokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.results_to_tokens" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.label_parsing.analyze_failures">
+<span class="sig-name descname"><span class="pre">analyze_failures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">failures</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.label_parsing.TokenResult" title="buildingmotif.label_parsing.TokenResult"><span class="pre">TokenResult</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/label_parsing.html#analyze_failures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.label_parsing.analyze_failures" title="Permalink to this definition">#</a></dt>
+<dd><p>Analyze the failures of a parser.</p>
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./reference/apidoc/_autosummary"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="buildingmotif.ingresses.xlsx.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">buildingmotif.ingresses.xlsx</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="buildingmotif.libraries.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">buildingmotif.libraries</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By NREL
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
