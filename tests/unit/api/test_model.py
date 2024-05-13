@@ -253,8 +253,11 @@ def test_create_model_bad_name(client, building_motif):
     assert len(building_motif.table_connection.get_all_db_models()) == 0
 
 
-def test_validate_model(client, building_motif):
+def test_validate_model(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
     # Set up
+    brick = Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    assert brick is not None
     library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert library_1 is not None
     library_2 = Library.load(directory="tests/unit/fixtures/templates")
@@ -297,7 +300,7 @@ def test_validate_model(client, building_motif):
     results = client.post(
         f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        json={"library_ids": [library_1.id, library_2.id]},
+        json={"library_ids": [library_1.id, library_2.id, brick.id]},
     )
 
     # Assert
@@ -309,7 +312,8 @@ def test_validate_model(client, building_motif):
     assert results.get_json()["reasons"] == {}
 
 
-def test_validate_model_bad_model_id(client, building_motif):
+def test_validate_model_bad_model_id(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
     # Set up
     library = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert library is not None
@@ -325,7 +329,8 @@ def test_validate_model_bad_model_id(client, building_motif):
     assert results.status_code == 404
 
 
-def test_validate_model_no_args(client, building_motif):
+def test_validate_model_no_args(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
     # Set up
     BLDG = Namespace("urn:building/")
     model = Model.create(name=BLDG)
@@ -344,7 +349,8 @@ def test_validate_model_no_args(client, building_motif):
     assert results.get_json()["reasons"] == {}
 
 
-def test_validate_model_no_library_ids(client, building_motif):
+def test_validate_model_no_library_ids(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
     # Set up
     BLDG = Namespace("urn:building/")
     model = Model.create(name=BLDG)
@@ -413,7 +419,8 @@ def test_validate_model_bad_args(client, building_motif):
     assert results.status_code == 400
 
 
-def test_test_model_against_shapes(client, building_motif):
+def test_test_model_against_shapes(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
     # Load libraries
     Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick-subset.ttl"))
     ashrae_g36 = Library.load(

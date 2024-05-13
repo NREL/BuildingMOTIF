@@ -16,9 +16,9 @@ repos:
         entry: poetry run flake8 buildingmotif
 # can't poetry run becuase not present in repository https://github.com/pre-commit/mirrors-mypy
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.931
+    rev: v1.9.0
     hooks:
     -   id: mypy
-        args: ["--install-types", "--non-interactive", "--ignore-missing-imports", "--follow-imports=skip"]
+        args: ["--install-types", "--non-interactive", "--ignore-missing-imports", "--follow-imports=skip", "--disable-error-code=import-untyped"]
         additional_dependencies: [sqlalchemy2-stubs <= 0.0.2a20, SQLAlchemy <= 1.4]
 exclude: docs/conf.py
