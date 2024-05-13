@@ -32,7 +32,7 @@ Currently, libraries in `../../buildingmotif/libraries/` are *included* and libr
 ```{code-cell}
 from rdflib import Namespace, URIRef
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, Library
+from buildingmotif.dataclasses import Model, Library, Template
 from buildingmotif.namespaces import BRICK, RDF # import this to make writing URIs easier
 
 # in-memory instance
@@ -145,6 +145,9 @@ for templ in generated_templates.get_templates():
         param: BLDG[ahu_name + suffix],
     }
     thing = templ.evaluate(bindings)
+    if isinstance(thing, Template):
+        # there might be other parameters on a template. Invent names for them
+        _, thing = thing.fill(BLDG)
     model.add_graph(thing)
 ```
 

@@ -10,7 +10,8 @@
         <urn:bldg/Core_ZN-PSC_AC-Damper>,
         <urn:bldg/Core_ZN-PSC_AC-Fan>,
         <urn:bldg/Core_ZN-PSC_AC-Htg_Coil>,
-        <urn:bldg/Core_ZN-PSC_AC-OutsideDamper> ;
+        <urn:bldg/Core_ZN-PSC_AC-OutsideDamper>,
+        <urn:bldg/name_fbe04c78> ;
     brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-CCmd>,
         <urn:bldg/Core_ZN-PSC_AC-FilterDPS>,
         <urn:bldg/Core_ZN-PSC_AC-HCmd>,
@@ -20,25 +21,13 @@
         <urn:bldg/Core_ZN-PSC_AC-SAT>,
         <urn:bldg/zone-temp> .
 
-bldg:A1 a brick:Air_Handler_Unit .
+bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 
 <urn:bldg/Core_ZN-PSC_AC-CCmd> a brick:Cooling_Command .
 
 <urn:bldg/Core_ZN-PSC_AC-Clg_Coil> a brick:Cooling_Coil .
 
 <urn:bldg/Core_ZN-PSC_AC-Damper> a brick:Damper .
-
-<urn:bldg/Core_ZN-PSC_AC-Fan> a brick:Supply_Fan,
-        vav48:sa-fan ;
-    brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-Fan-Freq>,
-        <urn:bldg/Core_ZN-PSC_AC-Fan-StartStop>,
-        <urn:bldg/Core_ZN-PSC_AC-Fan-Sts> .
-
-<urn:bldg/Core_ZN-PSC_AC-Fan-Freq> a brick:Frequency_Command .
-
-<urn:bldg/Core_ZN-PSC_AC-Fan-StartStop> a brick:Start_Stop_Command .
-
-<urn:bldg/Core_ZN-PSC_AC-Fan-Sts> a brick:Fan_Status .
 
 <urn:bldg/Core_ZN-PSC_AC-FilterDPS> a brick:Filter_Differential_Pressure_Sensor .
 
@@ -59,5 +48,18 @@ bldg:A1 a brick:Air_Handler_Unit .
 
 <urn:bldg/Core_ZN-PSC_AC-SAT> a brick:Supply_Air_Temperature_Sensor .
 
+<urn:bldg/name_fbe04c78> a brick:Supply_Fan,
+        vav48:sa-fan ;
+    brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-Fan>,
+        <urn:bldg/p57_a384fdde>,
+        <urn:bldg/p59_2f4e2ba5> .
+
+<urn:bldg/p57_a384fdde> a brick:Start_Stop_Command .
+
+<urn:bldg/p59_2f4e2ba5> a brick:Frequency_Command .
+
 <urn:bldg/zone-temp> a brick:Zone_Air_Temperature_Sensor .
+
+<urn:bldg/Core_ZN-PSC_AC-Fan> a brick:Fan_Status,
+        brick:Supply_Fan .
 
