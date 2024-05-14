@@ -66,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="shortcut icon" href="../../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="buildingmotif.label_parsing" href="buildingmotif.label_parsing.html" />
+    <link rel="next" title="buildingmotif.libraries" href="buildingmotif.libraries.html" />
     <link rel="prev" title="buildingmotif.ingresses.template" href="buildingmotif.ingresses.template.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -210,13 +210,11 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
-<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.csvingress.html">buildingmotif.ingresses.csvingress</a></li>
-<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.csv.html">buildingmotif.ingresses.csv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">buildingmotif.ingresses.xlsx</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="buildingmotif.label_parsing.html">buildingmotif.label_parsing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.schemas.html">buildingmotif.schemas</a></li>
@@ -457,14 +455,14 @@ document.write(`
 <p class="rubric">Classes</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.ingresses.xlsx.XLSXIngress" title="buildingmotif.ingresses.xlsx.XLSXIngress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XLSXIngress</span></code></a>(filename)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.ingresses.xlsx.XLSXIngress" title="buildingmotif.ingresses.xlsx.XLSXIngress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XLSXIngress</span></code></a>(filename[, limit])</p></td>
 <td><p>Reads sheets from a XLSX file and exposes them as records.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py class">
 <dt class="sig sig-object py" id="buildingmotif.ingresses.xlsx.XLSXIngress">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">XLSXIngress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/ingresses/xlsx.html#XLSXIngress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.ingresses.xlsx.XLSXIngress" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">XLSXIngress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/ingresses/xlsx.html#XLSXIngress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.ingresses.xlsx.XLSXIngress" title="Permalink to this definition">#</a></dt>
 <dd><p>Reads sheets from a XLSX file and exposes them as records. The ‘rtype’
 field of each Record gives the name of the sheet.</p>
 <dl class="py property">
@@ -528,11 +526,11 @@ are the cell values at that column for the given row.</p>
       </div>
     </a>
     <a class="right-next"
-       href="buildingmotif.label_parsing.html"
+       href="buildingmotif.libraries.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">buildingmotif.label_parsing</p>
+        <p class="prev-next-title">buildingmotif.libraries</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
