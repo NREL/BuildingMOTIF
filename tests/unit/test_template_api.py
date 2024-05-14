@@ -1,3 +1,5 @@
+import warnings
+
 import pytest
 from rdflib import Graph, Namespace
 
@@ -174,7 +176,12 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     templ = lib.get_template_by_name("opt-vav")
     assert templ.parameters == {"name", "occ", "zone"}
-    assert templ.optional_args == ["occ"]
+    assert templ.optional_args == ["occ", "zone"]
+
+    g = templ.evaluate({"name": BLDG["vav"]})
+    assert isinstance(g, Graph)
+    assert graph_size(g) == 1
+
     g = templ.evaluate({"name": BLDG["vav"], "zone": BLDG["zone1"]})
     assert isinstance(g, Graph)
     assert graph_size(g) == 1
@@ -192,8 +199,15 @@ def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     assert isinstance(t, Template)
     assert t.parameters == {"occ"}
 
+    # assert no warning is raised when optional args are not required
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        t = templ.evaluate({"name": BLDG["vav"]})
+
     with pytest.warns():
-        partial_templ = templ.evaluate({"name": BLDG["vav"]})
+        partial_templ = templ.evaluate(
+            {"name": BLDG["vav"]}, require_optional_args=True
+        )
     assert isinstance(partial_templ, Template)
     g = partial_templ.evaluate({"zone": BLDG["zone1"]})
     assert isinstance(g, Graph)

@@ -1,13 +1,14 @@
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import chain
 from secrets import token_hex
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rdflib
 from rdflib import Graph, URIRef
-from rdflib.term import Node
+from rdflib.term import BNode, Node
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
@@ -94,6 +95,51 @@ class PathClassCount(GraphDiff):
     maxc: Optional[int]
     classname: URIRef
 
+    @classmethod
+    def from_validation_report(cls, report: Graph) -> List["PathClassCount"]:
+        """Construct PathClassCount objects from a SHACL validation report.
+
+        :param report: the SHACL validation report
+        :type report: Graph
+        :return: a list of PathClassCount objects
+        :rtype: List[PathClassCount]
+        """
+
+        query = """
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        SELECT ?focus ?path ?minc ?maxc ?classname WHERE {
+            ?result sh:sourceShape/sh:qualifiedValueShape? ?shape .
+            { ?result sh:sourceConstraintComponent sh:CountConstraintComponent }
+            UNION
+            { ?result sh:sourceConstraintComponent sh:QualifiedMinCountConstraintComponent }
+            ?result sh:focusNode ?focus .
+            ?shape sh:resultPath ?path .
+            {
+                ?shape sh:class ?classname .
+                ?shape sh:minCount ?minc .
+                OPTIONAL { ?shape sh:maxCount ?maxc }
+            }
+            UNION
+            {
+                ?shape sh:qualifiedValueShape [ sh:class ?classname ] .
+                ?shape sh:qualifiedMinCount ?minc .
+                OPTIONAL { ?shape sh:qualifiedMaxCount ?maxc }
+            }
+        }"""
+        results = report.query(query)
+        return [
+            cls(
+                focus,
+                report,
+                report,
+                path,
+                minc,
+                maxc,
+                classname,
+            )
+            for focus, path, minc, maxc, classname in results
+        ]
+
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
@@ -109,11 +155,14 @@ class PathClassCount(GraphDiff):
         """
         assert self.focus is not None
         body = Graph()
+        # extract everything after the last "delimiter" character from self.classname
+        name = re.split(r"[#\/]", self.classname)[-1]
+        focus = re.split(r"[#\/]", self.focus)[-1]
         for _ in range(self.minc or 0):
             inst = _gensym()
             body.add((self.focus, self.path, inst))
             body.add((inst, A, self.classname))
-        return [lib.create_template(f"resolve_{token_hex(4)}", body)]
+        return [lib.create_template(f"resolve_{focus}{name}", body)]
 
 
 @dataclass(frozen=True, unsafe_hash=True)
@@ -130,6 +179,54 @@ class PathShapeCount(GraphDiff):
     extra_body: Optional[Graph] = field(hash=False)
     extra_deps: Optional[Tuple] = field(hash=False)
 
+    @classmethod
+    def from_validation_report(
+        cls, report: Graph
+    ) -> Generator["PathShapeCount", None, None]:
+        """Construct PathShapeCount objects from a SHACL validation report.
+
+        :param report: the SHACL validation report
+        :type report: Graph
+        :return: a list of PathShapeCount objects
+        :rtype: List[PathShapeCount]
+        """
+        query = """
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        SELECT ?focus ?path ?minc ?maxc ?shapename WHERE {
+            ?result sh:sourceShape ?shape .
+            ?result sh:resultPath ?path .
+            { ?result sh:sourceConstraintComponent sh:CountConstraintComponent }
+            UNION
+            { ?result sh:sourceConstraintComponent sh:QualifiedMinCountConstraintComponent }
+            ?result sh:focusNode ?focus .
+            {
+                ?shape sh:node ?shapename .
+                ?shape sh:minCount ?minc .
+                OPTIONAL { ?shape sh:maxCount ?maxc }
+            }
+            UNION
+            {
+                ?shape sh:qualifiedValueShape [ sh:node ?shapename ] .
+                ?shape sh:qualifiedMinCount ?minc .
+                OPTIONAL { ?shape sh:qualifiedMaxCount ?maxc }
+            }
+
+        }"""
+        results = report.query(query)
+        for (focus, path, minc, maxc, shapename) in results:
+            extra_body, deps = get_template_parts_from_shape(shapename, report)
+            yield cls(
+                focus,
+                report,
+                report,
+                path,
+                minc,
+                maxc,
+                shapename,
+                extra_body,
+                tuple(deps),
+            )
+
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
@@ -142,6 +239,9 @@ class PathShapeCount(GraphDiff):
         if self.extra_deps:
             for dep in self.extra_deps:
                 dep["args"] = {k: str(v)[len(PARAM) :] for k, v in dep["args"].items()}
+        # extract everything after the last "delimiter" character from self.shapename
+        name = re.split(r"[#\/]", self.shapename)[-1]
+        focus = re.split(r"[#\/]", self.focus)[-1]
         for _ in range(self.minc or 0):
             body = Graph()
             inst = PARAM["name"]
@@ -150,7 +250,7 @@ class PathShapeCount(GraphDiff):
             if self.extra_body:
                 replace_nodes(self.extra_body, {PARAM.name: inst})
                 body += self.extra_body
-            templ = lib.create_template(f"resolve{token_hex(4)}", body)
+            templ = lib.create_template(f"resolve{focus}{name}", body)
             if self.extra_deps:
                 from buildingmotif.dataclasses.template import Template
 
@@ -171,6 +271,45 @@ class RequiredPath(GraphDiff):
     minc: Optional[int]
     maxc: Optional[int]
 
+    @classmethod
+    def from_validation_report(cls, report: Graph) -> List["RequiredPath"]:
+        """Construct RequiredPath objects from a SHACL validation report.
+
+        :param report: the SHACL validation report
+        :type report: Graph
+        :return: a list of RequiredPath objects
+        :rtype: List[RequiredPath]
+        """
+        query = """
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        SELECT ?focus ?path ?minc ?maxc WHERE {
+            ?result sh:sourceShape ?shape .
+            ?result sh:resultPath ?path .
+            { ?result sh:sourceConstraintComponent sh:CountConstraintComponent }
+            UNION
+            { ?result sh:sourceConstraintComponent sh:QualifiedMinCountConstraintComponent }
+            ?result sh:focusNode ?focus .
+            {
+                ?shape sh:minCount ?minc .
+                OPTIONAL { ?shape sh:maxCount ?maxc }
+            } UNION {
+                ?shape sh:qualifiedMinCount ?minc .
+                OPTIONAL { ?shape sh:qualifiedMaxCount ?maxc }
+            }
+        }"""
+        results = report.query(query)
+        return [
+            cls(
+                focus,
+                report,
+                report,
+                path,
+                minc,
+                maxc,
+            )
+            for focus, path, minc, maxc in results
+        ]
+
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         return f"{self.focus} needs between {self.minc} and {self.maxc} uses \
@@ -186,10 +325,13 @@ of path {self.path}"
         """
         assert self.focus is not None
         body = Graph()
+        # extract everything after the last "delimiter" character from self.shapename
+        name = re.split(r"[#\/]", self.path)[-1]
+        focus = re.split(r"[#\/]", self.focus)[-1]
         for _ in range(self.minc or 0):
             inst = _gensym()
             body.add((self.focus, self.path, inst))
-        return [lib.create_template(f"resolve{token_hex(4)}", body)]
+        return [lib.create_template(f"resolve{focus}{name}", body)]
 
 
 @dataclass(frozen=True)
@@ -212,8 +354,9 @@ class RequiredClass(GraphDiff):
         """
         assert self.focus is not None
         body = Graph()
+        name = re.split(r"[#\/]", self.classname)[-1]
         body.add((self.focus, A, self.classname))
-        return [lib.create_template(f"resolve{token_hex(4)}", body)]
+        return [lib.create_template(f"resolveSelf{name}", body)]
 
 
 @dataclass(frozen=True)
@@ -238,10 +381,11 @@ class GraphClassCardinality(GraphDiff):
         :rtype: List[Template]
         """
         templs = []
+        name = re.split(r"[#\/]", self.classname)[-1]
         for _ in range(self.expectedCount):
             template_body = Graph()
             template_body.add((PARAM["name"], A, self.classname))
-            templs.append(lib.create_template(f"resolve{token_hex(4)}", template_body))
+            templs.append(lib.create_template(f"resolveAdd{name}", template_body))
         return templs
 
 
@@ -252,21 +396,20 @@ class ValidationContext:
     """
 
     shape_collections: List[ShapeCollection]
+    # the shapes graph that was used to validate the model
+    # This will be skolemized!
+    shapes_graph: Graph
     valid: bool
     report: rdflib.Graph
     report_string: str
     model: "Model"
 
     @cached_property
-    def diffset(self) -> Set[GraphDiff]:
+    def diffset(self) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """The unordered set of GraphDiffs produced from interpreting the input
         SHACL validation report.
         """
         return self._report_to_diffset()
-
-    @cached_property
-    def _context(self) -> Graph:
-        return sum((sc.graph for sc in self.shape_collections), start=Graph())  # type: ignore
 
     def as_templates(self) -> List["Template"]:
         """Produces the set of templates that reconcile the GraphDiffs from the
@@ -277,7 +420,62 @@ class ValidationContext:
         """
         return diffset_to_templates(self.diffset)
 
-    def _report_to_diffset(self) -> Set[GraphDiff]:
+    def get_broken_entities(self) -> Set[URIRef]:
+        """Get the set of entities that are broken in the model.
+
+        :return: set of entities that are broken
+        :rtype: Set[URIRef]
+        """
+        return {diff or "Model" for diff in self.diffset}
+
+    def get_diffs_for_entity(self, entity: URIRef) -> Set[GraphDiff]:
+        """Get the set of diffs for a specific entity.
+
+        :param entity: the entity to get diffs for
+        :type entity: URIRef
+        :return: set of diffs for the entity
+        :rtype: Set[GraphDiff]
+        """
+        return self.diffset.get(entity, set())
+
+    def get_reasons_with_severity(
+        self, severity: Union[URIRef, str]
+    ) -> Dict[Optional[URIRef], Set[GraphDiff]]:
+        """
+        Like diffset, but only includes ValidationResults with the given severity.
+        Permitted values are:
+        - SH.Violation or "Violation" for violations
+        - SH.Warning or "Warning" for warnings
+        - SH.Info or "Info" for info
+
+        :param severity: the severity to filter by
+        :type severity: Union[URIRef|str]
+        :return: a dictionary of focus nodes to the reasons with the given severity
+        :rtype: Dict[Optional[URIRef], Set[GraphDiff]]
+        """
+
+        if not isinstance(severity, URIRef):
+            severity = SH[severity]
+
+        # check if the severity is a valid SHACL severity
+        if severity not in {SH.Violation, SH.Warning, SH.Info}:
+            raise ValueError(
+                f"Invalid severity: {severity}. Must be one of SH.Violation, SH.Warning, or SH.Info"
+            )
+
+        # for each value in the diffset, filter out the diffs that don't have the given severity
+        # in the diffset.graph
+        return {
+            focus: {
+                diff
+                for diff in diffs
+                if diff.validation_result.value(diff._result_uri, SH.resultSeverity)
+                == severity
+            }
+            for focus, diffs in self.diffset.items()
+        }
+
+    def _report_to_diffset(self) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """Interpret a SHACL validation report and say what is missing.
 
         :return: a set of GraphDiffs that each abstract a SHACL shape violation
@@ -288,8 +486,9 @@ class ValidationContext:
         # TODO: for future use
         # proppath = SH["property"] | (SH.qualifiedValueShape / SH["property"])  # type: ignore
 
-        g = self.report + self._context
-        diffs: Set[GraphDiff] = set()
+        g = self.report + self.shapes_graph
+        diffs: Dict[Optional[URIRef], Set[GraphDiff]] = defaultdict(set)
+
         for result in g.objects(predicate=SH.result):
             # check if the failure is due to our count constraint component
             focus = g.value(result, SH.focusNode)
@@ -308,13 +507,9 @@ class ValidationContext:
                 # here, our 'self.focus' is the graph itself, which we don't want to have bound
                 # to the templates during evaluation (for this specific kind of diff).
                 # For this reason we override focus to be None
-                diffs.add(
+                diffs[None].add(
                     GraphClassCardinality(
-                        None,
-                        validation_report,
-                        g,
-                        of_class,
-                        int(expected_count),
+                        None, validation_report, g, of_class, int(expected_count)
                     )
                 )
             elif (
@@ -323,7 +518,11 @@ class ValidationContext:
             ):
                 requiring_shape = g.value(result, SH.sourceShape)
                 expected_class = g.value(requiring_shape, SH["class"])
-                diffs.add(RequiredClass(focus, validation_report, g, expected_class))
+                if expected_class is None or isinstance(expected_class, BNode):
+                    continue
+                diffs[focus].add(
+                    RequiredClass(focus, validation_report, g, expected_class)
+                )
             elif (
                 g.value(result, SH.sourceConstraintComponent)
                 == SH.NodeConstraintComponent
@@ -352,7 +551,7 @@ class ValidationContext:
                 # extra = g.value(result, SH.sourceShape / proppath)  # type: ignore
 
                 if focus and (min_count or max_count) and classname:
-                    diffs.add(
+                    diffs[focus].add(
                         PathClassCount(
                             focus,
                             validation_report,
@@ -367,7 +566,7 @@ class ValidationContext:
                 shapename = g.value(result, SH.sourceShape / shapepath)  # type: ignore
                 if focus and (min_count or max_count) and shapename:
                     extra_body, deps = get_template_parts_from_shape(shapename, g)
-                    diffs.add(
+                    diffs[focus].add(
                         PathShapeCount(
                             focus,
                             validation_report,
@@ -382,7 +581,7 @@ class ValidationContext:
                     )
                     continue
                 if focus and (min_count or max_count):
-                    diffs.add(
+                    diffs[focus].add(
                         RequiredPath(
                             focus,
                             validation_report,
@@ -395,7 +594,9 @@ class ValidationContext:
         return diffs
 
 
-def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
+def diffset_to_templates(
+    grouped_diffset: Dict[Optional[URIRef], Set[GraphDiff]]
+) -> List["Template"]:
     """Combine GraphDiff by focus node to generate a list of templates that
     reconcile what is "wrong" with the Graph with respect to the GraphDiffs.
 
@@ -407,23 +608,18 @@ def diffset_to_templates(diffset: Set[GraphDiff]) -> List["Template"]:
     """
     from buildingmotif.dataclasses import Library, Template
 
-    related: Dict[URIRef, Set[GraphDiff]] = defaultdict(set)
-    unfocused: List[Template] = []
     lib = Library.create(f"resolve_{token_hex(4)}")
-    # compute the GROUP BY GraphDiff.focus
-    for diff in diffset:
-        if diff.focus is None:
-            unfocused.extend(diff.resolve(lib))
-        else:
-            related[diff.focus].add(diff)
 
     templates = []
-    # add all templates that don't have a focus node
-    templates.extend(unfocused)
     # now merge all tempaltes together for each focus node
-    for focus, diffset in related.items():
+    for focus, diffset in grouped_diffset.items():
+        if focus is None:
+            for diff in diffset:
+                templates.extend(diff.resolve(lib))
+            continue
+
         templ_lists = (diff.resolve(lib) for diff in diffset)
-        templs = list(filter(None, chain.from_iterable(templ_lists)))
+        templs: List[Template] = list(filter(None, chain.from_iterable(templ_lists)))
         if len(templs) <= 1:
             templates.extend(templs)
             continue

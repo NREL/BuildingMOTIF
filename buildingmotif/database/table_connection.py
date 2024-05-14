@@ -208,7 +208,7 @@ class TableConnection:
         db_libraries = self.bm.session.query(DBLibrary).all()
         return db_libraries
 
-    def get_db_library_by_id(self, id: int) -> DBLibrary:
+    def get_db_library(self, id: int) -> DBLibrary:
         """Get database library by id.
 
         :param id: id of DBLibrary
@@ -237,7 +237,7 @@ class TableConnection:
         :param name: new name
         :type name: str
         """
-        db_library = self.get_db_library_by_id(id)
+        db_library = self.get_db_library(id)
         self.logger.debug(
             f"Updating database library name: '{db_library.name}' -> '{name}'"
         )
@@ -250,7 +250,7 @@ class TableConnection:
         :type id: int
         """
 
-        db_library = self.get_db_library_by_id(id)
+        db_library = self.get_db_library(id)
 
         self.logger.debug(f"Deleting database library: '{db_library.name}'")
         self.bm.session.delete(db_library)
@@ -268,7 +268,7 @@ class TableConnection:
         :rtype: DBTemplate
         """
         self.logger.debug(f"Creating database template: '{name}'")
-        library = self.get_db_library_by_id(library_id)
+        library = self.get_db_library(library_id)
         template = DBTemplate(
             name=name,
             body_id=str(uuid.uuid4()),
@@ -290,7 +290,7 @@ class TableConnection:
         db_templates = self.bm.session.query(DBTemplate).all()
         return db_templates
 
-    def get_db_template_by_id(self, id: int) -> DBTemplate:
+    def get_db_template(self, id: int) -> DBTemplate:
         """Get database template by id.
 
         :param id: id of DBTemplate
@@ -327,7 +327,7 @@ class TableConnection:
         :return: DBLibrary
         :rtype: DBLibrary
         """
-        return self.get_db_template_by_id(id).library
+        return self.get_db_template(id).library
 
     def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
         """Get a template's dependencies and its arguments.
@@ -356,7 +356,7 @@ class TableConnection:
         :param name: new name
         :type name: str
         """
-        db_template = self.get_db_template_by_id(id)
+        db_template = self.get_db_template(id)
         self.logger.debug(
             f"Updating database template name: '{db_template.name}' -> '{name}'"
         )
@@ -405,7 +405,7 @@ class TableConnection:
         self.logger.debug(
             f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
         )
-        templ = self.get_db_template_by_id(template_id)
+        templ = self.get_db_template(template_id)
         if "name" not in args.keys():
             raise ValueError(
                 f"The name parameter is required for the dependency '{templ.name}'."
@@ -438,9 +438,10 @@ class TableConnection:
     def check_template_dependency_relationship(self, dep: DepsAssociation):
         """Verify that the dependency between two templates is well-formed. This involves
         a series of checks:
-        - existence of the dependent and dependency templates is performed during the add_ method
+        - existence of the dependent and dependency templates is performed during the
+        :py:method:`database.template_connection.`add_template_dependency_preliminary` method
         - the args keys appear in the dependency, or recursively in a template that is a dependency
-          of the named dependency
+        of the named dependency
         - the args values appear in the dependent template
         - there is a 'name' parameter in the dependent template
 
@@ -489,8 +490,8 @@ class TableConnection:
                 f"'name' was bound to {args['name']} but available params are {params}"
             )
 
-    def remove_template_dependency(self, template_id: int, dependency_id: int):
-        """Remove dependency between two templates.
+    def delete_template_dependency(self, template_id: int, dependency_id: int):
+        """Delete dependency between two templates.
 
         :param template_id: dependant template id
         :type template_id: int
@@ -519,7 +520,7 @@ class TableConnection:
         :param library_id: id of the new library
         :type library_id: int
         """
-        db_template = self.get_db_template_by_id(id)
+        db_template = self.get_db_template(id)
         self.logger.debug(
             f"Updating database template library: '{db_template.library_id}' -> '{library_id}'"  # noqa
         )
@@ -531,7 +532,7 @@ class TableConnection:
         :param id: id of deleted DBTemplate
         :type id: int
         """
-        db_template = self.get_db_template_by_id(id)
+        db_template = self.get_db_template(id)
         self.logger.debug(f"Deleting template: '{db_template.name}'")
 
         self.bm.session.delete(db_template)

@@ -1,8 +1,10 @@
+import logging
 import secrets
 from itertools import chain
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
+import pyshacl  # type: ignore
 import rfc3987  # type: ignore
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.paths import ZeroOrOne
@@ -201,6 +203,8 @@ def get_template_parts_from_shape(
     pshapes = shape_graph.objects(subject=shape_name, predicate=SH["property"])
     for pshape in pshapes:
         property_path = shape_graph.value(pshape, SH["path"])
+        if property_path is None:
+            raise Exception(f"no sh:path detected on {shape_name}")
         # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
@@ -226,11 +230,26 @@ def get_template_parts_from_shape(
         (path, otype, mincount) = property_path, otypes[0], mincounts[0]
         assert isinstance(mincount, Literal)
 
-        for _ in range(int(mincount)):
-            param = _gensym()
+        param_name = shape_graph.value(pshape, SH["name"])
+
+        for num in range(int(mincount)):
+            if param_name is not None:
+                param = PARAM[f"{param_name}{num}"]
+            else:
+                param = _gensym()
             body.add((root_param, path, param))
-            deps.append({"template": otype, "args": {"name": param}})
-            # body.add((param, RDF.type, otype))
+
+            otype_as_class = (None, SH["class"], otype) in shape_graph
+            otype_as_node = (None, SH["node"], otype) in shape_graph
+            otype_is_nodeshape = (otype, RDF.type, SH.NodeShape) in shape_graph
+
+            if (otype_as_class and otype_is_nodeshape) or otype_as_node:
+                deps.append({"template": str(otype), "args": {"name": param}})
+                body.add((param, RDF.type, otype))
+
+        pvalue = shape_graph.value(pshape, SH["hasValue"])
+        if pvalue:
+            body.add((root_param, path, pvalue))
 
     if (shape_name, RDF.type, OWL.Class) in shape_graph:
         body.add((root_param, RDF.type, shape_name))
@@ -239,9 +258,20 @@ def get_template_parts_from_shape(
     for cls in classes:
         body.add((root_param, RDF.type, cls))
 
-    nodes = shape_graph.objects(shape_name, SH["node"])
+    classes = shape_graph.objects(shape_name, SH["targetClass"])
+    for cls in classes:
+        body.add((root_param, RDF.type, cls))
+
+    # for all objects of sh:node, add them to the deps if they haven't been added
+    # already through the property shapes above
+    nodes = shape_graph.cbd(shape_name).objects(predicate=SH["node"], unique=True)
     for node in nodes:
-        deps.append({"template": node, "args": {"name": "name"}})  # tie to root param
+        # if node is already in deps, skip it
+        if any(str(node) == dep["template"] for dep in deps):
+            continue
+        deps.append(
+            {"template": str(node), "args": {"name": "name"}}
+        )  # tie to root param
 
     return body, deps
 
@@ -295,7 +325,7 @@ def _inline_sh_node(sg: Graph):
                 sh:node ?child .
         }"""
     for row in sg.query(q):
-        parent, child = row
+        parent, child = row  # type: ignore
         sg.remove((parent, SH.node, child))
         pos = sg.predicate_objects(child)
         for (p, o) in pos:
@@ -315,7 +345,7 @@ def _inline_sh_and(sg: Graph):
         ?andnode rdf:rest*/rdf:first ?child .
         }"""
     for row in sg.query(q):
-        parent, child, to_remove = row
+        parent, child, to_remove = row  # type: ignore
         sg.remove((parent, SH["and"], to_remove))
         pos = sg.predicate_objects(child)
         for (p, o) in pos:
@@ -370,3 +400,153 @@ def validate_uri(uri: str):
         raise ValueError(
             f"{uri} does not look like a valid URI, trying to serialize this will break."
         )
+
+
+def shacl_validate(
+    data_graph: Graph,
+    shape_graph: Optional[Graph] = None,
+    engine: Optional[str] = "topquadrant",
+) -> Tuple[bool, Graph, str]:
+    """
+    Validate the data graph against the shape graph.
+    Uses the fastest validation method available. Use the 'topquadrant' feature
+    to use TopQuadrant's SHACL engine. Defaults to using PySHACL.
+
+    :param data_graph: the graph to validate
+    :type data_graph: Graph
+    :param shape_graph: the shape graph to validate against
+    :type shape_graph: Graph, optional
+    :param engine: the SHACL engine to use, defaults to "topquadrant"
+    :type engine: str, optional
+    :return: a tuple containing the validation result, the validation report, and the validation report string
+    :rtype: Tuple[bool, Graph, str]
+    """
+
+    if engine == "topquadrant":
+        try:
+            from brick_tq_shacl.topquadrant_shacl import (
+                validate as tq_validate,  # type: ignore
+            )
+
+            return tq_validate(data_graph, shape_graph or Graph())  # type: ignore
+        except ImportError:
+            logging.info(
+                "TopQuadrant SHACL engine not available. Using PySHACL instead."
+            )
+            pass
+
+    return pyshacl.validate(
+        data_graph,
+        shacl_graph=shape_graph,
+        ont_graph=shape_graph,
+        advanced=True,
+        js=True,
+        allow_warnings=True,
+    )  # type: ignore
+
+
+def shacl_inference(
+    data_graph: Graph,
+    shape_graph: Optional[Graph] = None,
+    engine: Optional[str] = "topquadrant",
+) -> Graph:
+    """
+    Infer new triples in the data graph using the shape graph.
+    Edits the data graph in place. Uses the fastest inference method available.
+    Use the 'topquadrant' feature to use TopQuadrant's SHACL engine. Defaults to
+    using PySHACL.
+
+    :param data_graph: the graph to infer new triples in
+    :type data_graph: Graph
+    :param shape_graph: the shape graph to use for inference
+    :type shape_graph: Optional[Graph]
+    :param engine: the SHACL engine to use, defaults to "topquadrant"
+    :type engine: str, optional
+    :return: the data graph with inferred triples
+    :rtype: Graph
+    """
+    if engine == "topquadrant":
+        try:
+            from brick_tq_shacl.topquadrant_shacl import infer as tq_infer
+
+            return tq_infer(data_graph, shape_graph or Graph())  # type: ignore
+        except ImportError:
+            logging.info(
+                "TopQuadrant SHACL engine not available. Using PySHACL instead."
+            )
+            pass
+
+    # We use a fixed-point computation approach to 'compiling' RDF models.
+    # We accomlish this by keeping track of the size of the graph before and after
+    # the inference step. If the size of the graph changes, then we know that the
+    # inference has had some effect. We do this at most 3 times to avoid looping
+    # forever.
+    pre_compile_length = len(data_graph)  # type: ignore
+    pyshacl.validate(
+        data_graph=data_graph,
+        shacl_graph=shape_graph,
+        ont_graph=shape_graph,
+        advanced=True,
+        inplace=True,
+        js=True,
+        allow_warnings=True,
+    )
+    post_compile_length = len(data_graph)  # type: ignore
+
+    attempts = 3
+    while attempts > 0 and post_compile_length != pre_compile_length:
+        pre_compile_length = len(data_graph)  # type: ignore
+        pyshacl.validate(
+            data_graph=data_graph,
+            shacl_graph=shape_graph,
+            ont_graph=shape_graph,
+            advanced=True,
+            inplace=True,
+            js=True,
+            allow_warnings=True,
+        )
+        post_compile_length = len(data_graph)  # type: ignore
+        attempts -= 1
+    return data_graph - (shape_graph or Graph())
+
+
+def skolemize_shapes(g: Graph) -> Graph:
+    """
+    Skolemize the shapes in the graph.
+
+    :param g: the graph to skolemize
+    :type g: Graph
+    :return: the skolemized graph
+    :rtype: Graph
+    """
+    # write a query to update agraph by changing all PropertyShape blank nodes
+    # to URIRefs
+    g = copy_graph(g)
+    property_shapes = list(g.subjects(predicate=RDF.type, object=SH.PropertyShape))
+    property_shapes.extend(list(g.objects(predicate=SH.property)))
+    replacements = {}
+    for ps in property_shapes:
+        # if not bnode, skip
+        if not isinstance(ps, BNode):
+            continue
+        # create a new URIRef
+        new_ps = URIRef(f"urn:well-known/{secrets.token_hex(4)}")
+        # replace the old BNode with the new URIRef
+        replacements[ps] = new_ps
+    # apply the replacements
+    replace_nodes(g, replacements)
+
+    # name all objects of qualifiedValueShape
+    qvs = list(g.objects(predicate=SH.qualifiedValueShape))
+    replacements = {}
+    for qv in qvs:
+        # if not bnode, skip
+        if not isinstance(qv, BNode):
+            continue
+        # create a new URIRef
+        new_qv = URIRef(f"urn:well-known/{secrets.token_hex(4)}")
+        # replace the old BNode with the new URIRef
+        replacements[qv] = new_qv
+    # apply the replacements
+    replace_nodes(g, replacements)
+    return g
