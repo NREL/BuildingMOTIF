@@ -1,8 +1,8 @@
-FROM python:3.9
+FROM python:3.10
 
 WORKDIR /home/buildingmotif
 
-RUN pip install poetry==1.4.0 && poetry config virtualenvs.create false
+RUN pip install poetry==1.8.2 && poetry config virtualenvs.create false
 
 COPY pyproject.toml .
 COPY poetry.lock .
