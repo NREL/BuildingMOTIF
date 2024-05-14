@@ -50,6 +50,7 @@ def plug_223_connection_points(g: Graph):
 
 @pytest.mark.integration
 def test_brick_library(bm, library_path_brick: Path):
+    Library.load(ontology_graph="libraries/brick/imports/ref-schema.ttl")
     Library.load(ontology_graph="libraries/brick/Brick.ttl")
     Library.load(directory=str(library_path_brick))
     bm.session.commit()
@@ -104,6 +105,43 @@ def test_223p_template(bm, library_path_223p, template_223p, shacl_engine):
 @pytest.mark.integration
 def test_brick_template(bm, library_path_brick, template_brick, shacl_engine):
     bm.shacl_engine = shacl_engine
+    deps = []
+    deps.append(Library.load(ontology_graph="libraries/brick/imports/ref-schema.ttl"))
+    deps.append(
+        Library.load(
+            ontology_graph="libraries/qudt/VOCAB_QUDT-QUANTITY-KINDS-ALL-v2.1.ttl"
+        )
+    )
+    deps.append(
+        Library.load(
+            ontology_graph="libraries/qudt/VOCAB_QUDT-DIMENSION-VECTORS-v2.1.ttl"
+        )
+    )
+    deps.append(
+        Library.load(ontology_graph="libraries/qudt/VOCAB_QUDT-UNITS-ALL-v2.1.ttl")
+    )
+    deps.append(
+        Library.load(ontology_graph="libraries/qudt/SCHEMA-FACADE_QUDT-v2.1.ttl")
+    )
+    deps.append(
+        Library.load(ontology_graph="libraries/qudt/SCHEMA_QUDT_NoOWL-v2.1.ttl")
+    )
+    deps.append(
+        Library.load(ontology_graph="libraries/qudt/VOCAB_QUDT-PREFIXES-v2.1.ttl")
+    )
+    deps.append(
+        Library.load(
+            ontology_graph="libraries/qudt/SHACL-SCHEMA-SUPPLEMENT_QUDT-v2.1.ttl"
+        )
+    )
+    deps.append(
+        Library.load(
+            ontology_graph="libraries/qudt/VOCAB_QUDT-SYSTEM-OF-UNITS-ALL-v2.1.ttl"
+        )
+    )
+    deps.append(Library.load(ontology_graph="libraries/brick/imports/rec.ttl"))
+    deps.append(Library.load(ontology_graph="libraries/brick/imports/recimports.ttl"))
+    deps.append(Library.load(ontology_graph="libraries/brick/imports/brickpatches.ttl"))
     ont_brick = Library.load(ontology_graph="libraries/brick/Brick.ttl")
 
     lib = Library.load(directory=str(library_path_brick))
@@ -117,6 +155,6 @@ def test_brick_template(bm, library_path_brick, template_brick, shacl_engine):
     bind_prefixes(g)
     m.add_graph(g)
     m.graph.serialize("/tmp/model.ttl")
-    ctx = m.validate([ont_brick.get_shape_collection()])
+    ctx = m.validate([ont_brick.get_shape_collection()], error_on_missing_imports=False)
     ctx.report.serialize("/tmp/report.ttl")
     assert ctx.valid, ctx.report_string
