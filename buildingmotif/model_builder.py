@@ -1,14 +1,15 @@
 import secrets
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Union
 
 from rdflib import BNode, Graph, Literal, Namespace, URIRef
+from rdflib.store import Store
 from rdflib.term import Node
 
 from buildingmotif.dataclasses import Library, Template
 from buildingmotif.namespaces import RDF, RDFS
 
 
-class TemplateBuilderContext:
+class TemplateBuilderContext(Graph):
     """
     A context for building templates. This class allows the user to
     add templates to the context and then access them by name. The
@@ -16,28 +17,21 @@ class TemplateBuilderContext:
     the context into a single graph.
     """
 
-    def __init__(self, ns: Namespace):
+    def __init__(self, ns: Namespace, store: Optional[Union[Store, str]] = None):
         """
         Creates a new TemplateBuilderContext. The context will create
         entities in the given namespace.
 
         :param ns:  The namespace to use for the context
+        :param store: An optional backing store for the graph; ok to leave blank unless
+                    you are experiencing performance issues using TemplateBuilderContext
         """
         self.templates: Dict[str, Template] = {}
         self.wrappers: List[TemplateWrapper] = []
         self.ns: Namespace = ns
-        # stores triples outside of the templates
-        self._g: Graph = Graph()
-
-    def add(self, triple: Tuple):
-        """
-        Adds a triple to the context
-
-        :param s: The subject of the triple
-        :param p: The predicate of the triple
-        :param o: The object of the triple
-        """
-        self._g.add(triple)
+        super(TemplateBuilderContext, self).__init__(
+            store=store or "default", identifier=None
+        )
 
     def add_template(self, template: Template):
         """
@@ -73,12 +67,12 @@ class TemplateBuilderContext:
         :return: A graph containing all of the compiled templates
         """
         graph = Graph()
-        graph += self._g
+        graph += self
         for wrapper in self.wrappers:
             graph += wrapper.compile()
         # add a label to every instance if it doesn't have one. Make
         # the label the same as the value part of the URI
-        for s, p, o in graph.triples((None, RDF.type, None)):
+        for s, o in graph.subject_objects(predicate=RDF.type):
             if (s, RDFS.label, None) not in graph:
                 # get the 'value' part of the o URI using qname
                 _, _, value = graph.namespace_manager.compute_qname(str(o))
