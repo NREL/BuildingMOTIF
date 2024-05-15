@@ -194,9 +194,6 @@ class Model:
         # remove imports from data graph
         data_graph.remove((None, OWL.imports, None))
 
-        data_graph.serialize("/tmp/data.ttl", format='ttl')
-        shapeg.serialize("/tmp/shape.ttl", format='ttl')
-
         # validate the data graph
         valid, report_g, report_str = shacl_validate(
             data_graph, shapeg, engine=self._bm.shacl_engine
