@@ -1,3 +1,4 @@
+@prefix bldg: <urn:ex/> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 
@@ -6,11 +7,22 @@
 <urn:bldg/Core_ZN-PSC_AC> a brick:AHU ;
     brick:hasPart <urn:bldg/Core_ZN-PSC_AC-Clg_Coil>,
         <urn:bldg/Core_ZN-PSC_AC-Damper>,
-        <urn:bldg/Core_ZN-PSC_AC-Fan> .
+        <urn:bldg/Core_ZN-PSC_AC-Fan>,
+        <urn:bldg/Core_ZN-PSC_AC-OutsideDamper> ;
+    brick:hasPoint <urn:bldg/zone-temp> .
+
+bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 
 <urn:bldg/Core_ZN-PSC_AC-Clg_Coil> a brick:Cooling_Coil .
 
 <urn:bldg/Core_ZN-PSC_AC-Damper> a brick:Damper .
 
 <urn:bldg/Core_ZN-PSC_AC-Fan> a brick:Supply_Fan .
+
+<urn:bldg/Core_ZN-PSC_AC-OutsideDamper> a brick:Outside_Damper ;
+    brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition> .
+
+<urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition> a brick:Damper_Position_Command .
+
+<urn:bldg/zone-temp> a brick:Zone_Air_Temperature_Sensor .
 
