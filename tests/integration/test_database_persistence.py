@@ -10,7 +10,7 @@ EXAMPLE_TRIPLE = (URIRef("http://example.org/alex"), RDF.type, FOAF.Person)
 
 def test_database_persistence():
     # create bm
-    db_path = "sqlite://db.db"
+    db_path = "sqlite:///db.db"
     print(db_path)
     bm = BuildingMOTIF(db_path)
     print("setup tables")

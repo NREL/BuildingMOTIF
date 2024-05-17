@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from flask import Flask, current_app
 from flask_api import status
@@ -42,7 +43,7 @@ def _after_error(error):
     return str(error), status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
-def create_app(DB_URI):
+def create_app(DB_URI, shacl_engine: Optional[str] = "pyshacl"):
     """Creates a Flask API.
 
     :param db_uri: database URI
@@ -54,7 +55,7 @@ def create_app(DB_URI):
     app.config.from_mapping(
         DB_URI=DB_URI,
     )
-    app.building_motif = BuildingMOTIF(app.config["DB_URI"])
+    app.building_motif = BuildingMOTIF(app.config["DB_URI"], shacl_engine=shacl_engine)
 
     app.after_request(_after_request)
     app.register_error_handler(Exception, _after_error)
