@@ -95,6 +95,7 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     templ = lib.get_template_by_name("single-zone-vav-ahu")
     assert len(templ.get_dependencies()) == 2
     inlined = templ.inline_dependencies()
+    transitive_params = templ.transitive_parameters
     assert len(inlined.get_dependencies()) == 0
     preserved_params = {
         "name",
@@ -116,6 +117,7 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
         "oad-sen",
     }
     assert inlined.parameters == preserved_params
+    assert transitive_params == preserved_params
 
     # test optional 'name' param on dependency; this should
     # preserve optionality of all params in the dependency
@@ -125,8 +127,10 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     assert set(templ.optional_args) == {"d"}
     assert len(templ.get_dependencies()) == 3
     inlined = templ.inline_dependencies()
+    transitive_params = templ.transitive_parameters
     assert len(inlined.get_dependencies()) == 0
     assert inlined.parameters == {"name", "b", "c", "b-bp", "c-cp", "d", "d-dp"}
+    assert transitive_params == inlined.parameters
     assert set(inlined.optional_args) == {"d", "d-dp"}
 
     # test optional non-'name' parameter on dependency; this should
@@ -136,32 +140,38 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     assert set(templ.optional_args) == {"b-bp"}
     assert len(templ.get_dependencies()) == 1
     inlined = templ.inline_dependencies()
+    transitive_params = templ.transitive_parameters
     assert len(inlined.get_dependencies()) == 0
     assert inlined.parameters == {"name", "b", "b-bp"}
+    assert transitive_params == inlined.parameters
     assert set(inlined.optional_args) == {"b-bp"}
 
     # test inlining 2 or more levels
     parent = lib.get_template_by_name("Parent")
     assert parent.parameters == {"name", "level1"}
     inlined = parent.inline_dependencies()
+    transitive_params = parent.transitive_parameters
     assert inlined.parameters == {
         "name",
         "level1",
         "level1-level2",
         "level1-level2-level3",
     }
+    assert transitive_params == inlined.parameters
     assert len(inlined.optional_args) == 0
 
     # test inlining 2 or more levels with optional params
     parent = lib.get_template_by_name("Parent-opt")
     assert parent.parameters == {"name", "level1"}
     inlined = parent.inline_dependencies()
+    transitive_params = parent.transitive_parameters
     assert inlined.parameters == {
         "name",
         "level1",
         "level1-level2",
         "level1-level2-level3",
     }
+    assert transitive_params == inlined.parameters
     assert set(inlined.optional_args) == {
         "level1",
         "level1-level2",
