@@ -28,7 +28,7 @@ buildingmotif.utils
       shacl_validate
       skip_uri
       skolemize_shapes
-      template_to_shape
+      validate_uri
    
    
 

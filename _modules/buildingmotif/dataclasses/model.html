@@ -221,6 +221,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -404,7 +405,6 @@ document.write(`
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">rdflib</span>
-<span class="kn">import</span> <span class="nn">rfc3987</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
@@ -418,18 +418,11 @@ document.write(`
     <span class="n">shacl_inference</span><span class="p">,</span>
     <span class="n">shacl_validate</span><span class="p">,</span>
     <span class="n">skolemize_shapes</span><span class="p">,</span>
+    <span class="n">validate_uri</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
-
-
-<span class="k">def</span> <span class="nf">_validate_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">parsed</span> <span class="o">=</span> <span class="n">rfc3987</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">parsed</span><span class="p">[</span><span class="s2">&quot;scheme&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">uri</span><span class="si">}</span><span class="s2"> does not look like a valid URI, trying to serialize this will break.&quot;</span>
-        <span class="p">)</span>
 
 
 <div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model">[docs]</a><span class="nd">@dataclass</span>
@@ -456,7 +449,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
 
-        <span class="n">_validate_uri</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">validate_uri</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="n">db_model</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">create_db_model</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
 
         <span class="n">g</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
