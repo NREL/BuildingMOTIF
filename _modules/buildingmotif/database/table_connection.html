@@ -221,7 +221,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -863,9 +862,9 @@ document.write(`
         <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Template</span>
 
         <span class="n">templ</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">template_id</span><span class="p">)</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">transitive_parameters</span>
         <span class="n">dep_templ</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dependency_id</span><span class="p">)</span>
-        <span class="n">dep_params</span> <span class="o">=</span> <span class="n">dep_templ</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="n">dep_params</span> <span class="o">=</span> <span class="n">dep_templ</span><span class="o">.</span><span class="n">transitive_parameters</span>
 
         <span class="c1"># check parameters are valid</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
