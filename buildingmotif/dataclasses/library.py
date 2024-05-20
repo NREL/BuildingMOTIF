@@ -426,10 +426,10 @@ class Library:
                 return
             except Exception as e:
                 logging.debug(
-                    f"Could not find dependee {dep['template']} in library {imp}: {e}"
+                    f"{template.name} could not find dependee {dep['template']} in library {imp}: {e}"
                 )
         logging.warning(
-            f"Warning: could not find dependee {dep['template']} in libraries {self.graph_imports}"
+            f"Warning: {template.name} could not find dependee {dep['template']} in libraries {self.graph_imports}"
         )
 
     def _resolve_template_dependencies(
