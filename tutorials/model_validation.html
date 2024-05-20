@@ -548,97 +548,40 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NoResultFound</span><span class="g g-Whitespace">                             </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">23</span>
-<span class="g g-Whitespace">     </span><span class="mi">21</span> <span class="c1"># load libraries excluded from the python package (available from the repository)</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">23</span> <span class="n">g36</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../libraries/ashrae/guideline36&quot;</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:194,</span> in <span class="ni">Library.load</span><span class="nt">(cls, db_id, ontology_graph, directory, name, overwrite)</span>
-<span class="g g-Whitespace">    </span><span class="mi">192</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">src</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-<span class="g g-Whitespace">    </span><span class="mi">193</span>         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">194</span>     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_from_directory</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">195</span> <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">196</span>     <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:345,</span> in <span class="ni">Library._load_from_directory</span><span class="nt">(cls, directory, overwrite)</span>
-<span class="g g-Whitespace">    </span><span class="mi">343</span>     <span class="n">lib</span><span class="o">.</span><span class="n">_read_yml_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">344</span> <span class="c1"># now that we have all the templates, we can populate the dependencies</span>
-<span class="ne">--&gt; </span><span class="mi">345</span> <span class="n">lib</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">346</span> <span class="c1"># load shape collections from all ontology files in the directory</span>
-<span class="g g-Whitespace">    </span><span class="mi">347</span> <span class="n">lib</span><span class="o">.</span><span class="n">_load_shapes_from_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:448,</span> in <span class="ni">Library._resolve_template_dependencies</span><span class="nt">(self, template_id_lookup, dependency_cache)</span>
-<span class="g g-Whitespace">    </span><span class="mi">446</span>         <span class="k">continue</span>
-<span class="g g-Whitespace">    </span><span class="mi">447</span>     <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">dependency_cache</span><span class="p">[</span><span class="n">template</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
-<span class="ne">--&gt; </span><span class="mi">448</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_dependency</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">dep</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">449</span> <span class="c1"># check that all dependencies are valid (use parameters that exist, etc)</span>
-<span class="g g-Whitespace">    </span><span class="mi">450</span> <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:398,</span> in <span class="ni">Library._resolve_dependency</span><span class="nt">(self, template, dep, template_id_lookup)</span>
-<span class="g g-Whitespace">    </span><span class="mi">396</span> <span class="c1"># if dep is a _template_dependency, turn it into a template</span>
-<span class="g g-Whitespace">    </span><span class="mi">397</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">_template_dependency</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">398</span>     <span class="n">dependee</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_template</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">399</span>     <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">400</span>     <span class="k">return</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:86,</span> in <span class="ni">_template_dependency.to_template</span><span class="nt">(self, id_lookup)</span>
-<span class="g g-Whitespace">     </span><span class="mi">83</span>     <span class="k">return</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">id_lookup</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template_name</span><span class="p">])</span>
-<span class="g g-Whitespace">     </span><span class="mi">84</span> <span class="c1"># if not in the local cache, then search the database for the template</span>
-<span class="g g-Whitespace">     </span><span class="mi">85</span> <span class="c1"># within the given library</span>
-<span class="ne">---&gt; </span><span class="mi">86</span> <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">87</span> <span class="k">return</span> <span class="n">library</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_name</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:197,</span> in <span class="ni">Library.load</span><span class="nt">(cls, db_id, ontology_graph, directory, name, overwrite)</span>
-<span class="g g-Whitespace">    </span><span class="mi">195</span> <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">196</span>     <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">197</span>     <span class="n">db_library</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">198</span>     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">199</span> <span class="k">else</span><span class="p">:</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:230,</span> in <span class="ni">TableConnection.get_db_library_by_name</span><span class="nt">(self, name)</span>
-<span class="g g-Whitespace">    </span><span class="mi">222</span> <span class="k">def</span> <span class="nf">get_db_library_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">223</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Get database library by name.</span>
-<span class="g g-Whitespace">    </span><span class="mi">224</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">225</span><span class="sd">     :param name: name of DBLibrary</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">228</span><span class="sd">     :rtype: DBLibrary</span>
-<span class="g g-Whitespace">    </span><span class="mi">229</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">230</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/orm/query.py:2870,</span> in <span class="ni">Query.one</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2852</span> <span class="k">def</span> <span class="nf">one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="g g-Whitespace">   </span><span class="mi">2853</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Return exactly one result or raise an exception.</span>
-<span class="g g-Whitespace">   </span><span class="mi">2854</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">2855</span><span class="sd">     Raises ``sqlalchemy.orm.exc.NoResultFound`` if the query selects</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2868</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">2869</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">2870</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">()</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:1522,</span> in <span class="ni">ScalarResult.one</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1514</span> <span class="k">def</span> <span class="nf">one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="g g-Whitespace">   </span><span class="mi">1515</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Return exactly one object or raise an exception.</span>
-<span class="g g-Whitespace">   </span><span class="mi">1516</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">1517</span><span class="sd">     Equivalent to :meth:`_engine.Result.one` except that</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1520</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">1521</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">1522</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_only_one_row</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1523</span>         <span class="n">raise_for_second_row</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">raise_for_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span>
-<span class="g g-Whitespace">   </span><span class="mi">1524</span>     <span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:562,</span> in <span class="ni">ResultInternal._only_one_row</span><span class="nt">(self, raise_for_second_row, raise_for_none, scalar)</span>
-<span class="g g-Whitespace">    </span><span class="mi">560</span> <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">561</span>     <span class="k">if</span> <span class="n">raise_for_none</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">562</span>         <span class="k">raise</span> <span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">563</span>             <span class="s2">&quot;No row was found when one was required&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">564</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">565</span>     <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">566</span>         <span class="k">return</span> <span class="kc">None</span>
-
-<span class="ne">NoResultFound</span>: No row was found when one was required
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,630 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/box-damper-position in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,637 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/window-switch in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,642 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/discharge-airflow in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,650 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,654 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,659 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,664 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,669 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,674 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,679 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,686 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:54,691 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
 </div>
@@ -652,6 +595,11 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pass a list of shape collections to .validate()</span>
 <span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">([</span><span class="n">brick</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()])</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
 </pre></div>
 </div>
 </div>
@@ -826,6 +774,19 @@ to load in the Brick and Guideline36 libraries at the top of this tutorial.</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:56,699 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:56,705 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+None
+ - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Heating_Coil
+</pre></div>
+</div>
+</div>
 </div>
 <div class="dropdown admonition">
 <p class="admonition-title">Tip on supplying extra shape collections</p>
@@ -877,6 +838,40 @@ will use these shape collections to validate the model <em>instead of</em> the m
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix bldg: &lt;urn:ex/&gt; .
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+
+&lt;urn:bldg/&gt; a owl:Ontology .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
+    brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt; ;
+    brick:hasPoint &lt;urn:bldg/zone-temp&gt; .
+
+bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Supply_Fan .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; a brick:Heating_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt; a brick:Outside_Damper ;
+    brick:hasPoint &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; a brick:Damper_Position_Command .
+
+&lt;urn:bldg/zone-temp&gt; a brick:Zone_Air_Temperature_Sensor .
+</pre></div>
+</div>
+</div>
 </div>
 <p>We can see that the heating coil was added to the model and connected to the AHU so let’s check if the manifest validation failure was fixed.</p>
 <div class="cell docutils container">
@@ -889,6 +884,17 @@ will use these shape collections to validate the model <em>instead of</em> the m
     <span class="nb">print</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:57,736 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:57,741 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
 </pre></div>
 </div>
 </div>
@@ -910,6 +916,25 @@ will use these shape collections to validate the model <em>instead of</em> the m
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/terminal-unit
+urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu
+urn:ashrae/g36/4.6/mz-vav-ahu/AHU
+urn:ashrae/g36/4.6/mz-vav-ahu/supply-fan
+urn:ashrae/g36/4.6/mz-vav-ahu/return-damper
+urn:ashrae/g36/4.6/mz-vav-ahu/heating-coil
+urn:ashrae/g36/4.6/mz-vav-ahu/cooling-coil
+urn:ashrae/g36/components/cooling_damper
+urn:ashrae/g36/components/heating_damper
+urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/terminal-unit
+urn:ashrae/g36/4.3/fan-powered/terminal-unit
+urn:ashrae/g36/4.3/fan-powered/fan
+urn:ashrae/g36/4.3/fan-powered/damper
+urn:ashrae/g36/4.2/vav-with-reheat/vav-with-reheat
+urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only
+</pre></div>
+</div>
+</div>
 </div>
 <p>The model represents the Small Office Commercial Prototype Building model, which has single zone packaged AHUs, so we’re interested in validating it against Section 4.8 of Guideline 36 for single zone variable air volume (VAV) AHUs.</p>
 <p>Let’s update our manifest to include the requirement that AHUs must match the “single zone AHU” shape from G36:</p>
@@ -924,6 +949,11 @@ will use these shape collections to validate the model <em>instead of</em> the m
 <span class="s2">    sh:targetClass brick:AHU ;</span>
 <span class="s2">    sh:node &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu&gt; .</span>
 <span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=33a6c151-9f11-444b-ae1b-11338b248748 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -957,6 +987,17 @@ print(f"Model is valid? {validation_result.valid}")
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:58,794 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-20 21:01:58,800 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+</pre></div>
+</div>
+</div>
 </div>
 <p>The AHU fails validation because it doesn’t match the <code class="docutils literal notranslate"><span class="pre">sz-vav-ahu-control-sequences</span></code> requirements.
 Take a look at the first bit of output, which is the official SHACL validation report text format. This can be difficult to interpret without a background in SHACL, so BuildingMOTIF provides a more easily understood version of the same information.</p>
@@ -967,6 +1008,63 @@ Take a look at the first bit of output, which is the official SHACL validation r
 
 <span class="c1"># separator</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">79</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Validation Report
+Conforms: False
+Results (8):
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/814e6a6c&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/26e21666&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/8f8891c9&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/ea856ca0&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/cd636ff8&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/44a1e3f6&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/55e7c9be&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPart
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/148b43ae&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/5c0ea91a&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/08c267a2&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/e760ff39&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/34619970&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/a9c6e060&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/ef38ab75&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/f7682120&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/6ca55db5&gt;
+
+-------------------------------------------------------------------------------
 </pre></div>
 </div>
 </div>
@@ -983,6 +1081,20 @@ Take a look at the first bit of output, which is the official SHACL validation r
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is invalid for these reasons:
+urn:bldg/Core_ZN-PSC_AC
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Heating_Command on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Cooling_Command on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+</pre></div>
+</div>
+</div>
 </div>
 <p>The model is failing because the AHU doesn’t have the required points. We could find those templates manually, evaluate them, and add the resulting graphs to the model. However, this can be a bit
 tedious. To address this issue, BuildingMOTIF can find those templates automatically for us. We’ll cover this feature in the next tutorial so let’s save the model.</p>
@@ -990,6 +1102,11 @@ tedious. To address this issue, BuildingMOTIF can find those templates automatic
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#save model</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial2_model.ttl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=e1aeef9b-372b-4022-b391-12be1a26628e (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
