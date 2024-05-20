@@ -239,6 +239,26 @@ class Template:
         replace_nodes(templ.body, to_replace)
         return templ
 
+    @property
+    def transitive_parameters(self) -> Set[str]:
+        """Get all parameters used in this template and its dependencies.
+
+        :return: set of all parameters
+        :rtype: Set[str]
+        """
+        params = set(self.parameters)
+        for dep in self.get_dependencies():
+            transitive_params = dep.template.transitive_parameters
+            rename_params: Dict[str, str] = {
+                ours: theirs for ours, theirs in dep.args.items()
+            }
+            name_prefix = dep.args.get("name")
+            for param in transitive_params:
+                if param not in dep.args and param != "name":
+                    rename_params[param] = f"{name_prefix}-{param}"
+            params.update(rename_params.values())
+        return params
+
     def inline_dependencies(self) -> "Template":
         """Copies this template with all dependencies recursively inlined.
 
