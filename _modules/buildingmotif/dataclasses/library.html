@@ -221,7 +221,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -819,6 +818,7 @@ document.write(`
         <span class="c1"># check documentation for skip_uri for what URIs get skipped</span>
         <span class="k">if</span> <span class="n">skip_uri</span><span class="p">(</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]):</span>
             <span class="k">return</span>
+
         <span class="c1"># if the dependency is not in the local cache, then search through this library&#39;s imports</span>
         <span class="c1"># for the template</span>
         <span class="k">for</span> <span class="n">imp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_imports</span><span class="p">:</span>
@@ -829,10 +829,10 @@ document.write(`
                 <span class="k">return</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in library </span><span class="si">{</span><span class="n">imp</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in library </span><span class="si">{</span><span class="n">imp</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in libraries </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_imports</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Warning: could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in libraries </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_imports</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_resolve_template_dependencies</span><span class="p">(</span>
