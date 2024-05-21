@@ -97,8 +97,8 @@ def test_template_to_shape_dependency(bm):
         ] ;
         sh:property [
             sh:path brick:hasPoint ;
-            sh:class brick:Temperature_Sensor ;
-            sh:minCount 1 ;
+            sh:qualifiedValueShape [ sh:class brick:Temperature_Sensor ] ;
+            sh:qualifiedMinCount 1 ;
         ] ;
     .
     """
@@ -137,8 +137,8 @@ def test_template_to_shape_duplicate_props_with_optional(bm):
         sh:class brick:VAV ;
         sh:property [
             sh:path brick:hasPoint ;
-            sh:class brick:Temperature_Sensor ;
-            sh:minCount 1 ;
+            sh:qualifiedValueShape [ sh:class brick:Temperature_Sensor ] ;
+            sh:qualifiedMinCount 1 ;
         ] ;
     .
     """
@@ -176,8 +176,8 @@ def test_template_to_shape_duplicate_props(bm):
         sh:class brick:VAV ;
         sh:property [
             sh:path brick:hasPoint ;
-            sh:class brick:Temperature_Sensor ;
-            sh:minCount 2 ;
+            sh:qualifiedValueShape [ sh:class brick:Temperature_Sensor ] ;
+            sh:qualifiedMinCount 2 ;
         ] ;
     .
     """
