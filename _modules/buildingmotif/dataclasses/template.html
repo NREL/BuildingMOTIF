@@ -221,6 +221,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -419,6 +420,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.model</span> <span class="kn">import</span> <span class="n">Model</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">bind_prefixes</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.template_matcher</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">TemplateMatcher</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.template_to_shape</span> <span class="kn">import</span> <span class="n">template_to_nodeshape</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PARAM</span><span class="p">,</span>
     <span class="n">combine_graphs</span><span class="p">,</span>
@@ -690,15 +692,21 @@ document.write(`
             <span class="n">name_prefix</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
             <span class="c1"># for each parameter in the dependency...</span>
             <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">deptempl</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+                <span class="c1"># if param already starts with PARAM, then keep it as-is</span>
+                <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">PARAM</span><span class="p">):</span>
+                    <span class="n">rename_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
                 <span class="c1"># if it does *not* have a mapping in the dependency, then</span>
                 <span class="c1"># prefix the parameter with the value of the &#39;name&#39; binding</span>
                 <span class="c1"># to scope it properly</span>
                 <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span> <span class="ow">and</span> <span class="n">param</span> <span class="o">!=</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span>
                     <span class="n">rename_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name_prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span>
-
             <span class="c1"># replace the parameters in the dependency template</span>
             <span class="n">replace_nodes</span><span class="p">(</span>
-                <span class="n">deptempl</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="p">{</span><span class="n">PARAM</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rename_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+                <span class="n">deptempl</span><span class="o">.</span><span class="n">body</span><span class="p">,</span>
+                <span class="p">{</span>
+                    <span class="n">PARAM</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="k">else</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rename_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">},</span>
             <span class="p">)</span>
             <span class="c1"># rename the optional_args in the dependency template too</span>
             <span class="n">deptempl</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">=</span> <span class="p">[</span>
@@ -885,6 +893,17 @@ document.write(`
         <span class="n">matcher</span> <span class="o">=</span> <span class="n">TemplateMatcher</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">matcher</span><span class="o">.</span><span class="n">building_mapping_subgraphs_iter</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">sg</span><span class="p">,</span> <span class="n">matcher</span><span class="o">.</span><span class="n">remaining_template</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Template.to_nodeshape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.to_nodeshape">[docs]</a>    <span class="k">def</span> <span class="nf">to_nodeshape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interprets the template body as a SHACL shape and returns the SHACL</span>
+<span class="sd">        shape in its own graph. See buildingmotif.template_to_shape.template_to_nodeshape</span>
+<span class="sd">        for the specific translation rules and implementation.</span>
+
+<span class="sd">        :return: a graph containing the NodeShape</span>
+<span class="sd">        :rtype: rdflib.Graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">template_to_nodeshape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Template.generate_csv"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.generate_csv">[docs]</a>    <span class="k">def</span> <span class="nf">generate_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringIO</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
