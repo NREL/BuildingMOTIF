@@ -192,30 +192,29 @@ def test_template_to_shape_validates(bm, library):
     if library == "libraries/ashrae/223p/nrel-templates":
         pytest.skip("Skipping until 223P support is fixed")
     BLDG = Namespace("urn:bldg/")
-    model = Model.create(BLDG)
     Library.load(ontology_graph="brick/Brick.ttl")
     lib = Library.load(directory=library)
+    bm.session.commit()
     for template in lib.get_templates():
+        model = Model.create(BLDG)
         # add the generated shape to our collection
         shape_collection = ShapeCollection.create()
         shape = template.to_nodeshape()
         shape_collection.add_graph(shape)
 
+        inlined = template.inline_dependencies()
         # create an 'instance' graph from the template and add
         # it to the model
-        bindings, instance = template.inline_dependencies().fill(
-            BLDG, include_optional=True
-        )
+        bindings, instance = inlined.fill(BLDG, include_optional=True)
         instance_name = bindings["name"]
         # target the new node with the generated shape
         shape_collection.add_triples(
             (PARAM[template.name], SH.targetNode, instance_name)
         )
-        # truncate model and re-populate
-        model.graph.remove((None, None, None))
         model.add_graph(instance)
 
         report = model.validate([shape_collection])
         assert (
             report.valid
         ), f"Graph:\n{model.graph.serialize()}\n shape \n{shape.serialize()}\n failed to validate filled template {template.name}: {report.report_string}"
+        bm.session.rollback()

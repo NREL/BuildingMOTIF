@@ -289,15 +289,21 @@ class Template:
             name_prefix = dep.args.get("name")
             # for each parameter in the dependency...
             for param in deptempl.parameters:
+                # if param already starts with PARAM, then keep it as-is
+                if param.startswith(PARAM):
+                    rename_params[param] = param
                 # if it does *not* have a mapping in the dependency, then
                 # prefix the parameter with the value of the 'name' binding
                 # to scope it properly
                 if param not in dep.args and param != "name":
                     rename_params[param] = f"{name_prefix}-{param}"
-
             # replace the parameters in the dependency template
             replace_nodes(
-                deptempl.body, {PARAM[k]: PARAM[v] for k, v in rename_params.items()}
+                deptempl.body,
+                {
+                    PARAM[k]: PARAM[v] if not v.startswith(PARAM) else rdflib.URIRef(v)
+                    for k, v in rename_params.items()
+                },
             )
             # rename the optional_args in the dependency template too
             deptempl.optional_args = [

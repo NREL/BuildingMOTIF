@@ -159,48 +159,30 @@ class _TemplateIndex:
         Adds the prop_types index to the graph containing the shape
         """
         for prop, ptypes in self.prop_types.items():
-            c = Counter(
-                ptypes
-            )  # count by type; if there is more than 1 type for this prop, use qualified
-            if len(c) == 1 and self.specified_props[prop] == 1:
-                ptype, mincount = ptypes.first
-                _add_property_shape(
-                    shape, PARAM[self.template.name], SH["class"], prop, ptype, mincount
+            for ptype, mincount in ptypes.counts.items():
+                _add_qualified_property_shape(
+                    shape,
+                    PARAM[self.template.name],
+                    SH["class"],
+                    prop,
+                    ptype,
+                    mincount,
                 )
-            else:
-                for ptype, mincount in ptypes.counts.items():
-                    _add_qualified_property_shape(
-                        shape,
-                        PARAM[self.template.name],
-                        SH["class"],
-                        prop,
-                        ptype,
-                        mincount,
-                    )
 
     def _add_prop_shapes_to_shape(self, shape: Graph):
         """
         Adds the prop_shapes index to the graph containing the shape
         """
         for prop, ptypes in self.prop_shapes.items():
-            c = Counter(
-                ptypes
-            )  # count by type; if there is more than 1 type for this prop, use qualified
-            if len(c) == 1 and self.specified_props[prop] == 1:
-                ptype, mincount = ptypes.first
-                _add_property_shape(
-                    shape, PARAM[self.template.name], SH["node"], prop, ptype, mincount
+            for ptype, mincount in ptypes.counts.items():
+                _add_qualified_property_shape(
+                    shape,
+                    PARAM[self.template.name],
+                    SH["node"],
+                    prop,
+                    ptype,
+                    mincount,
                 )
-            else:
-                for ptype, mincount in ptypes.counts.items():
-                    _add_qualified_property_shape(
-                        shape,
-                        PARAM[self.template.name],
-                        SH["node"],
-                        prop,
-                        ptype,
-                        mincount,
-                    )
 
     def _add_prop_values_to_shape(self, shape: Graph):
         """
