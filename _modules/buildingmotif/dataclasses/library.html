@@ -221,7 +221,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -544,6 +543,8 @@ document.write(`
         <span class="n">directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">infer_templates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">run_shacl_inference</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Library&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads a library from the database or an external source.</span>
 <span class="sd">        When specifying a path to load a library or ontology_graph from,</span>
@@ -565,6 +566,12 @@ document.write(`
 <span class="sd">        :param overwrite: if true, replace any existing copy of the</span>
 <span class="sd">            library, defaults to True</span>
 <span class="sd">        :type overwrite: Optional[true], optional</span>
+<span class="sd">        :param infer_templates: if true, infer shapes from the ontology graph,</span>
+<span class="sd">            defaults to True</span>
+<span class="sd">        :type infer_templates: Optional[bool], optional</span>
+<span class="sd">        :param run_shacl_inference: if true, run SHACL inference on the ontology graph,</span>
+<span class="sd">            using the BuildingMOTIF SHACL engine, defaults to True</span>
+<span class="sd">        :type run_shacl_inference: Optional[bool], optional</span>
 <span class="sd">        :return: the loaded library</span>
 <span class="sd">        :rtype: Library</span>
 <span class="sd">        :raises Exception: if the library cannot be loaded</span>
@@ -583,7 +590,12 @@ document.write(`
                 <span class="n">ontology_graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
                     <span class="n">ontology_graph_path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">guess_format</span><span class="p">(</span><span class="n">ontology_graph_path</span><span class="p">)</span>
                 <span class="p">)</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_from_ontology</span><span class="p">(</span><span class="n">ontology_graph</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_from_ontology</span><span class="p">(</span>
+                <span class="n">ontology_graph</span><span class="p">,</span>
+                <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+                <span class="n">infer_templates</span><span class="o">=</span><span class="n">infer_templates</span><span class="p">,</span>
+                <span class="n">run_shacl_inference</span><span class="o">=</span><span class="n">run_shacl_inference</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="n">directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">resource_exists</span><span class="p">(</span><span class="s2">&quot;buildingmotif.libraries&quot;</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loading builtin library: </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -594,7 +606,12 @@ document.write(`
                 <span class="n">src</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">src</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_from_directory</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_from_directory</span><span class="p">(</span>
+                <span class="n">src</span><span class="p">,</span>
+                <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+                <span class="n">infer_templates</span><span class="o">=</span><span class="n">infer_templates</span><span class="p">,</span>
+                <span class="n">run_shacl_inference</span><span class="o">=</span><span class="n">run_shacl_inference</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
             <span class="n">db_library</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -618,7 +635,11 @@ document.write(`
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_load_from_ontology</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">ontology</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">infer_templates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">run_shacl_inference</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Library&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load a library from an ontology graph. This proceeds as follows.</span>
@@ -632,6 +653,10 @@ document.write(`
 <span class="sd">        :type ontology: rdflib.Graph</span>
 <span class="sd">        :param overwrite: if true, overwrite the existing copy of the Library</span>
 <span class="sd">        :type overwrite: bool</span>
+<span class="sd">        :param infer_templates: if true, infer shapes from the ontology graph</span>
+<span class="sd">        :type infer_templates: bool</span>
+<span class="sd">        :param run_shacl_inference: if true, run SHACL inference on the ontology graph</span>
+<span class="sd">        :type run_shacl_inference: bool</span>
 <span class="sd">        :return: the loaded Library</span>
 <span class="sd">        :rtype: &quot;Library&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -639,7 +664,7 @@ document.write(`
         <span class="c1"># any=False will raise an error if there is more than one ontology defined  in the graph</span>
         <span class="n">ontology_name</span> <span class="o">=</span> <span class="n">ontology</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
             <span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">Ontology</span><span class="p">,</span> <span class="nb">any</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
+        <span class="p">)</span> <span class="ow">or</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;urn:unnamed/&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_library_exists</span><span class="p">(</span><span class="n">ontology_name</span><span class="p">):</span>
@@ -651,12 +676,16 @@ document.write(`
         <span class="c1"># expand the ontology graph before we insert it into the database. This will ensure</span>
         <span class="c1"># that the output of compiled models will not contain triples that really belong to</span>
         <span class="c1"># the ontology</span>
-        <span class="n">ontology</span> <span class="o">=</span> <span class="n">shacl_inference</span><span class="p">(</span><span class="n">ontology</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">get_building_motif</span><span class="p">()</span><span class="o">.</span><span class="n">shacl_engine</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">run_shacl_inference</span><span class="p">:</span>
+            <span class="n">ontology</span> <span class="o">=</span> <span class="n">shacl_inference</span><span class="p">(</span>
+                <span class="n">ontology</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">get_building_motif</span><span class="p">()</span><span class="o">.</span><span class="n">shacl_engine</span>
+            <span class="p">)</span>
 
         <span class="n">lib</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ontology_name</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">)</span>
 
-        <span class="c1"># infer shapes from any class/nodeshape candidates in the graph</span>
-        <span class="n">lib</span><span class="o">.</span><span class="n">_infer_shapes_from_graph</span><span class="p">(</span><span class="n">ontology</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">infer_templates</span><span class="p">:</span>
+            <span class="c1"># infer shapes from any class/nodeshape candidates in the graph</span>
+            <span class="n">lib</span><span class="o">.</span><span class="n">_infer_templates_from_graph</span><span class="p">(</span><span class="n">ontology</span><span class="p">)</span>
 
         <span class="c1"># load the ontology graph as a shape_collection</span>
         <span class="n">shape_col_id</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
@@ -666,10 +695,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">lib</span>
 
-    <span class="k">def</span> <span class="nf">_infer_shapes_from_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer shapes from a graph and add them to this library.</span>
+    <span class="k">def</span> <span class="nf">_infer_templates_from_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer templates from a graph (by interpreting shapes) and add them to this library.</span>
 
-<span class="sd">        :param graph: graph to infer shapes from</span>
+<span class="sd">        :param graph: graph to infer templates from</span>
 <span class="sd">        :type graph: rdflib.Graph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">class_candidates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">Class</span><span class="p">))</span>
@@ -687,12 +716,21 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_shapes_from_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load_shapes_from_directory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">directory</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span>
+        <span class="n">infer_templates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">run_shacl_inference</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method to read all graphs in the given directory into this</span>
 <span class="sd">        library.</span>
 
 <span class="sd">        :param directory: directory containing graph files</span>
 <span class="sd">        :type directory: pathlib.Path</span>
+<span class="sd">        :param infer_templates: if true, infer shapes from the ontology graph</span>
+<span class="sd">        :type infer_templates: bool</span>
+<span class="sd">        :param run_shacl_inference: if true, run SHACL inference on the ontology graph</span>
+<span class="sd">        :type run_shacl_inference: bool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">shape_col_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
         <span class="k">assert</span> <span class="n">shape_col_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># this should always pass</span>
@@ -705,12 +743,21 @@ document.write(`
                     <span class="sa">f</span><span class="s2">&quot;Could not parse file </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">if</span> <span class="n">run_shacl_inference</span><span class="p">:</span>
+            <span class="n">shape_col</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">shacl_inference</span><span class="p">(</span>
+                <span class="n">shape_col</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">get_building_motif</span><span class="p">()</span><span class="o">.</span><span class="n">shacl_engine</span>
+            <span class="p">)</span>
         <span class="c1"># infer shapes from any class/nodeshape candidates in the graph</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_infer_shapes_from_graph</span><span class="p">(</span><span class="n">shape_col</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">infer_templates</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_infer_templates_from_graph</span><span class="p">(</span><span class="n">shape_col</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_load_from_directory</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">directory</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">infer_templates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">run_shacl_inference</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Library&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load a library from a directory.</span>
@@ -722,6 +769,10 @@ document.write(`
 <span class="sd">        :type directory: pathlib.Path</span>
 <span class="sd">        :param overwrite: if true, overwrite the existing copy of the Library</span>
 <span class="sd">        :type overwrite: bool</span>
+<span class="sd">        :param infer_templates: if true, infer shapes from the ontology graph</span>
+<span class="sd">        :type infer_templates: bool</span>
+<span class="sd">        :param run_shacl_inference: if true, run SHACL inference on the ontology graph</span>
+<span class="sd">        :type run_shacl_inference: bool</span>
 <span class="sd">        :raises e: if cannot create template</span>
 <span class="sd">        :raises e: if cannot resolve dependencies</span>
 <span class="sd">        :return: library</span>
@@ -819,6 +870,7 @@ document.write(`
         <span class="c1"># check documentation for skip_uri for what URIs get skipped</span>
         <span class="k">if</span> <span class="n">skip_uri</span><span class="p">(</span><span class="n">dep</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]):</span>
             <span class="k">return</span>
+
         <span class="c1"># if the dependency is not in the local cache, then search through this library&#39;s imports</span>
         <span class="c1"># for the template</span>
         <span class="k">for</span> <span class="n">imp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph_imports</span><span class="p">:</span>
@@ -829,10 +881,10 @@ document.write(`
                 <span class="k">return</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in library </span><span class="si">{</span><span class="n">imp</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in library </span><span class="si">{</span><span class="n">imp</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in libraries </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_imports</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Warning: could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in libraries </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_imports</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_resolve_template_dependencies</span><span class="p">(</span>
