@@ -66,7 +66,11 @@ def test_223p_library(bm, library_path_223p: Path):
 @pytest.mark.integration
 def test_223p_template(bm, library_path_223p, template_223p, shacl_engine):
     bm.shacl_engine = shacl_engine
-    ont_223p = Library.load(ontology_graph="libraries/ashrae/223p/ontology/223p.ttl")
+    ont_223p = Library.load(
+        ontology_graph="libraries/ashrae/223p/ontology/223p.ttl",
+        infer_templates=False,
+        run_shacl_inference=False,
+    )
 
     # pyshacl evaluation takes a long time, so we only test a couple of templates
     # from specific libraries
@@ -80,7 +84,11 @@ def test_223p_template(bm, library_path_223p, template_223p, shacl_engine):
         if template_223p not in use_pyshacl[library_path_223p]:
             pytest.skip("pyshacl evaluation is slow, skipping this template")
 
-    lib = Library.load(directory=str(library_path_223p))
+    lib = Library.load(
+        directory=str(library_path_223p),
+        infer_templates=False,
+        run_shacl_inference=False,
+    )
 
     template_223p = lib.get_template_by_name(template_223p)
 
@@ -105,43 +113,24 @@ def test_223p_template(bm, library_path_223p, template_223p, shacl_engine):
 @pytest.mark.integration
 def test_brick_template(bm, library_path_brick, template_brick, shacl_engine):
     bm.shacl_engine = shacl_engine
-    deps = []
-    deps.append(Library.load(ontology_graph="libraries/brick/imports/ref-schema.ttl"))
-    deps.append(
+    dependency_graphs = [
+        "libraries/brick/imports/ref-schema.ttl",
+        "libraries/qudt/VOCAB_QUDT-QUANTITY-KINDS-ALL-v2.1.ttl",
+        "libraries/qudt/VOCAB_QUDT-DIMENSION-VECTORS-v2.1.ttl",
+        "libraries/qudt/VOCAB_QUDT-UNITS-ALL-v2.1.ttl",
+        "libraries/qudt/SCHEMA-FACADE_QUDT-v2.1.ttl",
+        "libraries/qudt/SCHEMA_QUDT_NoOWL-v2.1.ttl",
+        "libraries/qudt/VOCAB_QUDT-PREFIXES-v2.1.ttl",
+        "libraries/qudt/SHACL-SCHEMA-SUPPLEMENT_QUDT-v2.1.ttl",
+        "libraries/qudt/VOCAB_QUDT-SYSTEM-OF-UNITS-ALL-v2.1.ttl",
+        "libraries/brick/imports/rec.ttl",
+        "libraries/brick/imports/recimports.ttl",
+        "libraries/brick/imports/brickpatches.ttl",
+    ]
+    for dep in dependency_graphs:
         Library.load(
-            ontology_graph="libraries/qudt/VOCAB_QUDT-QUANTITY-KINDS-ALL-v2.1.ttl"
+            ontology_graph=dep, infer_templates=False, run_shacl_inference=False
         )
-    )
-    deps.append(
-        Library.load(
-            ontology_graph="libraries/qudt/VOCAB_QUDT-DIMENSION-VECTORS-v2.1.ttl"
-        )
-    )
-    deps.append(
-        Library.load(ontology_graph="libraries/qudt/VOCAB_QUDT-UNITS-ALL-v2.1.ttl")
-    )
-    deps.append(
-        Library.load(ontology_graph="libraries/qudt/SCHEMA-FACADE_QUDT-v2.1.ttl")
-    )
-    deps.append(
-        Library.load(ontology_graph="libraries/qudt/SCHEMA_QUDT_NoOWL-v2.1.ttl")
-    )
-    deps.append(
-        Library.load(ontology_graph="libraries/qudt/VOCAB_QUDT-PREFIXES-v2.1.ttl")
-    )
-    deps.append(
-        Library.load(
-            ontology_graph="libraries/qudt/SHACL-SCHEMA-SUPPLEMENT_QUDT-v2.1.ttl"
-        )
-    )
-    deps.append(
-        Library.load(
-            ontology_graph="libraries/qudt/VOCAB_QUDT-SYSTEM-OF-UNITS-ALL-v2.1.ttl"
-        )
-    )
-    deps.append(Library.load(ontology_graph="libraries/brick/imports/rec.ttl"))
-    deps.append(Library.load(ontology_graph="libraries/brick/imports/recimports.ttl"))
-    deps.append(Library.load(ontology_graph="libraries/brick/imports/brickpatches.ttl"))
     ont_brick = Library.load(ontology_graph="libraries/brick/Brick.ttl")
 
     lib = Library.load(directory=str(library_path_brick))
