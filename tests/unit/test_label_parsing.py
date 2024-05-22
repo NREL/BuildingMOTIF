@@ -7,7 +7,6 @@ from buildingmotif.label_parsing.combinators import (
     choice,
     constant,
     ensure_token,
-    first_true,
     many,
     maybe,
     regex,
@@ -15,7 +14,7 @@ from buildingmotif.label_parsing.combinators import (
     string,
     substring_n,
 )
-from buildingmotif.label_parsing.parser import parse, parse_list
+from buildingmotif.label_parsing.parser import first_true, parse, parse_list
 from buildingmotif.label_parsing.tokens import (
     Constant,
     Delimiter,
@@ -125,6 +124,12 @@ def test_choice_parser():
     assert parser("-abc") == [
         TokenResult("-", Delimiter("-"), 1)
     ], "Should parse the string"
+    assert parser("doesnotmatch") == [
+        TokenResult(None, Null(), 0)
+    ], "Should not parse the string"
+    assert parser("abdef") == [
+        TokenResult(None, Null(), 0)
+    ], "Should not parse the string"
 
 
 def test_constant_parser():
@@ -148,6 +153,9 @@ def test_abbreviations():
     assert parser("AHU1") == [
         TokenResult("AHU", Constant(BRICK.Air_Handling_Unit), 3)
     ], "Should parse the string"
+    assert parser("BADABBREVIATION") == [
+        TokenResult(None, Null(), 0)
+    ], "Should not parse the string"
 
 
 def test_sequence():
