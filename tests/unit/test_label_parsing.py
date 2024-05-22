@@ -1,14 +1,8 @@
 from typing import List
 
-from buildingmotif.label_parsing import (
+from buildingmotif.label_parsing.parser import (
     COMMON_ABBREVIATIONS,
     COMMON_EQUIP_ABBREVIATIONS_BRICK,
-    Constant,
-    Delimiter,
-    ErrorTokenResult,
-    Identifier,
-    Null,
-    TokenResult,
     abbreviations,
     choice,
     constant,
@@ -22,6 +16,14 @@ from buildingmotif.label_parsing import (
     sequence,
     string,
     substring_n,
+)
+from buildingmotif.label_parsing.tokens import (
+    Constant,
+    Delimiter,
+    ErrorTokenResult,
+    Identifier,
+    Null,
+    TokenResult,
 )
 from buildingmotif.namespaces import BRICK
 

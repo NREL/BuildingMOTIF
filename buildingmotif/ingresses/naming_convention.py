@@ -11,11 +11,25 @@ from buildingmotif.label_parsing import (
 
 
 class NamingConventionIngress(RecordIngressHandler):
+    """
+    Ingress handler that parses labels using a naming convention parser.
+    This returns a Record for each input label, with the parsed tokens as a field.
+    You will need to attach this to a GraphIngressHandler to turn the tokens into a graph.
+    """
+
     def __init__(
         self,
         upstream: RecordIngressHandler,
         naming_convention: Parser,
     ):
+        """
+        Create a new NamingConventionIngress.
+
+        :param upstream: The upstream ingress handler to get records from. This should return records with a "label" field.
+        :type upstream: RecordIngressHandler
+        :param naming_convention: The naming convention parser to use.
+        :type naming_convention: Parser
+        """
         self.upstream = upstream
         self.naming_convention = naming_convention
 
