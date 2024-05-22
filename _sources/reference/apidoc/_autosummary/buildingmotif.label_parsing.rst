@@ -27,6 +27,7 @@ buildingmotif.label\_parsing
    :toctree:
    :recursive:
 
+   buildingmotif.label_parsing.combinators
    buildingmotif.label_parsing.parser
    buildingmotif.label_parsing.tokens
 
