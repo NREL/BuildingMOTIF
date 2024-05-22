@@ -20,6 +20,7 @@ from buildingmotif.dataclasses.template import Template
 from buildingmotif.schemas import validate_libraries_yaml
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import (
+    copy_graph,
     get_ontology_files,
     get_template_parts_from_shape,
     shacl_inference,
@@ -299,6 +300,20 @@ class Library:
         :param graph: graph to infer templates from
         :type graph: rdflib.Graph
         """
+        # add all imports to the same graph so we can resolve everything
+        imports_closure = copy_graph(graph)
+        # import dependencies into 'graph'
+        # get all imports from the graph
+        for dependency in graph.objects(predicate=rdflib.OWL.imports):
+            # attempt to load from BuildingMOTIF
+            try:
+                lib = Library.load(name=str(dependency))
+                imports_closure += lib.get_shape_collection().graph
+            except Exception as e:  # TODO: replace with a more specific exception
+                logging.warning(
+                    f"An ontology could not resolve a dependency on {dependency} ({e}). Check this is loaded into BuildingMOTIF"
+                )
+                continue
         class_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.OWL.Class))
         shape_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
         candidates = class_candidates.intersection(shape_candidates)
@@ -307,7 +322,9 @@ class Library:
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
             # TODO: mincount 0 (or unspecified) should be optional args on the generated template
-            partial_body, deps = get_template_parts_from_shape(candidate, graph)
+            partial_body, deps = get_template_parts_from_shape(
+                candidate, imports_closure
+            )
             templ = self.create_template(str(candidate), partial_body)
             dependency_cache[templ.id] = deps
             template_id_lookup[str(candidate)] = templ.id

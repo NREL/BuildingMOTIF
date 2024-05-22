@@ -131,7 +131,9 @@ def test_brick_template(bm, library_path_brick, template_brick, shacl_engine):
         Library.load(
             ontology_graph=dep, infer_templates=False, run_shacl_inference=False
         )
-    ont_brick = Library.load(ontology_graph="libraries/brick/Brick.ttl")
+    ont_brick = Library.load(
+        ontology_graph="libraries/brick/Brick.ttl", run_shacl_inference=False
+    )
 
     lib = Library.load(directory=str(library_path_brick))
 
@@ -143,7 +145,5 @@ def test_brick_template(bm, library_path_brick, template_brick, shacl_engine):
     assert isinstance(g, Graph), "was not a graph"
     bind_prefixes(g)
     m.add_graph(g)
-    m.graph.serialize("/tmp/model.ttl")
     ctx = m.validate([ont_brick.get_shape_collection()], error_on_missing_imports=False)
-    ctx.report.serialize("/tmp/report.ttl")
     assert ctx.valid, ctx.report_string
