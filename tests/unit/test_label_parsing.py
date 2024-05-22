@@ -1,6 +1,6 @@
 from typing import List
 
-from buildingmotif.label_parsing.parser import (
+from buildingmotif.label_parsing.combinators import (
     COMMON_ABBREVIATIONS,
     COMMON_EQUIP_ABBREVIATIONS_BRICK,
     abbreviations,
@@ -10,13 +10,12 @@ from buildingmotif.label_parsing.parser import (
     first_true,
     many,
     maybe,
-    parse,
-    parse_list,
     regex,
     sequence,
     string,
     substring_n,
 )
+from buildingmotif.label_parsing.parser import parse, parse_list
 from buildingmotif.label_parsing.tokens import (
     Constant,
     Delimiter,
