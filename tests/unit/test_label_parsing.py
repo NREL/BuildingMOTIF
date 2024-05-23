@@ -159,7 +159,7 @@ def test_abbreviations():
 
 
 def test_sequence():
-    parser = sequence(string("abc", Identifier), string("def", Identifier))
+    parser = sequence([string("abc", Identifier), string("def", Identifier)])
     # test that it parses the whole sequence
     assert parser("abcdef") == [
         TokenResult("abc", Identifier("abc"), 3),
@@ -168,9 +168,11 @@ def test_sequence():
 
     # test multiple kinds of parsers inside
     parser = sequence(
-        abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK),
-        regex(r"[/\-:_]+", Delimiter),
-        regex(r"[0-9]+", Identifier),
+        [
+            abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK),
+            regex(r"[/\-:_]+", Delimiter),
+            regex(r"[0-9]+", Identifier),
+        ]
     )
 
     # test that only the matching characters are consumed
@@ -188,9 +190,11 @@ def test_sequence():
 def test_many():
     delim = regex(r"[_\-:/]+", Delimiter)
     type_ident_delim = sequence(
-        COMMON_ABBREVIATIONS,
-        regex(r"\d+", Identifier),
-        delim,
+        [
+            COMMON_ABBREVIATIONS,
+            regex(r"\d+", Identifier),
+            delim,
+        ]
     )
     parser = many(type_ident_delim)
 
@@ -222,8 +226,10 @@ def test_many():
 
 def test_maybe():
     parser = sequence(
-        maybe(string("abc", Identifier)),
-        string("def", Identifier),
+        [
+            maybe(string("abc", Identifier)),
+            string("def", Identifier),
+        ]
     )
     # test that it parses the whole sequence
     assert parser("abcdef") == [
@@ -237,13 +243,17 @@ def test_maybe():
 
     # test sequence inside maybe
     parser = sequence(
-        maybe(
-            sequence(
-                string("abc", Identifier),
-                string("def", Identifier),
-            )
-        ),
-        string("ghi", Identifier),
+        [
+            maybe(
+                sequence(
+                    [
+                        string("abc", Identifier),
+                        string("def", Identifier),
+                    ]
+                )
+            ),
+            string("ghi", Identifier),
+        ]
     )
     assert parser("ghi") == [
         TokenResult(None, Null(), 0),
@@ -258,14 +268,18 @@ def test_maybe():
 
     # test maybe inside sequence
     parser = sequence(
-        string("abc", Identifier),
-        maybe(
-            sequence(
-                string("def", Identifier),
-                string("ghi", Identifier),
-            )
-        ),
-        string("jkl", Identifier),
+        [
+            string("abc", Identifier),
+            maybe(
+                sequence(
+                    [
+                        string("def", Identifier),
+                        string("ghi", Identifier),
+                    ]
+                )
+            ),
+            string("jkl", Identifier),
+        ]
     )
     assert parser("abcjkl") == [
         TokenResult("abc", Identifier("abc"), 3),
@@ -283,9 +297,11 @@ def test_maybe():
 
 def test_parse():
     parser = sequence(
-        abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK),
-        regex(r"[/\-:_]+", Delimiter),
-        regex(r"[0-9]+", Identifier),
+        [
+            abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK),
+            regex(r"[/\-:_]+", Delimiter),
+            regex(r"[0-9]+", Identifier),
+        ]
     )
     result = parse(parser, "AHU-1")
     assert result.tokens == [
@@ -305,9 +321,11 @@ def test_parse():
 
 def test_parse_list():
     parser = sequence(
-        abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK),
-        regex(r"[/\-:_]+", Delimiter),
-        regex(r"[0-9]+", Identifier),
+        [
+            abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK),
+            regex(r"[/\-:_]+", Delimiter),
+            regex(r"[0-9]+", Identifier),
+        ]
     )
     points = [
         "AHU-1",
