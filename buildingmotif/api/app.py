@@ -7,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from buildingmotif.api.views.library import blueprint as library_blueprint
 from buildingmotif.api.views.model import blueprint as model_blueprint
+from buildingmotif.api.views.parser import blueprint as parsers_blueprint
 from buildingmotif.api.views.template import blueprint as template_blueprint
 from buildingmotif.building_motif.building_motif import BuildingMOTIF
 
@@ -67,6 +68,7 @@ def create_app(DB_URI, shacl_engine: Optional[str] = "pyshacl"):
     app.register_blueprint(library_blueprint, url_prefix="/libraries")
     app.register_blueprint(template_blueprint, url_prefix="/templates")
     app.register_blueprint(model_blueprint, url_prefix="/models")
+    app.register_blueprint(parsers_blueprint, url_prefix="/parsers")
 
     return app
 
