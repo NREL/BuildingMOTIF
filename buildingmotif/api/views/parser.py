@@ -6,7 +6,6 @@ from flask import Blueprint, jsonify, request
 from flask_api import status
 
 from buildingmotif.label_parsing.combinators import (
-    Parser,
     abbreviations,
     as_identifier,
     choice,
@@ -27,7 +26,7 @@ log = logging.getLogger()
 
 blueprint = Blueprint("parsers", __name__)
 
-parsers_by_name: dict[str, Type[Parser]] = {
+parsers_by_name: dict[str, Type] = {
     "abbreviations": abbreviations,
     "sequence": sequence,
     "string": string,
