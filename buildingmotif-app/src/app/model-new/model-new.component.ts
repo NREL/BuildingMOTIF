@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { ModelNewService } from './model-new.service';
 import {Router} from "@angular/router"
 import { Model } from '../types';
@@ -12,9 +12,9 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   providers: [ModelNewService]
 })
 export class ModelNewComponent {
-  newModelForm = new UntypedFormGroup({
-    nameControl: new UntypedFormControl("", [Validators.required, noInValidCharacatersValidator]),
-    descriptionControl: new UntypedFormControl(""),
+  newModelForm = new FormGroup({
+    nameControl: new FormControl("", [Validators.required, noInValidCharacatersValidator]),
+    descriptionControl: new FormControl(""),
   })
   
 
@@ -23,6 +23,9 @@ export class ModelNewComponent {
   createModel = () => {
     const name = this.newModelForm.value.nameControl
     const description = this.newModelForm.value.descriptionControl
+
+    if (!name) return;
+    if (!description) return;
 
     this.modelNewService.createModel(name, description).subscribe({
       next: (newModel: Model) => {
@@ -38,7 +41,7 @@ export class ModelNewComponent {
 }
 
 
-function noInValidCharacatersValidator(control: UntypedFormControl) {
+function noInValidCharacatersValidator(control: FormControl) {
   const invalidCharacter = '<>" {}|\\^`';
 
   for (const c of control?.value.split("")) {
