@@ -27,7 +27,7 @@ export class ShapeValidationComponent implements OnInit {
   shapes?:  {[definition_type: string]: Shape[]} = undefined;
   targetNodes?: string[] = undefined;
   formGroup = new FormGroup({
-    shapes: new FormControl(new Set(), forbiddenNameValidator()),
+    shapes: new FormControl<Set<Shape>>(new Set(), forbiddenNameValidator()),
     targetNode: new FormControl(null, Validators.required)
   });
   response?: Record<string, string[]> = undefined;
