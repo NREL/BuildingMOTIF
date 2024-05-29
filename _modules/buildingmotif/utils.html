@@ -419,6 +419,7 @@ document.write(`
 
 <span class="kn">import</span> <span class="nn">pyshacl</span>  <span class="c1"># type: ignore</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span> <span class="nn">rdflib.compare</span> <span class="kn">import</span> <span class="n">_TripleCanonicalizer</span>
 <span class="kn">from</span> <span class="nn">rdflib.paths</span> <span class="kn">import</span> <span class="n">ZeroOrOne</span>
 <span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
 
@@ -1100,6 +1101,25 @@ document.write(`
     <span class="c1"># apply the replacements</span>
     <span class="n">replace_nodes</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">replacements</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">g</span></div>
+
+
+<div class="viewcode-block" id="approximate_graph_hash"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.approximate_graph_hash">[docs]</a><span class="k">def</span> <span class="nf">approximate_graph_hash</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a cryptographic hash of the graph contents.</span>
+<span class="sd">    This uses the same method as rdflib&#39;s isomorphic function to generate a cryptographic hash of a given graph.</span>
+<span class="sd">    This can be used to calcualte graph isomorphism across time without needing to save the entire graph.</span>
+
+<span class="sd">    :param graph: graph to hash</span>
+<span class="sd">    :type graph: graph</span>
+
+<span class="sd">    :return: integer hash</span>
+<span class="sd">    :rtype: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Copy graph to memory (improved performance if graph is backed by a DB store)</span>
+    <span class="n">graph_prime</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">triple_canonicalizer</span> <span class="o">=</span> <span class="n">_TripleCanonicalizer</span><span class="p">(</span><span class="n">graph_prime</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">triple_canonicalizer</span><span class="o">.</span><span class="n">to_hash</span><span class="p">()</span></div>
 </pre></div>
 
                 </article>
