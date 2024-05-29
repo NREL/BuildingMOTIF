@@ -86,7 +86,7 @@ class TemplateIngress(GraphIngressHandler):
                 _, graph = graph.fill(ns, include_optional=self.require_optional_args)
                 g += graph
                 continue
-            raise Exception(f"Paramers {graph.parameters} are still unused!")
+            raise Exception(f"Paramaters {graph.parameters} are still unused!")
         return g
 
 
@@ -122,9 +122,14 @@ class TemplateIngressWithChooser(GraphIngressHandler):
         :type mapper: Optional[Callable[[str], str]]
         :param upstream: the ingress handler from which to source records
         :type upstream: RecordIngressHandler
+
         :param inline: if True, inline the template before evaluating it on
                       each row, defaults to False
         :type inline: bool, optional
+        :param require_optional_args: if True, require that optional arguments in the
+                      chosen template be provided by the upstream ingress handler,
+                      defaults to False
+        :type require_optional_args: bool, optional
         """
         self.chooser = chooser
         self.mapper = mapper if mapper else lambda x: x
