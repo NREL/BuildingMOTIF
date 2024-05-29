@@ -180,3 +180,18 @@ print(template.body.serialize())
 ```
 
 Observe that the generated template uses the `sh:name` property of each property shape to inform the paramter name. If this is not provided (e.g. for the `brick:Supply_Air_Flow_Sensor` property shape), then a generated parameter will be used.
+
+## Converting Templates to Shapes
+
+BuildingMOTIF can automatically convert templates to shapes.
+This is helpful when you want to verify that parts of a model fulfill the structure defined by a template.
+
+BuildingMOTIF will not do this automatically. To generate a SHACL shape from a BuildingMOTIF template, call the `to_nodeshape` method on the template.
+
+To explore this with an example, let's fetch the `vav` template that we created above.
+
+```{code-cell}
+template = lib.get_template_by_name("urn:example/vav")
+shape_graph = template.to_nodeshape() # turn the template into a shape
+print(shape_graph.serialize())
+```
