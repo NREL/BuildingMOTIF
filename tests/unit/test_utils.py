@@ -346,7 +346,7 @@ def test_hash(bm: BuildingMOTIF):
     before_hash = approximate_graph_hash(model.graph)
 
     assert (
-        approximate_graph_hash(graph) == before_hash
+        approximate_graph_hash(model.graph) == before_hash
     ), "Graph did not change but hash did"
 
     triple_to_add = (MODEL["b"], A, BRICK["Sensor"])

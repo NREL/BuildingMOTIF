@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
 
 import pyshacl  # type: ignore
 from rdflib import BNode, Graph, Literal, URIRef
+from rdflib.compare import _TripleCanonicalizer
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
 
@@ -695,11 +696,8 @@ def skolemize_shapes(g: Graph) -> Graph:
 def approximate_graph_hash(graph: Graph) -> int:
     """
     Returns a cryptographic hash of the graph contents.
-    This method does not currently guarrantee that two isomorphic graphs will produce the same graph.
-    It is intended to differentiate between a graph and a modified version of that graph.
-
-    In the future canonicalization (https://www.w3.org/TR/rdf-canon/) may allow for graph isomorphism to be reflected
-    in a graph's hash.
+    This uses the same method as rdflib's isomorphic function to generate a cryptographic hash of a given graph.
+    This can be used to calcualte graph isomorphism across time without needing to save the entire graph.
 
     :param graph: graph to hash
     :type graph: graph
@@ -709,9 +707,6 @@ def approximate_graph_hash(graph: Graph) -> int:
     """
     # Copy graph to memory (improved performance if graph is backed by a DB store)
     graph_prime = copy_graph(graph)
+    triple_canonicalizer = _TripleCanonicalizer(graph_prime)
 
-    # nt is the best performing serialization format I tested.
-    # For medium-office-compiled it takes 0.03s vs 0.5 for ttl
-    graph_string = graph_prime.serialize(format="nt")
-
-    return hash(graph_string)
+    return triple_canonicalizer.to_hash()
