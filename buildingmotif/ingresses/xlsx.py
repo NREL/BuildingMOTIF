@@ -42,6 +42,7 @@ class XLSXIngress(RecordIngressHandler):
         :rtype: List[Record]
         """
         records = []
+        # using data_only means that the cells will contain data, rather than a formula.
         wb = load_workbook(self.filename, data_only=True)  # noqa
         for sheetname in wb.sheetnames:
             sheet = wb[sheetname]
