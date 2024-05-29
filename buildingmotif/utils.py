@@ -697,7 +697,10 @@ def approximate_graph_hash(graph: Graph) -> int:
     """
     Returns a cryptographic hash of the graph contents.
     This uses the same method as rdflib's isomorphic function to generate a cryptographic hash of a given graph.
-    This can be used to calcualte graph isomorphism across time without needing to save the entire graph.
+    This method calculates a consistent hash of the canonicalized form of the graph.
+    If the hashes of two graphs are equal, this means that the graphs are isomorphic.
+    Generating the hashes (using this method) and caching them allows graph isomorphism to be determined
+    without having to recalculate the canonical form of the graph, which can be expensive.
 
     :param graph: graph to hash
     :type graph: graph
