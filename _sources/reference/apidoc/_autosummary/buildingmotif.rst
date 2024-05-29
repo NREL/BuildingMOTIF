@@ -34,11 +34,11 @@
    buildingmotif.ingresses
    buildingmotif.label_parsing
    buildingmotif.libraries
+   buildingmotif.model_builder
    buildingmotif.namespaces
    buildingmotif.schemas
    buildingmotif.shape_builder
    buildingmotif.template_compilation
    buildingmotif.template_matcher
-   buildingmotif.template_to_shape
    buildingmotif.utils
 
