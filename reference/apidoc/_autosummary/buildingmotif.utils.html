@@ -67,7 +67,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Model Creation" href="../../../tutorials/model_creation.html" />
-    <link rel="prev" title="buildingmotif.template_matcher" href="buildingmotif.template_matcher.html" />
+    <link rel="prev" title="buildingmotif.template_to_shape" href="buildingmotif.template_to_shape.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -231,6 +231,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -507,8 +508,8 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.skolemize_shapes" title="buildingmotif.utils.skolemize_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skolemize_shapes</span></code></a>(g)</p></td>
 <td><p>Skolemize the shapes in the graph.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.template_to_shape" title="buildingmotif.utils.template_to_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">template_to_shape</span></code></a>(template)</p></td>
-<td><p>Turn this template into a SHACL shape.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.validate_uri" title="buildingmotif.utils.validate_uri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_uri</span></code></a>(uri)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -658,23 +659,6 @@ NodeShapes will be incorporated into the resulting template:
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="buildingmotif.utils.template_to_shape">
-<span class="sig-name descname"><span class="pre">template_to_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Graph</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#template_to_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.template_to_shape" title="Permalink to this definition">#</a></dt>
-<dd><p>Turn this template into a SHACL shape.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>template</strong> (<em>template</em>) – template to convert</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>graph of template</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Graph</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="buildingmotif.utils.new_temporary_graph">
 <span class="sig-name descname"><span class="pre">new_temporary_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">more_namespaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Graph</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#new_temporary_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.new_temporary_graph" title="Permalink to this definition">#</a></dt>
 <dd><p>Creates a new in-memory RDF graph with common and additional namespace
@@ -744,6 +728,11 @@ because it is axiomatic or not expected to be imported.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.utils.validate_uri">
+<span class="sig-name descname"><span class="pre">validate_uri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#validate_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.validate_uri" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="buildingmotif.utils.shacl_validate">
@@ -842,12 +831,12 @@ using PySHACL.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="buildingmotif.template_matcher.html"
+       href="buildingmotif.template_to_shape.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">buildingmotif.template_matcher</p>
+        <p class="prev-next-title">buildingmotif.template_to_shape</p>
       </div>
     </a>
     <a class="right-next"

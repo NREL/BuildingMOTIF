@@ -231,6 +231,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -555,42 +556,6 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,030 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,035 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,049 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/box-damper-position in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,056 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/window-switch in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,061 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/discharge-airflow in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,066 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,071 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,080 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,085 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,090 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,095 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:22,100 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
-</pre></div>
-</div>
 </div>
 </div>
 </section>
@@ -782,10 +747,10 @@ to load in the Brick and Guideline36 libraries at the top of this tutorial.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:23,199 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:46,738 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:23,205 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:46,744 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
@@ -895,10 +860,10 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:24,182 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:47,682 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:24,188 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:47,687 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
@@ -960,7 +925,7 @@ urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=502596a9-6b98-4ef4-9d34-e463c51c644e (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=eaba8eb5-33c4-41fc-bcd4-2926bcae595d (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -995,10 +960,10 @@ print(f"Model is valid? {validation_result.valid}")
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:25,110 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:48,694 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:25,116 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-05-29 16:46:48,702 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
@@ -1021,55 +986,43 @@ Take a look at the first bit of output, which is the official SHACL validation r
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Validation Report
 Conforms: False
-Results (8):
+Results (6):
 Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
 	Severity: sh:Violation
-	Source Shape: &lt;urn:well-known/a41fbf15&gt;
+	Source Shape: &lt;urn:well-known/4e2f7aab&gt;
 	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
 	Result Path: brick:hasPoint
-	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/9e3460de&gt;
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/67613176&gt;
 Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
 	Severity: sh:Violation
-	Source Shape: &lt;urn:well-known/86e7d290&gt;
+	Source Shape: &lt;urn:well-known/276f56d1&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/adc6e40a&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/929b823f&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/fcaa37fc&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/a2f39bf6&gt;
 	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
 	Result Path: brick:hasPart
-	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/4dd5df6f&gt;
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/c1ab877b&gt;
 Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
 	Severity: sh:Violation
-	Source Shape: &lt;urn:well-known/ee82b4b2&gt;
+	Source Shape: &lt;urn:well-known/2f0fb5d0&gt;
 	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
 	Result Path: brick:hasPoint
-	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/994c2eb1&gt;
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/ae1fcdc2&gt;
 Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
 	Severity: sh:Violation
-	Source Shape: &lt;urn:well-known/f0d74219&gt;
+	Source Shape: &lt;urn:well-known/79650797&gt;
 	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
 	Result Path: brick:hasPoint
-	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/931e64a4&gt;
-Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
-	Severity: sh:Violation
-	Source Shape: &lt;urn:well-known/ee10552a&gt;
-	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
-	Result Path: brick:hasPoint
-	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/a30febe4&gt;
-Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
-	Severity: sh:Violation
-	Source Shape: &lt;urn:well-known/bdd303a4&gt;
-	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
-	Result Path: brick:hasPoint
-	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/b0d96114&gt;
-Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
-	Severity: sh:Violation
-	Source Shape: &lt;urn:well-known/b8ffdeef&gt;
-	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
-	Result Path: brick:hasPoint
-	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/4e8b54a0&gt;
-Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
-	Severity: sh:Violation
-	Source Shape: &lt;urn:well-known/5c224c5f&gt;
-	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
-	Result Path: brick:hasPoint
-	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/05c7d0e8&gt;
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/c541efaf&gt;
 
 -------------------------------------------------------------------------------
 </pre></div>
@@ -1091,14 +1044,12 @@ Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.or
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is invalid for these reasons:
 urn:bldg/Core_ZN-PSC_AC
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Heating_Command on path https://brickschema.org/schema/Brick#hasPoint
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Cooling_Command on path https://brickschema.org/schema/Brick#hasPoint
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
  - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
  - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
  - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
 </pre></div>
 </div>
 </div>
@@ -1113,7 +1064,7 @@ tedious. To address this issue, BuildingMOTIF can find those templates automatic
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=c8642bff-1c93-43b7-b9cf-c918b69796ad (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=0e3fdcb4-81cc-4d27-b319-7290f55f5092 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
