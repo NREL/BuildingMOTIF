@@ -693,7 +693,7 @@ def skolemize_shapes(g: Graph) -> Graph:
     return g
 
 
-def approximate_graph_hash(graph: Graph) -> int:
+def graph_hash(graph: Graph) -> int:
     """
     Returns a cryptographic hash of the graph contents.
     This uses the same method as rdflib's isomorphic function to generate a cryptographic hash of a given graph.

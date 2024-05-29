@@ -7,9 +7,9 @@ from buildingmotif.namespaces import BRICK, SH, XSD, A
 from buildingmotif.utils import (
     PARAM,
     _param_name,
-    approximate_graph_hash,
     get_parameters,
     get_template_parts_from_shape,
+    graph_hash,
     replace_nodes,
     rewrite_shape_graph,
     shacl_validate,
@@ -343,19 +343,17 @@ def test_hash(bm: BuildingMOTIF):
 
     model = Model.create(MODEL)
     model.add_graph(graph)
-    before_hash = approximate_graph_hash(model.graph)
+    before_hash = graph_hash(model.graph)
 
-    assert (
-        approximate_graph_hash(model.graph) == before_hash
-    ), "Graph did not change but hash did"
+    assert graph_hash(model.graph) == before_hash, "Graph did not change but hash did"
 
     triple_to_add = (MODEL["b"], A, BRICK["Sensor"])
     model.graph.add(triple_to_add)
 
-    after_hash = approximate_graph_hash(model.graph)
+    after_hash = graph_hash(model.graph)
     assert before_hash != after_hash, "Graph changed, but hashes did not"
 
     model.graph.remove(triple_to_add)
 
-    after_hash = approximate_graph_hash(model.graph)
+    after_hash = graph_hash(model.graph)
     assert before_hash == after_hash, "Graph with same state resulted in different hash"
