@@ -30,7 +30,8 @@ buildingmotif.ingresses
    buildingmotif.ingresses.bacnet
    buildingmotif.ingresses.base
    buildingmotif.ingresses.brick
-   buildingmotif.ingresses.csv
+   buildingmotif.ingresses.csvingress
+   buildingmotif.ingresses.naming_convention
    buildingmotif.ingresses.template
    buildingmotif.ingresses.xlsx
 

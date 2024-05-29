@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>buildingmotif.ingresses.csv &#8212; BuildingMOTIF Documentation</title>
+    <title>buildingmotif.label_parsing.tokens &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -61,7 +61,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/ingresses/csv';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/label_parsing/tokens';</script>
     <link rel="shortcut icon" href="../../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -207,15 +207,22 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csv.html">buildingmotif.ingresses.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.html">buildingmotif.ingresses.csvingress</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html">buildingmotif.label_parsing.combinators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.parser.html">buildingmotif.label_parsing.parser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html">buildingmotif.label_parsing.tokens</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
 </ul>
 </li>
@@ -321,7 +328,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/ingresses/csv.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/label_parsing/tokens.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -399,51 +406,77 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>Source code for buildingmotif.ingresses.csv</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">csv</span> <span class="kn">import</span> <span class="n">DictReader</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+  <h1>Source code for buildingmotif.label_parsing.tokens</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.ingresses.base</span> <span class="kn">import</span> <span class="n">Record</span><span class="p">,</span> <span class="n">RecordIngressHandler</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
+
+<span class="c1"># Token is a union of the different types of tokens</span>
+<span class="n">Token</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Constant&quot;</span><span class="p">,</span> <span class="s2">&quot;Delimiter&quot;</span><span class="p">,</span> <span class="s2">&quot;Null&quot;</span><span class="p">]</span>
+<span class="n">TokenOrConstructor</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Token</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="CSVIngress"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csv.html#buildingmotif.ingresses.csv.CSVIngress">[docs]</a><span class="k">class</span> <span class="nc">CSVIngress</span><span class="p">(</span><span class="n">RecordIngressHandler</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads rows from a CSV file and exposes them as records.</span>
-<span class="sd">    The type of the record is the name of the CSV file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ensure_token"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.ensure_token">[docs]</a><span class="k">def</span> <span class="nf">ensure_token</span><span class="p">(</span><span class="n">token_or_constructor</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Ensure a value is a token or constructs one from a given value.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token_or_constructor</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">token_or_constructor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">token_or_constructor</span></div>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StringIO</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both filename and data are defined.&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">filename</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dict_reader</span> <span class="o">=</span> <span class="n">DictReader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<div class="viewcode-block" id="Identifier"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.Identifier">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Identifier</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An identifier token. Contains a string.&quot;&quot;&quot;</span>
 
-        <span class="k">elif</span> <span class="n">data</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dict_reader</span> <span class="o">=</span> <span class="n">DictReader</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">rtype</span> <span class="o">=</span> <span class="s2">&quot;data stream&quot;</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span></div>
 
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either filename or data must be defined.&quot;</span><span class="p">)</span>
 
-    <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Record</span><span class="p">]:</span>
-        <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_reader</span><span class="p">:</span>
-            <span class="n">rec</span> <span class="o">=</span> <span class="n">Record</span><span class="p">(</span>
-                <span class="n">rtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rtype</span><span class="p">,</span>
-                <span class="n">fields</span><span class="o">=</span><span class="n">row</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+<div class="viewcode-block" id="Constant"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.Constant">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Constant</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A constant token. Contains a URI, probably some sort of Class&quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">records</span></div>
+    <span class="n">value</span><span class="p">:</span> <span class="n">URIRef</span></div>
+
+
+<div class="viewcode-block" id="Delimiter"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.Delimiter">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Delimiter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A delimiter token.&quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="Null"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.Null">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Null</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A null token.&quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="TokenResult"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.TokenResult">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TokenResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A token result. Contains a token, the type of the token, the length of the token, and a possible error.&quot;&quot;&quot;</span>
+
+    <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Token</span>
+    <span class="n">length</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compare two token results on every</span>
+<span class="sd">        field except for the error field.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TokenResult</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">token</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">length</span>
+        <span class="p">)</span></div>
+
+
+<span class="c1"># null token result</span>
+<span class="n">ErrorTokenResult</span> <span class="o">=</span> <span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 </pre></div>
 
                 </article>
