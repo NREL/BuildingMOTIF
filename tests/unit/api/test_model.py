@@ -262,6 +262,8 @@ def test_validate_model(client, building_motif, shacl_engine):
     assert library_1 is not None
     library_2 = Library.load(directory="tests/unit/fixtures/templates")
     assert library_2 is not None
+    brick = Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    assert brick is not None
 
     BLDG = Namespace("urn:building/")
     model = Model.create(name=BLDG)
@@ -271,10 +273,7 @@ def test_validate_model(client, building_motif, shacl_engine):
     results = client.post(
         f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        json={
-            "library_ids": [library_1.id, library_2.id, brick.id],
-            "shacl_engine": shacl_engine,
-        },
+        json={"library_ids": [library_1.id, library_2.id, brick.id]},
     )
 
     # Assert
