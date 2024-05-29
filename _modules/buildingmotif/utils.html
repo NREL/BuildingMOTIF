@@ -1107,7 +1107,10 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a cryptographic hash of the graph contents.</span>
 <span class="sd">    This uses the same method as rdflib&#39;s isomorphic function to generate a cryptographic hash of a given graph.</span>
-<span class="sd">    This can be used to calcualte graph isomorphism across time without needing to save the entire graph.</span>
+<span class="sd">    This method calculates a consistent hash of the canonicalized form of the graph.</span>
+<span class="sd">    If the hashes of two graphs are equal, this means that the graphs are isomorphic.</span>
+<span class="sd">    Generating the hashes (using this method) and caching them allows graph isomorphism to be determined</span>
+<span class="sd">    without having to recalculate the canonical form of the graph, which can be expensive.</span>
 
 <span class="sd">    :param graph: graph to hash</span>
 <span class="sd">    :type graph: graph</span>
