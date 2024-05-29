@@ -207,22 +207,15 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.html">buildingmotif.ingresses.csvingress</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csv.html">buildingmotif.ingresses.csv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html">buildingmotif.label_parsing.combinators</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.parser.html">buildingmotif.label_parsing.parser</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html">buildingmotif.label_parsing.tokens</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
 </ul>
 </li>
@@ -410,7 +403,7 @@ document.write(`
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif.ingresses.base</span> <span class="kn">import</span> <span class="n">Record</span><span class="p">,</span> <span class="n">RecordIngressHandler</span>
 
@@ -427,15 +420,18 @@ document.write(`
 <span class="sd">    field of each Record gives the name of the sheet.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Path to the .xlsx file to be ingested</span>
 
 <span class="sd">        :param filename: Path to a .xlsx file</span>
 <span class="sd">        :type filename: Path</span>
+<span class="sd">        :param limit: The maximum number of rows to read from each sheet. If -1 (default), reads all rows.</span>
+<span class="sd">        :type limit: Optional[int], optional</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span> <span class="ow">or</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Record</span><span class="p">]:</span>
@@ -448,11 +444,12 @@ document.write(`
 <span class="sd">        :rtype: List[Record]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">wb</span> <span class="o">=</span> <span class="n">load_workbook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>  <span class="c1"># noqa</span>
+        <span class="n">wb</span> <span class="o">=</span> <span class="n">load_workbook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">data_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># noqa</span>
         <span class="k">for</span> <span class="n">sheetname</span> <span class="ow">in</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span><span class="p">:</span>
             <span class="n">sheet</span> <span class="o">=</span> <span class="n">wb</span><span class="p">[</span><span class="n">sheetname</span><span class="p">]</span>
             <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">sheet</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sheet</span><span class="o">.</span><span class="n">max_column</span><span class="p">)]</span>
-            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">sheet</span><span class="o">.</span><span class="n">max_row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">upper_range</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="n">max_row</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">upper_range</span><span class="p">):</span>
                 <span class="n">fields</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="n">columns</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span> <span class="n">sheet</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
                     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sheet</span><span class="o">.</span><span class="n">max_column</span><span class="p">)</span>
