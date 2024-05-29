@@ -24,6 +24,8 @@ class XLSXIngress(RecordIngressHandler):
 
         :param filename: Path to a .xlsx file
         :type filename: Path
+        :param limit: The maximum number of rows to read from each sheet. If -1 (default), reads all rows.
+        :type limit: Optional[int], optional
         """
 
         self.filename = filename
