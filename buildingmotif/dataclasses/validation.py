@@ -687,7 +687,6 @@ class ValidationContext:
         # inside the or clause
         candidates = OrShape.from_validation_report(g)
         for c in candidates:
-            print(c)
             diffs[c.focus].add(c)
         return diffs
 
