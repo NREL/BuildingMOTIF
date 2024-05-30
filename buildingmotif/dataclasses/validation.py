@@ -114,6 +114,40 @@ class GraphDiff:
 
 
 @dataclass(frozen=True)
+class OrShape(GraphDiff):
+    """Represents an entity that is missing one of several possible shapes, via sh:or"""
+
+    shapes: List[URIRef]
+
+    @classmethod
+    def from_validation_report(cls, report: Graph) -> List["OrShape"]:
+        """Construct OrShape objects from a SHACL validation report.
+
+        :param report: the SHACL validation report
+        :type report: Graph
+        :return: a list of OrShape objects
+        :rtype: List[OrShape]
+        """
+        query = """
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        SELECT ?focus ?shapes WHERE {
+            ?result sh:sourceConstraintComponent sh:OrConstraintComponent .
+            ?result sh:sourceShape/sh:or ?shapes .
+            ?result sh:focusNode ?focus .
+        }"""
+        print(query)
+        results = report.query(query)
+        print(results)
+        for focus, shapes in results:
+            yield cls(
+                focus,
+                report,
+                report,
+                [s for s in Collection(report, shapes)],
+            )
+
+
+@dataclass(frozen=True)
 class PathClassCount(GraphDiff):
     """Represents an entity missing paths to objects of a given type:
     $this <path> <object> .
@@ -643,6 +677,10 @@ class ValidationContext:
                             int(max_count) if max_count else None,
                         )
                     )
+        print("LOOKING FOR OR SHAPES")
+        candidates = OrShape.from_validation_report(g)
+        for c in candidates:
+            print(c)
         return diffs
 
 
