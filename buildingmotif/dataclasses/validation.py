@@ -7,16 +7,46 @@ from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rdflib
-from rdflib import Graph, URIRef
+from rdflib import Graph, URIRef, Literal
 from rdflib.term import BNode, Node
+from rdflib.collection import Collection
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
-from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A
+from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A, RDF
 from buildingmotif.utils import _gensym, get_template_parts_from_shape, replace_nodes
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Library, Model, Template
+
+
+def shacl_to_sparql_path(g, shacl_path):
+    def parse_path(node):
+        if isinstance(node, URIRef):
+            return g.qname(node)
+        elif isinstance(node, BNode):
+            for p, o in g.predicate_objects(node):
+                if p == SH.inversePath:
+                    return "^" + parse_path(o)
+                elif p == SH.alternativePath:
+                    return "|".join(parse_path(e) for e in g.items(node))
+                elif p == SH.zeroOrMorePath:
+                    return parse_path(o) + "*"
+                elif p == SH.oneOrMorePath:
+                    return parse_path(o) + "+"
+                elif p == SH.zeroOrOnePath:
+                    return parse_path(o) + "?"
+        elif isinstance(node, Literal):
+            return str(node)
+        else:
+            raise ValueError(f"Unsupported SHACL path element: {node}")
+
+    # if shacl_path is an RDF list, then we need to turn it into a Collection
+    if (shacl_path, RDF.first, None) in g:
+        c = Collection(g, shacl_path)
+        return "/".join([parse_path(e) for e in c])
+
+    return parse_path(shacl_path)
 
 
 @dataclass(frozen=True)
@@ -142,8 +172,18 @@ class PathClassCount(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
+        # interpret a SHACL property path as a sparql property path
+        path = shacl_to_sparql_path(self.graph, self.path)
+
+        classname = self.graph.qname(self.classname)
+        if self.maxc is None and self.minc is not None:
+            return f"{self.focus} needs at least {self.minc} instances of \
+{classname} on path {path}"
+        if self.minc is None and self.maxc is not None:
+            return f"{self.focus} needs at most {self.maxc} instances of \
+{classname} on path {path}"
         return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
-{self.classname} on path {self.path}"
+{classname} on path {path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
@@ -229,8 +269,15 @@ class PathShapeCount(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
+        shapename = self.graph.qname(self.shapename)
+        if self.maxc is None and self.minc is not None:
+            return f"{self.focus} needs at least {self.minc} instances of \
+{shapename} on path {self.path}"
+        if self.minc is None and self.maxc is not None:
+            return f"{self.focus} needs at most {self.maxc} instances of \
+{shapename} on path {self.path}"
         return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
-{self.shapename} on path {self.path}"
+{shapename} on path {self.path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff."""
@@ -312,8 +359,12 @@ class RequiredPath(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        return f"{self.focus} needs between {self.minc} and {self.maxc} uses \
-of path {self.path}"
+        path = shacl_to_sparql_path(self.graph, self.path)
+        if self.maxc is None and self.minc is not None:
+            return f"{self.focus} needs at least {self.minc} uses of path {path}"
+        if self.minc is None and self.maxc is not None:
+            return f"{self.focus} needs at most {self.maxc} uses of path {path}"
+        return f"{self.focus} needs between {self.minc} and {self.maxc} uses of path {path}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
@@ -342,7 +393,8 @@ class RequiredClass(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        return f"{self.focus} needs to be a {self.classname}"
+        value_node = self.validation_result.value(self._result_uri, SH.value)
+        return f"{value_node} on {self.focus} needs to be a {self.classname}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.

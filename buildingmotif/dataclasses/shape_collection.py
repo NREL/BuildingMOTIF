@@ -319,7 +319,10 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
     tc_clauses = [
         f"?target rdf:type/rdfs:subClassOf* {tc.n3()} .\n" for tc in targetClasses  # type: ignore
     ]
-    clauses += " UNION ".join(tc_clauses)
+    if len(tc_clauses) > 1:
+        clauses += " UNION ".join(f"{{ {tc_clause} }}" for tc_clause in tc_clauses)
+    elif len(tc_clauses) == 1:
+        clauses += tc_clauses[0]
 
     # handle targetSubjectsOf
     targetSubjectsOf = graph.objects(shape, SH.targetSubjectsOf)
@@ -347,10 +350,23 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
     # find all of the non-qualified property shapes. All of these will use the same variable
     # for all uses of the same sh:path value
     pshapes_by_path: Dict[Node, List[Node]] = defaultdict(list)
+    qualified_pshapes: Set[Node] = set()
     for pshape in graph.objects(shape, SH.property):
         path = _sh_path_to_path(graph, graph.value(pshape, SH.path))
         if not graph.value(pshape, SH.qualifiedValueShape):
             pshapes_by_path[path].append(pshape)  # type: ignore
+        else:
+            qualified_pshapes.add(pshape)
+
+    # look at pshapes implicitly defined by sh:path
+    for pshape in graph.subjects(predicate=SH.path):
+        if pshape == shape: # skip the input 'shape', otherwise this will infinitely recurse
+            continue
+        path = _sh_path_to_path(graph, graph.value(pshape, SH.path))
+        if not graph.value(pshape, SH.qualifiedValueShape):
+            pshapes_by_path[path].append(pshape)  # type: ignore
+        else:
+            qualified_pshapes.add(pshape)
 
     for dep_shape in graph.objects(shape, SH.node):
         dep_clause, dep_project = _shape_to_where(graph, dep_shape)
