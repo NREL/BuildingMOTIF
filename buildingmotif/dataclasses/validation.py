@@ -119,6 +119,10 @@ class OrShape(GraphDiff):
 
     shapes: List[URIRef]
 
+    def reason(self) -> str:
+        """Human-readable explanation of this GraphDiff."""
+        return f"{self.focus} needs to match one of the following shapes: {', '.join(self.shapes)}"
+
     @classmethod
     def from_validation_report(cls, report: Graph) -> List["OrShape"]:
         """Construct OrShape objects from a SHACL validation report.
