@@ -1090,10 +1090,13 @@ document.write(`
                             <span class="nb">int</span><span class="p">(</span><span class="n">max_count</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_count</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LOOKING FOR OR SHAPES&quot;</span><span class="p">)</span>
+
+        <span class="c1"># TODO: this is still kind of broken...ideally we would actually interpret the shapes</span>
+        <span class="c1"># inside the or clause</span>
         <span class="n">candidates</span> <span class="o">=</span> <span class="n">OrShape</span><span class="o">.</span><span class="n">from_validation_report</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">diffs</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">focus</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">diffs</span></div>
 
 
