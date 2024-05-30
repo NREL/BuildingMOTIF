@@ -9,12 +9,19 @@ export interface Token {
   value: string;
 }
 
+export interface IProgram {
+  name: string;
+  xmlData: string;
+}
+
 export interface TokenizePointLabel {
   _errors: String[];
   success: Boolean;
   tokens: Token[]
 
 }
+
+declare var Blockly: any;
 
 @Component({
   selector: 'app-pointlabel-parser',
@@ -23,8 +30,9 @@ export interface TokenizePointLabel {
   styleUrls: ['./pointlabel-parser.component.css']
 })
 export class PointlabelParserComponent implements OnInit {
+  workspace: any;
+  // program: IProgram;
   pointLabelsFormControl: FormControl = new FormControl('[]'); // graph as in UI
-  parsersFormControl: FormControl = new FormControl('{}'); // graph as in UI
   results: TokenizePointLabel[] = []; 
   codeMirrorOptions: any = {
     // theme: 'material',
@@ -38,12 +46,52 @@ export class PointlabelParserComponent implements OnInit {
     lint: true
   };
 
-  constructor(private PointlabelParserService: PointlabelParserService,) { }
+  constructor(private PointlabelParserService: PointlabelParserService,) {
+   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.workspace = Blockly.inject('blocklyDiv', {
+      toolbox: document.getElementById('toolbox'),
+      scrollbars: false
+    });
+  }
+
+  block_to_json(block: any): any {
+    const res: any = { name: block.type, args: {} }
+
+    // set non nesting args
+    Object.assign(res["args"], block.fields)
+
+    // set nesting args
+    if (block.inputs) {
+      const parers = Object.keys(block.inputs).reduce((acc, key) => { 
+        acc[key] = this.block_list_to_json(block.inputs[key].block)
+        return acc
+      }, {} as any)
+      Object.assign(res["args"], parers)
+    }
+
+    return res
+  } 
+
+  block_list_to_json(block: any): any {
+    let res: any = []
+    do {
+      res = [...res, this.block_to_json(block)]
+      block = block.next?.block;
+    } while(block);
+
+    return res
+  }
 
   parse(){
-    this.PointlabelParserService.parse(JSON.parse(this.pointLabelsFormControl.value), JSON.parse(this.parsersFormControl.value))
+    const state = Blockly.serialization.workspaces.save(this.workspace);
+    const parser = this.block_to_json(state.blocks.blocks[0])
+
+    this.PointlabelParserService.parse(
+      JSON.parse(this.pointLabelsFormControl.value), 
+      parser
+    )
     .subscribe({
       next: (data: TokenizePointLabel[]) => {
         this.results = data
