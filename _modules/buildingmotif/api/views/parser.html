@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>buildingmotif.api.views.library &#8212; BuildingMOTIF Documentation</title>
+    <title>buildingmotif.api.views.parser &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -61,7 +61,7 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/api/views/library';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/buildingmotif/api/views/parser';</script>
     <link rel="shortcut icon" href="../../../../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -328,7 +328,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/api/views/library.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2F_modules/buildingmotif/api/views/parser.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -406,96 +406,65 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <h1>Source code for buildingmotif.api.views.library</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+  <h1>Source code for buildingmotif.api.views.parser</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
 
 <span class="kn">import</span> <span class="nn">flask</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
 <span class="kn">from</span> <span class="nn">flask_api</span> <span class="kn">import</span> <span class="n">status</span>
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm.exc</span> <span class="kn">import</span> <span class="n">NoResultFound</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.library</span> <span class="kn">import</span> <span class="n">serialize</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.label_parsing.combinators</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">abbreviations</span><span class="p">,</span>
+    <span class="n">as_identifier</span><span class="p">,</span>
+    <span class="n">choice</span><span class="p">,</span>
+    <span class="n">constant</span><span class="p">,</span>
+    <span class="n">extend_if_match</span><span class="p">,</span>
+    <span class="n">identifier</span><span class="p">,</span>
+    <span class="n">many</span><span class="p">,</span>
+    <span class="n">maybe</span><span class="p">,</span>
+    <span class="n">regex</span><span class="p">,</span>
+    <span class="n">rest</span><span class="p">,</span>
+    <span class="n">sequence</span><span class="p">,</span>
+    <span class="n">string</span><span class="p">,</span>
+    <span class="n">until</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.label_parsing.parser</span> <span class="kn">import</span> <span class="n">parse</span>
 
-<span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;libraries&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
 
-<span class="n">get_shape_query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    PREFIX sh: &lt;http://www.w3.org/ns/shacl#&gt;</span>
-<span class="s2">    PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</span>
-<span class="s2">    PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;</span>
-<span class="s2">    SELECT ?shape ?label ?desc</span>
-<span class="s2">    WHERE {</span>
-<span class="s2">        ?shape a sh:NodeShape ;</span>
-<span class="s2">            sh:targetClass|sh:targetSubjectOf|sh:targetObjectsOf|sh:targetNode ?target .</span>
-<span class="s2">        OPTIONAL { ?shape rdfs:label ?label }</span>
-<span class="s2">        OPTIONAL { ?shape skos:description ?desc }</span>
-<span class="s2">    }</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;parsers&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="get_all_libraries"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.library.html#buildingmotif.api.views.library.get_all_libraries">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_all_libraries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all libraries.</span>
-
-<span class="sd">    :return: all libraries</span>
-<span class="sd">    :rtype: flask.Response</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">db_libs</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">building_motif</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_all_db_libraries</span><span class="p">()</span>
-
-    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="n">db_libs</span><span class="p">)),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
-
-
-<div class="viewcode-block" id="get_all_shapes"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.library.html#buildingmotif.api.views.library.get_all_shapes">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/shapes&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_all_shapes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all shapes.</span>
-
-<span class="sd">    :return: all shapes</span>
-<span class="sd">    :rtype: flask.Response</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">definition_types</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;https://nrel.gov/BuildingMOTIF#Sequence_Of_Operations&quot;</span><span class="p">),</span>
-        <span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;https://nrel.gov/BuildingMOTIF#Analytics_Application&quot;</span><span class="p">),</span>
-        <span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;https://nrel.gov/BuildingMOTIF#System_Specification&quot;</span><span class="p">),</span>
-    <span class="p">]</span>
-    <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">URIRef</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="n">dt</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">definition_types</span><span class="p">}</span>
-
-    <span class="n">db_libs</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">building_motif</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_all_db_libraries</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">db_lib</span> <span class="ow">in</span> <span class="n">db_libs</span><span class="p">:</span>
-        <span class="n">shape_collection</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">db_lib</span><span class="o">.</span><span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">definition_types</span><span class="p">:</span>
-            <span class="n">results</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;shape_uri&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span>
-                    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
-                    <span class="s2">&quot;library_name&quot;</span><span class="p">:</span> <span class="n">db_lib</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                    <span class="s2">&quot;shape_collection_id&quot;</span><span class="p">:</span> <span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                <span class="p">}</span>
-                <span class="k">for</span> <span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="ow">in</span> <span class="n">shape_collection</span><span class="o">.</span><span class="n">get_shapes_of_definition_type</span><span class="p">(</span>
-                    <span class="n">dt</span><span class="p">,</span> <span class="n">include_labels</span><span class="o">=</span><span class="kc">True</span>
-                <span class="p">)</span>
-            <span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+<span class="n">parsers_by_name</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;abbreviations&quot;</span><span class="p">:</span> <span class="n">abbreviations</span><span class="p">,</span>
+    <span class="s2">&quot;sequence&quot;</span><span class="p">:</span> <span class="n">sequence</span><span class="p">,</span>
+    <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="n">string</span><span class="p">,</span>
+    <span class="s2">&quot;constant&quot;</span><span class="p">:</span> <span class="n">constant</span><span class="p">,</span>
+    <span class="s2">&quot;regex&quot;</span><span class="p">:</span> <span class="n">regex</span><span class="p">,</span>
+    <span class="s2">&quot;many&quot;</span><span class="p">:</span> <span class="n">many</span><span class="p">,</span>
+    <span class="s2">&quot;maybe&quot;</span><span class="p">:</span> <span class="n">maybe</span><span class="p">,</span>
+    <span class="s2">&quot;rest&quot;</span><span class="p">:</span> <span class="n">rest</span><span class="p">,</span>
+    <span class="s2">&quot;choice&quot;</span><span class="p">:</span> <span class="n">choice</span><span class="p">,</span>
+    <span class="s2">&quot;until&quot;</span><span class="p">:</span> <span class="n">until</span><span class="p">,</span>
+    <span class="s2">&quot;extend_if_match&quot;</span><span class="p">:</span> <span class="n">extend_if_match</span><span class="p">,</span>
+    <span class="s2">&quot;as_identifier&quot;</span><span class="p">:</span> <span class="n">as_identifier</span><span class="p">,</span>
+    <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">identifier</span><span class="p">,</span>
+<span class="p">}</span>
 
 
-<div class="viewcode-block" id="get_library"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.library.html#buildingmotif.api.views.library.get_library">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;library_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_library</span><span class="p">(</span><span class="n">library_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get library by id.</span>
+<div class="viewcode-block" id="evaluate"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.parser.html#buildingmotif.api.views.parser.evaluate">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">]))</span>
+<span class="k">def</span> <span class="nf">evaluate</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+    <span class="n">raw_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
 
-<span class="sd">    :param library_id: library id</span>
-<span class="sd">    :type library_id: int</span>
-<span class="sd">    :return: requested library</span>
-<span class="sd">    :rtype: flask.Response</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">db_lib</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">building_motif</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library</span><span class="p">(</span><span class="n">library_id</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No library with id </span><span class="si">{</span><span class="n">library_id</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+    <span class="n">parser_dict</span> <span class="o">=</span> <span class="n">raw_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parsers&quot;</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">parser_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span> <span class="n">parser_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">)</span>
+    <span class="n">my_parser</span> <span class="o">=</span> <span class="n">parsers_by_name</span><span class="p">[</span><span class="n">name</span><span class="p">](</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">point_labels</span> <span class="o">=</span> <span class="n">raw_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;point_labels&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="n">db_lib</span><span class="p">)),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">jsonify</span><span class="p">([</span><span class="n">parse</span><span class="p">(</span><span class="n">my_parser</span><span class="p">,</span> <span class="n">point_label</span><span class="p">)</span> <span class="k">for</span> <span class="n">point_label</span> <span class="ow">in</span> <span class="n">point_labels</span><span class="p">]),</span>
+        <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">,</span>
+    <span class="p">)</span></div>
 </pre></div>
 
                 </article>

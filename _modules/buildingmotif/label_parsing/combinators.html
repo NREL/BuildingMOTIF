@@ -220,7 +220,6 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -441,7 +440,18 @@ document.write(`
             <span class="n">TokenResult</span><span class="p">(</span>
                 <span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="p">]</span></div>
+        <span class="p">]</span>
+
+<div class="viewcode-block" id="string.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.string.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;s&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+                <span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">Constant</span><span class="p">)</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="rest"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.rest">[docs]</a><span class="k">class</span> <span class="nc">rest</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
@@ -451,7 +461,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">))]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">))]</span>
+
+<div class="viewcode-block" id="rest.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.rest.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;rest&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">)}}</span></div></div>
 
 
 <div class="viewcode-block" id="substring_n"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.substring_n">[docs]</a><span class="k">class</span> <span class="nc">substring_n</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
@@ -474,7 +487,13 @@ document.write(`
                 <span class="mi">0</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="si">}</span><span class="s2"> characters, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="p">]</span></div>
+        <span class="p">]</span>
+
+<div class="viewcode-block" id="substring_n.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.substring_n.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;substring_n&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">)},</span>
+        <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="regex"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.regex">[docs]</a><span class="k">class</span> <span class="nc">regex</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
@@ -493,14 +512,23 @@ document.write(`
             <span class="n">TokenResult</span><span class="p">(</span>
                 <span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">)]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="p">]</span></div>
+        <span class="p">]</span>
+
+<div class="viewcode-block" id="regex.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.regex.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;regex&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="o">.</span><span class="vm">__name__</span><span class="p">},</span>
+        <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="choice"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.choice">[docs]</a><span class="k">class</span> <span class="nc">choice</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a choice combinator of parsers.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">parsers</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsers</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parsers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Parser</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">parsers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="p">{</span><span class="nb">eval</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])(</span><span class="o">**</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parsers</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
         <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
@@ -510,7 +538,13 @@ document.write(`
                 <span class="k">return</span> <span class="n">result</span>
             <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
                 <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">))]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">))]</span>
+
+<div class="viewcode-block" id="choice.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.choice.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;choice&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;parsers&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">]},</span>
+        <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="constant"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.constant">[docs]</a><span class="k">class</span> <span class="nc">constant</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
@@ -520,7 +554,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+
+<div class="viewcode-block" id="constant.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.constant.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">)}}</span></div></div>
 
 
 <div class="viewcode-block" id="abbreviations"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.abbreviations">[docs]</a><span class="k">class</span> <span class="nc">abbreviations</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
@@ -529,17 +566,23 @@ document.write(`
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patterns</span><span class="p">):</span>
         <span class="n">patterns</span> <span class="o">=</span> <span class="n">patterns</span>
         <span class="n">parsers</span> <span class="o">=</span> <span class="p">[</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Constant</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">patterns</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">choice</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="o">*</span><span class="n">parsers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">choice</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="n">parsers</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+
+<div class="viewcode-block" id="abbreviations.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.abbreviations.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="sequence"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.sequence">[docs]</a><span class="k">class</span> <span class="nc">sequence</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies parsers in sequence. All parsers must match consecutively.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">parsers</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsers</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parsers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parsers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Parser</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">parsers</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="p">[</span><span class="nb">eval</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])(</span><span class="o">**</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parsers</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
@@ -556,14 +599,23 @@ document.write(`
             <span class="n">consumed_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">])</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">consumed_length</span><span class="p">:]</span>
             <span class="n">total_length</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">results</span></div>
+        <span class="k">return</span> <span class="n">results</span>
+
+<div class="viewcode-block" id="sequence.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.sequence.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;sequence&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;parsers&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span><span class="p">]},</span>
+        <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="many"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.many">[docs]</a><span class="k">class</span> <span class="nc">many</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the given sequence parser repeatedly until it stops matching.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_parser</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">seq_parser</span> <span class="o">=</span> <span class="n">seq_parser</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seq_parser</span><span class="p">,</span> <span class="n">Parser</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seq_parser</span> <span class="o">=</span> <span class="n">seq_parser</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">seq_parser</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])(</span><span class="o">**</span><span class="n">seq_parser</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
@@ -575,21 +627,30 @@ document.write(`
             <span class="c1"># add up the length of all the tokens</span>
             <span class="n">total_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">r</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">part</span><span class="p">])</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">[</span><span class="n">total_length</span><span class="p">:]</span>
-        <span class="k">return</span> <span class="n">results</span></div>
+        <span class="k">return</span> <span class="n">results</span>
+
+<div class="viewcode-block" id="many.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.many.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;many&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;seq_parser&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq_parser</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()}}</span></div></div>
 
 
 <div class="viewcode-block" id="maybe"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.maybe">[docs]</a><span class="k">class</span> <span class="nc">maybe</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the given parser, but does not fail if it does not match.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">Parser</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">parser</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])(</span><span class="o">**</span><span class="n">parser</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="c1"># if the result is not empty and there are no errors, return the result, otherwise return a null token</span>
         <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">error</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">result</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)]</span>
+
+<div class="viewcode-block" id="maybe.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.maybe.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;maybe&quot;</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;parser&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()}}</span></div></div>
 
 
 <div class="viewcode-block" id="until"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.until">[docs]</a><span class="k">class</span> <span class="nc">until</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
@@ -599,8 +660,11 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">Parser</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">parser</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])(</span><span class="o">**</span><span class="n">parser</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">length</span> <span class="o">=</span> <span class="mi">1</span>
@@ -619,14 +683,28 @@ document.write(`
             <span class="n">TokenResult</span><span class="p">(</span>
                 <span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="p">]</span></div>
+        <span class="p">]</span>
+
+<div class="viewcode-block" id="until.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.until.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;until&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;parser&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+                <span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">Constant</span><span class="p">)</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="extend_if_match"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.extend_if_match">[docs]</a><span class="k">class</span> <span class="nc">extend_if_match</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the type to the token result.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">Token</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">Parser</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">parser</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])(</span><span class="n">parser</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
@@ -634,7 +712,13 @@ document.write(`
         <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">error</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">):</span>
             <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
             <span class="k">return</span> <span class="n">result</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="extend_if_match.to_dict"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.extend_if_match.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;extend_if_match&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;parser&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">)},</span>
+        <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="as_identifier"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.as_identifier">[docs]</a><span class="k">def</span> <span class="nf">as_identifier</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
@@ -710,8 +794,8 @@ document.write(`
 <span class="n">point_abbreviations</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">(</span><span class="n">COMMON_POINT_ABBREVIATIONS</span><span class="p">)</span>
 <span class="n">delimiters</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[._:/\- ]&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">)</span>
 <span class="n">identifier</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[a-zA-Z0-9]+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)</span>
-<span class="n">named_equip</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">equip_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">)</span>
-<span class="n">named_point</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">point_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">)</span>
+<span class="n">named_equip</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">([</span><span class="n">equip_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">])</span>
+<span class="n">named_point</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">([</span><span class="n">point_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">])</span>
 </pre></div>
 
                 </article>

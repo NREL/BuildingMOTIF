@@ -34,7 +34,6 @@
    buildingmotif.ingresses
    buildingmotif.label_parsing
    buildingmotif.libraries
-   buildingmotif.model_builder
    buildingmotif.namespaces
    buildingmotif.schemas
    buildingmotif.shape_builder
