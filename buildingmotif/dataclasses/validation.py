@@ -117,7 +117,7 @@ class GraphDiff:
 class OrShape(GraphDiff):
     """Represents an entity that is missing one of several possible shapes, via sh:or"""
 
-    shapes: List[URIRef]
+    shapes: Tuple[URIRef]
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
@@ -147,7 +147,7 @@ class OrShape(GraphDiff):
                 focus,
                 report,
                 report,
-                [s for s in Collection(report, shapes)],
+                tuple([s for s in Collection(report, shapes)]),
             )
 
 
