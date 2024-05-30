@@ -223,7 +223,6 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.libraries.html">buildingmotif.libraries</a></li>
-<li class="toctree-l3"><a class="reference internal" href="buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -466,6 +465,9 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.diffset_to_templates" title="buildingmotif.dataclasses.validation.diffset_to_templates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diffset_to_templates</span></code></a>(grouped_diffset)</p></td>
 <td><p>Combine GraphDiff by focus node to generate a list of templates that reconcile what is &quot;wrong&quot; with the Graph with respect to the GraphDiffs.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.shacl_to_sparql_path" title="buildingmotif.dataclasses.validation.shacl_to_sparql_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shacl_to_sparql_path</span></code></a>(g, shacl_path)</p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Classes</p>
@@ -477,23 +479,31 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.GraphDiff" title="buildingmotif.dataclasses.validation.GraphDiff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GraphDiff</span></code></a>(focus, validation_result, graph)</p></td>
 <td><p>An abstraction of a SHACL Validation Result that can produce a template that resolves the difference between the expected and actual graph.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.PathClassCount" title="buildingmotif.dataclasses.validation.PathClassCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PathClassCount</span></code></a>(focus, validation_result, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.OrShape" title="buildingmotif.dataclasses.validation.OrShape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrShape</span></code></a>(focus, validation_result, graph, shapes)</p></td>
+<td><p>Represents an entity that is missing one of several possible shapes, via sh:or</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.PathClassCount" title="buildingmotif.dataclasses.validation.PathClassCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PathClassCount</span></code></a>(focus, validation_result, ...)</p></td>
 <td><p>Represents an entity missing paths to objects of a given type: $this &lt;path&gt; &lt;object&gt; .</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.PathShapeCount" title="buildingmotif.dataclasses.validation.PathShapeCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PathShapeCount</span></code></a>(focus, validation_result, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.PathShapeCount" title="buildingmotif.dataclasses.validation.PathShapeCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PathShapeCount</span></code></a>(focus, validation_result, ...)</p></td>
 <td><p>Represents an entity missing paths to objects that match a given shape.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.RequiredClass" title="buildingmotif.dataclasses.validation.RequiredClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RequiredClass</span></code></a>(focus, validation_result, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.RequiredClass" title="buildingmotif.dataclasses.validation.RequiredClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RequiredClass</span></code></a>(focus, validation_result, ...)</p></td>
 <td><p>Represents an entity that should be an instance of the class.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.RequiredPath" title="buildingmotif.dataclasses.validation.RequiredPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RequiredPath</span></code></a>(focus, validation_result, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.RequiredPath" title="buildingmotif.dataclasses.validation.RequiredPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RequiredPath</span></code></a>(focus, validation_result, ...)</p></td>
 <td><p>Represents an entity missing a required property.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.ValidationContext" title="buildingmotif.dataclasses.validation.ValidationContext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValidationContext</span></code></a>(shape_collections, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.dataclasses.validation.ValidationContext" title="buildingmotif.dataclasses.validation.ValidationContext"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValidationContext</span></code></a>(shape_collections, ...)</p></td>
 <td><p>Holds the necessary information for processing the results of SHACL validation.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.shacl_to_sparql_path">
+<span class="sig-name descname"><span class="pre">shacl_to_sparql_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shacl_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#shacl_to_sparql_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.shacl_to_sparql_path" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.GraphDiff">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GraphDiff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">focus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">URIRef</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#GraphDiff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.GraphDiff" title="Permalink to this definition">#</a></dt>
@@ -550,6 +560,34 @@ model itself rather than a specific node</p>
 <dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.GraphDiff.failed_component">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">failed_component</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">URIRef</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.GraphDiff.failed_component" title="Permalink to this definition">#</a></dt>
 <dd><p>The Constraint Component of the Shape that failed</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.OrShape">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">OrShape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">focus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">URIRef</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">URIRef</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#OrShape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.OrShape" title="Permalink to this definition">#</a></dt>
+<dd><p>Represents an entity that is missing one of several possible shapes, via sh:or</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.OrShape.shapes">
+<span class="sig-name descname"><span class="pre">shapes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">URIRef</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.dataclasses.validation.OrShape.shapes" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="buildingmotif.dataclasses.validation.OrShape.from_validation_report">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_validation_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.dataclasses.validation.OrShape" title="buildingmotif.dataclasses.validation.OrShape"><span class="pre">OrShape</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/dataclasses/validation.html#OrShape.from_validation_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.dataclasses.validation.OrShape.from_validation_report" title="Permalink to this definition">#</a></dt>
+<dd><p>Construct OrShape objects from a SHACL validation report.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>report</strong> (<em>Graph</em>) – the SHACL validation report</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a list of OrShape objects</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#buildingmotif.dataclasses.validation.OrShape" title="buildingmotif.dataclasses.validation.OrShape">OrShape</a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
