@@ -497,14 +497,15 @@ document.write(`
 <span class="sd">        as objects; this should  be exactly one URI which is the &#39;root&#39; of the validation result</span>
 <span class="sd">        graph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">possible_uris</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">subjects</span><span class="p">())</span>
-        <span class="n">objects</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">objects</span><span class="p">())</span>
-        <span class="n">sub_not_obj</span> <span class="o">=</span> <span class="n">possible_uris</span> <span class="o">-</span> <span class="n">objects</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_not_obj</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Validation result has more than one &#39;root&#39; node, which should not happen. Please raise an issue on https://github.com/NREL/BuildingMOTIF&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">sub_not_obj</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">ValidationResult</span><span class="p">))</span>
+        <span class="c1">#possible_uris: Set[Node] = set(self.validation_result.subjects())</span>
+        <span class="c1">#objects: Set[Node] = set(self.validation_result.objects())</span>
+        <span class="c1">#sub_not_obj = possible_uris - objects</span>
+        <span class="c1">#if len(sub_not_obj) != 1:</span>
+        <span class="c1">#    raise Exception(</span>
+        <span class="c1">#        &quot;Validation result has more than one &#39;root&#39; node, which should not happen. Please raise an issue on https://github.com/NREL/BuildingMOTIF&quot;</span>
+        <span class="c1">#    )</span>
+        <span class="c1">#return sub_not_obj.pop()</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">failed_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
