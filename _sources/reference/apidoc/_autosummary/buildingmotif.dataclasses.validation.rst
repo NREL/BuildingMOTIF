@@ -14,6 +14,7 @@ buildingmotif.dataclasses.validation
    .. autosummary::
    
       diffset_to_templates
+      shacl_to_sparql_path
    
    
 

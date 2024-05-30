@@ -29,6 +29,5 @@ buildingmotif.api.views
 
    buildingmotif.api.views.library
    buildingmotif.api.views.model
-   buildingmotif.api.views.parser
    buildingmotif.api.views.template
 
