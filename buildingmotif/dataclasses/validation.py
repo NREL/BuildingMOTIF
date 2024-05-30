@@ -681,10 +681,13 @@ class ValidationContext:
                             int(max_count) if max_count else None,
                         )
                     )
-        print("LOOKING FOR OR SHAPES")
+
+        # TODO: this is still kind of broken...ideally we would actually interpret the shapes
+        # inside the or clause
         candidates = OrShape.from_validation_report(g)
         for c in candidates:
             print(c)
+            diffs[c.focus].add(c)
         return diffs
 
 
