@@ -135,21 +135,22 @@ class OrShape(GraphDiff):
         """
         query = """
         PREFIX sh: <http://www.w3.org/ns/shacl#>
-        SELECT ?focus ?shapes WHERE {
+        SELECT ?result ?focus ?shapes WHERE {
             ?result sh:sourceConstraintComponent sh:OrConstraintComponent .
             ?result sh:sourceShape/sh:or ?shapes .
             ?result sh:focusNode ?focus .
         }"""
-        print(query)
         results = report.query(query)
-        print(results)
-        for focus, shapes in results:
-            yield cls(
+        ret = []
+        for result, focus, shapes in results:
+            validation_report = report.cbd(result)
+            ret.append(cls(
                 focus,
-                report,
+                validation_report,
                 report,
                 tuple([s for s in Collection(report, shapes)]),
-            )
+            ))
+        return ret
 
 
 @dataclass(frozen=True)
