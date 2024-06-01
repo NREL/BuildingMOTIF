@@ -18,6 +18,7 @@ buildingmotif.utils
       get_ontology_files
       get_parameters
       get_template_parts_from_shape
+      graph_hash
       graph_size
       inline_sh_nodes
       new_temporary_graph
@@ -28,7 +29,7 @@ buildingmotif.utils
       shacl_validate
       skip_uri
       skolemize_shapes
-      template_to_shape
+      validate_uri
    
    
 

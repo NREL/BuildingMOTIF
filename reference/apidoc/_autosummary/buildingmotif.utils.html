@@ -67,7 +67,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Model Creation" href="../../../tutorials/model_creation.html" />
-    <link rel="prev" title="buildingmotif.template_matcher" href="buildingmotif.template_matcher.html" />
+    <link rel="prev" title="buildingmotif.template_to_shape" href="buildingmotif.template_to_shape.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -223,6 +223,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -231,6 +232,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -477,38 +479,41 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.get_template_parts_from_shape" title="buildingmotif.utils.get_template_parts_from_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_template_parts_from_shape</span></code></a>(shape_name, ...)</p></td>
 <td><p>Turn a SHACL shape into a template.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.graph_size" title="buildingmotif.utils.graph_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">graph_size</span></code></a>(g)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.graph_hash" title="buildingmotif.utils.graph_hash"><code class="xref py py-obj docutils literal notranslate"><span class="pre">graph_hash</span></code></a>(graph)</p></td>
+<td><p>Returns a cryptographic hash of the graph contents.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.graph_size" title="buildingmotif.utils.graph_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">graph_size</span></code></a>(g)</p></td>
 <td><p>Returns the number of triples in a graph.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.inline_sh_nodes" title="buildingmotif.utils.inline_sh_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inline_sh_nodes</span></code></a>(g)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.inline_sh_nodes" title="buildingmotif.utils.inline_sh_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inline_sh_nodes</span></code></a>(g)</p></td>
 <td><p>Recursively inlines all sh:node properties and objects on the graph.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.new_temporary_graph" title="buildingmotif.utils.new_temporary_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_temporary_graph</span></code></a>([more_namespaces])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.new_temporary_graph" title="buildingmotif.utils.new_temporary_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_temporary_graph</span></code></a>([more_namespaces])</p></td>
 <td><p>Creates a new in-memory RDF graph with common and additional namespace bindings.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.remove_triples_with_node" title="buildingmotif.utils.remove_triples_with_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_triples_with_node</span></code></a>(g, node)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.remove_triples_with_node" title="buildingmotif.utils.remove_triples_with_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_triples_with_node</span></code></a>(g, node)</p></td>
 <td><p>Remove all triples that include the given node.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.replace_nodes" title="buildingmotif.utils.replace_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_nodes</span></code></a>(g, replace)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.replace_nodes" title="buildingmotif.utils.replace_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replace_nodes</span></code></a>(g, replace)</p></td>
 <td><p>Replace nodes in a graph.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.rewrite_shape_graph" title="buildingmotif.utils.rewrite_shape_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rewrite_shape_graph</span></code></a>(g)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.rewrite_shape_graph" title="buildingmotif.utils.rewrite_shape_graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rewrite_shape_graph</span></code></a>(g)</p></td>
 <td><p>Rewrites the input graph to make the resulting validation report more useful.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.shacl_inference" title="buildingmotif.utils.shacl_inference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shacl_inference</span></code></a>(data_graph[, shape_graph, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.shacl_inference" title="buildingmotif.utils.shacl_inference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shacl_inference</span></code></a>(data_graph[, shape_graph, ...])</p></td>
 <td><p>Infer new triples in the data graph using the shape graph.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.shacl_validate" title="buildingmotif.utils.shacl_validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shacl_validate</span></code></a>(data_graph[, shape_graph, engine])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.shacl_validate" title="buildingmotif.utils.shacl_validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shacl_validate</span></code></a>(data_graph[, shape_graph, engine])</p></td>
 <td><p>Validate the data graph against the shape graph.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.skip_uri" title="buildingmotif.utils.skip_uri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skip_uri</span></code></a>(uri)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.skip_uri" title="buildingmotif.utils.skip_uri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skip_uri</span></code></a>(uri)</p></td>
 <td><p>Returns True if the URI should be skipped during processing because it is axiomatic or not expected to be imported.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.skolemize_shapes" title="buildingmotif.utils.skolemize_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skolemize_shapes</span></code></a>(g)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.skolemize_shapes" title="buildingmotif.utils.skolemize_shapes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">skolemize_shapes</span></code></a>(g)</p></td>
 <td><p>Skolemize the shapes in the graph.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.utils.template_to_shape" title="buildingmotif.utils.template_to_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">template_to_shape</span></code></a>(template)</p></td>
-<td><p>Turn this template into a SHACL shape.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.utils.validate_uri" title="buildingmotif.utils.validate_uri"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_uri</span></code></a>(uri)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
@@ -658,23 +663,6 @@ NodeShapes will be incorporated into the resulting template:
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="buildingmotif.utils.template_to_shape">
-<span class="sig-name descname"><span class="pre">template_to_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template" title="buildingmotif.dataclasses.template.Template"><span class="pre">Template</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Graph</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#template_to_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.template_to_shape" title="Permalink to this definition">#</a></dt>
-<dd><p>Turn this template into a SHACL shape.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>template</strong> (<em>template</em>) – template to convert</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>graph of template</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Graph</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="buildingmotif.utils.new_temporary_graph">
 <span class="sig-name descname"><span class="pre">new_temporary_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">more_namespaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Graph</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#new_temporary_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.new_temporary_graph" title="Permalink to this definition">#</a></dt>
 <dd><p>Creates a new in-memory RDF graph with common and additional namespace
@@ -746,6 +734,11 @@ because it is axiomatic or not expected to be imported.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.utils.validate_uri">
+<span class="sig-name descname"><span class="pre">validate_uri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#validate_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.validate_uri" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="buildingmotif.utils.shacl_validate">
 <span class="sig-name descname"><span class="pre">shacl_validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape_graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Graph</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'topquadrant'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Graph</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#shacl_validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.shacl_validate" title="Permalink to this definition">#</a></dt>
 <dd><p>Validate the data graph against the shape graph.
@@ -809,6 +802,28 @@ using PySHACL.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.utils.graph_hash">
+<span class="sig-name descname"><span class="pre">graph_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../../_modules/buildingmotif/utils.html#graph_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.utils.graph_hash" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a cryptographic hash of the graph contents.
+This uses the same method as rdflib’s isomorphic function to generate a cryptographic hash of a given graph.
+This method calculates a consistent hash of the canonicalized form of the graph.
+If the hashes of two graphs are equal, this means that the graphs are isomorphic.
+Generating the hashes (using this method) and caching them allows graph isomorphism to be determined
+without having to recalculate the canonical form of the graph, which can be expensive.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>graph</strong> (<em>graph</em>) – graph to hash</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>integer hash</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
     <script type="text/x-thebe-config">
@@ -842,12 +857,12 @@ using PySHACL.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="buildingmotif.template_matcher.html"
+       href="buildingmotif.template_to_shape.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">buildingmotif.template_matcher</p>
+        <p class="prev-next-title">buildingmotif.template_to_shape</p>
       </div>
     </a>
     <a class="right-next"

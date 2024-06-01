@@ -220,6 +220,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -228,6 +229,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -550,7 +552,7 @@ document.write(`
         <span class="n">ref_name</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">BNode</span><span class="p">()</span>
         <span class="n">object_name</span> <span class="o">=</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">param</span> <span class="o">+</span> <span class="s2">&quot;_object&quot;</span><span class="p">]</span>
         <span class="n">G</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">PARAM</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="n">REF</span><span class="o">.</span><span class="n">hasExternalReference</span><span class="p">,</span> <span class="n">ref_name</span><span class="p">))</span>
-        <span class="n">G</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">BACNET</span><span class="p">[</span><span class="s2">&quot;object-identifier&quot;</span><span class="p">],</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Literal</span><span class="p">(</span><span class="n">object_name</span><span class="p">)))</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">BACNET</span><span class="p">[</span><span class="s2">&quot;object-identifier&quot;</span><span class="p">],</span> <span class="n">object_name</span><span class="p">))</span>
         <span class="n">G</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">BACNET</span><span class="p">[</span><span class="s2">&quot;objectOf&quot;</span><span class="p">],</span> <span class="n">PARAM</span><span class="p">[</span><span class="s2">&quot;BACnet_device&quot;</span><span class="p">]))</span>
     <span class="k">return</span> <span class="n">G</span></div>
 

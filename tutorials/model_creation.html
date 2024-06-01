@@ -223,6 +223,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -231,6 +232,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -586,16 +588,16 @@ document.write(`
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Supply_Air_Temperature_Setpoint_Limit
-  - https://brickschema.org/schema/Brick#On_Status
-  - https://brickschema.org/schema/Brick#Leaving_Medium_Temperature_Hot_Water_Temperature_Load_Shed_Status
-  - https://brickschema.org/schema/Brick#Motor_Current_Sensor
-  - https://brickschema.org/schema/Brick#DewpointShape
-  - https://brickschema.org/schema/Brick#Bus_Riser
-  - https://brickschema.org/schema/Brick#Failure_Alarm
-  - https://brickschema.org/schema/Brick#Chilled_Water_Flow_Sensor
-  - https://brickschema.org/schema/Brick#Transformer_Room
-  - https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Occupied_Heating_Temperature_Deadband_Setpoint
+  - https://brickschema.org/schema/Brick#Chilled_Water_Static_Pressure_Setpoint
+  - https://brickschema.org/schema/Brick#Piezoelectric_Sensor
+  - https://brickschema.org/schema/Brick#Chilled_Water_Differential_Pressure_Load_Shed_Reset_Status
+  - https://brickschema.org/schema/Brick#Unoccupied_Room_Air_Temperature_Setpoint
+  - https://brickschema.org/schema/Brick#Energy_Zone
+  - https://brickschema.org/schema/Brick#Heating_Discharge_Air_Flow_Setpoint
+  - https://brickschema.org/schema/Brick#VFD_Enable_Command
+  - https://brickschema.org/schema/Brick#Communication_Loss_Alarm
+  - https://brickschema.org/schema/Brick#Water_Loss_Alarm
 </pre></div>
 </div>
 </div>
@@ -619,7 +621,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=089faa7f-fb62-43a7-af71-06c6a59e78bc (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=5cfffd51-7b02-4241-b161-8c65623b86da (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -665,7 +667,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=089faa7f-fb62-43a7-af71-06c6a59e78bc (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=5cfffd51-7b02-4241-b161-8c65623b86da (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -907,7 +909,7 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=089faa7f-fb62-43a7-af71-06c6a59e78bc (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=5cfffd51-7b02-4241-b161-8c65623b86da (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
