@@ -1,6 +1,8 @@
 import re
 from typing import List
 
+from rdflib import URIRef
+
 from buildingmotif.label_parsing.parser import Parser
 from buildingmotif.label_parsing.tokens import (
     Constant,
@@ -33,17 +35,6 @@ class string(Parser):
             )
         ]
 
-    def to_dict(self):
-        return {
-            "name": "string",
-            "args": {
-                "s": self.s,
-                "type_name": str(self.type_name)
-                if isinstance(self.type_name, Constant)
-                else self.type_name.__name__,
-            },
-        }
-
 
 class rest(Parser):
     """Constructs a parser that matches the rest of the string."""
@@ -54,14 +45,11 @@ class rest(Parser):
     def __call__(self, target: str) -> List[TokenResult]:
         return [TokenResult(target, ensure_token(self.type_name, target), len(target))]
 
-    def to_dict(self):
-        return {"name": "rest", "args": {"type_name": str(self.type_name)}}
-
 
 class substring_n(Parser):
     """Constructs a parser that matches a substring of length n."""
 
-    def __init__(self, length, type_name: TokenOrConstructor):
+    def __init__(self, length: int, type_name: TokenOrConstructor):
         self.length = length
         self.type_name = type_name
 
@@ -80,17 +68,11 @@ class substring_n(Parser):
             )
         ]
 
-    def to_dict(self):
-        return {
-            "name": "substring_n",
-            "args": {"length": self.length, "type_name": str(self.type_name)},
-        }
-
 
 class regex(Parser):
     """Constructs a parser that matches a regular expression."""
 
-    def __init__(self, r, type_name: TokenOrConstructor):
+    def __init__(self, r: str, type_name: TokenOrConstructor):
         self.r = r
         self.type_name = type_name
 
@@ -105,21 +87,12 @@ class regex(Parser):
             )
         ]
 
-    def to_dict(self):
-        return {
-            "name": "regex",
-            "args": {"r": self.r, "type_name": self.type_name.__name__},
-        }
-
 
 class choice(Parser):
     """Constructs a choice combinator of parsers."""
 
-    def __init__(self, parsers):
-        if len(parsers) == 0 or isinstance(parsers[0], Parser):
-            self.parsers = parsers
-        else:
-            self.parsers = {eval(p["name"])(**p["args"]) for p in parsers}
+    def __init__(self, *parsers: Parser):
+        self.parsers = parsers
 
     def __call__(self, target: str) -> List[TokenResult]:
         errors = []
@@ -129,13 +102,7 @@ class choice(Parser):
                 return result
             if result:
                 errors.append(result[0].error)
-        return [TokenResult(None, Null(), 0, " | ".join(errors))]
-
-    def to_dict(self):
-        return {
-            "name": "choice",
-            "args": {"parsers": [p.to_dict() for p in self.parsers]},
-        }
+        return [TokenResult(None, Null(), 0, " | ".join(errors))]  # type: ignore
 
 
 class constant(Parser):
@@ -147,33 +114,23 @@ class constant(Parser):
     def __call__(self, target: str) -> List[TokenResult]:
         return [TokenResult(None, self.type_name, 0)]
 
-    def to_dict(self):
-        return {"name": "constant", "args": {"type_name": str(self.type_name)}}
-
 
 class abbreviations(Parser):
     """Constructs a choice combinator of string matching based on a dictionary."""
 
-    def __init__(self, patterns):
-        patterns = patterns
-        parsers = [string(s, Constant(t)) for s, t in patterns.items()]
-        self.choice = choice(parsers)
+    def __init__(self, patterns: dict):
+        parsers = [string(s, Constant(URIRef(t))) for s, t in patterns.items()]
+        self.choice = choice(*parsers)
 
-    def __call__(self, target):
+    def __call__(self, target: str):
         return self.choice(target)
-
-    def to_dict(self):
-        return self.choice.to_dict()
 
 
 class sequence(Parser):
     """Applies parsers in sequence. All parsers must match consecutively."""
 
-    def __init__(self, parsers):
-        if len(parsers) == 0 or isinstance(parsers[0], Parser):
-            self.parsers = parsers
-        else:
-            self.parsers = [eval(p["name"])(**p["args"]) for p in parsers]
+    def __init__(self, parsers: List[Parser]):
+        self.parsers = parsers
 
     def __call__(self, target: str) -> List[TokenResult]:
         results = []
@@ -192,21 +149,12 @@ class sequence(Parser):
             total_length += sum([r.length for r in result])
         return results
 
-    def to_dict(self):
-        return {
-            "name": "sequence",
-            "args": {"parsers": [p.to_dict() for p in self.parsers]},
-        }
-
 
 class many(Parser):
     """Applies the given sequence parser repeatedly until it stops matching."""
 
-    def __init__(self, seq_parser):
-        if isinstance(seq_parser, Parser):
-            self.seq_parser = seq_parser
-        else:
-            self.parsers = eval(seq_parser["name"])(**seq_parser["args"])
+    def __init__(self, seq_parser: Parser):
+        self.seq_parser = seq_parser
 
     def __call__(self, target):
         results = []
@@ -220,18 +168,12 @@ class many(Parser):
             target = target[total_length:]
         return results
 
-    def to_dict(self):
-        return {"name": "many", "args": {"seq_parser": self.seq_parser.to_dict()}}
-
 
 class maybe(Parser):
     """Applies the given parser, but does not fail if it does not match."""
 
     def __init__(self, parser: Parser):
-        if isinstance(parser, Parser):
-            self.parser = parser
-        else:
-            self.parser = eval(parser["name"])(**parser["args"])
+        self.parser = parser
 
     def __call__(self, target):
         result = self.parser(target)
@@ -240,9 +182,6 @@ class maybe(Parser):
             return result
         return [TokenResult(None, Null(), 0)]
 
-    def to_dict(self):
-        return {"name": "maybe", "args": {"parser": self.parser.to_dict()}}
-
 
 class until(Parser):
     """
@@ -250,12 +189,9 @@ class until(Parser):
     STarts with a string length of 1 and increments it until the parser matches.
     """
 
-    def __init__(self, parser, type_name: TokenOrConstructor):
+    def __init__(self, parser: Parser, type_name: TokenOrConstructor):
         self.type_name = type_name
-        if isinstance(parser, Parser):
-            self.parser = parser
-        else:
-            self.parser = eval(parser["name"])(**parser["args"])
+        self.parser = parser
 
     def __call__(self, target):
         length = 1
@@ -276,26 +212,12 @@ class until(Parser):
             )
         ]
 
-    def to_dict(self):
-        return {
-            "name": "until",
-            "args": {
-                "parser": self.parser.to_dict(),
-                "type_name": str(self.type_name)
-                if isinstance(self.type_name, Constant)
-                else self.type_name.__name__,
-            },
-        }
-
 
 class extend_if_match(Parser):
     """Adds the type to the token result."""
 
-    def __init__(self, parser, type_name: Token):
-        if isinstance(parser, Parser):
-            self.parser = parser
-        else:
-            self.parser = eval(parser["name"])(parser["args"])
+    def __init__(self, parser: Parser, type_name: Token):
+        self.parser = parser
         self.type_name = type_name
 
     def __call__(self, target):
