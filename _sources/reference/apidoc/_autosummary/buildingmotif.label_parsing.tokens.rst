@@ -27,6 +27,7 @@ buildingmotif.label\_parsing.tokens
       Delimiter
       Identifier
       Null
+      Token
       TokenResult
    
    

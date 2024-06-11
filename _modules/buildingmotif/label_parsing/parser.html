@@ -229,7 +229,6 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_to_shape.html">buildingmotif.template_to_shape</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
 </li>
@@ -446,6 +445,26 @@ document.write(`
 <span class="c1"># the length of the token is used to keep track of how much of the string</span>
 <span class="c1"># has been parsed</span>
 <div class="viewcode-block" id="Parser"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.parser.html#buildingmotif.label_parsing.Parser">[docs]</a><span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="n">__args__</span><span class="p">:</span> <span class="nb">dict</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">mcls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;When a parser is constructed, save its arguments into a dictionary __args__.</span>
+<span class="sd">        This allows parsers to be serialized later without requiring bespoke (de)serialization code</span>
+<span class="sd">        for every parser type.&quot;&quot;&quot;</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcls</span><span class="p">)</span>
+        <span class="n">init_var_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">rem_var_names</span> <span class="o">=</span> <span class="n">init_var_names</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">init_var_names</span><span class="p">:</span>
+                <span class="n">rem_var_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">rem_var_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rem_var_names</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__args__</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">rem_var_count</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">args</span><span class="p">[:</span> <span class="n">rem_var_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="n">rem_var_count</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:]]</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">__args__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">init_var_names</span><span class="p">,</span> <span class="n">args</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="bp">cls</span>
+
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
         <span class="k">pass</span></div>
