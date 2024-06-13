@@ -66,7 +66,7 @@
         sh:qualifiedMaxCount 1 ;
     ] ;
 
-    sh:node components:clg-signal, components:htg-signal, vav41:zone-temperature, vav41:occupancy-sensor, vav41:zone-co2-level ;
+    rdfs:subClassOf components:clg-signal, components:htg-signal, vav41:zone-temperature, vav41:occupancy-sensor, vav41:zone-co2-level ;
     bmotif:domain bmotif:HVAC ;
 .
 
@@ -91,4 +91,24 @@
         sh:qualifiedValueShape [ sh:class brick:Fan_Status ] ;
         sh:path brick:hasPoint ;
     ] ;
+.
+
+:sa-temp a sh:NodeShape, owl:Class ;
+    sh:class brick:Supply_Air_Temperature_Sensor ;
+.
+
+:oa-temp a sh:NodeShape, owl:Class ;
+    sh:class brick:Outside_Air_Temperature_Sensor ;
+.
+
+:ma-temp a sh:NodeShape, owl:Class ;
+    sh:class brick:Mixed_Air_Temperature_Sensor ;
+.
+
+:ra-temp a sh:NodeShape, owl:Class ;
+    sh:class brick:Return_Air_Temperature_Sensor ;
+.
+
+:filter-pd a sh:NodeShape, owl:Class ;
+    sh:class brick:Filter_Differential_Pressure_Sensor ;
 .
