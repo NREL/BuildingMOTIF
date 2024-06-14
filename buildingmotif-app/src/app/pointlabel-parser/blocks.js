@@ -1,8 +1,8 @@
 Blockly.defineBlocksWithJsonArray([
-  // string
+  // string - url
   {
-    type: 'string',
-    message0: '%2 matches to %1',
+    type: 'string-url',
+    message0: 'url %2 matches to %1',
     args0: [
       {
         type: 'field_input',
@@ -17,6 +17,28 @@ Blockly.defineBlocksWithJsonArray([
     previousStatement: 'any',
     nextStatement: 'any',
   },
+  // string - token
+  {
+    type: 'string-token',
+    message0: '%2 matches to %1',
+    args0: [
+      {
+        type: 'field_input',
+        name: 's',  
+      },
+      {
+        type: 'field_dropdown',
+        name: 'type_name',
+        options: [
+          [ "Delimiter", "Delimiter" ],
+          [ "Identifier", "Identifier" ]
+        ]
+      },
+    ],
+    colour: 60,
+    previousStatement: 'any',
+    nextStatement: 'any',
+  },
   //rest
   {
     type: 'rest',
@@ -27,7 +49,7 @@ Blockly.defineBlocksWithJsonArray([
         name: 'type_name',
       },
     ],
-    colour: 50,
+    colour: 0,
     previousStatement: 'any',
   },
   // substring_n
@@ -44,7 +66,7 @@ Blockly.defineBlocksWithJsonArray([
         name: 'type_name',
       },
     ],
-    colour: 360,
+    colour: 330,
     previousStatement: 'any',
     nextStatement: 'any',
   },
@@ -60,14 +82,26 @@ Blockly.defineBlocksWithJsonArray([
     "nextStatement": null,
     "colour": 120
   },
-    // sequence
+    // sequence - wrapper
     {
-      "type": "sequence",
+      "type": "sequence-wrapper",
       "message0": "my parser",
       "message1": "%1",
       "args1": [
         {"type": "input_statement", "name": "parsers"}
       ],
-      "colour": 30
+      "colour": 200
+    },
+    // sequence-internal
+    {
+      "type": "sequence-internal",
+      "message0": "all of these",
+      "message1": "%1",
+      "args1": [
+        {"type": "input_statement", "name": "parsers"}
+      ],
+      "colour": 250,
+      "previousStatement": null,
+      "nextStatement": null,
     },
 ]);

@@ -7,11 +7,13 @@
     <div id="blocklyDiv" style="width: 100%; height: 100%"></div>
     <xml id="toolbox" style="display: none">
       <category name="Custom" colour="360">
-        <block type="string"></block>
+        <block type="string-url"></block>
+        <block type="string-token"></block>
         <block type="rest"></block>
         <block type="substring_n"></block>
         <block type="choice"></block>
-        <block type="sequence"></block>
+        <block type="sequence-wrapper"></block>
+        <block type="sequence-internal"></block>
       </category>
     </xml>
   </div>
@@ -22,11 +24,11 @@
   <mat-card *ngFor="let r of results">
     <mat-card-title>
       <span *ngFor="let t of r.tokens">
-        <a *ngIf="t.token == 'Delimiter'" title="{{t.token}}" style="color:red">{{t.value}}</a>
-        <a *ngIf="t.token == 'Identifier'" title="{{t.token}}" style="color:blue">{{t.value}}</a>
-        <a *ngIf="t.token == 'Constant'" title="{{t.token}}" style="color:green">{{t.value}}</a>
+        <a *ngIf="t.token == 'Delimiter'" title="{{t.token}}" style="color:red" (mouseover)="onHover(t)">{{t.value}}</a>
+        <a *ngIf="t.token == 'Identifier'" title="{{t.token}}" style="color:blue" (mouseover)="onHover(t)">{{t.value}}</a>
+        <a *ngIf="t.token == 'Constant'" title="{{t.token}}" style="color:green" (mouseover)="onHover(t)">{{t.value}}</a>
         <a *ngIf="t.token !== 'Delimiter' && t.token !== 'Identifier' && t.token !== 'Constant'" title="{{t.token}}"
-          style="color: purple">{{t.value}}</a>
+          style="color: purple" (mouseover)="onHover(t)">{{t.value}}</a>
       </span>
     </mat-card-title>
     <mat-card-subtitle *ngIf="r._errors">
@@ -34,3 +36,9 @@
     </mat-card-subtitle>
   </mat-card>
 </mat-list>
+
+
+<div class="Block">
+  <label id="lbl">Code </label>
+  <input type='file' (change)="fileChanged($event)">
+</div>
