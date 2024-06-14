@@ -409,57 +409,24 @@ document.write(`
                   
   <h1>Source code for buildingmotif.api.views.parser</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span>
 
 <span class="kn">import</span> <span class="nn">flask</span>
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
 <span class="kn">from</span> <span class="nn">flask_api</span> <span class="kn">import</span> <span class="n">status</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.label_parsing.combinators</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">abbreviations</span><span class="p">,</span>
-    <span class="n">as_identifier</span><span class="p">,</span>
-    <span class="n">choice</span><span class="p">,</span>
-    <span class="n">constant</span><span class="p">,</span>
-    <span class="n">extend_if_match</span><span class="p">,</span>
-    <span class="n">identifier</span><span class="p">,</span>
-    <span class="n">many</span><span class="p">,</span>
-    <span class="n">maybe</span><span class="p">,</span>
-    <span class="n">regex</span><span class="p">,</span>
-    <span class="n">rest</span><span class="p">,</span>
-    <span class="n">sequence</span><span class="p">,</span>
-    <span class="n">string</span><span class="p">,</span>
-    <span class="n">until</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.parser</span> <span class="kn">import</span> <span class="n">deserialize</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.label_parsing.parser</span> <span class="kn">import</span> <span class="n">parse</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
 
 <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;parsers&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 
-<span class="n">parsers_by_name</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;abbreviations&quot;</span><span class="p">:</span> <span class="n">abbreviations</span><span class="p">,</span>
-    <span class="s2">&quot;sequence&quot;</span><span class="p">:</span> <span class="n">sequence</span><span class="p">,</span>
-    <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="n">string</span><span class="p">,</span>
-    <span class="s2">&quot;constant&quot;</span><span class="p">:</span> <span class="n">constant</span><span class="p">,</span>
-    <span class="s2">&quot;regex&quot;</span><span class="p">:</span> <span class="n">regex</span><span class="p">,</span>
-    <span class="s2">&quot;many&quot;</span><span class="p">:</span> <span class="n">many</span><span class="p">,</span>
-    <span class="s2">&quot;maybe&quot;</span><span class="p">:</span> <span class="n">maybe</span><span class="p">,</span>
-    <span class="s2">&quot;rest&quot;</span><span class="p">:</span> <span class="n">rest</span><span class="p">,</span>
-    <span class="s2">&quot;choice&quot;</span><span class="p">:</span> <span class="n">choice</span><span class="p">,</span>
-    <span class="s2">&quot;until&quot;</span><span class="p">:</span> <span class="n">until</span><span class="p">,</span>
-    <span class="s2">&quot;extend_if_match&quot;</span><span class="p">:</span> <span class="n">extend_if_match</span><span class="p">,</span>
-    <span class="s2">&quot;as_identifier&quot;</span><span class="p">:</span> <span class="n">as_identifier</span><span class="p">,</span>
-    <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">identifier</span><span class="p">,</span>
-<span class="p">}</span>
-
 
 <div class="viewcode-block" id="evaluate"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.parser.html#buildingmotif.api.views.parser.evaluate">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">]))</span>
 <span class="k">def</span> <span class="nf">evaluate</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
     <span class="n">raw_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span>
 
-    <span class="n">parser_dict</span> <span class="o">=</span> <span class="n">raw_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parsers&quot;</span><span class="p">)</span>
-    <span class="n">name</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">parser_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span> <span class="n">parser_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">)</span>
-    <span class="n">my_parser</span> <span class="o">=</span> <span class="n">parsers_by_name</span><span class="p">[</span><span class="n">name</span><span class="p">](</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">my_parser</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span><span class="n">raw_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parsers&quot;</span><span class="p">))</span>
     <span class="n">point_labels</span> <span class="o">=</span> <span class="n">raw_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;point_labels&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span>
