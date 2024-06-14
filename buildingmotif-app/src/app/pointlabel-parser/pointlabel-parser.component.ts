@@ -114,7 +114,7 @@ export class PointlabelParserComponent implements OnInit {
 
   block_to_json(block: any): any {
     const res: any = {
-      name: block.type.split("-")[0],
+      parser: block.type.split("-")[0],
       args: { id: block.id }
     }
 

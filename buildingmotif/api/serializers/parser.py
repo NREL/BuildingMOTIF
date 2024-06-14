@@ -5,6 +5,7 @@ from typing import Any, Literal, Tuple, Type, Union, get_type_hints
 from rdflib import URIRef
 from typing_extensions import TypedDict
 
+from buildingmotif.label_parsing import combinators  # noqa
 from buildingmotif.label_parsing.parser import Parser
 from buildingmotif.label_parsing.tokens import Token
 
