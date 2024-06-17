@@ -35,6 +35,26 @@ class ParseResult:
 # the length of the token is used to keep track of how much of the string
 # has been parsed
 class Parser(ABC):
+    __args__: dict
+
+    def __new__(mcls, *args, **kwargs):
+        """When a parser is constructed, save its arguments into a dictionary __args__.
+        This allows parsers to be serialized later without requiring bespoke (de)serialization code
+        for every parser type."""
+        cls = super().__new__(mcls)
+        init_var_names = list(cls.__init__.__code__.co_varnames[1:])
+        rem_var_names = init_var_names
+        for key in kwargs.keys():
+            if key in init_var_names:
+                rem_var_names.remove(key)
+        rem_var_count = len(rem_var_names)
+        cls.__args__ = kwargs
+        if len(args) > rem_var_count:
+            args = [*args[: rem_var_count - 1], args[rem_var_count - 1 :]]
+        cls.__args__.update(dict(zip(init_var_names, args)))
+
+        return cls
+
     @abstractmethod
     def __call__(self, target: str) -> List[TokenResult]:
         pass
