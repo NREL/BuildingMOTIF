@@ -1,6 +1,7 @@
 import warnings
 from functools import lru_cache
-from typing import Any, Literal, Tuple, Type, Union, get_type_hints
+from inspect import Parameter, signature
+from typing import Any, Type, Union, get_type_hints
 
 from rdflib import URIRef
 from typing_extensions import TypedDict
@@ -96,34 +97,7 @@ def _get_token_by_name(token_name: str) -> Type[Token]:
     raise NameError(f'Token of type "{token_name}" does not exist')
 
 
-@lru_cache
-def _get_parser_args_info(
-    parser: Type[Parser],
-) -> Tuple[Union[str, Literal[None]], Union[str, Literal[None]]]:
-    """Get information about the args in a parser's constructor.
-    This has been moved to it's own function to allow for speed improvements by
-    caching results.
-
-    :param parser: parser to inspect
-    :type parser: Type[Parser]
-    :return: variable length positional arguments name, variable length keyword arguments name
-    :rtype: tuple[str, str]"""
-    flags = parser.__init__.__code__.co_flags
-    varargs_flag = (flags & 4) != 0
-    varkeyargs_flag = (flags & 8) != 0
-    var_names = parser.__init__.__code__.co_varnames[1:]
-    varargs_name = None
-    varkeyargs_name = None
-    if varkeyargs_flag:
-        varkeyargs_name = var_names[-1]
-    if varargs_flag:
-        varargs_name = var_names[-1]
-        if varkeyargs_flag:
-            varargs_name = var_names[-2]
-    return (varargs_name, varkeyargs_name)
-
-
-def _construct_class(cls: Type[Parser], args: dict) -> Parser:
+def _construct_class(cls: Type[Parser], args_dict: dict) -> Parser:
     """Construct class from type and arguments
 
     :param cls: type of class to construct
@@ -132,21 +106,24 @@ def _construct_class(cls: Type[Parser], args: dict) -> Parser:
     :type args: dict
     :return: Instance of class
     :rtype: Any"""
-    varargs_name, varkeyargs_name = _get_parser_args_info(cls)
-    if varkeyargs_name:
-        varkeyargs_value = args[varkeyargs_name]
-        del args[varkeyargs_name]
-        args = {**args, **varkeyargs_value}
-    if varargs_name:
-        if varargs_name in args:
-            varargs_value: list = args[varargs_name]
-            if not isinstance(varargs_value, list):
-                raise TypeError(
-                    "Serialized variadic arguments are not encoded as a list"
-                )
-            del args[varargs_name]
-        return cls(*varargs_value, **args)
-    return cls(**args)
+    parameters = signature(cls.__init__).parameters
+    args = []
+    kwargs = {}
+    for name, param in parameters.items():
+        if name not in args_dict:
+            continue
+        kind = param.kind
+        value = args_dict[name]
+        if kind == Parameter.POSITIONAL_ONLY:
+            args.append(value)
+        elif kind in [Parameter.POSITIONAL_OR_KEYWORD, Parameter.KEYWORD_ONLY]:
+            kwargs[name] = value
+        elif kind == Parameter.VAR_POSITIONAL:
+            args = [*args, *value]
+        elif kind == Parameter.VAR_KEYWORD:
+            kwargs.update(value)
+
+    return cls(*args, **kwargs)
 
 
 def deserialize(parser_dict: Union[ParserDict, dict]) -> Parser:
@@ -186,7 +163,7 @@ def _deserialize_token(token_dict: dict) -> Union[Token, Type[Token]]:
     :rtype: Token"""
     token = _get_token_by_name(token_dict["token"])
     if "value" in token_dict:
-        value_type = _get_token_value_type(token)
+        value_type = _get_token_value_type(token)  # type: ignore
         return token(value_type(token_dict["value"]))
     return token
 

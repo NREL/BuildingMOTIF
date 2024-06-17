@@ -149,7 +149,7 @@ def test_abbreviations():
 
 def test_sequence():
     parser = deserialize(
-        serialize(sequence([string("abc", Identifier), string("def", Identifier)]))
+        serialize(sequence(string("abc", Identifier), string("def", Identifier)))
     )
     # test that it parses the whole sequence
     assert parser("abcdef") == [
@@ -161,11 +161,9 @@ def test_sequence():
     parser = deserialize(
         serialize(
             sequence(
-                [
-                    abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK),
-                    regex(r"[/\-:_]+", Delimiter),
-                    regex(r"[0-9]+", Identifier),
-                ]
+                abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK),
+                regex(r"[/\-:_]+", Delimiter),
+                regex(r"[0-9]+", Identifier),
             )
         )
     )
@@ -187,11 +185,9 @@ def test_many():
     type_ident_delim = deserialize(
         serialize(
             sequence(
-                [
-                    COMMON_ABBREVIATIONS,
-                    regex(r"\d+", Identifier),
-                    delim,
-                ]
+                COMMON_ABBREVIATIONS,
+                regex(r"\d+", Identifier),
+                delim,
             )
         )
     )
@@ -225,14 +221,7 @@ def test_many():
 
 def test_maybe():
     parser = deserialize(
-        serialize(
-            sequence(
-                [
-                    maybe(string("abc", Identifier)),
-                    string("def", Identifier),
-                ]
-            )
-        )
+        serialize(sequence(maybe(string("abc", Identifier)), string("def", Identifier)))
     )
     # test that it parses the whole sequence
     assert parser("abcdef") == [
@@ -248,17 +237,13 @@ def test_maybe():
     parser = deserialize(
         serialize(
             sequence(
-                [
-                    maybe(
-                        sequence(
-                            [
-                                string("abc", Identifier),
-                                string("def", Identifier),
-                            ]
-                        )
-                    ),
-                    string("ghi", Identifier),
-                ]
+                maybe(
+                    sequence(
+                        string("abc", Identifier),
+                        string("def", Identifier),
+                    )
+                ),
+                string("ghi", Identifier),
             )
         )
     )
@@ -277,18 +262,14 @@ def test_maybe():
     parser = deserialize(
         serialize(
             sequence(
-                [
-                    string("abc", Identifier),
-                    maybe(
-                        sequence(
-                            [
-                                string("def", Identifier),
-                                string("ghi", Identifier),
-                            ]
-                        )
-                    ),
-                    string("jkl", Identifier),
-                ]
+                string("abc", Identifier),
+                maybe(
+                    sequence(
+                        string("def", Identifier),
+                        string("ghi", Identifier),
+                    )
+                ),
+                string("jkl", Identifier),
             )
         )
     )
