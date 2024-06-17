@@ -618,7 +618,9 @@ document.write(`
     <span class="k">for</span> <span class="n">pshape</span> <span class="ow">in</span> <span class="n">pshapes</span><span class="p">:</span>
         <span class="n">property_path</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">property_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;no sh:path detected on </span><span class="si">{</span><span class="n">shape_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;no sh:path detected on </span><span class="si">{</span><span class="n">shape_name</span><span class="si">}</span><span class="s2"> property shape </span><span class="si">{</span><span class="n">pshape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="c1"># TODO: expand otypes to include sh:in, sh:or, or no datatype at all!</span>
         <span class="n">otypes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="n">shape_graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
@@ -986,6 +988,7 @@ document.write(`
             <span class="p">)</span>
             <span class="k">pass</span>
 
+    <span class="n">data_graph</span> <span class="o">=</span> <span class="n">data_graph</span> <span class="o">+</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">pyshacl</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
         <span class="n">data_graph</span><span class="p">,</span>
         <span class="n">shacl_graph</span><span class="o">=</span><span class="n">shape_graph</span><span class="p">,</span>
