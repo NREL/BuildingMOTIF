@@ -1,6 +1,8 @@
 import re
 from typing import List
 
+from rdflib import URIRef
+
 from buildingmotif.label_parsing.parser import Parser
 from buildingmotif.label_parsing.tokens import (
     Constant,
@@ -47,7 +49,7 @@ class rest(Parser):
 class substring_n(Parser):
     """Constructs a parser that matches a substring of length n."""
 
-    def __init__(self, length, type_name: TokenOrConstructor):
+    def __init__(self, length: int, type_name: TokenOrConstructor):
         self.length = length
         self.type_name = type_name
 
@@ -70,7 +72,7 @@ class substring_n(Parser):
 class regex(Parser):
     """Constructs a parser that matches a regular expression."""
 
-    def __init__(self, r, type_name: TokenOrConstructor):
+    def __init__(self, r: str, type_name: TokenOrConstructor):
         self.r = r
         self.type_name = type_name
 
@@ -89,7 +91,7 @@ class regex(Parser):
 class choice(Parser):
     """Constructs a choice combinator of parsers."""
 
-    def __init__(self, *parsers):
+    def __init__(self, *parsers: Parser):
         self.parsers = parsers
 
     def __call__(self, target: str) -> List[TokenResult]:
@@ -100,7 +102,7 @@ class choice(Parser):
                 return result
             if result:
                 errors.append(result[0].error)
-        return [TokenResult(None, Null(), 0, " | ".join(errors))]
+        return [TokenResult(None, Null(), 0, " | ".join(errors))]  # type: ignore
 
 
 class constant(Parser):
@@ -116,19 +118,18 @@ class constant(Parser):
 class abbreviations(Parser):
     """Constructs a choice combinator of string matching based on a dictionary."""
 
-    def __init__(self, patterns):
-        patterns = patterns
-        parsers = [string(s, Constant(t)) for s, t in patterns.items()]
+    def __init__(self, patterns: dict):
+        parsers = [string(s, Constant(URIRef(t))) for s, t in patterns.items()]
         self.choice = choice(*parsers)
 
-    def __call__(self, target):
+    def __call__(self, target: str):
         return self.choice(target)
 
 
 class sequence(Parser):
     """Applies parsers in sequence. All parsers must match consecutively."""
 
-    def __init__(self, *parsers):
+    def __init__(self, *parsers: Parser):
         self.parsers = parsers
 
     def __call__(self, target: str) -> List[TokenResult]:
@@ -152,7 +153,7 @@ class sequence(Parser):
 class many(Parser):
     """Applies the given sequence parser repeatedly until it stops matching."""
 
-    def __init__(self, seq_parser):
+    def __init__(self, seq_parser: Parser):
         self.seq_parser = seq_parser
 
     def __call__(self, target):
@@ -188,9 +189,9 @@ class until(Parser):
     STarts with a string length of 1 and increments it until the parser matches.
     """
 
-    def __init__(self, parser, type_name: TokenOrConstructor):
-        self.parser = parser
+    def __init__(self, parser: Parser, type_name: TokenOrConstructor):
         self.type_name = type_name
+        self.parser = parser
 
     def __call__(self, target):
         length = 1
@@ -215,7 +216,7 @@ class until(Parser):
 class extend_if_match(Parser):
     """Adds the type to the token result."""
 
-    def __init__(self, parser, type_name: Token):
+    def __init__(self, parser: Parser, type_name: Token):
         self.parser = parser
         self.type_name = type_name
 
