@@ -3,9 +3,10 @@
 hot-water-plant:
   body: >
     @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
-    p:name a sh:or ( p:primary-only-plant p:primary-secondary-plant ) .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name rdf:type rdf:Alt ;
+      rdf:_1 p:primary-only-plant ;
+      rdf:_2 p:primary-secondary-plant .
   dependencies:
     - template: primary-only-plant
       args: {'name': 'primary-only-plant'}
@@ -16,10 +17,12 @@ primary-only-plant:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Hot_Water_System ;
       brick:hasPart p:boiler,
-        sh:or ( p:constant-primary-only-loop p:variable-primary-only-loop ) .
+        ( _:plant rdf:type rdf:Alt
+          rdf:_1 p:constant-primary-only-loop
+          rdf:_2 p:variable-primary-only-loop ) .
   optional: ['constant-primary-only-loop', 'variable-primary-only-loop']
   dependencies:
     - template: boiler
@@ -33,15 +36,14 @@ primary-secondary-plant:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Hot_Water_System ;
       brick:hasPart p:boiler,
-        sh:or (
-          p:constant-primary-constant-secondary-loop
-          p:constant-primary-variable-secondary-loop
-          p:variable-primary-constant-secondary-loop
-          p:variable-primary-variable-secondary-loop
-        ) .
+        ( _:plant rdf:type rdf:Alt
+          rdf:_1 p:constant-primary-constant-secondary-loop
+          rdf:_2 p:constant-primary-variable-secondary-loop
+          rdf:_3 p:variable-primary-constant-secondary-loop
+          rdf:_4 p:variable-primary-variable-secondary-loop ) .
   optional: [
     'constant-primary-constant-secondary-loop',
     'constant-primary-variable-secondary-loop',
@@ -112,9 +114,13 @@ primary-only-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Hot_Water_Loop ;
-      brick:hasPoint sh:or ( p:hws-flow p:hwr-flow ), p:hws-temp, p:gauge-pressure .
+      brick:hasPoint
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:hws-flow
+          rdf:_2 p:hwr-flow ),
+        p:hws-temp, p:gauge-pressure .
   optional: ['gauge-pressure']
   dependencies:
     - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Flow_Sensor
@@ -221,10 +227,13 @@ secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Hot_Water_Loop ;
       brick:hasPoint p:sec-hws-temp, p:sec-hwr-temp,
-        sh:or ( p:sec-hws-flow p:sec-hwr-flow ), p:int-hws-temp .
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:sec-hws-flow
+          rdf:_2 p:sec-hwr-flow ),
+        p:int-hws-temp .
   optional: ['sec-hws-flow', 'sec-hwr-flow', 'int-hws-temp']
   dependencies:
     - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Temperature_Sensor
@@ -286,13 +295,14 @@ constant-primary-variable-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Hot_Water_Loop ;
-      brick:hasPart [
-        p:constant-primary-loop ;
-        brick:feeds p:variable-secondary-loop ;
-        brick:hasPoint sh:or ( p:hws-flow p:hwr-flow )
-      ] .
+      brick:hasPart
+        ( p:constant-primary-loop brick:feeds p:variable-secondary-loop ) ;
+          brick:hasPoint
+            ( _:point rdf:type rdf:Alt
+              rdf:_1 p:hws-flow
+              rdf:_2 p:hwr-flow ) .
   dependencies:
     - template: constant-primary-loop
       args: {'name': 'constant-primary-loop'}
@@ -324,13 +334,15 @@ variable-primary-variable-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Hot_Water_Loop ;
-      brick:hasPart [
-        p:variable-primary-loop ;
-        brick:feeds p:variable-secondary-loop ;
-        brick:hasPoint sh:or ( p:hws-flow p:hwr-flow ), p:decoupler-flow
-      ] .
+      brick:hasPart
+        ( p:variable-primary-loop brick:feeds p:variable-secondary-loop ) ;
+          brick:hasPoint
+            ( _:point rdf:type rdf:Alt
+              rdf:_1 p:hws-flow
+              rdf:_2 p:hwr-flow ),
+            p:decoupler-flow .
   optional: ['hws-flow', 'hwr-flow', 'decoupler-flow']
   dependencies:
     - template: variable-primary-loop

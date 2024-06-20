@@ -3,14 +3,12 @@
 chilled-water-plant:
   body: >
     @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
-    p:name a sh:or (
-      p:air-cooled-primary-only-plant
-      p:wtr-cooled-primary-only-plant
-      p:air-cooled-primary-secondary-plant
-      p:wtr-cooled-primary-secondary-plant
-    ) .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name rdf:type rdf:Alt ;
+      rdf:_1 p:air-cooled-primary-only-plant ;
+      rdf:_2 p:wtr-cooled-primary-only-plant ;
+      rdf:_3 p:air-cooled-primary-secondary-plant ;
+      rdf:_4 p:wtr-cooled-primary-secondary-plant .
   optional: [
     'air-cooled-primary-only-plant',
     'wtr-cooled-primary-only-plant',
@@ -31,12 +29,13 @@ air-cooled-primary-only-plant:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Chilled_Water_System ;
-      brick:hasPart [
-        p:air-cooled-chiller ;
-        brick:hasPoint p:demand-limit ],
-        sh:or ( p:constant-primary-only-loop p:variable-primary-only-loop ) ;
+      brick:hasPart
+        ( p:air-cooled-chiller brick:hasPoint p:demand-limit ),
+        ( _:plant rdf:type rdf:Alt
+          rdf:_1 p:constant-primary-only-loop
+          rdf:_2 p:variable-primary-only-loop ) ;
       brick:hasPoint p:plant-chwr-temp .
   optional: ['constant-primary-only-loop', 'variable-primary-only-loop']
   dependencies:
@@ -57,12 +56,13 @@ wtr-cooled-primary-only-plant:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Chilled_Water_System ;
-      brick:hasPart [
-        p:wtr-cooled-chiller ;
-        brick:hasPoint p:demand-limit ],
-        sh:or ( p:constant-primary-only-loop p:variable-primary-only-loop ),
+      brick:hasPart
+        ( p:wtr-cooled-chiller brick:hasPoint p:demand-limit ),
+        ( _:plant rdf:type rdf:Alt
+          rdf:_1 p:constant-primary-only-loop
+          rdf:_2 p:variable-primary-only-loop ),
         p:waterside-economizer ;
       brick:hasPoint p:plant-chwr-temp, p:oa-temp, p:rh-sen ;
       brick:isFedBy p:condenser-water-plant .
@@ -95,17 +95,15 @@ air-cooled-primary-secondary-plant:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Chilled_Water_System ;
-      brick:hasPart [
-        p:air-cooled-chiller ;
-        brick:hasPoint p:demand-limit ],
-        sh:or (
-          p:constant-primary-constant-secondary-loop
-          p:constant-primary-variable-secondary-loop
-          p:variable-primary-constant-secondary-loop
-          p:variable-primary-variable-secondary-loop
-        ) ;
+      brick:hasPart
+        ( p:air-cooled-chiller brick:hasPoint p:demand-limit ),
+        ( _:loop rdf:type rdf:Alt
+          rdf:_1 p:constant-primary-constant-secondary-loop
+          rdf:_2 p:constant-primary-variable-secondary-loop
+          rdf:_3 p:variable-primary-constant-secondary-loop
+          rdf:_4 p:variable-primary-variable-secondary-loop ) ;
       brick:hasPoint p:plant-chwr-temp .
   optional: ['demand-limit',
     'constant-primary-constant-secondary-loop',
@@ -136,19 +134,17 @@ wtr-cooled-primary-secondary-plant:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Chilled_Water_System ;
-      brick:hasPart [
-        p:wtr-cooled-chiller ;
-        brick:hasPoint p:demand-limit ],
-        sh:or (
-          p:constant-primary-constant-secondary-loop
-          p:constant-primary-variable-secondary-loop
-          p:variable-primary-constant-secondary-loop
-          p:variable-primary-variable-secondary-loop
-        ),
+      brick:hasPart
+        ( p:wtr-cooled-chiller brick:hasPoint p:demand-limit ),
+        ( _:loop rdf:type rdf:Alt
+          rdf:_1 p:constant-primary-constant-secondary-loop
+          rdf:_2 p:constant-primary-variable-secondary-loop
+          rdf:_3 p:variable-primary-constant-secondary-loop
+          rdf:_4 p:variable-primary-variable-secondary-loop ),
         p:waterside-economizer ;
-      brick:hasPoint p:plant-chwr-temp, oa-temp, rh-sen ;
+      brick:hasPoint p:plant-chwr-temp, p:oa-temp, p:rh-sen ;
       brick:isFedBy p:condenser-water-plant .
   optional: ['demand-limit',
     'constant-primary-constant-secondary-loop',
@@ -217,7 +213,7 @@ chiller:
         p:refrig-evap-temp,
         p:refrig-cond-temp,
         p:local-auto-switch,
-        p:off-switch
+        p:off-switch .
   optional: [
     'ch-chw-isolation-valve',
     'ch-chw-bypass-valve',
@@ -275,7 +271,6 @@ chiller:
 air-cooled-chiller:
   body: >
     @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a p:chiller .
   dependencies:
     - template: chiller
@@ -308,10 +303,12 @@ ch-chw-isolation-valve:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Isolation_Valve ;
       brick:hasPoint
-        sh:or ( p:valve-position-cmd p:on-off-cmd),
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:valve-position-cmd
+          rdf:_2 p:on-off-cmd ),
         p:closed-end-switch,
         p:open-end-switch,
         p:position-feedback .
@@ -354,10 +351,12 @@ ch-cw-isolation-valve:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Condenser_Water_Isolation_Valve ;
       brick:hasPoint
-        sh:or ( p:valve-position-cmd p:on-off-cmd),
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:valve-position-cmd
+          rdf:_2 p:on-off-cmd ),
         p:closed-end-switch,
         p:open-end-switch,
         p:position-feedback .
@@ -393,10 +392,12 @@ primary-only-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Chilled_Water_Loop ;
       brick:hasPoint
-        sh:or ( p:chws-flow p:chwr-flow ),
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:chws-flow
+          rdf:_2 p:chwr-flow ),
         p:chws-temp, p:gauge-pressure .
   optional: ['chws-flow-sen', 'chwr-flow-sen', 'gauge-pressure']
   dependencies:
@@ -430,7 +431,8 @@ variable-primary-only-loop:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a p:primary-only-loop ;
-      brick:feeds [ p:chw-demand-loop ; brick:hasPoint p:dem-chwr-temp ] ;
+      brick:feeds
+      ( p:chw-demand-loop brick:hasPoint p:dem-chwr-temp ) ;
       brick:hasPart p:variable-speed-pump, p:min-flow-bypass-valve ;
       brick:hasPoint p:sup-chwr-temp .
   optional: ['dem-chwr-temp-sen']
@@ -496,10 +498,12 @@ secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Chilled_Water_Loop ;
       brick:hasPoint p:chws-temp, p:chwr-temp,
-        sh:or ( p:chws-flow p:chwr-flow ) .
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:chws-flow
+          rdf:_2 p:chwr-flow ) .
   optional: ['chwr-temp', 'chws-flow', 'chwr-flow']
   dependencies:
     - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Temperature_Sensor
@@ -544,7 +548,7 @@ constant-primary-constant-secondary-loop:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Chilled_Water_Loop ;
-      brick:hasPart [ p:constant-primary-loop ; brick:feeds p:constant-secondary-loop ] .
+      brick:hasPart ( p:constant-primary-loop brick:feeds p:constant-secondary-loop ) .
   dependencies:
     - template: constant-primary-loop
       args: {'name': 'constant-primary-loop'}
@@ -556,7 +560,7 @@ constant-primary-variable-secondary-loop:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Chilled_Water_Loop ;
-      brick:hasPart [ p:constant-primary-loop ; brick:feeds p:variable-secondary-loop ] .
+      brick:hasPart ( p:constant-primary-loop brick:feeds p:variable-secondary-loop ) .
   dependencies:
     - template: constant-primary-loop
       args: {'name': 'constant-primary-loop'}
@@ -568,7 +572,7 @@ variable-primary-constant-secondary-loop:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Chilled_Water_Loop ;
-      brick:hasPart [ p:variable-primary-loop ; brick:feeds p:constant-secondary-loop ] .
+      brick:hasPart ( p:variable-primary-loop brick:feeds p:constant-secondary-loop ) .
   dependencies:
     - template: variable-primary-loop
       args: {'name': 'variable-primary-loop'}
@@ -579,13 +583,15 @@ variable-primary-variable-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Chilled_Water_Loop ;
-      brick:hasPart [
-        p:variable-primary-loop ;
-        brick:feeds p:variable-secondary-loop ;
-        brick:hasPoint sh:or ( p:chws-flow p:chwr-flow ), p:decoupler-flow
-      ] .
+      brick:hasPart
+        ( p:variable-primary-loop brick:feeds p:variable-secondary-loop ),
+        ( brick:hasPoint
+          _:point rdf:type rdf:Alt
+            rdf:_1 p:chws-flow
+            rdf:_2 p:chwr-flow
+          p:decoupler-flow ) .
   dependencies:
     - template: variable-primary-loop
       args: {'name': 'constant-primary-loop'}
@@ -609,13 +615,15 @@ cooling-tower:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Cooling_Tower ;
       brick:hasPart
         p:variable-speed-fan,
-        sh:or (
+        ( _:or rdf:type rdf:Alt
           p:ct-outlet-isolation-valve
-          sh:and ( p:ct-inlet-isolation-valve p:ct-outlet-isolation-valve )
+          ( _:and rdf:type rdf:Bag
+            rdf:_1 p:ct-inlet-isolation-valve
+            rdf:_2 p:ct-outlet-isolation-valve )
         ),
         p:ct-bypass-valve, p:ct-basin-heater ;
       brick:hasPoint p:twr-basin-lvl, p:heat-trace-enable, p:heat-trace-status .
@@ -746,11 +754,13 @@ condenser-water-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Chilled_Water_Loop ;
       brick:hasPart
-        sh:or ( p:constant-speed-pump p:variable-speed-pump ),
-        [ p:makeup-water-valve ; brick:hasPoint p:on-off-cmd ] ;
+        ( _:pump rdf:type rdf:Alt
+          rdf:_1 p:constant-speed-pump
+          rdf:_2 p:variable-speed-pump ),
+        ( p:makeup-water-valve brick:hasPoint p:on-off-cmd ) ;
       brick:hasPoint p:cws-temp, p:cwr-temp .
   optional: ['constant-speed-pump', 'variable-speed-pump']
   dependencies:
@@ -777,10 +787,13 @@ waterside-economizer:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Heat_Exchanger ;
-      brick:hasPart p:wse-isolation-valve, p::wse-bypass-valve,
-        sh:or ( p:constant-speed-pump p:variable-speed-pump ) ;
+      brick:hasPart
+        p:wse-isolation-valve, p:wse-bypass-valve,
+        ( _:pump rdf:type rdf:Alt
+          rdf:_1 p:constant-speed-pump
+          rdf:_2 p:variable-speed-pump ) ;
       brick:hasPoint p:cwr-temp, p:chwr-temp, p:chws-temp, p:wse-chwr-temp, p:oa-temp, p:rh-sen .
   optional: ['wse-bypass-valve', 'constant-speed-pump', 'variable-speed-pump']
   dependencies:
