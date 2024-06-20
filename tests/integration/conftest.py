@@ -14,6 +14,8 @@ def pytest_generate_tests(metafunc):
     """
     Generates BuildingMOTIF tests for a variety of contexts
     """
+    if metafunc.config.getoption("skip_library_tests"):
+        return
 
     # validates that example files pass validation
     if "notebook" in metafunc.fixturenames:
