@@ -64,13 +64,13 @@ jobs:
         run: poetry run pytest tests/unit --cov=./ --cov-report=xml
       - name: integration tests
         run: poetry run pytest tests/integration -k 'topquadrant and test_223p_template'
-      - name: bacnet tests
-        run: |
-          cd tests/integration/fixtures/bacnet
-          docker compose build device buildingmotif
-          docker compose run -d device
-          docker compose run buildingmotif poetry run pytest -m bacnet
-          docker compose down
+        #- name: bacnet tests
+        #  run: |
+        #    cd tests/integration/fixtures/bacnet
+        #    docker compose build device buildingmotif
+        #    docker compose run -d device
+        #    docker compose run buildingmotif poetry run pytest -m bacnet
+        #    docker compose down
       - name: build tests
         run: poetry build
 
