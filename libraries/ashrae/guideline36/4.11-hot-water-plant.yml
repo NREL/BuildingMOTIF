@@ -154,10 +154,7 @@ variable-primary-only-loop:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a p:primary-only-loop ;
-      brick:feeds [
-        p:demand-loop ;
-        brick:hasPoint p:loop-hwr-temp
-      ] ;
+      brick:feeds ( p:demand-loop brick:hasPoint p:loop-hwr-temp ) ;
       brick:hasPart p:variable-speed-pump, p:min-flow-bypass-valve ;
       brick:hasPoint p:plant-hwr-temp .
   optional: ['loop-hwr-temp']
@@ -281,10 +278,7 @@ constant-primary-constant-secondary-loop:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Hot_Water_Loop ;
-      brick:hasPart [
-        p:constant-primary-loop ;
-        brick:feeds p:constant-secondary-loop
-      ] .
+      brick:hasPart ( p:constant-primary-loop brick:feeds p:constant-secondary-loop ) .
   dependencies:
     - template: constant-primary-loop
       args: {'name': 'constant-primary-loop'}
@@ -320,10 +314,7 @@ variable-primary-constant-secondary-loop:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Hot_Water_Loop ;
-      brick:hasPart [
-        p:variable-primary-loop ;
-        brick:feeds p:constant-secondary-loop
-      ] .
+      brick:hasPart ( p:variable-primary-loop brick:feeds p:constant-secondary-loop ) .
   dependencies:
     - template: variable-primary-loop
       args: {'name': 'variable-primary-loop'}
