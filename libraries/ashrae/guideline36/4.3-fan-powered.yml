@@ -4,7 +4,7 @@ fan-powered-terminal-unit:
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:VAV ;
       brick:hasPart p:fan, p:damper ;
-      brick:hasPoint p:heating_signal, p:airflow, p:dat, p:zat .
+      brick:hasPoint p:heating_signal, p:airflow, p:sat, p:zat .
   dependencies:
   - template: fan
     args: {"name": "fan"}
@@ -13,9 +13,9 @@ fan-powered-terminal-unit:
   - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor 
     library: https://brickschema.org/schema/1.4/Brick
     args: {"name": "airflow"}
-  - template: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor 
+  - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor 
     library: https://brickschema.org/schema/1.4/Brick
-    args: {"name": "dat"}
+    args: {"name": "sat"}
   - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor 
     library: https://brickschema.org/schema/1.4/Brick
     args: {"name": "zat"}
