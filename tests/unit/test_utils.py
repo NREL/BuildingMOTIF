@@ -7,6 +7,7 @@ from buildingmotif.namespaces import BRICK, SH, XSD, A
 from buildingmotif.utils import (
     PARAM,
     _param_name,
+    _strip_param,
     get_parameters,
     get_template_parts_from_shape,
     graph_hash,
@@ -357,3 +358,23 @@ def test_hash(bm: BuildingMOTIF):
 
     after_hash = graph_hash(model.graph)
     assert before_hash == after_hash, "Graph with same state resulted in different hash"
+
+
+def test_strip_param():
+    # if value is 'None', key should remain unchanged
+    inputs = {
+        "p123": None,
+        "urn:___param___#123": "123",
+        "urn:___param___/123": None,
+        "urn:___param___#urn___param___#123": "123",
+    }
+    for input_val, expected in inputs.items():
+        output = _strip_param(input_val)
+        if expected is None:
+            assert (
+                input_val == output
+            ), f"Input {input_val} should remain unchanged but was {output}"
+        else:
+            assert (
+                expected == output
+            ), f"Input {input_val} should be {expected} but was {output}"
