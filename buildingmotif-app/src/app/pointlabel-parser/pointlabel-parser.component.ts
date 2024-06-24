@@ -69,9 +69,8 @@ export class PointlabelParserComponent implements OnInit {
     let fileReader = new FileReader();
     fileReader.onload = (e: any) => {
       // read file
-      const abbs: {s: string, type_name: string}[] = e.target.result.split("\n").map((row: string) => {
+      const abbs: {s: string, type_name: string}[] = e.target.result.split("\r\n").map((row: string) => {
         const items = row.split(",")
-        console.log(items)
         return { s: items[0], type_name: items[1] }
       })
 
@@ -83,9 +82,7 @@ export class PointlabelParserComponent implements OnInit {
 
       // for each abb
       let currentConnection = parentConnection;
-      console.log("abbs", abbs)
       abbs.forEach(abb => {
-        console.log(abb)
         // make child
         var childBlock = this.workspace.newBlock('string-url');
         childBlock.setFieldValue(abb.type_name, 'type_name');
@@ -95,7 +92,6 @@ export class PointlabelParserComponent implements OnInit {
         var childConnection = childBlock.previousConnection;
 
         // connect child
-        console.log(childConnection)
         currentConnection.connect(childConnection);
         currentConnection = childBlock.nextConnection
       });
@@ -108,7 +104,6 @@ export class PointlabelParserComponent implements OnInit {
 
 
   onHover(token: Token) {
-    console.log(token)
     this.workspace.highlightBlock(token.id)
   }
 
@@ -145,12 +140,10 @@ export class PointlabelParserComponent implements OnInit {
 
   parse() {
     const state = Blockly.serialization.workspaces.save(this.workspace);
-    console.log(state)
     localStorage.setItem('state', JSON.stringify(state))
     localStorage.setItem('pointLabels', JSON.stringify(this.pointLabelsFormControl.value))
 
     const parser = this.block_to_json(state.blocks.blocks[0])
-    console.log(parser)
 
     this.PointlabelParserService.parse(
       JSON.parse(this.pointLabelsFormControl.value),
@@ -161,7 +154,6 @@ export class PointlabelParserComponent implements OnInit {
           this.results = data
         }, // success path
         error: (error) => {
-          console.log(error)
         }, // error path
       });
   }

@@ -1,10 +1,34 @@
-<div style="display: flex;">
+<div class="container">
   <div class="pointlabels">
-    <ngx-codemirror #codemirror [options]="codeMirrorOptions" [formControl]="pointLabelsFormControl"></ngx-codemirror>
+    <!-- Unparsed -->
+        <ngx-codemirror #codemirror [options]="codeMirrorOptions"
+          [formControl]="pointLabelsFormControl"></ngx-codemirror>
+    <button mat-raised-button color="primary" (click)="parse()">Parse</button>
+
+    <!-- Parsed -->
+    <mat-list>
+      <mat-card *ngFor="let r of results">
+        <mat-card-title>
+          <span *ngFor="let t of r.tokens">
+            <a *ngIf="t.token == 'Delimiter'" title="{{t.token}}" style="color:red"
+              (mouseover)="onHover(t)">{{t.value}}</a>
+            <a *ngIf="t.token == 'Identifier'" title="{{t.token}}" style="color:blue"
+              (mouseover)="onHover(t)">{{t.value}}</a>
+            <a *ngIf="t.token == 'Constant'" title="{{t.token}}" style="color:green"
+              (mouseover)="onHover(t)">{{t.value}}</a>
+            <a *ngIf="t.token !== 'Delimiter' && t.token !== 'Identifier' && t.token !== 'Constant'" title="{{t.token}}"
+              style="color: purple" (mouseover)="onHover(t)">{{t.value}}</a>
+          </span>
+        </mat-card-title>
+        <mat-card-subtitle *ngIf="r._errors">
+          <div *ngFor="let error of r._errors">{{error}}</div>
+        </mat-card-subtitle>
+      </mat-card>
+    </mat-list>
   </div>
 
   <div class="parser">
-    <div id="blocklyDiv" style="width: 100%; height: 100%"></div>
+    <div id="blocklyDiv"></div>
     <xml id="toolbox" style="display: none">
       <category name="Custom" colour="360">
         <block type="string-url"></block>
@@ -18,24 +42,6 @@
     </xml>
   </div>
 </div>
-<button mat-raised-button color="primary" (click)="parse()">Parse</button>
-
-<mat-list>
-  <mat-card *ngFor="let r of results">
-    <mat-card-title>
-      <span *ngFor="let t of r.tokens">
-        <a *ngIf="t.token == 'Delimiter'" title="{{t.token}}" style="color:red" (mouseover)="onHover(t)">{{t.value}}</a>
-        <a *ngIf="t.token == 'Identifier'" title="{{t.token}}" style="color:blue" (mouseover)="onHover(t)">{{t.value}}</a>
-        <a *ngIf="t.token == 'Constant'" title="{{t.token}}" style="color:green" (mouseover)="onHover(t)">{{t.value}}</a>
-        <a *ngIf="t.token !== 'Delimiter' && t.token !== 'Identifier' && t.token !== 'Constant'" title="{{t.token}}"
-          style="color: purple" (mouseover)="onHover(t)">{{t.value}}</a>
-      </span>
-    </mat-card-title>
-    <mat-card-subtitle *ngIf="r._errors">
-      <div *ngFor="let error of r._errors">{{error}}</div>
-    </mat-card-subtitle>
-  </mat-card>
-</mat-list>
 
 
 <div class="Block">
