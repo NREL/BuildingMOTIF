@@ -366,7 +366,7 @@ def test_strip_param():
         "p123": None,
         "urn:___param___#123": "123",
         "urn:___param___/123": None,
-        "urn:___param___#urn___param___#123": "123",
+        "urn:___param___#urn:___param___#123": "123",
     }
     for input_val, expected in inputs.items():
         output = _strip_param(input_val)
