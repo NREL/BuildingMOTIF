@@ -69,7 +69,7 @@ export class PointlabelParserComponent implements OnInit {
     let fileReader = new FileReader();
     fileReader.onload = (e: any) => {
       // read file
-      const abbs: {s: string, type_name: string}[] = e.target.result.split("\r\n").map((row: string) => {
+      const abbs: {s: string, type_name: string}[] = e.target.result.split(/\r?\n/).map((row: string) => {
         const items = row.split(",")
         return { s: items[0], type_name: items[1] }
       })
