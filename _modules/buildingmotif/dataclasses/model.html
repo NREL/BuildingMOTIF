@@ -601,9 +601,6 @@ document.write(`
         <span class="c1"># TODO: do we want to preserve the materialized triples added to data_graph via reasoning?</span>
         <span class="n">data_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
 
-        <span class="c1"># remove imports from data graph</span>
-        <span class="n">data_graph</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="n">OWL</span><span class="o">.</span><span class="n">imports</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-
         <span class="c1"># validate the data graph</span>
         <span class="n">valid</span><span class="p">,</span> <span class="n">report_g</span><span class="p">,</span> <span class="n">report_str</span> <span class="o">=</span> <span class="n">shacl_validate</span><span class="p">(</span>
             <span class="n">data_graph</span><span class="p">,</span> <span class="n">shapeg</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">shacl_engine</span>
@@ -689,7 +686,7 @@ document.write(`
             <span class="n">ontology_graph</span> <span class="o">=</span> <span class="n">ontology_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
 
             <span class="n">valid</span><span class="p">,</span> <span class="n">report_g</span><span class="p">,</span> <span class="n">report_str</span> <span class="o">=</span> <span class="n">shacl_validate</span><span class="p">(</span>
-                <span class="n">temp_model_graph</span><span class="p">,</span> <span class="n">ontology_graph</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">shacl_engine</span>
+                <span class="n">temp_model_graph</span><span class="p">,</span> <span class="n">ontology_graph</span>
             <span class="p">)</span>
 
             <span class="n">results</span><span class="p">[</span><span class="n">shape_uri</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValidationContext</span><span class="p">(</span>
