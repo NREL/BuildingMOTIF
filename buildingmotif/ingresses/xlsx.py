@@ -1,6 +1,6 @@
 import logging
 from functools import cached_property
-from pathlib import Path
+from os import PathLike
 from typing import List, Optional
 
 from buildingmotif.ingresses.base import Record, RecordIngressHandler
@@ -18,12 +18,12 @@ class XLSXIngress(RecordIngressHandler):
     field of each Record gives the name of the sheet.
     """
 
-    def __init__(self, filename: Path, limit: Optional[int] = -1):
+    def __init__(self, filename: PathLike, limit: Optional[int] = -1):
         """
         Path to the .xlsx file to be ingested
 
         :param filename: Path to a .xlsx file
-        :type filename: Path
+        :type filename: PathLike
         :param limit: The maximum number of rows to read from each sheet. If -1 (default), reads all rows.
         :type limit: Optional[int], optional
         """
