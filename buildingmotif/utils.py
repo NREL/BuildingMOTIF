@@ -5,7 +5,7 @@ from copy import copy
 from dataclasses import dataclass
 from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
 
 import pyshacl  # type: ignore
 from rdflib import BNode, Graph, Literal, URIRef
@@ -20,6 +20,16 @@ if TYPE_CHECKING:
 
 Triple = Tuple[Node, Node, Node]
 _gensym_counter = 0
+
+
+def _strip_param(param: Union[Node, str]) -> str:
+    """
+    Strips all PARAM namespaces from the input parameter
+    """
+    param = str(param)
+    while param.startswith(PARAM):
+        param = param[len(PARAM) :]
+    return param
 
 
 def _gensym(prefix: str = "p") -> URIRef:

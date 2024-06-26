@@ -19,6 +19,7 @@ from buildingmotif.namespaces import bind_prefixes
 from buildingmotif.template_matcher import Mapping, TemplateMatcher
 from buildingmotif.utils import (
     PARAM,
+    _strip_param,
     combine_graphs,
     copy_graph,
     remove_triples_with_node,
@@ -280,17 +281,18 @@ class Template:
             # replace dependency parameters with the names they inherit
             # through the provided bindings
             rename_params: Dict[str, str] = {
-                ours: theirs for ours, theirs in dep.args.items()
+                ours: _strip_param(theirs) for ours, theirs in dep.args.items()
             }
             # replace all parameters *not* mentioned in the args by prefixing
             # them with the 'name' parameter binding; this is guaranteed
             # to exist
-            name_prefix = dep.args.get("name")
+            name_prefix = _strip_param(dep.args["name"])
             # for each parameter in the dependency...
             for param in deptempl.parameters:
                 # if it does *not* have a mapping in the dependency, then
                 # prefix the parameter with the value of the 'name' binding
                 # to scope it properly
+                param = _strip_param(param)
                 if param not in dep.args and param != "name":
                     rename_params[param] = f"{name_prefix}-{param}"
 
