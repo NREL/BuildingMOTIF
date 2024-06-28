@@ -1,6 +1,5 @@
 import os
 
-import pytest
 from pytest import MonkeyPatch
 
 import buildingmotif
@@ -37,19 +36,6 @@ def mock_building_motif():
     return instances[name]
 
 
-# this fixture is automatically applied to all tests. It monkeypatches the building motif module to ignore the singleton pattern.
-@pytest.fixture(autouse=True, scope="function")
-def patch_bmotif(monkeypatch):
-    monkeypatch.setattr(buildingmotif.building_motif.singleton, "Singleton", type)
-    monkeypatch.setattr(buildingmotif.building_motif.building_motif, "Singleton", type)
-    monkeypatch.setattr(
-        buildingmotif.building_motif.building_motif,
-        "get_building_motif",
-        mock_building_motif,
-    )
-    monkeypatch.setattr(buildingmotif, "get_building_motif", mock_building_motif)
-
-
 def library_load(**kwargs):
     with MonkeyPatch().context() as m:
         m.setattr(
@@ -71,9 +57,6 @@ def library_load(**kwargs):
         return Library.load(**kwargs)
 
 
-#  create a contextmanager that patches the building motif module to ignore the singleton pattern.
-
-
 class PatchBuildingMotif:
     def __enter__(self):
         print("patching")
@@ -93,6 +76,20 @@ class PatchBuildingMotif:
             buildingmotif.dataclasses.template,
             "get_building_motif",
             mock_building_motif,
+        )
+        self.monkeypatch.setattr(
+            buildingmotif.building_motif.singleton, "Singleton", type
+        )
+        self.monkeypatch.setattr(
+            buildingmotif.building_motif.building_motif, "Singleton", type
+        )
+        self.monkeypatch.setattr(
+            buildingmotif.building_motif.building_motif,
+            "get_building_motif",
+            mock_building_motif,
+        )
+        self.monkeypatch.setattr(
+            buildingmotif, "get_building_motif", mock_building_motif
         )
         return self.monkeypatch
 

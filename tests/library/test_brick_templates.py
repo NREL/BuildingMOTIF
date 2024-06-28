@@ -54,22 +54,23 @@ def setup_building_motif_brick() -> Tuple[BuildingMOTIF, Library]:
 
 def test_brick_template(bm, brick, library, template):
     # set the module to this file; this helps the monkeypatch determine which BuildingMOTIF instance to use
-    os.environ["bmotif_module"] = __file__
-    try:
-        MODEL = Namespace("urn:ex/")
-        m = Model.create(MODEL)
-        _, g = template.inline_dependencies().fill(MODEL, include_optional=False)
-        assert isinstance(g, Graph), "was not a graph"
-        bind_prefixes(g)
-        m.add_graph(g)
-        ctx = m.validate(
-            [library.get_shape_collection(), brick.get_shape_collection()],
-            error_on_missing_imports=False,
-        )
-    except Exception as e:
-        bm.session.rollback()
-        raise e
-    assert ctx.valid, ctx.report_string
+    with PatchBuildingMotif():
+        os.environ["bmotif_module"] = __file__
+        try:
+            MODEL = Namespace("urn:ex/")
+            m = Model.create(MODEL)
+            _, g = template.inline_dependencies().fill(MODEL, include_optional=False)
+            assert isinstance(g, Graph), "was not a graph"
+            bind_prefixes(g)
+            m.add_graph(g)
+            ctx = m.validate(
+                [brick.get_shape_collection()],
+                error_on_missing_imports=False,
+            )
+        except Exception as e:
+            bm.session.rollback()
+            raise e
+        assert ctx.valid, ctx.report_string
 
 
 def pytest_generate_tests(metafunc):

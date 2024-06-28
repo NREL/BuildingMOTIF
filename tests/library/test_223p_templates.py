@@ -20,12 +20,12 @@ def setup_building_motif_s223() -> Tuple[BuildingMOTIF, Library]:
         instances[__file__] = bm
         # bm = get_building_motif()
         bm.setup_tables()
-        brick = Library.load(
+        s223 = Library.load(
             ontology_graph="libraries/ashrae/223p/ontology/223p.ttl",
             run_shacl_inference=False,
         )
         bm.session.commit()
-        return bm, brick
+        return bm, s223
 
 
 def plug_223_connection_points(g: Graph):
