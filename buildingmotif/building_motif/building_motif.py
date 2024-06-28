@@ -22,7 +22,7 @@ from buildingmotif.database.utils import (
 from buildingmotif.namespaces import bind_prefixes
 
 
-class BuildingMOTIF:
+class BuildingMOTIF(metaclass=Singleton):
     """Manages BuildingMOTIF data classes."""
 
     # we specify the metaclass as an attribute (__metaclass__ = Singleton) instead of providing

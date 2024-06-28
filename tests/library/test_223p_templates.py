@@ -3,10 +3,9 @@ from typing import Tuple
 
 from rdflib import Graph, Namespace, URIRef
 
-from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library, Model
 from buildingmotif.namespaces import RDF, S223, bind_prefixes
-from tests.library.conftest import PatchBuildingMotif, instances
+from tests.library.conftest import BuildingMOTIF, PatchBuildingMotif, instances
 
 libraries = [
     "libraries/ashrae/223p/nrel-templates",

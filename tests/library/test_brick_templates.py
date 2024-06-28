@@ -3,10 +3,9 @@ from typing import Tuple
 
 from rdflib import Graph, Namespace
 
-from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library, Model
 from buildingmotif.namespaces import bind_prefixes
-from tests.library.conftest import PatchBuildingMotif, instances
+from tests.library.conftest import BuildingMOTIF, PatchBuildingMotif, instances
 
 # all the Brick libraries to test
 libraries = [
@@ -75,13 +74,13 @@ def test_brick_template(bm, brick, library, template):
 
 def pytest_generate_tests(metafunc):
     # set the module to this file; this helps the monkeypatch determine which BuildingMOTIF instance to use
-    os.environ["bmotif_module"] = __file__
-    bm, brick = setup_building_motif_brick()
-    if "test_brick_template" == metafunc.function.__name__:
-        params = []
-        ids = []
-        for library_name in libraries:
-            with PatchBuildingMotif():
+    with PatchBuildingMotif():
+        os.environ["bmotif_module"] = __file__
+        bm, brick = setup_building_motif_brick()
+        if "test_brick_template" == metafunc.function.__name__:
+            params = []
+            ids = []
+            for library_name in libraries:
                 library = Library.load(
                     directory=library_name, run_shacl_inference=False
                 )
@@ -92,4 +91,4 @@ def pytest_generate_tests(metafunc):
                 ids.extend(
                     [f"{library.name}-{template.name}" for template in templates]
                 )
-        metafunc.parametrize("bm,brick,library,template", params, ids=ids)
+            metafunc.parametrize("bm,brick,library,template", params, ids=ids)
