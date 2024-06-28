@@ -3,9 +3,10 @@ from typing import Tuple
 
 from rdflib import Graph, Namespace, URIRef
 
-from buildingmotif import BuildingMOTIF, get_building_motif
+from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library, Model
 from buildingmotif.namespaces import RDF, S223, bind_prefixes
+from tests.library.conftest import PatchBuildingMotif, instances
 
 libraries = [
     "libraries/ashrae/223p/nrel-templates",
@@ -13,16 +14,18 @@ libraries = [
 
 
 def setup_building_motif_s223() -> Tuple[BuildingMOTIF, Library]:
-    os.environ["bmotif_module"] = __file__
-    # bm = BuildingMOTIF("sqlite://")
-    bm = get_building_motif()
-    bm.setup_tables()
-    brick = Library.load(
-        ontology_graph="libraries/ashrae/223p/ontology/223p.ttl",
-        run_shacl_inference=False,
-    )
-    bm.session.commit()
-    return bm, brick
+    with PatchBuildingMotif():
+        os.environ["bmotif_module"] = __file__
+        bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
+        instances[__file__] = bm
+        # bm = get_building_motif()
+        bm.setup_tables()
+        brick = Library.load(
+            ontology_graph="libraries/ashrae/223p/ontology/223p.ttl",
+            run_shacl_inference=False,
+        )
+        bm.session.commit()
+        return bm, brick
 
 
 def plug_223_connection_points(g: Graph):
@@ -55,20 +58,23 @@ def plug_223_connection_points(g: Graph):
 
 def test_223p_template(bm, s223, library, template):
     # set the module to this file; this helps the monkeypatch determine which BuildingMOTIF instance to use
-    os.environ["bmotif_module"] = __file__
-    try:
-        MODEL = Namespace("urn:ex/")
-        m = Model.create(MODEL)
-        _, g = template.inline_dependencies().fill(MODEL, include_optional=False)
-        assert isinstance(g, Graph), "was not a graph"
-        bind_prefixes(g)
-        plug_223_connection_points(g)
-        m.add_graph(g)
-        ctx = m.validate([s223.get_shape_collection()], error_on_missing_imports=False)
-    except Exception as e:
-        bm.session.rollback()
-        raise e
-    assert ctx.valid, ctx.report_string
+    with PatchBuildingMotif():
+        os.environ["bmotif_module"] = __file__
+        try:
+            MODEL = Namespace("urn:ex/")
+            m = Model.create(MODEL)
+            _, g = template.inline_dependencies().fill(MODEL, include_optional=False)
+            assert isinstance(g, Graph), "was not a graph"
+            bind_prefixes(g)
+            plug_223_connection_points(g)
+            m.add_graph(g)
+            ctx = m.validate(
+                [s223.get_shape_collection()], error_on_missing_imports=False
+            )
+        except Exception as e:
+            bm.session.rollback()
+            raise e
+        assert ctx.valid, ctx.report_string
 
 
 def pytest_generate_tests(metafunc):
@@ -80,10 +86,15 @@ def pytest_generate_tests(metafunc):
         params = []
         ids = []
         for library_name in libraries:
-            library = Library.load(
-                directory=library_name, run_shacl_inference=False, infer_templates=False
-            )
-            templates = library.get_templates()
-            params.extend([(bm, s223, library, template) for template in templates])
-            ids.extend([f"{library.name}-{template.name}" for template in templates])
+            with PatchBuildingMotif():
+                library = Library.load(
+                    directory=library_name,
+                    run_shacl_inference=False,
+                    infer_templates=False,
+                )
+                templates = library.get_templates()
+                params.extend([(bm, s223, library, template) for template in templates])
+                ids.extend(
+                    [f"{library.name}-{template.name}" for template in templates]
+                )
         metafunc.parametrize("bm,s223,library,template", params, ids=ids)
