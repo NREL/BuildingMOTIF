@@ -563,39 +563,7 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">SingletonNotInstantiatedException</span><span class="g g-Whitespace">         </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">9</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="c1"># in-memory instance</span>
-<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">9</span> <span class="n">sc</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="n">sc</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span><span class="s2"> @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span><span class="s2"> @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
-<span class="s2">   (...)</span>
-<span class="g g-Whitespace">     </span><span class="mi">41</span><span class="s2"> .</span>
-<span class="g g-Whitespace">     </span><span class="mi">42</span><span class="s2"> &quot;&quot;&quot;</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:42,</span> in <span class="ni">ShapeCollection.create</span><span class="nt">(cls)</span>
-<span class="g g-Whitespace">     </span><span class="mi">35</span> <span class="nd">@classmethod</span>
-<span class="g g-Whitespace">     </span><span class="mi">36</span> <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ShapeCollection&quot;</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">37</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Create a new ShapeCollection.</span>
-<span class="g g-Whitespace">     </span><span class="mi">38</span><span class="sd"> </span>
-<span class="g g-Whitespace">     </span><span class="mi">39</span><span class="sd">     :return: new ShapeCollection</span>
-<span class="g g-Whitespace">     </span><span class="mi">40</span><span class="sd">     :rtype: ShapeCollection</span>
-<span class="g g-Whitespace">     </span><span class="mi">41</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">---&gt; </span><span class="mi">42</span>     <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">43</span>     <span class="n">db_shape_collection</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">create_db_shape_collection</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">44</span>     <span class="n">graph</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">graph_connection</span><span class="o">.</span><span class="n">create_graph</span><span class="p">(</span>
-<span class="g g-Whitespace">     </span><span class="mi">45</span>         <span class="n">db_shape_collection</span><span class="o">.</span><span class="n">graph_id</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
-<span class="g g-Whitespace">     </span><span class="mi">46</span>     <span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/building_motif/building_motif.py:152,</span> in <span class="ni">get_building_motif</span><span class="nt">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">150</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">BuildingMOTIF</span><span class="p">,</span> <span class="s2">&quot;instance&quot;</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">151</span>     <span class="k">return</span> <span class="n">BuildingMOTIF</span><span class="o">.</span><span class="n">instance</span>  <span class="c1"># type: ignore</span>
-<span class="ne">--&gt; </span><span class="mi">152</span> <span class="k">raise</span> <span class="n">SingletonNotInstantiatedException</span>
-
-<span class="ne">SingletonNotInstantiatedException</span>: 
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=ec331310-2f04-4b38-8838-2fb279919145 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -608,6 +576,11 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">shape_name</span> <span class="ow">in</span> <span class="n">sc</span><span class="o">.</span><span class="n">get_shapes_about_class</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Fan_Coil_Unit</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">shape_name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:simpleapp/app1
 </pre></div>
 </div>
 </div>
@@ -624,6 +597,11 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:simpleapp/app1 is a NodeShape
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="generating-queries-from-shapes">
@@ -635,6 +613,23 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 <span class="n">app1_shape</span> <span class="o">=</span> <span class="n">URIRef</span><span class="p">(</span><span class="s2">&quot;urn:simpleapp/app1&quot;</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PREFIX sh: &lt;http://www.w3.org/ns/shacl#&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+         SELECT ?roomTemp ?coolsp ?target ?heatsp WHERE {
+?target rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Fan_Coil_Unit&gt; .
+?target &lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?coolsp .
+ ?coolsp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Occupied_Cooling_Temperature_Setpoint&gt; .
+?target &lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?heatsp .
+ ?heatsp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Occupied_Heating_Temperature_Setpoint&gt; .
+?target &lt;https://brickschema.org/schema/Brick#feeds&gt;/&lt;https://brickschema.org/schema/Brick#hasPart&gt;/&lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?roomTemp .
+ ?roomTemp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Air_Temperature_Sensor&gt; .
+
+}
 </pre></div>
 </div>
 </div>
@@ -664,6 +659,20 @@ create a pandas <code class="docutils literal notranslate"><span class="pre">Dat
 <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">app_query</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="c1"># generate and save the query string to a variable</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">app_query</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">)</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;pandas&#39;
 </pre></div>
 </div>
 </div>
