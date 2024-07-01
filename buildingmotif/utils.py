@@ -5,10 +5,11 @@ from copy import copy
 from dataclasses import dataclass
 from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
 
 import pyshacl  # type: ignore
 from rdflib import BNode, Graph, Literal, URIRef
+from rdflib.compare import _TripleCanonicalizer
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
 
@@ -19,6 +20,16 @@ if TYPE_CHECKING:
 
 Triple = Tuple[Node, Node, Node]
 _gensym_counter = 0
+
+
+def _strip_param(param: Union[Node, str]) -> str:
+    """
+    Strips all PARAM namespaces from the input parameter
+    """
+    param = str(param)
+    while param.startswith(PARAM):
+        param = param[len(PARAM) :]
+    return param
 
 
 def _gensym(prefix: str = "p") -> URIRef:
@@ -50,8 +61,6 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     :rtype: Graph
     """
     c = Graph()
-    for pfx, ns in g.namespaces():
-        c.bind(pfx, ns)
     new_prefix = secrets.token_hex(4)
     for t in g.triples((None, None, None)):
         assert isinstance(t, tuple)
@@ -692,3 +701,25 @@ def skolemize_shapes(g: Graph) -> Graph:
     # apply the replacements
     replace_nodes(g, replacements)
     return g
+
+
+def graph_hash(graph: Graph) -> int:
+    """
+    Returns a cryptographic hash of the graph contents.
+    This uses the same method as rdflib's isomorphic function to generate a cryptographic hash of a given graph.
+    This method calculates a consistent hash of the canonicalized form of the graph.
+    If the hashes of two graphs are equal, this means that the graphs are isomorphic.
+    Generating the hashes (using this method) and caching them allows graph isomorphism to be determined
+    without having to recalculate the canonical form of the graph, which can be expensive.
+
+    :param graph: graph to hash
+    :type graph: graph
+
+    :return: integer hash
+    :rtype: int
+    """
+    # Copy graph to memory (improved performance if graph is backed by a DB store)
+    graph_prime = copy_graph(graph)
+    triple_canonicalizer = _TripleCanonicalizer(graph_prime)
+
+    return triple_canonicalizer.to_hash()

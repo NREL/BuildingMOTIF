@@ -7,8 +7,10 @@ from buildingmotif.namespaces import BRICK, SH, XSD, A
 from buildingmotif.utils import (
     PARAM,
     _param_name,
+    _strip_param,
     get_parameters,
     get_template_parts_from_shape,
+    graph_hash,
     replace_nodes,
     rewrite_shape_graph,
     shacl_validate,
@@ -332,3 +334,47 @@ def test_skip_uri():
     assert skip_uri(XSD.integer)
     assert skip_uri(SH.NodeShape)
     assert not skip_uri(BRICK.Sensor)
+
+
+def test_hash(bm: BuildingMOTIF):
+    graph = Graph()
+    graph.parse("tests/unit/fixtures/smallOffice_brick.ttl")
+
+    graph.add((MODEL["a"], A, BRICK["AHU"]))
+
+    model = Model.create(MODEL)
+    model.add_graph(graph)
+    before_hash = graph_hash(model.graph)
+
+    assert graph_hash(model.graph) == before_hash, "Graph did not change but hash did"
+
+    triple_to_add = (MODEL["b"], A, BRICK["Sensor"])
+    model.graph.add(triple_to_add)
+
+    after_hash = graph_hash(model.graph)
+    assert before_hash != after_hash, "Graph changed, but hashes did not"
+
+    model.graph.remove(triple_to_add)
+
+    after_hash = graph_hash(model.graph)
+    assert before_hash == after_hash, "Graph with same state resulted in different hash"
+
+
+def test_strip_param():
+    # if value is 'None', key should remain unchanged
+    inputs = {
+        "p123": None,
+        "urn:___param___#123": "123",
+        "urn:___param___/123": None,
+        "urn:___param___#urn:___param___#123": "123",
+    }
+    for input_val, expected in inputs.items():
+        output = _strip_param(input_val)
+        if expected is None:
+            assert (
+                input_val == output
+            ), f"Input {input_val} should remain unchanged but was {output}"
+        else:
+            assert (
+                expected == output
+            ), f"Input {input_val} should be {expected} but was {output}"
