@@ -36,4 +36,4 @@ def pytest_generate_tests(metafunc):
             for notebook in glob.glob("notebooks/**/*.ipynb", recursive=True)
         ]
 
-        metafunc.parametrize("notebook", notebook_files)
+        metafunc.parametrize("notebook", notebook_files, ids=map(str, notebook_files))
