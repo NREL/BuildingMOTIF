@@ -207,15 +207,23 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csv.html">buildingmotif.ingresses.csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.html">buildingmotif.ingresses.csvingress</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
 </ul>
 </li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html">buildingmotif.label_parsing.combinators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.parser.html">buildingmotif.label_parsing.parser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html">buildingmotif.label_parsing.tokens</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
 </ul>
 </li>
@@ -421,6 +429,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">buildingmotif.template_matcher</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">TemplateMatcher</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">PARAM</span><span class="p">,</span>
+    <span class="n">_strip_param</span><span class="p">,</span>
     <span class="n">combine_graphs</span><span class="p">,</span>
     <span class="n">copy_graph</span><span class="p">,</span>
     <span class="n">remove_triples_with_node</span><span class="p">,</span>
@@ -682,17 +691,18 @@ document.write(`
             <span class="c1"># replace dependency parameters with the names they inherit</span>
             <span class="c1"># through the provided bindings</span>
             <span class="n">rename_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">ours</span><span class="p">:</span> <span class="n">theirs</span> <span class="k">for</span> <span class="n">ours</span><span class="p">,</span> <span class="n">theirs</span> <span class="ow">in</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="n">ours</span><span class="p">:</span> <span class="n">_strip_param</span><span class="p">(</span><span class="n">theirs</span><span class="p">)</span> <span class="k">for</span> <span class="n">ours</span><span class="p">,</span> <span class="n">theirs</span> <span class="ow">in</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="p">}</span>
             <span class="c1"># replace all parameters *not* mentioned in the args by prefixing</span>
             <span class="c1"># them with the &#39;name&#39; parameter binding; this is guaranteed</span>
             <span class="c1"># to exist</span>
-            <span class="n">name_prefix</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+            <span class="n">name_prefix</span> <span class="o">=</span> <span class="n">_strip_param</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
             <span class="c1"># for each parameter in the dependency...</span>
             <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">deptempl</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
                 <span class="c1"># if it does *not* have a mapping in the dependency, then</span>
                 <span class="c1"># prefix the parameter with the value of the &#39;name&#39; binding</span>
                 <span class="c1"># to scope it properly</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">_strip_param</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span> <span class="ow">and</span> <span class="n">param</span> <span class="o">!=</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span>
                     <span class="n">rename_params</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name_prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span>
 
