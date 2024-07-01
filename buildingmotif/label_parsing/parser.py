@@ -35,26 +35,6 @@ class ParseResult:
 # the length of the token is used to keep track of how much of the string
 # has been parsed
 class Parser(ABC):
-    __args__: dict
-
-    def __new__(mcls, *args, **kwargs):
-        """When a parser is constructed, save its arguments into a dictionary __args__.
-        This allows parsers to be serialized later without requiring bespoke (de)serialization code
-        for every parser type."""
-        cls = super().__new__(mcls)
-        init_var_names = list(cls.__init__.__code__.co_varnames[1:])
-        rem_var_names = init_var_names
-        for key in kwargs.keys():
-            if key in init_var_names:
-                rem_var_names.remove(key)
-        rem_var_count = len(rem_var_names)
-        cls.__args__ = kwargs
-        if len(args) > rem_var_count:
-            args = [*args[: rem_var_count - 1], args[rem_var_count - 1 :]]
-        cls.__args__.update(dict(zip(init_var_names, args)))
-
-        return cls
-
     @abstractmethod
     def __call__(self, target: str) -> List[TokenResult]:
         pass
@@ -197,3 +177,28 @@ def first_true(iterable, default=None, pred=None):
     # first_true([a,b,c], x) --> a or b or c or x
     # first_true([a,b], x, f) --> a if f(a) else b if f(b) else x
     return next(filter(pred, iterable), default)
+
+
+def parser_on_list(parser, test_file):
+    """
+    Applies parser to each element in test file.
+    Returns total parsed, total unparsed, and specific elements that were
+    parsed and not parsed.
+    """
+    parsed = []
+    unparsed = []
+    with open(test_file) as file:
+        data_list = [
+            line.replace(" ", "").replace("\n", "") for line in file.readlines()
+        ]
+    wrong = 0
+    right = 0
+    for data in data_list:
+        res = parser(data)
+        if res and not any(r.error for r in res):
+            parsed.append(data)
+            right += 1
+        else:
+            unparsed.append(data)
+            wrong += 1
+    return parsed, unparsed, right, wrong
