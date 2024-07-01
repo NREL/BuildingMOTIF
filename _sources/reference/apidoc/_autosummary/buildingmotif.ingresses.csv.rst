@@ -1,7 +1,7 @@
-buildingmotif.ingresses.csvingress
-==================================
+buildingmotif.ingresses.csv
+===========================
 
-.. automodule:: buildingmotif.ingresses.csvingress
+.. automodule:: buildingmotif.ingresses.csv
 
    
    
