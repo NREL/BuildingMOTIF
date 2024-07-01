@@ -276,7 +276,7 @@ class Model:
             ontology_graph = ontology_graph.skolemize()
 
             valid, report_g, report_str = shacl_validate(
-                temp_model_graph, ontology_graph
+                temp_model_graph, ontology_graph, engine=self._bm.shacl_engine
             )
 
             results[shape_uri] = ValidationContext(
