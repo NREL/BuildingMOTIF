@@ -148,6 +148,7 @@ def test_csv_generation_file(
     with NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as dest:
         output = template.generate_csv(Path(dest.name))
         assert output is None
+        dest.flush()
 
         with open(Path(dest.name)) as f:
             params = f.read().strip().split(",")
