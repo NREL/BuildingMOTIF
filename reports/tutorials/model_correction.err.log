@@ -21,88 +21,49 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-from rdflib import Namespace, URIRef
-from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, Library, Template
-from buildingmotif.namespaces import BRICK, RDF # import this to make writing URIs easier
+# use the name of the AHU from above as the base of our template names
+ahu_name = "Core_ZN-PSC_AC"
 
-# in-memory instance
-bm = BuildingMOTIF("sqlite://")
+# lookup for the name of the template to the name of the point or part
+points_and_parts = {
+    "resolve_Core_ZN-PSC_ACMixed_Air_Temperature_Sensor": "-MAT",
+    "resolve_Core_ZN-PSC_ACFilter_Differential_Pressure_Sensor": "-FilterDPS",
+    "resolve_Core_ZN-PSC_ACCooling_Command": "-CCmd",
+    "resolve_Core_ZN-PSC_ACHeating_Command": "-HCmd",
+    "resolve_Core_ZN-PSC_ACOutside_Air_Temperature_Sensor": "-OAT",
+    "resolve_Core_ZN-PSC_ACSupply_Air_Temperature_Sensor": "-SAT",
+    "resolve_Core_ZN-PSC_ACReturn_Air_Temperature_Sensor": "-RAT",
+    "resolveCore_ZN-PSC_ACsa-fan": "-Fan", # this is an existing fan in the model!
+}
 
-# create the namespace for the building
-BLDG = Namespace('urn:bldg/')
+for templ in generated_templates.get_templates():
+    templ = templ.inline_dependencies()
 
-# create the building model
-model = Model.create(BLDG, description="This is a test model for a simple building")
+    suffix = points_and_parts[templ.name]
 
-# load libraries included with the python package
-constraints = Library.load(ontology_graph="constraints/constraints.ttl")
-
-# load libraries excluded from the python package (available from the repository)
-brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
-g36 = Library.load(directory="../../libraries/ashrae/guideline36")
-
-
-# load tutorial 2 model and manifest
-model.graph.parse("tutorial2_model.ttl", format="ttl")
-manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
-
-# assign the manifest to our model
-model.update_manifest(manifest.get_shape_collection())
+    # we know from the exploration above that each template has
+    # 1 parameter which is the name of the missing item
+    param = list(templ.parameters)[0]
+    bindings = {
+        param: BLDG[ahu_name + suffix],
+    }
+    thing = templ.evaluate(bindings)
+    if isinstance(thing, Template):
+        # there might be other parameters on a template. Invent names for them
+        _, thing = thing.fill(BLDG)
+    model.add_graph(thing)
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
-[0;31mImportError[0m                               Traceback (most recent call last)
-Cell [0;32mIn[1], line 3[0m
-[1;32m      1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m [38;5;28;01mimport[39;00m Namespace, URIRef
-[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m BuildingMOTIF
-[0;32m----> 3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Model, Library, Template
-[1;32m      4[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m BRICK, RDF [38;5;66;03m# import this to make writing URIs easier[39;00m
-[1;32m      6[0m [38;5;66;03m# in-memory instance[39;00m
+[0;31mKeyError[0m                                  Traceback (most recent call last)
+Cell [0;32mIn[6], line 19[0m
+[1;32m     16[0m [38;5;28;01mfor[39;00m templ [38;5;129;01min[39;00m generated_templates[38;5;241m.[39mget_templates():
+[1;32m     17[0m     templ [38;5;241m=[39m templ[38;5;241m.[39minline_dependencies()
+[0;32m---> 19[0m     suffix [38;5;241m=[39m [43mpoints_and_parts[49m[43m[[49m[43mtempl[49m[38;5;241;43m.[39;49m[43mname[49m[43m][49m
+[1;32m     21[0m     [38;5;66;03m# we know from the exploration above that each template has[39;00m
+[1;32m     22[0m     [38;5;66;03m# 1 parameter which is the name of the missing item[39;00m
+[1;32m     23[0m     param [38;5;241m=[39m [38;5;28mlist[39m(templ[38;5;241m.[39mparameters)[[38;5;241m0[39m]
 
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/__init__.py:1[0m
-[0;32m----> 1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mlibrary[39;00m [38;5;28;01mimport[39;00m Library  [38;5;66;03m# noqa[39;00m
-[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodel[39;00m [38;5;28;01mimport[39;00m Model  [38;5;66;03m# noqa[39;00m
-[1;32m      3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection  [38;5;66;03m# noqa[39;00m
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:19[0m
-[1;32m     17[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdatabase[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtables[39;00m [38;5;28;01mimport[39;00m DBLibrary, DBTemplate
-[1;32m     18[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection
-[0;32m---> 19[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtemplate[39;00m [38;5;28;01mimport[39;00m Template
-[1;32m     20[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mschemas[39;00m [38;5;28;01mimport[39;00m validate_libraries_yaml
-[1;32m     21[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtemplate_compilation[39;00m [38;5;28;01mimport[39;00m compile_template_spec
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/template.py:17[0m
-[1;32m     14[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m[38;5;21;01m.[39;00m[38;5;21;01mterm[39;00m [38;5;28;01mimport[39;00m Node
-[1;32m     16[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m get_building_motif
-[0;32m---> 17[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodel[39;00m [38;5;28;01mimport[39;00m Model
-[1;32m     18[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m bind_prefixes
-[1;32m     19[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtemplate_matcher[39;00m [38;5;28;01mimport[39;00m Mapping, TemplateMatcher
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:10[0m
-[1;32m      8[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m get_building_motif
-[1;32m      9[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection
-[0;32m---> 10[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mvalidation[39;00m [38;5;28;01mimport[39;00m ValidationContext
-[1;32m     11[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m OWL, A
-[1;32m     12[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mutils[39;00m [38;5;28;01mimport[39;00m (
-[1;32m     13[0m     Triple,
-[1;32m     14[0m     copy_graph,
-[0;32m   (...)[0m
-[1;32m     18[0m     skolemize_shapes,
-[1;32m     19[0m )
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/validation.py:16[0m
-[1;32m     14[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection
-[1;32m     15[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m CONSTRAINT, PARAM, SH, A
-[0;32m---> 16[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mutils[39;00m [38;5;28;01mimport[39;00m (
-[1;32m     17[0m     _gensym,
-[1;32m     18[0m     _guarantee_unique_template_name,
-[1;32m     19[0m     get_template_parts_from_shape,
-[1;32m     20[0m     replace_nodes,
-[1;32m     21[0m )
-[1;32m     23[0m [38;5;28;01mif[39;00m TYPE_CHECKING:
-[1;32m     24[0m     [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Library, Model, Template
-
-[0;31mImportError[0m: cannot import name '_guarantee_unique_template_name' from 'buildingmotif.utils' (/home/runner/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/utils.py)
-ImportError: cannot import name '_guarantee_unique_template_name' from 'buildingmotif.utils' (/home/runner/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/utils.py)
+[0;31mKeyError[0m: 'resolveCore_ZN-PSC_ACFilter_Differential_Pressure_Sensor'
+KeyError: 'resolveCore_ZN-PSC_ACFilter_Differential_Pressure_Sensor'
 

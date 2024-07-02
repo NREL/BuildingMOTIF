@@ -21,77 +21,61 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-import logging
-from rdflib import Namespace
-from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, Library
-from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
+from buildingmotif.ingresses.bacnet import BACnetNetwork
 
-# in-memory instance
-bm = BuildingMOTIF("sqlite://", log_level=logging.ERROR)
-
-# create the namespace for the building
-BLDG = Namespace('urn:bldg/')
-
-# create the building model
-model = Model.create(BLDG, description="This is a test model for a simple building")
-
-# load some libraries we will use later
-brick = Library.load(ontology_graph="https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl")
+bacnet = BACnetNetwork("172.24.0.1/32") # don't change this if you are using the docker compose setup
+for rec in bacnet.records:
+    print(rec)
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
-[0;31mImportError[0m                               Traceback (most recent call last)
-Cell [0;32mIn[2], line 4[0m
-[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m [38;5;28;01mimport[39;00m Namespace
-[1;32m      3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m BuildingMOTIF
-[0;32m----> 4[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Model, Library
-[1;32m      5[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m BRICK [38;5;66;03m# import this to make writing URIs easier[39;00m
-[1;32m      7[0m [38;5;66;03m# in-memory instance[39;00m
+[0;31mInitializationError[0m                       Traceback (most recent call last)
+Cell [0;32mIn[3], line 3[0m
+[1;32m      1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mingresses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mbacnet[39;00m [38;5;28;01mimport[39;00m BACnetNetwork
+[0;32m----> 3[0m bacnet [38;5;241m=[39m [43mBACnetNetwork[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43m172.24.0.1/32[39;49m[38;5;124;43m"[39;49m[43m)[49m [38;5;66;03m# don't change this if you are using the docker compose setup[39;00m
+[1;32m      4[0m [38;5;28;01mfor[39;00m rec [38;5;129;01min[39;00m bacnet[38;5;241m.[39mrecords:
+[1;32m      5[0m     [38;5;28mprint[39m(rec)
 
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/__init__.py:1[0m
-[0;32m----> 1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mlibrary[39;00m [38;5;28;01mimport[39;00m Library  [38;5;66;03m# noqa[39;00m
-[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodel[39;00m [38;5;28;01mimport[39;00m Model  [38;5;66;03m# noqa[39;00m
-[1;32m      3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection  [38;5;66;03m# noqa[39;00m
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:19[0m
-[1;32m     17[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdatabase[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtables[39;00m [38;5;28;01mimport[39;00m DBLibrary, DBTemplate
-[1;32m     18[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection
-[0;32m---> 19[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtemplate[39;00m [38;5;28;01mimport[39;00m Template
-[1;32m     20[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mschemas[39;00m [38;5;28;01mimport[39;00m validate_libraries_yaml
-[1;32m     21[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtemplate_compilation[39;00m [38;5;28;01mimport[39;00m compile_template_spec
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/template.py:17[0m
-[1;32m     14[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m[38;5;21;01m.[39;00m[38;5;21;01mterm[39;00m [38;5;28;01mimport[39;00m Node
-[1;32m     16[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m get_building_motif
-[0;32m---> 17[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodel[39;00m [38;5;28;01mimport[39;00m Model
-[1;32m     18[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m bind_prefixes
-[1;32m     19[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtemplate_matcher[39;00m [38;5;28;01mimport[39;00m Mapping, TemplateMatcher
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:10[0m
-[1;32m      8[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m get_building_motif
-[1;32m      9[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection
-[0;32m---> 10[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mvalidation[39;00m [38;5;28;01mimport[39;00m ValidationContext
-[1;32m     11[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m OWL, A
-[1;32m     12[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mutils[39;00m [38;5;28;01mimport[39;00m (
-[1;32m     13[0m     Triple,
-[1;32m     14[0m     copy_graph,
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/ingresses/bacnet.py:36[0m, in [0;36mBACnetNetwork.__init__[0;34m(self, ip)[0m
+[1;32m     27[0m [38;5;250m[39m[38;5;124;03m"""[39;00m
+[1;32m     28[0m [38;5;124;03mReads a BACnet network to discover the devices and objects therein[39;00m
+[1;32m     29[0m 
 [0;32m   (...)[0m
-[1;32m     18[0m     skolemize_shapes,
-[1;32m     19[0m )
+[1;32m     32[0m [38;5;124;03m:type ip: Optional[str], optional[39;00m
+[1;32m     33[0m [38;5;124;03m"""[39;00m
+[1;32m     34[0m [38;5;66;03m# create the network object; this will handle scans[39;00m
+[1;32m     35[0m [38;5;66;03m# Be a good net citizen: do not ping BACnet devices[39;00m
+[0;32m---> 36[0m [38;5;28mself[39m[38;5;241m.[39mnetwork [38;5;241m=[39m [43mBAC0[49m[38;5;241;43m.[39;49m[43mconnect[49m[43m([49m[43mip[49m[38;5;241;43m=[39;49m[43mip[49m[43m,[49m[43m [49m[43mping[49m[38;5;241;43m=[39;49m[38;5;28;43;01mFalse[39;49;00m[43m)[49m
+[1;32m     37[0m [38;5;66;03m# initiate discovery of BACnet networks[39;00m
+[1;32m     38[0m [38;5;28mself[39m[38;5;241m.[39mnetwork[38;5;241m.[39mdiscover()
 
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/validation.py:16[0m
-[1;32m     14[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection
-[1;32m     15[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m CONSTRAINT, PARAM, SH, A
-[0;32m---> 16[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mutils[39;00m [38;5;28;01mimport[39;00m (
-[1;32m     17[0m     _gensym,
-[1;32m     18[0m     _guarantee_unique_template_name,
-[1;32m     19[0m     get_template_parts_from_shape,
-[1;32m     20[0m     replace_nodes,
-[1;32m     21[0m )
-[1;32m     23[0m [38;5;28;01mif[39;00m TYPE_CHECKING:
-[1;32m     24[0m     [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Library, Model, Template
+File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/BAC0/scripts/Lite.py:152[0m, in [0;36mLite.__init__[0;34m(self, ip, port, mask, bbmdAddress, bbmdTTL, bdtable, ping, ping_delay, db_params, **params)[0m
+[1;32m    150[0m     ip_addr [38;5;241m=[39m Address([38;5;124m"[39m[38;5;132;01m{}[39;00m[38;5;124m/[39m[38;5;132;01m{}[39;00m[38;5;124m:[39m[38;5;132;01m{}[39;00m[38;5;124m"[39m[38;5;241m.[39mformat(ip, mask, port))
+[1;32m    151[0m [38;5;28mself[39m[38;5;241m.[39m_log[38;5;241m.[39minfo([38;5;124m"[39m[38;5;124mUsing ip : [39m[38;5;132;01m{ip_addr}[39;00m[38;5;124m"[39m[38;5;241m.[39mformat(ip_addr[38;5;241m=[39mip_addr))
+[0;32m--> 152[0m [43mBase[49m[38;5;241;43m.[39;49m[38;5;21;43m__init__[39;49m[43m([49m
+[1;32m    153[0m [43m    [49m[38;5;28;43mself[39;49m[43m,[49m
+[1;32m    154[0m [43m    [49m[43mlocalIPAddr[49m[38;5;241;43m=[39;49m[43mip_addr[49m[43m,[49m
+[1;32m    155[0m [43m    [49m[43mbbmdAddress[49m[38;5;241;43m=[39;49m[43mbbmdAddress[49m[43m,[49m
+[1;32m    156[0m [43m    [49m[43mbbmdTTL[49m[38;5;241;43m=[39;49m[43mbbmdTTL[49m[43m,[49m
+[1;32m    157[0m [43m    [49m[43mbdtable[49m[38;5;241;43m=[39;49m[43mbdtable[49m[43m,[49m
+[1;32m    158[0m [43m    [49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[43mparams[49m
+[1;32m    159[0m [43m[49m[43m)[49m
+[1;32m    161[0m [38;5;28mself[39m[38;5;241m.[39mbokehserver [38;5;241m=[39m [38;5;28;01mFalse[39;00m
+[1;32m    162[0m [38;5;28mself[39m[38;5;241m.[39m_points_to_trend [38;5;241m=[39m weakref[38;5;241m.[39mWeakValueDictionary()
 
-[0;31mImportError[0m: cannot import name '_guarantee_unique_template_name' from 'buildingmotif.utils' (/home/runner/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/utils.py)
-ImportError: cannot import name '_guarantee_unique_template_name' from 'buildingmotif.utils' (/home/runner/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/utils.py)
+File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/BAC0/scripts/Base.py:147[0m, in [0;36mBase.__init__[0;34m(self, localIPAddr, localObjName, deviceId, firmwareRevision, maxAPDULengthAccepted, maxSegmentsAccepted, segmentationSupported, bbmdAddress, bbmdTTL, bdtable, modelName, vendorId, vendorName, description, spin)[0m
+[1;32m    145[0m     [38;5;28mself[39m[38;5;241m.[39mlocalIPAddr [38;5;241m=[39m localIPAddr
+[1;32m    146[0m [38;5;28;01melse[39;00m:
+[0;32m--> 147[0m     [38;5;28;01mraise[39;00m InitializationError(
+[1;32m    148[0m         [38;5;124m"[39m[38;5;124mIP Address provided ([39m[38;5;132;01m{}[39;00m[38;5;124m) invalid. Check if another software is using port 47808 on this network interface. If so, you can define multiple IP per interface. Or specify another IP using BAC0.lite(ip=[39m[38;5;124m'[39m[38;5;124mIP/mask[39m[38;5;124m'[39m[38;5;124m)[39m[38;5;124m"[39m[38;5;241m.[39mformat(
+[1;32m    149[0m             localIPAddr
+[1;32m    150[0m         )
+[1;32m    151[0m     )
+[1;32m    153[0m [38;5;28mself[39m[38;5;241m.[39mBoid [38;5;241m=[39m (
+[1;32m    154[0m     [38;5;28mint[39m(deviceId) [38;5;28;01mif[39;00m deviceId [38;5;28;01melse[39;00m ([38;5;241m3056177[39m [38;5;241m+[39m [38;5;28mint[39m(random[38;5;241m.[39muniform([38;5;241m0[39m, [38;5;241m1000[39m)))
+[1;32m    155[0m )
+[1;32m    157[0m [38;5;28mself[39m[38;5;241m.[39msegmentationSupported [38;5;241m=[39m segmentationSupported
+
+[0;31mInitializationError[0m: IP Address provided (172.24.0.1) invalid. Check if another software is using port 47808 on this network interface. If so, you can define multiple IP per interface. Or specify another IP using BAC0.lite(ip='IP/mask')
+InitializationError: IP Address provided (172.24.0.1) invalid. Check if another software is using port 47808 on this network interface. If so, you can define multiple IP per interface. Or specify another IP using BAC0.lite(ip='IP/mask')
 
