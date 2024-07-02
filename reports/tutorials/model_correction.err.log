@@ -21,14 +21,13 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-import logging
-from rdflib import Namespace
+from rdflib import Namespace, URIRef
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, Library
-from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
+from buildingmotif.dataclasses import Model, Library, Template
+from buildingmotif.namespaces import BRICK, RDF # import this to make writing URIs easier
 
 # in-memory instance
-bm = BuildingMOTIF("sqlite://", log_level=logging.ERROR)
+bm = BuildingMOTIF("sqlite://")
 
 # create the namespace for the building
 BLDG = Namespace('urn:bldg/')
@@ -36,18 +35,30 @@ BLDG = Namespace('urn:bldg/')
 # create the building model
 model = Model.create(BLDG, description="This is a test model for a simple building")
 
-# load some libraries we will use later
-brick = Library.load(ontology_graph="https://github.com/BrickSchema/Brick/releases/download/nightly/Brick.ttl")
+# load libraries included with the python package
+constraints = Library.load(ontology_graph="constraints/constraints.ttl")
+
+# load libraries excluded from the python package (available from the repository)
+brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
+g36 = Library.load(directory="../../libraries/ashrae/guideline36")
+
+
+# load tutorial 2 model and manifest
+model.graph.parse("tutorial2_model.ttl", format="ttl")
+manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
+
+# assign the manifest to our model
+model.update_manifest(manifest.get_shape_collection())
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mImportError[0m                               Traceback (most recent call last)
-Cell [0;32mIn[2], line 4[0m
-[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m [38;5;28;01mimport[39;00m Namespace
-[1;32m      3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m BuildingMOTIF
-[0;32m----> 4[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Model, Library
-[1;32m      5[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m BRICK [38;5;66;03m# import this to make writing URIs easier[39;00m
-[1;32m      7[0m [38;5;66;03m# in-memory instance[39;00m
+Cell [0;32mIn[1], line 3[0m
+[1;32m      1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m [38;5;28;01mimport[39;00m Namespace, URIRef
+[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m BuildingMOTIF
+[0;32m----> 3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Model, Library, Template
+[1;32m      4[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m BRICK, RDF [38;5;66;03m# import this to make writing URIs easier[39;00m
+[1;32m      6[0m [38;5;66;03m# in-memory instance[39;00m
 
 File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/__init__.py:1[0m
 [0;32m----> 1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mlibrary[39;00m [38;5;28;01mimport[39;00m Library  [38;5;66;03m# noqa[39;00m

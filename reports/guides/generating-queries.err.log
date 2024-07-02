@@ -21,32 +21,102 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-from buildingmotif.dataclasses import Model
-from rdflib import Namespace
-import pandas as pd
+from rdflib import Graph, URIRef
+from buildingmotif import BuildingMOTIF
+from buildingmotif.dataclasses import ShapeCollection
+from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
 
-# generate and save the query string to a variable
-app_query = sc.shape_to_query(app1_shape)
+# in-memory instance
+bm = BuildingMOTIF("sqlite://")
 
-# Create the 'building1' model and load the contents from a file
-BLDG = Namespace("urn:building1")
-model = Model.create(BLDG)
-model.graph.parse("query_generation_example.ttl")
+sc = ShapeCollection.create()
+sc.graph.parse(data="""
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+@prefix : <urn:simpleapp/> .
 
-res = model.graph.query(app_query)
-df = pd.DataFrame(res.bindings)
-print(df.iloc[0])
+: a owl:Ontology .
+
+:app1 a sh:NodeShape ;
+    sh:targetClass brick:Fan_Coil_Unit ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Occupied_Cooling_Temperature_Setpoint ] ;
+        sh:name "coolsp" ;
+    ] ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Occupied_Heating_Temperature_Setpoint ] ;
+        sh:name "heatsp" ;
+    ] ;
+    sh:property [
+        sh:path ( brick:feeds brick:hasPart brick:hasPoint ) ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class brick:Air_Temperature_Sensor ] ;
+        sh:name "roomTemp" ;
+    ] ;
+.
+""")
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
-[0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
-Cell [0;32mIn[5], line 3[0m
-[1;32m      1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Model
-[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m [38;5;28;01mimport[39;00m Namespace
-[0;32m----> 3[0m [38;5;28;01mimport[39;00m [38;5;21;01mpandas[39;00m [38;5;28;01mas[39;00m [38;5;21;01mpd[39;00m
-[1;32m      5[0m [38;5;66;03m# generate and save the query string to a variable[39;00m
-[1;32m      6[0m app_query [38;5;241m=[39m sc[38;5;241m.[39mshape_to_query(app1_shape)
+[0;31mImportError[0m                               Traceback (most recent call last)
+Cell [0;32mIn[1], line 3[0m
+[1;32m      1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m [38;5;28;01mimport[39;00m Graph, URIRef
+[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m BuildingMOTIF
+[0;32m----> 3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m ShapeCollection
+[1;32m      4[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m BRICK [38;5;66;03m# import this to make writing URIs easier[39;00m
+[1;32m      6[0m [38;5;66;03m# in-memory instance[39;00m
 
-[0;31mModuleNotFoundError[0m: No module named 'pandas'
-ModuleNotFoundError: No module named 'pandas'
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/__init__.py:1[0m
+[0;32m----> 1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mlibrary[39;00m [38;5;28;01mimport[39;00m Library  [38;5;66;03m# noqa[39;00m
+[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodel[39;00m [38;5;28;01mimport[39;00m Model  [38;5;66;03m# noqa[39;00m
+[1;32m      3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection  [38;5;66;03m# noqa[39;00m
+
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:19[0m
+[1;32m     17[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdatabase[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtables[39;00m [38;5;28;01mimport[39;00m DBLibrary, DBTemplate
+[1;32m     18[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection
+[0;32m---> 19[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtemplate[39;00m [38;5;28;01mimport[39;00m Template
+[1;32m     20[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mschemas[39;00m [38;5;28;01mimport[39;00m validate_libraries_yaml
+[1;32m     21[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtemplate_compilation[39;00m [38;5;28;01mimport[39;00m compile_template_spec
+
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/template.py:17[0m
+[1;32m     14[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m[38;5;21;01m.[39;00m[38;5;21;01mterm[39;00m [38;5;28;01mimport[39;00m Node
+[1;32m     16[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m get_building_motif
+[0;32m---> 17[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodel[39;00m [38;5;28;01mimport[39;00m Model
+[1;32m     18[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m bind_prefixes
+[1;32m     19[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtemplate_matcher[39;00m [38;5;28;01mimport[39;00m Mapping, TemplateMatcher
+
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:10[0m
+[1;32m      8[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m [38;5;28;01mimport[39;00m get_building_motif
+[1;32m      9[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection
+[0;32m---> 10[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mvalidation[39;00m [38;5;28;01mimport[39;00m ValidationContext
+[1;32m     11[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m OWL, A
+[1;32m     12[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mutils[39;00m [38;5;28;01mimport[39;00m (
+[1;32m     13[0m     Triple,
+[1;32m     14[0m     copy_graph,
+[0;32m   (...)[0m
+[1;32m     18[0m     skolemize_shapes,
+[1;32m     19[0m )
+
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/validation.py:16[0m
+[1;32m     14[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mshape_collection[39;00m [38;5;28;01mimport[39;00m ShapeCollection
+[1;32m     15[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnamespaces[39;00m [38;5;28;01mimport[39;00m CONSTRAINT, PARAM, SH, A
+[0;32m---> 16[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mutils[39;00m [38;5;28;01mimport[39;00m (
+[1;32m     17[0m     _gensym,
+[1;32m     18[0m     _guarantee_unique_template_name,
+[1;32m     19[0m     get_template_parts_from_shape,
+[1;32m     20[0m     replace_nodes,
+[1;32m     21[0m )
+[1;32m     23[0m [38;5;28;01mif[39;00m TYPE_CHECKING:
+[1;32m     24[0m     [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Library, Model, Template
+
+[0;31mImportError[0m: cannot import name '_guarantee_unique_template_name' from 'buildingmotif.utils' (/home/runner/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/utils.py)
+ImportError: cannot import name '_guarantee_unique_template_name' from 'buildingmotif.utils' (/home/runner/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/utils.py)
 
