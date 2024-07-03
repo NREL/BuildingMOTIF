@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 import pygit2
-import pyshacl
 import rdflib
 import sqlalchemy
 import yaml
@@ -23,6 +22,7 @@ from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import (
     get_ontology_files,
     get_template_parts_from_shape,
+    shacl_inference,
     skip_uri,
 )
 
@@ -112,7 +112,7 @@ class Library:
             if overwrite:
                 cls._clear_library(db_library)
             else:
-                logging.warn(
+                logging.warning(
                     f'Library {name} already exists in database. To ovewrite load library with "overwrite=True"'  # noqa
                 )
         except sqlalchemy.exc.NoResultFound:
@@ -248,15 +248,7 @@ class Library:
         # expand the ontology graph before we insert it into the database. This will ensure
         # that the output of compiled models will not contain triples that really belong to
         # the ontology
-        pyshacl.validate(
-            data_graph=ontology,
-            shacl_graph=ontology,
-            ont_graph=ontology,
-            advanced=True,
-            inplace=True,
-            js=True,
-            allow_warnings=True,
-        )
+        ontology = shacl_inference(ontology, engine=get_building_motif().shacl_engine)
 
         lib = cls.create(ontology_name, overwrite=overwrite)
 
@@ -284,6 +276,7 @@ class Library:
         dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
+            # TODO: mincount 0 (or unspecified) should be optional args on the generated template
             partial_body, deps = get_template_parts_from_shape(candidate, graph)
             templ = self.create_template(str(candidate), partial_body)
             dependency_cache[templ.id] = deps
@@ -334,7 +327,7 @@ class Library:
 
         if not overwrite:
             if cls._library_exists(directory.name):
-                logging.warn(
+                logging.warning(
                     f'Library "{directory.name}" already exists in database and "overwrite=False". Returning existing library.'  # noqa
                 )
                 return Library.load(name=directory.name)
@@ -383,33 +376,75 @@ class Library:
         except sqlalchemy.exc.NoResultFound:
             return False
 
+    def _resolve_dependency(
+        self,
+        template: Template,
+        dep: Union[_template_dependency, dict],
+        template_id_lookup: Dict[str, int],
+    ):
+        """Resolve a dependency to a template.
+
+        :param template: template to resolve dependency for
+        :type template: Template
+        :param dep: dependency
+        :type dep: Union[_template_dependency, dict]
+        :param template_id_lookup: a local cache of {name: id} for uncommitted templates
+        :type template_id_lookup: Dict[str, int]
+        :return: the template instance this dependency points to
+        :rtype: Template
+        """
+        # if dep is a _template_dependency, turn it into a template
+        if isinstance(dep, _template_dependency):
+            dependee = dep.to_template(template_id_lookup)
+            template.add_dependency(dependee, dep.bindings)
+            return
+
+        # now, we know that dep is a dict
+
+        # if dependency names a library explicitly, load that library and get the template by name
+        if "library" in dep:
+            dependee = Library.load(name=dep["library"]).get_template_by_name(
+                dep["template"]
+            )
+            template.add_dependency(dependee, dep["args"])
+            return
+        # if no library is provided, try to resolve the dependency from this library
+        if dep["template"] in template_id_lookup:
+            dependee = Template.load(template_id_lookup[dep["template"]])
+            template.add_dependency(dependee, dep["args"])
+            return
+        # check documentation for skip_uri for what URIs get skipped
+        if skip_uri(dep["template"]):
+            return
+        # if the dependency is not in the local cache, then search through this library's imports
+        # for the template
+        for imp in self.graph_imports:
+            try:
+                library = Library.load(name=str(imp))
+                dependee = library.get_template_by_name(dep["template"])
+                template.add_dependency(dependee, dep["args"])
+                return
+            except Exception as e:
+                logging.debug(
+                    f"Could not find dependee {dep['template']} in library {imp}: {e}"
+                )
+        logging.warning(
+            f"Warning: could not find dependee {dep['template']} in libraries {self.graph_imports}"
+        )
+
     def _resolve_template_dependencies(
         self,
         template_id_lookup: Dict[str, int],
         dependency_cache: Mapping[int, Union[List[_template_dependency], List[dict]]],
     ):
+        """Resolve all dependencies for all templates in this library"""
         # two phases here: first, add all of the templates and their dependencies
         # to the database but *don't* check that the dependencies are valid yet
         for template in self.get_templates():
             if template.id not in dependency_cache:
                 continue
             for dep in dependency_cache[template.id]:
-                if isinstance(dep, dict):
-                    if dep["template"] in template_id_lookup:
-                        dependee = Template.load(template_id_lookup[dep["template"]])
-                        template.add_dependency(dependee, dep["args"])
-                    # check documentation for skip_uri for what URIs get skipped
-                    elif not skip_uri(dep["template"]):
-                        logging.warn(
-                            f"Warning: could not find dependee {dep['template']}"
-                        )
-                elif isinstance(dep, _template_dependency):
-                    try:
-                        dependee = dep.to_template(template_id_lookup)
-                        template.add_dependency(dependee, dep.bindings)
-                    except Exception as e:
-                        logging.warn(f"Warning: could not resolve dependency {dep}")
-                        raise e
+                self._resolve_dependency(template, dep, template_id_lookup)
         # check that all dependencies are valid (use parameters that exist, etc)
         for template in self.get_templates():
             template.check_dependencies()
@@ -459,6 +494,18 @@ class Library:
     def name(self, new_name: str):
         self._bm.table_connection.update_db_library_name(self._id, new_name)
         self._name = new_name
+
+    @property
+    def graph_imports(self) -> List[rdflib.URIRef]:
+        """
+        Get the list of owl:imports for this library's shape collection
+        """
+        shape_col = self.get_shape_collection()
+        return [
+            i
+            for i in shape_col.graph.objects(None, rdflib.OWL.imports)
+            if isinstance(i, rdflib.URIRef)
+        ]
 
     def create_template(
         self,

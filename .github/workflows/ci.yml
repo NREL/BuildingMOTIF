@@ -11,7 +11,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       - name: setup-python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
       - name: install-poetry
@@ -36,8 +36,12 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+      - uses: actions/setup-java@v4 # for topquadrant shacl support
+        with:
+          distribution: 'temurin'
+          java-version: '21'
       - name: setup-python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: install-poetry
@@ -51,7 +55,7 @@ jobs:
       - name: lint
         run: poetry run flake8 buildingmotif
       - name: type check
-        run: poetry run mypy
+        run: poetry run mypy --ignore-missing-imports
       - name: unit tests
         run: poetry run pytest tests/unit --cov=./ --cov-report=xml
       - name: integration tests

@@ -19,6 +19,7 @@ from buildingmotif.namespaces import bind_prefixes
 from buildingmotif.template_matcher import Mapping, TemplateMatcher
 from buildingmotif.utils import (
     PARAM,
+    _strip_param,
     combine_graphs,
     copy_graph,
     remove_triples_with_node,
@@ -238,6 +239,26 @@ class Template:
         replace_nodes(templ.body, to_replace)
         return templ
 
+    @property
+    def transitive_parameters(self) -> Set[str]:
+        """Get all parameters used in this template and its dependencies.
+
+        :return: set of all parameters
+        :rtype: Set[str]
+        """
+        params = set(self.parameters)
+        for dep in self.get_dependencies():
+            transitive_params = dep.template.transitive_parameters
+            rename_params: Dict[str, str] = {
+                ours: theirs for ours, theirs in dep.args.items()
+            }
+            name_prefix = dep.args.get("name")
+            for param in transitive_params:
+                if param not in dep.args and param != "name":
+                    rename_params[param] = f"{name_prefix}-{param}"
+            params.update(rename_params.values())
+        return params
+
     def inline_dependencies(self) -> "Template":
         """Copies this template with all dependencies recursively inlined.
 
@@ -260,17 +281,18 @@ class Template:
             # replace dependency parameters with the names they inherit
             # through the provided bindings
             rename_params: Dict[str, str] = {
-                ours: theirs for ours, theirs in dep.args.items()
+                ours: _strip_param(theirs) for ours, theirs in dep.args.items()
             }
             # replace all parameters *not* mentioned in the args by prefixing
             # them with the 'name' parameter binding; this is guaranteed
             # to exist
-            name_prefix = dep.args.get("name")
+            name_prefix = _strip_param(dep.args["name"])
             # for each parameter in the dependency...
             for param in deptempl.parameters:
                 # if it does *not* have a mapping in the dependency, then
                 # prefix the parameter with the value of the 'name' binding
                 # to scope it properly
+                param = _strip_param(param)
                 if param not in dep.args and param != "name":
                     rename_params[param] = f"{name_prefix}-{param}"
 
@@ -356,6 +378,7 @@ class Template:
             parameters were provided
         :rtype: Union[Template, rdflib.Graph]
         """
+        # TODO: handle datatype properties
         templ = self.in_memory_copy()
         # put all of the parameter names into the PARAM namespace so they can be
         # directly subsituted in the template body
@@ -387,7 +410,8 @@ class Template:
             return templ.body
         if len(leftover_params) > 0 and warn_unused:
             warnings.warn(
-                f"Parameters \"{', '.join(leftover_params)}\" were not provided during evaluation"
+                f"Parameters \"{', '.join(leftover_params)}\" were not provided during evaluation",
+                UserWarning,
             )
         return templ
 
