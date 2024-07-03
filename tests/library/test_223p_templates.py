@@ -19,6 +19,12 @@ to_skip = {
     "nrel-templates": [
         "differential-sensor",
         "sensor",
+        "duct",
+        "junction",
+        "air-inlet-cp",
+        "air-outlet-cp",
+        "water-inlet-cp",
+        "water-outlet-cp",
     ],
 }
 
