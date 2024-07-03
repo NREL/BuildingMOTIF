@@ -11,6 +11,17 @@ libraries = [
     "libraries/ashrae/223p/nrel-templates",
 ]
 
+# these templates require extra information to be properly 'filled' by
+# BuildingMOTIF, so we can skip them. They are all used as dependencies
+# in other templates.
+to_skip = {
+    # the final folder name in the path is the library name
+    "nrel-templates": [
+        "differential-sensor",
+        "sensor",
+    ],
+}
+
 
 def setup_building_motif_s223() -> Tuple[BuildingMOTIF, Library]:
     with PatchBuildingMotif():
@@ -93,7 +104,9 @@ def pytest_generate_tests(metafunc):
                 )
                 templates = library.get_templates()
                 params.extend([(bm, s223, library, template) for template in templates])
-                ids.extend(
-                    [f"{library.name}-{template.name}" for template in templates]
-                )
+
+        # remove all templates in 'to skip'
+        params = [p for p in params if p[3].name not in to_skip[p[2].name]]
+        # library name - template name
+        ids = [f"{p[2].name}-{p[3].name}" for p in params]
         metafunc.parametrize("bm,s223,library,template", params, ids=ids)
