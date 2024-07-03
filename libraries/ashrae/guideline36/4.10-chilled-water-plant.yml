@@ -34,20 +34,20 @@ air-cooled-primary-only-plant:
       brick:hasPart
         ( p:air-cooled-chiller brick:hasPoint p:demand-limit ),
         ( _:plant rdf:type rdf:Alt
-          rdf:_1 p:constant-primary-only-loop
-          rdf:_2 p:variable-primary-only-loop ) ;
+          rdf:_1 p:chw-constant-primary-only-loop
+          rdf:_2 p:chw-variable-primary-only-loop ) ;
       brick:hasPoint p:plant-chwr-temp .
-  optional: ['constant-primary-only-loop', 'variable-primary-only-loop']
+  optional: ['chw-constant-primary-only-loop', 'chw-variable-primary-only-loop']
   dependencies:
     - template: air-cooled-chiller
       args: {'name': 'air-cooled-chiller'}
     - template: https://brickschema.org/schema/Brick#Cooling_Demand_Setpoint
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'demand-limit'}
-    - template: constant-primary-only-loop
-      args: {'name': 'constant-primary-only-loop'}
-    - template: variable-primary-only-loop
-      args: {'name': 'variable-primary-only-loop'}
+    - template: chw-constant-primary-only-loop
+      args: {'name': 'chw-constant-primary-only-loop'}
+    - template: chw-variable-primary-only-loop
+      args: {'name': 'chw-variable-primary-only-loop'}
     - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'plant-chwr-temp'}
@@ -61,22 +61,22 @@ wtr-cooled-primary-only-plant:
       brick:hasPart
         ( p:wtr-cooled-chiller brick:hasPoint p:demand-limit ),
         ( _:plant rdf:type rdf:Alt
-          rdf:_1 p:constant-primary-only-loop
-          rdf:_2 p:variable-primary-only-loop ),
+          rdf:_1 p:chw-constant-primary-only-loop
+          rdf:_2 p:chw-variable-primary-only-loop ),
         p:waterside-economizer ;
       brick:hasPoint p:plant-chwr-temp, p:oa-temp, p:rh-sen ;
       brick:isFedBy p:condenser-water-plant .
-  optional: ['constant-primary-only-loop', 'variable-primary-only-loop', 'waterside-economizer', 'oa-temp', 'rh-sen']
+  optional: ['chw-constant-primary-only-loop', 'chw-variable-primary-only-loop', 'waterside-economizer', 'oa-temp', 'rh-sen']
   dependencies:
     - template: wtr-cooled-chiller
       args: {'name': 'wtr-cooled-chiller'}
     - template: https://brickschema.org/schema/Brick#Cooling_Demand_Setpoint
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'demand-limit'}
-    - template: constant-primary-only-loop
-      args: {'name': 'constant-primary-only-loop'}
-    - template: variable-primary-only-loop
-      args: {'name': 'variable-primary-only-loop'}
+    - template: chw-constant-primary-only-loop
+      args: {'name': 'chw-constant-primary-only-loop'}
+    - template: chw-variable-primary-only-loop
+      args: {'name': 'chw-variable-primary-only-loop'}
     - template: waterside-economizer
       args: {'name': 'waterside-economizer'}
     - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
@@ -100,16 +100,16 @@ air-cooled-primary-secondary-plant:
       brick:hasPart
         ( p:air-cooled-chiller brick:hasPoint p:demand-limit ),
         ( _:loop rdf:type rdf:Alt
-          rdf:_1 p:constant-primary-constant-secondary-loop
-          rdf:_2 p:constant-primary-variable-secondary-loop
-          rdf:_3 p:variable-primary-constant-secondary-loop
-          rdf:_4 p:variable-primary-variable-secondary-loop ) ;
+          rdf:_1 p:chw-constant-primary-constant-secondary-loop
+          rdf:_2 p:chw-constant-primary-variable-secondary-loop
+          rdf:_3 p:chw-variable-primary-constant-secondary-loop
+          rdf:_4 p:chw-variable-primary-variable-secondary-loop ) ;
       brick:hasPoint p:plant-chwr-temp .
   optional: ['demand-limit',
-    'constant-primary-constant-secondary-loop',
-    'constant-primary-variable-secondary-loop',
-    'variable-primary-constant-secondary-loop',
-    'variable-primary-variable-secondary-loop',
+    'chw-constant-primary-constant-secondary-loop',
+    'chw-constant-primary-variable-secondary-loop',
+    'chw-variable-primary-constant-secondary-loop',
+    'chw-variable-primary-variable-secondary-loop',
     'plant-chwr-temp'
   ]
   dependencies:
@@ -118,14 +118,14 @@ air-cooled-primary-secondary-plant:
     - template: https://brickschema.org/schema/Brick#Cooling_Demand_Setpoint
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'demand-limit'}
-    - template: constant-primary-constant-secondary-loop
-      args: {'name': 'constant-primary-constant-secondary-loop'}
-    - template: constant-primary-variable-secondary-loop
-      args: {'name': 'constant-primary-variable-secondary-loop'}
-    - template: variable-primary-constant-secondary-loop
-      args: {'name': 'variable-primary-constant-secondary-loop'}
-    - template: variable-primary-variable-secondary-loop
-      args: {'name': 'variable-primary-variable-secondary-loop'}
+    - template: chw-constant-primary-constant-secondary-loop
+      args: {'name': 'chw-constant-primary-constant-secondary-loop'}
+    - template: chw-constant-primary-variable-secondary-loop
+      args: {'name': 'chw-constant-primary-variable-secondary-loop'}
+    - template: chw-variable-primary-constant-secondary-loop
+      args: {'name': 'chw-variable-primary-constant-secondary-loop'}
+    - template: chw-variable-primary-variable-secondary-loop
+      args: {'name': 'chw-variable-primary-variable-secondary-loop'}
     - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'plant-chwr-temp'}
@@ -139,18 +139,18 @@ wtr-cooled-primary-secondary-plant:
       brick:hasPart
         ( p:wtr-cooled-chiller brick:hasPoint p:demand-limit ),
         ( _:loop rdf:type rdf:Alt
-          rdf:_1 p:constant-primary-constant-secondary-loop
-          rdf:_2 p:constant-primary-variable-secondary-loop
-          rdf:_3 p:variable-primary-constant-secondary-loop
-          rdf:_4 p:variable-primary-variable-secondary-loop ),
+          rdf:_1 p:chw-constant-primary-constant-secondary-loop
+          rdf:_2 p:chw-constant-primary-variable-secondary-loop
+          rdf:_3 p:chw-variable-primary-constant-secondary-loop
+          rdf:_4 p:chw-variable-primary-variable-secondary-loop ),
         p:waterside-economizer ;
       brick:hasPoint p:plant-chwr-temp, p:oa-temp, p:rh-sen ;
       brick:isFedBy p:condenser-water-plant .
   optional: ['demand-limit',
-    'constant-primary-constant-secondary-loop',
-    'constant-primary-variable-secondary-loop',
-    'variable-primary-constant-secondary-loop',
-    'variable-primary-variable-secondary-loop',
+    'chw-constant-primary-constant-secondary-loop',
+    'chw-constant-primary-variable-secondary-loop',
+    'chw-variable-primary-constant-secondary-loop',
+    'chw-variable-primary-variable-secondary-loop',
     'waterside-economizer', 'plant-chwr-temp', 'oa-temp', 'rh-sen'
   ]
   dependencies:
@@ -159,14 +159,14 @@ wtr-cooled-primary-secondary-plant:
     - template: https://brickschema.org/schema/Brick#Cooling_Demand_Setpoint
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'demand-limit'}
-    - template: constant-primary-constant-secondary-loop
-      args: {'name': 'constant-primary-constant-secondary-loop'}
-    - template: constant-primary-variable-secondary-loop
-      args: {'name': 'constant-primary-variable-secondary-loop'}
-    - template: variable-primary-constant-secondary-loop
-      args: {'name': 'variable-primary-constant-secondary-loop'}
-    - template: variable-primary-variable-secondary-loop
-      args: {'name': 'variable-primary-variable-secondary-loop'}
+    - template: chw-constant-primary-constant-secondary-loop
+      args: {'name': 'chw-constant-primary-constant-secondary-loop'}
+    - template: chw-constant-primary-variable-secondary-loop
+      args: {'name': 'chw-constant-primary-variable-secondary-loop'}
+    - template: chw-variable-primary-constant-secondary-loop
+      args: {'name': 'chw-variable-primary-constant-secondary-loop'}
+    - template: chw-variable-primary-variable-secondary-loop
+      args: {'name': 'chw-variable-primary-variable-secondary-loop'}
     - template: waterside-economizer
       args: {'name': 'waterside-economizer'}
     - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
@@ -388,7 +388,7 @@ ch-cw-isolation-valve:
 
 # 4.10.3 Primary (only) CHW Loop
 
-primary-only-loop:
+chw-primary-only-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -414,31 +414,31 @@ primary-only-loop:
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'gauge-pressure'}
 
-constant-primary-only-loop:
+chw-constant-primary-only-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a p:primary-only-loop ;
+    p:name a p:chw-primary-only-loop ;
       brick:hasPart p:constant-speed-pump .
   dependencies:
-    - template: primary-only-loop
-      args: {'name': 'primary-only-loop'}
+    - template: chw-primary-only-loop
+      args: {'name': 'chw-primary-only-loop'}
     - template: constant-speed-pump
       args: {'name': 'constant-speed-pump'}
 
-variable-primary-only-loop:
+chw-variable-primary-only-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a p:primary-only-loop ;
+    p:name a p:chw-primary-only-loop ;
       brick:feeds
       ( p:chw-demand-loop brick:hasPoint p:dem-chwr-temp ) ;
       brick:hasPart p:variable-speed-pump, p:min-flow-bypass-valve ;
       brick:hasPoint p:sup-chwr-temp .
   optional: ['dem-chwr-temp-sen']
   dependencies:
-    - template: primary-only-loop
-      args: {'name': 'primary-only-loop'}
+    - template: chw-primary-only-loop
+      args: {'name': 'chw-primary-only-loop'}
     - template: https://brickschema.org/schema/Brick#Chilled_Water_Loop
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'chw-demand-loop'}
@@ -455,7 +455,7 @@ variable-primary-only-loop:
 
 # 4.10.4 (Primary) Secondary CHW Loop
 
-primary-loop:
+chw-primary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -470,31 +470,31 @@ primary-loop:
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'chwr-temp'}
 
-constant-primary-loop:
+chw-constant-primary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a p:primary-loop ;
+    p:name a p:chw-primary-loop ;
       brick:hasPart p:constant-speed-pump .
   dependencies:
-    - template: primary-loop
-      args: {'name': 'primary-loop'}
+    - template: chw-primary-loop
+      args: {'name': 'chw-primary-loop'}
     - template: constant-speed-pump
       args: {'name': 'constant-speed-pump'}
 
-variable-primary-loop:
+chw-variable-primary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a p:primary-loop ;
+    p:name a p:chw-primary-loop ;
       brick:hasPart p:variable-speed-pump .
   dependencies:
-    - template: primary-loop
-      args: {'name': 'primary-loop'}
+    - template: chw-primary-loop
+      args: {'name': 'chw-primary-loop'}
     - template: variable-speed-pump
       args: {'name': 'variable-speed-pump'}
 
-secondary-loop:
+chw-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
@@ -519,84 +519,84 @@ secondary-loop:
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'chwr-flow'}
 
-constant-secondary-loop:
+chw-constant-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a p:secondary-loop ;
+    p:name a p:chw-secondary-loop ;
       brick:hasPart p:constant-speed-pump .
   dependencies:
-    - template: secondary-loop
-      args: {'name': 'secondary-loop'}
+    - template: chw-secondary-loop
+      args: {'name': 'chw-secondary-loop'}
     - template: constant-speed-pump
       args: {'name': 'constant-speed-pump'}
 
-variable-secondary-loop:
+chw-variable-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a p:secondary-loop ;
+    p:name a p:chw-secondary-loop ;
       brick:hasPart p:variable-speed-pump .
   dependencies:
-    - template: secondary-loop
-      args: {'name': 'secondary-loop'}
+    - template: chw-secondary-loop
+      args: {'name': 'chw-secondary-loop'}
     - template: variable-speed-pump
       args: {'name': 'variable-speed-pump'}
 
-constant-primary-constant-secondary-loop:
+chw-constant-primary-constant-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Chilled_Water_Loop ;
-      brick:hasPart ( p:constant-primary-loop brick:feeds p:constant-secondary-loop ) .
+      brick:hasPart ( p:chw-constant-primary-loop brick:feeds p:chw-constant-secondary-loop ) .
   dependencies:
-    - template: constant-primary-loop
-      args: {'name': 'constant-primary-loop'}
-    - template: constant-secondary-loop
-      args: {'name': 'constant-secondary-loop'}
+    - template: chw-constant-primary-loop
+      args: {'name': 'chw-constant-primary-loop'}
+    - template: chw-constant-secondary-loop
+      args: {'name': 'chw-constant-secondary-loop'}
 
-constant-primary-variable-secondary-loop:
+chw-constant-primary-variable-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Chilled_Water_Loop ;
-      brick:hasPart ( p:constant-primary-loop brick:feeds p:variable-secondary-loop ) .
+      brick:hasPart ( p:chw-constant-primary-loop brick:feeds p:chw-variable-secondary-loop ) .
   dependencies:
-    - template: constant-primary-loop
-      args: {'name': 'constant-primary-loop'}
-    - template: variable-secondary-loop
-      args: {'name': 'variable-secondary-loop'}
+    - template: chw-constant-primary-loop
+      args: {'name': 'chw-constant-primary-loop'}
+    - template: chw-variable-secondary-loop
+      args: {'name': 'chw-variable-secondary-loop'}
 
-variable-primary-constant-secondary-loop:
+chw-variable-primary-constant-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Chilled_Water_Loop ;
-      brick:hasPart ( p:variable-primary-loop brick:feeds p:constant-secondary-loop ) .
+      brick:hasPart ( p:chw-variable-primary-loop brick:feeds p:chw-constant-secondary-loop ) .
   dependencies:
-    - template: variable-primary-loop
-      args: {'name': 'variable-primary-loop'}
-    - template: constant-secondary-loop
-      args: {'name': 'constant-secondary-loop'}
+    - template: chw-variable-primary-loop
+      args: {'name': 'chw-variable-primary-loop'}
+    - template: chw-constant-secondary-loop
+      args: {'name': 'chw-constant-secondary-loop'}
 
-variable-primary-variable-secondary-loop:
+chw-variable-primary-variable-secondary-loop:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Chilled_Water_Loop ;
       brick:hasPart
-        ( p:variable-primary-loop brick:feeds p:variable-secondary-loop ),
+        ( p:chw-variable-primary-loop brick:feeds p:chw-variable-secondary-loop ),
         ( brick:hasPoint
           _:point rdf:type rdf:Alt
             rdf:_1 p:chws-flow
             rdf:_2 p:chwr-flow
           p:decoupler-flow ) .
   dependencies:
-    - template: variable-primary-loop
-      args: {'name': 'constant-primary-loop'}
-    - template: variable-secondary-loop
-      args: {'name': 'variable-secondary-loop'}
+    - template: chw-variable-primary-loop
+      args: {'name': 'chw-constant-primary-loop'}
+    - template: chw-variable-secondary-loop
+      args: {'name': 'chw-variable-secondary-loop'}
     - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Flow_Sensor
       library: https://brickschema.org/schema/1.3/Brick
       args: {'name': 'chws-flow'}
