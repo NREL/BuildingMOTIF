@@ -556,289 +556,40 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:03:46,388 | root |  ERROR: Error creating template primary-only-loop from file /home/runner/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/libraries/../../libraries/ashrae/guideline36/4.10-chilled-water-plant.yml: (sqlite3.IntegrityError) UNIQUE constraint failed: template.name, template.library_id
-[SQL: INSERT INTO template (name, body_id, optional_args, library_id) VALUES (?, ?, ?, ?)]
-[parameters: (&#39;primary-only-loop&#39;, &#39;f19463cc-0ccb-43f5-81ad-9352baf6a2cd&#39;, &#39;[]&#39;, 3)]
-(Background on this error at: https://sqlalche.me/e/14/gkpj)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,781 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>---------------------------------------------------------------------------
-IntegrityError                            Traceback (most recent call last)
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1910, in Connection._execute_context(self, dialect, constructor, statement, parameters, execution_options, *args, **kw)
-   1909     if not evt_handled:
--&gt; 1910         self.dialect.do_execute(
-   1911             cursor, statement, parameters, context
-   1912         )
-   1914 if self._has_events or self.engine._has_events:
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/default.py:736, in DefaultDialect.do_execute(self, cursor, statement, parameters, context)
-    735 def do_execute(self, cursor, statement, parameters, context=None):
---&gt; 736     cursor.execute(statement, parameters)
-
-IntegrityError: UNIQUE constraint failed: template.name, template.library_id
-
-The above exception was the direct cause of the following exception:
-
-IntegrityError                            Traceback (most recent call last)
-Cell In[1], line 23
-     21 # load libraries excluded from the python package (available from the repository)
-     22 brick = Library.load(ontology_graph=&quot;../../libraries/brick/Brick-subset.ttl&quot;)
----&gt; 23 g36 = Library.load(directory=&quot;../../libraries/ashrae/guideline36&quot;)
-
-File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:194, in Library.load(cls, db_id, ontology_graph, directory, name, overwrite)
-    192     if not src.exists():
-    193         raise Exception(f&quot;Directory {src} does not exist&quot;)
---&gt; 194     return cls._load_from_directory(src, overwrite=overwrite)
-    195 elif name is not None:
-    196     bm = get_building_motif()
-
-File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:343, in Library._load_from_directory(cls, directory, overwrite)
-    341 # read all .yml files
-    342 for file in directory.rglob(&quot;*.yml&quot;):
---&gt; 343     lib._read_yml_file(file, template_id_lookup, dependency_cache)
-    344 # now that we have all the templates, we can populate the dependencies
-    345 lib._resolve_template_dependencies(template_id_lookup, dependency_cache)
-
-File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:477, in Library._read_yml_file(self, file, template_id_lookup, dependency_cache)
-    473 except Exception as e:
-    474     logging.error(
-    475         f&quot;Error creating template {templ_name} from file {file}: {e}&quot;
-    476     )
---&gt; 477     raise e
-    478 dependency_cache[templ.id] = deps
-    479 template_id_lookup[templ.name] = templ.id
-
-File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:472, in Library._read_yml_file(self, file, template_id_lookup, dependency_cache)
-    470 templ_spec[&quot;optional_args&quot;] = templ_spec.pop(&quot;optional&quot;, [])
-    471 try:
---&gt; 472     templ = self.create_template(**templ_spec)
-    473 except Exception as e:
-    474     logging.error(
-    475         f&quot;Error creating template {templ_name} from file {file}: {e}&quot;
-    476     )
-
-File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:527, in Library.create_template(self, name, body, optional_args)
-    510 def create_template(
-    511     self,
-    512     name: str,
-    513     body: Optional[rdflib.Graph] = None,
-    514     optional_args: Optional[List[str]] = None,
-    515 ) -&gt; Template:
-    516     &quot;&quot;&quot;Create template in this library.
-    517 
-    518     :param name: name
-   (...)
-    525     :rtype: Template
-    526     &quot;&quot;&quot;
---&gt; 527     db_template = self._bm.table_connection.create_db_template(name, self._id)
-    528     body = self._bm.graph_connection.create_graph(
-    529         db_template.body_id, body if body else rdflib.Graph()
-    530     )
-    531     # ensure the &quot;param&quot; namespace is bound to the graph
-
-File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:280, in TableConnection.create_db_template(self, name, library_id)
-    272 template = DBTemplate(
-    273     name=name,
-    274     body_id=str(uuid.uuid4()),
-    275     optional_args=[],
-    276     library=library,
-    277 )
-    279 self.bm.session.add(template)
---&gt; 280 self.bm.session.flush()
-    282 return template
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/orm/session.py:3449, in Session.flush(self, objects)
-   3447 try:
-   3448     self._flushing = True
--&gt; 3449     self._flush(objects)
-   3450 finally:
-   3451     self._flushing = False
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/orm/session.py:3588, in Session._flush(self, objects)
-   3585     transaction.commit()
-   3587 except:
--&gt; 3588     with util.safe_reraise():
-   3589         transaction.rollback(_capture_exception=True)
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/util/langhelpers.py:70, in safe_reraise.__exit__(self, type_, value, traceback)
-     68     self._exc_info = None  # remove potential circular references
-     69     if not self.warn_only:
----&gt; 70         compat.raise_(
-     71             exc_value,
-     72             with_traceback=exc_tb,
-     73         )
-     74 else:
-     75     if not compat.py3k and self._exc_info and self._exc_info[1]:
-     76         # emulate Py3K&#39;s behavior of telling us when an exception
-     77         # occurs in an exception handler.
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/util/compat.py:211, in raise_(***failed resolving arguments***)
-    208     exception.__cause__ = replace_context
-    210 try:
---&gt; 211     raise exception
-    212 finally:
-    213     # credit to
-    214     # https://cosmicpercolator.com/2016/01/13/exception-leaks-in-python-2-and-3/
-    215     # as the __traceback__ object creates a cycle
-    216     del exception, replace_context, from_, with_traceback
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/orm/session.py:3549, in Session._flush(self, objects)
-   3547 self._warn_on_events = True
-   3548 try:
--&gt; 3549     flush_context.execute()
-   3550 finally:
-   3551     self._warn_on_events = False
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py:456, in UOWTransaction.execute(self)
-    454 else:
-    455     for rec in topological.sort(self.dependencies, postsort_actions):
---&gt; 456         rec.execute(self)
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/orm/unitofwork.py:630, in SaveUpdateAll.execute(self, uow)
-    628 @util.preload_module(&quot;sqlalchemy.orm.persistence&quot;)
-    629 def execute(self, uow):
---&gt; 630     util.preloaded.orm_persistence.save_obj(
-    631         self.mapper,
-    632         uow.states_for_mapper_hierarchy(self.mapper, False, False),
-    633         uow,
-    634     )
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py:245, in save_obj(base_mapper, states, uowtransaction, single)
-    233     update = _collect_update_commands(
-    234         uowtransaction, table, states_to_update
-    235     )
-    237     _emit_update_statements(
-    238         base_mapper,
-    239         uowtransaction,
-   (...)
-    242         update,
-    243     )
---&gt; 245     _emit_insert_statements(
-    246         base_mapper,
-    247         uowtransaction,
-    248         mapper,
-    249         table,
-    250         insert,
-    251     )
-    253 _finalize_insert_update_commands(
-    254     base_mapper,
-    255     uowtransaction,
-   (...)
-    271     ),
-    272 )
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/orm/persistence.py:1238, in _emit_insert_statements(base_mapper, uowtransaction, mapper, table, insert, bookkeeping)
-   1232     result = connection._execute_20(
-   1233         statement.values(value_params),
-   1234         params,
-   1235         execution_options=execution_options,
-   1236     )
-   1237 else:
--&gt; 1238     result = connection._execute_20(
-   1239         statement,
-   1240         params,
-   1241         execution_options=execution_options,
-   1242     )
-   1244 primary_key = result.inserted_primary_key
-   1245 if primary_key is None:
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1710, in Connection._execute_20(self, statement, parameters, execution_options)
-   1706     util.raise_(
-   1707         exc.ObjectNotExecutableError(statement), replace_context=err
-   1708     )
-   1709 else:
--&gt; 1710     return meth(self, args_10style, kwargs_10style, execution_options)
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/sql/elements.py:334, in ClauseElement._execute_on_connection(self, connection, multiparams, params, execution_options, _force)
-    330 def _execute_on_connection(
-    331     self, connection, multiparams, params, execution_options, _force=False
-    332 ):
-    333     if _force or self.supports_execution:
---&gt; 334         return connection._execute_clauseelement(
-    335             self, multiparams, params, execution_options
-    336         )
-    337     else:
-    338         raise exc.ObjectNotExecutableError(self)
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1577, in Connection._execute_clauseelement(self, elem, multiparams, params, execution_options)
-   1565 compiled_cache = execution_options.get(
-   1566     &quot;compiled_cache&quot;, self.engine._compiled_cache
-   1567 )
-   1569 compiled_sql, extracted_params, cache_hit = elem._compile_w_cache(
-   1570     dialect=dialect,
-   1571     compiled_cache=compiled_cache,
-   (...)
-   1575     linting=self.dialect.compiler_linting | compiler.WARN_LINTING,
-   1576 )
--&gt; 1577 ret = self._execute_context(
-   1578     dialect,
-   1579     dialect.execution_ctx_cls._init_compiled,
-   1580     compiled_sql,
-   1581     distilled_params,
-   1582     execution_options,
-   1583     compiled_sql,
-   1584     distilled_params,
-   1585     elem,
-   1586     extracted_params,
-   1587     cache_hit=cache_hit,
-   1588 )
-   1589 if has_events:
-   1590     self.dispatch.after_execute(
-   1591         self,
-   1592         elem,
-   (...)
-   1596         ret,
-   1597     )
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1953, in Connection._execute_context(self, dialect, constructor, statement, parameters, execution_options, *args, **kw)
-   1950             branched.close()
-   1952 except BaseException as e:
--&gt; 1953     self._handle_dbapi_exception(
-   1954         e, statement, parameters, cursor, context
-   1955     )
-   1957 return result
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/base.py:2134, in Connection._handle_dbapi_exception(self, e, statement, parameters, cursor, context)
-   2132     util.raise_(newraise, with_traceback=exc_info[2], from_=e)
-   2133 elif should_wrap:
--&gt; 2134     util.raise_(
-   2135         sqlalchemy_exception, with_traceback=exc_info[2], from_=e
-   2136     )
-   2137 else:
-   2138     util.raise_(exc_info[1], with_traceback=exc_info[2])
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/util/compat.py:211, in raise_(***failed resolving arguments***)
-    208     exception.__cause__ = replace_context
-    210 try:
---&gt; 211     raise exception
-    212 finally:
-    213     # credit to
-    214     # https://cosmicpercolator.com/2016/01/13/exception-leaks-in-python-2-and-3/
-    215     # as the __traceback__ object creates a cycle
-    216     del exception, replace_context, from_, with_traceback
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1910, in Connection._execute_context(self, dialect, constructor, statement, parameters, execution_options, *args, **kw)
-   1908                 break
-   1909     if not evt_handled:
--&gt; 1910         self.dialect.do_execute(
-   1911             cursor, statement, parameters, context
-   1912         )
-   1914 if self._has_events or self.engine._has_events:
-   1915     self.dispatch.after_cursor_execute(
-   1916         self,
-   1917         cursor,
-   (...)
-   1921         context.executemany,
-   1922     )
-
-File /opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/sqlalchemy/engine/default.py:736, in DefaultDialect.do_execute(self, cursor, statement, parameters, context)
-    735 def do_execute(self, cursor, statement, parameters, context=None):
---&gt; 736     cursor.execute(statement, parameters)
-
-IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: template.name, template.library_id
-[SQL: INSERT INTO template (name, body_id, optional_args, library_id) VALUES (?, ?, ?, ?)]
-[parameters: (&#39;primary-only-loop&#39;, &#39;f19463cc-0ccb-43f5-81ad-9352baf6a2cd&#39;, &#39;[]&#39;, 3)]
-(Background on this error at: https://sqlalche.me/e/14/gkpj)
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,786 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,795 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/box-damper-position in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,802 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/window-switch in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,807 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/discharge-airflow in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,811 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,816 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,825 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,830 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,834 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,839 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:45,843 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
 </div>
@@ -852,6 +603,11 @@ IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: template.name
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># pass a list of shape collections to .validate()</span>
 <span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">([</span><span class="n">brick</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()])</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
 </pre></div>
 </div>
 </div>
@@ -1026,6 +782,19 @@ to load in the Brick and Guideline36 libraries at the top of this tutorial.</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:46,783 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:46,789 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+None
+ - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Heating_Coil
+</pre></div>
+</div>
+</div>
 </div>
 <div class="dropdown admonition">
 <p class="admonition-title">Tip on supplying extra shape collections</p>
@@ -1077,6 +846,40 @@ will use these shape collections to validate the model <em>instead of</em> the m
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix bldg: &lt;urn:ex/&gt; .
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+
+&lt;urn:bldg/&gt; a owl:Ontology .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
+    brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt; ;
+    brick:hasPoint &lt;urn:bldg/zone-temp&gt; .
+
+bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Supply_Fan .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; a brick:Heating_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt; a brick:Outside_Damper ;
+    brick:hasPoint &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; a brick:Damper_Position_Command .
+
+&lt;urn:bldg/zone-temp&gt; a brick:Zone_Air_Temperature_Sensor .
+</pre></div>
+</div>
+</div>
 </div>
 <p>We can see that the heating coil was added to the model and connected to the AHU so let’s check if the manifest validation failure was fixed.</p>
 <div class="cell docutils container">
@@ -1089,6 +892,17 @@ will use these shape collections to validate the model <em>instead of</em> the m
     <span class="nb">print</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:47,788 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:47,793 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
 </pre></div>
 </div>
 </div>
@@ -1110,6 +924,25 @@ will use these shape collections to validate the model <em>instead of</em> the m
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:ashrae/g36/4.3/fan-powered/terminal-unit
+urn:ashrae/g36/4.3/fan-powered/fan
+urn:ashrae/g36/4.3/fan-powered/damper
+urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/terminal-unit
+urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only
+urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/terminal-unit
+urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu
+urn:ashrae/g36/components/cooling_damper
+urn:ashrae/g36/components/heating_damper
+urn:ashrae/g36/4.2/vav-with-reheat/vav-with-reheat
+urn:ashrae/g36/4.6/mz-vav-ahu/AHU
+urn:ashrae/g36/4.6/mz-vav-ahu/supply-fan
+urn:ashrae/g36/4.6/mz-vav-ahu/return-damper
+urn:ashrae/g36/4.6/mz-vav-ahu/heating-coil
+urn:ashrae/g36/4.6/mz-vav-ahu/cooling-coil
+</pre></div>
+</div>
+</div>
 </div>
 <p>The model represents the Small Office Commercial Prototype Building model, which has single zone packaged AHUs, so we’re interested in validating it against Section 4.8 of Guideline 36 for single zone variable air volume (VAV) AHUs.</p>
 <p>Let’s update our manifest to include the requirement that AHUs must match the “single zone AHU” shape from G36:</p>
@@ -1124,6 +957,11 @@ will use these shape collections to validate the model <em>instead of</em> the m
 <span class="s2">    sh:targetClass brick:AHU ;</span>
 <span class="s2">    sh:node &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu&gt; .</span>
 <span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=1a785f49-2f15-456b-afac-5cbe67271460 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -1157,6 +995,17 @@ print(f"Model is valid? {validation_result.valid}")
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:48,827 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-03 18:40:48,833 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+</pre></div>
+</div>
+</div>
 </div>
 <p>The AHU fails validation because it doesn’t match the <code class="docutils literal notranslate"><span class="pre">sz-vav-ahu-control-sequences</span></code> requirements.
 Take a look at the first bit of output, which is the official SHACL validation report text format. This can be difficult to interpret without a background in SHACL, so BuildingMOTIF provides a more easily understood version of the same information.</p>
@@ -1167,6 +1016,63 @@ Take a look at the first bit of output, which is the official SHACL validation r
 
 <span class="c1"># separator</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">79</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Validation Report
+Conforms: False
+Results (8):
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/c5e190cc&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPart
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/a6446e2c&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/00f5c2da&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/be48e85a&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/475f8180&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/8b7dbabc&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/dce487a7&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/ba585c0d&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/4a176cfa&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/2960dfb1&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/508df939&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/0284b49d&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/5ab33e12&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/622cd04a&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/893c66dc&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/c2b74f99&gt;
+
+-------------------------------------------------------------------------------
 </pre></div>
 </div>
 </div>
@@ -1183,6 +1089,20 @@ Take a look at the first bit of output, which is the official SHACL validation r
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is invalid for these reasons:
+urn:bldg/Core_ZN-PSC_AC
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Cooling_Command on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Heating_Command on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+</pre></div>
+</div>
+</div>
 </div>
 <p>The model is failing because the AHU doesn’t have the required points. We could find those templates manually, evaluate them, and add the resulting graphs to the model. However, this can be a bit
 tedious. To address this issue, BuildingMOTIF can find those templates automatically for us. We’ll cover this feature in the next tutorial so let’s save the model.</p>
@@ -1190,6 +1110,11 @@ tedious. To address this issue, BuildingMOTIF can find those templates automatic
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#save model</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial2_model.ttl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=82a86f18-d349-4c8e-8dd0-55c827ffc275 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
