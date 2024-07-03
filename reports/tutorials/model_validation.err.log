@@ -21,10 +21,10 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-from rdflib import Namespace, URIRef
+from rdflib import Namespace
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, Library, Template
-from buildingmotif.namespaces import BRICK, RDF # import this to make writing URIs easier
+from buildingmotif.dataclasses import Model, Library
+from buildingmotif.namespaces import BRICK # import this to make writing URIs easier
 
 # in-memory instance
 bm = BuildingMOTIF("sqlite://")
@@ -35,20 +35,15 @@ BLDG = Namespace('urn:bldg/')
 # create the building model
 model = Model.create(BLDG, description="This is a test model for a simple building")
 
+# load tutorial 1 model
+model.graph.parse("tutorial1_model.ttl", format="ttl")
+
 # load libraries included with the python package
-constraints = Library.load(ontology_graph="constraints/constraints.ttl")
+constraints = Library.load(ontology_graph="../../buildingmotif/libraries/constraints/constraints.ttl")
 
 # load libraries excluded from the python package (available from the repository)
 brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
 g36 = Library.load(directory="../../libraries/ashrae/guideline36")
-
-
-# load tutorial 2 model and manifest
-model.graph.parse("tutorial2_model.ttl", format="ttl")
-manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
-
-# assign the manifest to our model
-model.update_manifest(manifest.get_shape_collection())
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
@@ -69,12 +64,10 @@ File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/
 The above exception was the direct cause of the following exception:
 
 [0;31mIntegrityError[0m                            Traceback (most recent call last)
-Cell [0;32mIn[1], line 20[0m
-[1;32m     18[0m [38;5;66;03m# load libraries excluded from the python package (available from the repository)[39;00m
-[1;32m     19[0m brick [38;5;241m=[39m Library[38;5;241m.[39mload(ontology_graph[38;5;241m=[39m[38;5;124m"[39m[38;5;124m../../libraries/brick/Brick-subset.ttl[39m[38;5;124m"[39m)
-[0;32m---> 20[0m g36 [38;5;241m=[39m [43mLibrary[49m[38;5;241;43m.[39;49m[43mload[49m[43m([49m[43mdirectory[49m[38;5;241;43m=[39;49m[38;5;124;43m"[39;49m[38;5;124;43m../../libraries/ashrae/guideline36[39;49m[38;5;124;43m"[39;49m[43m)[49m
-[1;32m     23[0m [38;5;66;03m# load tutorial 2 model and manifest[39;00m
-[1;32m     24[0m model[38;5;241m.[39mgraph[38;5;241m.[39mparse([38;5;124m"[39m[38;5;124mtutorial2_model.ttl[39m[38;5;124m"[39m, [38;5;28mformat[39m[38;5;241m=[39m[38;5;124m"[39m[38;5;124mttl[39m[38;5;124m"[39m)
+Cell [0;32mIn[1], line 23[0m
+[1;32m     21[0m [38;5;66;03m# load libraries excluded from the python package (available from the repository)[39;00m
+[1;32m     22[0m brick [38;5;241m=[39m Library[38;5;241m.[39mload(ontology_graph[38;5;241m=[39m[38;5;124m"[39m[38;5;124m../../libraries/brick/Brick-subset.ttl[39m[38;5;124m"[39m)
+[0;32m---> 23[0m g36 [38;5;241m=[39m [43mLibrary[49m[38;5;241;43m.[39;49m[43mload[49m[43m([49m[43mdirectory[49m[38;5;241;43m=[39;49m[38;5;124;43m"[39;49m[38;5;124;43m../../libraries/ashrae/guideline36[39;49m[38;5;124;43m"[39;49m[43m)[49m
 
 File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:194[0m, in [0;36mLibrary.load[0;34m(cls, db_id, ontology_graph, directory, name, overwrite)[0m
 [1;32m    192[0m     [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m src[38;5;241m.[39mexists():
@@ -328,10 +321,10 @@ File [0;32m/opt/hostedtoolcache/Python/3.11.9/x64/lib/python3.11/site-packages/
 
 [0;31mIntegrityError[0m: (sqlite3.IntegrityError) UNIQUE constraint failed: template.name, template.library_id
 [SQL: INSERT INTO template (name, body_id, optional_args, library_id) VALUES (?, ?, ?, ?)]
-[parameters: ('primary-only-loop', '617e86c5-c303-4277-a7e5-8da71c89edd2', '[]', 3)]
+[parameters: ('primary-only-loop', 'e78d958d-aa01-4655-a350-ff5d8617b18c', '[]', 3)]
 (Background on this error at: https://sqlalche.me/e/14/gkpj)
 IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: template.name, template.library_id
 [SQL: INSERT INTO template (name, body_id, optional_args, library_id) VALUES (?, ?, ?, ?)]
-[parameters: ('primary-only-loop', '617e86c5-c303-4277-a7e5-8da71c89edd2', '[]', 3)]
+[parameters: ('primary-only-loop', 'e78d958d-aa01-4655-a350-ff5d8617b18c', '[]', 3)]
 (Background on this error at: https://sqlalche.me/e/14/gkpj)
 
