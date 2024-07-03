@@ -226,14 +226,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.semantic_graph_synthesizer.html">buildingmotif.semantic_graph_synthesizer</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.semantic_graph_synthesizer.bindings_utils.html">buildingmotif.semantic_graph_synthesizer.bindings_utils</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.semantic_graph_synthesizer.bipartite_token_mapper.html">buildingmotif.semantic_graph_synthesizer.bipartite_token_mapper</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.semantic_graph_synthesizer.classes.html">buildingmotif.semantic_graph_synthesizer.classes</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.semantic_graph_synthesizer.semantic_graph_synthesizer.html">buildingmotif.semantic_graph_synthesizer.semantic_graph_synthesizer</a></li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
 </ul>
 </li>
@@ -570,7 +563,7 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=cb5f6f5a-7057-43f2-b995-5ff3ef14d67b (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=1da624fa-d200-4748-b962-9bb8b4c079ab (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -627,7 +620,7 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>PREFIX sh: &lt;http://www.w3.org/ns/shacl#&gt;
 PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-         SELECT ?target ?roomTemp ?heatsp ?coolsp WHERE {
+         SELECT ?target ?coolsp ?heatsp ?roomTemp WHERE {
 ?target rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Fan_Coil_Unit&gt; .
 ?target &lt;https://brickschema.org/schema/Brick#hasPoint&gt; ?coolsp .
  ?coolsp rdf:type/rdfs:subClassOf* &lt;https://brickschema.org/schema/Brick#Occupied_Cooling_Temperature_Setpoint&gt; .
@@ -670,11 +663,16 @@ create a pandas <code class="docutils literal notranslate"><span class="pre">Dat
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>coolsp                  urn:building1/occ_clg_sp_8c1848b7
-heatsp                  urn:building1/occ_htg_sp_461c60c5
-roomTemp    urn:building1/:BuildingName_01:FCU048_RoomTmp
-target                               urn:building1/FCU048
-Name: 0, dtype: object
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">3</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
+<span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="c1"># generate and save the query string to a variable</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">app_query</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">)</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;pandas&#39;
 </pre></div>
 </div>
 </div>
