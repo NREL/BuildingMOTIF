@@ -1,3 +1,4 @@
+@prefix bldg: <urn:ex/> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix vav48: <urn:ashrae/g36/4.8/sz-vav-ahu/> .
@@ -8,23 +9,57 @@
     brick:hasPart <urn:bldg/Core_ZN-PSC_AC-Clg_Coil>,
         <urn:bldg/Core_ZN-PSC_AC-Damper>,
         <urn:bldg/Core_ZN-PSC_AC-Fan>,
-        <urn:bldg/Core_ZN-PSC_AC-Htg_Coil> .
+        <urn:bldg/Core_ZN-PSC_AC-Htg_Coil>,
+        <urn:bldg/Core_ZN-PSC_AC-OutsideDamper>,
+        <urn:bldg/name_fbe04c78> ;
+    brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-CCmd>,
+        <urn:bldg/Core_ZN-PSC_AC-FilterDPS>,
+        <urn:bldg/Core_ZN-PSC_AC-HCmd>,
+        <urn:bldg/Core_ZN-PSC_AC-MAT>,
+        <urn:bldg/Core_ZN-PSC_AC-OAT>,
+        <urn:bldg/Core_ZN-PSC_AC-RAT>,
+        <urn:bldg/Core_ZN-PSC_AC-SAT>,
+        <urn:bldg/zone-temp> .
+
+bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
+
+<urn:bldg/Core_ZN-PSC_AC-CCmd> a brick:Cooling_Command .
 
 <urn:bldg/Core_ZN-PSC_AC-Clg_Coil> a brick:Cooling_Coil .
 
 <urn:bldg/Core_ZN-PSC_AC-Damper> a brick:Damper .
 
-<urn:bldg/Core_ZN-PSC_AC-Fan> a brick:Supply_Fan,
-        vav48:sa-fan ;
-    brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-Fanp1>,
-        <urn:bldg/Core_ZN-PSC_AC-Fanp2>,
-        <urn:bldg/Core_ZN-PSC_AC-Fanp3> .
+<urn:bldg/Core_ZN-PSC_AC-FilterDPS> a brick:Filter_Differential_Pressure_Sensor .
 
-<urn:bldg/Core_ZN-PSC_AC-Fanp1> a brick:Fan_Status .
-
-<urn:bldg/Core_ZN-PSC_AC-Fanp2> a brick:Start_Stop_Command .
-
-<urn:bldg/Core_ZN-PSC_AC-Fanp3> a brick:Frequency_Command .
+<urn:bldg/Core_ZN-PSC_AC-HCmd> a brick:Heating_Command .
 
 <urn:bldg/Core_ZN-PSC_AC-Htg_Coil> a brick:Heating_Coil .
+
+<urn:bldg/Core_ZN-PSC_AC-MAT> a brick:Mixed_Air_Temperature_Sensor .
+
+<urn:bldg/Core_ZN-PSC_AC-OAT> a brick:Outside_Air_Temperature_Sensor .
+
+<urn:bldg/Core_ZN-PSC_AC-OutsideDamper> a brick:Outside_Damper ;
+    brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition> .
+
+<urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition> a brick:Damper_Position_Command .
+
+<urn:bldg/Core_ZN-PSC_AC-RAT> a brick:Return_Air_Temperature_Sensor .
+
+<urn:bldg/Core_ZN-PSC_AC-SAT> a brick:Supply_Air_Temperature_Sensor .
+
+<urn:bldg/name_fbe04c78> a brick:Supply_Fan,
+        vav48:sa-fan ;
+    brick:hasPoint <urn:bldg/Core_ZN-PSC_AC-Fan>,
+        <urn:bldg/p57_a384fdde>,
+        <urn:bldg/p59_2f4e2ba5> .
+
+<urn:bldg/p57_a384fdde> a brick:Start_Stop_Command .
+
+<urn:bldg/p59_2f4e2ba5> a brick:Frequency_Command .
+
+<urn:bldg/zone-temp> a brick:Zone_Air_Temperature_Sensor .
+
+<urn:bldg/Core_ZN-PSC_AC-Fan> a brick:Fan_Status,
+        brick:Supply_Fan .
 
