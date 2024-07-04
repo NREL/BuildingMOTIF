@@ -1,69 +1,69 @@
-@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix components: <urn:ashrae/g36/components/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix vav41: <urn:ashrae/g36/4.1/vav-cooling-only/> .
-@prefix vav42: <urn:ashrae/g36/4.2/vav-with-reheat/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix : <urn:ashrae/g36/4.3/fan-powered/> .
-@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 
 :terminal-unit a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "Fan-Powered Terminal Unit" ;
     sh:class brick:Terminal_Unit ;
-    sh:node vav41:zone-temperature ;
-    sh:or ( vav42:heating-signal1 vav42:heating-signal2 ) ;
     sh:property [
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node :fan ] ;
+        sh:qualifiedValueShape [
+            sh:or (
+                components:constant-speed-fan
+                components:variable-speed-fan-ecm
+                components:variable-speed-fan-vfd
+            )
+        ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
+    # required
     sh:property [
+        rdfs:label "VAV box damper" ;
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node :damper] ;
+        sh:qualifiedValueShape [ sh:node components:supply-damper ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
+    # required
     sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:heating-coil ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Primary airflow" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Flow_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Discharge_Air_Flow_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
+    # required
     sh:property [
+        rdfs:label "Discharge air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Discharge_Air_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-.
-
-:fan a sh:NodeShape, owl:Class, bmotif:System_Specification ;
-    sh:class brick:Fan ;
+    # required
     sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Frequency_Command ] ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:thermostat] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
+    # must feed a zone
     sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Fan_Status ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-:damper a sh:NodeShape, owl:Class, bmotif:System_Specification ;
-    sh:class brick:Damper ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Damper_Position_Command ] ;
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:node components:zone ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] .
