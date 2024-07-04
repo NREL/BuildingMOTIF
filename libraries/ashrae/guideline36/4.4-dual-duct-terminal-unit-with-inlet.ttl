@@ -1,22 +1,15 @@
-@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix components: <urn:ashrae/g36/components/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix vav41: <urn:ashrae/g36/4.1/vav-cooling-only/> .
-@prefix vav42: <urn:ashrae/g36/4.2/vav-with-reheat/> .
-@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
-@prefix components: <urn:ashrae/g36/components/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix : <urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/> .
 
 :terminal-unit a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "Dual-Duct Terminal Unit with Inlet Sensors" ;
     sh:class brick:Terminal_Unit ;
-    sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node :hot-deck ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node :cold-deck ] ;
@@ -24,26 +17,22 @@
         sh:qualifiedMaxCount 1 ;
     ] ;
     sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Override_Command ] ;
-        sh:qualifiedMinCount 0 ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :hot-deck ] ;
+        sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
+    # required
     sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Temperature_Adjust_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:thermostat] ;
+        sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    sh:node vav41:zone-temperature, vav41:zone-co2-level, vav41:occupancy-sensor ;
-.
-
-:hot-deck a sh:NodeShape ;
-    sh:class brick:Hot_Deck ;
-    sh:node components:heating_damper ;
+    # must feed a zone
     sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Flow_Sensor ] ;
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:node components:zone ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
@@ -51,11 +40,39 @@
 
 :cold-deck a sh:NodeShape ;
     sh:class brick:Cold_Deck ;
-    sh:node components:cooling_damper ;
+    # required
     sh:property [
+        rdfs:label "Cooling Damper" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:supply-damper ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Cooling airflow" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Flow_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
+.
+
+:hot-deck a sh:NodeShape ;
+    sh:class brick:Hot_Deck ;
+    # required
+    sh:property [
+        rdfs:label "Heating Damper" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:supply-damper ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "Heating airflow" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Flow_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ]
 .
