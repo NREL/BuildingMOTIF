@@ -1,38 +1,57 @@
-@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix components: <urn:ashrae/g36/components/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix vav41: <urn:ashrae/g36/4.1/vav-cooling-only/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix : <urn:ashrae/g36/4.2/vav-with-reheat/> .
-@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 
 :vav-with-reheat a sh:NodeShape, owl:Class, bmotif:System_Specification ;
-    sh:class brick:RVAV ;
-    rdfs:subClassOf vav41:vav-cooling-only ;
-    sh:or ( :heating-signal1 :heating-signal2 ) ;
-    bmotif:domain bmotif:HVAC ;
-.
-
-:heating-signal1 a sh:NodeShape ;
+    rdfs:label "VAV Terminal Unit with Reheat" ;
+    sh:class brick:Variable_Air_Volume_Box_With_Reheat ;
+    # required
     sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Heating_Command ] ;
+        rdfs:label "VAV box damper" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:supply-damper ] ;
         sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
     ] ;
-.
-
-:heating-signal2 a sh:NodeShape ;
+    # required
     sh:property [
         sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:heating-coil ] ;
         sh:qualifiedMinCount 1 ;
-        sh:qualifiedValueShape [
-            sh:class brick:Heating_Coil ;
-            sh:property [
-                sh:qualifiedMinCount 1 ;
-                sh:qualifiedValueShape [ sh:class brick:Position_Command ] ;
-                sh:path brick:hasPoint ;
-            ] ;
-        ] ;
+        sh:qualifiedMaxCount 1 ;
     ] ;
-.
+    # required
+    sh:property [
+        rdfs:label "Discharge airflow" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Discharge_Air_Flow_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Discharge air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Discharge_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:thermostat] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # must feed a zone
+    sh:property [
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:node components:zone ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
