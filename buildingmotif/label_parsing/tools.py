@@ -1,8 +1,7 @@
 import subprocess
 
 import enchant
-from combinators import equip_abbreviations, point_abbreviations
-
+from combinators import equip_abbreviations, point_abbreviations, make_combined_abbreviations
 
 class Lint_Code:
     """
@@ -66,7 +65,7 @@ class Tokenizer:
 
         return tokened
 
-    def split_and_group(self, word: str):
+    def split_and_group(self, word: str, list_of_dicts):
         """
         Tokenizes a word based on alphanumeric or special character shifts. Then,
         apply abbreviations to find more tokens, and combines tokens
@@ -75,32 +74,24 @@ class Tokenizer:
 
         tokens = self.shift_split(word)
         arr = []
+        combined_abbreviations = make_combined_abbreviations(list_of_dicts)
         for group in tokens:
             if not group.isalnum():
                 arr.append(group)
-            elif point_abbreviations(group) and not any(
-                r.error for r in point_abbreviations(group)
-            ):
-                parsed_abbrev = point_abbreviations(group)[0].value
+            elif combined_abbreviations(group) and not any(r.error for r in combined_abbreviations(group)):
+                parsed_abbrev = combined_abbreviations(group)[0].value
                 arr.append(parsed_abbrev)
                 remain = group[len(parsed_abbrev) :]
                 if len(remain) > 0:
-                    arr.extend(self.split_and_group(remain))
-            elif equip_abbreviations(group) and not any(
-                r.error for r in equip_abbreviations(group)
-            ):
-                parsed_abbrev = equip_abbreviations(group)[0].value
-                arr.append(parsed_abbrev)
-                remain = group[len(parsed_abbrev) :]
-                if len(remain) > 0:
-                    arr.extend(self.split_and_group(remain))
+                    arr.extend(self.split_and_group(remain, list_of_dicts))
             else:
                 arr.append(group)
-
+    
         final_groups = []
         left = 0
         right = 1
 
+        
         while right < len(arr):
             if wordChecker.check_word_validity(arr[left] + arr[right]) and (
                 arr[left].isalpha() and arr[right].isalpha()
@@ -114,6 +105,7 @@ class Tokenizer:
                 right = left + 1
         if left < len(arr):
             final_groups.append(arr[left])
+        #print(final_groups)
         return final_groups
 
 

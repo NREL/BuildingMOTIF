@@ -48,7 +48,7 @@ class rest(Parser):
 class substring_n(Parser):
     """Constructs a parser that matches a substring of length n."""
 
-    def __init__(self, length, type_name: TokenOrConstructor):
+    def __init__(self, length: int, type_name: TokenOrConstructor):
         self.length = length
         self.type_name = type_name
 
@@ -71,7 +71,7 @@ class substring_n(Parser):
 class regex(Parser):
     """Constructs a parser that matches a regular expression."""
 
-    def __init__(self, r, type_name: TokenOrConstructor):
+    def __init__(self, r: str, type_name: TokenOrConstructor):
         self.r = r
         self.type_name = type_name
 
@@ -102,45 +102,6 @@ class choice(Parser):
             if result:
                 errors.append(result[0].error)
         return [TokenResult(None, Null(), 0, " | ".join(errors))]
-
-
-class choice_for_list(Parser):
-    """
-    Constructs a choice combinator of parsers and applies it to a file.
-    Returns total parsed, total unparsed, results of each successful parse, and
-    unparsed elements.
-    """
-
-    def __init__(self, *parsers):
-        self.parsers = parsers
-
-    def __call__(
-        self, file: str
-    ) -> Tuple[List[TokenResult], List[TokenResult], int, int]:
-        successes = []
-        errors = []
-        total_right = 0
-        with open(file) as filename:
-            list_names = [
-                line.replace(" ", "").replace("\n", "") for line in filename.readlines()
-            ]
-        for data in list_names:
-            for p in self.parsers:
-                try:
-                    result = p(data)
-                except Exception:
-                    if data not in errors:
-                        print(data)
-                    errors.append(data)
-                    continue
-                if result and not any(r.error for r in result):
-                    # print(result)
-                    total_right += 1
-                    successes.append(result)
-                    break
-                else:
-                    errors.append(data)
-        return successes, errors, total_right, len(errors)
 
 
 class constant(Parser):
@@ -342,6 +303,27 @@ sorted_points = sorted(
 )
 COMMON_POINT_ABBREVIATIONS = {ele[0]: ele[1] for ele in sorted_points}
 
+def make_abbreviations_list(*dicts):
+    arr = []
+    for d in dicts:
+        sorted_points = sorted(
+        list(d.items()), key=lambda key: len(key[0]), reverse=True
+        )
+        processed = {ele[0].upper(): ele[1] for ele in sorted_points}
+        arr.append(abbreviations(processed)) 
+    return arr
+
+def make_combined_abbreviations(list_of_dicts):
+    combined = {}
+    for d in list_of_dicts:
+        combined.update(d)
+    sorted_points = sorted(
+    list(combined.items()), key=lambda key: len(key[0]), reverse=True
+    )
+    processed = {ele[0].upper(): ele[1] for ele in sorted_points}
+    return abbreviations(processed) 
+
+
 COMMON_ABBREVIATIONS = abbreviations(
     {**COMMON_EQUIP_ABBREVIATIONS_BRICK, **COMMON_POINT_ABBREVIATIONS}
 )
@@ -355,7 +337,7 @@ named_point = sequence(point_abbreviations, maybe(delimiters), identifier)
 building_constant = constant(Constant(BRICK.Building))
 up_to_delimiter = regex(r"[^_._:/\-]+", Identifier)
 
-# lookup table generated with mapped points to brick class embeddings
+#ith mapped points to brick class embeddings
 COMMON_GENERATED_ABBREVIATIONS = {
     "DEWPTTMP": BRICK.Dewpoint_Setpoint,
     "KTONHR": BRICK.Chilled_Water_Meter,

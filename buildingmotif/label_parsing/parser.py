@@ -179,7 +179,7 @@ def first_true(iterable, default=None, pred=None):
     return next(filter(pred, iterable), default)
 
 
-def parser_on_list(parser, test_file):
+def parser_on_list(parser, data_list):
     """
     Applies parser to each element in test file.
     Returns total parsed, total unparsed, and specific elements that were
@@ -187,16 +187,12 @@ def parser_on_list(parser, test_file):
     """
     parsed = []
     unparsed = []
-    with open(test_file) as file:
-        data_list = [
-            line.replace(" ", "").replace("\n", "") for line in file.readlines()
-        ]
     wrong = 0
     right = 0
-    for data in data_list:
+    for data in list(data_list):
         res = parser(data)
         if res and not any(r.error for r in res):
-            parsed.append(data)
+            parsed.append(res)
             right += 1
         else:
             unparsed.append(data)

@@ -2,17 +2,20 @@ import os
 import random
 import re
 import sys
+import csv
 
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import metrics
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import MinMaxScaler
+#import matplotlib.pyplot as plt
 
 from buildingmotif.label_parsing.combinators import (
     equip_abbreviations,
     point_abbreviations,
+    make_abbreviations_list,
+    make_combined_abbreviations
 )
 from buildingmotif.label_parsing.token_classify import classify_tokens_with_llm
 from buildingmotif.label_parsing.tools import codeLinter, tokenizer, wordChecker
@@ -30,8 +33,6 @@ def classify_tokens(split: list):
             classified.append("alpha")
         elif group.isdigit():
             classified.append("num")
-        # elif group == " ":
-        #     classified.append("space")
         else:
             classified.append("special")
     return classified
@@ -60,15 +61,66 @@ def similarity_ratio_ordered(a: str, b: str):
                 break
         return first_unmatched / len(classified_tokens_a)
 
+def get_column_data(csv_file, column_name):
+    try:
+        with open(csv_file, mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            if column_name not in reader.fieldnames:
+                raise ValueError(f"Column '{column_name}' does not exist in the CSV file.")
+            
+            column_contents = [row[column_name].replace('\n', '').replace(' ', '') for row in reader]
+            
+        return column_contents
+    
+    except FileNotFoundError:
+        print(f"Error: The file '{csv_file}' was not found.")
+        return None
+    
+    except IOError:
+        print(f"Error: Unable to read the file '{csv_file}'.")
+        return None
+    
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return None
 
-def group_by_clusters(filename: str):
+def generate_parsers_for_points(filename: str, col_name: str, num_tries: int, list_of_dicts):
+    parsers = []
+    clusters = []
+    flagged = []
+    if get_column_data(filename, col_name) is not None:
+        data_list = get_column_data(filename, col_name)
+        for data in data_list:
+            try:
+                llm_output = classify_tokens_with_llm(data, list_of_dicts, num_tries)
+            except Exception as e:
+                print(e)
+                print(f"num_tries exceeded {num_tries}")
+                continue
+            program_arr, flagged = make_program(data, llm_output, list_of_dicts)
+            random_generated_parser = (
+                "parser_noise_" + str(len(program_arr)) + "_" + str(random.randint(1, 1000))
+            )
+            parser = random_generated_parser + " = sequence(" + ", ".join(program_arr) + ")"
+            parsers.append(parser)
+            clusters.append([data])
+    return parsers, clusters, flagged
+
+
+
+def group_by_clusters(filename: str, col_name: str):
     # groups using DBScan clustering, then returns list of all clusters and list of noise points with clustering metrics
     noise = []
     clusters = []
-    with open(filename, "r") as file:
-        data_list = [
-            line.replace(" ", "").replace("\n", "") for line in file.readlines()
-        ]
+    distance_matrix_metrics = {}
+    clustering_metrics = {}
+
+    # with open(filename, "r") as file:
+    #     data_list = [
+    #         line.replace(" ", "").replace("\n", "") for line in file.readlines()
+    #     ]
+    if get_column_data(filename, col_name) is not None:
+        data_list = get_column_data(filename, col_name)
 
     n = len(data_list)
     distance_matrix = np.zeros((n, n))
@@ -78,14 +130,10 @@ def group_by_clusters(filename: str):
             distance_matrix[i, j] = dist
             distance_matrix[j, i] = dist
 
-    print("distance matrix: ")
-    print("mean ", np.mean(distance_matrix))
-    print("median ", np.median(distance_matrix))
-    print("std ", np.std(distance_matrix))
-    print("min ", np.min(distance_matrix))
-    print("max ", np.max(distance_matrix))
-    print("range ", np.max(distance_matrix) - np.min(distance_matrix))
-    print("\n")
+    
+    distance_matrix_metrics = {"mean":np.mean(distance_matrix), "median":np.median(distance_matrix), 
+    "std":np.std(distance_matrix), "min":np.min(distance_matrix), "max":np.max(distance_matrix), 
+    "range":np.max(distance_matrix) - np.min(distance_matrix)}
 
     scaled_distance_matrix = scaler.fit_transform(distance_matrix)
     neigh = NearestNeighbors(n_neighbors=4, metric="precomputed")
@@ -93,9 +141,10 @@ def group_by_clusters(filename: str):
     distances, indices = nbrs.kneighbors(scaled_distance_matrix)
     distances = np.sort(distances[:, 1])
 
-    dbscan = DBSCAN(eps=0.125, min_samples=4).fit(scaled_distance_matrix)  # 0.4
+    dbscan = DBSCAN(eps=0.125, min_samples=4).fit(scaled_distance_matrix) 
     labels = dbscan.fit_predict(scaled_distance_matrix)
 
+    '''
     unique_labels = set(labels)
     core_samples_mask = np.zeros_like(labels, dtype=bool)
     core_samples_mask[dbscan.core_sample_indices_] = True
@@ -128,17 +177,14 @@ def group_by_clusters(filename: str):
             markersize=6,
         )
     plt.show()
+    '''
 
     # Number of clusters in labels, ignoring noise if present.
     n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
     n_noise_ = list(labels).count(-1)
-
-    print("clustering information: ")
-    print("Estimated number of clusters: %d" % n_clusters_)
-    print("Estimated number of noise points: %d" % n_noise_)
-    print(
-        f"Silhouette Coefficient: {metrics.silhouette_score(scaled_distance_matrix, labels):.3f}\n"
-    )
+    clustering_metrics= {"clusters":n_clusters_, 
+    "noise points":n_noise_, 
+    "clustering_score":metrics.silhouette_score(scaled_distance_matrix, labels)}
 
     for cluster_id in np.unique(labels):
         cluster_strings = [data_list[i] for i in np.where(labels == cluster_id)[0]]
@@ -147,10 +193,10 @@ def group_by_clusters(filename: str):
         else:
             clusters.append(cluster_strings)
         # print(f"Cluster {cluster_id}: {cluster_strings}")
-    return clusters, noise
+    return clusters, noise, distance_matrix_metrics, clustering_metrics
 
 
-def make_program(user_text, matched_token_classes):
+def make_program(user_text:str, matched_token_classes, list_of_dicts):
     """
     Assigns parsers to tokens based on types and the result of applying specific parsers, resorting to
     LLM to seperate constants and identifiers.
@@ -158,27 +204,29 @@ def make_program(user_text, matched_token_classes):
     which token they parse or if there is a sequence of similar parsers.
     Returns an ordered list of parsers.
     """
-    tokens = tokenizer.split_and_group(user_text)
+    tokens = tokenizer.split_and_group(user_text, list_of_dicts)
+    #print(tokens)
     unparsed = tokens.copy()
     dict_predictions = {}
+    flagged = []
 
     valid_tokens = set()
     delimiters = set()
+    combined_abbreviations = make_combined_abbreviations(list_of_dicts)
     for token in tokens:
         if not token.isalnum():
             delimiters.add(token)
-        elif equip_abbreviations(token) and not any(
-            r.error for r in equip_abbreviations(token)
-        ):
-            dict_predictions[token] = "equip_abbreviations"
-        elif point_abbreviations(token) and not any(
-            r.error for r in point_abbreviations(token)
-        ):
-            dict_predictions[token] = "point_abbreviations"
         elif (
             wordChecker.check_word_validity(token) and len(token) >= MIN_CONSTANT_LENGTH
         ):
             valid_tokens.add(token)
+        else:
+            if combined_abbreviations(token) and not any(
+                r.error for r in combined_abbreviations(token)
+            ):
+                dict_predictions[token] = "COMBINED_ABBREVIATIONS"
+                break
+        
 
     # Assign classifications
     for token in delimiters:
@@ -203,7 +251,7 @@ def make_program(user_text, matched_token_classes):
         classification = class_token_dict.get(token)
         if classification:
             if classification == "Abbreviations":
-                print(f"{token} may be an unknown abbreviation")
+                flagged.append(token)
         if (
             wordChecker.check_word_validity(token) and len(token) >= MIN_CONSTANT_LENGTH
         ) or classification == "Constant":
@@ -221,9 +269,7 @@ def make_program(user_text, matched_token_classes):
 
     while right < arr_size:
         if (
-            arr[left] == "equip_abbreviations" and arr[right] == "point_abbreviations"
-        ) or (
-            arr[left] == "equip_abbreviations" and arr[right] == "equip_abbreviations"
+            arr[left] == "COMBINED_ABBREVIATIONS" and arr[right] == "COMBINED_ABBREVIATIONS"
         ):  # two abbreviations in sequence
             final_groups.append("many(" + arr[left] + ")")
             left += 2
@@ -321,22 +367,28 @@ def make_program(user_text, matched_token_classes):
     ):  # last element is an identifier
         final_groups.pop(len(final_groups) - 1)
         final_groups.append("identifier")
-    return final_groups
+    return final_groups, flagged
 
 
-def generate_parsers_for_clusters(filename: str):
-    # generate parsers for each cluster and returns a map of parser to cluster as well as generating parser for each point in noise
+def generate_parsers_for_clusters(filename: str, col_name:str, num_tries: int, list_of_dicts):
+    '''
+    Generate parsers for each cluster and 
+    returns a map of parser to cluster as well as 
+    generating parser for each point in noise
+    '''
     map_parser_to_cluster = {}
-    clusters, noise = group_by_clusters(filename)
+    clusters, noise, distance_metrics, cluster_metrics = group_by_clusters(filename, col_name)
+    flagged = []
 
     for arr_of_point_names in clusters:
         point_name = arr_of_point_names[random.randint(0, len(arr_of_point_names) - 1)]
         try:
-            llm_output = classify_tokens_with_llm(point_name)
+            llm_output = classify_tokens_with_llm(point_name, list_of_dicts, num_tries)
         except Exception as e:
             print(e)
+            print(f"num_tries exceeded {num_tries}")
             continue
-        program_arr = make_program(point_name, llm_output)
+        program_arr, flagged = make_program(point_name, llm_output, list_of_dicts)
         random_generated_parser = (
             "parser_lencluster_"
             + str(len(program_arr))
@@ -348,23 +400,25 @@ def generate_parsers_for_clusters(filename: str):
 
     for noise_point in noise[0]:
         try:
-            llm_output = classify_tokens_with_llm(noise_point)
+            llm_output = classify_tokens_with_llm(noise_point, list_of_dicts, num_tries)
         except Exception as e:
             print(e)
+            print(f"num_tries exceeded {num_tries}")
             continue
-        program_arr = make_program(noise_point, llm_output)
+        program_arr, flagged = make_program(noise_point, llm_output, list_of_dicts)
         random_generated_parser = (
             "parser_noise_" + str(len(program_arr)) + "_" + str(random.randint(1, 1000))
         )
         parser = random_generated_parser + " = sequence(" + ", ".join(program_arr) + ")"
-        map_parser_to_cluster[parser] = noise_point
+        map_parser_to_cluster[parser] = [noise_point]
 
-    return map_parser_to_cluster
+    return map_parser_to_cluster.keys(), map_parser_to_cluster.values(), distance_metrics, cluster_metrics, flagged
 
 
 def generate_program(point_name, program_arr, file_to_write, test_file, mode):
     """
-    Writes ordered, combined parsers based on mode to either a file or a directory with files to test clusters.
+    Writes ordered, combined parsers based on mode to either a file 
+    or a directory with files to test clusters.
     """
 
     prog = f"parser_for{len(program_arr)}"
@@ -410,7 +464,7 @@ print({prog}(\"{point_name}\"))
         return parser
 
 
-def parse_file(input_file, mode):
+def parse_file(input_file, mode, list_of_dicts):
     """
     Driver program that applies parser generation algorithm to a file, clusters the contents with DBScan,
     will either write it as a sequence of parsers combined into one parser
@@ -435,16 +489,17 @@ print("wrong percentage: ", (wrong) / (right+wrong))
 print("total: ", right+wrong)
 #print(unparsed)
 """
-    clusters, noise = group_by_clusters(input_file)
+    clusters, noise, distance_metrics, cluster_metrics = group_by_clusters(input_file, col_name)
     for arr_of_point_names in clusters:
         point_name = arr_of_point_names[random.randint(0, len(arr_of_point_names) - 1)]
         len_token = len(tokenizer.split_and_group(point_name))
         try:
-            llm_output = classify_tokens_with_llm(point_name)
+            llm_output = classify_tokens_with_llm(point_name, list_of_dicts, num_tries)
         except Exception as e:
             print(e)
+            print(f"num_tries exceeded {num_tries}")
             continue
-        program_arr = make_program(point_name, llm_output)
+        program_arr, flagged = make_program(point_name, llm_output, list_of_dicts=[equip_abbreviations, point_abbreviations])
         rand_num = random.randint(1, 1000)
         test_file = f"test_{len_token}_{rand_num}.txt"
         file_to_write = f"program_for_length_{len_token}_{rand_num}.py"
@@ -514,14 +569,13 @@ else:
     file = sys.argv[1]
     mode = sys.argv[2]
     try:
-        with open(file, "r") as f:
-            if mode != "terminal":
-                parse_file(file, mode)
-            else:
-                for k, v in generate_parsers_for_clusters(file).items():
-                    print(k)
-                    print(v)
-                    print("\n")
+        if mode != "terminal":
+            parse_file(file, mode)
+        else:
+            for k, v in generate_parsers_for_clusters(file).items():
+                print(k)
+                print(v)
+                print("\n")
     except FileNotFoundError:
         print("File not found:", file)
     except Exception as e:

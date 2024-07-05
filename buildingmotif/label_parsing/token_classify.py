@@ -29,14 +29,14 @@ class LLM_Token_Predictions(BaseModel):
 parser = PydanticOutputParser(pydantic_object=LLM_Token_Predictions)
 
 
-def classify_tokens_with_llm(user_input):
+def classify_tokens_with_llm(user_input, list_of_dicts, num_tries):
     """
     Splits a string meant to represent a building point label based on character shifts and
-    uses local LLM from Ollama to classify each token as either a constant, abbreviation, identifier, or delimiter.
+    uses local LLM from Ollama3 to classify each token as either a constant, abbreviation, identifier, or delimiter.
     Returns List of Token_Prediction, which has a token and classification field as predicted by the LLM.
     """
-    tokens_str_list = str(tokenizer.split_and_group(user_input))
-
+    tokens_str_list = str(tokenizer.split_and_group(user_input, list_of_dicts))
+    
     file_path = "docs/usage.md"
 
     headers_to_split_on = [
@@ -108,6 +108,15 @@ def classify_tokens_with_llm(user_input):
 
     chain = prompt | llm | parser
 
-    resp = chain.invoke({"query": class_mapping, "examples": splits})
+    curr_tries = 0
+    while(curr_tries < num_tries):
+        try:
+            resp = chain.invoke({"query": class_mapping, "examples": splits})
+            break
+        except Exception as e:
+            print(e)
+            resp = None
+        finally:
+            curr_tries+=1
 
     return resp
