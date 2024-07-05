@@ -48,6 +48,10 @@ def create_app(DB_URI, shacl_engine: Optional[str] = "pyshacl"):
 
     :param db_uri: database URI
     :type db_uri: str
+    :param shacl_engine: the name of the engine to use for validation: "pyshacl" or "topquadrant". Using topquadrant
+        requires Java to be installed on this machine, and the "topquadrant" feature on BuildingMOTIF,
+        defaults to "pyshacl"
+    :type shacl_engine: str, optional
     :return: flask app
     :rtype: Flask.app
     """
