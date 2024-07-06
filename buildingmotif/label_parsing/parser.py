@@ -179,17 +179,27 @@ def first_true(iterable, default=None, pred=None):
     return next(filter(pred, iterable), default)
 
 
-def parser_on_list(parser, data_list):
+def parser_on_list(parser, data_list: List):
     """
-    Applies parser to each element in test file.
-    Returns total parsed, total unparsed, and specific elements that were
-    parsed and not parsed.
+    Applies parser to each element in data_list.
+    Returns total parsed, total unparsed, successful parsed tokens, and unparsed elements from the list.
+
+    Parameters:
+    parser(Parser): parser to test
+    data_list(List): building points in list format
+
+    Returns:
+    parsed(List): list of emitted tokens from applying each parser on each element
+    unparsed(List): list of unsuccessfully parsed building point labels
+    right(int): amount of successfully parsed building point labels
+    wrong(int): amount of unsuccessfully parsed building point labels
     """
+    
     parsed = []
     unparsed = []
     wrong = 0
     right = 0
-    for data in list(data_list):
+    for data in data_list:
         res = parser(data)
         if res and not any(r.error for r in res):
             parsed.append(res)

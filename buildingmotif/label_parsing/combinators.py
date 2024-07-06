@@ -274,13 +274,6 @@ COMMON_EQUIP_ABBREVIATIONS_BRICK = {
 }
 
 
-sorted_equip = sorted(
-    list(COMMON_EQUIP_ABBREVIATIONS_BRICK.items()),
-    key=lambda key: len(key[0]),
-    reverse=True,
-)
-COMMON_EQUIP_ABBREVIATIONS_BRICK = {ele[0]: ele[1] for ele in sorted_equip}
-
 COMMON_POINT_ABBREVIATIONS = {
     "ART": BRICK.Room_Temperature_Sensor,
     "TSP": BRICK.Air_Temperature_Setpoint,
@@ -298,30 +291,6 @@ COMMON_POINT_ABBREVIATIONS = {
     "PS": BRICK.Pressure_Sensor,
     "DPS": BRICK.Differential_Pressure_Sensor,
 }
-sorted_points = sorted(
-    list(COMMON_POINT_ABBREVIATIONS.items()), key=lambda key: len(key[0]), reverse=True
-)
-COMMON_POINT_ABBREVIATIONS = {ele[0]: ele[1] for ele in sorted_points}
-
-def make_abbreviations_list(*dicts):
-    arr = []
-    for d in dicts:
-        sorted_points = sorted(
-        list(d.items()), key=lambda key: len(key[0]), reverse=True
-        )
-        processed = {ele[0].upper(): ele[1] for ele in sorted_points}
-        arr.append(abbreviations(processed)) 
-    return arr
-
-def make_combined_abbreviations(list_of_dicts):
-    combined = {}
-    for d in list_of_dicts:
-        combined.update(d)
-    sorted_points = sorted(
-    list(combined.items()), key=lambda key: len(key[0]), reverse=True
-    )
-    processed = {ele[0].upper(): ele[1] for ele in sorted_points}
-    return abbreviations(processed) 
 
 
 COMMON_ABBREVIATIONS = abbreviations(
