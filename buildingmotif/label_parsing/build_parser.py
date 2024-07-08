@@ -15,6 +15,7 @@ from typing import List
 MIN_CONSTANT_LENGTH = 3
 scaler = MinMaxScaler()
 
+
 def classify_tokens(split: List):
     """
     Classifies tokens into one of three classes: alpha (letters), numbers, or special characters. Used for
@@ -142,8 +143,9 @@ def make_program(user_text: str, matched_token_classes, list_of_dicts: List):
 
     valid_tokens = set()
     delimiters = set()
-    combined_abbreviations = abbreviationsTool.make_combined_abbreviations(list_of_dicts)
-    # combines dictionaries, sorts keys by decreasing length, and makes combined dictionary an abbreviations object
+    combined_abbreviations = abbreviationsTool.make_combined_abbreviations(
+        list_of_dicts
+    )# combines dictionaries, sorts keys by decreasing length, and makes combined dictionary an abbreviations object
 
     for token in tokens:
         if not token.isalnum():

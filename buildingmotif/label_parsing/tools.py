@@ -1,14 +1,15 @@
 import subprocess
 from typing import List
 import enchant
-from combinators import abbreviations
+from buildingmotif.label_parsing.combinators import abbreviations
+
 
 class Lint_Code:
     """
     Runs black in a subprocess to lint code
     """
 
-    def _run(self, filepath:str):
+    def _run(self, filepath: str):
         """
         Lints a file with black.
         """
@@ -21,6 +22,7 @@ class Lint_Code:
             check=False,
         )
 
+
 class Abbreviations_Tools:
     """
     Process dictionaries or list of dictionaries by making keys uppercase, sorting by key length, and making
@@ -29,7 +31,7 @@ class Abbreviations_Tools:
 
     def make_abbreviations(self, input_dict):
         """
-        Sorts and makes all keys uppercase in a dictionary. 
+        Sorts and makes all keys uppercase in a dictionary.
 
         Parameters:
         input_dict(dict): input dict.
@@ -39,11 +41,10 @@ class Abbreviations_Tools:
         """
 
         sorted_points = sorted(
-        list(input_dict.items()), key=lambda key: len(key[0]), reverse=True
+            list(input_dict.items()), key=lambda key: len(key[0]), reverse=True
         )
         processed = {ele[0].upper(): ele[1] for ele in sorted_points}
         return abbreviations(processed)
-
 
     def make_combined_abbreviations(self, list_of_dicts):
         """
@@ -61,12 +62,35 @@ class Abbreviations_Tools:
         for d in list_of_dicts:
             combined.update(d)
         sorted_points = sorted(
-        list(combined.items()), key=lambda key: len(key[0]), reverse=True
+            list(combined.items()), key=lambda key: len(key[0]), reverse=True
         )
         processed = {ele[0].upper(): ele[1] for ele in sorted_points}
-        return abbreviations(processed) 
+        return abbreviations(processed)
+
+    def make_combined_dict(self, list_of_dicts):
+        """
+        Combines into one dictionary.
+        Sorts and makes all keys uppercase for that dictionary.
+
+        Parameters:
+        list_of_dicts(List[dict]).
+
+        Returns:
+        processed, combined dictionary
+        """
+
+        combined = {}
+        for d in list_of_dicts:
+            combined.update(d)
+        sorted_points = sorted(
+            list(combined.items()), key=lambda key: len(key[0]), reverse=True
+        )
+        processed = {ele[0].upper(): ele[1] for ele in sorted_points}
+        return processed
+
 
 abbreviationsTool = Abbreviations_Tools()
+
 
 class Check_Valid_Word:
     """
@@ -134,7 +158,7 @@ class Tokenizer:
 
         return tokened
 
-    def split_and_group(self, word: str, list_of_dicts:List):
+    def split_and_group(self, word: str, list_of_dicts: List):
         """
         Tokenizes a word based on alphanumeric or special character shifts. Then,
         apply abbreviations to find more tokens, and finally combines tokens
@@ -150,11 +174,15 @@ class Tokenizer:
 
         tokens = self.shift_split(word)
         arr = []
-        combined_abbreviations = abbreviationsTool.make_combined_abbreviations(list_of_dicts)
+        combined_abbreviations = abbreviationsTool.make_combined_abbreviations(
+            list_of_dicts
+        )
         for group in tokens:
             if not group.isalnum():
                 arr.append(group)
-            elif combined_abbreviations(group) and not any(r.error for r in combined_abbreviations(group)):
+            elif combined_abbreviations(group) and not any(
+                r.error for r in combined_abbreviations(group)
+            ):
                 parsed_abbrev = combined_abbreviations(group)[0].value
                 arr.append(parsed_abbrev)
                 remain = group[len(parsed_abbrev) :]
@@ -162,12 +190,11 @@ class Tokenizer:
                     arr.extend(self.split_and_group(remain, list_of_dicts))
             else:
                 arr.append(group)
-    
+
         final_groups = []
         left = 0
         right = 1
 
-        
         while right < len(arr):
             if wordChecker.check_word_validity(arr[left] + arr[right]) and (
                 arr[left].isalpha() and arr[right].isalpha()
@@ -181,7 +208,7 @@ class Tokenizer:
                 right = left + 1
         if left < len(arr):
             final_groups.append(arr[left])
-        
+
         return final_groups
 
 

@@ -1,5 +1,5 @@
 from typing import List
-from tools import tokenizer
+from buildingmotif.label_parsing.tools import tokenizer
 
 from langchain.output_parsers import PydanticOutputParser
 from langchain_community.llms import Ollama
@@ -9,7 +9,7 @@ from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
 )
-
+import os
 
 llm = Ollama(model="llama3")
 
@@ -52,9 +52,8 @@ def classify_tokens_with_llm(user_input: str, list_of_dicts: List, num_tries: in
     List of Token_Prediction
 
     """
-    tokens_str_list = str(tokenizer.split_and_group(user_input, list_of_dicts))
-
-    file_path = "docs/usage.md"
+    #tokens_str_list = str(tokenizer.split_and_group(user_input, list_of_dicts))
+    file_path = os.path.abspath("..\notebooks\examples\usage.md")
 
     headers_to_split_on = [
         ("## `string`", "Header 1"),
@@ -69,6 +68,7 @@ def classify_tokens_with_llm(user_input: str, list_of_dicts: List, num_tries: in
         ("## `extend_if_match`", "Header 10"),
     ]
 
+    file_path = os.path.abspath(r"docs/usage.md")
     try:
         with open(file_path, "r") as file:
             file_content = file.read()

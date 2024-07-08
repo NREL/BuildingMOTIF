@@ -194,7 +194,7 @@ def parser_on_list(parser, data_list: List):
     right(int): amount of successfully parsed building point labels
     wrong(int): amount of unsuccessfully parsed building point labels
     """
-    
+
     parsed = []
     unparsed = []
     wrong = 0
