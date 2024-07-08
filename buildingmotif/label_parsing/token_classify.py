@@ -52,8 +52,7 @@ def classify_tokens_with_llm(user_input: str, list_of_dicts: List, num_tries: in
     List of Token_Prediction
 
     """
-    #tokens_str_list = str(tokenizer.split_and_group(user_input, list_of_dicts))
-    file_path = os.path.abspath("..\notebooks\examples\usage.md")
+    tokens_str_list = str(tokenizer.split_and_group(user_input, list_of_dicts))
 
     headers_to_split_on = [
         ("## `string`", "Header 1"),
@@ -68,7 +67,7 @@ def classify_tokens_with_llm(user_input: str, list_of_dicts: List, num_tries: in
         ("## `extend_if_match`", "Header 10"),
     ]
 
-    file_path = os.path.abspath(r"docs/usage.md")
+    file_path = os.path.abspath(r"../notebooks/examples/usage.md")
     try:
         with open(file_path, "r") as file:
             file_content = file.read()

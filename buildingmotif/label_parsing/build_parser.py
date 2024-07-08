@@ -145,7 +145,7 @@ def make_program(user_text: str, matched_token_classes, list_of_dicts: List):
     delimiters = set()
     combined_abbreviations = abbreviationsTool.make_combined_abbreviations(
         list_of_dicts
-    )# combines dictionaries, sorts keys by decreasing length, and makes combined dictionary an abbreviations object
+    )  # combines dictionaries, sorts keys by decreasing length, and makes combined dictionary an abbreviations object
 
     for token in tokens:
         if not token.isalnum():

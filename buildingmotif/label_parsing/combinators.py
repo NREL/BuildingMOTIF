@@ -1,6 +1,6 @@
 # import neccessary libraries
 import re
-from typing import List, Tuple
+from typing import List
 
 from buildingmotif.label_parsing.parser import Parser
 from buildingmotif.label_parsing.tokens import (

@@ -1,10 +1,15 @@
 import importlib.util
 import os
 import re
-from buildingmotif.label_parsing.build_parser import generate_parsers_for_clusters, generate_parsers_for_points
-from buildingmotif.label_parsing.combinators import COMMON_EQUIP_ABBREVIATIONS_BRICK, COMMON_POINT_ABBREVIATIONS
+from buildingmotif.label_parsing.build_parser import (
+    generate_parsers_for_clusters,
+    generate_parsers_for_points,
+)
+from buildingmotif.label_parsing.combinators import (
+    COMMON_EQUIP_ABBREVIATIONS_BRICK,
+    COMMON_POINT_ABBREVIATIONS,
+)
 from buildingmotif.label_parsing.tools import abbreviationsTool, codeLinter
-
 
 class SerializedParserMetrics:
     """
@@ -64,7 +69,7 @@ class SerializedParserMetrics:
             )
         except (
             ValueError
-        ) as e:  # if not enough points to cluster, generate parsers for each point
+        ):  # if not enough points to cluster, generate parsers for each point
             self.parsers, self.clusters, self.flagged_abbreviations = (
                 generate_parsers_for_points(
                     filename, col_name, num_tries, list_of_dicts
@@ -91,7 +96,7 @@ class SerializedParserMetrics:
                         0
                     ]  # matches the parser variable (e.g. parser_lencluster_11_417)
                     temp_file.write(
-                        f"""
+                        """
 from buildingmotif.label_parsing.combinators import *
 from buildingmotif.label_parsing.tools import abbreviationsTool
 from buildingmotif.label_parsing.parser import parser_on_list
@@ -165,7 +170,7 @@ def run_parser():
             filename = parser_var + ".py"
             with open(os.path.join(directory, filename), "w") as file:
                 file.write(
-                    f"""
+                    """
 from buildingmotif.label_parsing.combinators import *
 from buildingmotif.label_parsing.parser import parser_on_list
 from buildingmotif.label_parsing.tools import abbreviationsTool
@@ -186,29 +191,3 @@ COMBINED_ABBREVIATIONS = abbreviationsTool.make_combined_abbreviations({abbrevia
 cluster = {cluster}"""
                 )
             codeLinter._run(os.path.join(directory, filename))
-
-
-#serializedParsers = SerializedParserMetrics("docs/basic_len102.csv", "BuildingNames")
-# serializedParsers= SerializedParserMetrics("docs/basic.csv", "BuildingNames")
-
-# serializedParsers.write_to_directory("generated")
-# print("all parsers: ", serializedParsers.parsers)
-# print("all clusters: ", serializedParsers.clusters)
-# print("potential abbreviations: ", serializedParsers.flagged_abbreviations)
-
-# print("distances info: ")
-# for k, v in serializedParsers.distance_metrics.items():
-#     print(k, v)
-
-# print("clustering info: ")
-# for k, v in serializedParsers.clustering_metrics.items():
-#     print(k, v)
-
-# print("total parsed for all clusters: ", serializedParsers.parsed_count)
-# print("total unparsed for all clusters: ", serializedParsers.unparsed_count)
-# print("total for all clusters: ", serializedParsers.total_count)
-
-# print("combined clustering information for each cluster: ")
-# for i in serializedParsers.combined_clusters:
-#     for k, v in i.items():
-#         print(k, v)
