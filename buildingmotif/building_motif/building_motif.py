@@ -25,11 +25,6 @@ from buildingmotif.namespaces import bind_prefixes
 class BuildingMOTIF(metaclass=Singleton):
     """Manages BuildingMOTIF data classes."""
 
-    # we specify the metaclass as an attribute (__metaclass__ = Singleton) instead of providing
-    # it as a keyword arg above (BuildingMOTIF(metaclass=Singleton)) because it allows us to monkeypatch
-    # BuildingMOTIF for tests to ignore the singleton behavior
-    __metaclass__ = Singleton
-
     def __init__(
         self,
         db_uri: str,

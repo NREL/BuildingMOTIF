@@ -14,6 +14,7 @@ def bm():
     """
     BuildingMotif instance for tests involving dataclasses and API calls
     """
+    BuildingMOTIF.clean()
     bm = BuildingMOTIF("sqlite://")
     # add tables to db
     bm.setup_tables()
