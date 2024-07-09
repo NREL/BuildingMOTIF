@@ -13,7 +13,12 @@ from rdflib.term import BNode, Node
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A
-from buildingmotif.utils import _gensym, get_template_parts_from_shape, replace_nodes
+from buildingmotif.utils import (
+    _gensym,
+    _guarantee_unique_template_name,
+    get_template_parts_from_shape,
+    replace_nodes,
+)
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Library, Model, Template
@@ -162,7 +167,8 @@ class PathClassCount(GraphDiff):
             inst = _gensym()
             body.add((self.focus, self.path, inst))
             body.add((inst, A, self.classname))
-        return [lib.create_template(f"resolve_{focus}{name}", body)]
+        template_name = _guarantee_unique_template_name(lib, f"resolve{focus}{name}")
+        return [lib.create_template(template_name, body)]
 
 
 @dataclass(frozen=True, unsafe_hash=True)
@@ -250,7 +256,10 @@ class PathShapeCount(GraphDiff):
             if self.extra_body:
                 replace_nodes(self.extra_body, {PARAM.name: inst})
                 body += self.extra_body
-            templ = lib.create_template(f"resolve{focus}{name}", body)
+            template_name = _guarantee_unique_template_name(
+                lib, f"resolve{focus}{name}"
+            )
+            templ = lib.create_template(template_name, body)
             if self.extra_deps:
                 from buildingmotif.dataclasses.template import Template
 
@@ -331,7 +340,8 @@ of path {self.path}"
         for _ in range(self.minc or 0):
             inst = _gensym()
             body.add((self.focus, self.path, inst))
-        return [lib.create_template(f"resolve{focus}{name}", body)]
+        template_name = _guarantee_unique_template_name(lib, f"resolve{focus}{name}")
+        return [lib.create_template(template_name, body)]
 
 
 @dataclass(frozen=True)
@@ -356,7 +366,8 @@ class RequiredClass(GraphDiff):
         body = Graph()
         name = re.split(r"[#\/]", self.classname)[-1]
         body.add((self.focus, A, self.classname))
-        return [lib.create_template(f"resolveSelf{name}", body)]
+        template_name = _guarantee_unique_template_name(lib, f"resolveSelf{name}")
+        return [lib.create_template(template_name, body)]
 
 
 @dataclass(frozen=True)
@@ -385,7 +396,8 @@ class GraphClassCardinality(GraphDiff):
         for _ in range(self.expectedCount):
             template_body = Graph()
             template_body.add((PARAM["name"], A, self.classname))
-            templs.append(lib.create_template(f"resolveAdd{name}", template_body))
+            template_name = _guarantee_unique_template_name(lib, f"resolveAdd{name}")
+            templs.append(lib.create_template(template_name, template_body))
         return templs
 
 
