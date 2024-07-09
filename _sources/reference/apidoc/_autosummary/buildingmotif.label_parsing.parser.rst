@@ -17,6 +17,7 @@ buildingmotif.label\_parsing.parser
       first_true
       parse
       parse_list
+      parser_on_list
       results_to_tokens
    
    

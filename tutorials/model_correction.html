@@ -15,19 +15,19 @@
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
-  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -77,28 +77,23 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -121,17 +116,22 @@ const thebe_selector_output = ".output, .cell_output"
 </form></div>
   </div>
 
-
-  <div class="bd-header-announcement container-fluid bd-header-announcement">
-    <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
-  </div>
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
+</aside>
 
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-    </nav>
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
   
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -147,6 +147,8 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
 
+  
+    
   
 
 <a class="navbar-brand logo" href="../README.html">
@@ -179,34 +181,34 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../reference/developer_documentation.html">Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/cli_tool.html">Command Line Interface</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/apidoc/index.html">Code Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.app.html">buildingmotif.api.app</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.views.html">buildingmotif.api.views</a></li>
 </ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.html">buildingmotif.building_motif</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.html">buildingmotif.building_motif</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.building_motif.html">buildingmotif.building_motif.building_motif</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html">buildingmotif.building_motif.singleton</a></li>
 </ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.utils.html">buildingmotif.database.utils</a></li>
 </ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html">buildingmotif.dataclasses.library</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html">buildingmotif.dataclasses.model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html">buildingmotif.dataclasses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html">buildingmotif.dataclasses.validation</a></li>
 </ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.html">buildingmotif.ingresses</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.html">buildingmotif.ingresses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
@@ -215,28 +217,32 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
 </ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.SerializedParserMetrics.html">buildingmotif.label_parsing.SerializedParserMetrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.build_parser.html">buildingmotif.label_parsing.build_parser</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html">buildingmotif.label_parsing.combinators</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.parser.html">buildingmotif.label_parsing.parser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.token_classify.html">buildingmotif.label_parsing.token_classify</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html">buildingmotif.label_parsing.tokens</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.tools.html">buildingmotif.label_parsing.tools</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
-</li>
+</details></li>
 </ul>
-</li>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current nav bd-sidenav">
@@ -276,7 +282,7 @@ const thebe_selector_output = ".output, .cell_output"
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
 
@@ -285,7 +291,7 @@ const thebe_selector_output = ".output, .cell_output"
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article">
+              <div class="bd-header-article d-print-none">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
@@ -417,10 +423,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
   </button>
 `);
 </script>
@@ -428,7 +434,7 @@ document.write(`
 
 <script>
 document.write(`
-  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
@@ -468,7 +474,7 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="model-correction">
 <h1>Model Correction<a class="headerlink" href="#model-correction" title="Permalink to this heading">#</a></h1>
@@ -528,40 +534,40 @@ document.write(`
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,443 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,876 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/box-damper-position in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,448 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,884 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/window-switch in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,453 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,890 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/discharge-airflow in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,457 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,895 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,462 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,900 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,469 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,910 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/oa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,473 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,915 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ma-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,480 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,920 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/ra-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,486 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,925 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/filter-pd in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,492 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/box-damper-position in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,930 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.8/sz-vav-ahu/sa-temp in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,499 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/window-switch in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,941 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/hot-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,504 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.1/vav-cooling-only/discharge-airflow in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:31,946 | root |  WARNING: Warning: could not find dependee urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/cold-deck in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.3/Brick&#39;)]
 </pre></div>
 </div>
 </div>
@@ -583,21 +589,21 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,816 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:32,287 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (No row was found when one was required). Trying shape collections
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 18:20:15,821 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:59:32,293 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor on path https://brickschema.org/schema/Brick#hasPoint
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
  - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
- - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Cooling_Command on path https://brickschema.org/schema/Brick#hasPoint
  - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Heating_Command on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Cooling_Command on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+ - urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
 </pre></div>
 </div>
 </div>
@@ -626,14 +632,14 @@ For example, asking for all the entities which have failed validation:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor on path https://brickschema.org/schema/Brick#hasPoint
-urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
-urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
-urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
-urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
-urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
-urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Cooling_Command on path https://brickschema.org/schema/Brick#hasPoint
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
 urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Heating_Command on path https://brickschema.org/schema/Brick#hasPoint
+urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan on path https://brickschema.org/schema/Brick#hasPart
+urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Cooling_Command on path https://brickschema.org/schema/Brick#hasPoint
+urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
+urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint
 </pre></div>
 </div>
 </div>
@@ -663,36 +669,57 @@ urn:bldg/Core_ZN-PSC_AC needs between 1 and 1 instances of https://brickschema.o
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Name (autogenerated): resolveCore_ZN-PSC_ACFilter_Differential_Pressure_Sensor
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Name (autogenerated): resolveCore_ZN-PSC_ACReturn_Air_Temperature_Sensor
 Parameters (autogenerated): {&#39;p60&#39;}
 Template body (autogenerated):
 @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
 
 &lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p60&gt; .
 
-&lt;urn:___param___#p60&gt; a brick:Filter_Differential_Pressure_Sensor .
+&lt;urn:___param___#p60&gt; a brick:Return_Air_Temperature_Sensor .
 
 
 -------------------------------------------------------------------------------
-Name (autogenerated): resolveCore_ZN-PSC_ACOutside_Air_Temperature_Sensor
+Name (autogenerated): resolveCore_ZN-PSC_ACHeating_Command
 Parameters (autogenerated): {&#39;p61&#39;}
 Template body (autogenerated):
 @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
 
 &lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p61&gt; .
 
-&lt;urn:___param___#p61&gt; a brick:Outside_Air_Temperature_Sensor .
+&lt;urn:___param___#p61&gt; a brick:Heating_Command .
 
 
 -------------------------------------------------------------------------------
-Name (autogenerated): resolveCore_ZN-PSC_ACReturn_Air_Temperature_Sensor
+Name (autogenerated): resolveCore_ZN-PSC_ACFilter_Differential_Pressure_Sensor
 Parameters (autogenerated): {&#39;p62&#39;}
 Template body (autogenerated):
 @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
 
 &lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p62&gt; .
 
-&lt;urn:___param___#p62&gt; a brick:Return_Air_Temperature_Sensor .
+&lt;urn:___param___#p62&gt; a brick:Filter_Differential_Pressure_Sensor .
+
+
+-------------------------------------------------------------------------------
+Name (autogenerated): resolveCore_ZN-PSC_ACsa-fan
+Parameters (autogenerated): {&#39;p58&#39;, &#39;name&#39;, &#39;p57&#39;, &#39;p59&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPart &lt;urn:___param___#name&gt; .
+
+&lt;urn:___param___#name&gt; a brick:Supply_Fan,
+        &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan&gt; ;
+    brick:hasPoint &lt;urn:___param___#p57&gt;,
+        &lt;urn:___param___#p58&gt;,
+        &lt;urn:___param___#p59&gt; .
+
+&lt;urn:___param___#p57&gt; a brick:Start_Stop_Command .
+
+&lt;urn:___param___#p58&gt; a brick:Fan_Status .
+
+&lt;urn:___param___#p59&gt; a brick:Frequency_Command .
 
 
 -------------------------------------------------------------------------------
@@ -707,57 +734,36 @@ Template body (autogenerated):
 
 
 -------------------------------------------------------------------------------
-Name (autogenerated): resolveCore_ZN-PSC_ACSupply_Air_Temperature_Sensor
+Name (autogenerated): resolveCore_ZN-PSC_ACCooling_Command
 Parameters (autogenerated): {&#39;p64&#39;}
 Template body (autogenerated):
 @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
 
 &lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p64&gt; .
 
-&lt;urn:___param___#p64&gt; a brick:Supply_Air_Temperature_Sensor .
+&lt;urn:___param___#p64&gt; a brick:Cooling_Command .
 
 
 -------------------------------------------------------------------------------
-Name (autogenerated): resolveCore_ZN-PSC_ACsa-fan
-Parameters (autogenerated): {&#39;p59&#39;, &#39;p58&#39;, &#39;name&#39;, &#39;p57&#39;}
-Template body (autogenerated):
-@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
-
-&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPart &lt;urn:___param___#name&gt; .
-
-&lt;urn:___param___#name&gt; a brick:Supply_Fan,
-        &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan&gt; ;
-    brick:hasPoint &lt;urn:___param___#p57&gt;,
-        &lt;urn:___param___#p58&gt;,
-        &lt;urn:___param___#p59&gt; .
-
-&lt;urn:___param___#p57&gt; a brick:Start_Stop_Command .
-
-&lt;urn:___param___#p58&gt; a brick:Frequency_Command .
-
-&lt;urn:___param___#p59&gt; a brick:Fan_Status .
-
-
--------------------------------------------------------------------------------
-Name (autogenerated): resolveCore_ZN-PSC_ACCooling_Command
+Name (autogenerated): resolveCore_ZN-PSC_ACOutside_Air_Temperature_Sensor
 Parameters (autogenerated): {&#39;p65&#39;}
 Template body (autogenerated):
 @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
 
 &lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p65&gt; .
 
-&lt;urn:___param___#p65&gt; a brick:Cooling_Command .
+&lt;urn:___param___#p65&gt; a brick:Outside_Air_Temperature_Sensor .
 
 
 -------------------------------------------------------------------------------
-Name (autogenerated): resolveCore_ZN-PSC_ACHeating_Command
+Name (autogenerated): resolveCore_ZN-PSC_ACSupply_Air_Temperature_Sensor
 Parameters (autogenerated): {&#39;p66&#39;}
 Template body (autogenerated):
 @prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
 
 &lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p66&gt; .
 
-&lt;urn:___param___#p66&gt; a brick:Heating_Command .
+&lt;urn:___param___#p66&gt; a brick:Supply_Air_Temperature_Sensor .
 
 
 -------------------------------------------------------------------------------
@@ -814,7 +820,7 @@ Template body (autogenerated):
 <span class="g g-Whitespace">     </span><span class="mi">22</span>     <span class="c1"># 1 parameter which is the name of the missing item</span>
 <span class="g g-Whitespace">     </span><span class="mi">23</span>     <span class="n">param</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-<span class="ne">KeyError</span>: &#39;resolveCore_ZN-PSC_ACFilter_Differential_Pressure_Sensor&#39;
+<span class="ne">KeyError</span>: &#39;resolveCore_ZN-PSC_ACReturn_Air_Temperature_Sensor&#39;
 </pre></div>
 </div>
 </div>
@@ -940,7 +946,7 @@ Let’s use the same process above to get templates we can fill out to repair th
               
               
               
-                <footer class="prev-next-footer">
+                <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
     <a class="left-prev"
@@ -969,6 +975,7 @@ Let’s use the same process above to get templates we can fill out to repair th
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
 
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
@@ -1027,8 +1034,8 @@ By NREL
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
