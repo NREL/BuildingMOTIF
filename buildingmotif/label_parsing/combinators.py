@@ -1,7 +1,6 @@
+# import neccessary libraries
 import re
 from typing import List
-
-from rdflib import URIRef
 
 from buildingmotif.label_parsing.parser import Parser
 from buildingmotif.label_parsing.tokens import (
@@ -91,7 +90,7 @@ class regex(Parser):
 class choice(Parser):
     """Constructs a choice combinator of parsers."""
 
-    def __init__(self, *parsers: Parser):
+    def __init__(self, *parsers):
         self.parsers = parsers
 
     def __call__(self, target: str) -> List[TokenResult]:
@@ -102,7 +101,7 @@ class choice(Parser):
                 return result
             if result:
                 errors.append(result[0].error)
-        return [TokenResult(None, Null(), 0, " | ".join(errors))]  # type: ignore
+        return [TokenResult(None, Null(), 0, " | ".join(errors))]
 
 
 class constant(Parser):
@@ -118,18 +117,19 @@ class constant(Parser):
 class abbreviations(Parser):
     """Constructs a choice combinator of string matching based on a dictionary."""
 
-    def __init__(self, patterns: dict):
-        parsers = [string(s, Constant(URIRef(t))) for s, t in patterns.items()]
+    def __init__(self, patterns):
+        patterns = patterns
+        parsers = [string(s, Constant(t)) for s, t in patterns.items()]
         self.choice = choice(*parsers)
 
-    def __call__(self, target: str):
-        return self.choice(target)
+    def __call__(self, target):
+        return self.choice(target.upper())
 
 
 class sequence(Parser):
     """Applies parsers in sequence. All parsers must match consecutively."""
 
-    def __init__(self, *parsers: Parser):
+    def __init__(self, *parsers):
         self.parsers = parsers
 
     def __call__(self, target: str) -> List[TokenResult]:
@@ -153,7 +153,7 @@ class sequence(Parser):
 class many(Parser):
     """Applies the given sequence parser repeatedly until it stops matching."""
 
-    def __init__(self, seq_parser: Parser):
+    def __init__(self, seq_parser):
         self.seq_parser = seq_parser
 
     def __call__(self, target):
@@ -189,9 +189,9 @@ class until(Parser):
     STarts with a string length of 1 and increments it until the parser matches.
     """
 
-    def __init__(self, parser: Parser, type_name: TokenOrConstructor):
-        self.type_name = type_name
+    def __init__(self, parser, type_name: TokenOrConstructor):
         self.parser = parser
+        self.type_name = type_name
 
     def __call__(self, target):
         length = 1
@@ -216,7 +216,7 @@ class until(Parser):
 class extend_if_match(Parser):
     """Adds the type to the token result."""
 
-    def __init__(self, parser: Parser, type_name: Token):
+    def __init__(self, parser, type_name: Token):
         self.parser = parser
         self.type_name = type_name
 
@@ -273,6 +273,7 @@ COMMON_EQUIP_ABBREVIATIONS_BRICK = {
     "A": BRICK.Air_Handling_Unit,
 }
 
+
 COMMON_POINT_ABBREVIATIONS = {
     "ART": BRICK.Room_Temperature_Sensor,
     "TSP": BRICK.Air_Temperature_Setpoint,
@@ -291,15 +292,189 @@ COMMON_POINT_ABBREVIATIONS = {
     "DPS": BRICK.Differential_Pressure_Sensor,
 }
 
+
 COMMON_ABBREVIATIONS = abbreviations(
     {**COMMON_EQUIP_ABBREVIATIONS_BRICK, **COMMON_POINT_ABBREVIATIONS}
 )
 
-
-# common parser combinators
 equip_abbreviations = abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK)
 point_abbreviations = abbreviations(COMMON_POINT_ABBREVIATIONS)
-delimiters = regex(r"[._:/\- ]", Delimiter)
+delimiters = regex(r"[._&:/\- ]", Delimiter)
 identifier = regex(r"[a-zA-Z0-9]+", Identifier)
 named_equip = sequence(equip_abbreviations, maybe(delimiters), identifier)
 named_point = sequence(point_abbreviations, maybe(delimiters), identifier)
+building_constant = constant(Constant(BRICK.Building))
+up_to_delimiter = regex(r"[^_._:/\-]+", Identifier)
+
+# ith mapped points to brick class embeddings
+COMMON_GENERATED_ABBREVIATIONS = {
+    "DEWPTTMP": BRICK.Dewpoint_Setpoint,
+    "KTONHR": BRICK.Chilled_Water_Meter,
+    "CHWVLV": BRICK.Chilled_Water_Valve,
+    "ENTTMP": BRICK.Enthalpy_Sensor,
+    "CHVLV": BRICK.Chilled_Water_Valve,
+    "HWVLV": BRICK.Hot_Water_Valve,
+    "CHWST": BRICK.Leaving_Chilled_Water_Temperature_Sensor,
+    "CHWRT": BRICK.Chilled_Water_Temperature_Sensor,
+    "HHW-R": BRICK.Hot_Water_Radiator,
+    "HHW-S": BRICK.Hot_Water_System,
+    "SPEED": BRICK.Fan_Speed_Command,
+    "THERM": BRICK.Natural_Gas_Usage_Sensor,
+    "SCHWP": BRICK.Chilled_Water_System_Enable_Command,
+    "TCHWP": BRICK.Chilled_Water_Pump,
+    "PRESS": BRICK.Pressure_Setpoint,
+    "ZNTMP": BRICK.Zone_Air_Temperature_Setpoint,
+    "LWTMP": BRICK.Leaving_Water_Temperature_Setpoint,
+    "CRAC": BRICK.Computer_Room_Air_Conditioner,
+    "RVAV": BRICK.Variable_Air_Volume_Box_With_Reheat,
+    "HWST": BRICK.Leaving_Hot_Water_Temperature_Sensor,
+    "HWRT": BRICK.Entering_Hot_Water_Temperature_Sensor,
+    "CHWR": BRICK.Chilled_Water_System_Enable_Command,
+    "CHWS": BRICK.Chilled_Water_System_Enable_Command,
+    "CHWP": BRICK.Chilled_Water_Pump,
+    "HHWP": BRICK.Hot_Water_Pump,
+    "DMPR": BRICK.Damper_Command,
+    "FFIL": BRICK.Final_Filter,
+    "PFIL": BRICK.Pre_Filter_Status,
+    "SCHW": BRICK.Chilled_Water_System,
+    "ENTH": BRICK.Enthalpy_Setpoint,
+    "AHU": BRICK.Air_Handling_Unit,
+    "FCU": BRICK.Duct_Fan_Coil_Unit,
+    "VAV": BRICK.Variable_Air_Volume_Box,
+    "PMP": BRICK.Pump,
+    "RTU": BRICK.Rooftop_Unit,
+    "DMP": BRICK.Damper,
+    "VFD": BRICK.Variable_Frequency_Drive,
+    "MAU": BRICK.Makeup_Air_Unit,
+    "ART": BRICK.Room_Temperature_Sensor,
+    "TSP": BRICK.Air_Temperature_Setpoint,
+    "HSP": BRICK.Air_Temperature_Heating_Setpoint,
+    "CSP": BRICK.Air_Temperature_Cooling_Setpoint,
+    "CO2": BRICK.CO2_Sensor,
+    "STS": BRICK.Status,
+    "VLV": BRICK.Valve,
+    "DPS": BRICK.Differential_Pressure_Sensor,
+    "BLR": BRICK.Boiler_Command,
+    "CDW": BRICK.Condenser_Water_Temperature_Sensor,
+    "CWP": BRICK.Condenser_Water_Pump,
+    "DHW": BRICK.Domestic_Hot_Water_System_Enable_Command,
+    "FEV": BRICK.Exhaust_Air_Temperature_Sensor,
+    "GET": BRICK.Exhaust_Air_Temperature_Sensor,
+    "GEV": BRICK.Gas_Pressure_Regulator_Valve,
+    "LEF": BRICK.Exhaust_Air_Temperature_Sensor,
+    "HHW": BRICK.Hot_Water_Temperature_Setpoint,
+    "HPA": BRICK.Packaged_Air_Source_Heat_Pump,
+    "HRU": BRICK.Heat_Recovery_Condensing_Unit,
+    "HTX": BRICK.Radiator,
+    "HUM": BRICK.Humidifier_Fault_Status,
+    "LAB": BRICK.Enclosed_Office,
+    "OAU": BRICK.Dedicated_Outdoor_Air_System_Unit,
+    "PEM": BRICK.Electrical_Meter,
+    "PWP": BRICK.Water_Pump,
+    "SAV": BRICK.Return_Heating_Valve,
+    "CLG": BRICK.Cooling_Command,
+    "FLW": BRICK.Mixed_Air_Flow_Sensor,
+    "HTG": BRICK.Heating_Command,
+    "LSP": BRICK.Static_Pressure_Setpoint,
+    "MUA": BRICK.Makeup_Air_Unit,
+    "RHC": BRICK.Reheat_Valve,
+    "TON": BRICK.Chilled_Water_Meter,
+    "CHW": BRICK.Chilled_Water_System_Enable_Command,
+    "HWP": BRICK.Hot_Water_Pump,
+    "RAF": BRICK.Return_Fan,
+    "SAF": BRICK.Supply_Fan,
+    "FIL": BRICK.Intake_Air_Filter,
+    "MIX": BRICK.Mixing_Valve,
+    "RHT": BRICK.Reheat_Command,
+    "ALM": BRICK.Alarm_Sensitivity_Parameter,
+    "DEG": BRICK.Warm_Cool_Adjust_Sensor,
+    "TMP": BRICK.Temperature_Setpoint,
+    "PLT": BRICK.PVT_Panel,
+    "ACC": BRICK.Air_Cooled_Chiller,
+    "ACU": BRICK.Air_Cooling_Unit,
+    "ACW": BRICK.Wall_Air_Conditioner,
+    "ATS": BRICK.Automatic_Transfer_Switch,
+    "BAT": BRICK.Battery,
+    "BFP": BRICK.Backflow_Preventer_Valve,
+    "BSB": BRICK.Electric_Baseboard_Radiator,
+    "CMD": BRICK.CO2_Sensor,
+    "CMI": BRICK.CO2_Sensor,
+    "CMP": BRICK.Compressor,
+    "COL": BRICK.Cooling_Coil,
+    "CTR": BRICK.Cooling_Tower,
+    "DCT": BRICK.Disconnect_Switch,
+    "DEA": BRICK.Storage_Tank,
+    "DPP": BRICK.Damper_Command,
+    "EHC": BRICK.Fume_Hood,
+    "EHF": BRICK.Fume_Hood,
+    "EMS": BRICK.Energy_Storage_System,
+    "EVP": BRICK.Dry_Cooler,
+    "EXT": BRICK.Thermal_Expansion_Tank,
+    "FMT": BRICK.Flow_Sensor,
+    "FSD": BRICK.Fire_Safety_System,
+    "GDS": BRICK.Gas_Sensor,
+    "GTP": BRICK.Grease_Interceptor,
+    "HCU": BRICK.Heat_Pump_Condensing_Unit,
+    "HVU": BRICK.HVAC_Equipment,
+    "HWC": BRICK.Hot_Water_Radiator,
+    "ICE": BRICK.Chilled_Water_Loop,
+    "KTL": BRICK.Steam_Radiator,
+    "LCP": BRICK.Luminance_Command,
+    "LGD": BRICK.Dimmer,
+    "LOT": BRICK.Parking_Structure,
+    "MCC": BRICK.Motor_Control_Center,
+    "OZG": BRICK.Ozone_Level_Sensor,
+    "PLB": BRICK.Plumbing_Room,
+    "PTD": BRICK.Water_Pressure_Sensor,
+    "PVT": BRICK.PVT_Panel,
+    "REL": BRICK.Relay_Command,
+    "RFM": BRICK.Refrigerant_Metering_Device,
+    "RFR": BRICK.Chiller,
+    "RRS": BRICK.Heat_Recovery_Condensing_Unit,
+    "SDS": BRICK.Fire_Sensor,
+    "SHS": BRICK.Humidifier_Fault_Status,
+    "SWB": BRICK.Switch_Room,
+    "THS": BRICK.Outside_Air_Humidity_Sensor,
+    "TKW": BRICK.Hot_Water_Thermal_Energy_Storage_Tank,
+    "TMR": BRICK.On_Timer_Sensor,
+    "TMU": BRICK.Terminal_Unit,
+    "TST": BRICK.Thermostat_Status,
+    "TUS": BRICK.Steam_System,
+    "UHH": BRICK.Thermal_Energy_Usage_Sensor,
+    "UST": BRICK.Chilled_Water_Thermal_Energy_Storage_Tank,
+    "VCP": BRICK.Pump_VFD,
+    "WCC": BRICK.Condenser_Water_Temperature_Sensor,
+    "WIN": BRICK.Blind,
+    "HX": BRICK.Heat_Exchanger,
+    "HP": BRICK.Heat_Pump,
+    "CT": BRICK.Cooling_Tower,
+    "SP": BRICK.Setpoint,
+    "CO": BRICK.CO2_Alarm,
+    "FS": BRICK.Flow_Sensor,
+    "PS": BRICK.Air_Pressure_Sensor,
+    "AC": BRICK.Wall_Air_Conditioner,
+    "CH": BRICK.Centrifugal_Chiller,
+    "DW": BRICK.Water_System,
+    "EF": BRICK.Fan_VFD,
+    "RF": BRICK.Return_Fan,
+    "SF": BRICK.Supply_Fan,
+    "UH": BRICK.Heat_Pump_Condensing_Unit,
+    "CC": BRICK.Cooling_Coil,
+    "DP": BRICK.Differential_Pressure_Setpoint,
+    "EA": BRICK.Intake_Air_Filter,
+    "HC": BRICK.Heating_Coil,
+    "LT": BRICK.Low_Temperature_Alarm,
+    "MA": BRICK.Mixed_Air_Filter,
+    "VP": BRICK.Velocity_Pressure_Setpoint,
+    "RA": BRICK.Return_Air_Filter,
+    "SA": BRICK.Supply_Air_Plenum,
+    "RH": BRICK.Relative_Humidity_Sensor,
+    "AL": BRICK.Alarm_Sensitivity_Parameter,
+    "R": BRICK.Prayer_Room,
+    "A": BRICK.Alarm,
+    "T": BRICK.Temperature_Parameter,
+    "C": BRICK.Command,
+    "H": BRICK.High_Humidity_Alarm,
+    "P": BRICK.Pressure_Setpoint,
+    "S": BRICK.Status,
+}
