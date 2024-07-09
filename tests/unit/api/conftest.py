@@ -25,8 +25,8 @@ def building_motif():
 
 
 @pytest.fixture
-def app(building_motif):
-    app = create_app(DB_URI=building_motif.db_uri)
+def app(building_motif, shacl_engine):
+    app = create_app(DB_URI=building_motif.db_uri, shacl_engine=shacl_engine)
     app.config["TESTING"] = True
 
     return app

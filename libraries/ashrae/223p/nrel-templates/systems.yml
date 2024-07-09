@@ -40,9 +40,9 @@ makeup-air-unit:
     P:evaporative-cooler-out s223:mapsTo P:air-supply .
 
     P:air-supply a s223:OutletConnectionPoint ;
-      s223:hasMedium s223:Medium-Air .
+      s223:hasMedium s223:Fluid-Air .
     P:outside-air a s223:InletConnectionPoint ;
-      s223:hasMedium s223:Medium-Air .
+      s223:hasMedium s223:Fluid-Air .
       # TODO: building static pressure?
       # TODO: outside air dry bulb temp
       # TODO: outside air differential pressure
@@ -99,13 +99,13 @@ vav-reheat:
       s223:hasConnectionPoint P:air-in, P:air-out .
 
     P:air-in a s223:InletConnectionPoint ;
-      s223:hasMedium s223:Medium-Air .
+      s223:hasMedium s223:Fluid-Air .
     P:air-out a s223:OutletConnectionPoint ;
-      s223:hasMedium s223:Medium-Air .
+      s223:hasMedium s223:Fluid-Air .
 
   dependencies:
     - template: duct
-      args: {"name": "c0", "a": "dmp-air-out", "b": "rhc-air-in"}
+      args: {"name": "c0", "a": "dmp-out", "b": "rhc-air-in"}
     - template: hot-water-coil
       args: {"name": "rhc"}
     - template: damper
@@ -311,7 +311,7 @@ heat-recovery-system:
       s223:hasProperty P:hrw_p .
   dependencies:
     - template: heat-recovery-coil
-      args: {"name": "MAU-HRC", "water-out": "EAU-HRC-water-in"}
+      args: {"name": "MAU-HRC"}
     - template: HR-pump
       args: {"name": "HR-pmp"}
     - template: HRC-BTU-meter
@@ -319,7 +319,9 @@ heat-recovery-system:
     - template: heat-recovery-coil
       args: {"name": "EAU-HRC"}
     - template: sensor
-      args: {"name": "water-pressure-sensor", "property": "hrw-p"}
+      args: {"name": "water-pressure-sensor", "property": "hrw_p", "where": "HR-pmp"}
+    - template: water-static-pressure
+      args: {"name": "hrw_p"}
 
 process-chilled-water-system:
   body: >
@@ -329,7 +331,7 @@ process-chilled-water-system:
     P:name a s223:System ;
       rdfs:label "Chilled Water System" ;
       s223:contains P:bypass-valve, P:lead-pchw-pump, P:standby-pchw-pump,
-                    P:water-sp-sensor, P:water-diff-press_sensor,
+                    P:water-sp-sensor, P:water-diff-press-sensor,
                     P:chw-hx ;
       s223:hasProperty P:water-sp, P:water-diff-press .
   dependencies:
@@ -342,10 +344,10 @@ process-chilled-water-system:
     - template: heat-exchanger
       args: {"name": "chw-hx"}
     - template: sensor
-      args: {"name": "water-sp-sensor", "property": "water-sp"}
+      args: {"name": "water-sp-sensor", "property": "water-sp", "where": "lead-pchw-pump"}
     - template: water-static-pressure
       args: {"name": "water-sp"}
-    - template: sensor
-      args: {"name": "water-diff-press-sensor", "property": "water-diff-press"}
+    - template: differential-sensor
+      args: {"name": "water-diff-press-sensor", "property": "water-diff-press", "whereA": "lead-pchw-pump", "whereB": "standby-pchw-pump"}
     - template: water-differential-pressure
       args: {"name": "water-diff-press"}
