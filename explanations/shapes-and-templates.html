@@ -15,19 +15,19 @@
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -77,23 +77,28 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
+
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -116,22 +121,17 @@ const thebe_selector_output = ".output, .cell_output"
 </form></div>
   </div>
 
-  <div class="pst-async-banner-revealer d-none">
-  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
-</div>
-<aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
-</aside>
+
+  <div class="bd-header-announcement container-fluid bd-header-announcement">
+    <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
+  </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
-    </header>
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
   
-
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
-      
-      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -147,8 +147,6 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
 
-  
-    
   
 
 <a class="navbar-brand logo" href="../README.html">
@@ -181,34 +179,34 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../reference/developer_documentation.html">Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../reference/cli_tool.html">Command Line Interface</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/apidoc/index.html">Code Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.app.html">buildingmotif.api.app</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.api.views.html">buildingmotif.api.views</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.html">buildingmotif.building_motif</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.html">buildingmotif.building_motif</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.building_motif.html">buildingmotif.building_motif.building_motif</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html">buildingmotif.building_motif.singleton</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.utils.html">buildingmotif.database.utils</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html">buildingmotif.dataclasses.library</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html">buildingmotif.dataclasses.model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html">buildingmotif.dataclasses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html">buildingmotif.dataclasses.validation</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.html">buildingmotif.ingresses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.html">buildingmotif.ingresses</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
@@ -217,32 +215,28 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.SerializedParserMetrics.html">buildingmotif.label_parsing.SerializedParserMetrics</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.build_parser.html">buildingmotif.label_parsing.build_parser</a></li>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html">buildingmotif.label_parsing.combinators</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.parser.html">buildingmotif.label_parsing.parser</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.token_classify.html">buildingmotif.label_parsing.token_classify</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html">buildingmotif.label_parsing.tokens</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.tools.html">buildingmotif.label_parsing.tools</a></li>
 </ul>
-</details></li>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
 </ul>
-</details></li>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
-</details></li>
+</li>
 </ul>
-</details></li>
+</li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
@@ -282,7 +276,7 @@ const thebe_selector_output = ".output, .cell_output"
 
       </div>
       
-      <main id="main-content" class="bd-main" role="main">
+      <main id="main-content" class="bd-main">
         
         
 
@@ -291,7 +285,7 @@ const thebe_selector_output = ".output, .cell_output"
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article d-print-none">
+              <div class="bd-header-article">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
@@ -423,10 +417,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -434,7 +428,7 @@ document.write(`
 
 <script>
 document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
@@ -475,7 +469,7 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article">
+                <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="shapes-and-templates">
 <h1>Shapes and Templates<a class="headerlink" href="#shapes-and-templates" title="Permalink to this heading">#</a></h1>
@@ -625,70 +619,112 @@ there is a <code class="docutils literal notranslate"><span class="pre">sh:name<
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,926 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7643 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,956 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/prefix (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,930 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7645 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,957 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/quantitykind (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,935 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7639 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,958 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/schema/facade/qudt (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,939 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7647 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,959 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/schema/shacl/qudt (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,943 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7641 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,959 | root |  WARNING: An ontology could not resolve a dependency on https://brickschema.org/schema/Brick/ref (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,950 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7626 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,960 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/unit (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,954 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7632 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,961 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/schema/shacl/overlay/qudt (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,959 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7624 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,962 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/collection/usertest (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,963 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7628 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,963 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/dimensionvector (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,967 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7622 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,965 | root |  WARNING: An ontology could not resolve a dependency on http://data.ashrae.org/bacnet/2020 (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,972 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7630 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,965 | root |  WARNING: An ontology could not resolve a dependency on https://w3id.org/rec/recimports (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,976 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7586 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,966 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/sou (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,980 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7594 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,967 | root |  WARNING: An ontology could not resolve a dependency on https://w3id.org/rec/brickpatches (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,985 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7588 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:17:58,967 | root |  WARNING: An ontology could not resolve a dependency on https://w3id.org/rec (No row was found when one was required). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,989 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7590 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:01,972 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7647 in libraries []
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,994 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7592 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:01,976 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7643 in libraries []
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:10,998 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7584 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:01,981 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7639 in libraries []
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:11,002 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7704 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:01,985 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7641 in libraries []
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:11,006 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7708 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:01,989 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7645 in libraries []
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:11,011 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7706 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:01,995 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7592 in libraries []
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:11,015 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7700 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:01,999 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7584 in libraries []
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 20:58:11,019 | root |  WARNING: Warning: could not find dependee nb52945e9def841f2b07a2ab7ac847aecb7702 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,003 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7594 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,007 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7586 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,011 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7588 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,015 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7590 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,021 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7708 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,225 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7700 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,230 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7704 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,234 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7706 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,238 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7702 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,244 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7622 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,248 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7630 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,252 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7628 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,257 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7626 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,261 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7632 in libraries []
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-09 21:18:02,265 | root |  WARNING: Warning: could not find dependee n65e431dce4d548619db532085026b23fb7624 in libraries []
 </pre></div>
 </div>
 </div>
@@ -779,7 +815,7 @@ defined explicitly:</p>
               
               
               
-                <footer class="prev-next-footer d-print-none">
+                <footer class="prev-next-footer">
                   
 <div class="prev-next-area">
     <a class="left-prev"
@@ -808,7 +844,6 @@ defined explicitly:</p>
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
 
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
@@ -868,8 +903,8 @@ By NREL
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>

@@ -14,19 +14,19 @@
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
@@ -37,9 +37,9 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -74,23 +74,28 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
+
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -113,24 +118,17 @@ const thebe_selector_output = ".output, .cell_output"
 </form></div>
   </div>
 
-  <div class="pst-async-banner-revealer d-none">
-  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
-</div>
-<aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
-</aside>
+
+  <div class="bd-header-announcement container-fluid bd-header-announcement">
+    <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
+  </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
-    </header>
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
   
-
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
-      
-      
-      
-        
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -146,8 +144,6 @@ const thebe_selector_output = ".output, .cell_output"
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
 
-  
-    
   
 
 <a class="navbar-brand logo" href="../../../README.html">
@@ -180,34 +176,34 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/developer_documentation.html">Developer Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reference/cli_tool.html">Command Line Interface</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/apidoc/index.html">Code Documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../reference/apidoc/index.html">Code Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.html">buildingmotif</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.api.html">buildingmotif.api</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.api.app.html">buildingmotif.api.app</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.api.views.html">buildingmotif.api.views</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.html">buildingmotif.building_motif</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.html">buildingmotif.building_motif</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.building_motif.html">buildingmotif.building_motif.building_motif</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html">buildingmotif.building_motif.singleton</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.utils.html">buildingmotif.database.utils</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html">buildingmotif.dataclasses.library</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html">buildingmotif.dataclasses.model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html">buildingmotif.dataclasses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html">buildingmotif.dataclasses.validation</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.html">buildingmotif.ingresses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.html">buildingmotif.ingresses</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
@@ -216,32 +212,28 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
 </ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.SerializedParserMetrics.html">buildingmotif.label_parsing.SerializedParserMetrics</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.build_parser.html">buildingmotif.label_parsing.build_parser</a></li>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html">buildingmotif.label_parsing.combinators</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.parser.html">buildingmotif.label_parsing.parser</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.token_classify.html">buildingmotif.label_parsing.token_classify</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html">buildingmotif.label_parsing.tokens</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tools.html">buildingmotif.label_parsing.tools</a></li>
 </ul>
-</details></li>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.libraries.html">buildingmotif.libraries</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.schemas.html">buildingmotif.schemas</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
 </ul>
-</details></li>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.utils.html">buildingmotif.utils</a></li>
 </ul>
-</details></li>
+</li>
 </ul>
-</details></li>
+</li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
@@ -281,7 +273,7 @@ const thebe_selector_output = ".output, .cell_output"
 
       </div>
       
-      <main id="main-content" class="bd-main" role="main">
+      <main id="main-content" class="bd-main">
         
         
 
@@ -290,7 +282,7 @@ const thebe_selector_output = ".output, .cell_output"
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article d-print-none">
+              <div class="bd-header-article">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
@@ -374,10 +366,10 @@ const thebe_selector_output = ".output, .cell_output"
 
 <script>
 document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -385,7 +377,7 @@ document.write(`
 
 <script>
 document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
@@ -413,12 +405,13 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article">
+                <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.label_parsing.combinators</h1><div class="highlight"><pre>
-<span></span><span class="c1"># import neccessary libraries</span>
-<span class="kn">import</span> <span class="nn">re</span>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif.label_parsing.parser</span> <span class="kn">import</span> <span class="n">Parser</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.label_parsing.tokens</span> <span class="kn">import</span> <span class="p">(</span>
@@ -508,7 +501,7 @@ document.write(`
 <div class="viewcode-block" id="choice"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.choice">[docs]</a><span class="k">class</span> <span class="nc">choice</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a choice combinator of parsers.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">:</span> <span class="n">Parser</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">parsers</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
@@ -519,7 +512,7 @@ document.write(`
                 <span class="k">return</span> <span class="n">result</span>
             <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
                 <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">))]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">))]</span>  <span class="c1"># type: ignore</span></div>
 
 
 <div class="viewcode-block" id="constant"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.constant">[docs]</a><span class="k">class</span> <span class="nc">constant</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
@@ -535,19 +528,18 @@ document.write(`
 <div class="viewcode-block" id="abbreviations"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.abbreviations">[docs]</a><span class="k">class</span> <span class="nc">abbreviations</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a choice combinator of string matching based on a dictionary.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patterns</span><span class="p">):</span>
-        <span class="n">patterns</span> <span class="o">=</span> <span class="n">patterns</span>
-        <span class="n">parsers</span> <span class="o">=</span> <span class="p">[</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Constant</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">patterns</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patterns</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">parsers</span> <span class="o">=</span> <span class="p">[</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Constant</span><span class="p">(</span><span class="n">URIRef</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">patterns</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">choice</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="o">*</span><span class="n">parsers</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span></div>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="sequence"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.sequence">[docs]</a><span class="k">class</span> <span class="nc">sequence</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies parsers in sequence. All parsers must match consecutively.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">:</span> <span class="n">Parser</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">parsers</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
@@ -571,7 +563,7 @@ document.write(`
 <div class="viewcode-block" id="many"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.many">[docs]</a><span class="k">class</span> <span class="nc">many</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the given sequence parser repeatedly until it stops matching.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_parser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seq_parser</span> <span class="o">=</span> <span class="n">seq_parser</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
@@ -607,9 +599,9 @@ document.write(`
 <span class="sd">    STarts with a string length of 1 and increments it until the parser matches.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">length</span> <span class="o">=</span> <span class="mi">1</span>
@@ -634,7 +626,7 @@ document.write(`
 <div class="viewcode-block" id="extend_if_match"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.extend_if_match">[docs]</a><span class="k">class</span> <span class="nc">extend_if_match</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the type to the token result.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">Token</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">Token</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
 
@@ -691,7 +683,6 @@ document.write(`
     <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Handling_Unit</span><span class="p">,</span>
 <span class="p">}</span>
 
-
 <span class="n">COMMON_POINT_ABBREVIATIONS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;ART&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Room_Temperature_Sensor</span><span class="p">,</span>
     <span class="s2">&quot;TSP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Temperature_Setpoint</span><span class="p">,</span>
@@ -710,192 +701,18 @@ document.write(`
     <span class="s2">&quot;DPS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Differential_Pressure_Sensor</span><span class="p">,</span>
 <span class="p">}</span>
 
-
 <span class="n">COMMON_ABBREVIATIONS</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">(</span>
     <span class="p">{</span><span class="o">**</span><span class="n">COMMON_EQUIP_ABBREVIATIONS_BRICK</span><span class="p">,</span> <span class="o">**</span><span class="n">COMMON_POINT_ABBREVIATIONS</span><span class="p">}</span>
 <span class="p">)</span>
 
+
+<span class="c1"># common parser combinators</span>
 <span class="n">equip_abbreviations</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">(</span><span class="n">COMMON_EQUIP_ABBREVIATIONS_BRICK</span><span class="p">)</span>
 <span class="n">point_abbreviations</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">(</span><span class="n">COMMON_POINT_ABBREVIATIONS</span><span class="p">)</span>
-<span class="n">delimiters</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[._&amp;:/\- ]&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">)</span>
+<span class="n">delimiters</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[._:/\- ]&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">)</span>
 <span class="n">identifier</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[a-zA-Z0-9]+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)</span>
 <span class="n">named_equip</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">equip_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">)</span>
 <span class="n">named_point</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">point_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">)</span>
-<span class="n">building_constant</span> <span class="o">=</span> <span class="n">constant</span><span class="p">(</span><span class="n">Constant</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Building</span><span class="p">))</span>
-<span class="n">up_to_delimiter</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^_._:/\-]+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)</span>
-
-<span class="c1"># ith mapped points to brick class embeddings</span>
-<span class="n">COMMON_GENERATED_ABBREVIATIONS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;DEWPTTMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Dewpoint_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;KTONHR&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Meter</span><span class="p">,</span>
-    <span class="s2">&quot;CHWVLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Valve</span><span class="p">,</span>
-    <span class="s2">&quot;ENTTMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Enthalpy_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;CHVLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Valve</span><span class="p">,</span>
-    <span class="s2">&quot;HWVLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_Valve</span><span class="p">,</span>
-    <span class="s2">&quot;CHWST&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Leaving_Chilled_Water_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;CHWRT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;HHW-R&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_Radiator</span><span class="p">,</span>
-    <span class="s2">&quot;HHW-S&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_System</span><span class="p">,</span>
-    <span class="s2">&quot;SPEED&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Fan_Speed_Command</span><span class="p">,</span>
-    <span class="s2">&quot;THERM&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Natural_Gas_Usage_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;SCHWP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_System_Enable_Command</span><span class="p">,</span>
-    <span class="s2">&quot;TCHWP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Pump</span><span class="p">,</span>
-    <span class="s2">&quot;PRESS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Pressure_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;ZNTMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Zone_Air_Temperature_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;LWTMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Leaving_Water_Temperature_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;CRAC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Computer_Room_Air_Conditioner</span><span class="p">,</span>
-    <span class="s2">&quot;RVAV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Variable_Air_Volume_Box_With_Reheat</span><span class="p">,</span>
-    <span class="s2">&quot;HWST&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Leaving_Hot_Water_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;HWRT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Entering_Hot_Water_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;CHWR&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_System_Enable_Command</span><span class="p">,</span>
-    <span class="s2">&quot;CHWS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_System_Enable_Command</span><span class="p">,</span>
-    <span class="s2">&quot;CHWP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Pump</span><span class="p">,</span>
-    <span class="s2">&quot;HHWP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_Pump</span><span class="p">,</span>
-    <span class="s2">&quot;DMPR&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Damper_Command</span><span class="p">,</span>
-    <span class="s2">&quot;FFIL&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Final_Filter</span><span class="p">,</span>
-    <span class="s2">&quot;PFIL&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Pre_Filter_Status</span><span class="p">,</span>
-    <span class="s2">&quot;SCHW&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_System</span><span class="p">,</span>
-    <span class="s2">&quot;ENTH&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Enthalpy_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;AHU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Handling_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;FCU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Duct_Fan_Coil_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;VAV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Variable_Air_Volume_Box</span><span class="p">,</span>
-    <span class="s2">&quot;PMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Pump</span><span class="p">,</span>
-    <span class="s2">&quot;RTU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Rooftop_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;DMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Damper</span><span class="p">,</span>
-    <span class="s2">&quot;VFD&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Variable_Frequency_Drive</span><span class="p">,</span>
-    <span class="s2">&quot;MAU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Makeup_Air_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;ART&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Room_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;TSP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Temperature_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;HSP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Temperature_Heating_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;CSP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Temperature_Cooling_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;CO2&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">CO2_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;STS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Status</span><span class="p">,</span>
-    <span class="s2">&quot;VLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Valve</span><span class="p">,</span>
-    <span class="s2">&quot;DPS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Differential_Pressure_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;BLR&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Boiler_Command</span><span class="p">,</span>
-    <span class="s2">&quot;CDW&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Condenser_Water_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;CWP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Condenser_Water_Pump</span><span class="p">,</span>
-    <span class="s2">&quot;DHW&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Domestic_Hot_Water_System_Enable_Command</span><span class="p">,</span>
-    <span class="s2">&quot;FEV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Exhaust_Air_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;GET&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Exhaust_Air_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;GEV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Gas_Pressure_Regulator_Valve</span><span class="p">,</span>
-    <span class="s2">&quot;LEF&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Exhaust_Air_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;HHW&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_Temperature_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;HPA&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Packaged_Air_Source_Heat_Pump</span><span class="p">,</span>
-    <span class="s2">&quot;HRU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Recovery_Condensing_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;HTX&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Radiator</span><span class="p">,</span>
-    <span class="s2">&quot;HUM&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Humidifier_Fault_Status</span><span class="p">,</span>
-    <span class="s2">&quot;LAB&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Enclosed_Office</span><span class="p">,</span>
-    <span class="s2">&quot;OAU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Dedicated_Outdoor_Air_System_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;PEM&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Electrical_Meter</span><span class="p">,</span>
-    <span class="s2">&quot;PWP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Water_Pump</span><span class="p">,</span>
-    <span class="s2">&quot;SAV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Return_Heating_Valve</span><span class="p">,</span>
-    <span class="s2">&quot;CLG&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Cooling_Command</span><span class="p">,</span>
-    <span class="s2">&quot;FLW&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Mixed_Air_Flow_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;HTG&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heating_Command</span><span class="p">,</span>
-    <span class="s2">&quot;LSP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Static_Pressure_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;MUA&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Makeup_Air_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;RHC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Reheat_Valve</span><span class="p">,</span>
-    <span class="s2">&quot;TON&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Meter</span><span class="p">,</span>
-    <span class="s2">&quot;CHW&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_System_Enable_Command</span><span class="p">,</span>
-    <span class="s2">&quot;HWP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_Pump</span><span class="p">,</span>
-    <span class="s2">&quot;RAF&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Return_Fan</span><span class="p">,</span>
-    <span class="s2">&quot;SAF&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Supply_Fan</span><span class="p">,</span>
-    <span class="s2">&quot;FIL&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Intake_Air_Filter</span><span class="p">,</span>
-    <span class="s2">&quot;MIX&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Mixing_Valve</span><span class="p">,</span>
-    <span class="s2">&quot;RHT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Reheat_Command</span><span class="p">,</span>
-    <span class="s2">&quot;ALM&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Alarm_Sensitivity_Parameter</span><span class="p">,</span>
-    <span class="s2">&quot;DEG&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Warm_Cool_Adjust_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;TMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Temperature_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;PLT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">PVT_Panel</span><span class="p">,</span>
-    <span class="s2">&quot;ACC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Cooled_Chiller</span><span class="p">,</span>
-    <span class="s2">&quot;ACU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Cooling_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;ACW&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Wall_Air_Conditioner</span><span class="p">,</span>
-    <span class="s2">&quot;ATS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Automatic_Transfer_Switch</span><span class="p">,</span>
-    <span class="s2">&quot;BAT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Battery</span><span class="p">,</span>
-    <span class="s2">&quot;BFP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Backflow_Preventer_Valve</span><span class="p">,</span>
-    <span class="s2">&quot;BSB&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Electric_Baseboard_Radiator</span><span class="p">,</span>
-    <span class="s2">&quot;CMD&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">CO2_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;CMI&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">CO2_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;CMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Compressor</span><span class="p">,</span>
-    <span class="s2">&quot;COL&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Cooling_Coil</span><span class="p">,</span>
-    <span class="s2">&quot;CTR&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Cooling_Tower</span><span class="p">,</span>
-    <span class="s2">&quot;DCT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Disconnect_Switch</span><span class="p">,</span>
-    <span class="s2">&quot;DEA&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Storage_Tank</span><span class="p">,</span>
-    <span class="s2">&quot;DPP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Damper_Command</span><span class="p">,</span>
-    <span class="s2">&quot;EHC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Fume_Hood</span><span class="p">,</span>
-    <span class="s2">&quot;EHF&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Fume_Hood</span><span class="p">,</span>
-    <span class="s2">&quot;EMS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Energy_Storage_System</span><span class="p">,</span>
-    <span class="s2">&quot;EVP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Dry_Cooler</span><span class="p">,</span>
-    <span class="s2">&quot;EXT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Thermal_Expansion_Tank</span><span class="p">,</span>
-    <span class="s2">&quot;FMT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Flow_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;FSD&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Fire_Safety_System</span><span class="p">,</span>
-    <span class="s2">&quot;GDS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Gas_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;GTP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Grease_Interceptor</span><span class="p">,</span>
-    <span class="s2">&quot;HCU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Pump_Condensing_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;HVU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">HVAC_Equipment</span><span class="p">,</span>
-    <span class="s2">&quot;HWC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_Radiator</span><span class="p">,</span>
-    <span class="s2">&quot;ICE&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Loop</span><span class="p">,</span>
-    <span class="s2">&quot;KTL&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Steam_Radiator</span><span class="p">,</span>
-    <span class="s2">&quot;LCP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Luminance_Command</span><span class="p">,</span>
-    <span class="s2">&quot;LGD&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Dimmer</span><span class="p">,</span>
-    <span class="s2">&quot;LOT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Parking_Structure</span><span class="p">,</span>
-    <span class="s2">&quot;MCC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Motor_Control_Center</span><span class="p">,</span>
-    <span class="s2">&quot;OZG&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Ozone_Level_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;PLB&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Plumbing_Room</span><span class="p">,</span>
-    <span class="s2">&quot;PTD&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Water_Pressure_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;PVT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">PVT_Panel</span><span class="p">,</span>
-    <span class="s2">&quot;REL&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Relay_Command</span><span class="p">,</span>
-    <span class="s2">&quot;RFM&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Refrigerant_Metering_Device</span><span class="p">,</span>
-    <span class="s2">&quot;RFR&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chiller</span><span class="p">,</span>
-    <span class="s2">&quot;RRS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Recovery_Condensing_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;SDS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Fire_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;SHS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Humidifier_Fault_Status</span><span class="p">,</span>
-    <span class="s2">&quot;SWB&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Switch_Room</span><span class="p">,</span>
-    <span class="s2">&quot;THS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Outside_Air_Humidity_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;TKW&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_Thermal_Energy_Storage_Tank</span><span class="p">,</span>
-    <span class="s2">&quot;TMR&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">On_Timer_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;TMU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Terminal_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;TST&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Thermostat_Status</span><span class="p">,</span>
-    <span class="s2">&quot;TUS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Steam_System</span><span class="p">,</span>
-    <span class="s2">&quot;UHH&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Thermal_Energy_Usage_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;UST&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Thermal_Energy_Storage_Tank</span><span class="p">,</span>
-    <span class="s2">&quot;VCP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Pump_VFD</span><span class="p">,</span>
-    <span class="s2">&quot;WCC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Condenser_Water_Temperature_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;WIN&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Blind</span><span class="p">,</span>
-    <span class="s2">&quot;HX&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Exchanger</span><span class="p">,</span>
-    <span class="s2">&quot;HP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Pump</span><span class="p">,</span>
-    <span class="s2">&quot;CT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Cooling_Tower</span><span class="p">,</span>
-    <span class="s2">&quot;SP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;CO&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">CO2_Alarm</span><span class="p">,</span>
-    <span class="s2">&quot;FS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Flow_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;PS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Pressure_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;AC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Wall_Air_Conditioner</span><span class="p">,</span>
-    <span class="s2">&quot;CH&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Centrifugal_Chiller</span><span class="p">,</span>
-    <span class="s2">&quot;DW&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Water_System</span><span class="p">,</span>
-    <span class="s2">&quot;EF&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Fan_VFD</span><span class="p">,</span>
-    <span class="s2">&quot;RF&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Return_Fan</span><span class="p">,</span>
-    <span class="s2">&quot;SF&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Supply_Fan</span><span class="p">,</span>
-    <span class="s2">&quot;UH&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Pump_Condensing_Unit</span><span class="p">,</span>
-    <span class="s2">&quot;CC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Cooling_Coil</span><span class="p">,</span>
-    <span class="s2">&quot;DP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Differential_Pressure_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;EA&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Intake_Air_Filter</span><span class="p">,</span>
-    <span class="s2">&quot;HC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heating_Coil</span><span class="p">,</span>
-    <span class="s2">&quot;LT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Low_Temperature_Alarm</span><span class="p">,</span>
-    <span class="s2">&quot;MA&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Mixed_Air_Filter</span><span class="p">,</span>
-    <span class="s2">&quot;VP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Velocity_Pressure_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;RA&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Return_Air_Filter</span><span class="p">,</span>
-    <span class="s2">&quot;SA&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Supply_Air_Plenum</span><span class="p">,</span>
-    <span class="s2">&quot;RH&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Relative_Humidity_Sensor</span><span class="p">,</span>
-    <span class="s2">&quot;AL&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Alarm_Sensitivity_Parameter</span><span class="p">,</span>
-    <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Prayer_Room</span><span class="p">,</span>
-    <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Alarm</span><span class="p">,</span>
-    <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Temperature_Parameter</span><span class="p">,</span>
-    <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span>
-    <span class="s2">&quot;H&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">High_Humidity_Alarm</span><span class="p">,</span>
-    <span class="s2">&quot;P&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Pressure_Setpoint</span><span class="p">,</span>
-    <span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Status</span><span class="p">,</span>
-<span class="p">}</span>
 </pre></div>
 
                 </article>
@@ -905,7 +722,7 @@ document.write(`
               
               
               
-                <footer class="prev-next-footer d-print-none">
+                <footer class="prev-next-footer">
                   
 <div class="prev-next-area">
 </div>
@@ -958,8 +775,8 @@ By NREL
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script src="../../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>
