@@ -1,8 +1,9 @@
+import pytest
+
 from buildingmotif.label_parsing.SerializedParserMetrics import (
     SerializedParserMetrics,
     abbreviationsTool,
 )
-import pytest
 
 #csv filename mapped to column name
 point_parsing_columns = {"tests/unit/fixtures/point_parsing/basic_len102.csv": "BuildingNames", "tests/unit/fixtures/point_parsing/basic.csv": "BuildingNames"}
