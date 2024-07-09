@@ -11,6 +11,7 @@ from buildingmotif.label_parsing.combinators import (
 )
 from buildingmotif.label_parsing.tools import abbreviationsTool, codeLinter
 
+
 class SerializedParserMetrics:
     """
     Combines parsers into a compact class with detailed metrics and other information.
@@ -18,6 +19,7 @@ class SerializedParserMetrics:
 
     Attributes:
         parsers(List[str]): list of all parsers
+        serializers_list (List[Dict]): list of all serialized parsers
         clusters(List[List[str]]): list of all clusters (clusters can have only one element)
         distance_metrics(Dict): statistics for distance matrix with similarity ratio as distance metric (mean, median, std, min, max, range)
         clustering_metrics(Dict): statistics for clustering (number of clusters, noise points, and silhouette score)
@@ -29,9 +31,10 @@ class SerializedParserMetrics:
 
         combined_clusters:List[dict]:
         for each cluster, each Dict has
-        -parser: post-exec code object loaded and ran via dynamic module import
+        -parser(Dict): serialized parser
         -source_code(str): parser code
         -tokens(List): emitted tokens from running parser on cluster
+        -parsed_labels(List): building point labels in which parser did not contain an error
         -unparsed(List): building point labels in which parser contained an error
         -parser_metrics(Dict):
             -parsed_count(int): count of parsed for that cluster
@@ -78,6 +81,7 @@ class SerializedParserMetrics:
             self.distance_metrics, self.clustering_metrics = {}, {}
 
         self.list_of_dicts = list_of_dicts
+        self.serializers_list = []
         self.parsed_count = 0
         self.unparsed_count = 0
         self.total_count = 0
@@ -100,6 +104,7 @@ class SerializedParserMetrics:
 from buildingmotif.label_parsing.combinators import *
 from buildingmotif.label_parsing.tools import abbreviationsTool
 from buildingmotif.label_parsing.parser import parser_on_list
+from buildingmotif.api.serializers import parser as serializerTool
 import rdflib
                         """
                     )
@@ -114,13 +119,18 @@ COMBINED_ABBREVIATIONS = abbreviationsTool.make_combined_abbreviations({list_of_
                     )
                     temp_file.write(
                         f"""
+def get_serialization():
+    return serializerTool.serialize({parser_var})"""
+                    )
+                    temp_file.write(
+                        f"""
 cluster = {cluster}"""
                     )
                     temp_file.write(
                         f"""
 def run_parser():
-    parsed, unparsed, right, wrong = parser_on_list({parser_var}, cluster)
-    return parsed, unparsed, right, wrong"""
+    parsed, parsed_elements, unparsed, right, wrong = parser_on_list({parser_var}, cluster)
+    return parsed, parsed_elements, unparsed, right, wrong"""
                     )
 
                 # Load the module from the temporary file dynamically
@@ -130,20 +140,25 @@ def run_parser():
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
                 # Call the function defined in the module to get parsed results, unparsed elements, and total parsed/unparsed
-                parsed_arr, unparsed_arr, right, wrong = module.run_parser()
+                parsed_arr, parsed_elements, unparsed_arr, right, wrong = (
+                    module.run_parser()
+                )
+                serialized = module.get_serialization()
                 self.parsed_count += right
                 self.unparsed_count += wrong
                 self.total_count += right + wrong
-                clustered_info["parser"] = module
+                clustered_info["parser"] = serialized
                 clustered_info["source_code"] = parser
+                clustered_info["parsed_labels"] = parsed_elements
                 clustered_info["tokens"] = parsed_arr
-                clustered_info["unparsed"] = unparsed_arr
+                clustered_info["unparsed_labels"] = unparsed_arr
                 clustered_info["parser_metrics"] = {
                     "parsed_count": right,
                     "unparsed_count": wrong,
                     "total_count": right + wrong,
                 }
                 self.combined_clusters.append(clustered_info)
+                self.serializers_list.append(serialized)
 
             finally:
                 if os.path.exists(temp_filename):

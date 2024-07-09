@@ -9,7 +9,7 @@ from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
 )
-import os
+from buildingmotif.label_parsing.docs import usage
 
 llm = Ollama(model="llama3")
 
@@ -67,18 +67,11 @@ def classify_tokens_with_llm(user_input: str, list_of_dicts: List, num_tries: in
         ("## `extend_if_match`", "Header 10"),
     ]
 
-    file_path = os.path.abspath(r"../notebooks/examples/usage.md")
-    try:
-        with open(file_path, "r") as file:
-            file_content = file.read()
-    except Exception as e:
-        print(f"An error occurred while reading the file: {e}")
-
     markdown_splitter = MarkdownHeaderTextSplitter(
         headers_to_split_on=headers_to_split_on, strip_headers=False
     )
     md_header_splits = markdown_splitter.split_text(
-        file_content
+        usage.usage_markdown
     )  # file_content contains detailed description of each parser class from combinators.py
 
     chunk_size = 200

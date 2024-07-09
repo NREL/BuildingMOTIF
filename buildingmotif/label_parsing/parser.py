@@ -225,6 +225,7 @@ def parser_on_list(parser, data_list: List):
     """
 
     parsed = []
+    parsed_elements = []
     unparsed = []
     wrong = 0
     right = 0
@@ -232,8 +233,9 @@ def parser_on_list(parser, data_list: List):
         res = parser(data)
         if res and not any(r.error for r in res):
             parsed.append(res)
+            parsed_elements.append(data)
             right += 1
         else:
             unparsed.append(data)
             wrong += 1
-    return parsed, unparsed, right, wrong
+    return parsed, parsed_elements, unparsed, right, wrong

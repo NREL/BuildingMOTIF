@@ -1,3 +1,4 @@
+usage_markdown = r"""
 ```markdown
 # Parsing Function Signatures and Usage
 
@@ -166,3 +167,4 @@ parser = extend_if_match(base_parser, Constant("extra_type"))
 result = parser("hello world")
 print(result)  # Expected output: [TokenResult('hello', Identifier('hello'), 5), TokenResult(None, Constant('extra_type'), 0)]
 ```
+"""
