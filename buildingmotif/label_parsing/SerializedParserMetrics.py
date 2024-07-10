@@ -1,6 +1,7 @@
 import importlib.util
 import os
 import re
+
 from buildingmotif.label_parsing.build_parser import (
     generate_parsers_for_clusters,
     generate_parsers_for_points,

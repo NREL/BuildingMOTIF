@@ -1,5 +1,4 @@
 from typing import List
-from buildingmotif.label_parsing.tools import tokenizer
 
 from langchain.output_parsers import PydanticOutputParser
 from langchain_community.llms import Ollama
@@ -9,7 +8,9 @@ from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
 )
+
 from buildingmotif.label_parsing.docs import usage
+from buildingmotif.label_parsing.tools import tokenizer
 
 llm = Ollama(model="llama3")
 

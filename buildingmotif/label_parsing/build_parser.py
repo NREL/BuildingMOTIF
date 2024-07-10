@@ -1,6 +1,7 @@
+import csv
 import random
 import re
-import csv
+from typing import List
 
 import numpy as np
 from sklearn import metrics
@@ -9,8 +10,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import MinMaxScaler
 
 from buildingmotif.label_parsing.token_classify import classify_tokens_with_llm
-from buildingmotif.label_parsing.tools import tokenizer, wordChecker, abbreviationsTool
-from typing import List
+from buildingmotif.label_parsing.tools import abbreviationsTool, tokenizer, wordChecker
 
 MIN_CONSTANT_LENGTH = 3
 scaler = MinMaxScaler()

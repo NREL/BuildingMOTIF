@@ -1,6 +1,8 @@
 import subprocess
 from typing import List
+
 import enchant
+
 from buildingmotif.label_parsing.combinators import abbreviations
 
 
