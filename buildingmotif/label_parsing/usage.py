@@ -1,3 +1,5 @@
+#generated using ChatGPT 4.0 to describe function/class signatures of combinators.py contents
+
 usage_markdown = r"""
 ```markdown
 # Parsing Function Signatures and Usage

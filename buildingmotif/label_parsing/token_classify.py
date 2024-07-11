@@ -44,15 +44,17 @@ def classify_tokens_with_llm(user_input: str, list_of_dicts: List, num_tries: in
     Uses LLM Ollama3 to classify each token as either a constant, abbreviation, identifier, or delimiter.
     Returns List of Token_Prediction, which has a token and classification field as predicted by the LLM.
 
-    Parameters:
-    user_input(str): building point label string.
-    list_of_dicts(List): list of dicts of abbreviations matched to brick class
-    num_tries(int): max times LLM attempts to create List of Token_Prediction
+    :param user_input: Building point label string.
+    :type user_input: str
+    :param list_of_dicts: List of dictionaries mapping abbreviations to brick classes.
+    :type list_of_dicts: List
+    :param num_tries: Maximum number of attempts for LLM to create List of Token_Prediction.
+    :type num_tries: int
 
-    Returns:
-    List of Token_Prediction
-
+    :return: List of Token_Prediction.
+    :rtype: List
     """
+    
     tokens_str_list = str(tokenizer.split_and_group(user_input, list_of_dicts))
 
     headers_to_split_on = [

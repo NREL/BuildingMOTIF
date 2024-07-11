@@ -44,13 +44,13 @@ def similarity_ratio_ordered(a: str, b: str):
     Calculates ratio of how similar two strings are based on the ratio of the tokens they have similar (order matters) to
     the length of the longer tokenized list.
 
-    Parameters:
-    a (str): The first input string that will be tokenized.
-    b (str): The second input string that will be tokenized.
+    :param a: The first input string that will be tokenized.
+    :type a: str
+    :param b: The second input string that will be tokenized.
+    :type b: str
 
-    Returns:
-    float: The similarity ratio between the two strings, ranging from 0.0 to 1.0.
-    A ratio of 1.0 indicates identical ordered token sequences; 0.0 indicates no similarity.
+    :return: The similarity ratio between the two strings, ranging from 0.0 to 1.0.
+    :rtype: float
     """
 
     classified_tokens_a = classify_tokens(tokenizer.shift_split(a))
@@ -81,13 +81,14 @@ def get_column_data(csv_file: str, column_name: str):
     in which whitespaces and new lines are removed from each entry.
     Raises exception if file cannot be found or cannot be read.
 
-    Parameters:
-    csv_file (str): file path to a csv file
-    column_name (str): column name where data exists
+    :param csv_file: File path to a CSV file.
+    :type csv_file: str
+    :param column_name: Column name where data exists.
+    :type column_name: str
 
-    Returns:
-    List: list of the data inside a specified CSV column,
-    in which whitespaces and new lines are removed from each entry.
+    :return: List of the data inside the specified CSV column,
+        with whitespaces and new lines removed from each entry.
+    :rtype: List
     """
 
     try:
@@ -125,15 +126,17 @@ def make_program(user_text: str, matched_token_classes, list_of_dicts: List):
     Flags unknown abbreviations with LLM Ollama3, then combines parsers assigned parsers based on the factors like
     which token they parse or if there is a sequence of similar parsers.
 
-    Parameters:
-    user_text(str): building point label
-    matched_token_classes(LLM_Token_Prediction): custom class which contains each token of the string and corresponding LLM Prediction:
+    :param user_text: Building point label.
+    :type user_text: str
+    :param matched_token_classes: Custom class containing each token of the string and corresponding LLM Prediction:
     Identifier, Abbreviations, Constant, or Delimiter. See token_classify.py for more details.
-    list_of_dicts(List): list of dictionaries mapping an abbreviation to a brick constant.
+    :type matched_token_classes: LLM_Token_Prediction
+    :param list_of_dicts: List of dictionaries mapping an abbreviation to a brick constant.
+    :type list_of_dicts: List
 
-    Returns:
-    Ordered list of parsers based on the order of the original tokens.
-    List of LLM-Flagged Abbreviations.
+    :return: Ordered list of parsers based on the order of the original tokens.
+    :return: List of LLM-Flagged Abbreviations.
+    :rtype: List
     """
 
     tokens = tokenizer.split_and_group(user_text, list_of_dicts)
@@ -314,13 +317,15 @@ def group_by_clusters(filename: str, col_name: str):
     """
     Uses DBScan clustering to group list of names returned from CSV file column.
 
-    Parameters:
-    filename(str): file path to csv file
-    col_name(str): column name
+    :param filename: File path to CSV file.
+    :type filename: str
+    :param col_name: Column name.
+    :type col_name: str
 
-    Returns:
-    List of lists of clustered building points.
-    List of lists of noise points.
+    :return: List of lists of clustered building points.
+    :rtype: List[List]
+    :return: List of lists of noise points.
+    :rtype: List[List]
     """
 
     noise = []
@@ -383,17 +388,21 @@ def generate_parsers_for_points(
     Generates parsers for every building point label from the CSV file column because
     DBScan was unable to create more than one cluster.
 
-    Parameters:
-    filename(str): file path to csv file
-    col_name(str): column name
-    num_tries(int): number of times for LLM to attempt to generate token predictions (LLM_Token_Predictions)
-    list_of_dicts(List): list of dictionaries to be used for abbreviations that map to brick classes
+    :param filename: File path to CSV file.
+    :type filename: str
+    :param col_name: Column name.
+    :type col_name: str
+    :param num_tries: Number of attempts for LLM to generate token predictions (LLM_Token_Predictions).
+    :type num_tries: int
+    :param list_of_dicts: List of dictionaries mapping abbreviations to brick classes.
+    :type list_of_dicts: List
 
-    Returns:
-    List of list of parsers.
-    List of list of each point.
-    List of all flagged abbreviations.
-
+    :return: List of lists of parsers.
+    :rtype: List[List]
+    :return: List of lists of each point.
+    :rtype: List[List]
+    :return: List of all flagged abbreviations.
+    :rtype: List
     """
 
     parsers = []
@@ -429,18 +438,25 @@ def generate_parsers_for_clusters(
     """
     Generates parsers for every cluster from the list of building point labels from CSV file column
 
-    Parameters:
-    filename(str): file path to csv file
-    col_name(str): column name
-    num_tries(int): number of times for LLM to attempt to generate token predictions (LLM_Token_Predictions)
-    list_of_dicts(List): list of dictionaries to be used for abbreviations that map to brick classes
+    :param filename: File path to CSV file.
+    :type filename: str
+    :param col_name: Column name.
+    :type col_name: str
+    :param num_tries: Number of attempts for LLM to generate token predictions (LLM_Token_Predictions).
+    :type num_tries: int
+    :param list_of_dicts: List of dictionaries mapping abbreviations to brick classes.
+    :type list_of_dicts: List
 
-    Returns:
-    List of list of parsers.
-    List of list of each cluster with building point labels.
-    Dictionary of distance metrics with distance being the similarity ratio metric, like: mean, median, mode, std, min, max, range.
-    Dictionary of clustering metrics like number of clusters, number of noise points, silhouette score.
-    List of all flagged abbreviations.
+    :return: List of lists of parsers.
+    :rtype: List[List]
+    :return: List of lists of each cluster with building point labels.
+    :rtype: List[List]
+    :return: Dictionary of distance metrics with metrics such as mean, median, mode, std, min, max, range.
+    :rtype: dict
+    :return: Dictionary of clustering metrics including number of clusters, number of noise points, silhouette score.
+    :rtype: dict
+    :return: List of all flagged abbreviations.
+    :rtype: List
     """
 
     map_parser_to_cluster = {}

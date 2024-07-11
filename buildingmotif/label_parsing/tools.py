@@ -35,11 +35,11 @@ class Abbreviations_Tools:
         """
         Sorts and makes all keys uppercase in a dictionary.
 
-        Parameters:
-        input_dict(dict): input dict.
+        :param input_dict: Input dictionary.
+        :type input_dict: dict
 
-        Returns:
-        abbreviation parser from processed dictionary.
+        :return: Abbreviation parser obtained from the processed dictionary.
+        :rtype: abbreviation parser
         """
 
         sorted_points = sorted(
@@ -53,11 +53,12 @@ class Abbreviations_Tools:
         Combines into one dictionary.
         Sorts and makes all keys uppercase for that dictionary and makes abbreviations parser.
 
-        Parameters:
-        list_of_dicts(List[dict]).
+        :param list_of_dicts: List of dictionaries.
+        :type list_of_dicts: List[dict]
 
-        Returns:
-        abbreviation parser from processed list of dictionaries.
+        :return: Abbreviation parser obtained from the processed list of dictionaries.
+        :rtype: abbreviation parser
+
         """
 
         combined = {}
@@ -74,11 +75,11 @@ class Abbreviations_Tools:
         Combines into one dictionary.
         Sorts and makes all keys uppercase for that dictionary.
 
-        Parameters:
-        list_of_dicts(List[dict]).
+        :param list_of_dicts: List of dictionaries to process and combine.
+        :type list_of_dicts: List[dict]
 
-        Returns:
-        processed, combined dictionary
+        :return: Processed and combined dictionary.
+        :rtype: dict
         """
 
         combined = {}
@@ -103,11 +104,11 @@ class Check_Valid_Word:
         """
         Checks word validity using enchant package.
 
-        Parameters:
-        input_str(str): input string.
+       :param input_str: Input string to check.
+       :type input_str: str
 
-        Returns:
-        bool to indicate whether a string is valid and only made of letters.
+       :return: Boolean indicating whether the input string is valid and only made of letters.
+       :rtype: bool
         """
 
         d = enchant.Dict("en_US")
@@ -129,11 +130,11 @@ class Tokenizer:
         """
         Tokenizes a word based on alphanumeric or special character shifts.
 
-        Parameters:
-        word(str): input string.
+        :param word: Input string to separate into tokens.
+        :type word: str
 
-        Returns:
-        List of seperated tokens.
+        :return: List of separated tokens.
+        :rtype: List[str]
         """
 
         word = word.replace(" ", "")
@@ -166,12 +167,13 @@ class Tokenizer:
         apply abbreviations to find more tokens, and finally combines tokens
         if they form a valid word.
 
-        Parameters:
-        word(str): input string.
-        list_of_dicts(List): list of dictionaries of abbreviations mapped to brick classes.
+        :param word: Input string to separate into tokens.
+        :type word: str
+        :param list_of_dicts: List of dictionaries mapping abbreviations to brick classes.
+        :type list_of_dicts: List
 
-        Returns:
-        List of seperated tokens.
+        :return: List of separated tokens.
+        :rtype: List[str]
         """
 
         tokens = self.shift_split(word)

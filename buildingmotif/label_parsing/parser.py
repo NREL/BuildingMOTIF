@@ -213,15 +213,21 @@ def parser_on_list(parser, data_list: List):
     Applies parser to each element in data_list.
     Returns total parsed, total unparsed, successful parsed tokens, and unparsed elements from the list.
 
-    Parameters:
-    parser(Parser): parser to test
-    data_list(List): building points in list format
+    :param parser: Parser to test.
+    :type parser: Parser
+    :param data_list: List of building points in list format.
+    :type data_list: List
 
-    Returns:
-    parsed(List): list of emitted tokens from applying each parser on each element
-    unparsed(List): list of unsuccessfully parsed building point labels
-    right(int): amount of successfully parsed building point labels
-    wrong(int): amount of unsuccessfully parsed building point labels
+    :return: List of emitted tokens from applying each parser on each element.
+    :rtype: List
+    :return: List of unsuccessfully parsed building point labels.
+    :rtype: List
+    :return List of successfully parsed point labels
+    :rtype List
+    :return: Amount of successfully parsed building point labels.
+    :rtype: int
+    :return: Amount of unsuccessfully parsed building point labels.
+    :rtype: int
     """
 
     parsed = []
