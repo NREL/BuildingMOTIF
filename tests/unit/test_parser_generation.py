@@ -1,7 +1,7 @@
 import pytest
 
-from buildingmotif.label_parsing.SerializedParserMetrics import (
-    SerializedParserMetrics,
+from buildingmotif.label_parsing.serialized_parser_metrics import (
+    ParserBuilder,
     abbreviationsTool,
 )
 
@@ -10,20 +10,22 @@ point_parsing_columns = {"tests/unit/fixtures/point_parsing/basic_len102.csv": "
 
 @pytest.mark.parametrize("point_label_file,point_column_name", point_parsing_columns.items())
 def test_serializedParserMetrics(point_label_file, point_column_name):
-    serializedParser = SerializedParserMetrics(point_label_file, point_column_name)
-    if not serializedParser.distance_metrics and not serializedParser.clustering_metrics: #not enough points for multiple clusters
-        assert len(serializedParser.parsers) == len(
-            serializedParser.clusters
+    parser_builder = ParserBuilder(point_label_file, point_column_name)
+    combined_and_metrics = parser_builder.combine_parsers_and_get_metrics() #emit ParserMetrics class
+    if not parser_builder.distance_metrics and not parser_builder.clustering_metrics: #not enough points for multiple clusters
+        assert len(parser_builder.parsers) == len(
+            parser_builder.clusters
         ), "number of parsers does not match number of clusters"
+
         assert (
-            serializedParser.parsed_count + serializedParser.unparsed_count
-            == serializedParser.total_count
+            combined_and_metrics.parsed_count + combined_and_metrics.unparsed_count
+            == combined_and_metrics.total_count
         ), "number of parsed plus unparsed points do not match the total number of points"
-        assert len(serializedParser.combined_clusters) == len(serializedParser.parsers)
-        assert(len(serializedParser.serializers_list) == len(
-            serializedParser.parsers
+        assert len(combined_and_metrics.combined_clusters) == len(parser_builder.parsers)
+        assert(len(combined_and_metrics.serializers_list) == len(
+            parser_builder.parsers
         )), "number of serialized parsers does not match number of parsers"
-        for cluster_dict in serializedParser.combined_clusters:
+        for cluster_dict in combined_and_metrics.combined_clusters:
             assert (
                 len(cluster_dict["tokens"]) == len(cluster_dict["parsed_labels"])
             ), "amount of parsed points do not match number of emitted tokens"
@@ -35,27 +37,27 @@ def test_serializedParserMetrics(point_label_file, point_column_name):
                 == cluster_dict["parser_metrics"]["total_count"]
             ), "amount of total points in the cluster does not match sum of parsed and unparsed points"
     else:
-        assert len(serializedParser.parsers) == len(
-            serializedParser.clusters
+        assert len(parser_builder.parsers) == len(
+            parser_builder.clusters
         ), "number of parsers does not match number of clusters"
-        assert serializedParser.clustering_metrics[
+        assert parser_builder.clustering_metrics[
             "clusters"
-        ] + serializedParser.clustering_metrics["noise points"] == len(
-            serializedParser.parsers
+        ] + parser_builder.clustering_metrics["noise_points"] == len(
+            parser_builder.parsers
         ), "number of parsers do not match number of clusters plus noise points"
         assert (
-            serializedParser.distance_metrics["min"] >= 0
-            and serializedParser.distance_metrics["max"] <= 1
+            parser_builder.distance_metrics["min"] >= 0
+            and parser_builder.distance_metrics["max"] <= 1
         ), "distance metric min or max have gone out of range of 0-1"
         assert (
-            serializedParser.parsed_count + serializedParser.unparsed_count
-            == serializedParser.total_count
+            combined_and_metrics.parsed_count + combined_and_metrics.unparsed_count
+            == combined_and_metrics.total_count
         ), "number of parsed plus unparsed points do not match the total number of points"
-        assert len(serializedParser.combined_clusters) == len(serializedParser.parsers)
-        assert(len(serializedParser.serializers_list) == len(
-            serializedParser.parsers
+        assert len(combined_and_metrics.combined_clusters) == len(parser_builder.parsers)
+        assert(len(combined_and_metrics.serializers_list) == len(
+            parser_builder.parsers
         )), "number of serialized parsers does not match number of parsers"
-        for cluster_dict in serializedParser.combined_clusters:
+        for cluster_dict in combined_and_metrics.combined_clusters:
             assert (
                 len(cluster_dict["tokens"]) == len(cluster_dict["parsed_labels"])
             ), "amount of parsed points do not match number of emitted tokens"

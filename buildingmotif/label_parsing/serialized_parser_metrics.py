@@ -13,35 +13,7 @@ from buildingmotif.label_parsing.combinators import (
 from buildingmotif.label_parsing.tools import abbreviationsTool, codeLinter
 
 
-class SerializedParserMetrics:
-    """
-    Combines parsers into a compact class with detailed metrics and other information.
-    Allows for easier serialization.
-
-    Attributes:
-        parsers(List[str]): list of all parsers
-        serializers_list (List[Dict]): list of all serialized parsers
-        clusters(List[List[str]]): list of all clusters (clusters can have only one element)
-        distance_metrics(Dict): statistics for distance matrix with similarity ratio as distance metric (mean, median, std, min, max, range)
-        clustering_metrics(Dict): statistics for clustering (number of clusters, noise points, and silhouette score)
-        flagged_abbreviations(List): LLM-flagged abbreviations
-        list_of_dicts(List[Dict]): list of dictionaries with abbreviations matched to brick classes. defaults to COMMON_EQUIP_ABBREVIATIONS_BRICK, COMMON_POINT_ABBREVIATIONS
-        parsed_count(int): total parsed across all clusters
-        unparsed_count(int): total unparsed across all clusters
-        total_count(int): total in all clusters
-
-        combined_clusters:List[dict]:
-        for each cluster, each Dict has
-        -parser(Dict): serialized parser
-        -source_code(str): parser code
-        -tokens(List): emitted tokens from running parser on cluster
-        -parsed_labels(List): building point labels in which parser did not contain an error
-        -unparsed(List): building point labels in which parser contained an error
-        -parser_metrics(Dict):
-            -parsed_count(int): count of parsed for that cluster
-            -unparsed_count(int): count of unparsed for that cluster
-            -total_count(int): count of total for that cluster
-    """
+class ParserBuilder:
 
     def __init__(
         self,
@@ -51,16 +23,20 @@ class SerializedParserMetrics:
         list_of_dicts=[COMMON_EQUIP_ABBREVIATIONS_BRICK, COMMON_POINT_ABBREVIATIONS],
     ):
         """
-        Initializes a new SerializedParserMetrics object.
+Initializes a new ParserBuilder object.
 
-        Args:
-            filename (str): file path to csv file
-            col_name (str): relevant column where data is stored
-            num_tries (Optional, int): max number of times for LLM to try to generate LLM_Token_Predictions object. Defaults to 3.
-            list_of_dicts (Optional, List): List of dictionaries where abbreviation is matched to brick class. Defaults to [equip_abbreviations, point_abbreviations]
+:param filename: File path to the CSV file.
+:type filename: str
+:param col_name: Name of the column where the point label data is stored.
+:type col_name: str
+:param num_tries: Maximum number of attempts for LLM to generate LLM_Token_Predictions object. Defaults to 3.
+:type num_tries: int, optional
+:param list_of_dicts: List of dictionaries mapping abbreviations to brick classes. Defaults to [equip_abbreviations, point_abbreviations].
+:type list_of_dicts: List, optional
         """
-        filename = os.path.abspath(filename)
 
+        filename = os.path.abspath(filename)
+        self.list_of_dicts = list_of_dicts
         try:
             (
                 self.parsers,
@@ -81,14 +57,76 @@ class SerializedParserMetrics:
             )
             self.distance_metrics, self.clustering_metrics = {}, {}
 
-        self.list_of_dicts = list_of_dicts
-        self.serializers_list = []
+    def combine_parsers_and_get_metrics(self):
+        """
+Emits a ParserMetrics object which contains serialized parsers and parser metrics.
+        """
+        return ParserMetrics(self.parsers, self.clusters, self.list_of_dicts)
+
+    def write_to_directory(self, directory: str):
+        """
+        Writes each parser and cluster to a file along with necessary imports.
+        Saves in specified directory.
+
+        :param directory: Directory path where each file containing a parser and its cluster will be saved.
+        :type directory: str
+
+        :return: None
+        :rtype: None
+        """
+
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        for parser, cluster in zip(self.parsers, self.clusters):
+            pattern = re.compile(r"([^\s]+)")
+            parser_var = pattern.match(parser)[0]
+            filename = parser_var + ".py"
+            with open(os.path.join(directory, filename), "w") as file:
+                file.write(
+                    """
+from buildingmotif.label_parsing.combinators import *
+from buildingmotif.label_parsing.parser import parser_on_list
+from buildingmotif.label_parsing.tools import abbreviationsTool
+import rdflib
+                    """
+                )
+                file.write(
+                    f"""
+COMBINED_ABBREVIATIONS = abbreviationsTool.make_combined_abbreviations({abbreviationsTool.make_combined_dict(self.list_of_dicts)})
+                    """
+                )
+                file.write(
+                    f"""
+{parser}"""
+                )
+                file.write(
+                    f"""
+cluster = {cluster}"""
+                )
+            codeLinter._run(os.path.join(directory, filename))
+
+
+class ParserMetrics:
+
+    def __init__(self, parsers, clusters, list_of_dicts):
+        """
+Initializes a new ParserMetrics object.
+
+:param parsers: List of parsers from ParserBuilder class.
+:type parsers: List[str]
+:param clusters: List of clusters from ParserBuilder class.
+:type cluster: List[str]
+:param list_of_dicts: provided list of abbreviation dictionaries passed to ParserBuilders
+:type list_of_dicts: List[dict]
+        """
         self.parsed_count = 0
         self.unparsed_count = 0
         self.total_count = 0
+        self.serializers_list = []
         self.combined_clusters = []
 
-        for parser, cluster in zip(self.parsers, self.clusters):
+        for parser, cluster in zip(parsers, clusters):
             clustered_info = {}
             try:
                 temp_filename = os.path.join(os.getcwd(), "temp_parser.py")
@@ -144,66 +182,28 @@ def run_parser():
                 parsed_arr, parsed_elements, unparsed_arr, right, wrong = (
                     module.run_parser()
                 )
-                serialized = module.get_serialization()
+                serialized = module.get_serialization() 
+                """
+                serialization process is not a direct result of the parser generation process, 
+                must be dynamically ran since parsers are strings
+                """
+                self.serializers_list.append(serialized)
                 self.parsed_count += right
                 self.unparsed_count += wrong
                 self.total_count += right + wrong
-                clustered_info["parser"] = serialized
+                clustered_info["serialized_parser"] = serialized
                 clustered_info["source_code"] = parser
                 clustered_info["parsed_labels"] = parsed_elements
-                clustered_info["tokens"] = parsed_arr
                 clustered_info["unparsed_labels"] = unparsed_arr
+                clustered_info["tokens"] = parsed_arr
                 clustered_info["parser_metrics"] = {
                     "parsed_count": right,
                     "unparsed_count": wrong,
                     "total_count": right + wrong,
                 }
                 self.combined_clusters.append(clustered_info)
-                self.serializers_list.append(serialized)
+                
 
             finally:
                 if os.path.exists(temp_filename):
                     os.remove(temp_filename)  # remove file when complete
-
-    def write_to_directory(self, directory: str):
-        """
-        Writes each parser and cluster to a file along with necessary imports.
-        Saves in specified directory.
-
-        Parameters:
-        directory(str): each file containing a parser and its cluster will be saved to this directory
-
-        Returns:
-        None
-        """
-
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-        for parser, cluster in zip(self.parsers, self.clusters):
-            pattern = re.compile(r"([^\s]+)")
-            parser_var = pattern.match(parser)[0]
-            filename = parser_var + ".py"
-            with open(os.path.join(directory, filename), "w") as file:
-                file.write(
-                    """
-from buildingmotif.label_parsing.combinators import *
-from buildingmotif.label_parsing.parser import parser_on_list
-from buildingmotif.label_parsing.tools import abbreviationsTool
-import rdflib
-                    """
-                )
-                file.write(
-                    f"""
-COMBINED_ABBREVIATIONS = abbreviationsTool.make_combined_abbreviations({abbreviationsTool.make_combined_dict(self.list_of_dicts)})
-                    """
-                )
-                file.write(
-                    f"""
-{parser}"""
-                )
-                file.write(
-                    f"""
-cluster = {cluster}"""
-                )
-            codeLinter._run(os.path.join(directory, filename))

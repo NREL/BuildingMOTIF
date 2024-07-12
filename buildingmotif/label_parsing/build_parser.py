@@ -21,11 +21,11 @@ def classify_tokens(split: List):
     Classifies tokens into one of three classes: alpha (letters), numbers, or special characters. Used for
     token similarity/difference metrics.
 
-    Parameters:
-    List of tokens.
+    :param tokens: List of tokens.
+    :type tokens: List[str]
 
-    Returns:
-    List of classified tokens.
+    :return: List of classified tokens.
+    :rtype: List[str]
     """
 
     classified = []
@@ -367,7 +367,7 @@ def group_by_clusters(filename: str, col_name: str):
     n_noise_ = list(labels).count(-1)
     clustering_metrics = {
         "clusters": n_clusters_,
-        "noise points": n_noise_,
+        "noise_points": n_noise_,
         "clustering_score": metrics.silhouette_score(scaled_distance_matrix, labels),
     }
 

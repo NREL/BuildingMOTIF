@@ -9,7 +9,7 @@ from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
 )
 
-from buildingmotif.label_parsing.docs import usage
+from buildingmotif.label_parsing import usage
 from buildingmotif.label_parsing.tools import tokenizer
 
 llm = Ollama(model="llama3")
@@ -54,7 +54,7 @@ def classify_tokens_with_llm(user_input: str, list_of_dicts: List, num_tries: in
     :return: List of Token_Prediction.
     :rtype: List
     """
-    
+
     tokens_str_list = str(tokenizer.split_and_group(user_input, list_of_dicts))
 
     headers_to_split_on = [

@@ -306,7 +306,7 @@ named_point = sequence(point_abbreviations, maybe(delimiters), identifier)
 building_constant = constant(Constant(BRICK.Building))
 up_to_delimiter = regex(r"[^_._:/\-]+", Identifier)
 
-# ith mapped points to brick class embeddings
+# mapped points to brick class using vector embeddings
 COMMON_GENERATED_ABBREVIATIONS = {
     "DEWPTTMP": BRICK.Dewpoint_Setpoint,
     "KTONHR": BRICK.Chilled_Water_Meter,
