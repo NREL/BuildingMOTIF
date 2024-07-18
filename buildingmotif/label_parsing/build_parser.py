@@ -153,15 +153,14 @@ def make_program(user_text: str, matched_token_classes, list_of_dicts: List):
     for token in tokens:
         if not token.isalnum():
             delimiters.add(token)
-        elif (
-            wordChecker.check_word_validity(token) and len(token) >= MIN_CONSTANT_LENGTH
-        ):
-            valid_tokens.add(token)
-        else:
-            if combined_abbreviations(token) and not any(
+        elif combined_abbreviations(token) and not any(
                 r.error for r in combined_abbreviations(token)
             ):
                 dict_predictions[token] = "COMBINED_ABBREVIATIONS"
+        elif (
+            wordChecker.check_word_validity(token) and len(token) >= MIN_CONSTANT_LENGTH and not token.isnumeric()
+        ):
+            valid_tokens.add(token)
 
     # Assign classifications
     for token in delimiters:
@@ -189,9 +188,7 @@ def make_program(user_text: str, matched_token_classes, list_of_dicts: List):
                 flagged.append(
                     token
                 )  # append all tokens the llm predicts as an Abbreviations to the flagged list
-        if (
-            wordChecker.check_word_validity(token) and len(token) >= MIN_CONSTANT_LENGTH
-        ) or classification == "Constant":  # check if a token is constant by using a word checker library or with llm prediction
+        if classification == "Constant" and not token.isnumeric():  # check if a token is constant by using a word checker library or with llm prediction
             dict_predictions[token] = f'regex(r"[a-zA-Z]{{1,{len(token)}}}", Constant)'
         else:
             dict_predictions[token] = (
@@ -482,7 +479,7 @@ def generate_parsers_for_clusters(
         )
         parser = random_generated_parser + " = sequence(" + ", ".join(program_arr) + ")"
         map_parser_to_cluster[parser] = arr_of_point_names
-
+    
     for noise_point in noise[0]:
         try:
             llm_output = classify_tokens_with_llm(noise_point, list_of_dicts, num_tries)
@@ -496,7 +493,7 @@ def generate_parsers_for_clusters(
         )
         parser = random_generated_parser + " = sequence(" + ", ".join(program_arr) + ")"
         map_parser_to_cluster[parser] = [noise_point]
-
+    
     return (
         map_parser_to_cluster.keys(),
         map_parser_to_cluster.values(),

@@ -9,6 +9,7 @@ from buildingmotif.label_parsing.build_parser import (
 from buildingmotif.label_parsing.combinators import (
     COMMON_EQUIP_ABBREVIATIONS_BRICK,
     COMMON_POINT_ABBREVIATIONS,
+    COMMON_GENERATED_ABBREVIATIONS
 )
 from buildingmotif.label_parsing.tools import abbreviationsTool, codeLinter
 
@@ -93,7 +94,7 @@ import rdflib
                 )
                 file.write(
                     f"""
-COMBINED_ABBREVIATIONS = abbreviationsTool.make_combined_abbreviations({abbreviationsTool.make_combined_dict(self.list_of_dicts)})
+COMBINED_ABBREVIATIONS = abbreviationsTool.make_combined_abbreviations({self.list_of_dicts})
                     """
                 )
                 file.write(
