@@ -191,6 +191,9 @@ class Model:
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
 
+        # remove imports from data graph
+        data_graph.remove((None, OWL.imports, None))
+
         # validate the data graph
         valid, report_g, report_str = shacl_validate(
             data_graph, shapeg, engine=self._bm.shacl_engine
@@ -276,7 +279,7 @@ class Model:
             ontology_graph = ontology_graph.skolemize()
 
             valid, report_g, report_str = shacl_validate(
-                temp_model_graph, ontology_graph
+                temp_model_graph, ontology_graph, engine=self._bm.shacl_engine
             )
 
             results[shape_uri] = ValidationContext(

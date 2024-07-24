@@ -12,11 +12,12 @@ from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.compare import _TripleCanonicalizer
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
+from sqlalchemy.exc import NoResultFound
 
 from buildingmotif.namespaces import OWL, PARAM, RDF, SH, XSD, bind_prefixes
 
 if TYPE_CHECKING:
-    from buildingmotif.dataclasses import Template
+    from buildingmotif.dataclasses import Library, Template
 
 Triple = Tuple[Node, Node, Node]
 _gensym_counter = 0
@@ -47,6 +48,25 @@ def _param_name(param: URIRef) -> str:
     """
     assert param.startswith(PARAM)
     return param[len(PARAM) :]
+
+
+def _guarantee_unique_template_name(library: "Library", name: str) -> str:
+    """
+    Ensure that the template name is unique in the library by appending an increasing
+    number. This is only called when we are generating templates from GraphDiffs and
+    the names are local to the Library. The Library is intended to be ephemeral so these
+    names will not be around for long.
+    """
+    idx = 1
+    original_name = name
+    try:
+        while library.get_template_by_name(name):
+            name = f"{original_name}_{idx}"
+            idx += 1
+    except NoResultFound:
+        # this means that the template does not exist and we can use the original name
+        pass
+    return name
 
 
 def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
@@ -218,7 +238,9 @@ def get_template_parts_from_shape(
     for pshape in pshapes:
         property_path = shape_graph.value(pshape, SH["path"])
         if property_path is None:
-            raise Exception(f"no sh:path detected on {shape_name}")
+            raise Exception(
+                f"no sh:path detected on {shape_name} property shape {pshape}"
+            )
         # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
@@ -586,6 +608,7 @@ def shacl_validate(
             )
             pass
 
+    data_graph = data_graph + (shape_graph or Graph())
     return pyshacl.validate(
         data_graph,
         shacl_graph=shape_graph,
