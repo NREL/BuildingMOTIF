@@ -21,6 +21,12 @@ export interface TokenizePointLabel {
   tokens: Token[]
 }
 
+export interface JsonParser  {
+  parser: string;
+  id?: string;
+  args: {id?: string, parsers?: JsonParser[], type_name?: string, s?: string, length?: number};
+}
+
 declare var Blockly: any;
 
 @Component({
@@ -60,7 +66,48 @@ export class PointlabelParserComponent implements OnInit {
 
     const pointLabels: string | null = localStorage.getItem('pointLabels')
     if (pointLabels) this.pointLabelsFormControl.setValue(JSON.parse(pointLabels))
+  }
 
+  defaultFill() {
+    // this is a place holder input
+    const json_parser: JsonParser = {"parser":"sequence","args":{"id":"$bh|H!ZDhv943E?;JTBR","parsers":[{"parser":"choice","args":{"id":"XaiW~OaA(1bqpAJmN$;P","parsers":[{"parser":"string","args":{"id":"8,sqLaZcdBIx?W;=i(Yd","type_name":"A","s":"B"}},{"parser":"string","args":{"id":"sd)kp8fJeJ/jCSE:Gp}h","type_name":"C","s":"D"}}]}},{"parser":"string","args":{"id":"u`Y?LS?N#h29~5l6VRs)","type_name":"Delimiter","s":"E"}},{"parser":"choice","args":{"id":"9J|Gl4K$,l?je*/jRRTa","parsers":[{"parser":"sequence","args":{"id":"v1srsf/1,=y9p3!nPq8M","parsers":[{"parser":"string","args":{"id":"Sx-V|ff/#S=W%B`j}1cM","type_name":"F","s":"G"}},{"parser":"substring_n","args":{"id":"{N*Phycp(glt`a*2TEWN","type_name":"H","length":1}}]}},{"parser":"sequence","args":{"id":"fw|3:6YeVyvest[@a4kC","parsers":[{"parser":"string","args":{"id":"F^v+jRh2@OlN4[dEfQNa","type_name":"I","s":"J"}},{"parser":"substring_n","args":{"id":"lL,KvAksa7j:.IwV,)}?","type_name":"K","length":2}}]}}]}}]}};
+
+    // its important this is a sequence
+    if (json_parser.parser !== "sequence") return 
+
+    json_parser.parser = "sequence-wrapper"
+    this.jsonToBlock(json_parser)
+  }
+
+  jsonToBlock(json_parser: JsonParser){
+    const {parser, args} = json_parser;
+
+    // get parser name
+    let parser_name;
+    if (parser == "string") parser_name = "string-url"
+    else if (parser == "sequence") parser_name = "sequence-internal"
+    else parser_name = parser
+
+    // build parent block
+    var parentBlock = this.workspace.newBlock(parser_name);
+    const {id, parsers, ...field_values} = args;
+    Object.entries(field_values).forEach(([field, value]) => {parentBlock.setFieldValue(value, field)});
+    parentBlock.initSvg();
+    parentBlock.render(); 
+    var parentConnection = parentBlock.getInput('parsers')?.connection;
+
+    // build out children
+    let currentConnection = parentConnection;
+    args.parsers?.forEach(p => {
+      const childBlock = this.jsonToBlock(p)
+
+      // connect child
+      var childConnection = childBlock.previousConnection;
+      currentConnection.connect(childConnection);
+      currentConnection = childBlock.nextConnection
+    });
+
+    return parentBlock
   }
 
   file: any;
