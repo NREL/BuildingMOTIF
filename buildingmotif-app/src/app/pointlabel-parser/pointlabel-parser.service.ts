@@ -4,6 +4,10 @@ import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Model } from '../types'
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { handleError } from '../handle-error';
+
+const API_URL = environment.API_URL;
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +19,10 @@ export class PointlabelParserService {
   parse(pointlabels: string, parsers: string): Observable<Model | any> {
     const headers = {'Content-Type': "application/json"}
 
-    return this.http.post(`http://localhost:5000/parsers`, {point_labels: pointlabels, parsers}, {headers, responseType: 'json'})
+    return this.http.post(API_URL + `/parsers`, {point_labels: pointlabels, parsers}, {headers, responseType: 'json'})
       .pipe(
         retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
+        catchError(handleError) // then handle the error
       );
   }
 
