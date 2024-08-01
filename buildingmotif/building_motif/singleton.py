@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class Singleton(type):
     """Metaclass that makes a class into a singleton."""
 
@@ -7,6 +10,14 @@ class Singleton(type):
         def clean():
             if hasattr(singleton_cls, "instance"):
                 delattr(singleton_cls, "instance")
+
+        def __getattribute__(self, name: str) -> Any:
+            if hasattr(self, name):
+                return super().__getattribute__(name)
+            elif hasattr(self, "instance"):
+                if hasattr(self.instance, name):
+                    return getattr(self.instance, name)
+            return super().__getattribute__(name)
 
         setattr(singleton_cls, "clean", clean)
         return singleton_cls
