@@ -2,10 +2,11 @@ import pytest
 from rdflib import Graph, Literal, Namespace, URIRef
 
 from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, ShapeCollection
+from buildingmotif.dataclasses import Library, Model, ShapeCollection
 from buildingmotif.namespaces import BRICK, SH, XSD, A
 from buildingmotif.utils import (
     PARAM,
+    _guarantee_unique_template_name,
     _param_name,
     _strip_param,
     get_parameters,
@@ -378,3 +379,22 @@ def test_strip_param():
             assert (
                 expected == output
             ), f"Input {input_val} should be {expected} but was {output}"
+
+
+def test_guarantee_unique_template_name(bm):
+    # make new library
+    lib = Library.create("test")
+    # add a template
+    lib.create_template("test_template", None)
+
+    # create a new template with the same name
+    name = _guarantee_unique_template_name(lib, "test_template")
+    assert name == "test_template_1"
+
+    lib.create_template(name, None)
+
+    # create a new template with the same name
+    name = _guarantee_unique_template_name(lib, "test_template")
+    assert name == "test_template_2"
+
+    lib.create_template(name, None)
