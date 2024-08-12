@@ -96,7 +96,7 @@
     sh:property [
         rdfs:label "Return Air Damper" ;
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:damper ] ;
+        sh:qualifiedValueShape [ sh:node components:damper-modulating ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
@@ -168,13 +168,13 @@
 # option 1
 :economizer-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Economizer Damper" ;
-    sh:node components:damper .
+    sh:node components:damper-modulating .
 
 # option 2
 # For units with a common economizer/minimum OA damper, include the following points.
 :economizer-minimum-oa-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "common economizer/minimum OA damper (and AFMS)" ;
-    sh:node components:damper ;
+    sh:node components:damper-modulating ;
     # application, Airflow measurement station (AFMS)
     sh:property [
         rdfs:label "Outdoor airflow" ;
@@ -189,15 +189,7 @@
 # Figure A-10?
 :minimum-oa-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "minimum outdoor air damper" ;
-    sh:class brick:Damper ;
-    # application
-    sh:property [
-        rdfs:label "Minimum outdoor air damper open/close" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Open_Close_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
+    sh:node components:damper-two-position ;
     # application
     sh:property [
         rdfs:label "Minimum outdoor air damper DP" ;
@@ -212,15 +204,7 @@
 # Figure A-9?
 :minimum-oa-damper-afms a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "minimum outdoor air damper and AFMS" ;
-    sh:class brick:Outside_Damper ;
-    # application
-    sh:property [
-        rdfs:label "Minimum outdoor air damper" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Damper_Position_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
+    sh:node components:damper-modulating ;
     # application, Airflow measurement station (AFMS)
     sh:property [
         rdfs:label "Minimum outdoor airflow" ;
@@ -235,7 +219,7 @@
 # For units with actuated relief dampers but no relief fan, include the following points.
 :relief-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Relief Damper" ;
-    sh:node components:damper ;
+    sh:node components:damper-modulating ;
     # NOTE G36 description (open/close) conflicts with type (AO) and device (modulating actuator)
     # assume it's an AO point for Damper_Position_Command from components:damper rather than Open_Close_Command below
     # application
@@ -262,15 +246,7 @@
 
 :relief-fan-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Relief Damper" ;
-    sh:class brick:Damper ;
-    # application
-    sh:property [
-        rdfs:label "Relief damper open/close" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Open_Close_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
+    sh:node components:damper-two-position ;
     # application
     sh:property [
         rdfs:label "Building static pressure" ;
@@ -334,4 +310,4 @@
 
 :return-fan-exhaust-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Exhaust damper" ;
-    sh:node components:damper .
+    sh:node components:damper-modulating .
