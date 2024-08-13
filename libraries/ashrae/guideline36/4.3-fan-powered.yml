@@ -3,20 +3,20 @@ fan-powered-terminal-unit:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:VAV ;
-      brick:hasPart p:fan, p:damper ;
+      brick:hasPart p:supply-fan, p:damper ;
       brick:hasPoint p:heating_signal, p:airflow, p:dat, p:zat .
   dependencies:
-  - template: fan
+  - template: supply-fan
     args: {"name": "fan"}
   - template: damper
     args: {"name": "damper"}
-  - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor 
+  - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
     library: https://brickschema.org/schema/1.3/Brick
     args: {"name": "airflow"}
-  - template: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor 
+  - template: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor
     library: https://brickschema.org/schema/1.3/Brick
     args: {"name": "dat"}
-  - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor 
+  - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
     library: https://brickschema.org/schema/1.3/Brick
     args: {"name": "zat"}
   - template: https://brickschema.org/schema/Brick#Heating_Command
