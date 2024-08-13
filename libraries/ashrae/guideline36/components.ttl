@@ -1,122 +1,44 @@
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 @prefix brick: <https://brickschema.org/schema/Brick#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix vav41: <urn:ashrae/g36/4.1/vav-cooling-only/> .
-@prefix vav42: <urn:ashrae/g36/4.2/vav-with-reheat/> .
-@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 @prefix : <urn:ashrae/g36/components/> .
 
 # Air-Side
 
-:cooling_damper a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+# Dampers
+
+# 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.8
+:damper-modulating a sh:NodeShape, owl:Class, bmotif:HVAC ;
     sh:class brick:Damper ;
-    rdfs:label "Cooling Damper" ;
+    # required
     sh:property [
+        rdfs:label "damper position command" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Damper_Position_Command ] ;
         sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-.
+        sh:qualifiedMaxCount 2 ; # 4.1, 4.2, 4.3, 4.4, 4.5 AO OR two DOs
+    ] .
 
-:heating_damper a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+# 4.6, 4.8
+:damper-two-position a sh:NodeShape, owl:Class, bmotif:HVAC ;
     sh:class brick:Damper ;
-    rdfs:label "Heating Damper" ;
+    # required
     sh:property [
+        rdfs:label "open/close command" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Damper_Position_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-.
-
-# component of 4.6, 4.7, 4.8, 4.12
-:supply-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Supply Fan" ;
-    sh:class brick:Supply_Fan ;
-    # motor
-    sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node :fan-motor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Open_Close_Command ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] .
 
-:fan-motor a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Fan Motor" ;
-    sh:class brick:Motor ;
-    # required for all
-    sh:property [
-        rdfs:label "Fan start/stop" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # required for all
-    sh:property [
-        rdfs:label "Fan speed" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Fan_Speed_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # optional for all, assuming 4.7 which is blank in 2021 follows the other AHUs
-    sh:property [
-        rdfs:label "Fan status" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Fan_Status ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
+# Zone
+# 4.1, 4.2, 4.3, 4.4, 4.5, 4.8, 4.12 (single zone systems)
 
-# component of 4.6, 4.7, 4.8, 4.12
-:filter a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Filter" ;
-    sh:class brick:Filter ;
-    # optional for all
-    sh:property [
-        rdfs:label "Filter pressure drop" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Differential_Pressure_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-# component of 4.6, 4.8, 4.12
-:cooling-coil a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Cooling Coil" ;
-    sh:class brick:Cooling_Coil ;
-    # required for all (application-specific)
-    sh:property [
-        rdfs:label "Cooling signal" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Cooling_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-# component of 4.2, 4.3, 4.7 (required)
-# component of 4.6, 4.8, 4.12 (application-specific)
-# NOTE guideline is inconsistent for cases when htg coils are not a component
-:heating-coil a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Heating Coil" ;
-    sh:class brick:Heating_Coil ;
-    # required for all
-    sh:property [
-        rdfs:label "Heating signal" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Heating_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-# component of 4.1, 4.2, 4.3, 4.4, 4.5, 4.8, 4.12
 :thermostat a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Thermostat" ;
     sh:class brick:Thermostat ;
-    # required for all
+    # required
     sh:property [
         rdfs:label "Zone temperature" ;
         sh:path brick:hasPoint ;
@@ -124,7 +46,7 @@
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # application-specific for all
+    # application
     sh:property [
         rdfs:label "Local override" ;
         sh:path brick:hasPoint ;
@@ -132,21 +54,26 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # application-specific for all
+    # application
     sh:property [
         rdfs:label "Zone temperature setpoint adjustment" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Differential_Air_Temperature_Setpoint ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
+    ] ;
+    # connect to room
+    sh:property [
+        sh:path brick:hasLocation ;
+        sh:qualifiedValueShape [ sh:class brick:Room ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
     ] .
 
-# component of 4.1, 4.2, 4.3, 4.4, 4.5, 4.8, 4.12 (systems serving a single zone)
-# NOTE may need to clarify cases for zones containing rooms and relationship to points
+# NOTE user must connect G36 equipment that feed a zone (in other files) to brick:Room(s) by zone hasPart brick:Room
 :zone a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "HVAC Zone" ;
     sh:class brick:HVAC_Zone ;
-    # application-specific for all
+    # application
     sh:property [
         rdfs:label "Occupancy sensor" ;
         sh:path brick:hasPoint ;
@@ -154,7 +81,7 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # application-specific for all
+    # application
     sh:property [
         rdfs:label "Window switch" ;
         sh:path brick:hasPoint ;
@@ -162,11 +89,178 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # application-specific for all
+    # application
     sh:property [
         rdfs:label "Zone CO2 level" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:CO2_Level_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# Coils
+
+# 4.2, 4.3, 4.6, 4.7, 4.8, 4.12
+:heating-coil a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Heating_Coil ;
+    # required 4.2, 4.3, 4.7, 4.12 (if present)
+    # application 4.6, 4.8
+    sh:property [
+        rdfs:label "Heating signal" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [
+            sh:or (
+                # 4.2, 4.3, 4.12 Modulating valve OR Floating actuator
+                # 4.6, 4.7, 4.8 Modulating HW valve
+                sh:class brick:Valve_Position_Command
+                # 4.2, 4.3, 4.6, 4.7, 4.8, 4.12 Modulating electric heating coil
+                # 4.12 Variable-capacity heat pump compressor
+                sh:class brick:Heating_Command
+            )
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 2 ; # 4.2, 4.3 AO OR two DOs
+    ] .
+
+# 4.6, 4.8, 4.12
+:cooling-coil a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Cooling_Coil ;
+    # required
+    sh:property [
+        rdfs:label "Cooling signal" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [
+            sh:or (
+                # 4.6, 4.8 Modulating CHW valve
+                # 4.12 Modulating CHW valve OR Floating actuator
+                sh:class brick:Valve_Position_Command
+                # 4.8, 4.12 Variable-capacity compressor
+                sh:class brick:Cooling_Command
+            )
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# Fans
+
+# 4.3, 4.9
+:constant-speed-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Fan ;
+    sh:property [
+        rdfs:label "Fan Constant Speed Motor" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Motor ;
+            # required
+            sh:property [
+                rdfs:label "fan start/stop" ;
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+            # optional
+            sh:property [
+                rdfs:label "fan status" ;
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Motor_On_Off_Status ] ;
+                sh:qualifiedMinCount 0 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# 4.3, 4.12
+:variable-speed-fan-ecm a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Fan ;
+    sh:property [
+        rdfs:label "Fan Electronically Commutated Motor" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Motor ;
+            # required
+            sh:property [
+                rdfs:label "fan start/stop" ;
+                # NOTE 4.3 (if separate from fan speed point)
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+            # required
+            sh:property [
+                rdfs:label "fan speed command" ;
+                # NOTE 4.3 (if applicable)
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Speed_Command ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+            # optional
+            sh:property [
+                rdfs:label "fan status " ;
+                # NOTE 4.3 OR Fan speed feedback AI sh:class brick:Motor_Current_Sensor
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Motor_On_Off_Status ] ;
+                sh:qualifiedMinCount 0 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# 4.6, 4.7, 4.8, 4.12
+:variable-speed-fan-vfd a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Fan ;
+    sh:property [
+        rdfs:label "Fan Variable Frequency Drive" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Variable_Frequency_Drive ;
+            # required
+            sh:property [
+                rdfs:label "fan start/stop" ;
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+            # required
+            sh:property [
+                rdfs:label "fan speed" ;
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Speed_Command ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+            # optional
+            # NOTE 4.7 is blank in 2021, assume it follows other AHUs
+            sh:property [
+                rdfs:label "fan status" ;
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Motor_On_Off_Status ] ;
+                sh:qualifiedMinCount 0 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# Air Filter
+
+# 4.6, 4.7, 4.8, 4.12
+:filter a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Filter ;
+    # optional
+    sh:property [
+        rdfs:label "Filter pressure drop" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Differential_Pressure_Sensor ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] .
