@@ -82,8 +82,17 @@
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # must feed a zone
+    # required
     sh:property [
+        rdfs:label "Thermostat" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:thermostat] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "HVAC Zone" ;
         sh:path brick:feeds ;
         sh:qualifiedValueShape [ sh:node components:zone ] ;
         sh:qualifiedMinCount 1 ;
@@ -148,7 +157,7 @@
         sh:qualifiedMaxCount 1 ;
     ] .
 
-# relief air options
+# relief air
 
 # option 1
 # For units with actuated relief dampers but no relief fan, include the following points.
@@ -166,7 +175,7 @@
     rdfs:label "Relief Damper" ;
     sh:node components:damper-two-position .
 
-# return air options
+# return air
 
 # option 1
 # For units with a return fan, include the following three points.
@@ -178,12 +187,12 @@
 # For units with a return fan and speed tracking control, include the following point.
 :return-fan-speed-control-exhaust-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
     rdfs:label "Exhaust Damper" ;
-    sh:node component:damper-two-position .
+    sh:node components:damper-two-position .
 
 # option 3
 # For units with a return fan and direct building pressure control, include the following two points.
 :return-fan-pressure-control a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "return fan and direct building pressure control" ;
+    rdfs:label "Return Fan with VFD and direct building pressure control" ;
     sh:node components:variable-speed-fan-vfd ;
     sh:property [
         rdfs:label "Return Fan Discharge Static Pressure" ;
@@ -194,4 +203,5 @@
     ] .
 
 :return-fan-pressure-control-exhaust-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Exhaust Damper" ;
     sh:node components:damper-modulating .

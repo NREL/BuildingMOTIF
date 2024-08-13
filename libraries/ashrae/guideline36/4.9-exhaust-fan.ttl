@@ -8,24 +8,9 @@
 
 :exhaust-fan a sh:NodeShape, owl:Class, bmotif:System_Specification ;
     rdfs:label "General Constant Speed Exhaust Fan" ;
-    sh:class brick:Exhaust_Fan ;
-    # required
-    sh:property [
-        rdfs:label "Exhaust Fan Start/Stop" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # optional
-    sh:property [
-        rdfs:label "Exhaust Fan Status" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Fan_Status ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
+    sh:node components:constant-speed-fan ;
     # For exhaust fans controlled by temperature, include the following point.
+    # application
     sh:property [
         rdfs:label "Zone Temperature" ;
         sh:path brick:hasPoint ;

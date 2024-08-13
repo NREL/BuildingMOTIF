@@ -9,9 +9,16 @@
 :fan-coil-unit a sh:NodeShape, owl:Class, bmotif:System_Specification ;
     rdfs:label "Fan Coil Unit" ;
     sh:class brick:Fan_Coil_Unit ;
+    # required
     sh:property [
+        rdfs:label "Variable Speed Fan" ;
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:supply-fan ] ;
+        sh:qualifiedValueShape [
+            sh:or (
+                sh:node components:variable-speed-fan-ecm
+                sh:node components:variable-speed-fan-vfd
+            )
+        ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
@@ -35,18 +42,22 @@
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:filter ] ;
-        sh:qualifiedMinCount 0 ; 
+        sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # application-specific
+    # For FCUs with a cooling coil, include the following point:
+    # required
     sh:property [
+        rdfs:label "Cooling Coil" ;
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:cooling-coil ] ;
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # application-specific
+    # For FCUs with a heating coil, include the following point:
+    # required
     sh:property [
+        rdfs:label "Heating Coil" ;
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:heating-coil ] ;
         sh:qualifiedMinCount 0 ;
@@ -54,13 +65,15 @@
     ] ;
     # required
     sh:property [
+        rdfs:label "Thermostat" ;
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:thermostat] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # must feed a zone
+    # required
     sh:property [
+        rdfs:label "HVAC Zone" ;
         sh:path brick:feeds ;
         sh:qualifiedValueShape [ sh:node components:zone ] ;
         sh:qualifiedMinCount 1 ;

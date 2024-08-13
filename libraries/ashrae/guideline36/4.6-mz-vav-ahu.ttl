@@ -9,7 +9,7 @@
 :mz-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
     rdfs:label "Multiple-Zone VAV Air-Handling Unit" ;
     sh:class brick:Air_Handling_Unit ;
-    # supply air fan, required
+    # required
     sh:property [
         rdfs:label "Supply Fan with VFD" ;
         sh:path brick:hasPart ;
@@ -43,15 +43,17 @@
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # filter, required
+    # required
     sh:property [
+        rdfs:label "Filter" ;
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:filter ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # heating coil, optional
+    # optional
     sh:property [
+        rdfs:label "Heating Coil" ;
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [
             sh:node components:heating-coil ;
@@ -67,7 +69,7 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # outdoor air damper(s) (economizer), required
+    # required, outdoor air damper(s) (economizer)
     # NOTE options are rather unclear in G36
     # 1. economizer damper (only)
     # 2. common economizer/minimum OA damper (with AFMS)
@@ -92,7 +94,7 @@
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # return air damper
+    # required
     sh:property [
         rdfs:label "Return Air Damper" ;
         sh:path brick:hasPart ;
@@ -125,8 +127,9 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # cooling coil
+    # required
     sh:property [
+        rdfs:label "Cooling Coil" ;
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:cooling-coil ] ;
         sh:qualifiedMinCount 1 ;
@@ -134,7 +137,7 @@
     ] ;
     # heating signal, see above
     # outdoor air, see above
-    # relief air, optional
+    # optional, relief air
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [
@@ -149,7 +152,7 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # return air, optional
+    # optional, return air
     sh:property [
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [
@@ -261,6 +264,7 @@
 
 # For units with a return fan, include the following points.
 :return-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Return Fan with VFD" ;
     sh:node components:variable-speed-fan-vfd ;
     # application
     sh:property [

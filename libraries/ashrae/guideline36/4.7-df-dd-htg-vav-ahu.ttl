@@ -10,7 +10,7 @@
 :df-dd-htg-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
     rdfs:label "Dual-Fan Dual-Duct Heating VAV Air-Handling Unit" ;
     sh:class brick:Air_Handling_Unit ;
-    # supply air fan, required
+    # required
     sh:property [
         rdfs:label "Supply Fan with VFD" ;
         sh:path brick:hasPart ;
@@ -36,8 +36,9 @@
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # heating coil, required
+    # required
     sh:property [
+        rdfs:label "Heating Coil" ;
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:heating-coil ] ;
         sh:qualifiedMinCount 1 ;
@@ -51,8 +52,9 @@
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # filter, optional
+    # optional
     sh:property [
+        rdfs:label "Filter" ;
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [ sh:node components:filter ] ;
         sh:qualifiedMinCount 0 ;
