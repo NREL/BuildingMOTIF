@@ -1,10 +1,23 @@
-vav-with-reheat:
+vav-terminal-unit-reheat:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name brick:hasPart p:rhc .
+    p:name a brick:Variable_Air_Volume_Box_With_Reheat ;
+        brick:hasPart p:damper, p:htg-coil, p:thermostat ;
+        brick:hasPoint p:airflow-sen, p:airtemp-sen ;
+        brick:feeds p:zone .
   dependencies:
-   - template: vav-cooling-only
-     args: {"name": "name"}
-   - template: heating-coil
-     args: {"name": "rhc"}
+  - template: damper-modulating
+    args: {"name": "damper"}
+  - template: heating-coil
+    args: {"name": "htg-coil"}
+  - template: thermostat
+    args: {"name": "thermostat"}
+  - template: https://brickschema.org/schema/Brick#Discharge_Air_Flow_Sensor
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "airflow-sen"}
+  - template: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor
+    library: https://brickschema.org/schema/1.3/Brick
+    args: {"name": "airtemp-sen"}
+  - template: zone
+    args: {"name": "zone"}

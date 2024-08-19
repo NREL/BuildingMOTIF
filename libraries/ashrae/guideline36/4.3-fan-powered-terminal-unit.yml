@@ -2,23 +2,32 @@ fan-powered-terminal-unit:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a brick:VAV ;
-      brick:hasPart p:supply-fan, p:damper ;
-      brick:hasPoint p:heating_signal, p:airflow, p:dat, p:zat .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Variable_Air_Volume_Box_With_Reheat ;
+      brick:hasPart
+        ( _:fan rdf:type rdf:Alt
+          rdf:_1 p:fan-cav
+          rdf:_2 p:fan-ecm ),
+        p:damper, p:htg-coil, p:thermostat ;
+      brick:hasPoint p:airflow-sen, p:airtemp-sen ;
+      brick:feeds p:zone .
   dependencies:
-  - template: supply-fan
-    args: {"name": "fan"}
+  - template: constant-speed-fan
+    args: {"name": "fan-cav"}
+  - template: variable-speed-fan-ecm
+    args: {"name": "fan-ecm"}
   - template: damper
     args: {"name": "damper"}
+  - template: heating-coil
+    args: {"name": "htg-coil"}
+  - template: thermostat
+    args: {"name": "thermostat"}
   - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
     library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "airflow"}
+    args: {"name": "airflow-sen"}
   - template: https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Sensor
     library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "dat"}
-  - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
-    library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "zat"}
-  - template: https://brickschema.org/schema/Brick#Heating_Command
-    library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "heating_signal"}
+    args: {"name": "airtemp-sen"}
+  - template: zone
+    args: {"name": "zone"}
+

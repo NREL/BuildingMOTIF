@@ -3,60 +3,19 @@ dual-duct-terminal-unit-inlet-sensors:
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Terminal_Unit ;
-      brick:hasPart p:hot_deck, p:cold_deck ;
-      brick:hasPoint p:cooling_airflow_sensor, p:heating_airflow_sensor,
-                     p:local_override, p:occupancy ;
+      brick:hasPart
+        ( p:hot_deck brick:hasPoint p:airflow-sen ),
+        ( p:cold_deck brick:hasPoint p:airflow-sen ) ;
       brick:feeds p:zone .
-    p:zone brick:hasPoint p:zone_temp_sensor, p:zone_temp_adjust, p:zone_co2_sensor .
-  optional: ["zone_co2_sensor", "occupancy", "local_override", "zone_temp_adjust"]
   dependencies:
-    - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+    - template: cold-deck
+      args: {"name": "cold-deck"}
+    - template: hot-deck
+      args: {"name": "hot-deck"}
+    - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "zone_temp_sensor"}
-    - template: https://brickschema.org/schema/Brick#Temperature_Adjust_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "zone_temp_adjust"}
-    - template: https://brickschema.org/schema/Brick#CO2_Level_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "zone_co2_sensor"}
-    - template: https://brickschema.org/schema/Brick#Override_Command
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "local_override"}
-    - template: https://brickschema.org/schema/Brick#Occupancy_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "occupancy"}
-    - template: https://brickschema.org/schema/Brick#HVAC_Zone
-      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "airflow-sen"}
+    - template: thermostat
+      args: {"name": "thermostat"}
+    - template: zone
       args: {"name": "zone"}
-    - template: hot-deck-with-damper
-      args: {"name": "hot_deck"}
-    - template: cold-deck-with-damper
-      args: {"name": "cold_deck"}
-
-hot-deck-with-damper:
-  body: >
-    @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a brick:Hot_Deck ;
-      brick:hasPart p:damper ;
-      brick:hasPoint p:airflow_sensor .
-  dependencies:
-    - template: damper
-      args: {"name": "damper"}
-    - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "airflow_sensor"}
-
-cold-deck-with-damper:
-  body: >
-    @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a brick:Cold_Deck ;
-      brick:hasPart p:damper ;
-      brick:hasPoint p:airflow_sensor .
-  dependencies:
-    - template: damper
-      args: {"name": "damper"}
-    - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "airflow_sensor"}
