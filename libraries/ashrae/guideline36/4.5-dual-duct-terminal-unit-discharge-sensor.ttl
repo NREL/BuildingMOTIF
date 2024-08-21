@@ -11,15 +11,17 @@
     sh:class brick:Terminal_Unit ;
     # required
     sh:property [
+        rdfs:label "Cold Deck" ;
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node :cold-deck ] ;
+        sh:qualifiedValueShape [ sh:node components:cold-deck ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
     # required
     sh:property [
+        rdfs:label "Hot Deck" ;
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node :hot-deck ] ;
+        sh:qualifiedValueShape [ sh:node components:hot-deck ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
@@ -46,29 +48,4 @@
         sh:qualifiedValueShape [ sh:node components:zone ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
-    ] ;
-.
-
-:cold-deck a sh:NodeShape ;
-    sh:class brick:Cold_Deck ;
-    # required
-    sh:property [
-        rdfs:label "Cooling Damper" ;
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:damper-modulating ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-.
-
-:hot-deck a sh:NodeShape ;
-    sh:class brick:Hot_Deck ;
-    # required
-    sh:property [
-        rdfs:label "Heating Damper" ;
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:damper-modulating ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-.
+    ] .
