@@ -6,7 +6,7 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix : <urn:ashrae/g36/4.6/mz-vav-ahu/> .
 
-:mz-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+:multiple-zone-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
     rdfs:label "Multiple-Zone VAV Air-Handling Unit" ;
     sh:class brick:Air_Handling_Unit ;
     # required
@@ -19,6 +19,7 @@
             sh:property [
                 rdfs:label "Supply fan high static alarm reset" ;
                 rdfs:comment "(optional-see control schematic)" ;
+                sh:path brick:hasPoint ;
                 sh:qualifiedValueShape [ sh:class brick:Reset_Command ] ;
                 sh:qualifiedMinCount 0 ;
                 sh:qualifiedMaxCount 1 ;
@@ -79,12 +80,16 @@
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [
             sh:or (
+                # option 1
                 sh:node :economizer-damper
+                # option 2
                 sh:node :economizer-minimum-oa-damper
+                # option 3
                 sh:and (
                     sh:node :economizer-damper
                     sh:node :minimum-oa-damper
                 )
+                # option 4
                 sh:and (
                     sh:node :economizer-damper
                     sh:node :minimum-oa-damper-afms
@@ -142,7 +147,9 @@
         sh:path brick:hasPart ;
         sh:qualifiedValueShape [
             sh:or (
+                # option 1
                 sh:node :relief-damper
+                # option 2
                 sh:and (
                     sh:node :relief-fan
                     sh:node :relief-fan-damper

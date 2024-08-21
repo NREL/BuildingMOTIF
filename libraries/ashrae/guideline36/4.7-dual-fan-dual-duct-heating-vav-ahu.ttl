@@ -2,12 +2,11 @@
 @prefix brick: <https://brickschema.org/schema/Brick#> .
 @prefix components: <urn:ashrae/g36/components/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix : <urn:ashrae/g36/4.7/df-dd-vav-ahu/> .
 
-:df-dd-htg-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+:dual-fan-dual-duct-heating-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
     rdfs:label "Dual-Fan Dual-Duct Heating VAV Air-Handling Unit" ;
     sh:class brick:Air_Handling_Unit ;
     # required
@@ -20,6 +19,7 @@
             sh:property [
                 rdfs:label "Supply fan high static alarm reset" ;
                 rdfs:comment "(optional-see control schematic)" ;
+                sh:path brick:hasPoint ;
                 sh:qualifiedValueShape [ sh:class brick:Reset_Command ] ;
                 sh:qualifiedMinCount 0 ;
                 sh:qualifiedMaxCount 1 ;
