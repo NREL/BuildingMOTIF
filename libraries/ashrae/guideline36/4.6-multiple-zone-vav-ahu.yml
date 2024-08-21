@@ -2,72 +2,134 @@ multiple-zone-ahu:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:AHU ;
-      brick:hasPart p:sa_fan, p:ra_damper, p:clg_coil, p:htg_coil ;
-      brick:hasPoint p:sa_temp, p:oa_temp, p:ma_temp, p:ra_temp, p:filter_pd .
-  optional: ['ma_temp', 'ra_temp', 'filter_pd']
+      brick:hasPart
+        ( p:supply-fan
+          brick:hasPoint p:supply-fan-reset ),
+        p:filter,
+        ( p:htg-coil
+          brick:hasPoint p:htg-coil-sa-temp ),
+        (_:economizer rdf:type rdf:Alt
+          rdf:_1
+            p:economizer-damper
+          rdf:_2
+            p:economizer-minimum-oa-damper
+              brick:hasPoint p:economizer-minimum-oa-damper-flow
+          rdf:_3
+            p:economizer-damper
+            p:minimum-oa-damper
+              brick:hasPoint p:minimum-oa-damper-pressure
+          rdf:_4
+            p:economizer-damper
+            p:minimum-oa-damper-afms
+              brick:hasPoint p:minimum-oa-damper-afms-flow ),
+        p:return-damper,
+        p:clg-coil,
+        (_:relief rdf:type rdf:Alt
+          rdf:_1
+            p:relief-damper
+              brick:hasPoint p:bldg-static-pressure
+          rdf:_2
+            p:relief-fan
+            p:relief-fan-damper
+              brick:hasPoint p:bldg-static-pressure ),
+        ( p:return-fan
+            brick:hasPoint
+              p:return-fan-reset
+              p:return-fan-sa-flow
+              p:return-fan-ra-flow
+              p:return-fan-pressure
+              p:bldg-static-pressure
+          p:return-fan-exhaust-damper ) ;
+      brick:hasPoint
+        p:sa-temp,
+        p:duct-static-pressure,
+        p:oa-temp,
+        p:ma-temp,
+        p:ra-temp .
+  optional: [
+    'supply-fan-reset',
+    'htg-coil',
+    'relief-damper', 'relief-fan', 'relief-fan-damper',
+    'return-fan', 'return-fan-exhaust-damper',
+    'ma-temp',
+    'ra-temp']
   dependencies:
-    - template: sa_fan
-      args: {"name": "sa_fan"}
-    - template: damper
-      args: {"name": "ra_damper"}
-    - template: htg_coil
-      args: {"name": "htg_coil"}
-    - template: clg_coil
-      args: {"name": "clg_coil"}
+    - template: variable-speed-fan-vfd
+      args: {"name": "supply-fan"}
+    - template: https://brickschema.org/schema/Brick#Reset_Command
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "supply-fan-reset"}
+    - template: filter
+      args: {"name": "filter"}
+    - template: heating-coil
+      args: {"name": "htg-coil"}
     - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "sa_temp"}
+      args: {"name": "htg-coil-sa-temp"}
+    # economizer
+    - template: damper-modulating
+      args: {"name": "economizer-damper"}
+    - template: damper-modulating
+      args: {"name": "economizer-minimum-oa-damper"}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Flow_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "economizer-minimum-oa-damper-flow"}
+    - template: damper-two-position
+      args: {"name": "minimum-oa-damper"}
+    - template: https://brickschema.org/schema/Brick#Air_Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "minimum-oa-damper-pressure"}
+    - template: damper-modulating
+      args: {"name": "minimum-oa-damper-afms"}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Flow_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "minimum-oa-damper-afms-flow"}
+    # return
+    - template: damper-modulating
+      args: {"name": "return-damper"}
+    # cooling coil
+    - template: cooling-coil
+      args: {"name": "clg-coil"}
+    # relief
+    - template: damper-modulating
+      args: {"name": "relief-damper"}
+    - template: https://brickschema.org/schema/Brick#Air_Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "bldg-static-pressure"}
+    - template: variable-speed-fan-vfd
+      args: {"name": "relief-fan"}
+    - template: damper-two-position
+      args: {"name": "relief-fan-damper"}
+    # return
+    - template: variable-speed-fan-vfd
+      args: {"name": "return-fan"}
+    - template: https://brickschema.org/schema/Brick#Reset_Command
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "return-fan-reset"}
+    - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "return-fan-sa-flow"}
+    - template: https://brickschema.org/schema/Brick#Return_Air_Flow_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "return-fan-ra-flow"}
+    - template: https://brickschema.org/schema/Brick#Discharge_Air_Static_Pressure_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "return-fan-pressure"}
+    # bldg-static-pressure see above
+    - template: damper-modulating
+      args: {"name": "return-fan-exhaust-damper"}
+    - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+    # points
+      args: {"name": "sa-temp"}
     - template: https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "oa_temp"}
+      args: {"name": "oa-temp"}
     - template: https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "ma_temp"}
+      args: {"name": "ma-temp"}
     - template: https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "ra_temp"}
-    - template: https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "filter_pd"}
-
-# compose on the ahu's 'name' 
-with-relief-damper:
-  body: >
-    @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name brick:hasPart p:relief-fan, p:relief-damper ;
-           brick:hasPoint p:sp-sensor .
-    p:relief-damper a brick:Exhaust_Damper .
-  optional: ["sp-sensor"]
-  dependencies:
-  - template: relief-fan
-    args: {"name": "relief-fan"}
-  - template: damper
-    args: {"name": "relief-damper"}
-  - template: https://brickschema.org/schema/Brick#Static_Pressure_Sensor
-    library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "sp-sensor"}
-
-with-return-fan:
-  body: >
-    @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name brick:hasPart p:return-fan ;
-      brick:hasPoint p:supply-air-flow, p:return-air-flow, p:sp-sensor .
-    p:relief-damper a brick:Exhaust_Damper .
-  optional: ["supply-air-flow", "return-air-flow", "sp-sensor"]
-  dependencies:
-  - template: return-fan
-    args: {"name": "return-fan"}
-  - template: damper
-    args: {"name": "relief-damper"}
-  - template: https://brickschema.org/schema/Brick#Static_Pressure_Sensor
-    library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "sp-sensor"}
-  - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
-    library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "supply-air-flow"}
-  - template: https://brickschema.org/schema/Brick#Return_Air_Flow_Sensor
-    library: https://brickschema.org/schema/1.3/Brick
-    args: {"name": "return-air-flow"}
+      args: {"name": "ra-temp"}
