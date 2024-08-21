@@ -251,6 +251,31 @@
         sh:qualifiedMaxCount 1 ;
     ] .
 
+# Dual Duct Decks
+# 4.4, 4.5
+
+:cold-deck a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Cold_Deck ;
+    # required
+    sh:property [
+        rdfs:label "Cooling Damper" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :damper-modulating ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:hot-deck a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    sh:class brick:Hot_Deck ;
+    # required
+    sh:property [
+        rdfs:label "Heating Damper" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :damper-modulating ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
 # Air Filter
 
 # 4.6, 4.7, 4.8, 4.12
