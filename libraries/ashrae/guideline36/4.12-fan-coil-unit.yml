@@ -6,12 +6,24 @@ fan-coil-unit:
     p:name a brick:Fan_Coil_Unit ;
       brick:hasPart
         ( _:fan rdf:type rdf:Alt
-          rdf:_1 p:fan-ecm
-          rdf:_2 p:fan-vfd ),
-        p:filter, p:clg-coil, p:htg-coil, p:thermostat ;
-      brick:hasPoint p:sa-temp-sen, p:ra-temp-sen ;
-      brick:feeds p:zone .
-  optional: ['filter', 'clg_coil', 'htg_coil', 'ra-temp-sen']
+          rdf:_1
+            p:fan-ecm
+          rdf:_2
+            p:fan-vfd ),
+        p:filter,
+        p:clg-coil,
+        p:htg-coil,
+        p:thermostat ;
+      brick:hasPoint
+        p:sa-temp,
+        p:ra-temp ;
+      brick:feeds
+        p:zone .
+  optional: [
+    'filter',
+    'clg_coil',
+    'htg_coil',
+    'ra-temp']
   dependencies:
     - template: variable-speed-fan-ecm
       args: {"name": "fan-ecm"}
@@ -27,9 +39,9 @@ fan-coil-unit:
       args: {"name": "thermostat"}
     - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "sa-temp-sen"}
+      args: {"name": "sa-temp"}
     - template: https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
       library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "ra-temp-sen"}
+      args: {"name": "ra-temp"}
     - template: zone
       args: {"name": "zone"}
