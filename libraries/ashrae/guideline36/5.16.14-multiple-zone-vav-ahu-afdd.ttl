@@ -43,106 +43,184 @@
 
 :fc-2 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
     bmotif:domain bmotif:HVAC ;
-    rdfs:label "MAT too low; should be between OAT and RAT" ;
-    sh:class brick:AHU ;
+    rdfs:label "FC#2" ;
+    rdfs:comment "MAT too low; should be between OAT and RAT" ;
+    sh:class brick:Air_Handling_Unit ;
     sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
-    ] ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
-    ] ;
-    sh:property [
+        rdfs:label "MAT_AVG" ;
+        rdfs:comment "rolling average of mixed air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
+        sh:qualifiedMinCount 1 ;
     ] ;
-.
+    sh:property [
+        rdfs:label "RAT_AVG" ;
+        rdfs:comment "rolling average of return air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "OAT_AVG" ;
+        rdfs:comment "rolling average of outdoor air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
 
 :fc-3 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
+    rdfs:label "FC#3" ;
+    rdfs:comment "MAT too high; should be between OAT and RAT" ;
     rdfs:subClassOf :fc-2 ;
-    rdfs:label "MAT too high; should be between OAT and RAT" ;
 .
 
 :fc-4 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
     bmotif:domain bmotif:HVAC ;
-    rdfs:label "Too many changes in Operating State" ;
-    sh:class brick:AHU ;
+    rdfs:label "FC#4" ;
+    rdfs:comment "Too many changes in Operating State" ;
+    sh:class brick:Air_Handling_Unit ;
     sh:property [
+        rdfs:label "OS" ;
+        rdfs:comment "Operating State" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Operating_Mode_Status ] ;
-        sh:qualifiedMinCount 1;
-    ] ;
-.
+        sh:qualifiedMinCount 1 ;
+    ] .
 
 :fc-5 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
     bmotif:domain bmotif:HVAC ;
-    rdfs:label "SAT too low; should be higher than MAT" ;
-    sh:class brick:AHU ;
+    rdfs:label "FC#5" ;
+    rdfs:comment "SAT too low; should be higher than MAT" ;
+    sh:class brick:Air_Handling_Unit ;
     sh:property [
+        rdfs:label "SAT_AVG" ;
+        rdfs:comment "rolling average of supply air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
+        sh:qualifiedMinCount 1 ;
     ] ;
     sh:property [
+        rdfs:label "MAT_AVG" ;
+        rdfs:comment "rolling average of mixed air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
-    ] ;
-.
+        sh:qualifiedMinCount 1 ;
+    # ] ;
+    # sh:property [
+    #     rdfs:label "Delta_T_SF" ;
+    #     rdfs:comment "Temperature rise across supply fan" ;
+    #     sh:path brick:hasPoint ;
+    #     TODO missing from brick
+    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
+    #     sh:qualifiedMinCount 1 ;
+    ] .
 
 :fc-6 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
     bmotif:domain bmotif:HVAC ;
-    rdfs:label "OA fraction is too low or too high; should equal %OA_min" ;
-    sh:class brick:AHU ;
-    rdfs:subClassOf :outside_air_fraction ;
+    rdfs:label "FC#6" ;
+    rdfs:comment "OA fraction is too low or too high; should equal %OA_MIN" ;
+    sh:class brick:Air_Handling_Unit ;
     sh:property [
+        rdfs:label "RAT_AVG" ;
+        rdfs:comment "rolling average of return air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
+        sh:qualifiedMinCount 1 ;
     ] ;
     sh:property [
+        rdfs:label "OAT_AVG" ;
+        rdfs:comment "rolling average of outdoor air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
+        sh:qualifiedMinCount 1 ;
     ] ;
-.
+    # sh:property [
+    #     rdfs:label "Delta_T_MIN" ;
+    #     rdfs:comment "Minimum difference between OAT and RAT to evaluate economizer error conditions (FC#6)" ;
+    #     sh:path brick:hasPoint ;
+    #     TODO missing from brick
+    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
+    #     sh:qualifiedMinCount 1 ;
+    # ] ;
+    sh:property [
+        rdfs:label "%OA" ;
+        rdfs:comment "actual outdoor air fraction as a percentage = (MAT - RAT)/(OAT - RAT), or per airflow measurement station if available." ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [
+            sh:or (
+                sh:and (
+                    sh:class brick:Mixed_Air_Temperature_Sensor
+                    sh:class brick:Return_Air_Temperature_Sensor
+                    sh:class brick:Outside_Air_Temperature_Sensor
+                )
+                sh:class brick:Outside_Air_Flow_Sensor
+            ) ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
 
 :fc-7 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
     bmotif:domain bmotif:HVAC ;
-    rdfs:label "SAT too low in full heating" ;
-    sh:class brick:AHU ;
+    rdfs:label "FC#7" ;
+    rdfs:comment "SAT too low in full heating" ;
+    sh:class brick:Air_Handling_Unit ;
     sh:property [
+        rdfs:label "SAT_AVG" ;
+        rdfs:comment "rolling average of supply air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
+        sh:qualifiedMinCount 1 ;
     ] ;
     sh:property [
+        rdfs:label "SATSP" ;
+        rdfs:comment "supply air temperature setpoint" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Setpoint ] ;
-        sh:qualifiedMinCount 1;
+        sh:qualifiedMinCount 1 ;
     ] ;
-    sh:or (vav_reheat:heating-signal1 vav_reheat:heating-signal2) ;
-.
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Coil ;
+            sh:property [
+                rdfs:label "HC" ;
+                rdfs:comment "heating-coil valve position command; 0% <= HC <= 100%" ;
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class bricK:Valve_Position_Command ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
 
 :fc-8 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
     bmotif:domain bmotif:HVAC ;
-    rdfs:label "SAT and MAT should be approximately equal" ;
-    sh:class brick:AHU ;
+    rdfs:label "FC#8" ;
+    rdfs:comment "SAT and MAT should be approximately equal" ;
+    sh:class brick:Air_Handling_Unit ;
     sh:property [
+        rdfs:label "SAT_AVG" ;
+        rdfs:comment "rolling average of supply air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
+        sh:qualifiedMinCount 1 ;
     ] ;
+    # sh:property [
+    #     rdfs:label "Delta_T_SF" ;
+    #     rdfs:comment "Temperature rise across supply fan" ;
+    #     sh:path brick:hasPoint ;
+    #     TODO missing from brick
+    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
+    #     sh:qualifiedMinCount 1 ;
+    # ] ;
     sh:property [
+        rdfs:label "MAT_AVG" ;
+        rdfs:comment "rolling average of mixed air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
-    ] ;
-.
+        sh:qualifiedMinCount 1 ;
+    ] .
 
 :fc-9 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
     bmotif:domain bmotif:HVAC ;
@@ -350,22 +428,3 @@
     #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
     #     sh:qualifiedMinCount 1 ;
     ] .
-
-:outside_air_fraction a sh:NodeShape ;
-    sh:class brick:AHU ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
-    ] ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
-    ] ;
-    sh:property [
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 1;
-    ] ;
-.
