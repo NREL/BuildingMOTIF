@@ -141,3 +141,62 @@ parse_label("AH-1")
 # Expected HWVLV, got AH-3 | Expected VFD, got AH- | Expected CT, got AH |
 # Expected MAU, got AH- | Expected R, got A', id=None)]
 ```
+
+## Example
+
+Consider these point labels:
+
+```
+:BuildingName_02:FCU503_ChwVlvPos
+:BuildingName_02:FCU510_EffOcc
+:BuildingName_02:FCU507_UnoccHtgSpt
+:BuildingName_02:FCU415_UnoccHtgSpt
+:BuildingName_01:FCU203_OccClgSpt
+:BuildingName_02:FCU529_UnoccHtgSpt
+:BuildingName_01:FCU243_EffOcc
+:BuildingName_01:FCU362_ChwVlvPos
+```
+
+We can define a set of parsing rules to extract structured data from these labels.
+This is essentially just an expression of the building point naming convention.
+
+```python
+equip_abbreviations = abbreviations(COMMON_EQUIP_ABBREVIATIONS_BRICK)
+# define our own for Points (specific to this building)
+point_abbreviations = abbreviations({
+    "ChwVlvPos": BRICK.Position_Sensor,
+    "HwVlvPos": BRICK.Position_Sensor,
+    "RoomTmp": BRICK.Air_Temperature_Sensor,
+    "Room_RH": BRICK.Relative_Humidity_Sensor,
+    "UnoccHtgSpt": BRICK.Unoccupied_Air_Temperature_Heating_Setpoint,
+    "OccHtgSpt": BRICK.Occupied_Air_Temperature_Heating_Setpoint,
+    "UnoccClgSpt": BRICK.Unoccupied_Air_Temperature_Cooling_Setpoint,
+    "OccClgSpt": BRICK.Occupied_Air_Temperature_Cooling_Setpoint,
+    "SaTmp": BRICK.Supply_Air_Temperature_Sensor,
+    "OccCmd": BRICK.Occupancy_Command,
+    "EffOcc": BRICK.Occupancy_Status,
+})
+
+def custom_parser(target):
+    return sequence(
+        string(":", Delimiter),
+        # regex until the underscore
+        constant(Constant(BRICK.Building)),
+        regex(r"[^_]+", Identifier),
+        string("_", Delimiter),
+        # number for AHU name
+        constant(Constant(BRICK.Air_Handling_Unit)),
+        regex(r"[0-9a-zA-Z]+", Identifier),
+        string(":", Delimiter),
+        # equipment types
+        equip_abbreviations,
+        # equipment ident
+        regex(r"[0-9a-zA-Z]+", Identifier),
+        string("_", Delimiter),
+        maybe(
+            sequence(regex(r"[A-Z]+[0-9]+", Identifier), string("_", Delimiter)),
+        ),
+        # point types
+        point_abbreviations,
+    )(target)
+```
