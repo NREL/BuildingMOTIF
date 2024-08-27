@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>SHACL to SPARQL Conversion &#8212; BuildingMOTIF Documentation</title>
+    <title>Point Label Parsing &#8212; BuildingMOTIF Documentation</title>
   
   
   
@@ -62,12 +62,12 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'explanations/shacl_to_sparql';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'explanations/point-label-parsing';</script>
     <link rel="shortcut icon" href="../_static/BuildingMOTIF-icon-rev.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Point Label Parsing" href="point-label-parsing.html" />
-    <link rel="prev" title="Shapes and Templates" href="shapes-and-templates.html" />
+    <link rel="next" title="Bibliography" href="../bibliography.html" />
+    <link rel="prev" title="SHACL to SPARQL Conversion" href="shacl_to_sparql.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -256,8 +256,8 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="ingresses.html">Ingresses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="shapes-and-templates.html">Shapes and Templates</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">SHACL to SPARQL Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="point-label-parsing.html">Point Label Parsing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Point Label Parsing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -333,7 +333,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fexplanations/shacl_to_sparql.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Fexplanations/point-label-parsing.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -363,7 +363,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="../_sources/explanations/shacl_to_sparql.md" target="_blank"
+      <li><a href="../_sources/explanations/point-label-parsing.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -447,7 +447,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>SHACL to SPARQL Conversion</h1>
+    <h1>Point Label Parsing</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -457,9 +457,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shape-to-query-algorithm">Shape-to-query Algorithm</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#select-clause-generation"><code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause generation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-clause-generation"><code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause generation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background-on-parser-combinators">Background on Parser Combinators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-parser-combinators">BuildingMOTIF Parser Combinators</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-new-combinators">Defining New Combinators</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#abbreviations">Abbreviations</a></li>
 </ul>
 </li>
 </ul>
@@ -473,73 +474,132 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="shacl-to-sparql-conversion">
-<h1>SHACL to SPARQL Conversion<a class="headerlink" href="#shacl-to-sparql-conversion" title="Permalink to this heading">#</a></h1>
-<p>BuildingMOTIF uses SHACL shapes to ensure that a metadata model contains the required metadata to support a given set of applications.
-SHACL validation only yields whether or not a given node in the model passes or fails validation.
-To aid in the execution of applications dependent on a SHACL shape, BuildingMOTIF provides functionality to extract from the model the nodes/edges that were used to validate the shape.</p>
-<p>See <a class="reference internal" href="../guides/generating-queries.html"><span class="doc std std-doc">Generating SPARQL Queries</span></a> for how to use the <code class="docutils literal notranslate"><span class="pre">shape_to_query</span></code> function. This page gives an overview of the algorithm.</p>
-<section id="shape-to-query-algorithm">
-<h2>Shape-to-query Algorithm<a class="headerlink" href="#shape-to-query-algorithm" title="Permalink to this heading">#</a></h2>
-<p>The main method, <code class="docutils literal notranslate"><span class="pre">shape_to_query</span></code>, takes a SHACL shape represented as a URI and generates a SPARQL query to select information from an RDF graph that satisfies the constraints defined by the SHACL shape.
-At a high level, the method works by first transforming the SHACL shape into a set of WHERE clauses, and then assembling these clauses into a complete SPARQL query.</p>
-<p>The shape-to-query algorithm takes as input a definition of a SHACL Node Shape.</p>
-<section id="select-clause-generation">
-<h3><code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause generation<a class="headerlink" href="#select-clause-generation" title="Permalink to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause of the resulting SPARQL query is generated as follows.
-Each query has at least a <code class="docutils literal notranslate"><span class="pre">?target</span></code> variable in the generated <code class="docutils literal notranslate"><span class="pre">SELECT</span></code>  clause.
-This variable represents a target node of the SHACL shape.</p>
-<p>The algorithm adds one variable to the <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause for each Property Shape associated
-with the Node Shape through <code class="docutils literal notranslate"><span class="pre">sh:property</span></code>.
-The variable name is pulled from a <code class="docutils literal notranslate"><span class="pre">sh:name</span></code> annotation on the Property Shape if one exists;
-otherwise, it is assigned a generated variable name.</p>
-<p>If a <code class="docutils literal notranslate"><span class="pre">UNION</span></code> clause exists within the SPARQL query, the algorithm generates variable names independently for each branch of the <code class="docutils literal notranslate"><span class="pre">UNION</span></code> clause.
-The resulting <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause contains the union of the different sets of variable names.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="point-label-parsing">
+<h1>Point Label Parsing<a class="headerlink" href="#point-label-parsing" title="Permalink to this heading">#</a></h1>
+<p>One common source of building metadata are the “point labels” used in building management systems to label or tag the input/output points with some human-readable description.
+It is often useful to extract structured information from these labels to help with constructing a semantic model of the building.</p>
+<p>BuildingMOTIF provides a framework for defining point label naming conventions and parsing them into structured data.
+The output of this process is a set of typed <code class="docutils literal notranslate"><span class="pre">Token</span></code>s which can be input into a “Semantic Graph Synthesis” process to generate a semantic model of the building.</p>
+<p>This article describes the framework for defining point label parsing rules and provides examples of how to use it.</p>
+<div class="admonition-semantic-graph-synthesis admonition">
+<p class="admonition-title">Semantic Graph Synthesis</p>
+<p>This feature is coming soon! This label parsing framework is just part of the larger BuildingMOTIF toolkit for generating semantic models of buildings.</p>
+</div>
+<section id="background-on-parser-combinators">
+<h2>Background on Parser Combinators<a class="headerlink" href="#background-on-parser-combinators" title="Permalink to this heading">#</a></h2>
+<p>The point label parsing framework in BuildingMOTIF is based on the concept of “parser combinators”.
+Parser combinators are a way of defining parsers by combining smaller parsers together.
+In BuildingMOTIF, the “combinators” are defined as Python functions which take a string as input and return a list of <code class="docutils literal notranslate"><span class="pre">Token</span></code>s.
+These combinators can be combined together to create more complex parsers.</p>
+<p>Here is a short example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_ahu_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">sequence</span><span class="p">(</span>
+        <span class="n">string</span><span class="p">(</span><span class="s2">&quot;AHU&quot;</span><span class="p">,</span> <span class="n">Constant</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Handling_Unit</span><span class="p">)),</span>
+        <span class="n">string</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">),</span>
+        <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)</span>
+    <span class="p">)(</span><span class="n">label</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This defines a parser which matches strings like “AHU-1” or “AHU-237” and returns a list of <code class="docutils literal notranslate"><span class="pre">Token</span></code>s.
+The <code class="docutils literal notranslate"><span class="pre">sequence</span></code> combinator combines the three parsers together, and the <code class="docutils literal notranslate"><span class="pre">string</span></code> and <code class="docutils literal notranslate"><span class="pre">regex</span></code> combinators match specific strings or regular expressions.</p>
+<p>Using parser combinators in this way allows you to define complex parsing rules in a concise and readable way.</p>
+<p>The example output of the <code class="docutils literal notranslate"><span class="pre">parse_ahu_label</span></code> function might look like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parse_ahu_label</span><span class="p">(</span><span class="s2">&quot;AHU-1&quot;</span><span class="p">)</span>
+<span class="c1"># [TokenResult(value=&#39;AHU&#39;, token=Constant(value=rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick#Air_Handling_Unit&#39;)), length=3, error=None, id=None), </span>
+<span class="c1"># TokenResult(value=&#39;-&#39;, token=Delimiter(value=&#39;-&#39;), length=1, error=None, id=None),</span>
+<span class="c1"># TokenResult(value=&#39;1&#39;, token=Identifier(value=&#39;1&#39;), length=1, error=None, id=None)]</span>
+
+<span class="n">parse_ahu_label</span><span class="p">(</span><span class="s2">&quot;AH-1&quot;</span><span class="p">)</span>
+<span class="c1"># [TokenResult(value=None, token=Null(value=None), length=0, error=&#39;Expected AHU, got AH-&#39;, id=None)]</span>
+</pre></div>
+</div>
 </section>
-<section id="where-clause-generation">
-<h3><code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause generation<a class="headerlink" href="#where-clause-generation" title="Permalink to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">WHERE</span></code>  clause of the resulting SPARQL query is generated from each of the Property Shapes associated with the input Node Shape, and a few annotations directly on the NodeShape.</p>
-<p>The Node Shape target definition is converted to a SPARQL query clause as follows:</p>
-<table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Target Definition</p></th>
-<th class="head"><p>Query Pattern</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sh:targetClass</span> <span class="pre">&lt;c&gt;</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">rdf:type/rdfs:subClassOf*</span> <span class="pre">&lt;c&gt;</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sh:targetSubjectsOf</span> <span class="pre">&lt;p&gt;</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">&lt;p&gt;</span> <span class="pre">?ignore</span> </code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sh:targetObjectsOf</span> <span class="pre">&lt;p&gt;</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">?ignore</span> <span class="pre">&lt;p&gt;</span> <span class="pre">?target?</span> </code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sh:targetNode</span> <span class="pre">&lt;n&gt;</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">BIND(&lt;n&gt;</span> <span class="pre">AS</span> <span class="pre">?target)</span></code></p></td>
-</tr>
-</tbody>
-</table>
-<p>Additionally, any <code class="docutils literal notranslate"><span class="pre">sh:class</span> <span class="pre">&lt;c&gt;</span></code> constraint on the Node Shape is also transformed into <code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">rdf:type/rdfs:subClassOf*</span> <span class="pre">&lt;c&gt;</span></code>.
-Except for <code class="docutils literal notranslate"><span class="pre">sh:targetNode</span></code>, if more than one of the target clauses exists (e.g., <code class="docutils literal notranslate"><span class="pre">sh:targetClass</span> <span class="pre">brick:VAV,</span> <span class="pre">brick:RVAV</span></code>) then the algorithm uses a <code class="docutils literal notranslate"><span class="pre">UNION</span></code> clause to combine the independent query patterns.</p>
-<p>The algorithm currently interprets a set of Property Shape-based constraint components into SPARQL query patterns.
-At this stage, only the following clauses are supported:</p>
-<table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Property Shape pattern</p></th>
-<th class="head"><p>SPARQL query pattern</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;shape&gt;</span> <span class="pre">sh:property</span> <span class="pre">[</span> <span class="pre">sh:path</span> <span class="pre">&lt;path&gt;;</span> <span class="pre">sh:class</span> <span class="pre">&lt;class&gt;;</span> <span class="pre">sh:name</span> <span class="pre">&lt;name&gt;</span> <span class="pre">]</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">&lt;path&gt;</span> <span class="pre">?name</span> <span class="pre">.</span> <span class="pre">?name</span> <span class="pre">rdf:type/rdfs:subClassOf*</span> <span class="pre">&lt;class&gt;</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;shape&gt;</span> <span class="pre">sh:property</span> <span class="pre">[</span> <span class="pre">sh:path</span> <span class="pre">&lt;path&gt;;</span> <span class="pre">sh:hasValue</span> <span class="pre">&lt;value&gt;]</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">?target</span> <span class="pre">&lt;path&gt;</span> <span class="pre">&lt;value&gt;</span></code></p></td>
-</tr>
-</tbody>
-</table>
+<section id="buildingmotif-parser-combinators">
+<h2>BuildingMOTIF Parser Combinators<a class="headerlink" href="#buildingmotif-parser-combinators" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">buildingmotif.label_parsing.combinators</span></code> module provides a set of parser combinators for defining point label parsing rules.
+Here are some of the most commonly used combinators:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">string</span></code>: Matches a specific string and returns a <code class="docutils literal notranslate"><span class="pre">Token</span></code> with a constant value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">regex</span></code>: Matches a regular expression and returns a <code class="docutils literal notranslate"><span class="pre">Token</span></code> with the matched value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code>: Matches one of a list of parsers. Uses the first one that matches.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sequence</span></code>: Matches a sequence of parsers and returns a list of <code class="docutils literal notranslate"><span class="pre">Token</span></code>s.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">constant</span></code>: Returns a <code class="docutils literal notranslate"><span class="pre">Token</span></code> with a constant value. Does not consume any input.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">many</span></code>: Matches zero or more occurrences of a parser.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">maybe</span></code>: Matches zero or one occurrence of a parser.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">until</span></code>: Matches a parser until another parser is matched.</p></li>
+</ul>
+<section id="defining-new-combinators">
+<h3>Defining New Combinators<a class="headerlink" href="#defining-new-combinators" title="Permalink to this heading">#</a></h3>
+<p>These are all just Python functions, so you can define your own combinators as needed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">delimiters</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[._:/\- ]&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">)</span>
+<span class="n">identifier</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[a-zA-Z0-9]+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)</span>
+<span class="n">named_equip</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">equip_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">)</span>
+<span class="n">named_point</span> <span class="o">=</span> <span class="n">sequence</span><span class="p">(</span><span class="n">point_abbreviations</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">delimiters</span><span class="p">),</span> <span class="n">identifier</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>More generally, a combinator is any function which takes a string as input and returns a list of <code class="docutils literal notranslate"><span class="pre">TokenResult</span></code>s.
+The methods above (<code class="docutils literal notranslate"><span class="pre">regex</span></code>, <code class="docutils literal notranslate"><span class="pre">sequence</span></code>, <code class="docutils literal notranslate"><span class="pre">delimiters</span></code>) are functions which <em>return</em> a combinator as an argument.</p>
+</section>
+<section id="abbreviations">
+<h3>Abbreviations<a class="headerlink" href="#abbreviations" title="Permalink to this heading">#</a></h3>
+<p>Abbreviations are a common feature of point labels.
+Strings like “AHU” for “Air Handling Unit” or “VAV” for “Variable Air Volume” are often used to save space on labels.
+You can use the <code class="docutils literal notranslate"><span class="pre">abbreviations</span></code> combinator to define a set of abbreviations and automatically expand them in the input string.</p>
+<p>We can define a dictionary of abbreviations like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_abbreviations</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;AHU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Handling_Unit</span><span class="p">,</span>
+    <span class="s2">&quot;FCU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Fan_Coil_Unit</span><span class="p">,</span>
+    <span class="s2">&quot;VAV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Variable_Air_Volume_Box</span><span class="p">,</span>
+    <span class="s2">&quot;CRAC&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Computer_Room_Air_Conditioner</span><span class="p">,</span>
+    <span class="s2">&quot;HX&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Exchanger</span><span class="p">,</span>
+    <span class="s2">&quot;PMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Pump</span><span class="p">,</span>
+    <span class="s2">&quot;RVAV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Variable_Air_Volume_Box_With_Reheat</span><span class="p">,</span>
+    <span class="s2">&quot;HP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Heat_Pump</span><span class="p">,</span>
+    <span class="s2">&quot;RTU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Rooftop_Unit</span><span class="p">,</span>
+    <span class="s2">&quot;DMP&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Damper</span><span class="p">,</span>
+    <span class="s2">&quot;STS&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Status</span><span class="p">,</span>
+    <span class="s2">&quot;VLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Valve</span><span class="p">,</span>
+    <span class="s2">&quot;CHVLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Chilled_Water_Valve</span><span class="p">,</span>
+    <span class="s2">&quot;HWVLV&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Hot_Water_Valve</span><span class="p">,</span>
+    <span class="s2">&quot;VFD&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Variable_Frequency_Drive</span><span class="p">,</span>
+    <span class="s2">&quot;CT&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Cooling_Tower</span><span class="p">,</span>
+    <span class="s2">&quot;MAU&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Makeup_Air_Unit</span><span class="p">,</span>
+    <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Room</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">my_abbreviations_parser</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">(</span><span class="n">my_abbreviations</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then we can use <code class="docutils literal notranslate"><span class="pre">my_abbreviations_parser</span></code> in our label parsing rules to automatically expand abbreviations.
+Note how the key of the <code class="docutils literal notranslate"><span class="pre">my_abbreviations</span></code> dictionary is the abbreviation and the value is the RDF Brick class that the abbreviation expands to.</p>
+<p>To expand our earlier example to work for other abbreviations, we can rewrite the parser like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">sequence</span><span class="p">(</span>
+        <span class="n">my_abbreviations_parser</span><span class="p">,</span>
+        <span class="n">string</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">),</span>
+        <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)</span>
+    <span class="p">)(</span><span class="n">label</span><span class="p">)</span>
+
+<span class="n">parse_label</span><span class="p">(</span><span class="s2">&quot;AHU-1&quot;</span><span class="p">)</span>
+<span class="c1"># [TokenResult(value=&#39;AHU&#39;, token=Constant(value=rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick#Air_Handling_Unit&#39;)), length=3, error=None, id=None),</span>
+<span class="c1"># TokenResult(value=&#39;-&#39;, token=Delimiter(value=&#39;-&#39;), length=1, error=None, id=None),</span>
+<span class="c1"># TokenResult(value=&#39;1&#39;, token=Identifier(value=&#39;1&#39;), length=1, error=None, id=None)]</span>
+
+<span class="n">parse_label</span><span class="p">(</span><span class="s2">&quot;FCU-1&quot;</span><span class="p">)</span>
+<span class="c1"># [TokenResult(value=&#39;FCU&#39;, token=Constant(value=rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick#Fan_Coil_Unit&#39;)), length=3, error=None, id=None),</span>
+<span class="c1"># TokenResult(value=&#39;-&#39;, token=Delimiter(value=&#39;-&#39;), length=1, error=None, id=None),</span>
+<span class="c1"># TokenResult(value=&#39;123&#39;, token=Identifier(value=&#39;123&#39;), length=3, error=None, id=None)]</span>
+
+<span class="n">parse_label</span><span class="p">(</span><span class="s2">&quot;AH-1&quot;</span><span class="p">)</span>
+<span class="c1"># [TokenResult(value=None, token=Null(value=None), length=0, error=&#39;Expected</span>
+<span class="c1"># AHU, got AH- | Expected FCU, got AH- | Expected VAV, got AH- | Expected CRAC,</span>
+<span class="c1"># got AH-3 | Expected HX, got AH | Expected PMP, got AH- | Expected RVAV, got</span>
+<span class="c1"># AH-3 | Expected HP, got AH | Expected RTU, got AH- | Expected DMP, got AH- |</span>
+<span class="c1"># Expected STS, got AH- | Expected VLV, got AH- | Expected CHVLV, got AH-3 |</span>
+<span class="c1"># Expected HWVLV, got AH-3 | Expected VFD, got AH- | Expected CT, got AH |</span>
+<span class="c1"># Expected MAU, got AH- | Expected R, got A&#39;, id=None)]</span>
+</pre></div>
+</div>
 </section>
 </section>
 </section>
@@ -575,20 +635,20 @@ At this stage, only the following clauses are supported:</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="shapes-and-templates.html"
+       href="shacl_to_sparql.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Shapes and Templates</p>
+        <p class="prev-next-title">SHACL to SPARQL Conversion</p>
       </div>
     </a>
     <a class="right-next"
-       href="point-label-parsing.html"
+       href="../bibliography.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Point Label Parsing</p>
+        <p class="prev-next-title">Bibliography</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -607,9 +667,10 @@ At this stage, only the following clauses are supported:</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shape-to-query-algorithm">Shape-to-query Algorithm</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#select-clause-generation"><code class="docutils literal notranslate"><span class="pre">SELECT</span></code> clause generation</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-clause-generation"><code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause generation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background-on-parser-combinators">Background on Parser Combinators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-parser-combinators">BuildingMOTIF Parser Combinators</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-new-combinators">Defining New Combinators</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#abbreviations">Abbreviations</a></li>
 </ul>
 </li>
 </ul>
