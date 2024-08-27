@@ -461,6 +461,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-parser-combinators">BuildingMOTIF Parser Combinators</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-new-combinators">Defining New Combinators</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#abbreviations">Abbreviations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
@@ -602,6 +603,13 @@ Note how the key of the <code class="docutils literal notranslate"><span class="
 </pre></div>
 </div>
 </section>
+<section id="error-handling">
+<h3>Error Handling<a class="headerlink" href="#error-handling" title="Permalink to this heading">#</a></h3>
+<p>The parser combinators in BuildingMOTIF provide detailed error messages when a parsing rule fails.
+This can be useful for debugging and understanding why a particular label did not match the expected format.
+The error messages include information about what was expected and what was found in the input string.</p>
+<p>If any <code class="docutils literal notranslate"><span class="pre">TokenResult</span></code> in the list has an <code class="docutils literal notranslate"><span class="pre">error</span></code> field, it means that the parsing rule failed at that point.</p>
+</section>
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
@@ -728,6 +736,7 @@ This is essentially just an expression of the building point naming convention.<
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#buildingmotif-parser-combinators">BuildingMOTIF Parser Combinators</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-new-combinators">Defining New Combinators</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#abbreviations">Abbreviations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
