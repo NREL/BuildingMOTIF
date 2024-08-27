@@ -254,7 +254,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../explanations/point-label-parsing.html">Point Label Parsing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -820,6 +819,9 @@ document.write(`
 
         <span class="c1"># read all .yml files</span>
         <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">directory</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.yml&quot;</span><span class="p">):</span>
+            <span class="c1"># if .ipynb_checkpoints, skip; these are cached files that Jupyter creates</span>
+            <span class="k">if</span> <span class="s2">&quot;.ipynb_checkpoints&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">lib</span><span class="o">.</span><span class="n">_read_yml_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
         <span class="c1"># now that we have all the templates, we can populate the dependencies</span>
         <span class="n">lib</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>

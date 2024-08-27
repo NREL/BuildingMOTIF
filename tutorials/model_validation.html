@@ -257,7 +257,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../explanations/point-label-parsing.html">Point Label Parsing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -576,26 +575,26 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
 <span class="g g-Whitespace">    </span><span class="mi">214</span> <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 <span class="g g-Whitespace">    </span><span class="mi">215</span>     <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
 
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:414,</span> in <span class="ni">Library._load_from_directory</span><span class="nt">(cls, directory, overwrite, infer_templates, run_shacl_inference)</span>
-<span class="g g-Whitespace">    </span><span class="mi">412</span>     <span class="n">lib</span><span class="o">.</span><span class="n">_read_yml_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">413</span> <span class="c1"># now that we have all the templates, we can populate the dependencies</span>
-<span class="ne">--&gt; </span><span class="mi">414</span> <span class="n">lib</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">415</span> <span class="c1"># load shape collections from all ontology files in the directory</span>
-<span class="g g-Whitespace">    </span><span class="mi">416</span> <span class="n">lib</span><span class="o">.</span><span class="n">_load_shapes_from_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:417,</span> in <span class="ni">Library._load_from_directory</span><span class="nt">(cls, directory, overwrite, infer_templates, run_shacl_inference)</span>
+<span class="g g-Whitespace">    </span><span class="mi">415</span>     <span class="n">lib</span><span class="o">.</span><span class="n">_read_yml_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">416</span> <span class="c1"># now that we have all the templates, we can populate the dependencies</span>
+<span class="ne">--&gt; </span><span class="mi">417</span> <span class="n">lib</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">418</span> <span class="c1"># load shape collections from all ontology files in the directory</span>
+<span class="g g-Whitespace">    </span><span class="mi">419</span> <span class="n">lib</span><span class="o">.</span><span class="n">_load_shapes_from_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
 
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:517,</span> in <span class="ni">Library._resolve_template_dependencies</span><span class="nt">(self, template_id_lookup, dependency_cache)</span>
-<span class="g g-Whitespace">    </span><span class="mi">515</span>         <span class="k">continue</span>
-<span class="g g-Whitespace">    </span><span class="mi">516</span>     <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">dependency_cache</span><span class="p">[</span><span class="n">template</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
-<span class="ne">--&gt; </span><span class="mi">517</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_dependency</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">dep</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">518</span> <span class="c1"># check that all dependencies are valid (use parameters that exist, etc)</span>
-<span class="g g-Whitespace">    </span><span class="mi">519</span> <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:520,</span> in <span class="ni">Library._resolve_template_dependencies</span><span class="nt">(self, template_id_lookup, dependency_cache)</span>
+<span class="g g-Whitespace">    </span><span class="mi">518</span>         <span class="k">continue</span>
+<span class="g g-Whitespace">    </span><span class="mi">519</span>     <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">dependency_cache</span><span class="p">[</span><span class="n">template</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
+<span class="ne">--&gt; </span><span class="mi">520</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_dependency</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">dep</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">521</span> <span class="c1"># check that all dependencies are valid (use parameters that exist, etc)</span>
+<span class="g g-Whitespace">    </span><span class="mi">522</span> <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
 
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:467,</span> in <span class="ni">Library._resolve_dependency</span><span class="nt">(self, template, dep, template_id_lookup)</span>
-<span class="g g-Whitespace">    </span><span class="mi">465</span> <span class="c1"># if dep is a _template_dependency, turn it into a template</span>
-<span class="g g-Whitespace">    </span><span class="mi">466</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">_template_dependency</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">467</span>     <span class="n">dependee</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_template</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">468</span>     <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">469</span>     <span class="k">return</span>
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:470,</span> in <span class="ni">Library._resolve_dependency</span><span class="nt">(self, template, dep, template_id_lookup)</span>
+<span class="g g-Whitespace">    </span><span class="mi">468</span> <span class="c1"># if dep is a _template_dependency, turn it into a template</span>
+<span class="g g-Whitespace">    </span><span class="mi">469</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">_template_dependency</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">470</span>     <span class="n">dependee</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_template</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">471</span>     <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">472</span>     <span class="k">return</span>
 
 <span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:87,</span> in <span class="ni">_template_dependency.to_template</span><span class="nt">(self, id_lookup)</span>
 <span class="g g-Whitespace">     </span><span class="mi">84</span>     <span class="k">return</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">id_lookup</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template_name</span><span class="p">])</span>
