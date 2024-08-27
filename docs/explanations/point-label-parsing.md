@@ -142,6 +142,14 @@ parse_label("AH-1")
 # Expected MAU, got AH- | Expected R, got A', id=None)]
 ```
 
+### Error Handling
+
+The parser combinators in BuildingMOTIF provide detailed error messages when a parsing rule fails.
+This can be useful for debugging and understanding why a particular label did not match the expected format.
+The error messages include information about what was expected and what was found in the input string.
+
+If any `TokenResult` in the list has an `error` field, it means that the parsing rule failed at that point.
+
 ## Example
 
 Consider these point labels:
