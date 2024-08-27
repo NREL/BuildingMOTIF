@@ -4,7 +4,7 @@ One common source of building metadata are the "point labels" used in building m
 It is often useful to extract structured information from these labels to help with constructing a semantic model of the building.
 
 BuildingMOTIF provides a framework for defining point label naming conventions and parsing them into structured data.
-The output of this process is a set of typed `Token`s which can be input into a "Semantic Graph Synthesis" process to generate a semantic model of the building.
+The output of this process is a set of typed <a href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.Token">Token</a> objects which can be input into a "Semantic Graph Synthesis" process to generate a semantic model of the building.
 
 This article describes the framework for defining point label parsing rules and provides examples of how to use it.
 
@@ -16,8 +16,9 @@ This feature is coming soon! This label parsing framework is just part of the la
 
 The point label parsing framework in BuildingMOTIF is based on the concept of "parser combinators".
 Parser combinators are a way of defining parsers by combining smaller parsers together.
-In BuildingMOTIF, the "combinators" are defined as Python functions which take a string as input and return a list of `Token`s.
+In BuildingMOTIF, the "combinators" are defined as Python functions which take a string as input and return a list of <a href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.TokenResult">TokenResult</a>s.
 These combinators can be combined together to create more complex parsers.
+
 
 Here is a short example:
 
