@@ -463,6 +463,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#abbreviations">Abbreviations</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
 </ul>
             </nav>
         </div>
@@ -602,6 +603,62 @@ Note how the key of the <code class="docutils literal notranslate"><span class="
 </div>
 </section>
 </section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
+<p>Consider these point labels:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="n">BuildingName_02</span><span class="p">:</span><span class="n">FCU503_ChwVlvPos</span>
+<span class="p">:</span><span class="n">BuildingName_02</span><span class="p">:</span><span class="n">FCU510_EffOcc</span>
+<span class="p">:</span><span class="n">BuildingName_02</span><span class="p">:</span><span class="n">FCU507_UnoccHtgSpt</span>
+<span class="p">:</span><span class="n">BuildingName_02</span><span class="p">:</span><span class="n">FCU415_UnoccHtgSpt</span>
+<span class="p">:</span><span class="n">BuildingName_01</span><span class="p">:</span><span class="n">FCU203_OccClgSpt</span>
+<span class="p">:</span><span class="n">BuildingName_02</span><span class="p">:</span><span class="n">FCU529_UnoccHtgSpt</span>
+<span class="p">:</span><span class="n">BuildingName_01</span><span class="p">:</span><span class="n">FCU243_EffOcc</span>
+<span class="p">:</span><span class="n">BuildingName_01</span><span class="p">:</span><span class="n">FCU362_ChwVlvPos</span>
+</pre></div>
+</div>
+<p>We can define a set of parsing rules to extract structured data from these labels.
+This is essentially just an expression of the building point naming convention.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">equip_abbreviations</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">(</span><span class="n">COMMON_EQUIP_ABBREVIATIONS_BRICK</span><span class="p">)</span>
+<span class="c1"># define our own for Points (specific to this building)</span>
+<span class="n">point_abbreviations</span> <span class="o">=</span> <span class="n">abbreviations</span><span class="p">({</span>
+    <span class="s2">&quot;ChwVlvPos&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Position_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;HwVlvPos&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Position_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;RoomTmp&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Temperature_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;Room_RH&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Relative_Humidity_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;UnoccHtgSpt&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Unoccupied_Air_Temperature_Heating_Setpoint</span><span class="p">,</span>
+    <span class="s2">&quot;OccHtgSpt&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Occupied_Air_Temperature_Heating_Setpoint</span><span class="p">,</span>
+    <span class="s2">&quot;UnoccClgSpt&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Unoccupied_Air_Temperature_Cooling_Setpoint</span><span class="p">,</span>
+    <span class="s2">&quot;OccClgSpt&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Occupied_Air_Temperature_Cooling_Setpoint</span><span class="p">,</span>
+    <span class="s2">&quot;SaTmp&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Supply_Air_Temperature_Sensor</span><span class="p">,</span>
+    <span class="s2">&quot;OccCmd&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Occupancy_Command</span><span class="p">,</span>
+    <span class="s2">&quot;EffOcc&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Occupancy_Status</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="k">def</span> <span class="nf">custom_parser</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">sequence</span><span class="p">(</span>
+        <span class="n">string</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">),</span>
+        <span class="c1"># regex until the underscore</span>
+        <span class="n">constant</span><span class="p">(</span><span class="n">Constant</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Building</span><span class="p">)),</span>
+        <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^_]+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">),</span>
+        <span class="n">string</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">),</span>
+        <span class="c1"># number for AHU name</span>
+        <span class="n">constant</span><span class="p">(</span><span class="n">Constant</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Handling_Unit</span><span class="p">)),</span>
+        <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[0-9a-zA-Z]+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">),</span>
+        <span class="n">string</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">),</span>
+        <span class="c1"># equipment types</span>
+        <span class="n">equip_abbreviations</span><span class="p">,</span>
+        <span class="c1"># equipment ident</span>
+        <span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[0-9a-zA-Z]+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">),</span>
+        <span class="n">string</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">),</span>
+        <span class="n">maybe</span><span class="p">(</span>
+            <span class="n">sequence</span><span class="p">(</span><span class="n">regex</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[A-Z]+[0-9]+&quot;</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">),</span> <span class="n">string</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">)),</span>
+        <span class="p">),</span>
+        <span class="c1"># point types</span>
+        <span class="n">point_abbreviations</span><span class="p">,</span>
+    <span class="p">)(</span><span class="n">target</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -673,6 +730,7 @@ Note how the key of the <code class="docutils literal notranslate"><span class="
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#abbreviations">Abbreviations</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
 </ul>
   </nav></div>
 
