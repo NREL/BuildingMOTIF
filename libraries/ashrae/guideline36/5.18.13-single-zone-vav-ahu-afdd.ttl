@@ -41,8 +41,7 @@
 :fc-3 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
     rdfs:label "FC#3" ;
     rdfs:comment "MAT too high; should be between OAT and RAT" ;
-    rdfs:subClassOf :fc-2 ;
-.
+    rdfs:subClassOf :fc-2 .
 
 :fc-4 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
     bmotif:domain bmotif:HVAC ;
@@ -75,14 +74,6 @@
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
-    # ] ;
-    # sh:property [
-    #     rdfs:label "Delta_T_SF" ;
-    #     rdfs:comment "Temperature rise across supply fan" ;
-    #     sh:path brick:hasPoint ;
-    #     TODO missing from brick
-    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
-    #     sh:qualifiedMinCount 1 ;
     ] .
 
 :fc-6 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
@@ -104,14 +95,6 @@
         sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
     ] ;
-    # sh:property [
-    #     rdfs:label "Delta_T_MIN" ;
-    #     rdfs:comment "Minimum difference between OAT and RAT to evaluate economizer error conditions (FC#6)" ;
-    #     sh:path brick:hasPoint ;
-    #     TODO missing from brick
-    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
-    #     sh:qualifiedMinCount 1 ;
-    # ] ;
     sh:property [
         rdfs:label "MAT_AVG" ;
         rdfs:comment "rolling average of mixed air temperature" ;
@@ -120,14 +103,13 @@
         sh:qualifiedMinCount 1 ;
     ] ;
     sh:or (
-        :percent-oa-fraction 
+        :percent-oa-fraction
         [ sh:path brick:hasPoint ;
           sh:qualifiedValueShape [ sh:class brick:Outside_Air_Flow_Sensor ] ;
           rdfs:comment "actual outdoor air fraction per airflow measurement station if available." ;
           sh:qualifiedMinCount 1 ;
         ]
-    )
-.
+    ) .
 
 :percent-oa-fraction a sh:NodeShape, owl:Class ;
     rdfs:label "%OA" ;
@@ -201,14 +183,6 @@
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
     ] ;
-    # sh:property [
-    #     rdfs:label "Delta_T_SF" ;
-    #     rdfs:comment "Temperature rise across supply fan" ;
-    #     sh:path brick:hasPoint ;
-    #     TODO missing from brick
-    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
-    #     sh:qualifiedMinCount 1 ;
-    # ] ;
     sh:property [
         rdfs:label "MAT_AVG" ;
         rdfs:comment "rolling average of mixed air temperature" ;
@@ -235,14 +209,6 @@
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Setpoint ] ;
         sh:qualifiedMinCount 1 ;
-    # ] ;
-    # sh:property [
-    #     rdfs:label "Delta_T_SF" ;
-    #     rdfs:comment "Temperature rise across supply fan" ;
-    #     sh:path brick:hasPoint ;
-    #     TODO missing from brick
-    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
-    #     sh:qualifiedMinCount 1 ;
     ] .
 
 :fc-10 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
@@ -283,14 +249,6 @@
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Setpoint ] ;
         sh:qualifiedMinCount 1 ;
-    # ] ;
-    # sh:property [
-    #     rdfs:label "Delta_T_SF" ;
-    #     rdfs:comment "Temperature rise across supply fan" ;
-    #     sh:path brick:hasPoint ;
-    #     TODO missing from brick
-    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
-    #     sh:qualifiedMinCount 1 ;
     ] .
 
 :fc-12 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
@@ -305,14 +263,6 @@
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
     ] ;
-    # sh:property [
-    #     rdfs:label "Delta_T_SF" ;
-    #     rdfs:comment "Temperature rise across supply fan" ;
-    #     sh:path brick:hasPoint ;
-    #     TODO missing from brick
-    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
-    #     sh:qualifiedMinCount 1 ;
-    # ] ;
     sh:property [
         rdfs:label "MAT_AVG" ;
         rdfs:comment "rolling average of mixed air temperature" ;
@@ -380,14 +330,6 @@
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
         sh:qualifiedMinCount 1 ;
-    # ] ;
-    # sh:property [
-    #     rdfs:label "Delta_T_SF" ;
-    #     rdfs:comment "Temperature rise across supply fan" ;
-    #     sh:path brick:hasPoint ;
-    #     TODO missing from brick
-    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
-    #     sh:qualifiedMinCount 1 ;
     ] .
 
 :fc-15 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
@@ -414,12 +356,4 @@
         #     )
         ] ;
         sh:qualifiedMinCount 1 ;
-    # ] ;
-    # sh:property [
-    #     rdfs:label "Delta_T_SF" ;
-    #     rdfs:comment "Temperature rise across supply fan" ;
-    #     sh:path brick:hasPoint ;
-    #     TODO missing from brick
-    #     sh:qualifiedValueShape [ sh:class brick:Air_Differential_Temperature_Sensor ] ;
-    #     sh:qualifiedMinCount 1 ;
     ] .
