@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Model } from '../types'
 import { ModelDetailService } from './model-detail.service'
-import {UntypedFormControl} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
@@ -20,7 +20,7 @@ import {TemplateEvaluateComponent} from '../template-evaluate/template-evaluate.
 export class ModelDetailComponent{
   model: Model;
   graph: string; // graph as in DB
-  graphFormControl: UntypedFormControl = new UntypedFormControl(''); // graph as in UI
+  graphFormControl: FormControl = new FormControl(''); // graph as in UI
   codeMirrorOptions: any = {
     theme: 'material',
     mode: 'application/xml',

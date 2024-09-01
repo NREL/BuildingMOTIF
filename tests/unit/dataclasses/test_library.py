@@ -179,7 +179,7 @@ def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
 
     monkeypatch.setattr(Library, "load", mock_load)
     # Brick dependencies always resolve for the test library
-    MockLibrary.create("https://brickschema.org/schema/1.3/Brick")
+    MockLibrary.create("https://brickschema.org/schema/1.4/Brick")
     lib = Library._load_from_directory(Path(library), overwrite=False)
     assert lib is not None
 
