@@ -87,6 +87,25 @@ def get_target_nodes(models_id: int) -> Graph:
     return result, status.HTTP_200_OK
 
 
+@blueprint.route("/<models_id>/point_names", methods=(["GET"]))
+def get_point_names(models_id: int) -> Graph:
+    """Get model's point names.
+
+    :param models_id: model id
+    :type models_id: int
+    :return: requested model graph
+    :rtype: rdflib.Graph
+    """
+    try:
+        model = Model.load(models_id)
+    except NoResultFound:
+        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    result = list()  # Stuff goes here
+
+    return result, status.HTTP_200_OK
+
+
 @blueprint.route("", methods=(["POST"]))
 def create_model() -> flask.Response:
     """Create model
