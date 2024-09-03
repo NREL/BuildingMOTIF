@@ -12,10 +12,13 @@ export class ModelNewService {
 
   constructor(private http: HttpClient) { }
 
-  createModel(name: string, description: string): Observable<Model | any> {
-    const headers = {'Content-Type': "application/json"}
+  createModel(name: string, description: string, file: File | null): Observable<Model | any> {
+    const formData: FormData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description);
+    if (file) formData.append('files[]', file);
 
-    return this.http.post(`http://localhost:5000/models`, {name: name, description: description}, {headers, responseType: 'json'})
+    return this.http.post(`http://localhost:5000/models`, formData, {responseType: 'json'})
       .pipe(
         retry(3), // retry a failed request up to 3 times
         catchError(this.handleError) // then handle the error

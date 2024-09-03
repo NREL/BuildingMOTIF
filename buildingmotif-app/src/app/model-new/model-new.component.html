@@ -19,6 +19,14 @@
                         formControlName="descriptionControl">
                 </textarea>
         </mat-form-field>
+        <!-- model input -->
+        <input type="file" class="file-input" (change)="handleModelTtlInput($event)" #modelUpload>
+        <div class="file-upload">
+                model file: {{modelTtl?.name || "No file uploaded yet."}}
+                <button mat-mini-fab color="primary" class="upload-btn" (click)="modelUpload.click()">
+                        <mat-icon>attach_file</mat-icon>
+                </button>
+        </div>
     </form>
     <button mat-raised-button color="primary" (click)="createModel()" [disabled]="newModelForm.invalid"> New Model </button> 
 </div>

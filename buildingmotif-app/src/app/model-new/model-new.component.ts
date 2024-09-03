@@ -16,9 +16,12 @@ export class ModelNewComponent {
     nameControl: new FormControl("", [Validators.required, noInValidCharacatersValidator]),
     descriptionControl: new FormControl(""),
   })
+  modelTtl: File | null = null;
   
 
   constructor(private router: Router, private modelNewService: ModelNewService, private _snackBar: MatSnackBar) { }
+
+  handleModelTtlInput(e: Event) { this.modelTtl = (e?.target as HTMLInputElement)?.files?.[0] ?? null }
 
   createModel = () => {
     const name = this.newModelForm.value.nameControl
@@ -27,7 +30,7 @@ export class ModelNewComponent {
     if (!name) return;
     if (!description) return;
 
-    this.modelNewService.createModel(name, description).subscribe({
+    this.modelNewService.createModel(name, description, this.modelTtl).subscribe({
       next: (newModel: Model) => {
         this.router.navigate([`/models/${newModel.id}`])
       }, // success path

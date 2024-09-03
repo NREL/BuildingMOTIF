@@ -1,12 +1,13 @@
 import flask
 from flask import Blueprint, current_app, jsonify, request
 from flask_api import status
-from rdflib import Graph, URIRef
+from rdflib import Graph, Namespace, URIRef
 from rdflib.plugins.parsers.notation3 import BadSyntax
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.model import serialize
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
+from buildingmotif.ingresses import BACnetNetwork, BACnetToBrickIngress
 
 blueprint = Blueprint("models", __name__)
 
@@ -93,13 +94,13 @@ def create_model() -> flask.Response:
     :return: new model
     :rtype: Model
     """
-    if request.content_type != "application/json":
+    if not request.content_type.startswith("multipart/form-data"):
         return {
-            "message": "request content type must be json"
+            "message": "request content type must be form_data"
         }, status.HTTP_400_BAD_REQUEST
 
-    name = request.json.get("name")
-    description = request.json.get("description")
+    name = request.form.get("name")
+    description = request.form.get("description")
 
     if name is None:
         return {"message": "must give name"}, status.HTTP_400_BAD_REQUEST
@@ -111,6 +112,14 @@ def create_model() -> flask.Response:
             "message": f"{name} does not look like a valid URI, "
             "trying to serialize this will break."
         }, status.HTTP_400_BAD_REQUEST
+
+    file = request.files.getlist("files[]")[0]
+
+    if file:
+        bacnet = BACnetNetwork.loads(file.read())
+        tobrick = BACnetToBrickIngress(current_app.building_motif, bacnet)
+        BLDG = Namespace("urn:building/")
+        model.add_graph(tobrick.graph(BLDG))
 
     current_app.building_motif.session.commit()
 
