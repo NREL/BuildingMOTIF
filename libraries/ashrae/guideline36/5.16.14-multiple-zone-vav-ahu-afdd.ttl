@@ -132,7 +132,12 @@
           rdfs:comment "actual outdoor air fraction per airflow measurement station if available." ;
           sh:qualifiedMinCount 1 ;
         ]
-    ) .
+    ) ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:node :percent-oa-minimum ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
 
 :percent-oa-fraction a sh:NodeShape, owl:Class ;
     rdfs:label "%OA" ;
@@ -156,6 +161,25 @@
         rdfs:comment "outdoor air temperature" ;
         sh:path brick:hasPoint ;
         sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
+
+:percent-oa-minimum a sh:NodeShape, owl:Class ;
+    rdfs:label "%OAmin" ;
+    rdfs:comment "active minimum OA setpoint (MinOAsp) divided by actual total airflow (from sum of VAV box flows or by airflow measurement station) as a percentage" ;
+    sh:property [
+        rdfs:label "MinOAsp" ;
+        rdfs:comment "minimum OA setpoint" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Flow_Setpoint ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        # rdfs:label "" ;
+        # NOTE unclear whether this is total OA or total supply air
+        rdfs:comment "actual total airflow" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Flow_Sensor ] ;
         sh:qualifiedMinCount 1 ;
     ] .
 
