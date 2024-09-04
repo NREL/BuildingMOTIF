@@ -65,26 +65,26 @@ File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library
 [1;32m    214[0m [38;5;28;01melif[39;00m name [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m:
 [1;32m    215[0m     bm [38;5;241m=[39m get_building_motif()
 
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:414[0m, in [0;36mLibrary._load_from_directory[0;34m(cls, directory, overwrite, infer_templates, run_shacl_inference)[0m
-[1;32m    412[0m     lib[38;5;241m.[39m_read_yml_file(file, template_id_lookup, dependency_cache)
-[1;32m    413[0m [38;5;66;03m# now that we have all the templates, we can populate the dependencies[39;00m
-[0;32m--> 414[0m [43mlib[49m[38;5;241;43m.[39;49m[43m_resolve_template_dependencies[49m[43m([49m[43mtemplate_id_lookup[49m[43m,[49m[43m [49m[43mdependency_cache[49m[43m)[49m
-[1;32m    415[0m [38;5;66;03m# load shape collections from all ontology files in the directory[39;00m
-[1;32m    416[0m lib[38;5;241m.[39m_load_shapes_from_directory(directory)
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:417[0m, in [0;36mLibrary._load_from_directory[0;34m(cls, directory, overwrite, infer_templates, run_shacl_inference)[0m
+[1;32m    415[0m     lib[38;5;241m.[39m_read_yml_file(file, template_id_lookup, dependency_cache)
+[1;32m    416[0m [38;5;66;03m# now that we have all the templates, we can populate the dependencies[39;00m
+[0;32m--> 417[0m [43mlib[49m[38;5;241;43m.[39;49m[43m_resolve_template_dependencies[49m[43m([49m[43mtemplate_id_lookup[49m[43m,[49m[43m [49m[43mdependency_cache[49m[43m)[49m
+[1;32m    418[0m [38;5;66;03m# load shape collections from all ontology files in the directory[39;00m
+[1;32m    419[0m lib[38;5;241m.[39m_load_shapes_from_directory(directory)
 
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:517[0m, in [0;36mLibrary._resolve_template_dependencies[0;34m(self, template_id_lookup, dependency_cache)[0m
-[1;32m    515[0m         [38;5;28;01mcontinue[39;00m
-[1;32m    516[0m     [38;5;28;01mfor[39;00m dep [38;5;129;01min[39;00m dependency_cache[template[38;5;241m.[39mid]:
-[0;32m--> 517[0m         [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_resolve_dependency[49m[43m([49m[43mtemplate[49m[43m,[49m[43m [49m[43mdep[49m[43m,[49m[43m [49m[43mtemplate_id_lookup[49m[43m)[49m
-[1;32m    518[0m [38;5;66;03m# check that all dependencies are valid (use parameters that exist, etc)[39;00m
-[1;32m    519[0m [38;5;28;01mfor[39;00m template [38;5;129;01min[39;00m [38;5;28mself[39m[38;5;241m.[39mget_templates():
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:520[0m, in [0;36mLibrary._resolve_template_dependencies[0;34m(self, template_id_lookup, dependency_cache)[0m
+[1;32m    518[0m         [38;5;28;01mcontinue[39;00m
+[1;32m    519[0m     [38;5;28;01mfor[39;00m dep [38;5;129;01min[39;00m dependency_cache[template[38;5;241m.[39mid]:
+[0;32m--> 520[0m         [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_resolve_dependency[49m[43m([49m[43mtemplate[49m[43m,[49m[43m [49m[43mdep[49m[43m,[49m[43m [49m[43mtemplate_id_lookup[49m[43m)[49m
+[1;32m    521[0m [38;5;66;03m# check that all dependencies are valid (use parameters that exist, etc)[39;00m
+[1;32m    522[0m [38;5;28;01mfor[39;00m template [38;5;129;01min[39;00m [38;5;28mself[39m[38;5;241m.[39mget_templates():
 
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:467[0m, in [0;36mLibrary._resolve_dependency[0;34m(self, template, dep, template_id_lookup)[0m
-[1;32m    465[0m [38;5;66;03m# if dep is a _template_dependency, turn it into a template[39;00m
-[1;32m    466[0m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(dep, _template_dependency):
-[0;32m--> 467[0m     dependee [38;5;241m=[39m [43mdep[49m[38;5;241;43m.[39;49m[43mto_template[49m[43m([49m[43mtemplate_id_lookup[49m[43m)[49m
-[1;32m    468[0m     template[38;5;241m.[39madd_dependency(dependee, dep[38;5;241m.[39mbindings)
-[1;32m    469[0m     [38;5;28;01mreturn[39;00m
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:470[0m, in [0;36mLibrary._resolve_dependency[0;34m(self, template, dep, template_id_lookup)[0m
+[1;32m    468[0m [38;5;66;03m# if dep is a _template_dependency, turn it into a template[39;00m
+[1;32m    469[0m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(dep, _template_dependency):
+[0;32m--> 470[0m     dependee [38;5;241m=[39m [43mdep[49m[38;5;241;43m.[39;49m[43mto_template[49m[43m([49m[43mtemplate_id_lookup[49m[43m)[49m
+[1;32m    471[0m     template[38;5;241m.[39madd_dependency(dependee, dep[38;5;241m.[39mbindings)
+[1;32m    472[0m     [38;5;28;01mreturn[39;00m
 
 File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:87[0m, in [0;36m_template_dependency.to_template[0;34m(self, id_lookup)[0m
 [1;32m     84[0m     [38;5;28;01mreturn[39;00m Template[38;5;241m.[39mload(id_lookup[[38;5;28mself[39m[38;5;241m.[39mtemplate_name])
