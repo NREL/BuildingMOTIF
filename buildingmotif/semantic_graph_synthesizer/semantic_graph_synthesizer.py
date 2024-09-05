@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 from rdflib import Namespace
 
-from buildingmotif.dataclasses import Template
+from buildingmotif.dataclasses import Library
 from buildingmotif.semantic_graph_synthesizer.bipartite_token_mapper import (
     BipartiteTokenMapper,
 )
@@ -36,6 +36,10 @@ class SemanticGraphSynthesizer:
         self.bindings_cost_threshold = bindings_cost_threshold
         self.cost_loss_function = cost_loss_function
         self.should_inline_dependencies = should_inline_dependencies
+        self.templates = []
+
+    def add_templates_from_library(self, library: Library):
+        self.templates.extend(library.get_templates())
 
     def _group_labels_by_tokens(self, labels: List[TokenizedLabel]) -> List[LabelSet]:
         """ "Group labels into labelsets based on shared sets on token classes"""
@@ -64,9 +68,7 @@ class SemanticGraphSynthesizer:
 
         return labelsets
 
-    def find_bindings_for_label(
-        self, templates: List[Template], label: TokenizedLabel
-    ) -> Bindings:
+    def find_bindings_for_label(self, label: TokenizedLabel) -> Bindings:
         """Gets the bindings for a specific label."""
         best_bindings = Bindings(
             label=label, template=None, bindings={}, cost=Cost.inf()
@@ -74,7 +76,7 @@ class SemanticGraphSynthesizer:
 
         logger.debug("Template costs:")
         # find the best template for the label
-        for template in templates:
+        for template in self.templates:
             if self.should_inline_dependencies:
                 template = template.inline_dependencies()
 
@@ -101,9 +103,7 @@ class SemanticGraphSynthesizer:
 
         return best_bindings
 
-    def find_bindings_for_labelset(
-        self, templates: List[Template], labelset: LabelSet
-    ) -> List[Bindings]:
+    def find_bindings_for_labelset(self, labelset: LabelSet) -> List[Bindings]:
         """Find the bindings a given LabelSet."""
         index_label = TokenizedLabel(
             label="Index Label",
@@ -112,7 +112,7 @@ class SemanticGraphSynthesizer:
                 for i, tc in enumerate(labelset.token_classes)
             ],
         )
-        index_bindings = self.find_bindings_for_label(templates, index_label)
+        index_bindings = self.find_bindings_for_label(index_label)
 
         bindings_list = []
         for label in labelset.labels:
@@ -136,9 +136,7 @@ class SemanticGraphSynthesizer:
 
         return bindings_list
 
-    def find_bindings_for_labels(
-        self, templates: List[Template], labels: List[TokenizedLabel]
-    ) -> List[Bindings]:
+    def find_bindings_for_labels(self, labels: List[TokenizedLabel]) -> List[Bindings]:
         """Find the bindings a given labels.
 
         Groups them in label sets for optimization purposes.
@@ -147,6 +145,6 @@ class SemanticGraphSynthesizer:
 
         bindings_list = []
         for labelset in labelsets:
-            bindings_list.extend(self.find_bindings_for_labelset(templates, labelset))
+            bindings_list.extend(self.find_bindings_for_labelset(labelset))
 
         return bindings_list

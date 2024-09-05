@@ -121,7 +121,7 @@ class BipartiteTokenMapper:
 
         # TODO: determine if this is the right preprocessing step to take
         cost_matrix = (
-            cost_matrix.replace(np.inf, np.nan)
+            cost_matrix.replace([np.inf, -np.inf], np.nan)
             .dropna(axis=0, how="all")
             .replace(np.nan, np.inf)
         )
@@ -143,7 +143,7 @@ class BipartiteTokenMapper:
 
         # if no edges, give the cost as infinity
         if len(kept_costs) <= 0:
-            edge_cost = np.Inf
+            edge_cost = np.inf
         else:
             edge_cost = cost_matrix.to_numpy()[row_ind, col_ind].sum()
 
