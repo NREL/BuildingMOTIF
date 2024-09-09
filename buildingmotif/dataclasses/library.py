@@ -409,6 +409,9 @@ class Library:
 
         # read all .yml files
         for file in directory.rglob("*.yml"):
+            # if .ipynb_checkpoints, skip; these are cached files that Jupyter creates
+            if ".ipynb_checkpoints" in file.parts:
+                continue
             lib._read_yml_file(file, template_id_lookup, dependency_cache)
         # now that we have all the templates, we can populate the dependencies
         lib._resolve_template_dependencies(template_id_lookup, dependency_cache)
