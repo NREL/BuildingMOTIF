@@ -97,11 +97,11 @@ def get_point_names(models_id: int) -> Graph:
     :rtype: rdflib.Graph
     """
     try:
-        model = Model.load(models_id)
+        Model.load(models_id)
     except NoResultFound:
         return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
 
-    result = list()  # Stuff goes here
+    result: list[str] = list()  # Stuff goes here
 
     return result, status.HTTP_200_OK
 
