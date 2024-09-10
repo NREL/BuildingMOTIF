@@ -4,6 +4,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Model } from '../types'
 import { throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { handleError } from '../handle-error';
+
+const API_URL = environment.API_URL;
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +19,13 @@ export class ShapeValidationService {
   validateModelShape(modelId: number, shape_collection_ids: number[], shape_uris: string[], target_class: string) {
     const headers = {'Content-Type': "application/json"}
 
-    return this.http.post<Record<string, string[]>>(`http://localhost:5000/models/${modelId}/validate_shape`,
+    return this.http.post<Record<string, string[]>>(API_URL + `/models/${modelId}/validate_shape`,
         {shape_collection_ids, shape_uris, target_class},
         {headers, responseType: 'json'}
       )
       .pipe(
         retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
+        catchError(handleError) // then handle the error
       );
   }
 

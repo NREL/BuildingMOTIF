@@ -3,6 +3,10 @@ name: continuous integration
 on:
   push
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   styling:
@@ -60,6 +64,8 @@ jobs:
         run: poetry run pytest tests/unit --cov=./ --cov-report=xml
       - name: integration tests
         run: poetry run pytest tests/integration
+      - name: library tests
+        run: poetry run pytest tests/library
       - name: bacnet tests
         run: |
           cd tests/integration/fixtures/bacnet
