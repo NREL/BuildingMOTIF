@@ -113,13 +113,15 @@ def create_model() -> flask.Response:
     :return: new model
     :rtype: Model
     """
-    if not request.content_type.startswith("multipart/form-data"):
+    if request.content_type and not request.content_type.startswith(
+        "multipart/form-data"
+    ):
         return {
             "message": "request content type must be form_data"
         }, status.HTTP_400_BAD_REQUEST
 
     name = request.form.get("name")
-    description = request.form.get("description")
+    description = request.form.get("description", "")
 
     if name is None:
         return {"message": "must give name"}, status.HTTP_400_BAD_REQUEST
@@ -132,7 +134,8 @@ def create_model() -> flask.Response:
             "trying to serialize this will break."
         }, status.HTTP_400_BAD_REQUEST
 
-    file = request.files.getlist("files[]")[0]
+    files = request.files.getlist("files[]", [])
+    file = None if len(files) == 0 else files[0]
 
     if file:
         bacnet = BACnetNetwork.loads(file.read())
