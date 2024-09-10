@@ -97,11 +97,21 @@ def get_point_names(models_id: int) -> Graph:
     :rtype: rdflib.Graph
     """
     try:
-        Model.load(models_id)
+        m = Model.load(models_id)
     except NoResultFound:
         return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
 
-    result: list[str] = list()  # Stuff goes here
+    full_graph = m.with_imports()
+    response = full_graph.query(
+        """
+    SELECT ?point ?label WHERE {
+        ?point rdf:type/rdfs:subClassOf* brick:Point ;
+               rdfs:label ?label .
+    }
+    """
+    )
+
+    result: list[str] = [str(row["label"]) for row in response]
 
     return result, status.HTTP_200_OK
 

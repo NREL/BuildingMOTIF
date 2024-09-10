@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Set
 
 import rdflib
 import rfc3987
 from rdflib import URIRef
 
 from buildingmotif import get_building_motif
-from buildingmotif.dataclasses.shape_collection import ShapeCollection
+from buildingmotif.dataclasses.shape_collection import ShapeCollection, _resolve_imports
 from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.namespaces import OWL, A
 from buildingmotif.utils import (
@@ -206,6 +206,19 @@ class Model:
             report_str,
             self,
         )
+
+    def with_imports(self) -> rdflib.Graph:
+        """
+        Returns a copy of this Model's graph with all the imports added
+
+        :return: copy of this model's graph with all imports included
+        :rtype: rdflib.Graph
+        """
+        seen: Set[rdflib.URIRef] = set()
+        resolved = _resolve_imports(
+            self.graph, recursive_limit=-1, seen=seen, error_on_missing_imports=False
+        )
+        return resolved
 
     def compile(self, shape_collections: List["ShapeCollection"]):
         """Compile the graph of a model against a set of ShapeCollections.
