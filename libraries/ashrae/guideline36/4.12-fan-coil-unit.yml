@@ -2,28 +2,46 @@ fan-coil-unit:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Fan_Coil_Unit ;
-      brick:hasPart p:supply_fan, p:filter, p:cooling_coil, p:heating_coil, p:thermostat ;
-      brick:hasPoint p:sa_temp, p:ra_temp ;
-      brick:feeds p:zone .
-  optional: ['clg_coil', 'htg_coil', 'ra_temp']
+      brick:hasPart
+        ( _:fan rdf:type rdf:Alt
+          rdf:_1
+            p:fan-ecm
+          rdf:_2
+            p:fan-vfd ),
+        p:filter,
+        p:clg-coil,
+        p:htg-coil,
+        p:thermostat ;
+      brick:hasPoint
+        p:sa-temp,
+        p:ra-temp ;
+      brick:feeds
+        p:zone .
+  optional: [
+    'filter',
+    'clg_coil',
+    'htg_coil',
+    'ra-temp']
   dependencies:
-    - template: supply-fan
-      args: {"name": "supply_fan"}
-    - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "sa_temp"}
-    - template: https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
-      library: https://brickschema.org/schema/1.3/Brick
-      args: {"name": "ra_temp"}
+    - template: variable-speed-fan-ecm
+      args: {"name": "fan-ecm"}
+    - template: variable-speed-fan-vfd
+      args: {"name": "fan-vfd"}
     - template: filter
       args: {"name": "filter"}
     - template: cooling-coil
-      args: {"name": "cooling_coil"}
+      args: {"name": "clg-coil"}
     - template: heating-coil
-      args: {"name": "heating_coil"}
+      args: {"name": "htg-coil"}
     - template: thermostat
       args: {"name": "thermostat"}
+    - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "sa-temp"}
+    - template: https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "ra-temp"}
     - template: zone
       args: {"name": "zone"}
-

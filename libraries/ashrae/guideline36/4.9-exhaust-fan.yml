@@ -2,9 +2,14 @@ constant-speed-exhaust-fan:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a brick:Exhaust_Fan ;
-      brick:hasPoint p:start_stop, p:status, p:zat .
-  optional: ["zat"]
+    p:name a brick:Fan ;
+      brick:hasPoint
+        p:start-stop,
+        p:on-off-status,
+        p:temp .
+  optional: [
+    'on-off-status',
+    'temp' ]
   dependencies:
     - template: https://brickschema.org/schema/Brick#Start_Stop_Command
       library: https://brickschema.org/schema/1.4/Brick
