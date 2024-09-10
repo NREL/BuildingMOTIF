@@ -156,6 +156,14 @@ def test_load_library_overwrite_directory(bm: BuildingMOTIF):
     assert len(lib.get_templates()) == 2, "Library overwritten improperly"
 
 
+def test_load_library_no_ipynb_checkpoints(bm: BuildingMOTIF):
+    lib = Library.load(directory="tests/unit/fixtures/ipynb_checkpoint_test")
+    assert lib is not None
+    assert len(lib.get_templates()) == 1
+    # if the checkpoint file was loaded, BuildingMOTIF would complain about
+    # duplicate templates
+
+
 def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
     """
     Test that the libraries can be loaded and used.

@@ -321,6 +321,24 @@ hw-valve:
     - template: run-status
       args: {"name": "feedback"}
 
+belimo-energy-valve:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Valve ;
+      s223:contains P:flow-sensor ;
+      s223:hasProperty P:flow ;
+      s223:hasConnectionPoint P:in, P:out .
+  dependencies:
+    - template: water-inlet-cp
+      args: {"name": "in"}
+    - template: water-outlet-cp
+      args: {"name": "out"}
+    - template: water-flow
+      args: {"name": "flow"}
+    - template: sensor
+      args: {"name": "flow-sensor", "property": "flow", "where": "out"}
+
 sensor:
   body: >
     @prefix P: <urn:___param___#> .

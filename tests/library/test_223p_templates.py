@@ -19,6 +19,7 @@ to_skip = {
         "differential-sensor",
         "sensor",
         "duct",
+        "pipe",
         "junction",
         "air-inlet-cp",
         "air-outlet-cp",
