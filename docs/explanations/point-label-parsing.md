@@ -73,8 +73,8 @@ named_equip = sequence(equip_abbreviations, maybe(delimiters), identifier)
 named_point = sequence(point_abbreviations, maybe(delimiters), identifier)
 ```
 
-More generally, a combinator is any function which takes a string as input and returns a list of `TokenResult`s.
-The methods above (`regex`, `sequence`, `delimiters`) are functions which *return* a combinator as an argument.
+More generally, a combinator is any function that takes a string as input and returns a list of `TokenResult`s.
+The methods above (`regex`, `sequence`, `delimiters`) are functions that *return* a combinator as an argument.
 
 ### Abbreviations
 
