@@ -31,9 +31,8 @@ def parse_ahu_label(label: str) -> List[TokenResult]:
     )(label)
 ```
 
-This defines a parser which matches strings like "AHU-1" or "AHU-237" and returns a list of `Token`s.
+This defines a parser that matches strings like "AHU-1" or "AHU-237" and returns a list of `Token`s.
 The `sequence` combinator combines the three parsers together, and the `string` and `regex` combinators match specific strings or regular expressions.
-
 Using parser combinators in this way allows you to define complex parsing rules in a concise and readable way.
 
 The example output of the `parse_ahu_label` function might look like this:
