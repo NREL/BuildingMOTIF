@@ -11,7 +11,9 @@ EXAMPLE_TRIPLE = (URIRef("http://example.org/alex"), RDF.type, FOAF.Person)
 def test_database_persistence(tmpdir):
     # create bm
     db_path = f"sqlite:///{tmpdir}/db.db"
+
     bm = BuildingMOTIF(db_path)
+
     bm.setup_tables()
 
     # create objects

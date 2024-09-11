@@ -23,7 +23,7 @@ vlv-dmp:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Valve ;
       s223:hasConnectionPoint P:in, P:out ;
-      #s223:hasMedium s223:Medium-Air ;
+      #s223:hasMedium s223:Fluid-Air ;
       s223:hasProperty P:command, P:feedback .
   dependencies:
     - template: air-inlet-cp
@@ -120,7 +120,7 @@ chilled-water-coil:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:CoolingCoil ;
-      s223:hasConnectionPoint P:air-in, P:air-out, P:water-in, P:water-out ;
+      s223:cnx P:air-in, P:air-out, P:water-in, P:water-out ;
       s223:contains P:pump, P:valve ;
       s223:hasProperty P:entering-air-temp, P:leaving-air-temp, P:supply-water-temp,
                        P:return-water-temp, P:leaving-air-wetbulb-temp .
@@ -321,6 +321,24 @@ hw-valve:
     - template: run-status
       args: {"name": "feedback"}
 
+belimo-energy-valve:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Valve ;
+      s223:contains P:flow-sensor ;
+      s223:hasProperty P:flow ;
+      s223:hasConnectionPoint P:in, P:out .
+  dependencies:
+    - template: water-inlet-cp
+      args: {"name": "in"}
+    - template: water-outlet-cp
+      args: {"name": "out"}
+    - template: water-flow
+      args: {"name": "flow"}
+    - template: sensor
+      args: {"name": "flow-sensor", "property": "flow", "where": "out"}
+
 sensor:
   body: >
     @prefix P: <urn:___param___#> .
@@ -328,13 +346,20 @@ sensor:
     P:name a s223:Sensor ;
       s223:hasObservationLocation P:where ;
       s223:observes P:property .
-  optional: ["where"]
+      #dependencies:
+      #  - template: http://data.ashrae.org/standard223#Property
+      #    library: http://data.ashrae.org/standard223/1.0/model/all
+      #    args: {"name": "property"}
+      #  - template: http://data.ashrae.org/standard223#Connectable
+      #    library: http://data.ashrae.org/standard223/1.0/model/all
+      #    args: {"name": "where"}
+      #    #optional: ["where"]
 
 differential-sensor:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
-    P:name a s223:Sensor ;
+    P:name a s223:DifferentialSensor ;
       s223:hasObservationLocationHigh P:whereA ;
       s223:hasObservationLocationLow P:whereB ;
       s223:observes P:property .
