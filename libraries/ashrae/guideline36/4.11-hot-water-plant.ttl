@@ -138,7 +138,7 @@
 
 # 4.11.2 HW Pumps (see components.ttl)
 
-# 4.11.3 Primary (only) HW Loop
+# 4.11.4 Primary (only) HW Loop
 # NOTE this subsection mixes primary-only points with primary-secondary points.
 # Thus, these two subsections have been explicitly separated into
 # Primary (only) HW Loops and (Primary) Secondary HW Loops in 4.11.4.
@@ -234,10 +234,10 @@
 
 # 4.11.4 (Primary) Secondary HW Loop
 
-# common points from 4.11.3
+# common points from 4.11.4
 :primary-loop a sh:NodeShape, owl:Class, bmotif:HVAC ;
     sh:class brick:Hot_Water_Loop ;
-    # applications, optional per 4.11.3
+    # applications, optional per 4.11.4
     sh:property [
         rdfs:label "HW supply temperature" ;
         rdfs:comment "Optional for primary-secondary plants." ;
@@ -246,7 +246,7 @@
         sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # applications, required per 4.11.3 TODO boiler type
+    # applications, required per 4.11.4 TODO boiler type
     sh:property [
         rdfs:label "Plant HW return temperature" ;
         rdfs:comment "HW return temperature is required for primary-only plants and primary-secondary plants with non-condensing boilers." ;
@@ -373,7 +373,7 @@
                 sh:qualifiedMinCount 1 ;
                 sh:qualifiedMaxCount 1 ;
             ] ;
-            # 4.11.3
+            # 4.11.4
             sh:property [
                 rdfs:label "HW supply or return flow" ;
                 rdfs:comment "Not required nor recommended for constant primary-variable secondary plants." ;
@@ -419,7 +419,7 @@
                 sh:qualifiedMinCount 1 ;
                 sh:qualifiedMaxCount 1 ;
             ] ;
-            # optional per 4.11.3
+            # optional per 4.11.4
             sh:property [
                 rdfs:label "HW supply or return flow" ;
                 rdfs:comment "Optional for variable primary-variable secondary plants." ;
@@ -430,7 +430,7 @@
                 sh:qualifiedMinCount 0 ;
                 sh:qualifiedMaxCount 1 ;
             ] ;
-            # optional per 4.11.3
+            # optional per 4.11.4
             sh:property [
                 rdfs:label "Decoupler flow" ;
                 rdfs:comment "Optional flow meter for primary pump speed control in variable primary-variable secondary plants." ;
