@@ -12,11 +12,11 @@ The output of this process is a set of typed <a href="../reference/apidoc/_autos
 This feature is coming soon! This label parsing framework is just part of the larger BuildingMOTIF toolkit for generating semantic models of buildings.
 ```
 
-## Background
+## Background on Parser Combinators
 
 The point label parsing framework in BuildingMOTIF is based on the concept of "parser combinators".
 Parser combinators are a way of defining parsers by combining smaller parsers together.
-In BuildingMOTIF, the "combinators" are defined as Python functions that take a string as input and return a list of <a href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.TokenResult">TokenResult</a>s.
+In BuildingMOTIF, the "combinators" are defined as Python functions which take a string as input and return a list of <a href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.TokenResult">TokenResult</a>s.
 These combinators can be combined together to create more complex parsers.
 
 
