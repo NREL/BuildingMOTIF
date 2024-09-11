@@ -187,6 +187,12 @@ def test_template_inline_dependencies_with_optional(bm: BuildingMOTIF):
     bindings, _ = templ.fill(BLDG, include_optional=False)
     assert "supply-water-temp" in bindings.keys()
     assert "name" in bindings.keys()
+    assert "supply-water-temp-sensor" not in bindings.keys()
+
+    bindings, _ = templ.fill(BLDG, include_optional=True)
+    assert "supply-water-temp" in bindings.keys()
+    assert "name" in bindings.keys()
+    assert "supply-water-temp-sensor" in bindings.keys()
 
 
 def test_template_evaluate_with_optional(bm: BuildingMOTIF):
