@@ -12,11 +12,11 @@ The output of this process is a set of typed <a href="../reference/apidoc/_autos
 This feature is coming soon! This label parsing framework is just part of the larger BuildingMOTIF toolkit for generating semantic models of buildings.
 ```
 
-## Background on Parser Combinators
+## Background
 
 The point label parsing framework in BuildingMOTIF is based on the concept of "parser combinators".
 Parser combinators are a way of defining parsers by combining smaller parsers together.
-In BuildingMOTIF, the "combinators" are defined as Python functions which take a string as input and return a list of <a href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.TokenResult">TokenResult</a>s.
+In BuildingMOTIF, the "combinators" are defined as Python functions that take a string as input and return a list of <a href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.TokenResult">TokenResult</a>s.
 These combinators can be combined together to create more complex parsers.
 
 
@@ -31,9 +31,8 @@ def parse_ahu_label(label: str) -> List[TokenResult]:
     )(label)
 ```
 
-This defines a parser which matches strings like "AHU-1" or "AHU-237" and returns a list of `Token`s.
+This defines a parser that matches strings like "AHU-1" or "AHU-237" and returns a list of `Token`s.
 The `sequence` combinator combines the three parsers together, and the `string` and `regex` combinators match specific strings or regular expressions.
-
 Using parser combinators in this way allows you to define complex parsing rules in a concise and readable way.
 
 The example output of the `parse_ahu_label` function might look like this:
@@ -48,7 +47,7 @@ parse_ahu_label("AH-1")
 # [TokenResult(value=None, token=Null(value=None), length=0, error='Expected AHU, got AH-', id=None)]
 ```
 
-## BuildingMOTIF Parser Combinators
+## Parser Combinators
 
 The `buildingmotif.label_parsing.combinators` module provides a set of parser combinators for defining point label parsing rules.
 Here are some of the most commonly used combinators:
