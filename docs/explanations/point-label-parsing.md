@@ -1,12 +1,12 @@
 # Point Label Parsing
 
-One common source of building metadata are the "point labels" used in building management systems to label or tag the input/output points with some human-readable description.
+The purpose of this explanation is to describe the framework for defining point label parsing rules and provide examples of how to use it.
+
+One common source of building metadata are the "point labels" used in building management systems to label or tag the input and output data points with some human-readable description.
 It is often useful to extract structured information from these labels to help with constructing a semantic model of the building.
 
 BuildingMOTIF provides a framework for defining point label naming conventions and parsing them into structured data.
-The output of this process is a set of typed <a href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.Token">Token</a> objects which can be input into a "Semantic Graph Synthesis" process to generate a semantic model of the building.
-
-This article describes the framework for defining point label parsing rules and provides examples of how to use it.
+The output of this process is a set of typed <a href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.Token">Token</a> objects that can be input into a "Semantic Graph Synthesis" process to generate a semantic model of the building.
 
 ```{admonition} Semantic Graph Synthesis
 This feature is coming soon! This label parsing framework is just part of the larger BuildingMOTIF toolkit for generating semantic models of buildings.
