@@ -47,7 +47,7 @@ parse_ahu_label("AH-1")
 # [TokenResult(value=None, token=Null(value=None), length=0, error='Expected AHU, got AH-', id=None)]
 ```
 
-## BuildingMOTIF Parser Combinators
+## Parser Combinators
 
 The `buildingmotif.label_parsing.combinators` module provides a set of parser combinators for defining point label parsing rules.
 Here are some of the most commonly used combinators:
