@@ -254,7 +254,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../explanations/point-label-parsing.html">Point Label Parsing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -667,27 +666,27 @@ document.write(`
 
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">shape_uri</span> <span class="ow">in</span> <span class="n">shapes_to_test</span><span class="p">:</span>
-            <span class="n">targets</span> <span class="o">=</span> <span class="n">model_graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">                PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</span>
-<span class="s2">                PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</span>
-<span class="s2">                SELECT ?target</span>
-<span class="s2">                WHERE </span><span class="se">{{</span>
-<span class="s2">                    ?target rdf:type/rdfs:subClassOf* &lt;</span><span class="si">{</span><span class="n">target_class</span><span class="si">}</span><span class="s2">&gt;</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">model_graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</span>
+<span class="s2">            PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;</span>
+<span class="s2">            SELECT ?target</span>
+<span class="s2">            WHERE </span><span class="se">{{</span>
+<span class="s2">                ?target rdf:type/rdfs:subClassOf* &lt;</span><span class="si">{</span><span class="n">target_class</span><span class="si">}</span><span class="s2">&gt;</span>
 
-<span class="s2">                </span><span class="se">}}</span>
-<span class="s2">            &quot;&quot;&quot;</span>
-            <span class="p">)</span>
+<span class="s2">            </span><span class="se">}}</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+        <span class="c1"># skolemize the shape graph so we have consistent identifiers across</span>
+        <span class="c1"># validation through the interpretation of the validation report</span>
+        <span class="n">ontology_graph</span> <span class="o">=</span> <span class="n">ontology_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">shape_uri</span> <span class="ow">in</span> <span class="n">shapes_to_test</span><span class="p">:</span>
             <span class="n">temp_model_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="n">model_graph</span><span class="p">)</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,)</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
                 <span class="n">temp_model_graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">URIRef</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">A</span><span class="p">,</span> <span class="n">shape_uri</span><span class="p">))</span>
 
-            <span class="n">temp_model_graph</span> <span class="o">+=</span> <span class="n">ontology_graph</span><span class="o">.</span><span class="n">cbd</span><span class="p">(</span><span class="n">shape_uri</span><span class="p">)</span>
-
-            <span class="c1"># skolemize the shape graph so we have consistent identifiers across</span>
-            <span class="c1"># validation through the interpretation of the validation report</span>
-            <span class="n">ontology_graph</span> <span class="o">=</span> <span class="n">ontology_graph</span><span class="o">.</span><span class="n">skolemize</span><span class="p">()</span>
+            <span class="c1"># temp_model_graph += ontology_graph.cbd(shape_uri)</span>
 
             <span class="n">valid</span><span class="p">,</span> <span class="n">report_g</span><span class="p">,</span> <span class="n">report_str</span> <span class="o">=</span> <span class="n">shacl_validate</span><span class="p">(</span>
                 <span class="n">temp_model_graph</span><span class="p">,</span> <span class="n">ontology_graph</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">shacl_engine</span>
