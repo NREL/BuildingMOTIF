@@ -254,6 +254,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/point-label-parsing.html">Point Label Parsing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -747,7 +748,15 @@ document.write(`
                 <span class="n">deptempl_opt_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">deptempl</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
 
             <span class="c1"># convert our set of optional params to a list and assign to the parent template</span>
-            <span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">templ_optional_args</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">deptempl_opt_args</span><span class="p">))</span>
+            <span class="c1"># 1. get required parameters from the original template</span>
+            <span class="c1"># 2. calculate all optional requirements from the dependency template and the original template</span>
+            <span class="c1"># 3. remove required parameters from the optional requirements</span>
+            <span class="c1"># This avoids a bug where an optional dependency makes reference to a required parameter, and then</span>
+            <span class="c1"># subsequent inlining of the dependency without optional args would remove the required parameter</span>
+            <span class="n">required</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">parameters</span> <span class="o">-</span> <span class="n">templ_optional_args</span>
+            <span class="n">templ</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                <span class="n">templ_optional_args</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">deptempl_opt_args</span><span class="p">)</span> <span class="o">-</span> <span class="n">required</span>
+            <span class="p">)</span>
 
             <span class="c1"># append the inlined template into the parent&#39;s body</span>
             <span class="n">templ</span><span class="o">.</span><span class="n">body</span> <span class="o">+=</span> <span class="n">deptempl</span><span class="o">.</span><span class="n">body</span>
