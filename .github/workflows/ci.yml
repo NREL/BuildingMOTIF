@@ -110,6 +110,7 @@ jobs:
   # These tests detect if changes to ontologies, libraries, models and BuildingMOTIF
   # affect correct operation of templates, shapes, and validation
   libraries:
+    if: github.event.review.state == 'approved' || github.event.pull_request.merged
     needs: styling
     runs-on: ubuntu-latest
     strategy:
