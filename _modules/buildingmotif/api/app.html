@@ -254,7 +254,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../explanations/point-label-parsing.html">Point Label Parsing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -410,7 +409,6 @@ document.write(`
                   
   <h1>Source code for buildingmotif.api.app</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">current_app</span>
 <span class="kn">from</span> <span class="nn">flask_api</span> <span class="kn">import</span> <span class="n">status</span>
@@ -418,7 +416,6 @@ document.write(`
 
 <span class="kn">from</span> <span class="nn">buildingmotif.api.views.library</span> <span class="kn">import</span> <span class="n">blueprint</span> <span class="k">as</span> <span class="n">library_blueprint</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.api.views.model</span> <span class="kn">import</span> <span class="n">blueprint</span> <span class="k">as</span> <span class="n">model_blueprint</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.api.views.parser</span> <span class="kn">import</span> <span class="n">blueprint</span> <span class="k">as</span> <span class="n">parsers_blueprint</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.api.views.template</span> <span class="kn">import</span> <span class="n">blueprint</span> <span class="k">as</span> <span class="n">template_blueprint</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.building_motif.building_motif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
 
@@ -455,15 +452,11 @@ document.write(`
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span>
 
 
-<div class="viewcode-block" id="create_app"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.api.app.html#buildingmotif.api.app.create_app">[docs]</a><span class="k">def</span> <span class="nf">create_app</span><span class="p">(</span><span class="n">DB_URI</span><span class="p">,</span> <span class="n">shacl_engine</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pyshacl&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="create_app"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.api.app.html#buildingmotif.api.app.create_app">[docs]</a><span class="k">def</span> <span class="nf">create_app</span><span class="p">(</span><span class="n">DB_URI</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a Flask API.</span>
 
 <span class="sd">    :param db_uri: database URI</span>
 <span class="sd">    :type db_uri: str</span>
-<span class="sd">    :param shacl_engine: the name of the engine to use for validation: &quot;pyshacl&quot; or &quot;topquadrant&quot;. Using topquadrant</span>
-<span class="sd">        requires Java to be installed on this machine, and the &quot;topquadrant&quot; feature on BuildingMOTIF,</span>
-<span class="sd">        defaults to &quot;pyshacl&quot;</span>
-<span class="sd">    :type shacl_engine: str, optional</span>
 <span class="sd">    :return: flask app</span>
 <span class="sd">    :rtype: Flask.app</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -471,7 +464,7 @@ document.write(`
     <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_mapping</span><span class="p">(</span>
         <span class="n">DB_URI</span><span class="o">=</span><span class="n">DB_URI</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">building_motif</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;DB_URI&quot;</span><span class="p">],</span> <span class="n">shacl_engine</span><span class="o">=</span><span class="n">shacl_engine</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">building_motif</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;DB_URI&quot;</span><span class="p">])</span>
 
     <span class="n">app</span><span class="o">.</span><span class="n">after_request</span><span class="p">(</span><span class="n">_after_request</span><span class="p">)</span>
     <span class="n">app</span><span class="o">.</span><span class="n">register_error_handler</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">_after_error</span><span class="p">)</span>
@@ -479,7 +472,6 @@ document.write(`
     <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">library_blueprint</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/libraries&quot;</span><span class="p">)</span>
     <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">template_blueprint</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/templates&quot;</span><span class="p">)</span>
     <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">model_blueprint</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/models&quot;</span><span class="p">)</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">register_blueprint</span><span class="p">(</span><span class="n">parsers_blueprint</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s2">&quot;/parsers&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">app</span></div>
 

@@ -254,7 +254,6 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="../../explanations/templates.html">Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../explanations/point-label-parsing.html">Point Label Parsing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
 <ul class="nav bd-sidenav">
@@ -552,7 +551,7 @@ document.write(`
         <span class="n">ref_name</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">BNode</span><span class="p">()</span>
         <span class="n">object_name</span> <span class="o">=</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">param</span> <span class="o">+</span> <span class="s2">&quot;_object&quot;</span><span class="p">]</span>
         <span class="n">G</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">PARAM</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="n">REF</span><span class="o">.</span><span class="n">hasExternalReference</span><span class="p">,</span> <span class="n">ref_name</span><span class="p">))</span>
-        <span class="n">G</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">BACNET</span><span class="p">[</span><span class="s2">&quot;object-identifier&quot;</span><span class="p">],</span> <span class="n">object_name</span><span class="p">))</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">BACNET</span><span class="p">[</span><span class="s2">&quot;object-identifier&quot;</span><span class="p">],</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Literal</span><span class="p">(</span><span class="n">object_name</span><span class="p">)))</span>
         <span class="n">G</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">ref_name</span><span class="p">,</span> <span class="n">BACNET</span><span class="p">[</span><span class="s2">&quot;objectOf&quot;</span><span class="p">],</span> <span class="n">PARAM</span><span class="p">[</span><span class="s2">&quot;BACnet_device&quot;</span><span class="p">]))</span>
     <span class="k">return</span> <span class="n">G</span></div>
 
