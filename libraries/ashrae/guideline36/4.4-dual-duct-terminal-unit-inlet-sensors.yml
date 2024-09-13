@@ -1,0 +1,24 @@
+dual-duct-terminal-unit-inlet-sensors:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Terminal_Unit ;
+      brick:hasPart
+        ( p:hot_deck
+          brick:hasPoint p:flow ),
+        ( p:cold_deck
+          brick:hasPoint p:flow ) ;
+      brick:feeds
+        p:zone .
+  dependencies:
+    - template: cold-deck
+      args: {"name": "cold-deck"}
+    - template: hot-deck
+      args: {"name": "hot-deck"}
+    - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "flow"}
+    - template: thermostat
+      args: {"name": "thermostat"}
+    - template: zone
+      args: {"name": "zone"}
