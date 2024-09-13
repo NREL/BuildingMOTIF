@@ -37,19 +37,19 @@
     ] ;
     sh:property [
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Flow_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Discharge_Air_Flow_Sensor ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    rdfs:subClassOf vav41:zone-temperature, vav41:zone-co2-level, vav41:occupancy-sensor ;
+    sh:node vav41:zone-temperature, vav41:zone-co2-level, vav41:occupancy-sensor ;
 .
 
-:hot-deck a sh:NodeShape, owl:Class ;
+:hot-deck a sh:NodeShape ;
     sh:class brick:Hot_Deck ;
-    rdfs:subClassOf components:heating_damper ;
+    sh:node components:heating_damper ;
 .
 
-:cold-deck a sh:NodeShape, owl:Class ;
+:cold-deck a sh:NodeShape ;
     sh:class brick:Cold_Deck ;
-    rdfs:subClassOf components:cooling_damper ;
+    sh:node components:cooling_damper ;
 .

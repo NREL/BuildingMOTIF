@@ -1,4 +1,4 @@
-import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -40,8 +40,6 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatStepperModule} from '@angular/material/stepper';
 import { ShapeValidationComponent } from './shape-validation/shape-validation.component';
 import {MatExpansionModule} from '@angular/material/expansion'; 
-import { PointlabelParserComponent } from './pointlabel-parser/pointlabel-parser.component';
-import {MatGridListModule} from '@angular/material/grid-list'; 
 
 @NgModule({
   declarations: [
@@ -58,7 +56,6 @@ import {MatGridListModule} from '@angular/material/grid-list';
     ModelNewComponent,
     ModelValidateComponent,
     ShapeValidationComponent,
-    PointlabelParserComponent,
   ],
   imports: [
     BrowserModule,
@@ -87,10 +84,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatDialogModule,
     MatStepperModule,
     MatExpansionModule,
-    MatGridListModule,
   ],
   providers: [TemplateDetailService, LibraryService],
-  bootstrap: [AppComponent],
-  schemas: [NO_ERRORS_SCHEMA]
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

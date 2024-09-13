@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
-from inspect import Parameter, signature
 from typing import Dict, List, Tuple
 
 from buildingmotif.label_parsing.tokens import Constant, Identifier, Null, TokenResult
@@ -43,24 +42,16 @@ class Parser(ABC):
         This allows parsers to be serialized later without requiring bespoke (de)serialization code
         for every parser type."""
         cls = super().__new__(mcls)
-        sig = signature(mcls.__init__)
-        parameters = sig.parameters
-        arguments = sig.bind(cls, *args, **kwargs).arguments
-
-        cls.__args__ = {}
-        for name, value in arguments.items():
-            if name != "self":
-                kind = parameters[name].kind
-                if kind in [
-                    Parameter.POSITIONAL_ONLY,
-                    Parameter.POSITIONAL_OR_KEYWORD,
-                    Parameter.KEYWORD_ONLY,
-                ]:
-                    cls.__args__[name] = value
-                elif kind == Parameter.VAR_POSITIONAL:
-                    cls.__args__[name] = list(value)
-                elif kind == Parameter.VAR_KEYWORD:
-                    cls.__args__.update(value)
+        init_var_names = list(cls.__init__.__code__.co_varnames[1:])
+        rem_var_names = init_var_names
+        for key in kwargs.keys():
+            if key in init_var_names:
+                rem_var_names.remove(key)
+        rem_var_count = len(rem_var_names)
+        cls.__args__ = kwargs
+        if len(args) > rem_var_count:
+            args = [*args[: rem_var_count - 1], args[rem_var_count - 1 :]]
+        cls.__args__.update(dict(zip(init_var_names, args)))
 
         return cls
 

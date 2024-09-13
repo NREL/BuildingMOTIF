@@ -205,12 +205,7 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
         searches = (directory.rglob(f"{pat}") for pat in patterns)
     else:
         searches = (directory.glob(f"{pat}") for pat in patterns)
-    # filter out files in .ipynb_checkpoints
-    filtered_searches = (
-        filter(lambda x: ".ipynb_checkpoints" not in Path(x).parts, search)
-        for search in searches
-    )
-    return list(chain.from_iterable(filtered_searches))
+    return list(chain.from_iterable(searches))
 
 
 def get_template_parts_from_shape(
@@ -243,9 +238,7 @@ def get_template_parts_from_shape(
     for pshape in pshapes:
         property_path = shape_graph.value(pshape, SH["path"])
         if property_path is None:
-            raise Exception(
-                f"no sh:path detected on {shape_name} property shape {pshape}"
-            )
+            raise Exception(f"no sh:path detected on {shape_name}")
         # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
@@ -613,7 +606,6 @@ def shacl_validate(
             )
             pass
 
-    data_graph = data_graph + (shape_graph or Graph())
     return pyshacl.validate(
         data_graph,
         shacl_graph=shape_graph,

@@ -13,7 +13,6 @@ COPY buildingmotif buildingmotif
 COPY tests tests
 COPY notebooks notebooks
 COPY migrations migrations
-COPY libraries libraries
 COPY docs docs
 
 RUN poetry install

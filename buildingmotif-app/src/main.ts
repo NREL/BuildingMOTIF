@@ -5,8 +5,6 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
-import 'codemirror/addon/lint/lint';
-import 'codemirror/addon/lint/json-lint';
 
 if (environment.production) {
   enableProdMode();

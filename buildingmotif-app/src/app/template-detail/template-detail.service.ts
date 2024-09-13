@@ -4,10 +4,6 @@ import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { handleError } from '../handle-error';
-
-const API_URL = environment.API_URL;
 
 export interface Template {
   name: string;
@@ -24,10 +20,10 @@ export class TemplateDetailService {
   constructor(private http: HttpClient) { }
 
   getTemplate(id: number, includeParameters: boolean =false) {
-    return this.http.get<Template>(API_URL + `/templates/${id}?parameters=${includeParameters}`)
+    return this.http.get<Template>(`http://localhost:5000/templates/${id}?parameters=${includeParameters}`)
       .pipe(
         retry(3), // retry a failed request up to 3 times
-        catchError(handleError) // then handle the error
+        catchError(this.handleError) // then handle the error
       );
   }
 

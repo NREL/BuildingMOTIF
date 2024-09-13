@@ -4,31 +4,31 @@ dual-duct-terminal-unit-discharge:
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Terminal_Unit ;
       brick:hasPart p:hot_deck, p:cold_deck ;
-      brick:hasPoint p:supply_airflow, p:local_override, p:occupancy ;
+      brick:hasPoint p:discharge_airflow, p:local_override, p:occupancy ;
       brick:feeds p:zone .
     p:zone brick:hasPoint p:zone_temp_sensor, p:zone_temp_adjust, p:zone_co2_sensor .
   optional: ["zone_co2_sensor", "occupancy", "local_override"]
   dependencies:
-    - template: https://brickschema.org/schema/Brick#Supply_Air_Flow_Sensor
-      library: https://brickschema.org/schema/1.4/Brick
-      args: {"name": "supply_airflow"}
+    - template: https://brickschema.org/schema/Brick#Discharge_Air_Flow_Sensor
+      library: https://brickschema.org/schema/1.3/Brick
+      args: {"name": "discharge_airflow"}
     - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
-      library: https://brickschema.org/schema/1.4/Brick
+      library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "zone_temp_sensor"}
     - template: https://brickschema.org/schema/Brick#CO2_Level_Sensor
-      library: https://brickschema.org/schema/1.4/Brick
+      library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "zone_co2_sensor"}
     - template: https://brickschema.org/schema/Brick#Override_Command
-      library: https://brickschema.org/schema/1.4/Brick
+      library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "local_override"}
     - template: https://brickschema.org/schema/Brick#Occupancy_Sensor
-      library: https://brickschema.org/schema/1.4/Brick
+      library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "occupancy"}
     - template: https://brickschema.org/schema/Brick#HVAC_Zone
-      library: https://brickschema.org/schema/1.4/Brick
+      library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "zone"}
     - template: https://brickschema.org/schema/Brick#Temperature_Adjust_Sensor
-      library: https://brickschema.org/schema/1.4/Brick
+      library: https://brickschema.org/schema/1.3/Brick
       args: {"name": "zone_temp_adjust"}
     - template: hot-deck-with-damper-no-sensor
       args: {"name": "hot_deck"}

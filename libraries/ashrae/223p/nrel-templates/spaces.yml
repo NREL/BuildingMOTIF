@@ -3,11 +3,15 @@ hvac-zone:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Zone ;
-      s223:hasDomainSpace P:domain-space ;
+    #s223:hasConnectionPoint P:in, P:out ;
       s223:hasDomain s223:Domain-HVAC .
-  dependencies:
-    - template: hvac-space
-      args: {"name": "domain-space"}
+      #  dependencies:
+      #    - template: hvac-space
+      #      args: {"name": "domain-space"}
+      #        #- template: air-inlet-cp
+      #        #  args: {"name": "in"}
+      #        #- template: air-outlet-cp
+      #        #  args: {"name": "out"}
 
 hvac-zone-contains-space:
   body: >
@@ -15,9 +19,6 @@ hvac-zone-contains-space:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Zone ;
       s223:hasDomainSpace P:domain-space .
-  dependencies:
-    - template: hvac-space
-      args: {"name": "domain-space"}
 
 hvac-space:
   body: >

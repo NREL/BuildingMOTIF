@@ -422,7 +422,7 @@ def test_validate_model_bad_args(client, building_motif):
 def test_test_model_against_shapes(client, building_motif, shacl_engine):
     building_motif.shacl_engine = shacl_engine
     # Load libraries
-    Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick.ttl"))
+    Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick-subset.ttl"))
     ashrae_g36 = Library.load(
         directory=str(PROJECT_DIR / "libraries/ashrae/guideline36/")
     )
@@ -448,8 +448,8 @@ def test_test_model_against_shapes(client, building_motif, shacl_engine):
         json={
             "shape_collection_ids": [ashrae_g36.get_shape_collection().id],
             "shape_uris": [
-                "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-3",
-                "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4",
+                "urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-3",
+                "urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-4",
             ],
             "target_class": str(BRICK["AHU"]),
         },
@@ -457,8 +457,14 @@ def test_test_model_against_shapes(client, building_motif, shacl_engine):
 
     # assert
     assert (
-        len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-3"]) == 0
-    ), results.content
+        len(
+            results.json["urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-3"]
+        )
+        == 0
+    )
     assert (
-        len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4"]) == 3
-    ), results.content
+        len(
+            results.json["urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-4"]
+        )
+        == 3
+    )
