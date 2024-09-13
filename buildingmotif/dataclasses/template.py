@@ -337,7 +337,15 @@ class Template:
                 deptempl_opt_args.update(deptempl.parameters)
 
             # convert our set of optional params to a list and assign to the parent template
-            templ.optional_args = list(templ_optional_args.union(deptempl_opt_args))
+            # 1. get required parameters from the original template
+            # 2. calculate all optional requirements from the dependency template and the original template
+            # 3. remove required parameters from the optional requirements
+            # This avoids a bug where an optional dependency makes reference to a required parameter, and then
+            # subsequent inlining of the dependency without optional args would remove the required parameter
+            required = templ.parameters - templ_optional_args
+            templ.optional_args = list(
+                templ_optional_args.union(deptempl_opt_args) - required
+            )
 
             # append the inlined template into the parent's body
             templ.body += deptempl.body

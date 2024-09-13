@@ -4,6 +4,10 @@ import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { handleError } from '../handle-error';
+
+const API_URL = environment.API_URL;
 
 export interface Template {
   name: string;
@@ -25,26 +29,26 @@ export class TemplateEvaluateService {
     }, {})
 
     return this.http.post(
-      `http://localhost:5000/templates/${templateId}/evaluate/bindings`,
+      API_URL + `/templates/${templateId}/evaluate/bindings`,
       {model_id: modelId, bindings},
       {responseType: 'text'}
       )
       .pipe(
         retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
+        catchError(handleError) // then handle the error
       );
 
   }
 
   evaluateTemplateIngress(templateId: number, modelId: number, file: File) {
     return this.http.post(
-      `http://localhost:5000/templates/${templateId}/evaluate/ingress?model_id=${modelId}`,
+      API_URL + `/templates/${templateId}/evaluate/ingress?model_id=${modelId}`,
       file,
       {responseType: 'text'}
       )
       .pipe(
         retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
+        catchError(handleError) // then handle the error
       );
 
   }
