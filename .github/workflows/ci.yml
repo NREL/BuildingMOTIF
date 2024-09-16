@@ -1,7 +1,9 @@
 name: continuous integration
 
 on:
-  push
+  push:
+  pull_request_review:
+    types: [submitted]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -10,6 +12,7 @@ concurrency:
 jobs:
 
   styling:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -34,6 +37,7 @@ jobs:
   # The "testing" job verifies the base SDK functionality across
   # all supported Python versions.
   testing:
+    if: github.event_name == 'push'
     needs: styling
     runs-on: ubuntu-latest
     strategy:
@@ -72,6 +76,7 @@ jobs:
   # affect correct operation of notebooks and BACnet scans. Library integration testing
   # is a separate job
   integration:
+    if: github.event_name == 'push'
     needs: styling
     runs-on: ubuntu-latest
     strategy:
@@ -110,7 +115,7 @@ jobs:
   # These tests detect if changes to ontologies, libraries, models and BuildingMOTIF
   # affect correct operation of templates, shapes, and validation
   libraries:
-    needs: styling
+    if: github.event.review.state == 'approved' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     strategy:
       matrix:
