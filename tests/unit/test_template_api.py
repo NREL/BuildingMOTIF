@@ -179,6 +179,22 @@ def test_template_inline_dependencies(bm: BuildingMOTIF):
     }
 
 
+def test_template_inline_dependencies_with_optional(bm: BuildingMOTIF):
+    # fixes https://github.com/NREL/BuildingMOTIF/issues/237
+    lib = Library.load(directory="tests/unit/fixtures/optional-inline")
+    templ = lib.get_template_by_name("hot-water-coil")
+    templ = templ.inline_dependencies()
+    bindings, _ = templ.fill(BLDG, include_optional=False)
+    assert "supply-water-temp" in bindings.keys()
+    assert "name" in bindings.keys()
+    assert "supply-water-temp-sensor" not in bindings.keys()
+
+    bindings, _ = templ.fill(BLDG, include_optional=True)
+    assert "supply-water-temp" in bindings.keys()
+    assert "name" in bindings.keys()
+    assert "supply-water-temp-sensor" in bindings.keys()
+
+
 def test_template_evaluate_with_optional(bm: BuildingMOTIF):
     """
     Test that template evaluation works with optional parameters.
