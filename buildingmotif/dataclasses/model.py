@@ -256,27 +256,25 @@ class Model:
 
         results = {}
 
-        for shape_uri in shapes_to_test:
-            targets = model_graph.query(
-                f"""
-                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                SELECT ?target
-                WHERE {{
-                    ?target rdf:type/rdfs:subClassOf* <{target_class}>
+        targets = model_graph.query(
+            f"""
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?target
+            WHERE {{
+                ?target rdf:type/rdfs:subClassOf* <{target_class}>
 
-                }}
-            """
-            )
+            }}
+        """
+        )
+        # skolemize the shape graph so we have consistent identifiers across
+        # validation through the interpretation of the validation report
+        ontology_graph = ontology_graph.skolemize()
+
+        for shape_uri in shapes_to_test:
             temp_model_graph = copy_graph(model_graph)
             for (s,) in targets:
                 temp_model_graph.add((URIRef(s), A, shape_uri))
-
-            temp_model_graph += ontology_graph.cbd(shape_uri)
-
-            # skolemize the shape graph so we have consistent identifiers across
-            # validation through the interpretation of the validation report
-            ontology_graph = ontology_graph.skolemize()
 
             valid, report_g, report_str = shacl_validate(
                 temp_model_graph, ontology_graph, engine=self._bm.shacl_engine
