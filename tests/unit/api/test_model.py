@@ -422,7 +422,7 @@ def test_validate_model_bad_args(client, building_motif):
 def test_test_model_against_shapes(client, building_motif, shacl_engine):
     building_motif.shacl_engine = shacl_engine
     # Load libraries
-    Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick-subset.ttl"))
+    Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick.ttl"))
     ashrae_g36 = Library.load(
         directory=str(PROJECT_DIR / "libraries/ashrae/guideline36/")
     )
