@@ -195,7 +195,7 @@ def test_get_library_dependencies(clean_building_motif):
     assert all(map(lambda x: isinstance(x, Library), libs))
     assert {str(lib.name) for lib in libs} == {
         "sample-lib-1",
-        "https://brickschema.org/schema/1.3/Brick",
+        "https://brickschema.org/schema/1.4/Brick",
     }
 
 
