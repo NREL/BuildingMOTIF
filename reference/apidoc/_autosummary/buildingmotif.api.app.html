@@ -464,18 +464,23 @@ document.write(`
 <p class="rubric">Functions</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.api.app.create_app" title="buildingmotif.api.app.create_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_app</span></code></a>(DB_URI)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.api.app.create_app" title="buildingmotif.api.app.create_app"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_app</span></code></a>(DB_URI[, shacl_engine])</p></td>
 <td><p>Creates a Flask API.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
 <dt class="sig sig-object py" id="buildingmotif.api.app.create_app">
-<span class="sig-name descname"><span class="pre">create_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DB_URI</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/api/app.html#create_app"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.api.app.create_app" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">create_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DB_URI</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shacl_engine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pyshacl'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/api/app.html#create_app"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.api.app.create_app" title="Permalink to this definition">#</a></dt>
 <dd><p>Creates a Flask API.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>db_uri</strong> (<em>str</em>) – database URI</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_uri</strong> (<em>str</em>) – database URI</p></li>
+<li><p><strong>shacl_engine</strong> (<em>str</em><em>, </em><em>optional</em>) – the name of the engine to use for validation: “pyshacl” or “topquadrant”. Using topquadrant
+requires Java to be installed on this machine, and the “topquadrant” feature on BuildingMOTIF,
+defaults to “pyshacl”</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>flask app</p>
