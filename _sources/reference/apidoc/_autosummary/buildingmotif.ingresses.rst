@@ -32,6 +32,7 @@ buildingmotif.ingresses
    buildingmotif.ingresses.brick
    buildingmotif.ingresses.csvingress
    buildingmotif.ingresses.naming_convention
+   buildingmotif.ingresses.semantic_graph_synthesis
    buildingmotif.ingresses.template
    buildingmotif.ingresses.xlsx
 
