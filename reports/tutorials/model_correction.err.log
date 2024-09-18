@@ -21,128 +21,60 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-from rdflib import Namespace, URIRef
-from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, Library, Template
-from buildingmotif.namespaces import BRICK, RDF # import this to make writing URIs easier
+validation_result = model.validate()
+print(f"Model is valid? {validation_result.valid}")
 
-# in-memory instance
-bm = BuildingMOTIF("sqlite://")
-
-# create the namespace for the building
-BLDG = Namespace('urn:bldg/')
-
-# create the building model
-model = Model.create(BLDG, description="This is a test model for a simple building")
-
-# load libraries included with the python package
-constraints = Library.load(ontology_graph="constraints/constraints.ttl")
-
-# load libraries excluded from the python package (available from the repository)
-brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
-g36 = Library.load(directory="../../libraries/ashrae/guideline36")
-
-
-# load tutorial 2 model and manifest
-model.graph.parse("tutorial2_model.ttl", format="ttl")
-manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
-
-# assign the manifest to our model
-model.update_manifest(manifest.get_shape_collection())
+# print reasons
+for uri, diffset in validation_result.diffset.items():
+    for diff in diffset:
+        print(f" - {diff.reason()}")
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
-[0;31mNoResultFound[0m                             Traceback (most recent call last)
-Cell [0;32mIn[1], line 20[0m
-[1;32m     18[0m [38;5;66;03m# load libraries excluded from the python package (available from the repository)[39;00m
-[1;32m     19[0m brick [38;5;241m=[39m Library[38;5;241m.[39mload(ontology_graph[38;5;241m=[39m[38;5;124m"[39m[38;5;124m../../libraries/brick/Brick-subset.ttl[39m[38;5;124m"[39m)
-[0;32m---> 20[0m g36 [38;5;241m=[39m [43mLibrary[49m[38;5;241;43m.[39;49m[43mload[49m[43m([49m[43mdirectory[49m[38;5;241;43m=[39;49m[38;5;124;43m"[39;49m[38;5;124;43m../../libraries/ashrae/guideline36[39;49m[38;5;124;43m"[39;49m[43m)[49m
-[1;32m     23[0m [38;5;66;03m# load tutorial 2 model and manifest[39;00m
-[1;32m     24[0m model[38;5;241m.[39mgraph[38;5;241m.[39mparse([38;5;124m"[39m[38;5;124mtutorial2_model.ttl[39m[38;5;124m"[39m, [38;5;28mformat[39m[38;5;241m=[39m[38;5;124m"[39m[38;5;124mttl[39m[38;5;124m"[39m)
+[0;31mException[0m                                 Traceback (most recent call last)
+Cell [0;32mIn[2], line 1[0m
+[0;32m----> 1[0m validation_result [38;5;241m=[39m [43mmodel[49m[38;5;241;43m.[39;49m[43mvalidate[49m[43m([49m[43m)[49m
+[1;32m      2[0m [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m"[39m[38;5;124mModel is valid? [39m[38;5;132;01m{[39;00mvalidation_result[38;5;241m.[39mvalid[38;5;132;01m}[39;00m[38;5;124m"[39m)
+[1;32m      4[0m [38;5;66;03m# print reasons[39;00m
 
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:194[0m, in [0;36mLibrary.load[0;34m(cls, db_id, ontology_graph, directory, name, overwrite)[0m
-[1;32m    192[0m     [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m src[38;5;241m.[39mexists():
-[1;32m    193[0m         [38;5;28;01mraise[39;00m [38;5;167;01mException[39;00m([38;5;124mf[39m[38;5;124m"[39m[38;5;124mDirectory [39m[38;5;132;01m{[39;00msrc[38;5;132;01m}[39;00m[38;5;124m does not exist[39m[38;5;124m"[39m)
-[0;32m--> 194[0m     [38;5;28;01mreturn[39;00m [38;5;28;43mcls[39;49m[38;5;241;43m.[39;49m[43m_load_from_directory[49m[43m([49m[43msrc[49m[43m,[49m[43m [49m[43moverwrite[49m[38;5;241;43m=[39;49m[43moverwrite[49m[43m)[49m
-[1;32m    195[0m [38;5;28;01melif[39;00m name [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m:
-[1;32m    196[0m     bm [38;5;241m=[39m get_building_motif()
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:178[0m, in [0;36mModel.validate[0;34m(self, shape_collections, error_on_missing_imports)[0m
+[1;32m    176[0m [38;5;66;03m# aggregate shape graphs[39;00m
+[1;32m    177[0m [38;5;28;01mfor[39;00m sc [38;5;129;01min[39;00m shape_collections:
+[0;32m--> 178[0m     shapeg [38;5;241m+[39m[38;5;241m=[39m [43msc[49m[38;5;241;43m.[39;49m[43mresolve_imports[49m[43m([49m
+[1;32m    179[0m [43m        [49m[43merror_on_missing_imports[49m[38;5;241;43m=[39;49m[43merror_on_missing_imports[49m
+[1;32m    180[0m [43m    [49m[43m)[49m[38;5;241m.[39mgraph
+[1;32m    181[0m [38;5;66;03m# inline sh:node for interpretability[39;00m
+[1;32m    182[0m shapeg [38;5;241m=[39m rewrite_shape_graph(shapeg)
 
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:345[0m, in [0;36mLibrary._load_from_directory[0;34m(cls, directory, overwrite)[0m
-[1;32m    343[0m     lib[38;5;241m.[39m_read_yml_file(file, template_id_lookup, dependency_cache)
-[1;32m    344[0m [38;5;66;03m# now that we have all the templates, we can populate the dependencies[39;00m
-[0;32m--> 345[0m [43mlib[49m[38;5;241;43m.[39;49m[43m_resolve_template_dependencies[49m[43m([49m[43mtemplate_id_lookup[49m[43m,[49m[43m [49m[43mdependency_cache[49m[43m)[49m
-[1;32m    346[0m [38;5;66;03m# load shape collections from all ontology files in the directory[39;00m
-[1;32m    347[0m lib[38;5;241m.[39m_load_shapes_from_directory(directory)
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:447[0m, in [0;36mLibrary._resolve_template_dependencies[0;34m(self, template_id_lookup, dependency_cache)[0m
-[1;32m    445[0m         [38;5;28;01mcontinue[39;00m
-[1;32m    446[0m     [38;5;28;01mfor[39;00m dep [38;5;129;01min[39;00m dependency_cache[template[38;5;241m.[39mid]:
-[0;32m--> 447[0m         [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_resolve_dependency[49m[43m([49m[43mtemplate[49m[43m,[49m[43m [49m[43mdep[49m[43m,[49m[43m [49m[43mtemplate_id_lookup[49m[43m)[49m
-[1;32m    448[0m [38;5;66;03m# check that all dependencies are valid (use parameters that exist, etc)[39;00m
-[1;32m    449[0m [38;5;28;01mfor[39;00m template [38;5;129;01min[39;00m [38;5;28mself[39m[38;5;241m.[39mget_templates():
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:398[0m, in [0;36mLibrary._resolve_dependency[0;34m(self, template, dep, template_id_lookup)[0m
-[1;32m    396[0m [38;5;66;03m# if dep is a _template_dependency, turn it into a template[39;00m
-[1;32m    397[0m [38;5;28;01mif[39;00m [38;5;28misinstance[39m(dep, _template_dependency):
-[0;32m--> 398[0m     dependee [38;5;241m=[39m [43mdep[49m[38;5;241;43m.[39;49m[43mto_template[49m[43m([49m[43mtemplate_id_lookup[49m[43m)[49m
-[1;32m    399[0m     template[38;5;241m.[39madd_dependency(dependee, dep[38;5;241m.[39mbindings)
-[1;32m    400[0m     [38;5;28;01mreturn[39;00m
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:86[0m, in [0;36m_template_dependency.to_template[0;34m(self, id_lookup)[0m
-[1;32m     83[0m     [38;5;28;01mreturn[39;00m Template[38;5;241m.[39mload(id_lookup[[38;5;28mself[39m[38;5;241m.[39mtemplate_name])
-[1;32m     84[0m [38;5;66;03m# if not in the local cache, then search the database for the template[39;00m
-[1;32m     85[0m [38;5;66;03m# within the given library[39;00m
-[0;32m---> 86[0m library [38;5;241m=[39m [43mLibrary[49m[38;5;241;43m.[39;49m[43mload[49m[43m([49m[43mname[49m[38;5;241;43m=[39;49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mlibrary[49m[43m)[49m
-[1;32m     87[0m [38;5;28;01mreturn[39;00m library[38;5;241m.[39mget_template_by_name([38;5;28mself[39m[38;5;241m.[39mtemplate_name)
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:197[0m, in [0;36mLibrary.load[0;34m(cls, db_id, ontology_graph, directory, name, overwrite)[0m
-[1;32m    195[0m [38;5;28;01melif[39;00m name [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m:
-[1;32m    196[0m     bm [38;5;241m=[39m get_building_motif()
-[0;32m--> 197[0m     db_library [38;5;241m=[39m [43mbm[49m[38;5;241;43m.[39;49m[43mtable_connection[49m[38;5;241;43m.[39;49m[43mget_db_library_by_name[49m[43m([49m[43mname[49m[43m)[49m
-[1;32m    198[0m     [38;5;28;01mreturn[39;00m [38;5;28mcls[39m(_id[38;5;241m=[39mdb_library[38;5;241m.[39mid, _name[38;5;241m=[39mdb_library[38;5;241m.[39mname, _bm[38;5;241m=[39mbm)
-[1;32m    199[0m [38;5;28;01melse[39;00m:
-
-File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:230[0m, in [0;36mTableConnection.get_db_library_by_name[0;34m(self, name)[0m
-[1;32m    222[0m [38;5;28;01mdef[39;00m [38;5;21mget_db_library_by_name[39m([38;5;28mself[39m, name: [38;5;28mstr[39m) [38;5;241m-[39m[38;5;241m>[39m DBLibrary:
-[1;32m    223[0m [38;5;250m    [39m[38;5;124;03m"""Get database library by name.[39;00m
-[1;32m    224[0m 
-[1;32m    225[0m [38;5;124;03m    :param name: name of DBLibrary[39;00m
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:134[0m, in [0;36mShapeCollection.resolve_imports[0;34m(self, recursive_limit, error_on_missing_imports)[0m
+[1;32m    117[0m [38;5;250m[39m[38;5;124;03m"""Resolves `owl:imports` to as many levels as requested.[39;00m
+[1;32m    118[0m 
+[1;32m    119[0m [38;5;124;03mBy default, all `owl:imports` are recursively resolved. This limit can[39;00m
 [0;32m   (...)[0m
-[1;32m    228[0m [38;5;124;03m    :rtype: DBLibrary[39;00m
-[1;32m    229[0m [38;5;124;03m    """[39;00m
-[0;32m--> 230[0m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mbm[49m[38;5;241;43m.[39;49m[43msession[49m[38;5;241;43m.[39;49m[43mquery[49m[43m([49m[43mDBLibrary[49m[43m)[49m[38;5;241;43m.[39;49m[43mfilter[49m[43m([49m[43mDBLibrary[49m[38;5;241;43m.[39;49m[43mname[49m[43m [49m[38;5;241;43m==[39;49m[43m [49m[43mname[49m[43m)[49m[38;5;241;43m.[39;49m[43mone[49m[43m([49m[43m)[49m
+[1;32m    131[0m [38;5;124;03m:rtype: ShapeCollection[39;00m
+[1;32m    132[0m [38;5;124;03m"""[39;00m
+[1;32m    133[0m resolved_namespaces: Set[rdflib[38;5;241m.[39mURIRef] [38;5;241m=[39m [38;5;28mset[39m()
+[0;32m--> 134[0m resolved [38;5;241m=[39m [43m_resolve_imports[49m[43m([49m
+[1;32m    135[0m [43m    [49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mgraph[49m[43m,[49m
+[1;32m    136[0m [43m    [49m[43mrecursive_limit[49m[43m,[49m
+[1;32m    137[0m [43m    [49m[43mresolved_namespaces[49m[43m,[49m
+[1;32m    138[0m [43m    [49m[43merror_on_missing_imports[49m[38;5;241;43m=[39;49m[43merror_on_missing_imports[49m[43m,[49m
+[1;32m    139[0m [43m[49m[43m)[49m
+[1;32m    140[0m new_sc [38;5;241m=[39m ShapeCollection[38;5;241m.[39mcreate()
+[1;32m    141[0m new_sc[38;5;241m.[39madd_graph(resolved)
 
-File [0;32m/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/sqlalchemy/orm/query.py:2870[0m, in [0;36mQuery.one[0;34m(self)[0m
-[1;32m   2852[0m [38;5;28;01mdef[39;00m [38;5;21mone[39m([38;5;28mself[39m):
-[1;32m   2853[0m [38;5;250m    [39m[38;5;124;03m"""Return exactly one result or raise an exception.[39;00m
-[1;32m   2854[0m 
-[1;32m   2855[0m [38;5;124;03m    Raises ``sqlalchemy.orm.exc.NoResultFound`` if the query selects[39;00m
-[0;32m   (...)[0m
-[1;32m   2868[0m 
-[1;32m   2869[0m [38;5;124;03m    """[39;00m
-[0;32m-> 2870[0m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_iter[49m[43m([49m[43m)[49m[38;5;241;43m.[39;49m[43mone[49m[43m([49m[43m)[49m
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:473[0m, in [0;36m_resolve_imports[0;34m(graph, recursive_limit, seen, error_on_missing_imports)[0m
+[1;32m    471[0m [38;5;28;01mif[39;00m sc_to_add [38;5;129;01mis[39;00m [38;5;28;01mNone[39;00m:
+[1;32m    472[0m     [38;5;28;01mif[39;00m error_on_missing_imports:
+[0;32m--> 473[0m         [38;5;28;01mraise[39;00m [38;5;167;01mException[39;00m([38;5;124m"[39m[38;5;124mCould not resolve import of [39m[38;5;132;01m%s[39;00m[38;5;124m"[39m, ontology)
+[1;32m    474[0m     [38;5;28;01mcontinue[39;00m
+[1;32m    476[0m dependency [38;5;241m=[39m _resolve_imports(
+[1;32m    477[0m     sc_to_add[38;5;241m.[39mgraph,
+[1;32m    478[0m     recursive_limit [38;5;241m-[39m [38;5;241m1[39m,
+[1;32m    479[0m     seen,
+[1;32m    480[0m     error_on_missing_imports[38;5;241m=[39merror_on_missing_imports,
+[1;32m    481[0m )
 
-File [0;32m/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:1522[0m, in [0;36mScalarResult.one[0;34m(self)[0m
-[1;32m   1514[0m [38;5;28;01mdef[39;00m [38;5;21mone[39m([38;5;28mself[39m):
-[1;32m   1515[0m [38;5;250m    [39m[38;5;124;03m"""Return exactly one object or raise an exception.[39;00m
-[1;32m   1516[0m 
-[1;32m   1517[0m [38;5;124;03m    Equivalent to :meth:`_engine.Result.one` except that[39;00m
-[0;32m   (...)[0m
-[1;32m   1520[0m 
-[1;32m   1521[0m [38;5;124;03m    """[39;00m
-[0;32m-> 1522[0m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_only_one_row[49m[43m([49m
-[1;32m   1523[0m [43m        [49m[43mraise_for_second_row[49m[38;5;241;43m=[39;49m[38;5;28;43;01mTrue[39;49;00m[43m,[49m[43m [49m[43mraise_for_none[49m[38;5;241;43m=[39;49m[38;5;28;43;01mTrue[39;49;00m[43m,[49m[43m [49m[43mscalar[49m[38;5;241;43m=[39;49m[38;5;28;43;01mFalse[39;49;00m
-[1;32m   1524[0m [43m    [49m[43m)[49m
-
-File [0;32m/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:562[0m, in [0;36mResultInternal._only_one_row[0;34m(self, raise_for_second_row, raise_for_none, scalar)[0m
-[1;32m    560[0m [38;5;28;01mif[39;00m row [38;5;129;01mis[39;00m [38;5;28;01mNone[39;00m:
-[1;32m    561[0m     [38;5;28;01mif[39;00m raise_for_none:
-[0;32m--> 562[0m         [38;5;28;01mraise[39;00m exc[38;5;241m.[39mNoResultFound(
-[1;32m    563[0m             [38;5;124m"[39m[38;5;124mNo row was found when one was required[39m[38;5;124m"[39m
-[1;32m    564[0m         )
-[1;32m    565[0m     [38;5;28;01melse[39;00m:
-[1;32m    566[0m         [38;5;28;01mreturn[39;00m [38;5;28;01mNone[39;00m
-
-[0;31mNoResultFound[0m: No row was found when one was required
-NoResultFound: No row was found when one was required
+[0;31mException[0m: ('Could not resolve import of %s', rdflib.term.URIRef('urn:ashrae/g36'))
+Exception: ('Could not resolve import of %s', rdflib.term.URIRef('urn:ashrae/g36'))
 
