@@ -409,8 +409,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.label_parsing.combinators</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">re</span>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
@@ -428,34 +427,22 @@ document.write(`
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
-
 
 <div class="viewcode-block" id="string"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.string">[docs]</a><span class="k">class</span> <span class="nc">string</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a parser that matches a string.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">s</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span>
-                <span class="n">TokenResult</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
-                    <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
-                    <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
-                    <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                <span class="p">)</span>
+                <span class="n">TokenResult</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
             <span class="p">]</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">TokenResult</span><span class="p">(</span>
-                <span class="kc">None</span><span class="p">,</span>
-                <span class="n">Null</span><span class="p">(),</span>
-                <span class="mi">0</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="p">]</span></div>
 
@@ -463,33 +450,25 @@ document.write(`
 <div class="viewcode-block" id="rest"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.rest">[docs]</a><span class="k">class</span> <span class="nc">rest</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a parser that matches the rest of the string.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="n">TokenResult</span><span class="p">(</span>
-                <span class="n">target</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">),</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span>
-            <span class="p">)</span>
-        <span class="p">]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">))]</span></div>
 
 
 <div class="viewcode-block" id="substring_n"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.substring_n">[docs]</a><span class="k">class</span> <span class="nc">substring_n</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a parser that matches a substring of length n.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">length</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">target</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">]</span>
             <span class="k">return</span> <span class="p">[</span>
-                <span class="n">TokenResult</span><span class="p">(</span>
-                    <span class="n">value</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span>
-                <span class="p">)</span>
+                <span class="n">TokenResult</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
             <span class="p">]</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">TokenResult</span><span class="p">(</span>
@@ -497,7 +476,6 @@ document.write(`
                 <span class="n">Null</span><span class="p">(),</span>
                 <span class="mi">0</span><span class="p">,</span>
                 <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="si">}</span><span class="s2"> characters, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">]</span></div>
 
@@ -505,27 +483,18 @@ document.write(`
 <div class="viewcode-block" id="regex"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.regex">[docs]</a><span class="k">class</span> <span class="nc">regex</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a parser that matches a regular expression.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">r</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
-            <span class="k">return</span> <span class="p">[</span>
-                <span class="n">TokenResult</span><span class="p">(</span>
-                    <span class="n">value</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span>
-                <span class="p">)</span>
-            <span class="p">]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">))]</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">TokenResult</span><span class="p">(</span>
-                <span class="kc">None</span><span class="p">,</span>
-                <span class="n">Null</span><span class="p">(),</span>
-                <span class="mi">0</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">)]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">)]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="p">]</span></div>
 
@@ -533,9 +502,8 @@ document.write(`
 <div class="viewcode-block" id="choice"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.choice">[docs]</a><span class="k">class</span> <span class="nc">choice</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a choice combinator of parsers.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">:</span> <span class="n">Parser</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">parsers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
         <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
@@ -545,27 +513,25 @@ document.write(`
                 <span class="k">return</span> <span class="n">result</span>
             <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
                 <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">),</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">)]</span>  <span class="c1"># type: ignore</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">errors</span><span class="p">))]</span>  <span class="c1"># type: ignore</span></div>
 
 
 <div class="viewcode-block" id="constant"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.constant">[docs]</a><span class="k">class</span> <span class="nc">constant</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matches a constant token.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">Token</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span></div>
 
 
 <div class="viewcode-block" id="abbreviations"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.abbreviations">[docs]</a><span class="k">class</span> <span class="nc">abbreviations</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a choice combinator of string matching based on a dictionary.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patterns</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patterns</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">parsers</span> <span class="o">=</span> <span class="p">[</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">Constant</span><span class="p">(</span><span class="n">URIRef</span><span class="p">(</span><span class="n">t</span><span class="p">)))</span> <span class="k">for</span> <span class="n">s</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">patterns</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">choice</span> <span class="o">=</span> <span class="n">choice</span><span class="p">(</span><span class="o">*</span><span class="n">parsers</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">target</span><span class="p">)</span></div>
@@ -574,9 +540,8 @@ document.write(`
 <div class="viewcode-block" id="sequence"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.sequence">[docs]</a><span class="k">class</span> <span class="nc">sequence</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies parsers in sequence. All parsers must match consecutively.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">parsers</span><span class="p">:</span> <span class="n">Parser</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parsers</span> <span class="o">=</span> <span class="n">parsers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
@@ -599,9 +564,8 @@ document.write(`
 <div class="viewcode-block" id="many"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.many">[docs]</a><span class="k">class</span> <span class="nc">many</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the given sequence parser repeatedly until it stops matching.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seq_parser</span> <span class="o">=</span> <span class="n">seq_parser</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
@@ -619,16 +583,15 @@ document.write(`
 <div class="viewcode-block" id="maybe"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.maybe">[docs]</a><span class="k">class</span> <span class="nc">maybe</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the given parser, but does not fail if it does not match.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="c1"># if the result is not empty and there are no errors, return the result, otherwise return a null token</span>
         <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">error</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">result</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)]</span></div>
 
 
 <div class="viewcode-block" id="until"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.until">[docs]</a><span class="k">class</span> <span class="nc">until</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
@@ -637,10 +600,9 @@ document.write(`
 <span class="sd">    STarts with a string length of 1 and increments it until the parser matches.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">length</span> <span class="o">=</span> <span class="mi">1</span>
@@ -652,17 +614,12 @@ document.write(`
                         <span class="n">target</span><span class="p">[:</span><span class="n">length</span><span class="p">],</span>
                         <span class="n">ensure_token</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="n">target</span><span class="p">[:</span><span class="n">length</span><span class="p">]),</span>
                         <span class="n">length</span><span class="p">,</span>
-                        <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="p">]</span>
             <span class="n">length</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">TokenResult</span><span class="p">(</span>
-                <span class="kc">None</span><span class="p">,</span>
-                <span class="n">Null</span><span class="p">(),</span>
-                <span class="mi">0</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="kc">None</span><span class="p">,</span> <span class="n">Null</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target</span><span class="p">[:</span><span class="n">length</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="p">]</span></div>
 
@@ -670,15 +627,14 @@ document.write(`
 <div class="viewcode-block" id="extend_if_match"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.combinators.html#buildingmotif.label_parsing.combinators.extend_if_match">[docs]</a><span class="k">class</span> <span class="nc">extend_if_match</span><span class="p">(</span><span class="n">Parser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds the type to the token result.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">Token</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="n">Token</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">result</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">error</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">):</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)])</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">TokenResult</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
             <span class="k">return</span> <span class="n">result</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
