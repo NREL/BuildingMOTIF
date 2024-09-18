@@ -1,23 +1,22 @@
+<app-parser-vis [parser]="parser"></app-parser-vis>
+
 <div class="container">
   <div class="pointlabels">
     <!-- Unparsed -->
-        <ngx-codemirror #codemirror [options]="codeMirrorOptions"
-          [formControl]="pointLabelsFormControl"></ngx-codemirror>
-    <button mat-raised-button color="primary" (click)="parse()">Parse</button>
+    <div *ngIf="results.length === 0">
+      <ngx-codemirror #codemirror [options]="codeMirrorOptions" [formControl]="pointLabelsFormControl"></ngx-codemirror>
+      <button mat-raised-button color="primary" (click)="parse()">Parse</button>
+    </div>
+    <button *ngIf="results.length !== 0" mat-raised-button color="primary" (click)="clearResults()">Enter New Points</button>
 
     <!-- Parsed -->
     <mat-list>
       <mat-card *ngFor="let r of results">
         <mat-card-title>
           <span *ngFor="let t of r.tokens">
-            <a *ngIf="t.token == 'Delimiter'" title="{{t.token}}" style="color:red"
-              (mouseover)="onHover(t)">{{t.value}}</a>
-            <a *ngIf="t.token == 'Identifier'" title="{{t.token}}" style="color:blue"
-              (mouseover)="onHover(t)">{{t.value}}</a>
-            <a *ngIf="t.token == 'Constant'" title="{{t.token}}" style="color:green"
-              (mouseover)="onHover(t)">{{t.value}}</a>
-            <a *ngIf="t.token !== 'Delimiter' && t.token !== 'Identifier' && t.token !== 'Constant'" title="{{t.token}}"
-              style="color: purple" (mouseover)="onHover(t)">{{t.value}}</a>
+            <span title="{{t.token}}" [ngStyle]="{'background-color': color_by_type[type_by_id[t.id]]}"
+              style="color: white; margin: 0rem 0.1rem; text-align: center;" (mouseover)="onHover(t)">{{t.value}}
+            </span>
           </span>
         </mat-card-title>
         <mat-card-subtitle *ngIf="r._errors">
@@ -27,6 +26,7 @@
     </mat-list>
   </div>
 
+  <!-- Parser -->
   <div class="parser">
     <div id="blocklyDiv"></div>
     <xml id="toolbox" style="display: none">

@@ -1,0 +1,67 @@
+<ul *ngIf="parser.args" class="my-parser-vis">
+    <ng-container *ngFor="let child of parser.args.parsers" [ngTemplateOutlet]="treeNode"
+        [ngTemplateOutletContext]="{ $implicit: child }">
+    </ng-container>
+</ul>
+
+<ng-template #substring_n let-data>
+    <div class="parser-vis">
+        <div>{{data.args.type_name}}</div>
+        <mat-icon style="color: #a55b80;" matSuffix>square</mat-icon>
+    </div>
+</ng-template>
+
+<ng-template #stringUrl let-data>
+    <div class="parser-vis">
+        <div>{{data.args.type_name}}</div>
+        <mat-icon style="color: #5ba5a5;" matSuffix>square</mat-icon>
+    </div>
+</ng-template>
+
+<ng-template #rest let-data>
+    <div class="parser-vis">
+        <div>{{data.args.type_name}}</div>
+        <mat-icon style="color: #a55b5b;" matSuffix>square</mat-icon>
+    </div>
+</ng-template>
+
+<ng-template #stringToken let-data>
+    <div class="parser-vis">
+        <div>{{data.args.s}}</div>
+        <mat-icon style="color: #a5a55b;" matSuffix>square</mat-icon>
+    </div>
+</ng-template>
+
+<ng-template #treeNode let-data>
+    <ng-container *ngIf="data.uiParser == 'choice'">
+        <div class="parser-vis">
+            <ng-container *ngFor="let child of data.args.parsers" [ngTemplateOutlet]="treeNode"
+                [ngTemplateOutletContext]="{ $implicit: child }">
+            </ng-container>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="data.uiParser == 'sequence-internal'">
+        <div style="display: flex; flex-direction: row; justify-content: start;">
+            <ng-container *ngFor="let child of data.args.parsers" [ngTemplateOutlet]="treeNode"
+                [ngTemplateOutletContext]="{ $implicit: child }">
+            </ng-container>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="data.uiParser == 'substring_n'" [ngTemplateOutlet]="substring_n"
+        [ngTemplateOutletContext]="{ $implicit: data }">
+    </ng-container>
+
+    <ng-container *ngIf="data.uiParser == 'rest'" [ngTemplateOutlet]="rest"
+        [ngTemplateOutletContext]="{ $implicit: data }">
+    </ng-container>
+
+    <ng-container *ngIf="data.uiParser == 'string-url'" [ngTemplateOutlet]="stringUrl"
+        [ngTemplateOutletContext]="{ $implicit: data }">
+    </ng-container>
+
+    <ng-container *ngIf="data.uiParser == 'string-token'" [ngTemplateOutlet]="stringToken"
+        [ngTemplateOutletContext]="{ $implicit: data }">
+    </ng-container>
+</ng-template>
