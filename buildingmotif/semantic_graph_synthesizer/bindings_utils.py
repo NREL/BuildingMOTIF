@@ -1,8 +1,8 @@
 from typing import List, Union
 
-from rdflib import Namespace
+from rdflib import Graph, Namespace
 
-from buildingmotif.dataclasses import Model, Template
+from buildingmotif.dataclasses import Template
 from buildingmotif.semantic_graph_synthesizer.classes import Bindings, UnifiedBindings
 
 BLDG = Namespace("urn:building/")
@@ -44,7 +44,7 @@ def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
 
 def evaluate_bindings(
     bindings: Union[Bindings, UnifiedBindings]
-) -> Union[Template, Model]:
+) -> Union[Template, Graph]:
     """evaluate bindings"""
     if bindings.template is None:
         raise ValueError("bindings have no template.")
