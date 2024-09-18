@@ -1,324 +1,116 @@
-@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
-@prefix brick: <https://brickschema.org/schema/Brick#> .
-@prefix components: <urn:ashrae/g36/components/> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix vav41: <urn:ashrae/g36/4.1/vav-cooling-only/> .
+@prefix vav42: <urn:ashrae/g36/4.2/vav-with-reheat/> .
+@prefix vav48: <urn:ashrae/g36/4.8/sz-vav-ahu/> .
 @prefix : <urn:ashrae/g36/4.6/mz-vav-ahu/> .
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
 
-:multiple-zone-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
-    rdfs:label "Multiple-Zone VAV Air-Handling Unit" ;
-    sh:class brick:Air_Handling_Unit ;
-    # required
+:AHU a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:class brick:AHU ;
     sh:property [
-        rdfs:label "Supply Fan with VFD" ;
         sh:path brick:hasPart ;
-        sh:qualifiedValueShape [
-            sh:node components:variable-speed-fan-vfd ;
-            # application TODO resets DP sensor, see schematic
-            sh:property [
-                rdfs:label "Supply fan high static alarm reset" ;
-                rdfs:comment "(optional-see control schematic)" ;
-                sh:path brick:hasPoint ;
-                sh:qualifiedValueShape [ sh:class brick:Reset_Command ] ;
-                sh:qualifiedMinCount 0 ;
-                sh:qualifiedMaxCount 1 ;
-            ] ;
-        ] ;
+        sh:qualifiedValueShape [ sh:node :return-damper ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # required
     sh:property [
-        rdfs:label "Supply air temperature" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :supply-fan ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :heating-coil ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node :cooling-coil ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    sh:property [
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
+        sh:qualifiedValueShape [ sh:node vav48:oa-temp ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # required
     sh:property [
-        rdfs:label "Duct static pressure (DSP)" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Air_Differential_Pressure_Sensor ] ;
+        sh:qualifiedValueShape [ sh:node vav48:ma-temp ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # required
     sh:property [
-        rdfs:label "Filter" ;
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:filter ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # optional
-    sh:property [
-        rdfs:label "Heating Coil" ;
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [
-            sh:node components:heating-coil ;
-            # optional
-            sh:property [
-                rdfs:label "Heating coil supply air temperature" ;
-                sh:path brick:hasPoint ;
-                sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
-                sh:qualifiedMinCount 0 ;
-                sh:qualifiedMaxCount 1 ;
-            ] ;
-        ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # required, outdoor air damper(s) (economizer)
-    # NOTE options are rather unclear in G36
-    # 1. economizer damper (only)
-    # 2. common economizer/minimum OA damper (with AFMS)
-    # 3. separate minimum oa damper and DP sensor (without AFMS)
-    # 4. separate minimum oa damper and AFMS
-    sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [
-            sh:or (
-                # option 1
-                sh:node :economizer-damper
-                # option 2
-                sh:node :economizer-minimum-oa-damper
-                # option 3
-                sh:and (
-                    sh:node :economizer-damper
-                    sh:node :minimum-oa-damper
-                )
-                # option 4
-                sh:and (
-                    sh:node :economizer-damper
-                    sh:node :minimum-oa-damper-afms
-                )
-            )
-        ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # required
-    sh:property [
-        rdfs:label "Return Air Damper" ;
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:damper-modulating ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # required
-    sh:property [
-        rdfs:label "Outdoor air temperature" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+        sh:qualifiedValueShape [ sh:node vav48:ra-temp ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # optional
     sh:property [
-        rdfs:label "Mixed air temperature" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # application
-    # NOTE not clear what application
-    sh:property [
-        rdfs:label "Return air temperature" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # required
-    sh:property [
-        rdfs:label "Cooling Coil" ;
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [ sh:node components:cooling-coil ] ;
+        sh:qualifiedValueShape [ sh:node vav48:sa-temp ] ;
         sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # heating signal, see above
-    # outdoor air, see above
-    # optional, relief air
     sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [
-            sh:or (
-                # option 1
-                sh:node :relief-damper
-                # option 2
-                sh:and (
-                    sh:node :relief-fan
-                    sh:node :relief-fan-damper
-                )
-            )
-        ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # optional, return air
-    sh:property [
-        sh:path brick:hasPart ;
-        sh:qualifiedValueShape [
-            sh:and (
-                sh:node :return-fan
-                sh:node :return-fan-exhaust-damper
-            )
-        ] ;
-        sh:qualifiedMinCount 0 ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:node vav48:filter-pd ] ;
+        sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
 .
 
-# outdoor air
-
-# option 1
-:economizer-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Economizer Damper" ;
-    sh:node components:damper-modulating .
-
-# option 2
-# For units with a common economizer/minimum OA damper, include the following points.
-:economizer-minimum-oa-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "common economizer/minimum OA damper (and AFMS)" ;
-    sh:node components:damper-modulating ;
-    # application, Airflow measurement station (AFMS)
+:supply-fan a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:class brick:Supply_Fan ;
     sh:property [
-        rdfs:label "Outdoor airflow" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Flow_Sensor ] ;
+        sh:qualifiedValueShape [ sh:class brick:Frequency_Command ] ;
         sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-# option 3
-# For units with a separate minimum outdoor air damper and DP sensor, include the following points.
-# Figure A-10?
-:minimum-oa-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "minimum outdoor air damper" ;
-    sh:node components:damper-two-position ;
-    # application
-    sh:property [
-        rdfs:label "Minimum outdoor air damper DP" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Air_Differential_Pressure_Sensor ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-# option 4
-# For units with a separate minimum outdoor air damper and AFMS, include the following points.
-# Figure A-9?
-:minimum-oa-damper-afms a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "minimum outdoor air damper and AFMS" ;
-    sh:node components:damper-modulating ;
-    # application, Airflow measurement station (AFMS)
-    sh:property [
-        rdfs:label "Minimum outdoor airflow" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Flow_Sensor ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-# relief air
-
-# For units with actuated relief dampers but no relief fan, include the following points.
-:relief-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Relief Damper" ;
-    sh:node components:damper-modulating ;
-    # NOTE G36 description (open/close) conflicts with type (AO) and device (modulating actuator)
-    # assume it's an AO point for Damper_Position_Command from components:damper rather than Open_Close_Command below
-    # application
-    # sh:property [
-    #     rdfs:label "Relief damper open/close" ;
-    #     sh:path brick:hasPoint ;
-    #     sh:qualifiedValueShape [ sh:class brick:Open_Close_Command ] ;
-    #     sh:qualifiedMinCount 1 ;
-    #     sh:qualifiedMaxCount 1 ;
-    # ] ;
-    # application
-    sh:property [
-        rdfs:label "Building static pressure" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Air_Differential_Pressure_Sensor ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-# For units with a relief fan, include the following points.
-:relief-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Relief Fan with VFD" ;
-    sh:node components:variable-speed-fan-vfd .
-
-:relief-fan-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Relief Damper" ;
-    sh:node components:damper-two-position ;
-    # application
-    sh:property [
-        rdfs:label "Building static pressure" ;
-        rdfs:comment "(if direct building pressure logic is used)" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Air_Differential_Pressure_Sensor ] ;
-        sh:qualifiedMinCount 1 ;
-        sh:qualifiedMaxCount 1 ;
-    ] .
-
-# return air
-
-# For units with a return fan, include the following points.
-:return-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Return Fan with VFD" ;
-    sh:node components:variable-speed-fan-vfd ;
-    # application
-    sh:property [
-        rdfs:label "Return-fan high-static alarm reset" ;
-        rdfs:comment "(optional-see control schematic)" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Reset_Command ] ;
-        sh:qualifiedMinCount 0 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # application
     sh:property [
-        rdfs:label "Supply airflow" ;
-        rdfs:comment "(if airflow tracking logic used)" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Flow_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
+        sh:qualifiedValueShape [ sh:class brick:Start_Stop_Command ] ;
+        sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] ;
-    # application
     sh:property [
-        rdfs:label "Return airflow" ;
-        rdfs:comment "(if airflow tracking logic used)" ;
         sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Return_Air_Flow_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # application
-    sh:property [
-        rdfs:label "Return-fan discharge static pressure" ;
-        rdfs:comment "(if direct building pressure logic is used)" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Discharge_Air_Static_Pressure_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
-        sh:qualifiedMaxCount 1 ;
-    ] ;
-    # application
-    sh:property [
-        rdfs:label "Building static pressure" ;
-        rdfs:comment "(if direct building pressure logic is used)" ;
-        sh:path brick:hasPoint ;
-        sh:qualifiedValueShape [ sh:class brick:Air_Differential_Pressure_Sensor ] ;
-        sh:qualifiedMinCount 0 ;
+        sh:qualifiedValueShape [ sh:class brick:Fan_Status ] ;
+        sh:qualifiedMinCount 1 ;
         sh:qualifiedMaxCount 1 ;
     ] .
 
-:return-fan-exhaust-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
-    rdfs:label "Exhaust damper" ;
-    sh:node components:damper-modulating .
+:return-damper a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:class brick:Return_Damper ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Damper_Position_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:heating-coil a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:class brick:Heating_Coil ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Valve_Position_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:cooling-coil a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    sh:class brick:Cooling_Coil ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Valve_Position_Command ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
