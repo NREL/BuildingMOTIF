@@ -448,8 +448,8 @@ def test_test_model_against_shapes(client, building_motif, shacl_engine):
         json={
             "shape_collection_ids": [ashrae_g36.get_shape_collection().id],
             "shape_uris": [
-                "urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-3",
-                "urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-4",
+                "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-3",
+                "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4",
             ],
             "target_class": str(BRICK["AHU"]),
         },
@@ -457,14 +457,8 @@ def test_test_model_against_shapes(client, building_motif, shacl_engine):
 
     # assert
     assert (
-        len(
-            results.json["urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-3"]
-        )
-        == 0
+        len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-3"]) == 0
     ), results.content
     assert (
-        len(
-            results.json["urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-4"]
-        )
-        == 3
+        len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4"]) == 3
     ), results.content

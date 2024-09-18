@@ -65,11 +65,11 @@ def test_template_generation_inmemory(
         template = template.inline_dependencies()
     bindings, filled = template.fill(BLDG, include_optional=include_optional)
 
-    with NamedTemporaryFile(suffix=".xlsx") as dest:
+    with NamedTemporaryFile(suffix=".xlsx", delete=False) as dest:
         output = template.generate_spreadsheet()
         assert output is not None
         dest.write(output.getbuffer())
-
+        dest.flush()
         w = openpyxl.load_workbook(dest.name)
         _add_spreadsheet_row(w.active, bindings)
         w.save(Path(dest.name))
@@ -92,10 +92,10 @@ def test_template_generation_file(
         template = template.inline_dependencies()
     bindings, filled = template.fill(BLDG, include_optional=include_optional)
 
-    with NamedTemporaryFile(suffix=".xlsx") as dest:
+    with NamedTemporaryFile(suffix=".xlsx", delete=False) as dest:
         output = template.generate_spreadsheet(Path(dest.name))
         assert output is None
-
+        dest.flush()
         w = openpyxl.load_workbook(dest.name)
         _add_spreadsheet_row(w.active, bindings)
         w.save(Path(dest.name))
@@ -118,7 +118,7 @@ def test_csv_generation_inmemory(
         template = template.inline_dependencies()
     bindings, filled = template.fill(BLDG, include_optional=include_optional)
 
-    with NamedTemporaryFile(mode="w", suffix=".csv") as dest:
+    with NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as dest:
         output = template.generate_csv()
         assert output is not None
         dest.writelines([output.getvalue()])
@@ -145,9 +145,10 @@ def test_csv_generation_file(
         template = template.inline_dependencies()
     bindings, filled = template.fill(BLDG, include_optional=include_optional)
 
-    with NamedTemporaryFile(mode="w", suffix=".csv") as dest:
+    with NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as dest:
         output = template.generate_csv(Path(dest.name))
         assert output is None
+        dest.flush()
 
         with open(Path(dest.name)) as f:
             params = f.read().strip().split(",")
