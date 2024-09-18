@@ -14,7 +14,7 @@ from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
 from sqlalchemy.exc import NoResultFound
 
-from buildingmotif.namespaces import OWL, PARAM, RDF, SH, XSD, bind_prefixes
+from buildingmotif.namespaces import OWL, PARAM, RDF, RDFS, SH, XSD, bind_prefixes
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Library, Template
@@ -246,13 +246,19 @@ def get_template_parts_from_shape(
             raise Exception(
                 f"no sh:path detected on {shape_name} property shape {pshape}"
             )
+        if isinstance(property_path, BNode):
+            # TODO: handle complex path
+            continue
         # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
                 subject=pshape,
-                predicate=SH["qualifiedValueShape"]
-                * ZeroOrOne  # type:ignore
-                / (SH["class"] | SH["node"] | SH["datatype"]),
+                predicate=(
+                    SH["qualifiedValueShape"]
+                    | SH["class"]
+                    | SH["node"]
+                    | SH["datatype"]
+                ),  # type:ignore
             )
         )
         mincounts = list(
@@ -260,39 +266,59 @@ def get_template_parts_from_shape(
                 subject=pshape, predicate=SH["minCount"] | SH["qualifiedMinCount"]
             )
         )
-        if len(otypes) > 1:
-            raise Exception(f"more than one object type detected on {shape_name}")
+        # if len(otypes) > 1:
+        #    raise Exception(f"more than one object type detected on {shape_name}")
+        # if there are multiple mincounts, sort them and take the smallest
         if len(mincounts) > 1:
-            raise Exception(f"more than one min count detected on {shape_name}")
-        if len(mincounts) == 0 or len(otypes) == 0:
+            mincounts = sorted(mincounts, key=lambda x: int(x))
+        if len(otypes) == 0:
             # print(f"No useful information on {shape_name} - {pshape}")
             # print(shape_graph.cbd(pshape).serialize())
+
             continue
-        (path, otype, mincount) = property_path, otypes[0], mincounts[0]
-        assert isinstance(mincount, Literal)
+        if len(mincounts) == 0:
+            # mincounts = [1]
+            continue
+        for otype in otypes:
+            if isinstance(otype, (Literal, BNode)):
+                continue
+            (path, mincount) = property_path, mincounts[0]
+            param_name = shape_graph.value(pshape, SH["name"])
+            param_name = str(param_name).replace(" ", "_") if param_name else None
 
-        param_name = shape_graph.value(pshape, SH["name"])
+            for num in range(int(mincount)):
+                if param_name is not None:
+                    param = PARAM[f"{param_name}{num}"]
+                else:
+                    param = _gensym()
+                body.add((root_param, path, param))
 
-        for num in range(int(mincount)):
-            if param_name is not None:
-                param = PARAM[f"{param_name}{num}"]
-            else:
-                param = _gensym()
-            body.add((root_param, path, param))
+                otype_as_class = (
+                    (None, SH["class"], otype) in shape_graph
+                    or ((otype, RDF.type, RDFS.Class) in shape_graph)
+                    or ((otype, RDF.type, OWL.Class) in shape_graph)
+                )
+                otype_as_node = ((None, SH["node"], otype) in shape_graph) or (
+                    (otype, RDF.type, SH.NodeShape) in shape_graph
+                )
+                otype_is_nodeshape = (otype, RDF.type, SH.NodeShape) in shape_graph
 
-            otype_as_class = (None, SH["class"], otype) in shape_graph
-            otype_as_node = (None, SH["node"], otype) in shape_graph
-            otype_is_nodeshape = (otype, RDF.type, SH.NodeShape) in shape_graph
+                if (otype_as_class and otype_is_nodeshape) or otype_as_node:
+                    if shape_name == otype:
+                        continue
+                    print(f"shape {shape_name} has dependency {otype}")
+                    deps.append({"template": str(otype), "args": {"name": param}})
+                    body.add((param, RDF.type, otype))
 
-            if (otype_as_class and otype_is_nodeshape) or otype_as_node:
-                deps.append({"template": str(otype), "args": {"name": param}})
-                body.add((param, RDF.type, otype))
+            pvalue = shape_graph.value(pshape, SH["hasValue"])
+            if pvalue:
+                body.add((root_param, path, pvalue))
 
-        pvalue = shape_graph.value(pshape, SH["hasValue"])
-        if pvalue:
-            body.add((root_param, path, pvalue))
-
-    if (shape_name, RDF.type, OWL.Class) in shape_graph:
+    if (shape_name, RDF.type, OWL.Class) in shape_graph or (
+        shape_name,
+        RDF.type,
+        RDFS.Class,
+    ) in shape_graph:
         body.add((root_param, RDF.type, shape_name))
 
     classes = shape_graph.objects(shape_name, SH["class"])
@@ -346,7 +372,6 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
 
     # pick a random node to act as the 'target' of the shape
     target = next(iter(templ_graph.subjects(RDF.type)))
-    print(f"Choosing {target} as the target of the shape")
     assert isinstance(target, URIRef)
 
     # store the classes for each parameter

@@ -314,7 +314,9 @@ class Library:
                     f"An ontology could not resolve a dependency on {dependency} ({e}). Check this is loaded into BuildingMOTIF"
                 )
                 continue
-        class_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.OWL.Class))
+        class_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.OWL.Class)).union(
+            set(graph.subjects(rdflib.RDF.type, rdflib.RDFS.Class))
+        )
         shape_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
         candidates = class_candidates.intersection(shape_candidates)
         template_id_lookup: Dict[str, int] = {}
