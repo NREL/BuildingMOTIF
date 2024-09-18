@@ -37,7 +37,6 @@
    buildingmotif.model_builder
    buildingmotif.namespaces
    buildingmotif.schemas
-   buildingmotif.semantic_graph_synthesizer
    buildingmotif.shape_builder
    buildingmotif.template_compilation
    buildingmotif.template_matcher
