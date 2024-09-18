@@ -1,0 +1,602 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>buildingmotif.ingresses.csvingress &#8212; BuildingMOTIF Documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress';</script>
+    <link rel="shortcut icon" href="../../../_static/BuildingMOTIF-icon-rev.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="buildingmotif.ingresses.naming_convention" href="buildingmotif.ingresses.naming_convention.html" />
+    <link rel="prev" title="buildingmotif.ingresses.brick" href="buildingmotif.ingresses.brick.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../README.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-light" alt="BuildingMOTIF Documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/BuildingMOTIF-logo-rev.svg" class="logo__image only-dark" alt="BuildingMOTIF Documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../README.html">
+                    BuildingMOTIF
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../developer_documentation.html">Developer Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli_tool.html">Command Line Interface</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Code Documentation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="buildingmotif.html">buildingmotif</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.api.html">buildingmotif.api</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.api.app.html">buildingmotif.api.app</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.api.views.html">buildingmotif.api.views</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.building_motif.html">buildingmotif.building_motif</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.building_motif.building_motif.html">buildingmotif.building_motif.building_motif</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.building_motif.singleton.html">buildingmotif.building_motif.singleton</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.database.html">buildingmotif.database</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.database.utils.html">buildingmotif.database.utils</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.dataclasses.html">buildingmotif.dataclasses</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.library.html">buildingmotif.dataclasses.library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.model.html">buildingmotif.dataclasses.model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.shape_collection.html">buildingmotif.dataclasses.shape_collection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.template.html">buildingmotif.dataclasses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.dataclasses.validation.html">buildingmotif.dataclasses.validation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="buildingmotif.ingresses.html">buildingmotif.ingresses</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.bacnet.html">buildingmotif.ingresses.bacnet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.base.html">buildingmotif.ingresses.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.brick.html">buildingmotif.ingresses.brick</a></li>
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">buildingmotif.ingresses.csvingress</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.naming_convention.html">buildingmotif.ingresses.naming_convention</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.semantic_graph_synthesis.html">buildingmotif.ingresses.semantic_graph_synthesis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.template.html">buildingmotif.ingresses.template</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.ingresses.xlsx.html">buildingmotif.ingresses.xlsx</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.label_parsing.html">buildingmotif.label_parsing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.label_parsing.combinators.html">buildingmotif.label_parsing.combinators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.label_parsing.parser.html">buildingmotif.label_parsing.parser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.label_parsing.tokens.html">buildingmotif.label_parsing.tokens</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.libraries.html">buildingmotif.libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.model_builder.html">buildingmotif.model_builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.namespaces.html">buildingmotif.namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.schemas.html">buildingmotif.schemas</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.semantic_graph_synthesizer.html">buildingmotif.semantic_graph_synthesizer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.semantic_graph_synthesizer.bindings_utils.html">buildingmotif.semantic_graph_synthesizer.bindings_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.semantic_graph_synthesizer.bipartite_token_mapper.html">buildingmotif.semantic_graph_synthesizer.bipartite_token_mapper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.semantic_graph_synthesizer.classes.html">buildingmotif.semantic_graph_synthesizer.classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.semantic_graph_synthesizer.semantic_graph_synthesizer.html">buildingmotif.semantic_graph_synthesizer.semantic_graph_synthesizer</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="buildingmotif.shape_builder.html">buildingmotif.shape_builder</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="buildingmotif.shape_builder.shape.html">buildingmotif.shape_builder.shape</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_compilation.html">buildingmotif.template_compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.template_matcher.html">buildingmotif.template_matcher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="buildingmotif.utils.html">buildingmotif.utils</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_creation.html">Model Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_validation.html">Model Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/model_correction.html">Model Correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/template_writing.html">Template Writing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Guides</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/csv-import.html">CSV Import</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/ingress-bacnet-to-brick.html">BACnet to Brick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../guides/generating-queries.html">Generating SPARQL Queries</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explainations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/ingresses.html">Ingresses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/templates.html">Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/shapes-and-templates.html">Shapes and Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/shacl_to_sparql.html">SHACL to SPARQL Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../explanations/point-label-parsing.html">Point Label Parsing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Appendix</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/NREL/BuildingMOTIF/issues/new?title=Issue%20on%20page%20%2Freference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/reference/apidoc/_autosummary/buildingmotif.ingresses.csvingress.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>buildingmotif.ingresses.csvingress</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-buildingmotif.ingresses.csvingress">
+<span id="buildingmotif-ingresses-csvingress"></span><h1>buildingmotif.ingresses.csvingress<a class="headerlink" href="#module-buildingmotif.ingresses.csvingress" title="Permalink to this heading">#</a></h1>
+<p class="rubric">Classes</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.ingresses.csvingress.CSVIngress" title="buildingmotif.ingresses.csvingress.CSVIngress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CSVIngress</span></code></a>([filename, data])</p></td>
+<td><p>Reads rows from a CSV file and exposes them as records.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.ingresses.csvingress.CSVIngress">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CSVIngress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">StringIO</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/ingresses/csvingress.html#CSVIngress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.ingresses.csvingress.CSVIngress" title="Permalink to this definition">#</a></dt>
+<dd><p>Reads rows from a CSV file and exposes them as records.
+The type of the record is the name of the CSV file</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="buildingmotif.ingresses.csvingress.CSVIngress.records">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">records</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="buildingmotif.ingresses.base.html#buildingmotif.ingresses.base.Record" title="buildingmotif.ingresses.base.Record"><span class="pre">Record</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.ingresses.csvingress.CSVIngress.records" title="Permalink to this definition">#</a></dt>
+<dd><p>Generates (then caches) a list of Records from an underlying data source</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./reference/apidoc/_autosummary"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="buildingmotif.ingresses.brick.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">buildingmotif.ingresses.brick</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="buildingmotif.ingresses.naming_convention.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">buildingmotif.ingresses.naming_convention</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By NREL
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
