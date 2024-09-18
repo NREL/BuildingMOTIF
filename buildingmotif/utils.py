@@ -205,7 +205,12 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
         searches = (directory.rglob(f"{pat}") for pat in patterns)
     else:
         searches = (directory.glob(f"{pat}") for pat in patterns)
-    return list(chain.from_iterable(searches))
+    # filter out files in .ipynb_checkpoints
+    filtered_searches = (
+        filter(lambda x: ".ipynb_checkpoints" not in Path(x).parts, search)
+        for search in searches
+    )
+    return list(chain.from_iterable(filtered_searches))
 
 
 def get_template_parts_from_shape(
