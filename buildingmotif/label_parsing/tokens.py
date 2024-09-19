@@ -57,6 +57,7 @@ class TokenResult:
     token: Token
     length: int
     error: Optional[str] = None
+    id: Optional[str] = None
 
     def __eq__(self, other):
         """

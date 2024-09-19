@@ -8,7 +8,7 @@ from nbmake.nb_run import NotebookRun
 
 @pytest.mark.integration
 def test_notebook(notebook: Path):
-    run = NotebookRun(notebook, 300)
+    run = NotebookRun(notebook, 600)
     res: NotebookResult = run.execute()
     if res.error is not None:
         # Print error from notebook

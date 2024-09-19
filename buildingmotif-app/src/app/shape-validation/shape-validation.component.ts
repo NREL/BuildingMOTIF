@@ -3,7 +3,7 @@ import { LibraryService, Shape } from '../library/library.service';
 import { ModelDetailService } from '../model-detail/model-detail.service';
 import {ShapeValidationService} from './shape-validate.service';
 import { ValidationResponse } from '../model-validate/model-validate.service';
-import { FormControl, FormGroup, FormRecord, Validators, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators, ValidationErrors, ValidatorFn, AbstractControl } from '@angular/forms';
 
 
 export function forbiddenNameValidator(): ValidatorFn {
@@ -28,7 +28,7 @@ export class ShapeValidationComponent implements OnInit {
   targetNodes?: string[] = undefined;
   formGroup = new FormGroup({
     shapes: new FormControl<Set<Shape>>(new Set(), forbiddenNameValidator()),
-    targetNode: new FormControl<string| null>(null, Validators.required)
+    targetNode: new FormControl(null, Validators.required)
   });
   response?: Record<string, string[]> = undefined;
 
@@ -57,7 +57,7 @@ export class ShapeValidationComponent implements OnInit {
 
 
   toggle_selected(shape: Shape): void {
-    var selectedShapes = this.formGroup.controls.shapes.value
+    var selectedShapes = this.formGroup.controls['shapes'].value
     if (selectedShapes === null) return;
 
     if(selectedShapes.has(shape)){
@@ -66,18 +66,18 @@ export class ShapeValidationComponent implements OnInit {
       selectedShapes.add(shape)
     }
 
-    this.formGroup.controls.shapes.setValue(selectedShapes)
-    this.formGroup.controls.shapes.markAsTouched()
-    this.formGroup.controls.shapes.markAsDirty()
+    this.formGroup.controls['shapes'].setValue(selectedShapes)
+    this.formGroup.controls['shapes'].markAsTouched()
+    this.formGroup.controls['shapes'].markAsDirty()
   }
 
   validate(){
-    var selected_shapes = this.formGroup.controls.shapes.value;
+    var selected_shapes = this.formGroup.controls['shapes'].value;
     if (selected_shapes === null) return;
     const shape_collection_ids = new Set([...selected_shapes].map(s => s.shape_collection_id));
     const shape_uris =  new Set([...selected_shapes].map(s => s.shape_uri));
 
-    var target_class = this.formGroup.controls.targetNode.value
+    var target_class = this.formGroup.controls['targetNode'].value
 
     if (this.modelId === undefined) return;
     if (target_class === null) return;

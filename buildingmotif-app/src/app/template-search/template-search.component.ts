@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import { TemplateSearchService, Template } from './template-search.service';
-import {UntypedFormControl} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 
@@ -13,7 +13,7 @@ import {map, startWith} from 'rxjs/operators';
 export class TemplateSearchComponent implements OnInit{
   error: any = undefined;
   templates: Template[] | undefined = undefined;
-  fitlerStringControl = new UntypedFormControl('');
+  fitlerStringControl = new FormControl('');
   filteredTemplates: Observable<Template[]> = new Observable();
 
   // When in model detail page, allow init of evaluation.
