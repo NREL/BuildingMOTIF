@@ -250,7 +250,9 @@ class Model:
         """
         ontology_graph = rdflib.Graph()
         for shape_collection in shape_collections:
-            ontology_graph += shape_collection.resolve_imports(error_on_missing_imports=False).graph
+            ontology_graph += shape_collection.resolve_imports(
+                error_on_missing_imports=False
+            ).graph
         ontology_graph.remove((None, OWL.imports, None))
 
         model_graph = copy_graph(self.graph)
