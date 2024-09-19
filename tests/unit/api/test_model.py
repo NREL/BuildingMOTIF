@@ -194,7 +194,8 @@ def test_update_model_graph_bad_graph_value(client, building_motif):
 def test_create_model(client, building_motif):
     results = client.post(
         "/models",
-        json={"name": "https://example.com"},
+        data={"name": "https://example.com"},
+        headers={"Content-Type": "multipart/form-data"},
     )
 
     assert results.status_code == 201
@@ -211,7 +212,8 @@ def test_create_model(client, building_motif):
 def test_create_model_with_description(client, building_motif):
     results = client.post(
         "/models",
-        json={"name": "https://example.com", "description": "it's so cool"},
+        data={"name": "https://example.com", "description": "it's so cool"},
+        headers={"Content-Type": "multipart/form-data"},
     )
 
     assert results.status_code == 201
@@ -225,18 +227,17 @@ def test_create_model_with_description(client, building_motif):
     assert isinstance(Model.load(results.json["id"]), Model)
 
 
-def test_create_model_no_json(client, building_motif):
+def test_create_model_no_data(client, building_motif):
     results = client.post(
         "/models",
     )
-
     assert results.status_code == 400
 
 
 def test_create_model_no_name(client, building_motif):
     results = client.post(
         "/models",
-        json={},
+        data={},
     )
 
     assert results.status_code == 400
