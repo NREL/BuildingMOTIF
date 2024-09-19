@@ -144,7 +144,7 @@ def create_model() -> flask.Response:
             "trying to serialize this will break."
         }, status.HTTP_400_BAD_REQUEST
 
-    files = request.files.getlist("files[]", [])
+    files = request.files.getlist("files[]")
     file = None if len(files) == 0 else files[0]
 
     if file:
