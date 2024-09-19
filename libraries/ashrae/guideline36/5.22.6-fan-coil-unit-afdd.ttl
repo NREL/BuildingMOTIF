@@ -1,0 +1,129 @@
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix : <urn:ashrae/g36/5.22.6/fan-coil-unit-afdd/> .
+
+:fc-1 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
+    bmotif:domain bmotif:HVAC ;
+    rdfs:label "FC#1" ;
+    rdfs:comment "Too many changes in Operating State" ;
+    sh:class brick:Air_Handling_Unit ;
+    sh:property [
+        rdfs:label "Delta_OS" ;
+        rdfs:comment "number of changes in OS during the previous 60 minutes (moving window)" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Operating_Mode_Status ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
+
+:fc-2 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
+    bmotif:domain bmotif:HVAC ;
+    rdfs:label "FC#2" ;
+    rdfs:comment "SAT too low in full heating" ;
+    sh:class brick:Air_Handling_Unit ;
+    sh:property [
+        rdfs:label "SAT_AVG" ;
+        rdfs:comment "rolling average of supply air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "SATSP" ;
+        rdfs:comment "supply air temperature setpoint" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Setpoint ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Hot_Water_Coil ;
+            sh:property [
+                rdfs:label "HC" ;
+                rdfs:comment "heating-coil valve position command; 0% <= HC <= 100%" ;
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Valve_Position_Command ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
+
+:fc-3 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
+    bmotif:domain bmotif:HVAC ;
+    rdfs:label "FC#3" ;
+    rdfs:comment "SAT too high in full cooling" ;
+    sh:class brick:Air_Handling_Unit ;
+    sh:property [
+        rdfs:label "SAT_AVG" ;
+        rdfs:comment "rolling average of supply air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "SATSP" ;
+        rdfs:comment "supply air temperature setpoint" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Setpoint ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:class brick:Chilled_Water_Coil ;
+            sh:property [
+                rdfs:label "CC" ;
+                rdfs:comment "cooling-coil valve position command; 0% <= CC <= 100%" ;
+                sh:path brick:hasPoint ;
+                sh:qualifiedValueShape [ sh:class brick:Valve_Position_Command ] ;
+                sh:qualifiedMinCount 1 ;
+                sh:qualifiedMaxCount 1 ;
+            ] ;
+        ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
+
+:fc-4 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
+    bmotif:domain bmotif:HVAC ;
+    rdfs:label "FC#4" ;
+    rdfs:comment "Temperature drop across inactive cooling coil" ;
+    sh:class brick:Air_Handling_Unit ;
+    sh:property [
+        rdfs:label "SAT_AVG" ;
+        rdfs:comment "rolling average of supply air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "RAT" ;
+        rdfs:comment "return air temperature (if present)" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
+
+:fc-5 a sh:NodeShape, owl:Class, bmotif:Analytics_Application ;
+    bmotif:domain bmotif:HVAC ;
+    rdfs:label "FC#5" ;
+    rdfs:comment "Temperature rise across inactive heating coil" ;
+    sh:class brick:Air_Handling_Unit ;
+    sh:property [
+        rdfs:label "SAT_AVG" ;
+        rdfs:comment "rolling average of supply air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        rdfs:label "RAT" ;
+        rdfs:comment "return air temperature (if present)" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .

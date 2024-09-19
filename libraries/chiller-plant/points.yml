@@ -3,7 +3,7 @@ chiller-plant:
     @prefix P: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     P:name a brick:Chiller ;
-    brick:hasPart P:cvlv, P:cnd, P:chwp ;
+      brick:hasPart P:cvlv, P:cnd, P:chwp ;
       brick:hasPoint P:chwst, P:chwrt ;
       brick:isMeteredBy P:meter .
   dependencies:
@@ -52,7 +52,7 @@ bypass_valve:
 
 
 condenser:
-  type: https://brickschema.org/schema/Brick#Condenser
+  type: https://brickschema.org/schema/Brick#Condensing_Unit
   hasPoint:
     sup: https://brickschema.org/schema/Brick#Entering_Condenser_Water_Temperature_Sensor
     ret: https://brickschema.org/schema/Brick#Leaving_Condenser_Water_Temperature_Sensor
@@ -71,6 +71,9 @@ electrical_meter:
     voltage: https://brickschema.org/schema/Brick#Voltage_Sensor
     power: https://brickschema.org/schema/Brick#Power_Sensor
     breaker_status: breaker_status
+  dependencies:
+    - template: breaker_status
+      args: {"name": "breaker_status"}
 
 
 breaker_status:

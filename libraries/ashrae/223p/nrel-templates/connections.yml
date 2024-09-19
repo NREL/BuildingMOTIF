@@ -4,9 +4,9 @@ air-outlet-cp:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:OutletConnectionPoint ;
       s223:mapsTo P:mapsto ;
-      s223:hasMedium s223:Medium-Air .
+      s223:hasMedium s223:Fluid-Air .
     P:mapsto a s223:OutletConnectionPoint ;
-      s223:hasMedium s223:Medium-Air .
+      s223:hasMedium s223:Fluid-Air .
   optional: ["mapsto"]
 
 water-inlet-cp:
@@ -15,9 +15,9 @@ water-inlet-cp:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:InletConnectionPoint ;
       s223:mapsTo P:mapsto ;
-      s223:hasMedium s223:Medium-Water .
+      s223:hasMedium s223:Fluid-Water .
     P:mapsto a s223:InletConnectionPoint ;
-      s223:hasMedium s223:Medium-Water .
+      s223:hasMedium s223:Fluid-Water .
   optional: ["mapsto"]
 
 water-outlet-cp:
@@ -26,9 +26,9 @@ water-outlet-cp:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:OutletConnectionPoint ;
       s223:mapsTo P:mapsto ;
-      s223:hasMedium s223:Medium-Water .
+      s223:hasMedium s223:Fluid-Water .
     P:mapsto a s223:OutletConnectionPoint ;
-      s223:hasMedium s223:Medium-Water .
+      s223:hasMedium s223:Fluid-Water .
   optional: ["mapsto"]
 
 air-inlet-cp:
@@ -37,9 +37,9 @@ air-inlet-cp:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:InletConnectionPoint ;
       s223:mapsTo P:mapsto ;
-      s223:hasMedium s223:Medium-Air .
+      s223:hasMedium s223:Fluid-Air .
     P:mapsto a s223:InletConnectionPoint ;
-      s223:hasMedium s223:Medium-Air .
+      s223:hasMedium s223:Fluid-Air .
   optional: ["mapsto"]
 
 duct:
@@ -47,7 +47,7 @@ duct:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Duct ;
-      s223:hasMedium s223:Medium-Air ;
+      s223:hasMedium s223:Fluid-Air ;
       s223:cnx P:a, P:b .
     # issue here is that 'connectsAt' requires a,b to be conn points
     # but we can't instantiate that class directly *and* being a conn point
@@ -61,7 +61,7 @@ junction:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Junction ;
-      s223:hasMedium s223:Medium-Air ;
+      s223:hasMedium s223:Fluid-Air ;
       s223:cnx P:in1, P:in2, P:out1, P:out2, P:out3, P:out4, P:out5, P:out6, P:out7,
       P:out8, P:out9, P:out10, P:out11, P:out12, P:out13, P:out14, P:out15, P:out16 .
   optional: ["in2","in3","in4","in5","out2", "out3", "out4", "out5", "out6", "out7", "out8", "out9","out10","out11","out12","out13","out14","out15", "out16"]
@@ -108,3 +108,11 @@ junction:
       args: {"name": "out15"}
     - template: air-outlet-cp
       args: {"name": "out16"}
+
+pipe:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Pipe ;
+      s223:hasMedium s223:Fluid-Water ;
+      s223:cnx P:a, P:b .
