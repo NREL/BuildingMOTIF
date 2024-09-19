@@ -1,6 +1,6 @@
 # Command Line Interface
 
-The `buildingmotif` command line tool will be available upon [installing BuildingMOTIF](/reference/developer_documentation). This provides several utilities for interacting with BuildingMOTIF:
+The `buildingmotif` command line interface (CLI) is available after [installing BuildingMOTIF](/reference/developer_documentation). This provides several utilities for interacting with BuildingMOTIF:
 
 - library loading
 - running an API server
@@ -18,7 +18,6 @@ Recall that a `Library` is a unit of distribution for shapes (for validation of 
 - **individually**, using the `buildingmotif load` command (see below)
 - **in bulk**, using the `buildingmotif load` command (see below)
 
-
 ### CLI Usage
 
 ```bash
@@ -35,7 +34,6 @@ optional arguments:
   -l LIBRARY_MANIFEST_FILE [LIBRARY_MANIFEST_FILE ...], --libraries LIBRARY_MANIFEST_FILE [LIBRARY_MANIFEST_FILE ...]
                         Filename of the libraries YAML file specifying what should be loaded into BuildingMOTIF
 ```
-
 
 ### Bulk Library Loading
 
@@ -83,7 +81,7 @@ Using the `git` key, point to a directory in a branch of a remote git repository
 
 ### Loading Individual Libraries
 
-You can load invidual diretories or ontologies into a BuildingMOTIF instance directly using the command line.
+You can load individual directories or ontologies into a BuildingMOTIF instance directly using the command line.
 
 #### Directory
 
