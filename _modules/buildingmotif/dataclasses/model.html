@@ -661,7 +661,9 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ontology_graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">shape_collection</span> <span class="ow">in</span> <span class="n">shape_collections</span><span class="p">:</span>
-            <span class="n">ontology_graph</span> <span class="o">+=</span> <span class="n">shape_collection</span><span class="o">.</span><span class="n">resolve_imports</span><span class="p">(</span><span class="n">error_on_missing_imports</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">graph</span>
+            <span class="n">ontology_graph</span> <span class="o">+=</span> <span class="n">shape_collection</span><span class="o">.</span><span class="n">resolve_imports</span><span class="p">(</span>
+                <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">graph</span>
         <span class="n">ontology_graph</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="n">OWL</span><span class="o">.</span><span class="n">imports</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
 
         <span class="n">model_graph</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
