@@ -2,7 +2,7 @@ from pathlib import Path
 
 from rdflib import Graph, Namespace, URIRef
 from rdflib.compare import isomorphic, to_isomorphic
-from rdflib.namespace import RDF, OWL
+from rdflib.namespace import RDF
 
 from buildingmotif.dataclasses import Library, Model
 from buildingmotif.namespaces import BRICK, A
@@ -448,7 +448,10 @@ def test_test_model_against_shapes(client, building_motif, shacl_engine):
         f"/models/{medium_office_model.id}/validate_shape",
         headers={"Content-Type": "application/json"},
         json={
-            "shape_collection_ids": [ashrae_g36.get_shape_collection().id, brick.get_shape_collection().id],
+            "shape_collection_ids": [
+                ashrae_g36.get_shape_collection().id,
+                brick.get_shape_collection().id,
+            ],
             "shape_uris": [
                 "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-3",
                 "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4",
