@@ -2,7 +2,7 @@ from pathlib import Path
 
 from rdflib import Graph, Namespace, URIRef
 from rdflib.compare import isomorphic, to_isomorphic
-from rdflib.namespace import RDF
+from rdflib.namespace import RDF, OWL
 
 from buildingmotif.dataclasses import Library, Model
 from buildingmotif.namespaces import BRICK, A
@@ -422,7 +422,10 @@ def test_validate_model_bad_args(client, building_motif):
 def test_test_model_against_shapes(client, building_motif, shacl_engine):
     building_motif.shacl_engine = shacl_engine
     # Load libraries
-    Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick-subset.ttl"))
+    brick = Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick.ttl"))
+    unit = Library.load(ontology_graph="http://qudt.org/2.1/vocab/unit")
+    qk = Library.load(ontology_graph="http://qudt.org/2.1/vocab/quantitykind")
+
     ashrae_g36 = Library.load(
         directory=str(PROJECT_DIR / "libraries/ashrae/guideline36/")
     )
@@ -446,7 +449,7 @@ def test_test_model_against_shapes(client, building_motif, shacl_engine):
         f"/models/{medium_office_model.id}/validate_shape",
         headers={"Content-Type": "application/json"},
         json={
-            "shape_collection_ids": [ashrae_g36.get_shape_collection().id],
+            "shape_collection_ids": [ashrae_g36.get_shape_collection().id, brick.get_shape_collection().id, unit.get_shape_collection().id],
             "shape_uris": [
                 "urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-3",
                 "urn:ashrae/g36/5.16/multiple-zone-vav-air-handling-unit/fc-4",
