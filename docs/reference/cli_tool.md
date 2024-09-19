@@ -39,21 +39,21 @@ optional arguments:
 
 ### Bulk Library Loading
 
-To load multiple libraries into BuildingMOTIF, create a `libraries.yml` file that describes the libraries to load and where they can be found.
+To load multiple libraries into BuildingMOTIF, create a `libraries.yaml` file that describes the libraries to load and where they can be found.
 
-Use the `buildingmotif load` command to load all libraries described in the `libraries.yml` file into BuildingMOTIF:
+Use the `buildingmotif load` command to load all libraries described in the `libraries.yaml` file into BuildingMOTIF:
 
 ```bash
-buildingmotif load -l libraries.yml
+buildingmotif load -l libraries.yaml
 ```
 
 The YAML-encoded file contains a list of key-value "documents". Each document corresponds to a library to be loaded into BuildingMOTIF. There are three ways to specify a library: by directory, ontology URL, and `git` repository.
 
-**Use `buildingmotif get_default_libraries_yml` to create an example `libraries.default.yml` file in the current directory.**
+**Use `buildingmotif get_default_libraries_yml` to create an example `libraries.default.yaml` file in the current directory.**
 
 #### Directory
 
-Using the `directory` key, point to a local directory containing template and shape files. The library will take on the name of the immediately enclosing directory. In the example below `libraries.yml` file, the name of the library will be "ZonePAC":
+Using the `directory` key, point to a local directory containing template and shape files. The library will take on the name of the immediately enclosing directory. In the example below `libraries.yaml` file, the name of the library will be "ZonePAC":
 
 ```yaml
 # load a library from a local directory

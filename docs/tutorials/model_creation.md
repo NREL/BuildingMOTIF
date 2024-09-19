@@ -55,7 +55,7 @@ from buildingmotif.dataclasses import Model
 BLDG = Namespace('urn:bldg/')
 
 # Create the model! This will raise an exception if the namespace is not syntactically valid.
-model = Model.create(BLDG, description="This is a test model for a simple building") 
+model = Model.create(BLDG, description="This is a test model for a simple building")
 ```
 
 We can print out the contents of the model by accessing the `.graph` property of the model object. Printing this out reveals that BuildingMOTIF has added a couple annotations to the model for us, but there is otherwise no metadata about the building itself:
@@ -75,11 +75,11 @@ The `model.graph` object is just the RDFLib Graph[^4] that stores the model. You
 `Libraries` are collections of Templates and Shapes.
 ```
 
-Before we can add semantic metadata to the model, we need to import some `Libraries`. We import libraries by calling `Library.load` in BuildingMOTIF. Libraries can be loaded from directories containing `.yml` and `.ttl` files (for Templates and Shapes, respectively), or from ontology files directly. The code below contains an example of importing the `brick` library, which is simply the Brick ontology. This allows BuildingMOTIF to take advantage of the classes and relationships defined by Brick when validating the model. Loading in these definitions also allows other libraries to refer to Brick definitions. You can also ask a library for the names of the templates it defines, which we'll limit to the first ten below.
+Before we can add semantic metadata to the model, we need to import some `Libraries`. We import libraries by calling `Library.load` in BuildingMOTIF. Libraries can be loaded from directories containing `.yaml` (or `.yml`) and `.ttl` files (for Templates and Shapes, respectively), or from ontology files directly. The code below contains an example of importing the `brick` library, which is simply the Brick ontology. This allows BuildingMOTIF to take advantage of the classes and relationships defined by Brick when validating the model. Loading in these definitions also allows other libraries to refer to Brick definitions. You can also ask a library for the names of the templates it defines, which we'll limit to the first ten below.
 
 ```{margin}
 ```{warning}
-Currently, libraries in `../../buildingmotif/libraries/` are *included* and libraries in `../../libraries/` are *excluded* from the [BuildingMOTIF Python package](https://pypi.org/project/buildingmotif/) (available by cloning, downloading, or forking the repository). See https://github.com/NREL/BuildingMOTIF/issues/133. 
+Currently, libraries in `../../buildingmotif/libraries/` are *included* and libraries in `../../libraries/` are *excluded* from the [BuildingMOTIF Python package](https://pypi.org/project/buildingmotif/) (available by cloning, downloading, or forking the repository). See https://github.com/NREL/BuildingMOTIF/issues/133.
 ```
 
 ```{code-cell}
@@ -157,7 +157,7 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 
 `Templates` make it easy to add metadata to a model without having to touch any RDF at all by generating parts of an RDF graph. This graph may represent a simple device like a fan, a complex entity like a chilled water system, or other parts of a building. The *body* of a template contains the basic structure of the graph representing that entity. Typically, a template defines several *parameters* that represent user-provided input necessary to create that entity in the model.
 
-Let's start with the template for an air handling unit (AHU) from the `brick` library, which we can fetch out of the library by referring to it by name. Then, let's ask the template for the parameters it defines. 
+Let's start with the template for an air handling unit (AHU) from the `brick` library, which we can fetch out of the library by referring to it by name. Then, let's ask the template for the parameters it defines.
 
 ```{code-cell}
 # import this to make writing URIs easier
@@ -210,7 +210,7 @@ print(ahu_graph.serialize())
 If using a persistent (disk-backed) instance of BuildingMOTIF instead of an in-memory instance, be sure to use `bm.session.commit()` to save your work after calling `add_graph`.
 ```
 
-Now that we have an RDF graph representing an AHU, let's add it to the model using the `add_graph` function. 
+Now that we have an RDF graph representing an AHU, let's add it to the model using the `add_graph` function.
 
 ```{code-cell}
 model.add_graph(ahu_graph)
