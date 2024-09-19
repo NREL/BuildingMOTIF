@@ -229,7 +229,7 @@ class Model:
             model_graph, ontology_graph, engine=self._bm.shacl_engine
         )
 
-    def test_model_against_shapes(
+    def validate_model_against_shapes(
         self,
         shape_collections: List["ShapeCollection"],
         shapes_to_test: List[rdflib.URIRef],
