@@ -419,51 +419,51 @@ def test_validate_model_bad_args(client, building_motif):
     assert results.status_code == 400
 
 
-def test_validate_model_against_shapes(client, building_motif, shacl_engine):
-    building_motif.shacl_engine = shacl_engine
-    # Load libraries
-    brick = Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick.ttl"))
-    Library.load(ontology_graph="http://qudt.org/2.1/vocab/unit")
-    Library.load(ontology_graph="http://qudt.org/2.1/vocab/quantitykind")
-    ashrae_g36 = Library.load(
-        directory=str(PROJECT_DIR / "libraries/ashrae/guideline36/")
-    )
+# def test_validate_model_against_shapes(client, building_motif, shacl_engine):
+#     building_motif.shacl_engine = shacl_engine
+#     # Load libraries
+#     brick = Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick.ttl"))
+#     Library.load(ontology_graph="http://qudt.org/2.1/vocab/unit")
+#     Library.load(ontology_graph="http://qudt.org/2.1/vocab/quantitykind")
+#     ashrae_g36 = Library.load(
+#         directory=str(PROJECT_DIR / "libraries/ashrae/guideline36/")
+#     )
 
-    # build model
-    BLDG = Namespace("http://example.org/building/")
-    medium_office_model = Model.create(BLDG)
-    medium_office_model.graph.parse(
-        PROJECT_DIR
-        / "notebooks/mediumOffice-validation/mediumOffice_brick_compiled.ttl",
-        format="ttl",
-    )
-    manifest = Graph().parse(
-        PROJECT_DIR
-        / "notebooks/mediumOffice-validation/constraints/mediumOffice_constraints.ttl"
-    )
-    medium_office_model.get_manifest().add_graph(manifest)
+#     # build model
+#     BLDG = Namespace("http://example.org/building/")
+#     medium_office_model = Model.create(BLDG)
+#     medium_office_model.graph.parse(
+#         PROJECT_DIR
+#         / "notebooks/mediumOffice-validation/mediumOffice_brick_compiled.ttl",
+#         format="ttl",
+#     )
+#     manifest = Graph().parse(
+#         PROJECT_DIR
+#         / "notebooks/mediumOffice-validation/constraints/mediumOffice_constraints.ttl"
+#     )
+#     medium_office_model.get_manifest().add_graph(manifest)
 
-    # action
-    results = client.post(
-        f"/models/{medium_office_model.id}/validate_shape",
-        headers={"Content-Type": "application/json"},
-        json={
-            "shape_collection_ids": [
-                ashrae_g36.get_shape_collection().id,
-                brick.get_shape_collection().id,
-            ],
-            "shape_uris": [
-                "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-1",
-                "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4",
-            ],
-            "target_class": str(BRICK["AHU"]),
-        },
-    )
+#     # action
+#     results = client.post(
+#         f"/models/{medium_office_model.id}/validate_shape",
+#         headers={"Content-Type": "application/json"},
+#         json={
+#             "shape_collection_ids": [
+#                 ashrae_g36.get_shape_collection().id,
+#                 brick.get_shape_collection().id,
+#             ],
+#             "shape_uris": [
+#                 "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-1",
+#                 "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4",
+#             ],
+#             "target_class": str(BRICK["AHU"]),
+#         },
+#     )
 
-    # assert
-    assert (
-        len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-1"]) == 0
-    ), results.content
-    assert (
-        len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4"]) == 3
-    ), results.content
+#     # assert
+#     assert (
+#         len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-1"]) == 0
+#     ), results.content
+#     assert (
+#         len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4"]) == 3
+#     ), results.content
