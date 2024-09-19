@@ -104,9 +104,13 @@ def get_point_names(models_id: int) -> Graph:
     full_graph = m.with_imports()
     response = full_graph.query(
         """
+    PREFIX ref: <https://brickschema.org/schema/ref#>
+    PREFIX bacnet: <http://data.ashrae.org/bacnet/2020#>
     SELECT ?point ?label WHERE {
-        ?point rdf:type/rdfs:subClassOf* brick:Point ;
-               rdfs:label ?label .
+        ?point rdf:type/rdfs:subClassOf* brick:Point .
+        { ?point rdfs:label ?label }
+        UNION
+        { ?point ref:hasExternalReference/bacnet:object-identifier ?label }
     }
     """
     )
