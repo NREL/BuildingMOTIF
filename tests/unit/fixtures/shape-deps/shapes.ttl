@@ -1,0 +1,34 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix : <urn:shape/> .
+
+: a owl:Ontology ;
+    owl:imports <https://brickschema.org/schema/1.4/Brick> .
+
+:vav_shape a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:VAV ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:node :Air_Flow_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+    sh:property [
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:node brick:Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] ;
+.
+
+:Air_Flow_Sensor a sh:NodeShape, owl:Class ;
+    sh:class brick:Air_Flow_Sensor ;
+    sh:property [
+        sh:path brick:hasUnit ;
+        sh:hasValue unit:DEG_C ;
+        sh:minCount 1 ;
+    ]
+.
+

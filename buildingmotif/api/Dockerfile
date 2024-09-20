@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.9
 
 # Copy project
 ADD buildingmotif /opt/buildingmotif
@@ -13,7 +13,7 @@ WORKDIR /opt/
 
 # Install dpeendencies
 RUN pip install poetry==1.4.0 && poetry config virtualenvs.create false
-RUN ls /opt && poetry install --no-dev
+RUN ls /opt && poetry install
 RUN chmod +x /opt/start.sh
 
 CMD /opt/start.sh

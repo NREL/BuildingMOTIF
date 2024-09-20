@@ -187,7 +187,7 @@ def test_remove_depedancy_does_not_exist(clean_building_motif):
 
 
 def test_get_library_dependencies(clean_building_motif):
-    Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
+    Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
     lib = Library.load(directory="tests/unit/fixtures/sample-lib-1")
     sf_templ = lib.get_template_by_name("fan")
     libs = sf_templ.library_dependencies()
@@ -195,8 +195,20 @@ def test_get_library_dependencies(clean_building_motif):
     assert all(map(lambda x: isinstance(x, Library), libs))
     assert {str(lib.name) for lib in libs} == {
         "sample-lib-1",
-        "https://brickschema.org/schema/1.3/Brick",
+        "https://brickschema.org/schema/1.4/Brick",
     }
+
+
+def test_get_library_dependencies_from_ttl(clean_building_motif):
+    Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    lib = Library.load(directory="tests/unit/fixtures/shape-deps")
+    for templ in lib.get_templates():
+        print(templ.name)
+    templ = lib.get_template_by_name("urn:shape/vav_shape")
+    assert len(templ.get_dependencies()) == 2, "Expected 2 dependencies"
+    dep_names = [d.template.name for d in templ.get_dependencies()]
+    assert "urn:shape/Air_Flow_Sensor" in dep_names
+    assert "https://brickschema.org/schema/Brick#Air_Temperature_Sensor" in dep_names
 
 
 def test_template_compilation(clean_building_motif):

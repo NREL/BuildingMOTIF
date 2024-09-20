@@ -25,10 +25,13 @@ QUDTQK = Namespace("http://qudt.org/vocab/quantitykind/")
 QUDTDV = Namespace("http://qudt.org/vocab/dimensionvector/")
 UNIT = Namespace("http://qudt.org/vocab/unit/")
 
+# ASHRAE namespaces
 BACNET = Namespace("http://data.ashrae.org/bacnet/2020#")
+S223 = Namespace("http://data.ashrae.org/standard223#")
 
 BM = Namespace("https://nrel.gov/BuildingMOTIF#")
 CONSTRAINT = Namespace("https://nrel.gov/BuildingMOTIF/constraints#")
+S223 = Namespace("http://data.ashrae.org/standard223#")
 
 A = RDF.type
 

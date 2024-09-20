@@ -3,13 +3,21 @@ hvac-zone:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Zone ;
-      s223:hasZoneConnectionPoint P:in, P:out ;
+      s223:hasDomainSpace P:domain-space ;
       s223:hasDomain s223:Domain-HVAC .
   dependencies:
-    - template: zone-air-inlet-cp
-      args: {"name": "in"}
-    - template: zone-air-outlet-cp
-      args: {"name": "out"}
+    - template: hvac-space
+      args: {"name": "domain-space"}
+
+hvac-zone-contains-space:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Zone ;
+      s223:hasDomainSpace P:domain-space .
+  dependencies:
+    - template: hvac-space
+      args: {"name": "domain-space"}
 
 hvac-space:
   body: >
@@ -21,33 +29,44 @@ hvac-space:
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:DomainSpace ;
-      s223:hasProperty P:temp, P:supply-air-flow, P:exhaust-air-flow, 
-                       P:humidity ;
      # TODO: , P:occupancy, P:occupancy-override  ;
-      s223:hasConnectionPoint P:in, P:out ;
-      s223:contains P:temp-sensor, P:exh-flow-sensor, P:sup-flow-sensor, P:humidity-sensor ;
+      s223:hasProperty P:temp, P:relative-humidity ;
+      s223:hasConnectionPoint P:in, P:in2, P:in3, P:in4, P:out, P:out2 ;
       s223:hasDomain s223:Domain-HVAC .
-    P:zone s223:contains P:name .
+    P:physical-space a s223:PhysicalSpace ;
+      s223:encloses P:name ;
+      s223:hasProperty P:supply-air-flow, P:exhaust-air-flow .
+    P:temp-sensor s223:hasPhysicalLocation P:physical-space .
+    P:humidity-sensor s223:hasPhysicalLocation P:physical-space .
+    P:exh-flow-sensor s223:hasPhysicalLocation P:physical-space .
+    P:sup-flow-sensor s223:hasPhysicalLocation P:physical-space .
+  optional: ["in2", "in3", "in4", "out2"]
   dependencies:
-    - template: hvac-zone
-      args: {"name": "zone"}
-    - template: air-outlet-cp
+    - template: air-inlet-cp
       args: {"name": "in"}
     - template: air-inlet-cp
+      args: {"name": "in2"}
+    - template: air-inlet-cp
+      args: {"name": "in3"}
+    - template: air-inlet-cp
+      args: {"name": "in4"}
+    - template: air-outlet-cp
       args: {"name": "out"}
+    - template: air-outlet-cp
+      args: {"name": "out2"}
     - template: air-temperature
       args: {"name": "temp"}
+    - template: relative-humidity
+      args: {"name": "relative-humidity"}
+    - template: sensor
+      args: {"name": "temp-sensor", "property": "temp", "where": "name"}
+    - template: sensor
+      args: {"name": "humidity-sensor", "property": "relative-humidity", "where": "name"}
     - template: air-flow
       args: {"name": "supply-air-flow"}
     - template: air-flow
       args: {"name": "exhaust-air-flow"}
-    - template: relative-humidity
-      args: {"name": "humidity"}
-    - template: sensor
-      args: {"name": "temp-sensor", "property": "temp", "where": "name"}
     - template: sensor
       args: {"name": "exh-flow-sensor", "property": "exhaust-air-flow", "where": "out"}
     - template: sensor
       args: {"name": "sup-flow-sensor", "property": "supply-air-flow", "where": "in"}
-    - template: sensor
-      args: {"name": "humidity-sensor", "property": "humidity", "where": "name"}

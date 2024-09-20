@@ -1,0 +1,36 @@
+sensor:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:Sensor ;
+      s223:observes P:property .
+
+
+water-temperature:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    @prefix g36: <http://data.ashrae.org/standard223/1.0/extensions/g36#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:Temperature;
+        qudt:hasUnit unit:DEG_C .
+
+
+
+hot-water-coil:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    @prefix g36: <http://data.ashrae.org/standard223/1.0/extensions/g36#> .
+    P:name a s223:HeatingCoil;
+      s223:hasProperty P:supply-water-temp .
+    P:supply-water-temp-sensor a s223:Sensor .
+  optional: ["supply-water-temp-sensor"]
+  dependencies:
+    - template: water-temperature
+      args: {"name": "supply-water-temp"}
+    - template: sensor
+      args: {"name": "supply-water-temp-sensor", "property": "supply-water-temp"}

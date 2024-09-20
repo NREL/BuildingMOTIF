@@ -1,6 +1,6 @@
 name: continuous deployment
 
-on: 
+on:
   pull_request:
     branches:
     - develop
@@ -19,11 +19,13 @@ jobs:
     steps:
       # setup, checkout pull_request.head.ref for repo-vis
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{github.event.pull_request.head.ref}}
       - name: setup-python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       # # update repo visualization for docs
       # - name: repo-visualizer
       #   uses: githubocto/repo-visualizer@0.8.2
@@ -32,8 +34,13 @@ jobs:
       #     excluded_paths: ".github"
       #     commit_message: "repo-visualizer [skip actions]"
       # install project, which is required for autodoc of code
+      - name: install-poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0
+          virtualenvs-create: false
       - name: install buildingmotif
-        run: pip install .
+        run: poetry install --all-extras
       # install jupyter-book, which for some reason isn't available with poetry install
       - name: install jupyter book
         run: pip install jupyter-book
@@ -47,7 +54,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/_build/html      
+          publish_dir: ./docs/_build/html
 
   # deploy distribution if a new release and tag are created
   deploy-dist:
@@ -57,9 +64,9 @@ jobs:
     steps:
       # setup
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: setup-python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
       # install poetry and build dist
       - name: install-poetry
         uses: snok/install-poetry@v1

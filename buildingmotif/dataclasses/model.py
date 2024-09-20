@@ -1,15 +1,22 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, List, Optional
 
-import pyshacl
 import rdflib
 import rfc3987
+from rdflib import URIRef
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
-from buildingmotif.namespaces import A
-from buildingmotif.utils import Triple, copy_graph, rewrite_shape_graph
+from buildingmotif.namespaces import OWL, A
+from buildingmotif.utils import (
+    Triple,
+    copy_graph,
+    rewrite_shape_graph,
+    shacl_inference,
+    shacl_validate,
+    skolemize_shapes,
+)
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -173,20 +180,27 @@ class Model:
             ).graph
         # inline sh:node for interpretability
         shapeg = rewrite_shape_graph(shapeg)
+
+        # remove imports from sg
+        shapeg.remove((None, OWL.imports, None))
+
+        # skolemize the shape graph so we have consistent identifiers across
+        # validation through the interpretation of the validation report
+        shapeg = skolemize_shapes(shapeg)
+
         # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
         data_graph = copy_graph(self.graph)
-        valid, report_g, report_str = pyshacl.validate(
-            data_graph,
-            shacl_graph=shapeg,
-            ont_graph=shapeg,
-            advanced=True,
-            js=True,
-            allow_warnings=True,
-            # inplace=True,
+
+        # remove imports from data graph
+        data_graph.remove((None, OWL.imports, None))
+
+        # validate the data graph
+        valid, report_g, report_str = shacl_validate(
+            data_graph, shapeg, engine=self._bm.shacl_engine
         )
-        assert isinstance(report_g, rdflib.Graph)
         return ValidationContext(
             shape_collections,
+            shapeg,
             valid,
             report_g,
             report_str,
@@ -207,43 +221,13 @@ class Model:
         for shape_collection in shape_collections:
             ontology_graph += shape_collection.graph
 
-        ontology_graph = ontology_graph.skolemize()
+        ontology_graph = skolemize_shapes(ontology_graph)
 
         model_graph = copy_graph(self.graph).skolemize()
 
-        # We use a fixed-point computation approach to 'compiling' RDF models.
-        # We accomlish this by keeping track of the size of the graph before and after
-        # the inference step. If the size of the graph changes, then we know that the
-        # inference has had some effect. We do this at most 3 times to avoid looping
-        # forever.
-        pre_compile_length = len(model_graph)  # type: ignore
-        pyshacl.validate(
-            data_graph=model_graph,
-            shacl_graph=ontology_graph,
-            ont_graph=ontology_graph,
-            advanced=True,
-            inplace=True,
-            js=True,
-            allow_warnings=True,
+        return shacl_inference(
+            model_graph, ontology_graph, engine=self._bm.shacl_engine
         )
-        post_compile_length = len(model_graph)  # type: ignore
-
-        attempts = 3
-        while attempts > 0 and post_compile_length != pre_compile_length:
-            pre_compile_length = len(model_graph)  # type: ignore
-            pyshacl.validate(
-                data_graph=model_graph,
-                shacl_graph=ontology_graph,
-                ont_graph=ontology_graph,
-                advanced=True,
-                inplace=True,
-                js=True,
-                allow_warnings=True,
-            )
-            post_compile_length = len(model_graph)  # type: ignore
-            attempts -= 1
-        model_graph -= ontology_graph
-        return model_graph.de_skolemize()
 
     def test_model_against_shapes(
         self,
@@ -272,23 +256,33 @@ class Model:
 
         results = {}
 
+        targets = model_graph.query(
+            f"""
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?target
+            WHERE {{
+                ?target rdf:type/rdfs:subClassOf* <{target_class}>
+
+            }}
+        """
+        )
+        # skolemize the shape graph so we have consistent identifiers across
+        # validation through the interpretation of the validation report
+        ontology_graph = ontology_graph.skolemize()
+
         for shape_uri in shapes_to_test:
-            targets = model_graph.triples((None, A, target_class))
             temp_model_graph = copy_graph(model_graph)
-            for s, _, _ in targets:
-                temp_model_graph.add((s, A, shape_uri))
+            for (s,) in targets:
+                temp_model_graph.add((URIRef(s), A, shape_uri))
 
-            temp_model_graph += ontology_graph.cbd(shape_uri)
-
-            valid, report_g, report_str = pyshacl.validate(
-                data_graph=temp_model_graph,
-                ont_graph=ontology_graph,
-                allow_warnings=True,
-                advanced=True,
-                js=True,
+            valid, report_g, report_str = shacl_validate(
+                temp_model_graph, ontology_graph, engine=self._bm.shacl_engine
             )
+
             results[shape_uri] = ValidationContext(
                 shape_collections,
+                ontology_graph,
                 valid,
                 report_g,
                 report_str,

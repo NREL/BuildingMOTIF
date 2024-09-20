@@ -4,6 +4,10 @@ import { HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Model } from '../types'
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { handleError } from '../handle-error';
+
+const API_URL = environment.API_URL;
 
 @Injectable({
   providedIn: 'root'
@@ -13,28 +17,36 @@ export class ModelDetailService {
   constructor(private http: HttpClient) { }
 
   getModel(id: number) {
-    return this.http.get<Model>(`http://localhost:5000/models/${id}`)
+    return this.http.get<Model>(API_URL + `/models/${id}`)
       .pipe(
         retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
+        catchError(handleError) // then handle the error
       );
   }
 
   getModelGraph(id: number) {
-    return this.http.get(`http://localhost:5000/models/${id}/graph`, {responseType: 'text'})
+    return this.http.get(API_URL + `/models/${id}/graph`, {responseType: 'text'})
       .pipe(
         retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
+        catchError(handleError) // then handle the error
+      );
+  }
+
+  getTargetNodes(id: number) {
+    return this.http.get<string[]>(API_URL + `/models/${id}/target_nodes`)
+      .pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(handleError) // then handle the error
       );
   }
 
   updateModelGraph(id: number, newGraph: string | File, append: boolean = false) {
     const headers = {'Content-Type': "application/xml"}
 
-    return this.http[append? "patch": "put"](`http://localhost:5000/models/${id}/graph`, newGraph, {headers, responseType: 'text'})
+    return this.http[append? "patch": "put"](API_URL + `/models/${id}/graph`, newGraph, {headers, responseType: 'text'})
       .pipe(
         retry(3), // retry a failed request up to 3 times
-        catchError(this.handleError) // then handle the error
+        catchError(handleError) // then handle the error
       );
   }
 

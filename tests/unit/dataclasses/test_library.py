@@ -76,6 +76,17 @@ def test_load_library_from_ontology(bm: BuildingMOTIF):
     assert len(shapeg.graph) > 1
 
 
+def test_load_library_from_ontology_with_error(bm: BuildingMOTIF):
+    with pytest.raises(Exception):
+        Library.load(ontology_graph="tests/unit/fixtures/bad_shape_template.ttl")
+
+
+def test_load_shapes_with_directory_library(bm: BuildingMOTIF):
+    lib = Library.load(directory="tests/unit/fixtures/library-shape-test")
+    assert lib is not None
+    assert len(lib.get_templates()) == 2
+
+
 def test_load_library_from_directory(bm: BuildingMOTIF):
     lib = Library.load(directory="tests/unit/fixtures/templates")
     assert lib is not None
@@ -145,6 +156,14 @@ def test_load_library_overwrite_directory(bm: BuildingMOTIF):
     assert len(lib.get_templates()) == 2, "Library overwritten improperly"
 
 
+def test_load_library_no_ipynb_checkpoints(bm: BuildingMOTIF):
+    lib = Library.load(directory="tests/unit/fixtures/ipynb_checkpoint_test")
+    assert lib is not None
+    assert len(lib.get_templates()) == 1
+    # if the checkpoint file was loaded, BuildingMOTIF would complain about
+    # duplicate templates
+
+
 def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
     """
     Test that the libraries can be loaded and used.
@@ -168,7 +187,7 @@ def test_libraries(monkeypatch, bm: BuildingMOTIF, library: str):
 
     monkeypatch.setattr(Library, "load", mock_load)
     # Brick dependencies always resolve for the test library
-    MockLibrary.create("https://brickschema.org/schema/1.3/Brick")
+    MockLibrary.create("https://brickschema.org/schema/1.4/Brick")
     lib = Library._load_from_directory(Path(library), overwrite=False)
     assert lib is not None
 

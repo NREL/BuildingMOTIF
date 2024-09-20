@@ -1,6 +1,6 @@
 import { Component, Input, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, FormGroup, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, ValidatorFn , AbstractControl } from '@angular/forms';
 import { ModelValidateService, ValidationResponse } from './model-validate.service';
 import { LibraryService, Library } from '../library/library.service';
 

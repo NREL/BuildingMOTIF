@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from rdflib import Graph, Namespace, URIRef
 from rdflib.compare import isomorphic, to_isomorphic
 from rdflib.namespace import RDF
@@ -25,6 +27,8 @@ default_graph = Graph()
 default_graph.add(
     (URIRef("urn:my_model"), RDF.type, URIRef("http://www.w3.org/2002/07/owl#Ontology"))
 )
+
+PROJECT_DIR = Path(__file__).resolve().parents[3]
 
 
 def test_get_all_models(client, building_motif):
@@ -249,12 +253,17 @@ def test_create_model_bad_name(client, building_motif):
     assert len(building_motif.table_connection.get_all_db_models()) == 0
 
 
-def test_validate_model(client, building_motif):
+def test_validate_model(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
     # Set up
+    brick = Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    assert brick is not None
     library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert library_1 is not None
     library_2 = Library.load(directory="tests/unit/fixtures/templates")
     assert library_2 is not None
+    brick = Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    assert brick is not None
 
     BLDG = Namespace("urn:building/")
     model = Model.create(name=BLDG)
@@ -264,7 +273,7 @@ def test_validate_model(client, building_motif):
     results = client.post(
         f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        json={"library_ids": [library_1.id, library_2.id]},
+        json={"library_ids": [library_1.id, library_2.id, brick.id]},
     )
 
     # Assert
@@ -272,10 +281,11 @@ def test_validate_model(client, building_motif):
 
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
-    assert results.get_json()["reasons"] == {
-        "urn:building/vav1": [
-            "urn:building/vav1 needs between 1 and None instances of https://brickschema.org/schema/Brick#Air_Flow_Sensor on path https://brickschema.org/schema/Brick#hasPoint"
-        ]
+    response = results.get_json()
+    assert "urn:building/vav1" in response["reasons"], "vav1 should be in the response"
+    assert set(response["reasons"]["urn:building/vav1"]) == {
+        "urn:building/vav1 needs between 1 and None instances of https://brickschema.org/schema/Brick#Air_Flow_Sensor on path https://brickschema.org/schema/Brick#hasPoint",
+        "urn:building/vav1 needs between 1 and None instances of https://brickschema.org/schema/Brick#Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint",
     }
     assert not results.get_json()["valid"]
 
@@ -290,7 +300,7 @@ def test_validate_model(client, building_motif):
     results = client.post(
         f"/models/{model.id}/validate",
         headers={"Content-Type": "application/json"},
-        json={"library_ids": [library_1.id, library_2.id]},
+        json={"library_ids": [library_1.id, library_2.id, brick.id]},
     )
 
     # Assert
@@ -302,7 +312,8 @@ def test_validate_model(client, building_motif):
     assert results.get_json()["reasons"] == {}
 
 
-def test_validate_model_bad_model_id(client, building_motif):
+def test_validate_model_bad_model_id(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
     # Set up
     library = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert library is not None
@@ -318,7 +329,8 @@ def test_validate_model_bad_model_id(client, building_motif):
     assert results.status_code == 404
 
 
-def test_validate_model_no_args(client, building_motif):
+def test_validate_model_no_args(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
     # Set up
     BLDG = Namespace("urn:building/")
     model = Model.create(name=BLDG)
@@ -337,7 +349,8 @@ def test_validate_model_no_args(client, building_motif):
     assert results.get_json()["reasons"] == {}
 
 
-def test_validate_model_no_library_ids(client, building_motif):
+def test_validate_model_no_library_ids(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
     # Set up
     BLDG = Namespace("urn:building/")
     model = Model.create(name=BLDG)
@@ -404,3 +417,48 @@ def test_validate_model_bad_args(client, building_motif):
 
     # Assert 2
     assert results.status_code == 400
+
+
+def test_test_model_against_shapes(client, building_motif, shacl_engine):
+    building_motif.shacl_engine = shacl_engine
+    # Load libraries
+    Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick.ttl"))
+    ashrae_g36 = Library.load(
+        directory=str(PROJECT_DIR / "libraries/ashrae/guideline36/")
+    )
+
+    # build model
+    BLDG = Namespace("http://example.org/building/")
+    medium_office_model = Model.create(BLDG)
+    medium_office_model.graph.parse(
+        PROJECT_DIR
+        / "notebooks/mediumOffice-validation/mediumOffice_brick_compiled.ttl",
+        format="ttl",
+    )
+    manifest = Graph().parse(
+        PROJECT_DIR
+        / "notebooks/mediumOffice-validation/constraints/mediumOffice_constraints.ttl"
+    )
+    medium_office_model.get_manifest().add_graph(manifest)
+
+    # action
+    results = client.post(
+        f"/models/{medium_office_model.id}/validate_shape",
+        headers={"Content-Type": "application/json"},
+        json={
+            "shape_collection_ids": [ashrae_g36.get_shape_collection().id],
+            "shape_uris": [
+                "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-3",
+                "urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4",
+            ],
+            "target_class": str(BRICK["AHU"]),
+        },
+    )
+
+    # assert
+    assert (
+        len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-3"]) == 0
+    ), results.content
+    assert (
+        len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4"]) == 3
+    ), results.content

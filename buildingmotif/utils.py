@@ -5,19 +5,32 @@ from copy import copy
 from dataclasses import dataclass
 from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
 
+import pyshacl  # type: ignore
 from rdflib import BNode, Graph, Literal, URIRef
+from rdflib.compare import _TripleCanonicalizer
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
+from sqlalchemy.exc import NoResultFound
 
 from buildingmotif.namespaces import OWL, PARAM, RDF, SH, XSD, bind_prefixes
 
 if TYPE_CHECKING:
-    from buildingmotif.dataclasses import Template
+    from buildingmotif.dataclasses import Library, Template
 
 Triple = Tuple[Node, Node, Node]
 _gensym_counter = 0
+
+
+def _strip_param(param: Union[Node, str]) -> str:
+    """
+    Strips all PARAM namespaces from the input parameter
+    """
+    param = str(param)
+    while param.startswith(PARAM):
+        param = param[len(PARAM) :]
+    return param
 
 
 def _gensym(prefix: str = "p") -> URIRef:
@@ -37,6 +50,25 @@ def _param_name(param: URIRef) -> str:
     return param[len(PARAM) :]
 
 
+def _guarantee_unique_template_name(library: "Library", name: str) -> str:
+    """
+    Ensure that the template name is unique in the library by appending an increasing
+    number. This is only called when we are generating templates from GraphDiffs and
+    the names are local to the Library. The Library is intended to be ephemeral so these
+    names will not be around for long.
+    """
+    idx = 1
+    original_name = name
+    try:
+        while library.get_template_by_name(name):
+            name = f"{original_name}_{idx}"
+            idx += 1
+    except NoResultFound:
+        # this means that the template does not exist and we can use the original name
+        pass
+    return name
+
+
 def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     """
     Copy a graph. Creates new blank nodes so that these remain unique to each Graph
@@ -49,8 +81,6 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     :rtype: Graph
     """
     c = Graph()
-    for pfx, ns in g.namespaces():
-        c.bind(pfx, ns)
     new_prefix = secrets.token_hex(4)
     for t in g.triples((None, None, None)):
         assert isinstance(t, tuple)
@@ -175,7 +205,12 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
         searches = (directory.rglob(f"{pat}") for pat in patterns)
     else:
         searches = (directory.glob(f"{pat}") for pat in patterns)
-    return list(chain.from_iterable(searches))
+    # filter out files in .ipynb_checkpoints
+    filtered_searches = (
+        filter(lambda x: ".ipynb_checkpoints" not in Path(x).parts, search)
+        for search in searches
+    )
+    return list(chain.from_iterable(filtered_searches))
 
 
 def get_template_parts_from_shape(
@@ -207,6 +242,10 @@ def get_template_parts_from_shape(
     pshapes = shape_graph.objects(subject=shape_name, predicate=SH["property"])
     for pshape in pshapes:
         property_path = shape_graph.value(pshape, SH["path"])
+        if property_path is None:
+            raise Exception(
+                f"no sh:path detected on {shape_name} property shape {pshape}"
+            )
         # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
@@ -232,11 +271,26 @@ def get_template_parts_from_shape(
         (path, otype, mincount) = property_path, otypes[0], mincounts[0]
         assert isinstance(mincount, Literal)
 
-        for _ in range(int(mincount)):
-            param = _gensym()
+        param_name = shape_graph.value(pshape, SH["name"])
+
+        for num in range(int(mincount)):
+            if param_name is not None:
+                param = PARAM[f"{param_name}{num}"]
+            else:
+                param = _gensym()
             body.add((root_param, path, param))
-            deps.append({"template": otype, "args": {"name": param}})
-            # body.add((param, RDF.type, otype))
+
+            otype_as_class = (None, SH["class"], otype) in shape_graph
+            otype_as_node = (None, SH["node"], otype) in shape_graph
+            otype_is_nodeshape = (otype, RDF.type, SH.NodeShape) in shape_graph
+
+            if (otype_as_class and otype_is_nodeshape) or otype_as_node:
+                deps.append({"template": str(otype), "args": {"name": param}})
+                body.add((param, RDF.type, otype))
+
+        pvalue = shape_graph.value(pshape, SH["hasValue"])
+        if pvalue:
+            body.add((root_param, path, pvalue))
 
     if (shape_name, RDF.type, OWL.Class) in shape_graph:
         body.add((root_param, RDF.type, shape_name))
@@ -245,9 +299,20 @@ def get_template_parts_from_shape(
     for cls in classes:
         body.add((root_param, RDF.type, cls))
 
-    nodes = shape_graph.objects(shape_name, SH["node"])
+    classes = shape_graph.objects(shape_name, SH["targetClass"])
+    for cls in classes:
+        body.add((root_param, RDF.type, cls))
+
+    # for all objects of sh:node, add them to the deps if they haven't been added
+    # already through the property shapes above
+    nodes = shape_graph.cbd(shape_name).objects(predicate=SH["node"], unique=True)
     for node in nodes:
-        deps.append({"template": node, "args": {"name": "name"}})  # tie to root param
+        # if node is already in deps, skip it
+        if any(str(node) == dep["template"] for dep in deps):
+            continue
+        deps.append(
+            {"template": str(node), "args": {"name": "name"}}
+        )  # tie to root param
 
     return body, deps
 
@@ -446,7 +511,7 @@ def _inline_sh_node(sg: Graph):
                 sh:node ?child .
         }"""
     for row in sg.query(q):
-        parent, child = row
+        parent, child = row  # type: ignore
         sg.remove((parent, SH.node, child))
         pos = sg.predicate_objects(child)
         for (p, o) in pos:
@@ -466,7 +531,7 @@ def _inline_sh_and(sg: Graph):
         ?andnode rdf:rest*/rdf:first ?child .
         }"""
     for row in sg.query(q):
-        parent, child, to_remove = row
+        parent, child, to_remove = row  # type: ignore
         sg.remove((parent, SH["and"], to_remove))
         pos = sg.predicate_objects(child)
         for (p, o) in pos:
@@ -513,3 +578,176 @@ def skip_uri(uri: URIRef) -> bool:
         if uri.startswith(ns):
             return True
     return False
+
+
+def shacl_validate(
+    data_graph: Graph,
+    shape_graph: Optional[Graph] = None,
+    engine: Optional[str] = "topquadrant",
+) -> Tuple[bool, Graph, str]:
+    """
+    Validate the data graph against the shape graph.
+    Uses the fastest validation method available. Use the 'topquadrant' feature
+    to use TopQuadrant's SHACL engine. Defaults to using PySHACL.
+
+    :param data_graph: the graph to validate
+    :type data_graph: Graph
+    :param shape_graph: the shape graph to validate against
+    :type shape_graph: Graph, optional
+    :param engine: the SHACL engine to use, defaults to "topquadrant"
+    :type engine: str, optional
+    :return: a tuple containing the validation result, the validation report, and the validation report string
+    :rtype: Tuple[bool, Graph, str]
+    """
+
+    if engine == "topquadrant":
+        try:
+            from brick_tq_shacl.topquadrant_shacl import (
+                validate as tq_validate,  # type: ignore
+            )
+
+            return tq_validate(data_graph, shape_graph or Graph())  # type: ignore
+        except ImportError:
+            logging.info(
+                "TopQuadrant SHACL engine not available. Using PySHACL instead."
+            )
+            pass
+
+    data_graph = data_graph + (shape_graph or Graph())
+    return pyshacl.validate(
+        data_graph,
+        shacl_graph=shape_graph,
+        ont_graph=shape_graph,
+        advanced=True,
+        js=True,
+        allow_warnings=True,
+    )  # type: ignore
+
+
+def shacl_inference(
+    data_graph: Graph,
+    shape_graph: Optional[Graph] = None,
+    engine: Optional[str] = "topquadrant",
+) -> Graph:
+    """
+    Infer new triples in the data graph using the shape graph.
+    Edits the data graph in place. Uses the fastest inference method available.
+    Use the 'topquadrant' feature to use TopQuadrant's SHACL engine. Defaults to
+    using PySHACL.
+
+    :param data_graph: the graph to infer new triples in
+    :type data_graph: Graph
+    :param shape_graph: the shape graph to use for inference
+    :type shape_graph: Optional[Graph]
+    :param engine: the SHACL engine to use, defaults to "topquadrant"
+    :type engine: str, optional
+    :return: the data graph with inferred triples
+    :rtype: Graph
+    """
+    if engine == "topquadrant":
+        try:
+            from brick_tq_shacl.topquadrant_shacl import infer as tq_infer
+
+            return tq_infer(data_graph, shape_graph or Graph())  # type: ignore
+        except ImportError:
+            logging.info(
+                "TopQuadrant SHACL engine not available. Using PySHACL instead."
+            )
+            pass
+
+    # We use a fixed-point computation approach to 'compiling' RDF models.
+    # We accomlish this by keeping track of the size of the graph before and after
+    # the inference step. If the size of the graph changes, then we know that the
+    # inference has had some effect. We do this at most 3 times to avoid looping
+    # forever.
+    pre_compile_length = len(data_graph)  # type: ignore
+    pyshacl.validate(
+        data_graph=data_graph,
+        shacl_graph=shape_graph,
+        ont_graph=shape_graph,
+        advanced=True,
+        inplace=True,
+        js=True,
+        allow_warnings=True,
+    )
+    post_compile_length = len(data_graph)  # type: ignore
+
+    attempts = 3
+    while attempts > 0 and post_compile_length != pre_compile_length:
+        pre_compile_length = len(data_graph)  # type: ignore
+        pyshacl.validate(
+            data_graph=data_graph,
+            shacl_graph=shape_graph,
+            ont_graph=shape_graph,
+            advanced=True,
+            inplace=True,
+            js=True,
+            allow_warnings=True,
+        )
+        post_compile_length = len(data_graph)  # type: ignore
+        attempts -= 1
+    return data_graph - (shape_graph or Graph())
+
+
+def skolemize_shapes(g: Graph) -> Graph:
+    """
+    Skolemize the shapes in the graph.
+
+    :param g: the graph to skolemize
+    :type g: Graph
+    :return: the skolemized graph
+    :rtype: Graph
+    """
+    # write a query to update agraph by changing all PropertyShape blank nodes
+    # to URIRefs
+    g = copy_graph(g)
+    property_shapes = list(g.subjects(predicate=RDF.type, object=SH.PropertyShape))
+    property_shapes.extend(list(g.objects(predicate=SH.property)))
+    replacements = {}
+    for ps in property_shapes:
+        # if not bnode, skip
+        if not isinstance(ps, BNode):
+            continue
+        # create a new URIRef
+        new_ps = URIRef(f"urn:well-known/{secrets.token_hex(4)}")
+        # replace the old BNode with the new URIRef
+        replacements[ps] = new_ps
+    # apply the replacements
+    replace_nodes(g, replacements)
+
+    # name all objects of qualifiedValueShape
+    qvs = list(g.objects(predicate=SH.qualifiedValueShape))
+    replacements = {}
+    for qv in qvs:
+        # if not bnode, skip
+        if not isinstance(qv, BNode):
+            continue
+        # create a new URIRef
+        new_qv = URIRef(f"urn:well-known/{secrets.token_hex(4)}")
+        # replace the old BNode with the new URIRef
+        replacements[qv] = new_qv
+    # apply the replacements
+    replace_nodes(g, replacements)
+    return g
+
+
+def graph_hash(graph: Graph) -> int:
+    """
+    Returns a cryptographic hash of the graph contents.
+    This uses the same method as rdflib's isomorphic function to generate a cryptographic hash of a given graph.
+    This method calculates a consistent hash of the canonicalized form of the graph.
+    If the hashes of two graphs are equal, this means that the graphs are isomorphic.
+    Generating the hashes (using this method) and caching them allows graph isomorphism to be determined
+    without having to recalculate the canonical form of the graph, which can be expensive.
+
+    :param graph: graph to hash
+    :type graph: graph
+
+    :return: integer hash
+    :rtype: int
+    """
+    # Copy graph to memory (improved performance if graph is backed by a DB store)
+    graph_prime = copy_graph(graph)
+    triple_canonicalizer = _TripleCanonicalizer(graph_prime)
+
+    return triple_canonicalizer.to_hash()

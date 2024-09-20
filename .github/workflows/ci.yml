@@ -1,17 +1,26 @@
 name: continuous integration
 
 on:
-  push
+  push:
+  pull_request_review:
+    types: [submitted]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
   styling:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: setup-python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
       - name: install-poetry
         uses: snok/install-poetry@v1
         with:
@@ -25,17 +34,24 @@ jobs:
           poetry run isort . --check
           poetry run black . --check
 
+  # The "testing" job verifies the base SDK functionality across
+  # all supported Python versions.
   testing:
+    if: github.event_name == 'push'
     needs: styling
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9', '3.10', '3.11']
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - uses: actions/setup-java@v4 # for topquadrant shacl support
+        with:
+          distribution: 'temurin'
+          java-version: '21'
       - name: setup-python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: install-poetry
@@ -49,9 +65,42 @@ jobs:
       - name: lint
         run: poetry run flake8 buildingmotif
       - name: type check
-        run: poetry run mypy
+        run: poetry run mypy --ignore-missing-imports
       - name: unit tests
         run: poetry run pytest tests/unit --cov=./ --cov-report=xml
+      - name: build tests
+        run: poetry build
+
+  # We only run "integration" tests on the latest Python version.
+  # These tests detect if changes to ontologies, libraries, models and BuildingMOTIF
+  # affect correct operation of notebooks and BACnet scans. Library integration testing
+  # is a separate job
+  integration:
+    if: github.event_name == 'push'
+    needs: styling
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11']
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-java@v4 # for topquadrant shacl support
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: install-poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0
+          virtualenvs-in-project: false
+          virtualenvs-path: ~/.virtualenvs
+      - name: poetry install
+        run: poetry install --all-extras
       - name: integration tests
         run: poetry run pytest tests/integration
       - name: bacnet tests
@@ -61,8 +110,37 @@ jobs:
           docker compose run -d device
           docker compose run buildingmotif poetry run pytest -m bacnet
           docker compose down
-      - name: build tests
-        run: poetry build
+
+  # We only run "library" tests on the latest Python version.
+  # These tests detect if changes to ontologies, libraries, models and BuildingMOTIF
+  # affect correct operation of templates, shapes, and validation
+  libraries:
+    if: github.event.review.state == 'approved' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11']
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-java@v4 # for topquadrant shacl support
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - name: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: install-poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0
+          virtualenvs-in-project: false
+          virtualenvs-path: ~/.virtualenvs
+      - name: poetry install
+        run: poetry install --all-extras
+      - name: library tests
+        run: poetry run pytest tests/library
 
   coverage:
     needs: testing
