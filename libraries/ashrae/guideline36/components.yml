@@ -1,60 +1,323 @@
-relief-fan:
-  body: >
-    @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a brick:Exhaust_Fan .
-  dependencies:
-  - template: fan
-    args: {"name": "name"}
-
-return-fan:
-  body: >
-    @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a brick:Return_Fan .
-  dependencies:
-  - template: fan
-    args: {"name": "name"}
-
 # TODO: can I "compose" templates, for instance to require
 # that the frequency command point has an external reference?
 # I don't want to have to duplicate a template for each point as a result
 # Much easier to just "join" my template w/ another. Kind of like a mix-in?
-fan:
-  body: >
-    @prefix p: <urn:___param___#> .
-    @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a brick:Fan ;
-       brick:hasPoint p:speed, p:start_stop, p:status .
-  dependencies:
-    - template: https://brickschema.org/schema/Brick#Frequency_Command
-      library: https://brickschema.org/schema/1.4/Brick
-      args: {"name": "speed"}
-    - template: https://brickschema.org/schema/Brick#Start_Stop_Command
-      library: https://brickschema.org/schema/1.4/Brick
-      args: {"name": "start_stop"}
-    - template: https://brickschema.org/schema/Brick#Fan_Status
-      library: https://brickschema.org/schema/1.4/Brick
-      args: {"name": "status"}
 
-damper:
+# Air-Side
+
+# Dampers
+
+# 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.8
+damper-modulating:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
     p:name a brick:Damper ;
-      brick:hasPoint p:dmppos .
+      brick:hasPoint p:position .
   dependencies:
   - template: https://brickschema.org/schema/Brick#Damper_Position_Command
     library: https://brickschema.org/schema/1.4/Brick
-    args: {"name": "dmppos"}
+    args: {"name": "position"}
 
+# 4.6, 4.8
+damper-two-position:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Damper ;
+      brick:hasPoint p:open-close .
+  dependencies:
+  - template: https://brickschema.org/schema/Brick#Open_Close_Command
+    library: https://brickschema.org/schema/1.4/Brick
+    args: {"name": "open-close"}
+
+# Zone
+# 4.1, 4.2, 4.3, 4.4, 4.5, 4.8, 4.12 (single zone systems)
+
+thermostat:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Thermostat ;
+      brick:hasPoint
+        p:temp,
+        p:override,
+        p:setpoint-adjustment .
+  optional: [
+    'override',
+    'setpoint_adjustment']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "temp"}
+    - template: https://brickschema.org/schema/Brick#Override_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "override"}
+    - template: https://brickschema.org/schema/Brick#Differential_Air_Temperature_Setpoint
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "setpoint-adjustment"}
+
+zone:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:HVAC_Zone ;
+      brick:hasPoint
+        p:occupancy,
+        p:window-switch,
+        p:co2 .
+  optional: [
+    'window-switch',
+    'co2']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Occupancy_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "occupancy"}
+    - template: https://brickschema.org/schema/Brick#Open_Close_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "window-switch"}
+    - template: https://brickschema.org/schema/Brick#CO2_Level_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "co2"}
+
+# Coils
+
+# 4.2, 4.3, 4.6, 4.7, 4.8, 4.12
+# 4.2, 4.3, 4.12 Modulating valve OR Floating actuator
+# 4.6, 4.7, 4.8 Modulating HW valve
+# 4.2, 4.3, 4.6, 4.7, 4.8, 4.12 Modulating electric heating coil
+# 4.12 Variable-capacity heat pump compressor
 heating-coil:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
     p:name a brick:Heating_Coil ;
-      brick:hasPoint p:cmd .
+      brick:hasPoint
+        (_:point rdf:type rdf:Alt
+          rdf:_1
+            p:valve-position
+          rdf:_2
+            p:htg-signal ) .
   dependencies:
-  - template: https://brickschema.org/schema/Brick#Position_Command
+  - template: https://brickschema.org/schema/Brick#Valve_Position_Command
     library: https://brickschema.org/schema/1.4/Brick
-    args: {"name": "cmd"}
+    args: {"name": "valve-position"}
+  - template: https://brickschema.org/schema/Brick#Heating_Command
+    library: https://brickschema.org/schema/1.4/Brick
+    args: {"name": "htg-signal"}
+
+# 4.6, 4.8, 4.12
+# 4.6, 4.8 Modulating CHW valve
+# 4.12 Modulating CHW valve OR Floating actuator
+# 4.8, 4.12 Variable-capacity compressor
+cooling-coil:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Cooling_Coil ;
+      brick:hasPoint
+        (_:point rdf:type rdf:Alt
+          rdf:_1
+            p:valve-position
+          rdf:_2
+            p:clg-signal ) .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "valve-position"}
+    - template: https://brickschema.org/schema/Brick#Cooling_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "clg-signal"}
+
+# Fans
+
+# 4.3, 4.9 TODO template subjects cannot be a component, e.g. p:name a constant-speed-fan
+constant-speed-fan:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Fan ;
+      brick:hasPart
+        ( p:motor
+          brick:hasPoint
+            p:start-stop
+            p:on-off-status ) .
+  optional: ['on-off-status']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Start_Stop_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "start-stop"}
+    - template: https://brickschema.org/schema/Brick#Motor_On_Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "on-off-status"}
+
+# 4.3, 4.12
+variable-speed-fan-ecm:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Fan ;
+      brick:hasPart
+        ( p:motor
+          brick:hasPoint
+            p:start-stop
+            p:speed
+            p:on-off-status ) .
+  optional: ['on-off-status']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Start_Stop_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "start-stop"}
+    - template: https://brickschema.org/schema/Brick#Speed_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "speed"}
+    - template: https://brickschema.org/schema/Brick#Motor_On_Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "on-off-status"}
+
+# 4.6, 4.7, 4.8, 4.12
+variable-speed-fan-vfd:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Fan ;
+      brick:hasPart
+        ( p:vfd
+          brick:hasPoint
+            p:start-stop
+            p:speed
+            p:on-off-status ).
+  optional: ['on-off-status']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Start_Stop_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "start-stop"}
+    - template: https://brickschema.org/schema/Brick#Speed_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "speed"}
+    - template: https://brickschema.org/schema/Brick#Motor_On_Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "on-off-status"}
+
+# Dual Duct Decks
+# 4.4, 4.5
+
+cold-deck:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Cold_Deck ;
+      brick:hasPart p:damper .
+  dependencies:
+    - template: damper-modulating
+      args: {"name": "damper"}
+
+hot-deck:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Hot_Deck ;
+      brick:hasPart p:damper .
+  dependencies:
+    - template: damper-modulating
+      args: {"name": "damper"}
+
+# Air Filter
+
+# 4.6, 4.7, 4.8, 4.12
+filter:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Filter ;
+      brick:hasPoint p:pressure-drop .
+  optional: ['pressure-drop']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Filter_Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "pressure-drop"}
+
+# Water-Side
+
+# Pumps
+# components of 4.10.2, 4.10.5, 4.11.2
+
+constant-speed-pump-motor:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Motor ;
+      brick:hasPoint p:start, p:status .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#On_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'start'}
+    - template: https://brickschema.org/schema/Brick#On_Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'status'}
+
+variable-speed-pump-motor:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Variable_Frequency_Drive ;
+      brick:hasPoint p:start, p:status, p:speed, p:alarm .
+  optional: ['pump-alarm']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#On_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'start'}
+    - template: https://brickschema.org/schema/Brick#On_Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'status'}
+    - template: https://brickschema.org/schema/Brick#Speed_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'speed'}
+    - template: https://brickschema.org/schema/Brick#Fault_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'alarm'}
+
+constant-speed-pump:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Pump ;
+      brick:hasPart p:constant-speed-pump-motor ;
+      brick:hasPoint p:dp .
+  optional: ['dp']
+  dependencies:
+    - template: constant-speed-pump-motor
+      args: {'name': 'constant-speed-pump-motor'}
+    - template: https://brickschema.org/schema/Brick#Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'dp'}
+
+variable-speed-pump:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Pump ;
+      brick:hasPart p:variable-speed-pump-motor ;
+      brick:hasPoint p:dp .
+  optional: ['dp']
+  dependencies:
+    - template: variable-speed-pump-motor
+      args: {'name': 'variable-speed-pump-motor'}
+    - template: https://brickschema.org/schema/Brick#Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'dp'}
+
+# Valves
+# component of 4.10.3 and 4.11.3
+min-flow-bypass-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Bypass_Valve ;
+      brick:hasPoint p:valve-position-cmd .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'valve-position-cmd'}
