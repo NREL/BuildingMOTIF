@@ -1,0 +1,14 @@
+<div mat-dialog-content>
+    <mat-form-field appearance="fill">
+        <mat-label>Models</mat-label>
+        <mat-select [(ngModel)]="data.selectedModelId">
+            <mat-option *ngFor="let model of models" [value]="model.id">
+                {{model.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">No Thanks</button>
+    <button mat-button [mat-dialog-close]="data.selectedModelId" cdkFocusInitial>Ok</button>
+</div>

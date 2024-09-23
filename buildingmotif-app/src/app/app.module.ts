@@ -40,7 +40,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatStepperModule} from '@angular/material/stepper';
 import { ShapeValidationComponent } from './shape-validation/shape-validation.component';
 import {MatExpansionModule} from '@angular/material/expansion'; 
-import { PointlabelParserComponent } from './pointlabel-parser/pointlabel-parser.component';
+import { PointlabelParserComponent, DialogOverviewExampleDialog } from './pointlabel-parser/pointlabel-parser.component';
 import {MatGridListModule} from '@angular/material/grid-list'; 
 
 @NgModule({
@@ -59,6 +59,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
     ModelValidateComponent,
     ShapeValidationComponent,
     PointlabelParserComponent,
+    DialogOverviewExampleDialog,
   ],
   imports: [
     BrowserModule,

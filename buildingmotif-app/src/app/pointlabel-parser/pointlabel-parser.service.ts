@@ -22,6 +22,14 @@ export class PointlabelParserService {
       );
   }
 
+  getPointNames(id: number) {
+    return this.http.get<string[]>(`http://localhost:5000/models/${id}/point_names`)
+      .pipe(
+        retry(3), // retry a failed request up to 3 times
+        catchError(this.handleError) // then handle the error
+      );
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
       // A client-side or network error occurred. Handle it accordingly.

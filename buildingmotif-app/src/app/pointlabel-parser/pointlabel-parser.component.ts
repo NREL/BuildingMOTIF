@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PointlabelParserService } from './pointlabel-parser.service'
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ModelSearchService } from '../model-search/model-search.service';
+import { Model } from '../types';
 
 export interface Token {
   error?: string;
@@ -46,7 +49,7 @@ export class PointlabelParserComponent implements OnInit {
     lint: true
   };
 
-  constructor(private PointlabelParserService: PointlabelParserService,) {
+  constructor(private PointlabelParserService: PointlabelParserService, public dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -69,7 +72,7 @@ export class PointlabelParserComponent implements OnInit {
     let fileReader = new FileReader();
     fileReader.onload = (e: any) => {
       // read file
-      const abbs: {s: string, type_name: string}[] = e.target.result.split(/\r?\n/).map((row: string) => {
+      const abbs: { s: string, type_name: string }[] = e.target.result.split(/\r?\n/).map((row: string) => {
         const items = row.split(",")
         return { s: items[0], type_name: items[1] }
       })
@@ -102,6 +105,27 @@ export class PointlabelParserComponent implements OnInit {
 
   }
 
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '250px',
+      data: { selectedModelId: null },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== null && result !== undefined) {
+        this.PointlabelParserService.getPointNames(
+          result
+        )
+          .subscribe({
+            next: (data: string[]) => {
+              this.pointLabelsFormControl.setValue(JSON.stringify(data))
+            }, // success path
+            error: (error) => {
+            }, // error path
+          });
+      }
+    });
+  }
 
   onHover(token: Token) {
     this.workspace.highlightBlock(token.id)
@@ -158,4 +182,38 @@ export class PointlabelParserComponent implements OnInit {
       });
   }
 
+}
+
+export interface DialogData {
+  selectedModelId?: number;
+}
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: 'dialog-overview-example-dialog.html',
+  providers: [ModelSearchService],
+})
+export class DialogOverviewExampleDialog implements OnInit {
+  models: Model[] = [];
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private modelSearchService: ModelSearchService,
+  ) { }
+
+  ngOnInit() {
+    this.modelSearchService.getAllModels()
+      .subscribe({
+        next: (data: Model[]) => this.models = data, // success path
+        error: (error) => { } // error path
+      });
+  }
+
+  onClick(): void {
+    this.dialogRef.close();
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }
