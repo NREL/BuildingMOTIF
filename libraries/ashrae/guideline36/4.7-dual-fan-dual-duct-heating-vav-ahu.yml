@@ -1,0 +1,37 @@
+dual-fan-dual-duct-heating-vav-ahu:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Air_Handling_Unit ;
+      brick:hasPart
+        ( p:fan
+          brick:hasPoint p:reset ),
+        p:htg-coil,
+        p:filter ;
+      p:hasPoint
+        p:sa-temp,
+        p:static-pressure,
+        p:ra-temp .
+  optional: [
+    'reset',
+    'filter',
+    'ra-temp']
+  dependencies:
+    - template: variable-speed-fan-vfd
+      args: {"name": "fan"}
+    - template: https://brickschema.org/schema/Brick#Reset_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "reset"}
+    - template: heating-coil
+      args: {"name": "htg-coil"}
+    - template: filter
+      args: {"name": "filter"}
+    - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "sa-temp"}
+    - template: https://brickschema.org/schema/Brick#Air_Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "static-pressure"}
+    - template: https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "ra-temp"}

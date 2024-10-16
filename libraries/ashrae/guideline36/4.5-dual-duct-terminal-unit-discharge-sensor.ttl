@@ -1,0 +1,51 @@
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix components: <urn:ashrae/g36/components/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix : <urn:ashrae/g36/4.5/dual-duct-terminal-unit-discharge-sensor/> .
+
+:dual-duct-terminal-unit-discharge-sensor a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "Dual-Duct Terminal Unit with Discharge Sensor" ;
+    sh:class brick:Terminal_Unit ;
+    # required
+    sh:property [
+        rdfs:label "Cold Deck" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:cold-deck ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Hot Deck" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:hot-deck ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Discharge airflow" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Discharge_Air_Flow_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Thermostat" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:thermostat] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "HVAC Zone" ;
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:node components:zone ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .

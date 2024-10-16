@@ -255,7 +255,7 @@ def validate_shape(models_id: int) -> flask.Response:
     target_class = URIRef(body.get("target_class"))
 
     # test
-    conformance = model.test_model_against_shapes(
+    conformance = model.validate_model_against_shapes(
         shape_collections=shape_collections,
         shapes_to_test=shape_uris,
         target_class=target_class,

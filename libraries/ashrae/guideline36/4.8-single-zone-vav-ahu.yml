@@ -1,0 +1,101 @@
+single-zone-vav-ahu:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Air_Handling_Unit ;
+      brick:hasPart
+        p:supply-fan,
+        p:oa-ra-damper,
+        p:filter,
+        p:clg-coil,
+        p:htg-coil,
+        p:thermostat,
+        (_:relief rdf:type rdf:Alt
+          rdf:_1
+            p:relief-damper
+          rdf:_2
+            p:relief-fan
+            p:relief-fan-damper ),
+        (_:return rdf:type rdf:Alt
+          rdf:_1
+            p:return-fan
+          rdf:_2
+            p:return-fan
+            p:return-fan-speed-control-exhaust-damper
+          rdf:_3
+            p:return-fan-pressure-control
+              brick:hasPoint p:return-fan-static-pressure
+            p:return-fan-pressure-control-exhaust-damper ) ;
+      brick:hasPoint
+        p:sa-temp,
+        p:oa-temp,
+        p:ma-temp,
+        p:ra-temp,
+        p:oa-flow,
+        p:bldg-static-pressure ;
+      brick:feeds
+        p:zone .
+  optional: [
+    'filter',
+    'relief-damper',
+    'relief-fan',
+    'relief-fan-damper',
+    'return-fan',
+    'return-fan-speed-control-exhaust-damper',
+    'return-fan-pressure-control',
+    'return-fan-speed-control-exhaust-damper',
+    'ma-temp',
+    'ra-temp',
+    'oa-flow',
+    'bldg-static-pressure']
+  dependencies:
+    - template: variable-speed-fan-vfd
+      args: {"name": "supply-fan"}
+    - template: damper-modulating
+      args: {"name": "oa-ra-damper"}
+    - template: filter
+      args: {"name": "filter"}
+    - template: cooling-coil
+      args: {"name": "clg-coil"}
+    - template: heating-coil
+      args: {"name": "htg-coil"}
+    - template: thermostat
+      args: {"name": "thermostat"}
+    - template: damper-modulating
+      args: {"name": "relief-damper"}
+    - template: variable-speed-fan-vfd
+      args: {"name": "relief-fan"}
+    - template: damper-two-position
+      args: {"name": "relief-fan-damper"}
+    - template: variable-speed-fan-vfd
+      args: {"name": "return-fan"}
+    - template: damper-two-position
+      args: {"name": "return-fan-speed-control-exhaust-damper"}
+    - template: variable-speed-fan-vfd
+      args: {"name": "return-fan-pressure-control"}
+    - template: https://brickschema.org/schema/Brick#Air_Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "return-fan-static-pressure"}
+    - template: damper-modulating
+      args: {"name": "return-fan-pressure-control-exhaust-damper"}
+    - template: https://brickschema.org/schema/Brick#Supply_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "sa-temp"}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "oa-temp"}
+    - template: https://brickschema.org/schema/Brick#Mixed_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "ma-temp"}
+    - template: https://brickschema.org/schema/Brick#Return_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "ra-temp"}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "oa-flow"}
+    - template: https://brickschema.org/schema/Brick#Air_Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "bldg-static-pressure"}
+    - template: zone
+      args: {"name": "zone"}
