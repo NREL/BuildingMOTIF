@@ -18,6 +18,22 @@ RUN update-ca-certificates
 
 ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
 
+# Install Java (this is the smallest JRE I could find)
+ARG JAVA_VERSION=21.0.5+11
+ARG JAVA_TYPE=jre
+ARG JAVA_DIR=/usr/lib/jvm/jdk-${JAVA_VERSION}-${JAVA_TYPE}
+RUN case "$(uname -m)" in \
+  x86_64) ARCH='x64';; \
+  aarch64) ARCH='aarch64';; \
+  *) echo "unsupported architecture"; exit 1 ;; \
+  esac; \
+  set -eux; \
+  JAVA_VERSION_=$(echo ${JAVA_VERSION} | sed 's/+/_/g'); \
+  mkdir -p ${JAVA_DIR}; \
+  curl -fsL https://github.com/adoptium/temurin21-binaries/releases/download/jdk-${JAVA_VERSION}/OpenJDK21U-${JAVA_TYPE}_${ARCH}_linux_hotspot_${JAVA_VERSION_}.tar.gz | tar xz -C /usr/lib/jvm/; \
+  ln -s ${JAVA_DIR}/bin/java /usr/bin/java
+
+# Install Docker (CLI only, as the engine is running on the host)
 ARG DOCKER_VERSION=27.3.1
 ARG BUILDX_VERSION=0.17.1
 RUN case "$(uname -m)" in \
@@ -32,6 +48,7 @@ RUN case "$(uname -m)" in \
   dpkg -i docker-buildx-plugin.deb; \
   rm docker-ce-cli.deb docker-buildx-plugin.deb
 
+# Install NodeJS
 ARG NODE_VERSION=20.18.0
 RUN case "$(uname -m)" in \
   x86_64) ARCH='x64';; \
@@ -69,19 +86,5 @@ RUN set -eux; \
   npm install -g @angular/cli@17; \
   echo "source <(ng completion script)" > /root/.bashrc; \
   rm -rf ~/.npm/_cacache
-
-ARG JAVA_VERSION=21.0.5+11
-ARG JAVA_TYPE=jre
-ARG JAVA_DIR=/usr/lib/jvm/jdk-${JAVA_VERSION}-${JAVA_TYPE}
-RUN case "$(uname -m)" in \
-  x86_64) ARCH='x64';; \
-  aarch64) ARCH='aarch64';; \
-  *) echo "unsupported architecture"; exit 1 ;; \
-  esac; \
-  set -eux; \
-  JAVA_VERSION_=$(echo ${JAVA_VERSION} | sed 's/+/_/g'); \
-  mkdir -p ${JAVA_DIR}; \
-  curl -fsL https://github.com/adoptium/temurin21-binaries/releases/download/jdk-${JAVA_VERSION}/OpenJDK21U-${JAVA_TYPE}_${ARCH}_linux_hotspot_${JAVA_VERSION_}.tar.gz | tar xz -C /usr/lib/jvm/; \
-  ln -s ${JAVA_DIR}/bin/java /usr/bin/java
 
 WORKDIR /workspaces/BuildingMOTIF
