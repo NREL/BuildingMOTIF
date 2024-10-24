@@ -1,9 +1,10 @@
 {
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": "../",
-    "cacheFrom": "ghcr.io/nrel/buildingmotif/devcontainer:develop"
-  },
+  // Uncomment this and commend "image" out for local devcontainer building.
+  // "build": {
+  //   "dockerfile": "Dockerfile",
+  //   "context": "../",
+  // },
+  "image": "ghcr.io/nrel/buildingmotif/devcontainer:ts-devcontainers",
   "runArgs": ["--net=host"], // Use host network for webapp (which only listens for localhost by default)
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" // Allow usage of host docker within container
