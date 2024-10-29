@@ -5,9 +5,7 @@ import numpy as np
 from rdflib import Namespace
 
 from buildingmotif.dataclasses import Library
-from buildingmotif.graph_generation.bipartite_token_mapper import (
-    BipartiteTokenMapper,
-)
+from buildingmotif.graph_generation.bipartite_token_mapper import BipartiteTokenMapper
 from buildingmotif.graph_generation.classes import (
     Bindings,
     Cost,

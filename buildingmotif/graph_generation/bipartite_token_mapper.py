@@ -8,8 +8,8 @@ from rdflib import Graph
 from scipy.optimize import linear_sum_assignment
 
 from buildingmotif.dataclasses import Template
-from buildingmotif.namespaces import PARAM
 from buildingmotif.graph_generation.classes import Cost, Param, Token, URIRef
+from buildingmotif.namespaces import PARAM
 
 brick = Graph()
 PROJECT_DIR = Path(__file__).resolve().parents[1]

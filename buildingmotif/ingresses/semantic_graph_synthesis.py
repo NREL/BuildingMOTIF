@@ -3,8 +3,6 @@ from typing import List
 from rdflib import Graph, Namespace
 
 from buildingmotif.dataclasses import Library, Template
-from buildingmotif.ingresses.base import GraphIngressHandler
-from buildingmotif.ingresses.naming_convention import NamingConventionIngress
 from buildingmotif.graph_generation.bindings_utils import (
     evaluate_bindings,
     unify_bindings,
@@ -13,6 +11,8 @@ from buildingmotif.graph_generation.classes import TokenizedLabel
 from buildingmotif.graph_generation.semantic_graph_synthesizer import (
     SemanticGraphSynthesizer,
 )
+from buildingmotif.ingresses.base import GraphIngressHandler
+from buildingmotif.ingresses.naming_convention import NamingConventionIngress
 
 
 class SemanticGraphSynthesizerIngress(GraphIngressHandler):
