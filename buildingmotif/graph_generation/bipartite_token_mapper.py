@@ -9,7 +9,7 @@ from scipy.optimize import linear_sum_assignment
 
 from buildingmotif.dataclasses import Template
 from buildingmotif.namespaces import PARAM
-from buildingmotif.semantic_graph_synthesizer.classes import Cost, Param, Token, URIRef
+from buildingmotif.graph_generation.classes import Cost, Param, Token, URIRef
 
 brick = Graph()
 PROJECT_DIR = Path(__file__).resolve().parents[1]

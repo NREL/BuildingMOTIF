@@ -5,12 +5,12 @@ from rdflib import Graph, Namespace
 from buildingmotif.dataclasses import Library, Template
 from buildingmotif.ingresses.base import GraphIngressHandler
 from buildingmotif.ingresses.naming_convention import NamingConventionIngress
-from buildingmotif.semantic_graph_synthesizer.bindings_utils import (
+from buildingmotif.graph_generation.bindings_utils import (
     evaluate_bindings,
     unify_bindings,
 )
-from buildingmotif.semantic_graph_synthesizer.classes import TokenizedLabel
-from buildingmotif.semantic_graph_synthesizer.semantic_graph_synthesizer import (
+from buildingmotif.graph_generation.classes import TokenizedLabel
+from buildingmotif.graph_generation.semantic_graph_synthesizer import (
     SemanticGraphSynthesizer,
 )
 

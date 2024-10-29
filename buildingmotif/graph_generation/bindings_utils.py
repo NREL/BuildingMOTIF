@@ -3,7 +3,7 @@ from typing import List, Union
 from rdflib import Graph, Namespace
 
 from buildingmotif.dataclasses import Template
-from buildingmotif.semantic_graph_synthesizer.classes import Bindings, UnifiedBindings
+from buildingmotif.graph_generation.classes import Bindings, UnifiedBindings
 
 BLDG = Namespace("urn:building/")
 
