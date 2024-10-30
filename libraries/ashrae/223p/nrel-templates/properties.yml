@@ -7,7 +7,18 @@ static-pressure:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:QuantifiableObservableProperty ;
       qudt:hasQuantityKind quantitykind:Pressure ;
-      qudt:unit unit:INH2O .
+      qudt:hasUnit unit:IN_H2O .
+    
+low-static-pressure:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:Pressure;
+        qudt:hasUnit unit:IN_H2O .
 
 damper-command:
   body: >
@@ -18,7 +29,19 @@ damper-command:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:QuantifiableActuatableProperty ;
         qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
-        qudt:unit unit:PERCENT .
+        qudt:hasUnit unit:PERCENT .
+
+water-static-pressure:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+      s223:ofMedium s223:Fluid-Water ;
+      qudt:hasQuantityKind quantitykind:Pressure ;
+      qudt:hasUnit unit:PSI .
 
 damper-feedback:
   body: >
@@ -29,7 +52,7 @@ damper-feedback:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:QuantifiableObservableProperty ;
         qudt:hasQuantityKind quantitykind:DimensionlessRatio ;
-        qudt:unit unit:PERCENT .
+        qudt:hasUnit unit:PERCENT .
 
 differential-pressure:
   body: >
@@ -40,7 +63,19 @@ differential-pressure:
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:QuantifiableObservableProperty ;
         qudt:hasQuantityKind quantitykind:Pressure;
-        qudt:unit unit:INH2O .
+        qudt:hasUnit unit:IN_H2O .
+
+water-differential-pressure:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        s223:ofMedium s223:Fluid-Water ;
+        qudt:hasQuantityKind quantitykind:Pressure;
+        qudt:hasUnit unit:PSI .
 
 air-temperature:
   body: >
@@ -50,8 +85,9 @@ air-temperature:
     @prefix unit: <http://qudt.org/vocab/unit/> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:QuantifiableObservableProperty ;
+        s223:ofMedium s223:Fluid-Air ;
         qudt:hasQuantityKind quantitykind:Temperature;
-        qudt:unit unit:DEG_C .
+        qudt:hasUnit unit:DEG_C .
 
 air-flow:
   body: >
@@ -61,8 +97,9 @@ air-flow:
     @prefix unit: <http://qudt.org/vocab/unit/> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:QuantifiableObservableProperty ;
+        s223:ofMedium s223:Fluid-Air ;
         qudt:hasQuantityKind quantitykind:VolumeFlowRate;
-        qudt:unit unit:FT3-PER-MIN .
+        qudt:hasUnit unit:FT3-PER-MIN .
 
 water-temperature:
   body: >
@@ -72,8 +109,9 @@ water-temperature:
     @prefix unit: <http://qudt.org/vocab/unit/> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:QuantifiableObservableProperty ;
+        s223:ofMedium s223:Fluid-Water ;
         qudt:hasQuantityKind quantitykind:Temperature;
-        qudt:unit unit:DEG_C .
+        qudt:hasUnit unit:DEG_C .
 
 water-flow:
   body: >
@@ -83,8 +121,9 @@ water-flow:
     @prefix unit: <http://qudt.org/vocab/unit/> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:QuantifiableObservableProperty ;
+        s223:ofMedium s223:Fluid-Water ;
         qudt:hasQuantityKind quantitykind:VolumeFlowRate;
-        qudt:unit unit:FT3-PER-MIN .
+        qudt:hasUnit unit:FT3-PER-MIN .
 
 start-command:
   body: >
@@ -104,9 +143,14 @@ flow-status:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:EnumeratedObservableProperty ;
       s223:hasEnumerationKind s223:EnumerationKind-FlowStatus .
+    s223:EnumerationKind-FlowStatus a s223:Class,
+      s223:EnumerationKind-FlowStatus, sh:NodeShape ;
+      rdfs:label "EnumerationKind FlowStatus" ;
+      rdfs:subClassOf s223:EnumerationKind .
     # TODO: add Flowstatus from g36 to s223
 
 relative-humidity:
@@ -117,5 +161,185 @@ relative-humidity:
     @prefix unit: <http://qudt.org/vocab/unit/> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:QuantifiableObservableProperty ;
-        qudt:hasQuantityKind quantitykind:RelativeHumiditiy ;
-        qudt:unit unit:PERCENT_RH .
+        qudt:hasQuantityKind quantitykind:RelativeHumidity ;
+        qudt:hasUnit unit:PERCENT_RH .
+
+#Selam
+vfd-current:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:ElectricCurrent ;
+        qudt:hasUnit unit:A .
+
+vfd-frequency:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:Frequency ;
+        qudt:hasUnit unit:HZ .
+
+vfd-voltage:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:ElectricPotential ;
+        qudt:hasUnit unit:V .
+
+vfd-power:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:ElectricPower ;
+        qudt:hasUnit unit:KiloW .
+
+vfd-energy:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:Energy ;
+        qudt:hasUnit unit:KiloW-HR .
+
+vfd-speed:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableActuatableProperty ;
+        qudt:hasQuantityKind quantitykind:PositiveDimensionlessRatio ;
+        rdfs:label "Fan speed as percentage of maximum frequency" ;
+        qudt:hasUnit unit:PERCENT .
+
+vfd-feedback:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:PositiveDimensionlessRatio ;
+        rdfs:label "Fan speed feedback as percentage of maximum frequency" ;
+        qudt:hasUnit unit:PERCENT .
+
+vfd-fault:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    s223:EnumerationKind-AlarmStatus a s223:Class,
+      s223:EnumerationKind-AlarmStatus, sh:NodeShape ;
+      rdfs:label "EnumerationKind AlarmStatus" ;
+      rdfs:subClassOf s223:EnumerationKind .
+    s223:EnumerationKind-Overridden a s223:EnumerationKind-AlarmStatus ;
+      rdfs:label "AlarmStatus-Ok"@en .
+    s223:EnumerationKind-Default a s223:EnumerationKind-AlarmStatus ;
+      rdfs:label "AlarmStatus-Alarm"@en .
+    P:name a s223:EnumeratedObservableProperty ;
+      s223:hasEnumerationKind s223:EnumerationKind-AlarmStatus .
+
+BTU-Meter-energy:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:ThermalEnergy ;
+        qudt:hasUnit unit:BTU_MEAN .
+
+BTU-Meter-energy-rate:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:Power ;
+        qudt:hasUnit unit:KiloBTU_TH-PER-HR .
+
+BTU-Meter-water-flow:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:VolumeFlowRate;
+        qudt:hasUnit unit:GAL_US-PER-MIN .
+
+BTU-Meter-water-volume:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    P:name a s223:QuantifiableObservableProperty ;
+        qudt:hasQuantityKind quantitykind:Volume ;
+        qudt:hasUnit unit:GAL_US .
+
+condensate-overflow:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix quantitykind: <http://qudt.org/vocab/quantitykind/> .
+    @prefix qudt: <http://qudt.org/schema/qudt/> .
+    @prefix unit: <http://qudt.org/vocab/unit/> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    s223:EnumerationKind-AlarmStatus a s223:Class,
+      s223:EnumerationKind-AlarmStatus, sh:NodeShape ;
+      rdfs:label "EnumerationKind AlarmStatus" ;
+      rdfs:subClassOf s223:EnumerationKind .
+    s223:EnumerationKind-Overridden a s223:EnumerationKind-AlarmStatus ;
+      rdfs:label "AlarmStatus-Ok"@en .
+    s223:EnumerationKind-Default a s223:EnumerationKind-AlarmStatus ;
+      rdfs:label "AlarmStatus-Alarm"@en .
+    P:name a s223:EnumeratedObservableProperty ;
+      s223:hasEnumerationKind s223:EnumerationKind-AlarmStatus .
+
+occupancy-override:
+  body: >
+    @prefix P: <urn:___param___#> .
+    @prefix sh: <http://www.w3.org/ns/shacl#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix s223: <http://data.ashrae.org/standard223#> .
+    s223:EnumerationKind-Override a s223:Class,
+      s223:EnumerationKind-Override, sh:NodeShape ;
+      rdfs:label "EnumerationKind Override" ;
+      rdfs:subClassOf s223:EnumerationKind .
+    s223:EnumerationKind-Overridden a s223:EnumerationKind-Override ;
+      rdfs:label "Override-Overridden"@en .
+    s223:EnumerationKind-Default a s223:EnumerationKind-Override ;
+      rdfs:label "Override-Default"@en .
+    P:name a s223:EnumeratedObservableProperty ;
+      s223:hasEnumerationKind s223:EnumerationKind-Override .

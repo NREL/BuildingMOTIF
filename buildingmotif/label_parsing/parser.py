@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass, field
+from inspect import Parameter, signature
 from typing import Dict, List, Tuple
 
 from buildingmotif.label_parsing.tokens import Constant, Identifier, Null, TokenResult
@@ -35,6 +36,34 @@ class ParseResult:
 # the length of the token is used to keep track of how much of the string
 # has been parsed
 class Parser(ABC):
+    __args__: dict
+
+    def __new__(mcls, *args, **kwargs):
+        """When a parser is constructed, save its arguments into a dictionary __args__.
+        This allows parsers to be serialized later without requiring bespoke (de)serialization code
+        for every parser type."""
+        cls = super().__new__(mcls)
+        sig = signature(mcls.__init__)
+        parameters = sig.parameters
+        arguments = sig.bind(cls, *args, **kwargs).arguments
+
+        cls.__args__ = {}
+        for name, value in arguments.items():
+            if name != "self":
+                kind = parameters[name].kind
+                if kind in [
+                    Parameter.POSITIONAL_ONLY,
+                    Parameter.POSITIONAL_OR_KEYWORD,
+                    Parameter.KEYWORD_ONLY,
+                ]:
+                    cls.__args__[name] = value
+                elif kind == Parameter.VAR_POSITIONAL:
+                    cls.__args__[name] = list(value)
+                elif kind == Parameter.VAR_KEYWORD:
+                    cls.__args__.update(value)
+
+        return cls
+
     @abstractmethod
     def __call__(self, target: str) -> List[TokenResult]:
         pass

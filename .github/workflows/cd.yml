@@ -1,20 +1,19 @@
 name: continuous deployment
 
 on:
-  pull_request:
-    branches:
-    - develop
-    - main
   push:
     branches:
     - develop
     - main
   release:
+    types:
+      - published
 
 jobs:
 
-  # deploy docs for develop and main branches
+  # deploy docs if not release
   deploy-docs:
+    if: github.event_name != 'release'
     runs-on: ubuntu-latest
     steps:
       # setup, checkout pull_request.head.ref for repo-vis
@@ -56,10 +55,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_build/html
 
-  # deploy distribution if a new release and tag are created
+  # deploy distribution if release
   deploy-dist:
-    needs: deploy-docs
-    if: startsWith(github.ref, 'refs/tags')
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       # setup

@@ -1,11 +1,17 @@
+from abc import ABC
 from dataclasses import dataclass
-from typing import Optional, Union
+from typing import Any, Optional, Type, Union
 
 from rdflib import URIRef
 
+
+@dataclass(frozen=True)
+class Token(ABC):
+    value: Any
+
+
 # Token is a union of the different types of tokens
-Token = Union["Identifier", "Constant", "Delimiter", "Null"]
-TokenOrConstructor = Union[Token, type]
+TokenOrConstructor = Union[Token, Type[Token]]
 
 
 def ensure_token(token_or_constructor: TokenOrConstructor, value):
@@ -16,28 +22,28 @@ def ensure_token(token_or_constructor: TokenOrConstructor, value):
 
 
 @dataclass(frozen=True)
-class Identifier:
+class Identifier(Token):
     """An identifier token. Contains a string."""
 
     value: str
 
 
 @dataclass(frozen=True)
-class Constant:
+class Constant(Token):
     """A constant token. Contains a URI, probably some sort of Class"""
 
     value: URIRef
 
 
 @dataclass(frozen=True)
-class Delimiter:
+class Delimiter(Token):
     """A delimiter token."""
 
     value: str
 
 
 @dataclass(frozen=True)
-class Null:
+class Null(Token):
     """A null token."""
 
     value: None = None
@@ -51,6 +57,7 @@ class TokenResult:
     token: Token
     length: int
     error: Optional[str] = None
+    id: Optional[str] = None
 
     def __eq__(self, other):
         """
