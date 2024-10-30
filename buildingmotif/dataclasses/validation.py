@@ -7,13 +7,13 @@ from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rdflib
-from rdflib import Graph, URIRef, Literal
-from rdflib.term import BNode, Node
+from rdflib import Graph, Literal, URIRef
 from rdflib.collection import Collection
+from rdflib.term import BNode, Node
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
-from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A, RDF
+from buildingmotif.namespaces import CONSTRAINT, PARAM, RDF, SH, A
 from buildingmotif.utils import (
     _gensym,
     _guarantee_unique_template_name,
