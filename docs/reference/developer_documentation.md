@@ -1,5 +1,7 @@
 # Developer Documentation
 
+For developer quickstart instructions using Dev Containers see the [Developer Quickstart Guide](developer_quickstart.md)
+
 ## Installing
 
 1. Install prerequisites:
