@@ -32,8 +32,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pre-build dev container image
-        uses: devcontainers/ci@v0.3
-        with:
-          imageName: ghcr.io/nrel/buildingmotif/devcontainer
-          push: always
-          platform: linux/amd64,linux/arm64
+        run: |
+          apt-get update
+          apt-get install npm
+          npm install -g @devcontainers/cli
+          devcontainer build --workspace-folder . --image-name ghcr.io/nrel/buildingmotif/devcontainer --platform linux/amd64,linux/arm64 --push
