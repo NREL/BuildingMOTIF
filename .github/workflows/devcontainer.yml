@@ -34,8 +34,7 @@ jobs:
       - name: Pre-build dev container image
         uses: devcontainers/ci@v0.3
         with:
-          imageName: ${{ env.REGISTRY }}/${{ github.repository }}/devcontainer
+          imageName: ghcr.io/nrel/buildingmotif/devcontainer
           imageTag: ts-devcontainers
-          cacheFrom: ${{ env.REGISTRY }}/${{ github.repository }}/devcontainer:ts-devcontainers
           push: always
           platform: linux/amd64,linux/arm64
