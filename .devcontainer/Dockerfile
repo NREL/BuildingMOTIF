@@ -5,11 +5,9 @@ WORKDIR /tmp/buildingmotif
 RUN set -eux; \
   apt-get update; \
   apt-get install -y --no-install-recommends\
-    git \
     curl \
     ca-certificates \
     xz-utils \
-    openssh-client \
   ; \
   rm -rf /var/lib/apt/lists/*
 
@@ -33,21 +31,6 @@ RUN case "$(uname -m)" in \
   mkdir -p ${JAVA_DIR}; \
   curl -fsL https://github.com/adoptium/temurin21-binaries/releases/download/jdk-${JAVA_VERSION}/OpenJDK21U-${JAVA_TYPE}_${ARCH}_linux_hotspot_${JAVA_VERSION_}.tar.gz | tar xz -C /usr/lib/jvm/; \
   ln -s ${JAVA_DIR}/bin/java /usr/bin/java
-
-# Install Docker (CLI only, as the engine is running on the host)
-ARG DOCKER_VERSION=27.3.1
-ARG BUILDX_VERSION=0.17.1
-RUN case "$(uname -m)" in \
-  x86_64) ARCH='amd64';; \
-  aarch64) ARCH='arm64';; \
-  *) echo "unsupported architecture"; exit 1 ;; \
-  esac; \
-  set -eux; \
-  curl -fsSL -o docker-ce-cli.deb https://download.docker.com/linux/debian/dists/bookworm/pool/stable/${ARCH}/docker-ce-cli_${DOCKER_VERSION}-1~debian.12~bookworm_${ARCH}.deb; \
-  curl -fsSL -o docker-buildx-plugin.deb https://download.docker.com/linux/debian/dists/bookworm/pool/stable/${ARCH}/docker-buildx-plugin_${BUILDX_VERSION}-1~debian.12~bookworm_${ARCH}.deb; \
-  dpkg -i docker-ce-cli.deb; \
-  dpkg -i docker-buildx-plugin.deb; \
-  rm docker-ce-cli.deb docker-buildx-plugin.deb
 
 # Install NodeJS
 ARG NODE_VERSION=20.18.0

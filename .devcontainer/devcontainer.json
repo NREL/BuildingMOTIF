@@ -6,9 +6,10 @@
   // },
   "image": "ghcr.io/nrel/buildingmotif/devcontainer:ts-devcontainers",
   "runArgs": ["--net=host"], // Use host network for webapp (which only listens for localhost by default)
-  "mounts": [
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" // Allow usage of host docker within container
-  ],
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
   "customizations": {
     "vscode": {
       "extensions": [
