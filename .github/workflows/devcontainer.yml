@@ -42,15 +42,11 @@ jobs:
             type=sha
             type=edge
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
+      - name: Pre-build dev container image
+        uses: devcontainers/ci@v0.3
         with:
-          context: .
-          file: .devcontainer/Dockerfile
-          push: true
-          target: devcontainer
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.output.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          imageName: ${{ env.REGISTRY }}/${{ github.repository }}/devcontainer:ts-devcontainers
+          imageTag: ${{ steps.meta.outputs.tags }}
+          cacheFrom: ${{ env.REGISTRY }}/${{ github.repository }}/devcontainer:ts-devcontainers
+          push: always
+          platform: linux/amd64,linux/arm64
