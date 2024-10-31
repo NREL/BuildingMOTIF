@@ -360,7 +360,9 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
 
     # look at pshapes implicitly defined by sh:path
     for pshape in graph.subjects(predicate=SH.path):
-        if pshape == shape: # skip the input 'shape', otherwise this will infinitely recurse
+        if (
+            pshape == shape
+        ):  # skip the input 'shape', otherwise this will infinitely recurse
             continue
         path = _sh_path_to_path(graph, graph.value(pshape, SH.path))
         if not graph.value(pshape, SH.qualifiedValueShape):
