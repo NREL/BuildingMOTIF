@@ -31,22 +31,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta
-        uses: docker/metadata-action@v5
-        id: meta
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ github.repository }}/devcontainer
-          tags: |
-            type=ref,event=branch
-            type=sha
-            type=edge
-
       - name: Pre-build dev container image
         uses: devcontainers/ci@v0.3
         with:
-          imageName: ${{ env.REGISTRY }}/${{ github.repository }}/devcontainer:ts-devcontainers
-          imageTag: ${{ steps.meta.outputs.tags }}
+          imageName: ${{ env.REGISTRY }}/${{ github.repository }}/devcontainer
+          imageTag: ts-devcontainers
           cacheFrom: ${{ env.REGISTRY }}/${{ github.repository }}/devcontainer:ts-devcontainers
           push: always
           platform: linux/amd64,linux/arm64
