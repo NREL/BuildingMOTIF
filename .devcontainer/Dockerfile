@@ -8,6 +8,7 @@ RUN set -eux; \
     curl \
     ca-certificates \
     xz-utils \
+    openssh-client \
   ; \
   rm -rf /var/lib/apt/lists/*
 
