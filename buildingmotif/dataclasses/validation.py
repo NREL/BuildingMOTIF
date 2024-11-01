@@ -20,38 +20,11 @@ from buildingmotif.utils import (
     get_template_parts_from_shape,
     replace_nodes,
 )
+import pyshacl
+from pyshacl.helper.path_helper import shacl_path_to_sparql_path
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Library, Model, Template
-
-
-def shacl_to_sparql_path(g, shacl_path):
-    def parse_path(node):
-        if isinstance(node, URIRef):
-            return g.qname(node)
-        elif isinstance(node, BNode):
-            for p, o in g.predicate_objects(node):
-                if p == SH.inversePath:
-                    return "^" + parse_path(o)
-                elif p == SH.alternativePath:
-                    return "|".join(parse_path(e) for e in g.items(node))
-                elif p == SH.zeroOrMorePath:
-                    return parse_path(o) + "*"
-                elif p == SH.oneOrMorePath:
-                    return parse_path(o) + "+"
-                elif p == SH.zeroOrOnePath:
-                    return parse_path(o) + "?"
-        elif isinstance(node, Literal):
-            return str(node)
-        else:
-            raise ValueError(f"Unsupported SHACL path element: {node}")
-
-    # if shacl_path is an RDF list, then we need to turn it into a Collection
-    if (shacl_path, RDF.first, None) in g:
-        c = Collection(g, shacl_path)
-        return "/".join([parse_path(e) for e in c])
-
-    return parse_path(shacl_path)
 
 
 @dataclass(frozen=True)
@@ -220,7 +193,7 @@ class PathClassCount(GraphDiff):
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         # interpret a SHACL property path as a sparql property path
-        path = shacl_to_sparql_path(self.graph, self.path)
+        path = shacl_path_to_sparql_path(self.graph, self.path)
 
         classname = self.graph.qname(self.classname)
         if self.maxc is None and self.minc is not None:
@@ -410,7 +383,7 @@ class RequiredPath(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        path = shacl_to_sparql_path(self.graph, self.path)
+        path = shacl_path_to_sparql_path(self.graph, self.path)
         if self.maxc is None and self.minc is not None:
             return f"{self.focus} needs at least {self.minc} uses of path {path}"
         if self.minc is None and self.maxc is not None:
