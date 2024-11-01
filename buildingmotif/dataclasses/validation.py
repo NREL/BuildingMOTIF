@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, U
 
 import rdflib
 from pyshacl.helper.path_helper import shacl_path_to_sparql_path
-from rdflib import Graph, Literal, URIRef
+from rdflib import Graph, URIRef
 from rdflib.collection import Collection
 from rdflib.term import BNode, Node
 
