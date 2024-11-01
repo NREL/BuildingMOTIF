@@ -177,3 +177,13 @@ def test_shape_to_query(clean_building_motif):
     assert (
         "?ignore <https://brickschema.org/schema/Brick#hasPoint> ?target ."
     ) in query4, query4
+
+    query5 = sc.shape_to_query(URIRef("urn:shapes_to_query/multiple_classes"))
+    assert (
+        "?target rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#Sensor>"
+    ) in query5, query5
+    assert (
+        "?target rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#VAV>"
+    ) in query5, query5
+    assert "?target <http://www.w3.org/2000/01/rdf-schema#label> ?label" in query5, query5
+    assert "UNION" in query5, query5

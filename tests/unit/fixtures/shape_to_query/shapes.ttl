@@ -5,6 +5,7 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix ref: <https://brickschema.org/schema/Brick/ref#> .
 @prefix : <urn:shapes_to_query/> .
 
@@ -54,6 +55,15 @@
         sh:qualifiedValueShape [ sh:node :sensor ] ;
         sh:qualifiedMaxCount 1 ;
         sh:qualifiedMinCount 1 ;
+    ] ;
+.
+
+:multiple_classes a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:Sensor, brick:VAV ;
+    sh:property [
+        sh:name "label" ;
+        sh:path rdfs:label ;
+        sh:datatype xsd:string ;
     ] ;
 .
 

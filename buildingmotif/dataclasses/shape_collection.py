@@ -384,10 +384,13 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
             project.update(or_project)
         clauses += " UNION ".join(f"{{ {or_body} }}" for or_body in or_parts)
 
+    # 'pshapes_by_path' maps a path to all of the property shapes that use that path on the target
+
     # assign a unique variable for each sh:path w/o a qualified shape
     pshape_vars: Dict[Node, str] = {}
     for pshape_list in pshapes_by_path.values():
-        varname = f"?{gensym()}"
+        # get name if it exists, otherwise generate a new one
+        varname = f"?{graph.value(pshape_list[0], SH.name)}" or f"?{gensym()}"
         for pshape in pshape_list:
             pshape_vars[pshape] = varname
 
@@ -438,6 +441,9 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
         pvalue = graph.value(pshape, SH.hasValue)
         if pvalue:
             clauses += f"?target {path} {pvalue.n3()} .\n"
+
+        if not pclass and not pnode and not or_values and not pvalue:
+            clauses += f"?target {path} {name} .\n"
 
     return clauses, list(project)
 
