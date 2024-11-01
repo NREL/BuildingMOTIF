@@ -67,6 +67,23 @@
     ] ;
 .
 
+:test_sh_or a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:Sensor ;
+    sh:or ( [
+        sh:property [
+            sh:name "unit" ;
+            sh:path brick:hasUnits ;
+            sh:hasValue unit:DEG_C ;
+        ] ;
+    ] [
+        sh:property [
+            sh:name "unit" ;
+            sh:path brick:hasUnits ;
+            sh:hasValue unit:DEG_F ;
+        ] ;
+    ] )
+    .
+
 :subjectTarget a sh:NodeShape, owl:Class ;
     sh:targetSubjectsOf brick:hasPoint ;
     sh:property [

@@ -189,3 +189,12 @@ def test_shape_to_query(clean_building_motif):
         "?target <http://www.w3.org/2000/01/rdf-schema#label> ?label" in query5
     ), query5
     assert "UNION" in query5, query5
+
+    query6 = sc.shape_to_query(URIRef("urn:shapes_to_query/test_sh_or"))
+    assert (
+        "?target <https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_C>"
+    ), query6
+    assert (
+        "?target <https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_F>"
+    ), query6
+    assert "UNION" in query6, query6
