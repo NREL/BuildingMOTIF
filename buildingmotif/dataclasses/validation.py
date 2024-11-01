@@ -7,6 +7,7 @@ from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rdflib
+from pyshacl.helper.path_helper import shacl_path_to_sparql_path
 from rdflib import Graph, Literal, URIRef
 from rdflib.collection import Collection
 from rdflib.term import BNode, Node
@@ -20,8 +21,6 @@ from buildingmotif.utils import (
     get_template_parts_from_shape,
     replace_nodes,
 )
-import pyshacl
-from pyshacl.helper.path_helper import shacl_path_to_sparql_path
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Library, Model, Template
