@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+import pandas as pd
 from typing import TYPE_CHECKING, Dict, List, Optional
+import rdflib.query
 
 import rdflib
 import rfc3987
@@ -8,7 +10,7 @@ from rdflib import URIRef
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
-from buildingmotif.namespaces import OWL, A
+from buildingmotif.namespaces import OWL, A, SH
 from buildingmotif.utils import (
     Triple,
     copy_graph,
@@ -207,7 +209,7 @@ class Model:
             self,
         )
 
-    def compile(self, shape_collections: List["ShapeCollection"]):
+    def compile(self, shape_collections: List["ShapeCollection"]) -> "CompiledModel":
         """Compile the graph of a model against a set of ShapeCollections.
 
         :param shape_collections: list of ShapeCollections to compile the model
@@ -225,9 +227,10 @@ class Model:
 
         model_graph = copy_graph(self.graph).skolemize()
 
-        return shacl_inference(
+        compiled_graph = shacl_inference(
             model_graph, ontology_graph, engine=self._bm.shacl_engine
         )
+        return CompiledModel(self, shape_collections, compiled_graph)
 
     def test_model_against_shapes(
         self,
@@ -307,3 +310,179 @@ class Model:
         :type manifest: ShapeCollection
         """
         self.get_manifest().graph += manifest.graph
+
+
+@dataclass
+class CompiledModel:
+    """
+    This class represents a model that has been compiled against a set of ShapeCollections.
+    """
+    model: Model
+    shape_collections: List[ShapeCollection]
+    _compiled_graph: rdflib.Graph
+
+    @property
+    def graph(self) -> rdflib.Graph:
+        return self._compiled_graph
+
+    def get_manifest(self) -> ShapeCollection:
+        """Get the manifest ShapeCollection for this model.
+
+        :return: model's shape collection
+        :rtype: ShapeCollection
+        """
+        return self.model.get_manifest()
+
+    def test_model_against_shapes(
+        self,
+        shapes_to_test: List[rdflib.URIRef],
+        target_class: rdflib.URIRef,
+    ) -> Dict[rdflib.URIRef, "ValidationContext"]:
+        """Validates the model against a list of shapes and generates a
+        validation report for each.
+
+        :param shapes_to_test: list of shape URIs to validate the model against
+        :type shapes_to_test: List[URIRef]
+        :param target_class: the class upon which to run the selected shapes
+        :type target_class: URIRef
+        :return: a dictionary that relates each shape to test URIRef to a
+                 ValidationContext
+        :rtype: Dict[URIRef, ValidationContext]
+        """
+        model_graph = copy_graph(self._compiled_graph)
+
+        results = {}
+
+        targets = model_graph.query(
+            f"""
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?target
+            WHERE {{
+                ?target rdf:type/rdfs:subClassOf* <{target_class}>
+
+            }}
+        """
+        )
+        # skolemize the shape graph so we have consistent identifiers across
+        # validation through the interpretation of the validation report
+        ontology_graph = model_graph.skolemize()
+
+        for shape_uri in shapes_to_test:
+            temp_model_graph = copy_graph(model_graph)
+            for (s,) in targets:
+                temp_model_graph.add((URIRef(s), A, shape_uri))
+
+            valid, report_g, report_str = shacl_validate(
+                temp_model_graph, ontology_graph, engine=self.model._bm.shacl_engine
+            )
+
+            results[shape_uri] = ValidationContext(
+                self.shape_collections,
+                ontology_graph,
+                valid,
+                report_g,
+                report_str,
+                self.model,
+            )
+
+        return results
+
+    def validate(
+        self,
+        error_on_missing_imports: bool = True,
+    ) -> "ValidationContext":
+        """Validates this model against the given list of ShapeCollections.
+        If no list is provided, the model will be validated against the model's "manifest".
+        If a list of shape collections is provided, the manifest will *not* be automatically
+        included in the set of shape collections.
+
+        Loads all of the ShapeCollections into a single graph.
+
+        :param error_on_missing_imports: if True, raises an error if any of the dependency
+            ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
+            to True
+        :type error_on_missing_imports: bool, optional
+        :return: An object containing useful properties/methods to deal with
+            the validation results
+        :rtype: ValidationContext
+        """
+        # TODO: determine the return types; At least a bool for valid/invalid,
+        # but also want a report. Is this the base pySHACL report? Or a useful
+        # transformation, like a list of deltas for potential fixes?
+        shapeg = copy_graph(self._compiled_graph)
+        # aggregate shape graphs
+        for sc in self.shape_collections:
+            shapeg += sc.resolve_imports(
+                error_on_missing_imports=error_on_missing_imports
+            ).graph
+        # inline sh:node for interpretability
+        shapeg = rewrite_shape_graph(shapeg)
+
+        # remove imports from sg
+        shapeg.remove((None, OWL.imports, None))
+
+        # skolemize the shape graph so we have consistent identifiers across
+        # validation through the interpretation of the validation report
+        shapeg = skolemize_shapes(shapeg)
+
+        # remove imports from data graph
+        shapeg.remove((None, OWL.imports, None))
+
+        # validate the data graph
+        valid, report_g, report_str = shacl_validate(
+            shapeg, engine=self.model._bm.shacl_engine
+        )
+        return ValidationContext(
+            self.shape_collections,
+            shapeg,
+            valid,
+            report_g,
+            report_str,
+            self.model,
+        )
+
+    def defining_shape_collection(self, shape: rdflib.URIRef) -> Optional[ShapeCollection]:
+        """
+        Given a shape, return the ShapeCollection that defines it. The search is limited to the
+        ShapeCollections that were used to compile this model.
+
+        :param shape: the shape to search for
+        :type shape: rdflib.URIRef
+        :return: the ShapeCollection that defines the shape, or None if the shape is not defined
+        :rtype: Optional[ShapeCollection]
+        """
+        for sc in self.shape_collections:
+            if (shape, A, SH.NodeShape) in sc.graph:
+                return sc
+        return None
+
+    def shape_to_table(self, shape: rdflib.URIRef, table: str, conn):
+        """
+        Turn the shape into a SPARQL query and execute it on the model's graph, storing the results in a table.
+
+        :param shape: the shape to query
+        :type shape: rdflib.URIRef
+        :param table: the name of the table to store the results in
+        :type table: str
+        :param conn: the connection to the database
+        :type conn: sqlalchemy.engine.base.Connection
+        """
+        metadata = self.shape_to_df(shape)
+        metadata.to_sql(table, conn, if_exists="replace", index=False)
+
+    def shape_to_df(self, shape: rdflib.URIRef):
+        """
+        Turn the shape into a SPARQL query and execute it on the model's graph, storing the results in a dataframe.
+
+        :param shape: the shape to query
+        :type shape: rdflib.URIRef
+        :return: the results of the query
+        :rtype: pd.DataFrame
+        """
+        defining_sc = self.defining_shape_collection(shape)
+        if defining_sc is None:
+            raise ValueError(f"Shape {shape} is not defined in any of the shape collections")
+        query = defining_sc.shape_to_query(shape)
+        metadata = pd.DataFrame(self._compiled_graph.query(query).bindings, dtype="string")
+        return metadata
