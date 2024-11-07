@@ -1,16 +1,16 @@
 from dataclasses import dataclass
-import pandas as pd
 from typing import TYPE_CHECKING, Dict, List, Optional
-import rdflib.query
 
+import pandas as pd
 import rdflib
+import rdflib.query
 import rfc3987
 from rdflib import URIRef
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
-from buildingmotif.namespaces import OWL, A, SH
+from buildingmotif.namespaces import OWL, SH, A
 from buildingmotif.utils import (
     Triple,
     copy_graph,
@@ -317,6 +317,7 @@ class CompiledModel:
     """
     This class represents a model that has been compiled against a set of ShapeCollections.
     """
+
     model: Model
     shape_collections: List[ShapeCollection]
     _compiled_graph: rdflib.Graph
@@ -442,7 +443,9 @@ class CompiledModel:
             self.model,
         )
 
-    def defining_shape_collection(self, shape: rdflib.URIRef) -> Optional[ShapeCollection]:
+    def defining_shape_collection(
+        self, shape: rdflib.URIRef
+    ) -> Optional[ShapeCollection]:
         """
         Given a shape, return the ShapeCollection that defines it. The search is limited to the
         ShapeCollections that were used to compile this model.
@@ -482,7 +485,11 @@ class CompiledModel:
         """
         defining_sc = self.defining_shape_collection(shape)
         if defining_sc is None:
-            raise ValueError(f"Shape {shape} is not defined in any of the shape collections")
+            raise ValueError(
+                f"Shape {shape} is not defined in any of the shape collections"
+            )
         query = defining_sc.shape_to_query(shape)
-        metadata = pd.DataFrame(self._compiled_graph.query(query).bindings, dtype="string")
+        metadata = pd.DataFrame(
+            self._compiled_graph.query(query).bindings, dtype="string"
+        )
         return metadata
