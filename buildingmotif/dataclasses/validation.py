@@ -184,7 +184,7 @@ class PathClassCount(GraphDiff):
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         # interpret a SHACL property path as a sparql property path
-        path = shacl_path_to_sparql_path(self.graph, self.path)
+        path = self.graph.qname(shacl_path_to_sparql_path(self.graph, self.path))
 
         classname = self.graph.qname(self.classname)
         if self.maxc is None and self.minc is not None:
@@ -374,7 +374,7 @@ class RequiredPath(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        path = shacl_path_to_sparql_path(self.graph, self.path)
+        path = self.graph.qname(shacl_path_to_sparql_path(self.graph, self.path))
         if self.maxc is None and self.minc is not None:
             return f"{self.focus} needs at least {self.minc} uses of path {path}"
         if self.minc is None and self.maxc is not None:
