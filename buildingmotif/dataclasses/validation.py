@@ -14,7 +14,7 @@ from rdflib.term import BNode, Node
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
-from buildingmotif.namespaces import CONSTRAINT, PARAM, RDF, SH, A
+from buildingmotif.namespaces import CONSTRAINT, PARAM, RDF, SH, A, bind_prefixes
 from buildingmotif.utils import (
     _gensym,
     _guarantee_unique_template_name,
@@ -41,6 +41,9 @@ class GraphDiff:
     # the SHACL validation result graph corresponding to this failure
     validation_result: Graph
     graph: Graph
+
+    def __post_init__(self):
+        bind_prefixes(self.graph)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
@@ -184,7 +187,7 @@ class PathClassCount(GraphDiff):
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         # interpret a SHACL property path as a sparql property path
-        path = self.graph.qname(shacl_path_to_sparql_path(self.graph, self.path))
+        path = shacl_path_to_sparql_path(self.graph, self.path, prefixes=dict(self.graph.namespaces()))
 
         classname = self.graph.qname(self.classname)
         if self.maxc is None and self.minc is not None:
@@ -374,7 +377,7 @@ class RequiredPath(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        path = self.graph.qname(shacl_path_to_sparql_path(self.graph, self.path))
+        path = shacl_path_to_sparql_path(self.graph, self.path, prefixes=dict(self.graph.namespaces()))
         if self.maxc is None and self.minc is not None:
             return f"{self.focus} needs at least {self.minc} uses of path {path}"
         if self.minc is None and self.maxc is not None:

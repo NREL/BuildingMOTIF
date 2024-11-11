@@ -277,7 +277,7 @@ def test_validate_model(client, building_motif, shacl_engine):
     )
 
     # Assert
-    assert results.status_code == 200
+    assert results.status_code == 200, results.data
 
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
@@ -304,7 +304,7 @@ def test_validate_model(client, building_motif, shacl_engine):
     )
 
     # Assert
-    assert results.status_code == 200
+    assert results.status_code == 200, results.data
 
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
