@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import cached_property
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 import pandas as pd
@@ -322,9 +323,12 @@ class CompiledModel:
     shape_collections: List[ShapeCollection]
     _compiled_graph: rdflib.Graph
 
-    @property
+    @cached_property
     def graph(self) -> rdflib.Graph:
-        return self._compiled_graph
+        g = copy_graph(self._compiled_graph)
+        for shape_collection in self.shape_collections:
+            g += shape_collection.graph
+        return g
 
     def get_manifest(self) -> ShapeCollection:
         """Get the manifest ShapeCollection for this model.
