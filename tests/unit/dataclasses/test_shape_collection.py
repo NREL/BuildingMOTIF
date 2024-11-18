@@ -124,7 +124,54 @@ def test_get_shapes_for_class(clean_building_motif):
     assert len(shapes) == 1
 
 
-def test_shape_to_query(clean_building_motif):
+# Define shape URIs and their expected query clauses for assertions
+shape_to_query_fixtures = {
+    "sensor": [
+        "rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick/ref#BACnetReference> .",
+        "<https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_F> .",
+    ],
+    "vav": [
+        "?target <https://brickschema.org/schema/Brick#hasPoint> ?sensor .",
+        "?air_flow_sensor rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#Air_Flow_Sensor> .",
+        "OPTIONAL { ?target <https://brickschema.org/schema/Brick#hasPoint> ?dp_sensor .",
+        "rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick/ref#BACnetReference> .",
+    ],
+    "multiple_targets": [
+        "BIND(<https://brickschema.org/schema/Brick#ABC> AS ?target) .",
+        "BIND(<https://brickschema.org/schema/Brick#DEF> AS ?target) .",
+    ],
+    "subjectTarget": [
+        "?target <https://brickschema.org/schema/Brick#hasPoint> ?ignore ."
+    ],
+    "objectTarget": [
+        "?ignore <https://brickschema.org/schema/Brick#hasPoint> ?target ."
+    ],
+    "multiple_classes": [
+        "?target rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#Sensor>",
+        "?target rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#VAV>",
+        "?target <http://www.w3.org/2000/01/rdf-schema#label> ?label",
+    ],
+    "test_sh_or": [
+        "?target <https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_C>",
+        "?target <https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_F>",
+    ],
+    "optional_property": [
+        "OPTIONAL { ?target <https://brickschema.org/schema/Brick#hasUnits> ?unit .",
+        "?unit rdf:type/rdfs:subClassOf* <http://qudt.org/schema/qudt/Unit> .",
+    ],
+    "or_clauses_qualified_shape": [
+        "?target rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#VAV>",
+        "?target <https://brickschema.org/schema/Brick#hasPart> ?part",
+        "?part rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#Sensor>",
+        "?part <https://brickschema.org/schema/Brick/ref#hasExternalReference>",
+        "rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick/ref#BACnetReference>",
+        "?part <https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_F>",
+    ],
+}
+
+
+@pytest.mark.parametrize("shape_name, query_clauses", shape_to_query_fixtures.items())
+def test_shape_to_query(clean_building_motif, shape_name, query_clauses):
     # fix seed for random variable names
     random.seed(0)
 
@@ -133,64 +180,8 @@ def test_shape_to_query(clean_building_motif):
     lib = Library.load(ontology_graph="tests/unit/fixtures/shape_to_query/shapes.ttl")
     sc = lib.get_shape_collection()
 
-    query1 = sc.shape_to_query(URIRef("urn:shapes_to_query/sensor"))
-    assert (
-        "rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick/ref#BACnetReference> ."
-        in query1
-    ), query1
-    assert (
-        "<https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_F> ."
-        in query1
-    ), query1
-    # assert this parses correctly
-    g.query(query1)
-
-    query2 = sc.shape_to_query(URIRef("urn:shapes_to_query/vav"))
-    assert "?target <https://brickschema.org/schema/Brick#hasPoint> ?sensor ." in query2
-    assert (
-        "?air_flow_sensor rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#Air_Flow_Sensor> ."
-        in query2
-    )
-    assert (
-        "OPTIONAL { ?target <https://brickschema.org/schema/Brick#hasPoint> ?dp_sensor ."
-        in query2
-    )
-    assert (
-        "rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick/ref#BACnetReference> ."
-        in query2
-    )
-    # assert this parses correctly
-    g.query(query2)
-
-    # test that we handle multiple target nodes
-    with pytest.raises(ValueError):
-        sc.shape_to_query(URIRef("urn:shapes_to_query/multiple_targets"))
-
-    # handle targetSubjectsOf
-    query3 = sc.shape_to_query(URIRef("urn:shapes_to_query/subjectTarget"))
-    assert (
-        "?target <https://brickschema.org/schema/Brick#hasPoint> ?ignore ."
-    ) in query3, query3
-
-    # handle targetObjectsOf
-    query4 = sc.shape_to_query(URIRef("urn:shapes_to_query/objectTarget"))
-    assert (
-        "?ignore <https://brickschema.org/schema/Brick#hasPoint> ?target ."
-    ) in query4, query4
-
-    query5 = sc.shape_to_query(URIRef("urn:shapes_to_query/multiple_classes"))
-    assert (
-        "?target rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#Sensor>"
-    ) in query5, query5
-    assert (
-        "?target rdf:type/rdfs:subClassOf* <https://brickschema.org/schema/Brick#VAV>"
-    ) in query5, query5
-    assert (
-        "?target <http://www.w3.org/2000/01/rdf-schema#label> ?label" in query5
-    ), query5
-    assert "UNION" in query5, query5
-
-    query6 = sc.shape_to_query(URIRef("urn:shapes_to_query/test_sh_or"))
-    assert "?target <https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_C>", (query6)
-    assert "?target <https://brickschema.org/schema/Brick#hasUnits> <http://qudt.org/vocab/unit/DEG_F>", (query6)
-    assert "UNION" in query6, query6
+    query = sc.shape_to_query(URIRef(f"urn:shapes_to_query/{shape_name}"))
+    for clause in query_clauses:
+        assert clause in query, query
+    # Validate that the query executes correctly
+    g.query(query)

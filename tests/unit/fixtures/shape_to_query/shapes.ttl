@@ -105,3 +105,21 @@
         sh:qualifiedMinCount 1 ;
     ] ;
 .
+
+:optional_property a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:Sensor ;
+    sh:property [
+        sh:name "unit" ;
+        sh:path brick:hasUnits ;
+        sh:qualifiedValueShape [ sh:class qudt:Unit ] ;
+    ] ;
+.
+
+:or_clauses_qualified_shape a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:VAV ;
+    sh:property [
+        sh:name "part" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:or ( [ sh:class brick:Sensor ] [ sh:node :sensor ] ) ] ;
+    ] ;
+.
