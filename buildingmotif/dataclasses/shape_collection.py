@@ -378,7 +378,8 @@ def _shape_to_where(graph: Graph, shape: URIRef) -> Tuple[str, List[str]]:
         # or generate a new one. When generating a name, use the SH.name|RDFS.label field
         # in the PropertyShape or generate a unique one
         name = pshape_vars.get(
-            pshape, f"?{graph.value(pshape, SH.name|RDFS.label) or gensym()}".replace(" ", "_")
+            pshape,
+            f"?{graph.value(pshape, SH.name|RDFS.label) or gensym()}".replace(" ", "_"),
         )
         path = _sh_path_to_path(graph, graph.value(pshape, SH.path))
         qMinCount = graph.value(pshape, SH.qualifiedMinCount) or 0
