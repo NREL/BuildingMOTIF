@@ -26,35 +26,6 @@ if TYPE_CHECKING:
     from buildingmotif.dataclasses import Library, Model, Template
 
 
-def format_count_error(
-    max_count, min_count, path, object_type: Optional[str] = None
-) -> str:
-    """Format a count error message for a given object type and path.
-
-    :param max_count: the maximum number of objects expected
-    :type max_count: int
-    :param min_count: the minimum number of objects expected
-    :type min_count: int
-    :param object_type: the type of object expected
-    :type object_type: str
-    :param path: the path to the object
-    :type path: str
-    :return: the formatted error message
-    :rtype: str
-    """
-    instances = f"instance(s) of {object_type} on" if object_type else "uses of"
-    if min_count == max_count:
-        return f"Expected {min_count} {instances} path {path}"
-    elif min_count is not None and max_count is not None:
-        return f"Expected between {min_count} and {max_count} {instances} path {path}"
-    elif min_count is not None:
-        return f"Expected at least {min_count} {instances} path {path}"
-    elif max_count is not None:
-        return f"Expected at most {max_count} {instances} path {path}"
-    else:
-        return f"Expected {instances} path {path}"
-
-
 @dataclass(frozen=True)
 class GraphDiff:
     """An abstraction of a SHACL Validation Result that can produce a template
@@ -113,6 +84,34 @@ class GraphDiff:
 
     def __hash__(self):
         return hash(self.reason())
+
+    def format_count_error(
+        self, max_count, min_count, path, object_type: Optional[str] = None
+    ) -> str:
+        """Format a count error message for a given object type and path.
+
+        :param max_count: the maximum number of objects expected
+        :type max_count: int
+        :param min_count: the minimum number of objects expected
+        :type min_count: int
+        :param object_type: the type of object expected
+        :type object_type: str
+        :param path: the path to the object
+        :type path: str
+        :return: the formatted error message
+        :rtype: str
+        """
+        instances = f"instance(s) of {object_type} on" if object_type else "uses of"
+        if min_count == max_count:
+            return f"{self.focus} expected {min_count} {instances} path {path}"
+        elif min_count is not None and max_count is not None:
+            return f"{self.focus} expected between {min_count} and {max_count} {instances} path {path}"
+        elif min_count is not None:
+            return f"{self.focus} expected at least {min_count} {instances} path {path}"
+        elif max_count is not None:
+            return f"{self.focus} expected at most {max_count} {instances} path {path}"
+        else:
+            return f"{self.focus} expected {instances} path {path}"
 
 
 @dataclass(frozen=True)
@@ -221,7 +220,7 @@ class PathClassCount(GraphDiff):
         )
 
         classname = self.graph.qname(self.classname)
-        return format_count_error(self.maxc, self.minc, path, classname)
+        return self.format_count_error(self.maxc, self.minc, path, classname)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
@@ -309,7 +308,7 @@ class PathShapeCount(GraphDiff):
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         shapename = self.graph.qname(self.shapename)
-        return format_count_error(self.maxc, self.minc, self.path, shapename)
+        return self.format_count_error(self.maxc, self.minc, self.path, shapename)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff."""
@@ -397,7 +396,7 @@ class RequiredPath(GraphDiff):
         path = shacl_path_to_sparql_path(
             self.graph, self.path, prefixes=dict(self.graph.namespaces())
         )
-        return format_count_error(self.maxc, self.minc, path)
+        return self.format_count_error(self.maxc, self.minc, path)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.

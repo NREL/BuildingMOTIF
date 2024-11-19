@@ -284,8 +284,8 @@ def test_validate_model(client, building_motif, shacl_engine):
     response = results.get_json()
     assert "urn:building/vav1" in response["reasons"], "vav1 should be in the response"
     assert set(response["reasons"]["urn:building/vav1"]) == {
-        "urn:building/vav1 needs at least 1 instances of brick:Air_Flow_Sensor on path brick:hasPoint",
-        "urn:building/vav1 needs at least 1 instances of brick:Temperature_Sensor on path brick:hasPoint",
+        "urn:building/vav1 expected at least 1 instance(s) of brick:Temperature_Sensor on path brick:hasPoint",
+        "urn:building/vav1 expected at least 1 instance(s) of brick:Air_Flow_Sensor on path brick:hasPoint",
     }
     assert not results.get_json()["valid"]
 
