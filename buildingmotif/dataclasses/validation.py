@@ -7,12 +7,14 @@ from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rdflib
+from pyshacl.helper.path_helper import shacl_path_to_sparql_path
 from rdflib import Graph, URIRef
+from rdflib.collection import Collection
 from rdflib.term import BNode, Node
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
-from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A
+from buildingmotif.namespaces import CONSTRAINT, PARAM, RDF, SH, A, bind_prefixes
 from buildingmotif.utils import (
     _gensym,
     _guarantee_unique_template_name,
@@ -40,6 +42,9 @@ class GraphDiff:
     validation_result: Graph
     graph: Graph
 
+    def __post_init__(self):
+        bind_prefixes(self.graph)
+
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
 
@@ -63,14 +68,7 @@ class GraphDiff:
         as objects; this should  be exactly one URI which is the 'root' of the validation result
         graph
         """
-        possible_uris: Set[Node] = set(self.validation_result.subjects())
-        objects: Set[Node] = set(self.validation_result.objects())
-        sub_not_obj = possible_uris - objects
-        if len(sub_not_obj) != 1:
-            raise Exception(
-                "Validation result has more than one 'root' node, which should not happen. Please raise an issue on https://github.com/NREL/BuildingMOTIF"
-            )
-        return sub_not_obj.pop()
+        return next(self.validation_result.subjects(RDF.type, SH.ValidationResult))
 
     @cached_property
     def failed_shape(self) -> Optional[URIRef]:
@@ -86,6 +84,75 @@ class GraphDiff:
 
     def __hash__(self):
         return hash(self.reason())
+
+    def format_count_error(
+        self, max_count, min_count, path, object_type: Optional[str] = None
+    ) -> str:
+        """Format a count error message for a given object type and path.
+
+        :param max_count: the maximum number of objects expected
+        :type max_count: int
+        :param min_count: the minimum number of objects expected
+        :type min_count: int
+        :param object_type: the type of object expected
+        :type object_type: str
+        :param path: the path to the object
+        :type path: str
+        :return: the formatted error message
+        :rtype: str
+        """
+        instances = f"instance(s) of {object_type} on" if object_type else "uses of"
+        if min_count == max_count:
+            return f"{self.focus} expected {min_count} {instances} path {path}"
+        elif min_count is not None and max_count is not None:
+            return f"{self.focus} expected between {min_count} and {max_count} {instances} path {path}"
+        elif min_count is not None:
+            return f"{self.focus} expected at least {min_count} {instances} path {path}"
+        elif max_count is not None:
+            return f"{self.focus} expected at most {max_count} {instances} path {path}"
+        else:
+            return f"{self.focus} expected {instances} path {path}"
+
+
+@dataclass(frozen=True)
+class OrShape(GraphDiff):
+    """Represents an entity that is missing one of several possible shapes, via sh:or"""
+
+    shapes: Tuple[URIRef]
+
+    def reason(self) -> str:
+        """Human-readable explanation of this GraphDiff."""
+        return f"{self.focus} needs to match one of the following shapes: {', '.join(self.shapes)}"
+
+    @classmethod
+    def from_validation_report(cls, report: Graph) -> List["OrShape"]:
+        """Construct OrShape objects from a SHACL validation report.
+
+        :param report: the SHACL validation report
+        :type report: Graph
+        :return: a list of OrShape objects
+        :rtype: List[OrShape]
+        """
+        query = """
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        SELECT ?result ?focus ?shapes WHERE {
+            ?result sh:sourceConstraintComponent sh:OrConstraintComponent .
+            ?result sh:sourceShape/sh:or ?shapes .
+            ?result sh:focusNode ?focus .
+        }"""
+        results = report.query(query)
+        ret = []
+        for result, focus, shapes in results:
+            validation_report = report.cbd(result)
+            ret.append(
+                cls(
+                    focus,
+                    validation_report,
+                    report,
+                    tuple([s for s in Collection(report, shapes)]),
+                )
+            )
+        return ret
 
 
 @dataclass(frozen=True)
@@ -147,8 +214,13 @@ class PathClassCount(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
-{self.classname} on path {self.path}"
+        # interpret a SHACL property path as a sparql property path
+        path = shacl_path_to_sparql_path(
+            self.graph, self.path, prefixes=dict(self.graph.namespaces())
+        )
+
+        classname = self.graph.qname(self.classname)
+        return self.format_count_error(self.maxc, self.minc, path, classname)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
@@ -235,8 +307,8 @@ class PathShapeCount(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
-{self.shapename} on path {self.path}"
+        shapename = self.graph.qname(self.shapename)
+        return self.format_count_error(self.maxc, self.minc, self.path, shapename)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff."""
@@ -321,8 +393,10 @@ class RequiredPath(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        return f"{self.focus} needs between {self.minc} and {self.maxc} uses \
-of path {self.path}"
+        path = shacl_path_to_sparql_path(
+            self.graph, self.path, prefixes=dict(self.graph.namespaces())
+        )
+        return self.format_count_error(self.maxc, self.minc, path)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
@@ -352,7 +426,8 @@ class RequiredClass(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        return f"{self.focus} needs to be a {self.classname}"
+        value_node = self.validation_result.value(self._result_uri, SH.value)
+        return f"{value_node} on {self.focus} needs to be a {self.classname}"
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
@@ -603,6 +678,12 @@ class ValidationContext:
                             int(max_count) if max_count else None,
                         )
                     )
+
+        # TODO: this is still kind of broken...ideally we would actually interpret the shapes
+        # inside the or clause
+        candidates = OrShape.from_validation_report(g)
+        for c in candidates:
+            diffs[c.focus].add(c)
         return diffs
 
 
