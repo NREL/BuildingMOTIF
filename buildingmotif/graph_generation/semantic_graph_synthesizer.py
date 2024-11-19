@@ -14,7 +14,6 @@ from buildingmotif.graph_generation.classes import (
     TokenizedLabel,
 )
 
-BLDG = Namespace("urn:building/")
 
 
 logger = logging.getLogger()
@@ -66,7 +65,7 @@ class SemanticGraphSynthesizer:
 
         return labelsets
 
-    def find_bindings_for_label(self, label: TokenizedLabel) -> Bindings:
+    def find_bindings_for_label(self, brick: Graph, label: TokenizedLabel) -> Bindings:
         """Gets the bindings for a specific label."""
         best_bindings = Bindings(
             label=label, template=None, bindings={}, cost=Cost.inf()
@@ -81,6 +80,7 @@ class SemanticGraphSynthesizer:
             # compute the best bindings for using the tokens of the label with the template
             # and the cost of the bindings
             bindings, cost = BipartiteTokenMapper.find_bindings_for_tokens_and_template(
+                brick,
                 label.tokens, template
             )
             logger.debug(f"- {template.name} {cost.scalar}")
@@ -101,7 +101,7 @@ class SemanticGraphSynthesizer:
 
         return best_bindings
 
-    def find_bindings_for_labelset(self, labelset: LabelSet) -> List[Bindings]:
+    def find_bindings_for_labelset(self, brick: Graph, labelset: LabelSet) -> List[Bindings]:
         """Find the bindings a given LabelSet."""
         index_label = TokenizedLabel(
             label="Index Label",
@@ -110,7 +110,7 @@ class SemanticGraphSynthesizer:
                 for i, tc in enumerate(labelset.token_classes)
             ],
         )
-        index_bindings = self.find_bindings_for_label(index_label)
+        index_bindings = self.find_bindings_for_label(brick, index_label)
 
         bindings_list = []
         for label in labelset.labels:
@@ -134,7 +134,7 @@ class SemanticGraphSynthesizer:
 
         return bindings_list
 
-    def find_bindings_for_labels(self, labels: List[TokenizedLabel]) -> List[Bindings]:
+    def find_bindings_for_labels(self, brick: Graph, labels: List[TokenizedLabel]) -> List[Bindings]:
         """Find the bindings a given labels.
 
         Groups them in label sets for optimization purposes.
@@ -143,6 +143,6 @@ class SemanticGraphSynthesizer:
 
         bindings_list = []
         for labelset in labelsets:
-            bindings_list.extend(self.find_bindings_for_labelset(labelset))
+            bindings_list.extend(self.find_bindings_for_labelset(brick, labelset))
 
         return bindings_list

@@ -5,7 +5,6 @@ from rdflib import Graph, Namespace
 from buildingmotif.dataclasses import Template
 from buildingmotif.graph_generation.classes import Bindings, UnifiedBindings
 
-BLDG = Namespace("urn:building/")
 
 
 def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
@@ -43,6 +42,7 @@ def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
 
 
 def evaluate_bindings(
+    namespace: Namespace,
     bindings: Union[Bindings, UnifiedBindings]
 ) -> Union[Template, Graph]:
     """evaluate bindings"""
@@ -50,5 +50,5 @@ def evaluate_bindings(
         raise ValueError("bindings have no template.")
 
     return bindings.template.evaluate(
-        {p: BLDG[t.identifier] for p, t in bindings.bindings.items()}
+        {p: namespace[t.identifier] for p, t in bindings.bindings.items()}
     )
