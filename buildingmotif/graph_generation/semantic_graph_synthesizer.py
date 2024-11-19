@@ -2,7 +2,7 @@ import logging
 from typing import List
 
 import numpy as np
-from rdflib import Namespace
+from rdflib import Namespace, Graph
 
 from buildingmotif.dataclasses import Library
 from buildingmotif.graph_generation.bipartite_token_mapper import BipartiteTokenMapper
