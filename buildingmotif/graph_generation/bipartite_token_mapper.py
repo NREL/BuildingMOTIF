@@ -11,8 +11,6 @@ from buildingmotif.dataclasses import Template
 from buildingmotif.graph_generation.classes import Cost, Param, Token, URIRef
 from buildingmotif.namespaces import PARAM
 
-
-
 logger = logging.getLogger()
 
 
@@ -50,8 +48,7 @@ class BipartiteTokenMapper:
 
     @staticmethod
     def _get_edge_cost(
-        ontology: Graph,
-        token_class: URIRef, param_class: URIRef, cost_power: int = 0
+        ontology: Graph, token_class: URIRef, param_class: URIRef, cost_power: int = 0
     ) -> float:
         """
         Return the cost between ontology classes token_class and param_class where cost is:
@@ -71,7 +68,9 @@ class BipartiteTokenMapper:
         )
 
     @staticmethod
-    def _create_cost_matrix(ontology: Graph, tokens: List[Token], params: List[Param]) -> pd.DataFrame:
+    def _create_cost_matrix(
+        ontology: Graph, tokens: List[Token], params: List[Param]
+    ) -> pd.DataFrame:
         """Create cost matrix of the above classes."""
 
         # a cost matrix is a matrix where the rows are the tokens and the columns are the params
@@ -86,8 +85,7 @@ class BipartiteTokenMapper:
         for i, token in enumerate(cost_matrix.columns):
             for j, param in enumerate(cost_matrix.index):
                 cost_matrix.iloc[j, i] = BipartiteTokenMapper._get_edge_cost(
-                    ontology,
-                    token.classname, param.classname
+                    ontology, token.classname, param.classname
                 )
 
         logger.debug("cost matrix:")
@@ -167,8 +165,7 @@ class BipartiteTokenMapper:
         params = get_typed_params(template)
         try:
             mapping, cost = BipartiteTokenMapper.find_bindings_for_tokens_and_params(
-                ontology,
-                tokens, params
+                ontology, tokens, params
             )
         except ValueError:
             mapping, cost = {}, Cost(

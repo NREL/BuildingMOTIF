@@ -14,8 +14,6 @@ from buildingmotif.graph_generation.classes import (
     TokenizedLabel,
 )
 
-
-
 logger = logging.getLogger()
 
 
@@ -65,7 +63,9 @@ class SemanticGraphSynthesizer:
 
         return labelsets
 
-    def find_bindings_for_label(self, ontology: Graph, label: TokenizedLabel) -> Bindings:
+    def find_bindings_for_label(
+        self, ontology: Graph, label: TokenizedLabel
+    ) -> Bindings:
         """Gets the bindings for a specific label."""
         best_bindings = Bindings(
             label=label, template=None, bindings={}, cost=Cost.inf()
@@ -80,8 +80,7 @@ class SemanticGraphSynthesizer:
             # compute the best bindings for using the tokens of the label with the template
             # and the cost of the bindings
             bindings, cost = BipartiteTokenMapper.find_bindings_for_tokens_and_template(
-                ontology,
-                label.tokens, template
+                ontology, label.tokens, template
             )
             logger.debug(f"- {template.name} {cost.scalar}")
 
@@ -101,7 +100,9 @@ class SemanticGraphSynthesizer:
 
         return best_bindings
 
-    def find_bindings_for_labelset(self, ontology: Graph, labelset: LabelSet) -> List[Bindings]:
+    def find_bindings_for_labelset(
+        self, ontology: Graph, labelset: LabelSet
+    ) -> List[Bindings]:
         """Find the bindings a given LabelSet."""
         index_label = TokenizedLabel(
             label="Index Label",
@@ -134,7 +135,9 @@ class SemanticGraphSynthesizer:
 
         return bindings_list
 
-    def find_bindings_for_labels(self, ontology: Graph, labels: List[TokenizedLabel]) -> List[Bindings]:
+    def find_bindings_for_labels(
+        self, ontology: Graph, labels: List[TokenizedLabel]
+    ) -> List[Bindings]:
         """Find the bindings a given labels.
 
         Groups them in label sets for optimization purposes.

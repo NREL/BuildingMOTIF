@@ -16,7 +16,12 @@ from buildingmotif.ingresses.naming_convention import NamingConventionIngress
 
 
 class SemanticGraphSynthesizerIngress(GraphIngressHandler):
-    def __init__(self, upstream: NamingConventionIngress, libraries: List[Library], ontology: Graph):
+    def __init__(
+        self,
+        upstream: NamingConventionIngress,
+        libraries: List[Library],
+        ontology: Graph,
+    ):
         self.upstream = upstream
         self.libraries = libraries
 

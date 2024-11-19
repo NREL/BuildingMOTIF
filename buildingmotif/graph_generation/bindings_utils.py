@@ -6,7 +6,6 @@ from buildingmotif.dataclasses import Template
 from buildingmotif.graph_generation.classes import Bindings, UnifiedBindings
 
 
-
 def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
     """
     Combine all the bindings for the same template with the same name.
@@ -42,8 +41,7 @@ def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
 
 
 def evaluate_bindings(
-    namespace: Namespace,
-    bindings: Union[Bindings, UnifiedBindings]
+    namespace: Namespace, bindings: Union[Bindings, UnifiedBindings]
 ) -> Union[Template, Graph]:
     """evaluate bindings"""
     if bindings.template is None:
