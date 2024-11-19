@@ -39,7 +39,7 @@ class SemanticGraphSynthesizerIngress(GraphIngressHandler):
 
         # for each group of labels, evaluate the bindings and add the resulting graph to the output
         for ub in unified_bindings_list:
-            ev = evaluate_bindings(ub)
+            ev = evaluate_bindings(ns, ub)
             # if the evaluation returns a Template, we need to mint new URIs in the given namespace
             # for any unbound parameters. If it returns a Graph, we can just add it to the output.
             if isinstance(ev, Template):
