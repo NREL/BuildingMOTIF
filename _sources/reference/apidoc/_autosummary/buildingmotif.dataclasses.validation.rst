@@ -25,6 +25,7 @@ buildingmotif.dataclasses.validation
    
       GraphClassCardinality
       GraphDiff
+      OrShape
       PathClassCount
       PathShapeCount
       RequiredClass

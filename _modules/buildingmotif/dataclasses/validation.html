@@ -418,12 +418,14 @@ document.write(`
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">rdflib</span>
+<span class="kn">from</span> <span class="nn">pyshacl.helper.path_helper</span> <span class="kn">import</span> <span class="n">shacl_path_to_sparql_path</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span> <span class="nn">rdflib.collection</span> <span class="kn">import</span> <span class="n">Collection</span>
 <span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Node</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">CONSTRAINT</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">SH</span><span class="p">,</span> <span class="n">A</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">CONSTRAINT</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">SH</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">bind_prefixes</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">_gensym</span><span class="p">,</span>
     <span class="n">_guarantee_unique_template_name</span><span class="p">,</span>
@@ -451,6 +453,9 @@ document.write(`
     <span class="n">validation_result</span><span class="p">:</span> <span class="n">Graph</span>
     <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span>
 
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bind_prefixes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+
 <div class="viewcode-block" id="GraphDiff.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphDiff.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
 
@@ -474,14 +479,7 @@ document.write(`
 <span class="sd">        as objects; this should  be exactly one URI which is the &#39;root&#39; of the validation result</span>
 <span class="sd">        graph</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">possible_uris</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">subjects</span><span class="p">())</span>
-        <span class="n">objects</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">objects</span><span class="p">())</span>
-        <span class="n">sub_not_obj</span> <span class="o">=</span> <span class="n">possible_uris</span> <span class="o">-</span> <span class="n">objects</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_not_obj</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Validation result has more than one &#39;root&#39; node, which should not happen. Please raise an issue on https://github.com/NREL/BuildingMOTIF&quot;</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="n">sub_not_obj</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">ValidationResult</span><span class="p">))</span>
 
     <span class="nd">@cached_property</span>
     <span class="k">def</span> <span class="nf">failed_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
@@ -496,7 +494,76 @@ document.write(`
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reason</span><span class="p">())</span></div>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reason</span><span class="p">())</span>
+
+<div class="viewcode-block" id="GraphDiff.format_count_error"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.GraphDiff.format_count_error">[docs]</a>    <span class="k">def</span> <span class="nf">format_count_error</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">max_count</span><span class="p">,</span> <span class="n">min_count</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">object_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format a count error message for a given object type and path.</span>
+
+<span class="sd">        :param max_count: the maximum number of objects expected</span>
+<span class="sd">        :type max_count: int</span>
+<span class="sd">        :param min_count: the minimum number of objects expected</span>
+<span class="sd">        :type min_count: int</span>
+<span class="sd">        :param object_type: the type of object expected</span>
+<span class="sd">        :type object_type: str</span>
+<span class="sd">        :param path: the path to the object</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        :return: the formatted error message</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">instances</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;instance(s) of </span><span class="si">{</span><span class="n">object_type</span><span class="si">}</span><span class="s2"> on&quot;</span> <span class="k">if</span> <span class="n">object_type</span> <span class="k">else</span> <span class="s2">&quot;uses of&quot;</span>
+        <span class="k">if</span> <span class="n">min_count</span> <span class="o">==</span> <span class="n">max_count</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> expected </span><span class="si">{</span><span class="n">min_count</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">instances</span><span class="si">}</span><span class="s2"> path </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="n">min_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> expected between </span><span class="si">{</span><span class="n">min_count</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">max_count</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">instances</span><span class="si">}</span><span class="s2"> path </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="n">min_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> expected at least </span><span class="si">{</span><span class="n">min_count</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">instances</span><span class="si">}</span><span class="s2"> path </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="n">max_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> expected at most </span><span class="si">{</span><span class="n">max_count</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">instances</span><span class="si">}</span><span class="s2"> path </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> expected </span><span class="si">{</span><span class="n">instances</span><span class="si">}</span><span class="s2"> path </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span></div></div>
+
+
+<div class="viewcode-block" id="OrShape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.OrShape">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">OrShape</span><span class="p">(</span><span class="n">GraphDiff</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents an entity that is missing one of several possible shapes, via sh:or&quot;&quot;&quot;</span>
+
+    <span class="n">shapes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]</span>
+
+<div class="viewcode-block" id="OrShape.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.OrShape.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs to match one of the following shapes: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+<div class="viewcode-block" id="OrShape.from_validation_report"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.OrShape.from_validation_report">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_validation_report</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">report</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;OrShape&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct OrShape objects from a SHACL validation report.</span>
+
+<span class="sd">        :param report: the SHACL validation report</span>
+<span class="sd">        :type report: Graph</span>
+<span class="sd">        :return: a list of OrShape objects</span>
+<span class="sd">        :rtype: List[OrShape]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        PREFIX sh: &lt;http://www.w3.org/ns/shacl#&gt;</span>
+<span class="s2">        SELECT ?result ?focus ?shapes WHERE {</span>
+<span class="s2">            ?result sh:sourceConstraintComponent sh:OrConstraintComponent .</span>
+<span class="s2">            ?result sh:sourceShape/sh:or ?shapes .</span>
+<span class="s2">            ?result sh:focusNode ?focus .</span>
+<span class="s2">        }&quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">result</span><span class="p">,</span> <span class="n">focus</span><span class="p">,</span> <span class="n">shapes</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">validation_report</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">cbd</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">(</span>
+                    <span class="n">focus</span><span class="p">,</span>
+                    <span class="n">validation_report</span><span class="p">,</span>
+                    <span class="n">report</span><span class="p">,</span>
+                    <span class="nb">tuple</span><span class="p">([</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">Collection</span><span class="p">(</span><span class="n">report</span><span class="p">,</span> <span class="n">shapes</span><span class="p">)]),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div></div>
 
 
 <div class="viewcode-block" id="PathClassCount"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathClassCount">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -558,8 +625,13 @@ document.write(`
 
 <div class="viewcode-block" id="PathClassCount.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathClassCount.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">maxc</span><span class="si">}</span><span class="s2"> instances of </span><span class="se">\</span>
-<span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="si">}</span><span class="s2"> on path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="c1"># interpret a SHACL property path as a sparql property path</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">shacl_path_to_sparql_path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">prefixes</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">namespaces</span><span class="p">())</span>
+        <span class="p">)</span>
+
+        <span class="n">classname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">qname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_count_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">classname</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PathClassCount.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathClassCount.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
@@ -646,8 +718,8 @@ document.write(`
 
 <div class="viewcode-block" id="PathShapeCount.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathShapeCount.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">maxc</span><span class="si">}</span><span class="s2"> instances of </span><span class="se">\</span>
-<span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shapename</span><span class="si">}</span><span class="s2"> on path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="n">shapename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">qname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shapename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_count_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">shapename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PathShapeCount.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.PathShapeCount.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.&quot;&quot;&quot;</span>
@@ -732,8 +804,10 @@ document.write(`
 
 <div class="viewcode-block" id="RequiredPath.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredPath.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">maxc</span><span class="si">}</span><span class="s2"> uses </span><span class="se">\</span>
-<span class="s2">of path </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">shacl_path_to_sparql_path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">prefixes</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">namespaces</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_count_error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minc</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="RequiredPath.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredPath.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
@@ -763,7 +837,8 @@ document.write(`
 
 <div class="viewcode-block" id="RequiredClass.reason"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredClass.reason">[docs]</a>    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable explanation of this GraphDiff.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs to be a </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="n">value_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_result</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_result_uri</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value_node</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">focus</span><span class="si">}</span><span class="s2"> needs to be a </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">classname</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 <div class="viewcode-block" id="RequiredClass.resolve"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.validation.html#buildingmotif.dataclasses.validation.RequiredClass.resolve">[docs]</a>    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces a list of templates to resolve this GraphDiff.</span>
@@ -1014,6 +1089,12 @@ document.write(`
                             <span class="nb">int</span><span class="p">(</span><span class="n">max_count</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_count</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
+
+        <span class="c1"># TODO: this is still kind of broken...ideally we would actually interpret the shapes</span>
+        <span class="c1"># inside the or clause</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="n">OrShape</span><span class="o">.</span><span class="n">from_validation_report</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="n">diffs</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">focus</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">diffs</span></div>
 
 

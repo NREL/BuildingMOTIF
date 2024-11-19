@@ -21,32 +21,48 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-from buildingmotif.dataclasses import Model
-from rdflib import Namespace
-import pandas as pd
+# refer to the shape by its URI
+app1_shape = URIRef("urn:simpleapp/app1")
 
-# generate and save the query string to a variable
-app_query = sc.shape_to_query(app1_shape)
-
-# Create the 'building1' model and load the contents from a file
-BLDG = Namespace("urn:building1")
-model = Model.create(BLDG)
-model.graph.parse("query_generation_example.ttl")
-
-res = model.graph.query(app_query)
-df = pd.DataFrame(res.bindings)
-print(df.iloc[0])
+print(sc.shape_to_query(app1_shape))
 ------------------
 
 [0;31m---------------------------------------------------------------------------[0m
-[0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
-Cell [0;32mIn[5], line 3[0m
-[1;32m      1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdataclasses[39;00m [38;5;28;01mimport[39;00m Model
-[1;32m      2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mrdflib[39;00m [38;5;28;01mimport[39;00m Namespace
-[0;32m----> 3[0m [38;5;28;01mimport[39;00m [38;5;21;01mpandas[39;00m [38;5;28;01mas[39;00m [38;5;21;01mpd[39;00m
-[1;32m      5[0m [38;5;66;03m# generate and save the query string to a variable[39;00m
-[1;32m      6[0m app_query [38;5;241m=[39m sc[38;5;241m.[39mshape_to_query(app1_shape)
+[0;31mAttributeError[0m                            Traceback (most recent call last)
+Cell [0;32mIn[4], line 4[0m
+[1;32m      1[0m [38;5;66;03m# refer to the shape by its URI[39;00m
+[1;32m      2[0m app1_shape [38;5;241m=[39m URIRef([38;5;124m"[39m[38;5;124murn:simpleapp/app1[39m[38;5;124m"[39m)
+[0;32m----> 4[0m [38;5;28mprint[39m([43msc[49m[38;5;241;43m.[39;49m[43mshape_to_query[49m[43m([49m[43mapp1_shape[49m[43m)[49m)
 
-[0;31mModuleNotFoundError[0m: No module named 'pandas'
-ModuleNotFoundError: No module named 'pandas'
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:271[0m, in [0;36mShapeCollection.shape_to_query[0;34m(self, shape)[0m
+[1;32m    260[0m     [38;5;28;01mdef[39;00m [38;5;21mshape_to_query[39m([38;5;28mself[39m, shape: URIRef) [38;5;241m-[39m[38;5;241m>[39m [38;5;28mstr[39m:
+[1;32m    261[0m [38;5;250m        [39m[38;5;124;03m"""[39;00m
+[1;32m    262[0m [38;5;124;03m        This method takes a URI representing a SHACL shape as an argument and returns[39;00m
+[1;32m    263[0m [38;5;124;03m        a SPARQL query selecting the information which would be used to satisfy that[39;00m
+[0;32m   (...)[0m
+[1;32m    269[0m [38;5;124;03m            ?target <path> <value>[39;00m
+[1;32m    270[0m [38;5;124;03m        """[39;00m
+[0;32m--> 271[0m         clauses, project [38;5;241m=[39m [43m_shape_to_where[49m[43m([49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mgraph[49m[43m,[49m[43m [49m[43mshape[49m[43m,[49m[43m [49m[38;5;124;43m"[39;49m[38;5;124;43m?target[39;49m[38;5;124;43m"[39;49m[43m)[49m
+[1;32m    272[0m         preamble [38;5;241m=[39m [38;5;124m"""[39m[38;5;124mPREFIX sh: <http://www.w3.org/ns/shacl#>[39m
+[1;32m    273[0m [38;5;124mPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>[39m
+[1;32m    274[0m [38;5;124mPREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>[39m
+[1;32m    275[0m [38;5;124m        [39m[38;5;124m"""[39m
+[1;32m    276[0m         [38;5;28;01mreturn[39;00m [38;5;124mf[39m[38;5;124m"[39m[38;5;132;01m{[39;00mpreamble[38;5;132;01m}[39;00m[38;5;124m SELECT [39m[38;5;132;01m{[39;00m[38;5;124m'[39m[38;5;124m [39m[38;5;124m'[39m[38;5;241m.[39mjoin(project)[38;5;132;01m}[39;00m[38;5;124m WHERE [39m[38;5;130;01m{{[39;00m[38;5;130;01m\n[39;00m[38;5;132;01m{[39;00mclauses[38;5;132;01m}[39;00m[38;5;130;01m\n[39;00m[38;5;130;01m}}[39;00m[38;5;124m"[39m
+
+File [0;32m~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:371[0m, in [0;36m_shape_to_where[0;34m(graph, shape, root_var)[0m
+[1;32m    369[0m qualified_pshapes: Set[Node] [38;5;241m=[39m [38;5;28mset[39m()
+[1;32m    370[0m [38;5;28;01mfor[39;00m pshape [38;5;129;01min[39;00m graph[38;5;241m.[39mobjects(shape, SH[38;5;241m.[39mproperty):
+[0;32m--> 371[0m     path [38;5;241m=[39m [43mshacl_path_to_sparql_path[49m[43m([49m[43mgraph[49m[43m,[49m[43m [49m[43mgraph[49m[38;5;241;43m.[39;49m[43mvalue[49m[43m([49m[43mpshape[49m[43m,[49m[43m [49m[43mSH[49m[38;5;241;43m.[39;49m[43mpath[49m[43m)[49m[43m)[49m
+[1;32m    372[0m     [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m graph[38;5;241m.[39mvalue(pshape, SH[38;5;241m.[39mqualifiedValueShape):
+[1;32m    373[0m         pshapes_by_path[path][38;5;241m.[39mappend(pshape)  [38;5;66;03m# type: ignore[39;00m
+
+File [0;32m/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/pyshacl/helper/path_helper.py:43[0m, in [0;36mshacl_path_to_sparql_path[0;34m(shapes_graph, path_node, prefixes, recursion)[0m
+[1;32m     41[0m     [38;5;28;01mraise[39;00m ReportableRuntimeError([38;5;124m"[39m[38;5;124mPath traversal depth is too much![39m[38;5;124m"[39m)
+[1;32m     42[0m top_level [38;5;241m=[39m recursion [38;5;241m==[39m [38;5;241m0[39m
+[0;32m---> 43[0m sequence_list [38;5;241m=[39m [38;5;28mlist[39m([43mshapes_graph[49m[38;5;241;43m.[39;49m[43mgraph[49m[38;5;241m.[39mitems(path_node))
+[1;32m     44[0m [38;5;28;01mif[39;00m [38;5;28mlen[39m(sequence_list) [38;5;241m>[39m [38;5;241m0[39m:
+[1;32m     45[0m     all_collected [38;5;241m=[39m []
+
+[0;31mAttributeError[0m: 'Graph' object has no attribute 'graph'
+AttributeError: 'Graph' object has no attribute 'graph'
 
