@@ -16,11 +16,12 @@ from buildingmotif.ingresses.naming_convention import NamingConventionIngress
 
 
 class SemanticGraphSynthesizerIngress(GraphIngressHandler):
-    def __init__(self, upstream: NamingConventionIngress, libraries: List[Library]):
+    def __init__(self, upstream: NamingConventionIngress, libraries: List[Library], ontology: Graph):
         self.upstream = upstream
         self.libraries = libraries
 
         self.sgs = SemanticGraphSynthesizer()
+        self.ontology = ontology
         # Add templates from libraries; the synthesizer will look at these to determine the "best fit"
         # for each group of input tokens
         for library in libraries:
@@ -32,7 +33,7 @@ class SemanticGraphSynthesizerIngress(GraphIngressHandler):
         labels = [TokenizedLabel.from_dict(x.fields) for x in self.upstream.records]
         # this groups labels into LabelSets based on shared sets of token classes.
         # This is used to speed up the matching process as we can figure out which labels are compatible
-        bindings_list = self.sgs.find_bindings_for_labels(labels)
+        bindings_list = self.sgs.find_bindings_for_labels(self.ontology, labels)
         unified_bindings_list = unify_bindings(bindings_list)
         # at this point, the unified_bindings_list contains the best fit for each group of input tokens
 
