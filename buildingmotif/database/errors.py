@@ -9,7 +9,7 @@ class LibraryNotFound(Exception):
         return f"Library with name '{self.lib_name}' not found"
 
 class TemplateNotFound(Exception):
-    def __init__(self, name: Optional[str], idnum: Optional[int]):
+    def __init__(self, name: Optional[str] = None, idnum: Optional[int] = None):
         self.template_name = name
         self.template_id = idnum
 
