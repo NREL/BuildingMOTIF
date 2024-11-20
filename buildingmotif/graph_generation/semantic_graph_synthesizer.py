@@ -146,6 +146,7 @@ class SemanticGraphSynthesizer:
 
         bindings_list = []
         for labelset in labelsets:
+            logger.debug(f"Generating bindings for labelset: {labelset.token_classes} {labelset.labels}")
             bindings_list.extend(self.find_bindings_for_labelset(ontology, labelset))
 
         return bindings_list
