@@ -313,7 +313,6 @@ class Library:
                 logging.warning(
                     f"An ontology could not resolve a dependency on {dependency} ({e}). Check this is loaded into BuildingMOTIF"
                 )
-                get_building_motif().session.rollback()
                 continue
         class_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.OWL.Class))
         shape_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
