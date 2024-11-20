@@ -112,6 +112,7 @@ class SemanticGraphSynthesizer:
             ],
         )
         index_bindings = self.find_bindings_for_label(ontology, index_label)
+        logger.debug(f"Index bindings: {index_bindings.bindings}. Now going through labels")
 
         bindings_list = []
         for label in labelset.labels:
@@ -123,6 +124,7 @@ class SemanticGraphSynthesizer:
                 )
                 for param, token in index_bindings.bindings.items()
             }
+            logger.debug(f"Bindings for label {label.label}: {bindings}")
 
             bindings_list.append(
                 Bindings(
@@ -132,6 +134,7 @@ class SemanticGraphSynthesizer:
                     cost=index_bindings.cost,
                 )
             )
+            logger.debug(f"Added binding: {bindings_list[-1]}")
 
         return bindings_list
 
