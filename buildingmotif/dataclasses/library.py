@@ -15,6 +15,7 @@ from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
 from buildingmotif.database.tables import DBLibrary, DBTemplate
+from buildingmotif.database.errors import LibraryNotFoundError, TemplateNotFoundError
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.schemas import validate_libraries_yaml
@@ -116,7 +117,7 @@ class Library:
                 logging.warning(
                     f'Library {name} already exists in database. To ovewrite load library with "overwrite=True"'  # noqa
                 )
-        except sqlalchemy.exc.NoResultFound:
+        except LibraryNotFoundError:
             db_library = bm.table_connection.create_db_library(name)
 
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
@@ -445,7 +446,7 @@ class Library:
         try:
             bm.table_connection.get_db_library_by_name(library_name)
             return True
-        except sqlalchemy.exc.NoResultFound:
+        except LibraryNotFoundError:
             return False
 
     def _resolve_dependency(

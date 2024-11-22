@@ -4,9 +4,9 @@ import flask
 from flask import Blueprint, current_app, jsonify
 from flask_api import status
 from rdflib import URIRef
-from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.library import serialize
+from buildingmotif.database.errors import LibraryNotFoundError, TemplateNotFoundError
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 
 blueprint = Blueprint("libraries", __name__)
@@ -81,7 +81,7 @@ def get_library(library_id: int) -> flask.Response:
     """
     try:
         db_lib = current_app.building_motif.table_connection.get_db_library(library_id)
-    except NoResultFound:
+    except LibraryNotFoundError:
         return {
             "message": f"No library with id {library_id}"
         }, status.HTTP_404_NOT_FOUND
