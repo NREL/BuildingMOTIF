@@ -97,6 +97,7 @@ class DBTemplate(Base):
         primaryjoin=id == DepsAssociation.dependant_id,
         secondaryjoin=id == DepsAssociation.dependee_id,
         back_populates="dependants",
+        cascade="all,delete",
     )
     dependants: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",
