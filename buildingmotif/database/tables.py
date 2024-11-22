@@ -104,6 +104,7 @@ class DBTemplate(Base):
         primaryjoin=id == DepsAssociation.dependee_id,
         secondaryjoin=id == DepsAssociation.dependant_id,
         back_populates="dependencies",
+        cascade="all,delete",
     )
 
     __table_args__ = (
