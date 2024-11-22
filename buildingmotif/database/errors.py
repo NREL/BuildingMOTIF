@@ -2,11 +2,14 @@ from typing import Optional
 
 
 class LibraryNotFound(Exception):
-    def __init__(self, lib_name):
-        self.lib_name = lib_name
+    def __init__(self, name: Optional[str] = None, idnum: Optional[int] = None):
+        self.lib_name = name
+        self.lib_id = idnum
 
     def __str__(self):
-        return f"Library with name '{self.lib_name}' not found"
+        if self.lib_name:
+            return f"Library with name '{self.lib_name}' not found"
+        return f"Library with id '{self.lib_id}' not found"
 
 class TemplateNotFound(Exception):
     def __init__(self, name: Optional[str] = None, idnum: Optional[int] = None):

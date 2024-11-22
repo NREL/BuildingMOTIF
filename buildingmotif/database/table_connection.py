@@ -231,7 +231,10 @@ class TableConnection:
         :return: DBLibrary
         :rtype: DBLibrary
         """
-        return self.bm.session.query(DBLibrary).filter(DBLibrary.name == name).one()
+        try:
+            return self.bm.session.query(DBLibrary).filter(DBLibrary.name == name).one()
+        except NoResultFound:
+            raise LibraryNotFound(name=name)
 
     def update_db_library_name(self, id: int, name: str) -> None:
         """Update database library name.
