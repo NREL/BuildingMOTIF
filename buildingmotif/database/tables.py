@@ -32,6 +32,7 @@ class DBModel(Base):
         "DBShapeCollection",
         uselist=False,
         cascade="all,delete",
+        passive_deletes=False,
     )
 
 
@@ -53,16 +54,17 @@ class DBLibrary(Base):
     name: Mapped[str] = Column(String(), nullable=False, unique=True)
 
     templates: Mapped[List["DBTemplate"]] = relationship(
-        "DBTemplate", back_populates="library", cascade="all,delete"
+        "DBTemplate", back_populates="library", cascade="all,delete", passive_deletes=False
     )
 
     shape_collection_id = Column(
-        Integer, ForeignKey("shape_collection.id", ondelete="CASCADE"), nullable=False
+        Integer, ForeignKey("shape_collection.id", ondelete="CASCADE"), nullable=False, ondelete="CASCADE"
     )
     shape_collection: DBShapeCollection = relationship(
         "DBShapeCollection",
         uselist=False,
         cascade="all,delete",
+        passive_deletes=False,
     )
 
 
@@ -106,6 +108,7 @@ class DBTemplate(Base):
         secondaryjoin=id == DepsAssociation.dependee_id,
         back_populates="dependants",
         cascade="all,delete",
+        passive_deletes=False,
     )
     dependants: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",
@@ -114,6 +117,7 @@ class DBTemplate(Base):
         secondaryjoin=id == DepsAssociation.dependant_id,
         back_populates="dependencies",
         cascade="all,delete",
+        passive_deletes=False,
     )
 
     __table_args__ = (
