@@ -42,25 +42,25 @@ class SemanticGraphSynthesizerIngress(GraphIngressHandler):
         g = Graph()
         # converts the input records to TokenizedLabels
         labels = [TokenizedLabel.from_dict(x.fields) for x in self.upstream.records]
-        logger.debug(f"Got {len(labels)} labels from upstream")
+        logger.info(f"Got {len(labels)} labels from upstream")
         # this groups labels into LabelSets based on shared sets of token classes.
         # This is used to speed up the matching process as we can figure out which labels are compatible
         bindings_list = self.sgs.find_bindings_for_labels(self.ontology, labels)
-        logger.debug(f"Got {len(bindings_list)} bindings from the synthesizer")
+        logger.info(f"Got {len(bindings_list)} bindings from the synthesizer")
         unified_bindings_list = unify_bindings(bindings_list)
-        logger.debug(f"Unified bindings into {len(unified_bindings_list)} groups")
+        logger.info(f"Unified bindings into {len(unified_bindings_list)} groups")
         # at this point, the unified_bindings_list contains the best fit for each group of input tokens
 
         # for each group of labels, evaluate the bindings and add the resulting graph to the output
         for ub in unified_bindings_list:
             ev = evaluate_bindings(ns, ub)
-            logger.debug(f"Evaluated bindings to {ev}")
+            logger.info(f"Evaluated bindings to {ev}")
             # if the evaluation returns a Template, we need to mint new URIs in the given namespace
             # for any unbound parameters. If it returns a Graph, we can just add it to the output.
             if isinstance(ev, Template):
                 _, graph = ev.fill(ns)
             else:
                 graph = ev
-            logger.debug(f"Adding graph with {len(graph)} triples to output")
+            logger.info(f"Adding graph with {len(graph)} triples to output")
             g += graph
         return g
