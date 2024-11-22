@@ -58,7 +58,7 @@ class DBLibrary(Base):
     )
 
     shape_collection_id = Column(
-        Integer, ForeignKey("shape_collection.id", ondelete="CASCADE"), nullable=False, ondelete="CASCADE"
+        Integer, ForeignKey("shape_collection.id", ondelete="CASCADE"), nullable=False
     )
     shape_collection: DBShapeCollection = relationship(
         "DBShapeCollection",
