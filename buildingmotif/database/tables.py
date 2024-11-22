@@ -1,6 +1,7 @@
 from typing import Dict, List
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, UniqueConstraint, event
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Mapped, declarative_base, relationship
 
 # from sqlalchemy.dialects.postgresql import JSON
@@ -8,6 +9,13 @@ from buildingmotif.database.utils import JSONType
 
 Base = declarative_base()
 
+
+# https://docs.sqlalchemy.org/en/14/dialects/sqlite.html#foreign-key-support
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 class DBModel(Base):
     """A Model is a metadata model of all or part of a building."""
