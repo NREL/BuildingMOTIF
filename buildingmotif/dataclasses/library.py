@@ -132,6 +132,7 @@ class Library:
         bm = get_building_motif()
         for template in library.templates:  # type: ignore
             bm.session.delete(template)
+        bm.session.commit()
 
     # TODO: load library from URI? Does the URI identify the library uniquely?
     # TODO: can we deduplicate shape graphs? use hash of graph?
