@@ -36,6 +36,7 @@ class SemanticGraphSynthesizerIngress(GraphIngressHandler):
         logger.info(f"Adding templates from {len(libraries)} libraries")
         for library in libraries:
             self.sgs.add_templates_from_library(library)
+        logger.info(f"Added templates from {len(libraries)} libraries")
 
     def graph(self, ns: Namespace) -> Graph:
         g = Graph()
