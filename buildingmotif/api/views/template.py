@@ -142,7 +142,7 @@ def evaluate_bindings(template_id: int) -> flask.Response:
     return graph.serialize(format="ttl"), status.HTTP_200_OK
 
 
-@blueprint.route(rule: "/<template_id>/body", methods=(["POST"]))
+@blueprint.route(rule: "/<template_id>/body", methods=(["GET"]))
 def get_template_body(template_id: int) -> flask.Response:
     """Get template body.
 
