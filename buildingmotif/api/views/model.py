@@ -198,7 +198,7 @@ def validate_model(models_id: int) -> flask.Response:
 
     # if shape_collections is empty, model.validate will default
     # to the model's manifest
-    vaildation_context = model.validate(shape_collections)
+    vaildation_context = model.validate(shape_collections, error_on_missing_imports=False)
 
     return {
         "message": vaildation_context.report_string,
