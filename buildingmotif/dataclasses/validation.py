@@ -122,7 +122,15 @@ class OrShape(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        return f"{self.focus} needs to match one of the following shapes: {', '.join(self.shapes)}"
+        context = ""
+        for shape in self.shapes:
+            # get the CBD of the shape
+            shape_graph = self.graph.cbd(shape)
+            # serialize the shape graph to a string
+            shape_str = shape_graph.serialize(format="turtle")
+            context += f"Shape: {shape}\n{shape_str}\n"
+
+        return f"{self.focus} needs to match one of the following shapes: {', '.join(self.shapes)}\n{context}"
 
     @classmethod
     def from_validation_report(cls, report: Graph) -> List["OrShape"]:
