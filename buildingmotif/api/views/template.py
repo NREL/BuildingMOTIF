@@ -142,6 +142,25 @@ def evaluate_bindings(template_id: int) -> flask.Response:
     return graph.serialize(format="ttl"), status.HTTP_200_OK
 
 
+@blueprint.route(rule: "/<template_id>/body", methods=(["POST"]))
+def get_template_body(template_id: int) -> flask.Response:
+    """Get template body.
+
+    :param template_id: template id
+    :type template_id: int
+    :return: template body
+    :rtype: flask.Response
+    """
+    try:
+        template: Template = Template.load(id: template_id)
+    except TemplateNotFound:
+        return {
+            "message": f"No template with id {template_id}"
+        }, status.HTTP_404_NOT_FOUND
+
+    return template.body.serialize(format="ttl"), status.HTTP_200_OK
+
+
 def get_bindings(binding_dict) -> Dict[str, Node]:
     """type binding_dict values to nodes
 
