@@ -142,7 +142,7 @@ def evaluate_bindings(template_id: int) -> flask.Response:
     return graph.serialize(format="ttl"), status.HTTP_200_OK
 
 
-@blueprint.route(rule: "/<template_id>/body", methods=(["GET"]))
+@blueprint.route("/<template_id>/body", methods=(["GET"]))
 def get_template_body(template_id: int) -> flask.Response:
     """Get template body.
 
@@ -152,7 +152,7 @@ def get_template_body(template_id: int) -> flask.Response:
     :rtype: flask.Response
     """
     try:
-        template: Template = Template.load(id: template_id)
+        template: Template = Template.load(template_id)
     except TemplateNotFound:
         return {
             "message": f"No template with id {template_id}"
