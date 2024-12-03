@@ -7,6 +7,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.model import serialize
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
+from buildingmotif import get_building_motif
 
 blueprint = Blueprint("models", __name__)
 
@@ -164,10 +165,13 @@ def validate_model(models_id: int) -> flask.Response:
         return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
 
     shape_collections = []
+    shacl_engine = None
 
     # no body provided -- default to model manifest and default SHACL engine
+    # TODO: take the shacl engine as a parameter
     if request.content_length is None:
         shape_collections = [model.get_manifest()]
+        shacl_engine = "pyshacl"
     else:
         # get body
         if request.content_type != "application/json":
@@ -198,7 +202,12 @@ def validate_model(models_id: int) -> flask.Response:
 
     # if shape_collections is empty, model.validate will default
     # to the model's manifest
+    bm = get_building_motif()
+    old_shacl_engine = bm.shacl_engine
+    bm.shacl_engine = shacl_engine
     vaildation_context = model.validate(shape_collections, error_on_missing_imports=False)
+    bm.shacl_engine = old_shacl_engine
+
 
     return {
         "message": vaildation_context.report_string,
