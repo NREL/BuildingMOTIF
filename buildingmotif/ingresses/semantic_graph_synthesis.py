@@ -61,11 +61,6 @@ class SemanticGraphSynthesizerIngress(GraphIngressHandler):
                 graph = ev.body
             else:
                 graph = ev
-            # remove all triples where either the subject or object is in the PARAM namespace
-            for s, p, o in graph:
-                if str(s).startswith(str(ns.PARAM)) or str(o).startswith(str(ns.PARAM)):
-                    logger.info(f"Removing triple {s} {p} {o}")
-                    graph.remove((s, p, o))
             logger.info(f"Adding graph with {len(graph)} triples to output")
             g += graph
         return g
