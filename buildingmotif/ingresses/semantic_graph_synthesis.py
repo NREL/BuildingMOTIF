@@ -58,13 +58,14 @@ class SemanticGraphSynthesizerIngress(GraphIngressHandler):
             # if the evaluation returns a Template, we need to mint new URIs in the given namespace
             # for any unbound parameters. If it returns a Graph, we can just add it to the output.
             if isinstance(ev, Template):
-                # remove all triples where either the subject or object is in the PARAM namespace
-                for s, p, o in ev.body:
-                    if str(s).startswith(str(ns.PARAM)) or str(o).startswith(str(ns.PARAM)):
-                        ev.body.remove((s, p, o))
                 graph = ev.body
             else:
                 graph = ev
+            # remove all triples where either the subject or object is in the PARAM namespace
+            for s, p, o in graph:
+                if str(s).startswith(str(ns.PARAM)) or str(o).startswith(str(ns.PARAM)):
+                    logger.info(f"Removing triple {s} {p} {o}")
+                    graph.remove((s, p, o))
             logger.info(f"Adding graph with {len(graph)} triples to output")
             g += graph
         return g
