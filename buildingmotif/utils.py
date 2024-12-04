@@ -544,7 +544,7 @@ def _inline_sh_qualified_value_shape(sg: Graph):
     """
     q = """
     PREFIX sh: <http://www.w3.org/ns/shacl#>
-    SELECT ?parent ?child ?andnode WHERE {
+    SELECT ?parent ?child WHERE {
         ?parent a sh:PropertyShape ;
                 sh:qualifiedValueShape ?child .
         }"""
