@@ -537,6 +537,23 @@ def _inline_sh_and(sg: Graph):
         for (p, o) in pos:
             sg.add((parent, p, o))
 
+def _inline_sh_qualified_value_shape(sg: Graph):
+    """
+    This detects the use of 'sh:qualifiedValueShape' on SHACL PropertyShapes and inlines
+    all of the included shapes
+    """
+    q = """
+    PREFIX sh: <http://www.w3.org/ns/shacl#>
+    SELECT ?parent ?child ?andnode WHERE {
+        ?parent a sh:PropertyShape ;
+                sh:qualifiedValueShape ?child .
+        }"""
+    for row in sg.query(q):
+        parent, child = row  # type: ignore
+        sg.remove((parent, SH["qualifiedValueShape"], child))
+        pos = sg.predicate_objects(child)
+        for (p, o) in pos:
+            sg.add((parent, p, o))
 
 def rewrite_shape_graph(g: Graph) -> Graph:
     """
@@ -555,6 +572,7 @@ def rewrite_shape_graph(g: Graph) -> Graph:
         _inline_sh_and(sg)
         # make sure to handle sh:node *after* sh:and
         _inline_sh_node(sg)
+        _inline_sh_qualified_value_shape(sg)
     return sg
 
 
