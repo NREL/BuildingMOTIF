@@ -4,7 +4,7 @@ import string
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union, Any
 
 import rdflib
 from pyshacl.helper.path_helper import shacl_path_to_sparql_path
@@ -14,10 +14,10 @@ from rdflib.term import Node
 
 from buildingmotif import get_building_motif
 from buildingmotif.namespaces import BMOTIF, OWL, SH
-from buildingmotif.utils import Triple, copy_graph
+from buildingmotif.utils import Triple, copy_graph, get_template_parts_from_shape
 
 if TYPE_CHECKING:
-    from buildingmotif import BuildingMOTIF
+    from buildingmotif import BuildingMOTIF, Library
 
 ONTOLOGY_FILE = (
     Path(__file__).resolve().parents[1] / "resources" / "building_motif_ontology.ttl"
