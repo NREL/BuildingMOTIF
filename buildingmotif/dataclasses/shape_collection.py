@@ -180,6 +180,39 @@ class ShapeCollection:
 
         return results
 
+    def infer_templates(self, library: "Library") -> None:
+        """Infer templates from the graph in this ShapeCollection and add them to the given library.
+
+        :param library: The library to add inferred templates to
+        :type library: Library
+        """
+        imports_closure = copy_graph(self.graph)
+        for dependency in self.graph.objects(predicate=rdflib.OWL.imports):
+            try:
+                lib = Library.load(name=str(dependency))
+                imports_closure += lib.get_shape_collection().graph
+            except Exception as e:
+                logging.warning(
+                    f"An ontology could not resolve a dependency on {dependency} ({e}). Check this is loaded into BuildingMOTIF"
+                )
+                continue
+
+        class_candidates = set(self.graph.subjects(rdflib.RDF.type, rdflib.OWL.Class))
+        shape_candidates = set(self.graph.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
+        candidates = class_candidates.intersection(shape_candidates)
+
+        template_id_lookup: Dict[str, int] = {}
+        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
+
+        for candidate in candidates:
+            assert isinstance(candidate, rdflib.URIRef)
+            partial_body, deps = get_template_parts_from_shape(candidate, imports_closure)
+            templ = library.create_template(str(candidate), partial_body)
+            dependency_cache[templ.id] = deps
+            template_id_lookup[str(candidate)] = templ.id
+
+        library._resolve_template_dependencies(template_id_lookup, dependency_cache)
+
     def get_shapes_of_definition_type(
         self, definition_type: URIRef, include_labels=False
     ) -> Union[List[URIRef], List[Tuple[URIRef, str]]]:
