@@ -9,6 +9,7 @@ from rdflib.term import Node
 from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.template import serialize
+from buildingmotif.database.errors import TemplateNotFound
 from buildingmotif.dataclasses import Model, Template
 from buildingmotif.ingresses import CSVIngress, TemplateIngress
 
@@ -42,7 +43,7 @@ def get_template(templates_id: int) -> flask.Response:
         template = current_app.building_motif.table_connection.get_db_template(
             templates_id
         )
-    except NoResultFound:
+    except TemplateNotFound:
         return {
             "message": f"No template with id {templates_id}"
         }, status.HTTP_404_NOT_FOUND
@@ -55,7 +56,7 @@ def evaluate_ingress(template_id: int) -> flask.Response:
     # get template
     try:
         template = Template.load(template_id)
-    except NoResultFound:
+    except TemplateNotFound:
         return {
             "message": f"No template with id {template_id}"
         }, status.HTTP_404_NOT_FOUND
@@ -107,7 +108,7 @@ def evaluate_bindings(template_id: int) -> flask.Response:
     """
     try:
         template = Template.load(template_id)
-    except NoResultFound:
+    except TemplateNotFound:
         return {
             "message": f"No template with id {template_id}"
         }, status.HTTP_404_NOT_FOUND

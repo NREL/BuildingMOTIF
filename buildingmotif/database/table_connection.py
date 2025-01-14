@@ -6,6 +6,7 @@ from typing import Dict, List, Tuple
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import NoResultFound
 
+from buildingmotif.database.errors import LibraryNotFound, TemplateNotFound
 from buildingmotif.database.tables import (
     DBLibrary,
     DBModel,
@@ -216,7 +217,12 @@ class TableConnection:
         :return: DBLibrary
         :rtype: DBLibrary
         """
-        db_library = self.bm.session.query(DBLibrary).filter(DBLibrary.id == id).one()
+        try:
+            db_library = (
+                self.bm.session.query(DBLibrary).filter(DBLibrary.id == id).one()
+            )
+        except NoResultFound:
+            raise LibraryNotFound(f"Library with id {id} not found")
         return db_library
 
     def get_db_library_by_name(self, name: str) -> DBLibrary:
@@ -227,7 +233,10 @@ class TableConnection:
         :return: DBLibrary
         :rtype: DBLibrary
         """
-        return self.bm.session.query(DBLibrary).filter(DBLibrary.name == name).one()
+        try:
+            return self.bm.session.query(DBLibrary).filter(DBLibrary.name == name).one()
+        except NoResultFound:
+            raise LibraryNotFound(name=name)
 
     def update_db_library_name(self, id: int, name: str) -> None:
         """Update database library name.
@@ -298,9 +307,12 @@ class TableConnection:
         :return: DBTemplate
         :rtype: DBTemplate
         """
-        db_template = (
-            self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
-        )
+        try:
+            db_template = (
+                self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+            )
+        except NoResultFound:
+            raise TemplateNotFound(idnum=id)
         return db_template
 
     def get_db_template_by_name(self, name: str) -> DBTemplate:
@@ -316,7 +328,7 @@ class TableConnection:
                 self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
             )
         except NoResultFound:
-            raise NoResultFound(f"No template found with name {name}")
+            raise TemplateNotFound(name=name)
         return db_template
 
     def get_library_defining_db_template(self, id: int) -> DBLibrary:
