@@ -51,6 +51,51 @@ BuildingMOTIF currently uses the name of the SHACL shape as the name of the gene
 All other parameters (i.e., nodes corresponding to `sh:property`) are given invented names *unless*
  there is a `sh:name` attribute on the property shape.
 
+This feature can be disabled by setting `infer_templates=False` when calling `Library.load`
+
+### From Shape Collections
+
+It is also possible to convert the shapes defined in a Shape Collection to templates.
+This is done by calling the `infer_templates` method on the Shape Collection.
+If `infer_templates` is True when calling `Library.load`, then BuildingMOTIF will automatically call `infer_templates` on the Shape Collection
+within that Library.
+
+Being able to call `infer_templates` on a Shape Collection is useful when you have
+a graph of shapes that you programmatically created or loaded without packaging them
+in a Library.
+
+```{code-cell} python3
+from buildingmotif import BuildingMOTIF
+from buildingmotif.dataclasses import Library, ShapeCollection
+
+# in-memory instance
+bm = BuildingMOTIF("sqlite://")
+
+my_shapes_source = """
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix ex: <http://example.org/> .
+
+ex:SimpleShape a sh:NodeShape, owl:Class ;
+    sh:property [
+        sh:path ex:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+    ] .
+"""
+
+# create a ShapeCollection to hold the shapes
+my_shapes = ShapeCollection.create()
+my_shapes.graph.parse(data=my_shapes_source, format="ttl")
+
+# create a Library to hold the generated templates
+lib = Library.create("my-library")
+my_shapes.infer_templates(lib)
+
+print(lib.get_templates())
+```
+
 ### Example
 
 Consider the following shape which has been loaded into BuildingMOTIF as part of a Library:
