@@ -21,7 +21,9 @@ a **Template** is a function that generates an RDF graph.
 
 ## Converting Shapes to Templates
 
-BuildingMOTIF automatically converts shapes to templates.
+### When Loading a Library
+
+BuildingMOTIF can automatically convert shapes to templates when loading a Library.
 Evaluating the resulting template will generate a graph that validates against the shape.
 
 When BuildingMOTIF loads a Library, it makes an attempt to find any shapes defined within it.
