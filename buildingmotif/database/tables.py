@@ -1,12 +1,29 @@
 from typing import Dict, List
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    event,
+)
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Mapped, declarative_base, relationship
 
 # from sqlalchemy.dialects.postgresql import JSON
 from buildingmotif.database.utils import JSONType
 
 Base = declarative_base()
+
+
+# https://docs.sqlalchemy.org/en/14/dialects/sqlite.html#foreign-key-support
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 
 class DBModel(Base):
@@ -18,12 +35,13 @@ class DBModel(Base):
     description: Mapped[str] = Column(Text(), default="", nullable=False)
     graph_id: Mapped[str] = Column(String())
     manifest_id: Mapped[int] = Column(
-        Integer, ForeignKey("shape_collection.id"), nullable=False
+        Integer, ForeignKey("shape_collection.id", ondelete="CASCADE"), nullable=False
     )
     manifest: "DBShapeCollection" = relationship(
         "DBShapeCollection",
         uselist=False,
-        cascade="all,delete",
+        cascade="all",
+        passive_deletes=True,
     )
 
 
@@ -45,16 +63,17 @@ class DBLibrary(Base):
     name: Mapped[str] = Column(String(), nullable=False, unique=True)
 
     templates: Mapped[List["DBTemplate"]] = relationship(
-        "DBTemplate", back_populates="library", cascade="all,delete"
+        "DBTemplate", back_populates="library", cascade="all", passive_deletes=True
     )
 
     shape_collection_id = Column(
-        Integer, ForeignKey("shape_collection.id"), nullable=False
+        Integer, ForeignKey("shape_collection.id", ondelete="CASCADE"), nullable=False
     )
     shape_collection: DBShapeCollection = relationship(
         "DBShapeCollection",
         uselist=False,
-        cascade="all,delete",
+        cascade="all",
+        passive_deletes=True,
     )
 
 
@@ -64,8 +83,8 @@ class DepsAssociation(Base):
     __tablename__ = "deps_association_table"
 
     id: Mapped[int] = Column(Integer, primary_key=True)
-    dependant_id: Mapped[int] = Column(ForeignKey("template.id"))
-    dependee_id: Mapped[int] = Column(ForeignKey("template.id"))
+    dependant_id: Mapped[int] = Column(ForeignKey("template.id", ondelete="CASCADE"))
+    dependee_id: Mapped[int] = Column(ForeignKey("template.id", ondelete="CASCADE"))
     # args are a mapping of dependee args to dependant args
     args: Mapped[Dict[str, str]] = Column(JSONType)  # type: ignore
 
@@ -89,7 +108,9 @@ class DBTemplate(Base):
     body_id: Mapped[str] = Column(String())
     optional_args: Mapped[List[str]] = Column(JSONType)  # type: ignore
 
-    library_id: Mapped[int] = Column(Integer, ForeignKey("library.id"), nullable=False)
+    library_id: Mapped[int] = Column(
+        Integer, ForeignKey("library.id", ondelete="CASCADE"), nullable=False
+    )
     library: Mapped[DBLibrary] = relationship("DBLibrary", back_populates="templates")
     dependencies: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",
@@ -97,6 +118,8 @@ class DBTemplate(Base):
         primaryjoin=id == DepsAssociation.dependant_id,
         secondaryjoin=id == DepsAssociation.dependee_id,
         back_populates="dependants",
+        cascade="all",
+        passive_deletes=True,
     )
     dependants: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",
@@ -104,6 +127,8 @@ class DBTemplate(Base):
         primaryjoin=id == DepsAssociation.dependee_id,
         secondaryjoin=id == DepsAssociation.dependant_id,
         back_populates="dependencies",
+        cascade="all",
+        passive_deletes=True,
     )
 
     __table_args__ = (
