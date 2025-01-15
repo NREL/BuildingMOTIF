@@ -6,7 +6,12 @@ from typing import Dict, List, Tuple
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import NoResultFound
 
-from buildingmotif.database.errors import LibraryNotFound, TemplateNotFound
+from buildingmotif.database.errors import (
+    LibraryNotFound,
+    ModelNotFound,
+    ShapeCollectionNotFound,
+    TemplateNotFound,
+)
 from buildingmotif.database.tables import (
     DBLibrary,
     DBModel,
@@ -77,7 +82,10 @@ class TableConnection:
         :return: DBModel
         :rtype: DBModel
         """
-        db_model = self.bm.session.query(DBModel).filter(DBModel.id == id).one()
+        try:
+            db_model = self.bm.session.query(DBModel).filter(DBModel.id == id).one()
+        except NoResultFound:
+            raise ModelNotFound(idnum=id)
         return db_model
 
     def get_db_model_by_name(self, name: str) -> DBModel:
@@ -158,11 +166,14 @@ class TableConnection:
         :return: DBShapeCollection
         :rtype: DBShapeCollection
         """
-        return (
-            self.bm.session.query(DBShapeCollection)
-            .filter(DBShapeCollection.id == id)
-            .one()
-        )
+        try:
+            return (
+                self.bm.session.query(DBShapeCollection)
+                .filter(DBShapeCollection.id == id)
+                .one()
+            )
+        except NoResultFound:
+            raise ShapeCollectionNotFound(idnum=id)
 
     def delete_db_shape_collection(self, id: int) -> None:
         """Delete database shape collection.
@@ -170,12 +181,7 @@ class TableConnection:
         :param id: id of deleted DBShapeCollection
         :type id: int
         """
-        db_shape_collection = (
-            self.bm.session.query(DBShapeCollection)
-            .filter(DBShapeCollection.id == id)
-            .one()
-        )
-
+        db_shape_collection = self.get_db_shape_collection(id)
         self.bm.session.delete(db_shape_collection)
 
     # library functions
