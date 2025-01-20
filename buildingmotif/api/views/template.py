@@ -6,10 +6,9 @@ from flask import Blueprint, current_app, jsonify, request
 from flask_api import status
 from rdflib import Literal, URIRef
 from rdflib.term import Node
-from sqlalchemy.orm.exc import NoResultFound
 
 from buildingmotif.api.serializers.template import serialize
-from buildingmotif.database.errors import TemplateNotFound
+from buildingmotif.database.errors import ModelNotFound, TemplateNotFound
 from buildingmotif.dataclasses import Model, Template
 from buildingmotif.ingresses import CSVIngress, TemplateIngress
 
@@ -69,7 +68,7 @@ def evaluate_ingress(template_id: int) -> flask.Response:
         }, status.HTTP_400_BAD_REQUEST
     try:
         model = Model.load(model_id)
-    except NoResultFound:
+    except ModelNotFound:
         return {"message": f"No model with id {model_id}"}, status.HTTP_404_NOT_FOUND
 
     # get file
@@ -123,7 +122,7 @@ def evaluate_bindings(template_id: int) -> flask.Response:
         return {"message": "body must contain 'model_id'"}, status.HTTP_400_BAD_REQUEST
     try:
         model = Model.load(model_id)
-    except NoResultFound:
+    except ModelNotFound:
         return {"message": f"No model with id {model_id}"}, status.HTTP_404_NOT_FOUND
 
     bindings = request.get_json().get("bindings")
