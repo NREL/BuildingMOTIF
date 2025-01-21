@@ -13,7 +13,7 @@ from rdflib.compare import _TripleCanonicalizer
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
 
-from buildingmotif.database.errors import LibraryNotFound
+from buildingmotif.database.errors import TemplateNotFound
 from buildingmotif.namespaces import OWL, PARAM, RDF, SH, XSD, bind_prefixes
 
 if TYPE_CHECKING:
@@ -63,7 +63,7 @@ def _guarantee_unique_template_name(library: "Library", name: str) -> str:
         while library.get_template_by_name(name):
             name = f"{original_name}_{idx}"
             idx += 1
-    except LibraryNotFound:
+    except TemplateNotFound:
         # this means that the template does not exist and we can use the original name
         pass
     return name
