@@ -75,7 +75,7 @@ def get_target_nodes(models_id: int) -> Graph:
     try:
         model = Model.load(models_id)
     except ModelNotFound:
-        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
     result = model.graph.query(
         """
