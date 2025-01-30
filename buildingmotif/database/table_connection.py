@@ -228,7 +228,7 @@ class TableConnection:
                 self.bm.session.query(DBLibrary).filter(DBLibrary.id == id).one()
             )
         except NoResultFound:
-            raise LibraryNotFound(f"Library with id {id} not found")
+            raise LibraryNotFound(idnum=id)
         return db_library
 
     def get_db_library_by_name(self, name: str) -> DBLibrary:

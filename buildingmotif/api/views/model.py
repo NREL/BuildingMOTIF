@@ -39,7 +39,7 @@ def get_model(models_id: int) -> flask.Response:
     try:
         model = current_app.building_motif.table_connection.get_db_model(models_id)
     except ModelNotFound:
-        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
     return jsonify(serialize(model)), status.HTTP_200_OK
 
@@ -56,7 +56,7 @@ def get_model_graph(models_id: int) -> Graph:
     try:
         model = Model.load(models_id)
     except ModelNotFound:
-        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
     g = Graph() + model.graph
 
@@ -75,7 +75,7 @@ def get_target_nodes(models_id: int) -> Graph:
     try:
         model = Model.load(models_id)
     except ModelNotFound:
-        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
     result = model.graph.query(
         """
@@ -137,7 +137,7 @@ def update_model_graph(models_id: int) -> flask.Response:
     try:
         model = Model.load(models_id)
     except ModelNotFound:
-        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
     if request.content_type != "application/xml":
         return {
@@ -165,7 +165,7 @@ def validate_model(models_id: int) -> flask.Response:
     try:
         model = Model.load(models_id)
     except ModelNotFound:
-        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
     shape_collections = []
 
@@ -220,7 +220,7 @@ def validate_shape(models_id: int) -> flask.Response:
     try:
         model = Model.load(models_id)
     except ModelNotFound:
-        return {"message": f"No model with id {models_id}"}, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
     # get body
     if request.content_type != "application/json":

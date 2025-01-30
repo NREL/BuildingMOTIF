@@ -99,4 +99,4 @@ def test_get_library_not_found(client):
 
     # Assert
     assert results.status_code == 404
-    assert results.json == {"message": "No library with id -1"}
+    assert results.json == {"message": "ID: -1"}
