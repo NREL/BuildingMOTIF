@@ -82,8 +82,6 @@ def get_library(library_id: int) -> flask.Response:
     try:
         db_lib = current_app.building_motif.table_connection.get_db_library(library_id)
     except LibraryNotFound:
-        return {
-            "message": f"No library with id {library_id}"
-        }, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {library_id}"}, status.HTTP_404_NOT_FOUND
 
     return jsonify(serialize(db_lib)), status.HTTP_200_OK

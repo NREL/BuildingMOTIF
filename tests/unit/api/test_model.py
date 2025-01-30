@@ -79,7 +79,7 @@ def test_get_model_not_found(client):
 
     # Assert
     assert results.status_code == 404
-    assert results.json == {"message": "No model with id -1"}
+    assert results.json == {"message": "ID: -1"}
 
 
 def test_get_model_graph(client, building_motif):
@@ -104,7 +104,7 @@ def test_get_model_graph_not_found(client):
 
     # Assert
     assert results.status_code == 404
-    assert results.json == {"message": "No model with id -1"}
+    assert results.json == {"message": "ID: -1"}
 
 
 def test_update_model_graph_overwrite(client, building_motif):
@@ -160,7 +160,7 @@ def test_update_model_graph_not_found(client, building_motif):
 
     # Assert
     assert results.status_code == 404
-    assert results.json == {"message": "No model with id -1"}
+    assert results.json == {"message": "ID: -1"}
 
 
 def test_update_model_graph_no_header(client, building_motif):
