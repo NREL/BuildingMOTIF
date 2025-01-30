@@ -189,6 +189,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.errors.html">buildingmotif.database.errors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
@@ -417,6 +418,12 @@ document.write(`
 <span class="kn">from</span> <span class="nn">sqlalchemy.engine</span> <span class="kn">import</span> <span class="n">Engine</span>
 <span class="kn">from</span> <span class="nn">sqlalchemy.exc</span> <span class="kn">import</span> <span class="n">NoResultFound</span>
 
+<span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LibraryNotFound</span><span class="p">,</span>
+    <span class="n">ModelNotFound</span><span class="p">,</span>
+    <span class="n">ShapeCollectionNotFound</span><span class="p">,</span>
+    <span class="n">TemplateNotFound</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.database.tables</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DBLibrary</span><span class="p">,</span>
     <span class="n">DBModel</span><span class="p">,</span>
@@ -487,7 +494,10 @@ document.write(`
 <span class="sd">        :return: DBModel</span>
 <span class="sd">        :rtype: DBModel</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">db_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBModel</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBModel</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">db_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBModel</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBModel</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModelNotFound</span><span class="p">(</span><span class="n">idnum</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">db_model</span></div>
 
 <div class="viewcode-block" id="TableConnection.get_db_model_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_model_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_model_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBModel</span><span class="p">:</span>
@@ -568,11 +578,14 @@ document.write(`
 <span class="sd">        :return: DBShapeCollection</span>
 <span class="sd">        :rtype: DBShapeCollection</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBShapeCollection</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBShapeCollection</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">one</span><span class="p">()</span>
-        <span class="p">)</span></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBShapeCollection</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBShapeCollection</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">one</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ShapeCollectionNotFound</span><span class="p">(</span><span class="n">idnum</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TableConnection.delete_db_shape_collection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_db_shape_collection">[docs]</a>    <span class="k">def</span> <span class="nf">delete_db_shape_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete database shape collection.</span>
@@ -580,12 +593,7 @@ document.write(`
 <span class="sd">        :param id: id of deleted DBShapeCollection</span>
 <span class="sd">        :type id: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">db_shape_collection</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBShapeCollection</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBShapeCollection</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">one</span><span class="p">()</span>
-        <span class="p">)</span>
-
+        <span class="n">db_shape_collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_db_shape_collection</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db_shape_collection</span><span class="p">)</span></div>
 
     <span class="c1"># library functions</span>
@@ -627,7 +635,12 @@ document.write(`
 <span class="sd">        :return: DBLibrary</span>
 <span class="sd">        :rtype: DBLibrary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">db_library</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">db_library</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LibraryNotFound</span><span class="p">(</span><span class="n">idnum</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">db_library</span></div>
 
 <div class="viewcode-block" id="TableConnection.get_db_library_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_library_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_library_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
@@ -638,7 +651,10 @@ document.write(`
 <span class="sd">        :return: DBLibrary</span>
 <span class="sd">        :rtype: DBLibrary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LibraryNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TableConnection.update_db_library_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_library_name">[docs]</a>    <span class="k">def</span> <span class="nf">update_db_library_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update database library name.</span>
@@ -709,9 +725,12 @@ document.write(`
 <span class="sd">        :return: DBTemplate</span>
 <span class="sd">        :rtype: DBTemplate</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">db_template</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBTemplate</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBTemplate</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">db_template</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBTemplate</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBTemplate</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">idnum</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">db_template</span></div>
 
 <div class="viewcode-block" id="TableConnection.get_db_template_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBTemplate</span><span class="p">:</span>
@@ -727,7 +746,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBTemplate</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBTemplate</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">NoResultFound</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No template found with name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">db_template</span></div>
 
 <div class="viewcode-block" id="TableConnection.get_library_defining_db_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_library_defining_db_template">[docs]</a>    <span class="k">def</span> <span class="nf">get_library_defining_db_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>

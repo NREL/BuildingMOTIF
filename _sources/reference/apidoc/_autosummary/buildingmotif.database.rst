@@ -27,6 +27,7 @@ buildingmotif.database
    :toctree:
    :recursive:
 
+   buildingmotif.database.errors
    buildingmotif.database.graph_connection
    buildingmotif.database.table_connection
    buildingmotif.database.tables

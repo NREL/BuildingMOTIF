@@ -189,6 +189,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.errors.html">buildingmotif.database.errors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
@@ -417,7 +418,6 @@ document.write(`
 
 <span class="kn">import</span> <span class="nn">pygit2</span>
 <span class="kn">import</span> <span class="nn">rdflib</span>
-<span class="kn">import</span> <span class="nn">sqlalchemy</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_exists</span><span class="p">,</span> <span class="n">resource_filename</span>
 <span class="kn">from</span> <span class="nn">rdflib.exceptions</span> <span class="kn">import</span> <span class="n">ParserError</span>
@@ -425,6 +425,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">rdflib.util</span> <span class="kn">import</span> <span class="n">guess_format</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="n">LibraryNotFound</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.database.tables</span> <span class="kn">import</span> <span class="n">DBLibrary</span><span class="p">,</span> <span class="n">DBTemplate</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.template</span> <span class="kn">import</span> <span class="n">Template</span>
@@ -527,7 +528,7 @@ document.write(`
                 <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s1">&#39;Library </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> already exists in database. To ovewrite load library with &quot;overwrite=True&quot;&#39;</span>  <span class="c1"># noqa</span>
                 <span class="p">)</span>
-        <span class="k">except</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">LibraryNotFound</span><span class="p">:</span>
             <span class="n">db_library</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">create_db_library</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">)</span></div>
@@ -856,7 +857,7 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_name</span><span class="p">(</span><span class="n">library_name</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">except</span> <span class="n">sqlalchemy</span><span class="o">.</span><span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">LibraryNotFound</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_resolve_dependency</span><span class="p">(</span>

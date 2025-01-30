@@ -192,6 +192,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.errors.html">buildingmotif.database.errors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
@@ -553,12 +554,49 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/pyshacl/extras/__init__.py:46: Warning: Extra &quot;js&quot; is not satisfied because requirement pyduktape2 is not installed.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pyshacl/extras/__init__.py:46: Warning: Extra &quot;js&quot; is not satisfied because requirement pyduktape2 is not installed.
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">NoResultFound</span><span class="g g-Whitespace">                             </span>Traceback (most recent call last)
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:243,</span> in <span class="ni">TableConnection.get_db_library_by_name</span><span class="nt">(self, name)</span>
+<span class="g g-Whitespace">    </span><span class="mi">242</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">243</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">244</span> <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/sqlalchemy/orm/query.py:2870,</span> in <span class="ni">Query.one</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2853</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Return exactly one result or raise an exception.</span>
+<span class="g g-Whitespace">   </span><span class="mi">2854</span><span class="sd"> </span>
+<span class="g g-Whitespace">   </span><span class="mi">2855</span><span class="sd"> Raises ``sqlalchemy.orm.exc.NoResultFound`` if the query selects</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2868</span><span class="sd"> </span>
+<span class="g g-Whitespace">   </span><span class="mi">2869</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="ne">-&gt; </span><span class="mi">2870</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">()</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:1522,</span> in <span class="ni">ScalarResult.one</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1515</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Return exactly one object or raise an exception.</span>
+<span class="g g-Whitespace">   </span><span class="mi">1516</span><span class="sd"> </span>
+<span class="g g-Whitespace">   </span><span class="mi">1517</span><span class="sd"> Equivalent to :meth:`_engine.Result.one` except that</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1520</span><span class="sd"> </span>
+<span class="g g-Whitespace">   </span><span class="mi">1521</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="ne">-&gt; </span><span class="mi">1522</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_only_one_row</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1523</span>     <span class="n">raise_for_second_row</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">raise_for_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span>
+<span class="g g-Whitespace">   </span><span class="mi">1524</span> <span class="p">)</span>
+
+<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:562,</span> in <span class="ni">ResultInternal._only_one_row</span><span class="nt">(self, raise_for_second_row, raise_for_none, scalar)</span>
+<span class="g g-Whitespace">    </span><span class="mi">561</span> <span class="k">if</span> <span class="n">raise_for_none</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">562</span>     <span class="k">raise</span> <span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">563</span>         <span class="s2">&quot;No row was found when one was required&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">564</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">565</span> <span class="k">else</span><span class="p">:</span>
+
+<span class="ne">NoResultFound</span>: No row was found when one was required
+
+<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
+
+<span class="ne">LibraryNotFound</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">23</span>
 <span class="g g-Whitespace">     </span><span class="mi">21</span> <span class="c1"># load libraries excluded from the python package (available from the repository)</span>
 <span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
@@ -611,48 +649,12 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
 <span class="g g-Whitespace">    </span><span class="mi">217</span>     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">)</span>
 <span class="g g-Whitespace">    </span><span class="mi">218</span> <span class="k">else</span><span class="p">:</span>
 
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:230,</span> in <span class="ni">TableConnection.get_db_library_by_name</span><span class="nt">(self, name)</span>
-<span class="g g-Whitespace">    </span><span class="mi">222</span> <span class="k">def</span> <span class="nf">get_db_library_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">223</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Get database library by name.</span>
-<span class="g g-Whitespace">    </span><span class="mi">224</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">225</span><span class="sd">     :param name: name of DBLibrary</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">228</span><span class="sd">     :rtype: DBLibrary</span>
-<span class="g g-Whitespace">    </span><span class="mi">229</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">230</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:245,</span> in <span class="ni">TableConnection.get_db_library_by_name</span><span class="nt">(self, name)</span>
+<span class="g g-Whitespace">    </span><span class="mi">243</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">244</span> <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">245</span>     <span class="k">raise</span> <span class="n">LibraryNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/sqlalchemy/orm/query.py:2870,</span> in <span class="ni">Query.one</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2852</span> <span class="k">def</span> <span class="nf">one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="g g-Whitespace">   </span><span class="mi">2853</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Return exactly one result or raise an exception.</span>
-<span class="g g-Whitespace">   </span><span class="mi">2854</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">2855</span><span class="sd">     Raises ``sqlalchemy.orm.exc.NoResultFound`` if the query selects</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2868</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">2869</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">2870</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">()</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:1522,</span> in <span class="ni">ScalarResult.one</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1514</span> <span class="k">def</span> <span class="nf">one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="g g-Whitespace">   </span><span class="mi">1515</span><span class="w">     </span><span class="sd">&quot;&quot;&quot;Return exactly one object or raise an exception.</span>
-<span class="g g-Whitespace">   </span><span class="mi">1516</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">1517</span><span class="sd">     Equivalent to :meth:`_engine.Result.one` except that</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1520</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">1521</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">1522</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_only_one_row</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1523</span>         <span class="n">raise_for_second_row</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">raise_for_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span>
-<span class="g g-Whitespace">   </span><span class="mi">1524</span>     <span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.10/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:562,</span> in <span class="ni">ResultInternal._only_one_row</span><span class="nt">(self, raise_for_second_row, raise_for_none, scalar)</span>
-<span class="g g-Whitespace">    </span><span class="mi">560</span> <span class="k">if</span> <span class="n">row</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">561</span>     <span class="k">if</span> <span class="n">raise_for_none</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">562</span>         <span class="k">raise</span> <span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">563</span>             <span class="s2">&quot;No row was found when one was required&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">564</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">565</span>     <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">566</span>         <span class="k">return</span> <span class="kc">None</span>
-
-<span class="ne">NoResultFound</span>: No row was found when one was required
+<span class="ne">LibraryNotFound</span>: Name: https://brickschema.org/schema/1.4/Brick
 </pre></div>
 </div>
 </div>

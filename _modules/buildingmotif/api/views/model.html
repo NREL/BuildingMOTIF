@@ -189,6 +189,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.database.html">buildingmotif.database</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.database.errors.html">buildingmotif.database.errors</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.database.graph_connection.html">buildingmotif.database.graph_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html">buildingmotif.database.table_connection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html">buildingmotif.database.tables</a></li>
@@ -414,9 +415,13 @@ document.write(`
 <span class="kn">from</span> <span class="nn">flask_api</span> <span class="kn">import</span> <span class="n">status</span>
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
 <span class="kn">from</span> <span class="nn">rdflib.plugins.parsers.notation3</span> <span class="kn">import</span> <span class="n">BadSyntax</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm.exc</span> <span class="kn">import</span> <span class="n">NoResultFound</span>
 
 <span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.model</span> <span class="kn">import</span> <span class="n">serialize</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LibraryNotFound</span><span class="p">,</span>
+    <span class="n">ModelNotFound</span><span class="p">,</span>
+    <span class="n">ShapeCollectionNotFound</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ShapeCollection</span>
 
 <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
@@ -445,8 +450,8 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">building_motif</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_model</span><span class="p">(</span><span class="n">models_id</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No model with id </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+    <span class="k">except</span> <span class="n">ModelNotFound</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
 
     <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="n">model</span><span class="p">)),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
 
@@ -462,8 +467,8 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">models_id</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No model with id </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+    <span class="k">except</span> <span class="n">ModelNotFound</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
 
     <span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span> <span class="o">+</span> <span class="n">model</span><span class="o">.</span><span class="n">graph</span>
 
@@ -481,8 +486,8 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">models_id</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No model with id </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+    <span class="k">except</span> <span class="n">ModelNotFound</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -543,8 +548,8 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">models_id</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No model with id </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+    <span class="k">except</span> <span class="n">ModelNotFound</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
 
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">content_type</span> <span class="o">!=</span> <span class="s2">&quot;application/xml&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -571,8 +576,8 @@ document.write(`
     <span class="c1"># get model</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">models_id</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No model with id </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+    <span class="k">except</span> <span class="n">ModelNotFound</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
 
     <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -600,7 +605,7 @@ document.write(`
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">shape_collection</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">library_id</span><span class="p">)</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span>
                 <span class="n">shape_collections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shape_collection</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+            <span class="k">except</span> <span class="n">LibraryNotFound</span><span class="p">:</span>
                 <span class="n">nonexistent_libraries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">library_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonexistent_libraries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
@@ -626,8 +631,8 @@ document.write(`
     <span class="c1"># get model</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">models_id</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No model with id </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+    <span class="k">except</span> <span class="n">ModelNotFound</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
 
     <span class="c1"># get body</span>
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">content_type</span> <span class="o">!=</span> <span class="s2">&quot;application/json&quot;</span><span class="p">:</span>
@@ -650,7 +655,7 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="n">shape_collection</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">shape_collection_id</span><span class="p">)</span>
             <span class="n">shape_collections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shape_collection</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">ShapeCollectionNotFound</span><span class="p">:</span>
             <span class="n">nonexistent_shape_collections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shape_collection_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonexistent_shape_collections</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
