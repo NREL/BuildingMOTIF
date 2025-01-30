@@ -7,14 +7,21 @@ from secrets import token_hex
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rdflib
-from rdflib import Graph, URIRef, Literal
+from pyshacl.helper.path_helper import shacl_path_to_sparql_path
+from rdflib import Graph, URIRef
+from rdflib.collection import Collection
 from rdflib.term import BNode, Node
 from rdflib.collection import Collection
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
-from buildingmotif.namespaces import CONSTRAINT, PARAM, SH, A, RDF
-from buildingmotif.utils import _gensym, get_template_parts_from_shape, replace_nodes
+from buildingmotif.namespaces import CONSTRAINT, PARAM, RDF, SH, A, bind_prefixes
+from buildingmotif.utils import (
+    _gensym,
+    _guarantee_unique_template_name,
+    get_template_parts_from_shape,
+    replace_nodes,
+)
 
 if TYPE_CHECKING:
     from buildingmotif.dataclasses import Library, Model, Template
@@ -65,6 +72,9 @@ class GraphDiff:
     validation_result: Graph
     graph: Graph
 
+    def __post_init__(self):
+        bind_prefixes(self.graph)
+
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
 
@@ -89,14 +99,6 @@ class GraphDiff:
         graph
         """
         return next(self.validation_result.subjects(RDF.type, SH.ValidationResult))
-        #possible_uris: Set[Node] = set(self.validation_result.subjects())
-        #objects: Set[Node] = set(self.validation_result.objects())
-        #sub_not_obj = possible_uris - objects
-        #if len(sub_not_obj) != 1:
-        #    raise Exception(
-        #        "Validation result has more than one 'root' node, which should not happen. Please raise an issue on https://github.com/NREL/BuildingMOTIF"
-        #    )
-        #return sub_not_obj.pop()
 
     @cached_property
     def failed_shape(self) -> Optional[URIRef]:
@@ -112,6 +114,34 @@ class GraphDiff:
 
     def __hash__(self):
         return hash(self.reason())
+
+    def format_count_error(
+        self, max_count, min_count, path, object_type: Optional[str] = None
+    ) -> str:
+        """Format a count error message for a given object type and path.
+
+        :param max_count: the maximum number of objects expected
+        :type max_count: int
+        :param min_count: the minimum number of objects expected
+        :type min_count: int
+        :param object_type: the type of object expected
+        :type object_type: str
+        :param path: the path to the object
+        :type path: str
+        :return: the formatted error message
+        :rtype: str
+        """
+        instances = f"instance(s) of {object_type} on" if object_type else "uses of"
+        if min_count == max_count:
+            return f"{self.focus} expected {min_count} {instances} path {path}"
+        elif min_count is not None and max_count is not None:
+            return f"{self.focus} expected between {min_count} and {max_count} {instances} path {path}"
+        elif min_count is not None:
+            return f"{self.focus} expected at least {min_count} {instances} path {path}"
+        elif max_count is not None:
+            return f"{self.focus} expected at most {max_count} {instances} path {path}"
+        else:
+            return f"{self.focus} expected {instances} path {path}"
 
 
 @dataclass(frozen=True)
@@ -144,12 +174,14 @@ class OrShape(GraphDiff):
         ret = []
         for result, focus, shapes in results:
             validation_report = report.cbd(result)
-            ret.append(cls(
-                focus,
-                validation_report,
-                report,
-                tuple([s for s in Collection(report, shapes)]),
-            ))
+            ret.append(
+                cls(
+                    focus,
+                    validation_report,
+                    report,
+                    tuple([s for s in Collection(report, shapes)]),
+                )
+            )
         return ret
 
 
@@ -213,17 +245,12 @@ class PathClassCount(GraphDiff):
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         # interpret a SHACL property path as a sparql property path
-        path = shacl_to_sparql_path(self.graph, self.path)
+        path = shacl_path_to_sparql_path(
+            self.graph, self.path, prefixes=dict(self.graph.namespaces())
+        )
 
         classname = self.graph.qname(self.classname)
-        if self.maxc is None and self.minc is not None:
-            return f"{self.focus} needs at least {self.minc} instances of \
-{classname} on path {path}"
-        if self.minc is None and self.maxc is not None:
-            return f"{self.focus} needs at most {self.maxc} instances of \
-{classname} on path {path}"
-        return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
-{classname} on path {path}"
+        return self.format_count_error(self.maxc, self.minc, path, classname)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
@@ -242,7 +269,8 @@ class PathClassCount(GraphDiff):
             inst = _gensym()
             body.add((self.focus, self.path, inst))
             body.add((inst, A, self.classname))
-        return [lib.create_template(f"resolve_{focus}{name}", body)]
+        template_name = _guarantee_unique_template_name(lib, f"resolve{focus}{name}")
+        return [lib.create_template(template_name, body)]
 
 
 @dataclass(frozen=True, unsafe_hash=True)
@@ -310,14 +338,7 @@ class PathShapeCount(GraphDiff):
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         shapename = self.graph.qname(self.shapename)
-        if self.maxc is None and self.minc is not None:
-            return f"{self.focus} needs at least {self.minc} instances of \
-{shapename} on path {self.path}"
-        if self.minc is None and self.maxc is not None:
-            return f"{self.focus} needs at most {self.maxc} instances of \
-{shapename} on path {self.path}"
-        return f"{self.focus} needs between {self.minc} and {self.maxc} instances of \
-{shapename} on path {self.path}"
+        return self.format_count_error(self.maxc, self.minc, self.path, shapename)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff."""
@@ -337,7 +358,10 @@ class PathShapeCount(GraphDiff):
             if self.extra_body:
                 replace_nodes(self.extra_body, {PARAM.name: inst})
                 body += self.extra_body
-            templ = lib.create_template(f"resolve{focus}{name}", body)
+            template_name = _guarantee_unique_template_name(
+                lib, f"resolve{focus}{name}"
+            )
+            templ = lib.create_template(template_name, body)
             if self.extra_deps:
                 from buildingmotif.dataclasses.template import Template
 
@@ -399,12 +423,10 @@ class RequiredPath(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        path = shacl_to_sparql_path(self.graph, self.path)
-        if self.maxc is None and self.minc is not None:
-            return f"{self.focus} needs at least {self.minc} uses of path {path}"
-        if self.minc is None and self.maxc is not None:
-            return f"{self.focus} needs at most {self.maxc} uses of path {path}"
-        return f"{self.focus} needs between {self.minc} and {self.maxc} uses of path {path}"
+        path = shacl_path_to_sparql_path(
+            self.graph, self.path, prefixes=dict(self.graph.namespaces())
+        )
+        return self.format_count_error(self.maxc, self.minc, path)
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
@@ -422,7 +444,8 @@ class RequiredPath(GraphDiff):
         for _ in range(self.minc or 0):
             inst = _gensym()
             body.add((self.focus, self.path, inst))
-        return [lib.create_template(f"resolve{focus}{name}", body)]
+        template_name = _guarantee_unique_template_name(lib, f"resolve{focus}{name}")
+        return [lib.create_template(template_name, body)]
 
 
 @dataclass(frozen=True)
@@ -448,7 +471,8 @@ class RequiredClass(GraphDiff):
         body = Graph()
         name = re.split(r"[#\/]", self.classname)[-1]
         body.add((self.focus, A, self.classname))
-        return [lib.create_template(f"resolveSelf{name}", body)]
+        template_name = _guarantee_unique_template_name(lib, f"resolveSelf{name}")
+        return [lib.create_template(template_name, body)]
 
 
 @dataclass(frozen=True)
@@ -477,7 +501,8 @@ class GraphClassCardinality(GraphDiff):
         for _ in range(self.expectedCount):
             template_body = Graph()
             template_body.add((PARAM["name"], A, self.classname))
-            templs.append(lib.create_template(f"resolveAdd{name}", template_body))
+            template_name = _guarantee_unique_template_name(lib, f"resolveAdd{name}")
+            templs.append(lib.create_template(template_name, template_body))
         return templs
 
 

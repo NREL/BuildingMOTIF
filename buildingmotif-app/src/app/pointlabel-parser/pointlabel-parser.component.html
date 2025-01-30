@@ -1,0 +1,50 @@
+<app-parser-vis [parser]="parser"></app-parser-vis>
+
+<div class="container">
+  <div class="pointlabels">
+    <!-- Unparsed -->
+    <div *ngIf="results.length === 0">
+      <ngx-codemirror #codemirror [options]="codeMirrorOptions" [formControl]="pointLabelsFormControl"></ngx-codemirror>
+      <button mat-raised-button color="primary" (click)="parse()">Parse</button>
+    </div>
+    <button *ngIf="results.length !== 0" mat-raised-button color="primary" (click)="clearResults()">Enter New Points</button>
+
+    <!-- Parsed -->
+    <mat-list>
+      <mat-card *ngFor="let r of results">
+        <mat-card-title>
+          <span *ngFor="let t of r.tokens">
+            <span title="{{t.token}}" [ngStyle]="{'background-color': color_by_type[type_by_id[t.id]]}"
+              style="color: white; margin: 0rem 0.1rem; text-align: center;" (mouseover)="onHover(t)">{{t.value}}
+            </span>
+          </span>
+        </mat-card-title>
+        <mat-card-subtitle *ngIf="r._errors">
+          <div *ngFor="let error of r._errors">{{error}}</div>
+        </mat-card-subtitle>
+      </mat-card>
+    </mat-list>
+  </div>
+
+  <!-- Parser -->
+  <div class="parser">
+    <div id="blocklyDiv"></div>
+    <xml id="toolbox" style="display: none">
+      <category name="Custom" colour="360">
+        <block type="string-url"></block>
+        <block type="string-token"></block>
+        <block type="rest"></block>
+        <block type="substring_n"></block>
+        <block type="choice"></block>
+        <block type="sequence-wrapper"></block>
+        <block type="sequence-internal"></block>
+      </category>
+    </xml>
+  </div>
+</div>
+
+
+<div class="Block">
+  <label id="lbl">Code </label>
+  <input type='file' (change)="fileChanged($event)">
+</div>

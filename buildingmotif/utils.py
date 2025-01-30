@@ -5,20 +5,32 @@ from copy import copy
 from dataclasses import dataclass
 from itertools import chain
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
 
 import pyshacl  # type: ignore
 from rdflib import BNode, Graph, Literal, URIRef
+from rdflib.compare import _TripleCanonicalizer
 from rdflib.paths import ZeroOrOne
 from rdflib.term import Node
 
+from buildingmotif.database.errors import TemplateNotFound
 from buildingmotif.namespaces import OWL, PARAM, RDF, SH, XSD, bind_prefixes
 
 if TYPE_CHECKING:
-    from buildingmotif.dataclasses import Template
+    from buildingmotif.dataclasses import Library, Template
 
 Triple = Tuple[Node, Node, Node]
 _gensym_counter = 0
+
+
+def _strip_param(param: Union[Node, str]) -> str:
+    """
+    Strips all PARAM namespaces from the input parameter
+    """
+    param = str(param)
+    while param.startswith(PARAM):
+        param = param[len(PARAM) :]
+    return param
 
 
 def _gensym(prefix: str = "p") -> URIRef:
@@ -38,6 +50,25 @@ def _param_name(param: URIRef) -> str:
     return param[len(PARAM) :]
 
 
+def _guarantee_unique_template_name(library: "Library", name: str) -> str:
+    """
+    Ensure that the template name is unique in the library by appending an increasing
+    number. This is only called when we are generating templates from GraphDiffs and
+    the names are local to the Library. The Library is intended to be ephemeral so these
+    names will not be around for long.
+    """
+    idx = 1
+    original_name = name
+    try:
+        while library.get_template_by_name(name):
+            name = f"{original_name}_{idx}"
+            idx += 1
+    except TemplateNotFound:
+        # this means that the template does not exist and we can use the original name
+        pass
+    return name
+
+
 def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     """
     Copy a graph. Creates new blank nodes so that these remain unique to each Graph
@@ -50,8 +81,6 @@ def copy_graph(g: Graph, preserve_blank_nodes: bool = True) -> Graph:
     :rtype: Graph
     """
     c = Graph()
-    for pfx, ns in g.namespaces():
-        c.bind(pfx, ns)
     new_prefix = secrets.token_hex(4)
     for t in g.triples((None, None, None)):
         assert isinstance(t, tuple)
@@ -176,7 +205,12 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
         searches = (directory.rglob(f"{pat}") for pat in patterns)
     else:
         searches = (directory.glob(f"{pat}") for pat in patterns)
-    return list(chain.from_iterable(searches))
+    # filter out files in .ipynb_checkpoints
+    filtered_searches = (
+        filter(lambda x: ".ipynb_checkpoints" not in Path(x).parts, search)
+        for search in searches
+    )
+    return list(chain.from_iterable(filtered_searches))
 
 
 def get_template_parts_from_shape(
@@ -209,7 +243,9 @@ def get_template_parts_from_shape(
     for pshape in pshapes:
         property_path = shape_graph.value(pshape, SH["path"])
         if property_path is None:
-            raise Exception(f"no sh:path detected on {shape_name}")
+            raise Exception(
+                f"no sh:path detected on {shape_name} property shape {pshape}"
+            )
         # TODO: expand otypes to include sh:in, sh:or, or no datatype at all!
         otypes = list(
             shape_graph.objects(
@@ -577,6 +613,7 @@ def shacl_validate(
             )
             pass
 
+    data_graph = data_graph + (shape_graph or Graph())
     return pyshacl.validate(
         data_graph,
         shacl_graph=shape_graph,
@@ -692,3 +729,25 @@ def skolemize_shapes(g: Graph) -> Graph:
     # apply the replacements
     replace_nodes(g, replacements)
     return g
+
+
+def graph_hash(graph: Graph) -> int:
+    """
+    Returns a cryptographic hash of the graph contents.
+    This uses the same method as rdflib's isomorphic function to generate a cryptographic hash of a given graph.
+    This method calculates a consistent hash of the canonicalized form of the graph.
+    If the hashes of two graphs are equal, this means that the graphs are isomorphic.
+    Generating the hashes (using this method) and caching them allows graph isomorphism to be determined
+    without having to recalculate the canonical form of the graph, which can be expensive.
+
+    :param graph: graph to hash
+    :type graph: graph
+
+    :return: integer hash
+    :rtype: int
+    """
+    # Copy graph to memory (improved performance if graph is backed by a DB store)
+    graph_prime = copy_graph(graph)
+    triple_canonicalizer = _TripleCanonicalizer(graph_prime)
+
+    return triple_canonicalizer.to_hash()
