@@ -12,19 +12,20 @@ class LibraryNotFound(Exception):
 
     def __str__(self):
         if self.lib_name:
-            return f"Library with name '{self.lib_name}' not found"
-        return f"Library with id '{self.lib_id}' not found"
+            return f"Name: {self.lib_name}"
+        return f"ID: {self.lib_id}"
 
 
-class TemplateNotFound(Exception):
+class ModelNotFound(Exception):
     def __init__(self, name: Optional[str] = None, idnum: Optional[int] = None):
-        self.template_name = name
-        self.template_id = idnum
+        self.model_name = name
+        self.model_id = idnum
 
     def __str__(self):
-        if self.template_name:
-            return f"Template with name '{self.template_name}' not found"
-        return f"Template with id '{self.template_id}' not found"
+        if self.model_name:
+            return f"Name: {self.model_name}"
+        return f"ID: {self.model_id}"
+
 
 
 class ShapeCollectionNotFound(Exception):
@@ -35,17 +36,17 @@ class ShapeCollectionNotFound(Exception):
     def __str__(self):
         if self.shape_collection_name:
             return (
-                f"Shape Collection with name '{self.shape_collection_name}' not found"
+                f"Name: {self.shape_collection_name}"
             )
-        return f"Shape Collection with id '{self.shape_collection_id}' not found"
+        return f"ID: {self.shape_collection_id}"
 
 
-class ModelNotFound(Exception):
+class TemplateNotFound(Exception):
     def __init__(self, name: Optional[str] = None, idnum: Optional[int] = None):
-        self.model_name = name
-        self.model_id = idnum
+        self.template_name = name
+        self.template_id = idnum
 
     def __str__(self):
-        if self.model_name:
-            return f"Model with name '{self.model_name}' not found"
-        return f"Model with id '{self.model_id}' not found"
+        if self.template_name:
+            return f"Name: {self.template_name}"
+        return f"ID: {self.template_id}"
