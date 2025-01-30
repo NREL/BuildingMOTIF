@@ -1,8 +1,12 @@
 import uuid
 
 import pytest
-from sqlalchemy.exc import NoResultFound
 
+from buildingmotif.database.errors import (
+    LibraryNotFound,
+    ShapeCollectionNotFound,
+    TemplateNotFound,
+)
 from buildingmotif.database.tables import DBLibrary, DBShapeCollection, DBTemplate
 
 
@@ -48,7 +52,7 @@ def test_get_db_library(table_connection):
 
 
 def test_get_db_library_does_not_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.get_db_library("I don't exist")
 
 
@@ -65,7 +69,7 @@ def test_get_db_library_by_name(table_connection):
 
 
 def test_get_db_library_by_name_not_found(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.get_db_library_by_name("I don't exist")
 
 
@@ -80,7 +84,7 @@ def test_update_db_library_name(table_connection):
 
 
 def test_update_db_library_name_does_not_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.update_db_library_name("I don't exist", "new_name")
 
 
@@ -93,16 +97,16 @@ def test_delete_db_library(table_connection):
 
     table_connection.delete_db_library(db_library.id)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.get_db_library(db_library.id)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(TemplateNotFound):
         table_connection.get_db_template(db_template.id)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(ShapeCollectionNotFound):
         table_connection.get_db_shape_collection(db_shape_collection.id)
 
 
 def tests_delete_db_library_does_does_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.delete_db_library("does not exist")
