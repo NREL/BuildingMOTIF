@@ -44,7 +44,7 @@ def get_template(templates_id: int) -> flask.Response:
         )
     except TemplateNotFound:
         return {
-            "message": f"No template with id {templates_id}"
+                "message": f"ID: {templates_id}"
         }, status.HTTP_404_NOT_FOUND
 
     return jsonify(serialize(template, include_parameters)), status.HTTP_200_OK
@@ -57,7 +57,7 @@ def evaluate_ingress(template_id: int) -> flask.Response:
         template = Template.load(template_id)
     except TemplateNotFound:
         return {
-            "message": f"No template with id {template_id}"
+            "message": f"ID: {template_id}"
         }, status.HTTP_404_NOT_FOUND
 
     # get model
@@ -69,12 +69,12 @@ def evaluate_ingress(template_id: int) -> flask.Response:
     try:
         model = Model.load(model_id)
     except ModelNotFound:
-        return {"message": f"No model with id {model_id}"}, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {model_id}"}, status.HTTP_404_NOT_FOUND
 
     # get file
     raw_data = flask.request.get_data()
     if raw_data is None:
-        return {"message": "no file recieved."}, status.HTTP_404_NOT_FOUND
+        return {"message": "no file recieved."}, status.HTTP_400_NOT_FOUND
 
     # evaluate template
     try:
@@ -109,7 +109,7 @@ def evaluate_bindings(template_id: int) -> flask.Response:
         template = Template.load(template_id)
     except TemplateNotFound:
         return {
-            "message": f"No template with id {template_id}"
+            "message": f"ID: {template_id}"
         }, status.HTTP_404_NOT_FOUND
 
     if request.content_type != "application/json":
@@ -123,7 +123,7 @@ def evaluate_bindings(template_id: int) -> flask.Response:
     try:
         model = Model.load(model_id)
     except ModelNotFound:
-        return {"message": f"No model with id {model_id}"}, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {model_id}"}, status.HTTP_404_NOT_FOUND
 
     bindings = request.get_json().get("bindings")
     if bindings is None:

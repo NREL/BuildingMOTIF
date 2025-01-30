@@ -79,7 +79,7 @@ def test_get_template_not_found(client):
 
     # Assert
     assert results.status_code == 404
-    assert results.json == {"message": "No template with id -1"}
+    assert results.json == {"message": "ID: -1"}
 
 
 def test_evaluate_bindings(client, building_motif):
