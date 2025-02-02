@@ -55,7 +55,8 @@ class Model:
         _validate_uri(name)
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
-        g.add((rdflib.URIRef(name), rdflib.RDFS.comment, rdflib.Literal(description)))
+        if description:
+            g.add((rdflib.URIRef(name), rdflib.RDFS.comment, rdflib.Literal(description)))
         return cls.from_graph(g)
 
     @classmethod
