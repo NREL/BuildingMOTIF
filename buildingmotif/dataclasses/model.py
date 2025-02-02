@@ -55,11 +55,14 @@ class Model:
         _validate_uri(name)
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
+        g.add((rdflib.URIRef(name), rdflib.RDFS.comment, rdflib.Literal(description)))
         return cls.from_graph(g)
 
     @classmethod
     def from_graph(cls, graph: rdflib.Graph) -> "Model":
-        """Create a new model from a graph.
+        """Create a new model from a graph. The name of the model is taken from the
+        ontology declaration in the graph (subject of rdf:type owl:Ontology triple).
+        The description of the model can be set through an RDFS comment on the ontology
 
         :param graph: graph to create model from
         :type graph: rdflib.Graph
@@ -71,9 +74,13 @@ class Model:
         name = graph.value(predicate=rdflib.RDF.type, object=rdflib.OWL.Ontology)
         if name is None:
             raise ValueError("Graph does not contain an ontology declaration")
-
         _validate_uri(name)
-        db_model = bm.table_connection.create_db_model(name, "")
+
+        # the 'description' is the rdfs:comment of the ontology
+        description = graph.value(name, rdflib.RDFS.comment)
+        description = str(description) if description is not None else ""
+
+        db_model = bm.table_connection.create_db_model(name, description)
 
         graph = bm.graph_connection.create_graph(db_model.graph_id, graph)
 
