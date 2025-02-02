@@ -44,7 +44,29 @@ def test_load_model(clean_building_motif):
     assert isomorphic(result.graph, m.graph)
 
 
-def test_update_model_manifest(clean_building_motif):
+def test_from_file(clean_building_motif):
+    # Create a model from a file
+    model = Model.from_file("tests/unit/fixtures/smallOffice_brick.ttl")
+
+    assert isinstance(model, Model)
+    assert model.name is not None
+    assert isinstance(model.graph, Graph)
+    assert len(model.graph) > 0
+
+
+def test_from_graph(clean_building_motif):
+    # Create a graph
+    g = Graph()
+    g.add((URIRef("https://example.com"), RDF.type, OWL.Ontology))
+
+    # Create a model from the graph
+    model = Model.from_graph(g)
+
+    assert isinstance(model, Model)
+    assert model.name == URIRef("https://example.com")
+    assert isinstance(model.graph, Graph)
+    assert len(model.graph) == 1
+
     m = Model.create(name="https://example.com", description="a very good model")
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
