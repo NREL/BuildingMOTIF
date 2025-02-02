@@ -166,7 +166,7 @@ class Model:
         :type error_on_missing_imports: bool, optional
         :return: An object containing useful properties/methods to deal with
             the validation results
-        :param shacl_engine: the SHACL engine to use for validation, defaults to whatever 
+        :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
             is set in the BuildingMOTIF object
         :type shacl_engine: str, optional
 
@@ -199,7 +199,9 @@ class Model:
         # remove imports from data graph
         data_graph.remove((None, OWL.imports, None))
 
-        shacl_engine = shacl_engine if shacl_engine != "default" else self._bm.shacl_engine
+        shacl_engine = (
+            shacl_engine if shacl_engine != "default" else self._bm.shacl_engine
+        )
 
         # validate the data graph
         valid, report_g, report_str = shacl_validate(
@@ -214,7 +216,9 @@ class Model:
             self,
         )
 
-    def compile(self, shape_collections: List["ShapeCollection"], shacl_engine: str = "default"):
+    def compile(
+        self, shape_collections: List["ShapeCollection"], shacl_engine: str = "default"
+    ):
         """Compile the graph of a model against a set of ShapeCollections.
 
         :param shape_collections: list of ShapeCollections to compile the model
@@ -235,11 +239,11 @@ class Model:
 
         model_graph = copy_graph(self.graph).skolemize()
 
-        shacl_engine = shacl_engine if shacl_engine != "default" else self._bm.shacl_engine
-
-        return shacl_inference(
-            model_graph, ontology_graph, engine=shacl_engine
+        shacl_engine = (
+            shacl_engine if shacl_engine != "default" else self._bm.shacl_engine
         )
+
+        return shacl_inference(model_graph, ontology_graph, engine=shacl_engine)
 
     def test_model_against_shapes(
         self,
@@ -287,7 +291,9 @@ class Model:
         # validation through the interpretation of the validation report
         ontology_graph = ontology_graph.skolemize()
 
-        shacl_engine = shacl_engine if shacl_engine != "default" else self._bm.shacl_engine
+        shacl_engine = (
+            shacl_engine if shacl_engine != "default" else self._bm.shacl_engine
+        )
 
         for shape_uri in shapes_to_test:
             temp_model_graph = copy_graph(model_graph)

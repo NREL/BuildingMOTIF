@@ -147,9 +147,7 @@ def get_template_body(template_id: int) -> flask.Response:
     try:
         template: Template = Template.load(template_id)
     except TemplateNotFound:
-        return {
-            "message": f"ID: {template_id}"
-        }, status.HTTP_404_NOT_FOUND
+        return {"message": f"ID: {template_id}"}, status.HTTP_404_NOT_FOUND
 
     return template.body.serialize(format="ttl"), status.HTTP_200_OK
 
