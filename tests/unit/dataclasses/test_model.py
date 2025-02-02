@@ -5,7 +5,7 @@ from rdflib.namespace import FOAF
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library, Model, ValidationContext
-from buildingmotif.namespaces import BRICK, RDF, RDFS, SH, A
+from buildingmotif.namespaces import BRICK, RDF, RDFS, SH, A, OWL
 
 BLDG = Namespace("urn:building/")
 
