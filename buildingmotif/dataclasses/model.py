@@ -52,14 +52,30 @@ class Model:
         :return: new model
         :rtype: Model
         """
-        bm = get_building_motif()
-
         _validate_uri(name)
-        db_model = bm.table_connection.create_db_model(name, description)
-
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
-        graph = bm.graph_connection.create_graph(db_model.graph_id, g)
+        return cls.from_graph(g)
+
+    @classmethod
+    def from_graph(cls, graph: rdflib.Graph) -> "Model":
+        """Create a new model from a graph.
+
+        :param graph: graph to create model from
+        :type graph: rdflib.Graph
+        :return: new model
+        :rtype: Model
+        """
+        bm = get_building_motif()
+
+        name = graph.value(predicate=rdflib.RDF.type, object=rdflib.OWL.Ontology)
+        if name is None:
+            raise ValueError("Graph does not contain an ontology declaration")
+
+        _validate_uri(name)
+        db_model = bm.table_connection.create_db_model(name, "")
+
+        graph = bm.graph_connection.create_graph(db_model.graph_id, graph)
 
         return cls(
             _id=db_model.id,
@@ -69,6 +85,19 @@ class Model:
             _bm=bm,
             _manifest_id=db_model.manifest_id,
         )
+
+    @classmethod
+    def from_file(cls, url_or_path: str) -> "Model":
+        """Create a new model from a file.
+
+        :param url_or_path: url or path to file
+        :type url_or_path: str
+        :return: new model
+        :rtype: Model
+        """
+        graph = rdflib.Graph()
+        graph.parse(url_or_path, format=rdflib.util.guess_format(url_or_path))
+        return cls.from_graph(graph)
 
     @classmethod
     def load(cls, id: Optional[int] = None, name: Optional[str] = None) -> "Model":
