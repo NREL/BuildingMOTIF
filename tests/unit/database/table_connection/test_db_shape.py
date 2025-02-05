@@ -1,8 +1,8 @@
 import uuid
 
 import pytest
-from sqlalchemy.exc import NoResultFound
 
+from buildingmotif.database.errors import ShapeCollectionNotFound
 from buildingmotif.database.tables import DBShapeCollection
 
 
@@ -47,7 +47,7 @@ def test_get_db_shape_collection(table_connection, monkeypatch):
 
 
 def test_get_db_shape_collection_does_not_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(ShapeCollectionNotFound):
         table_connection.get_db_shape_collection("I don't exist")
 
 
@@ -55,10 +55,10 @@ def test_delete_db_shape_collection(table_connection):
     db_shape_collection = table_connection.create_db_shape_collection()
     table_connection.delete_db_shape_collection(db_shape_collection.id)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(ShapeCollectionNotFound):
         table_connection.get_db_shape_collection(db_shape_collection.id)
 
 
-def tests_delete_db_shape_collection_does_does_exist(table_connection):
-    with pytest.raises(NoResultFound):
+def tests_delete_db_shape_collection_does_not_exist(table_connection):
+    with pytest.raises(ShapeCollectionNotFound):
         table_connection.delete_db_shape_collection("does not exist")

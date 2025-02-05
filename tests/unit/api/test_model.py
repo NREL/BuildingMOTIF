@@ -79,7 +79,7 @@ def test_get_model_not_found(client):
 
     # Assert
     assert results.status_code == 404
-    assert results.json == {"message": "No model with id -1"}
+    assert results.json == {"message": "ID: -1"}
 
 
 def test_get_model_graph(client, building_motif):
@@ -104,7 +104,7 @@ def test_get_model_graph_not_found(client):
 
     # Assert
     assert results.status_code == 404
-    assert results.json == {"message": "No model with id -1"}
+    assert results.json == {"message": "ID: -1"}
 
 
 def test_update_model_graph_overwrite(client, building_motif):
@@ -160,7 +160,7 @@ def test_update_model_graph_not_found(client, building_motif):
 
     # Assert
     assert results.status_code == 404
-    assert results.json == {"message": "No model with id -1"}
+    assert results.json == {"message": "ID: -1"}
 
 
 def test_update_model_graph_no_header(client, building_motif):
@@ -277,15 +277,15 @@ def test_validate_model(client, building_motif, shacl_engine):
     )
 
     # Assert
-    assert results.status_code == 200
+    assert results.status_code == 200, results.data
 
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
     response = results.get_json()
     assert "urn:building/vav1" in response["reasons"], "vav1 should be in the response"
     assert set(response["reasons"]["urn:building/vav1"]) == {
-        "urn:building/vav1 needs between 1 and None instances of https://brickschema.org/schema/Brick#Air_Flow_Sensor on path https://brickschema.org/schema/Brick#hasPoint",
-        "urn:building/vav1 needs between 1 and None instances of https://brickschema.org/schema/Brick#Temperature_Sensor on path https://brickschema.org/schema/Brick#hasPoint",
+        "urn:building/vav1 expected at least 1 instance(s) of brick:Temperature_Sensor on path brick:hasPoint",
+        "urn:building/vav1 expected at least 1 instance(s) of brick:Air_Flow_Sensor on path brick:hasPoint",
     }
     assert not results.get_json()["valid"]
 
@@ -304,7 +304,7 @@ def test_validate_model(client, building_motif, shacl_engine):
     )
 
     # Assert
-    assert results.status_code == 200
+    assert results.status_code == 200, results.data
 
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)

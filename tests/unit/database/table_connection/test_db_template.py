@@ -5,6 +5,7 @@ import rdflib
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from buildingmotif import BuildingMOTIF
+from buildingmotif.database.errors import LibraryNotFound, TemplateNotFound
 from buildingmotif.database.tables import DBTemplate
 
 
@@ -77,7 +78,7 @@ def test_create_db_template_bad_library(bm: BuildingMOTIF, monkeypatch):
 
     monkeypatch.setattr(uuid, "uuid4", mockreturn)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         bm.table_connection.create_db_template(
             name="my_db_template",
             library_id=-999,  # id does not exist
@@ -139,7 +140,7 @@ def test_get_db_template(bm: BuildingMOTIF, monkeypatch):
 
 
 def test_get_db_template_does_not_exist(bm: BuildingMOTIF):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(TemplateNotFound):
         bm.table_connection.get_db_template(-999)
 
 
@@ -176,7 +177,7 @@ def test_update_db_template_name_bad_name(bm: BuildingMOTIF):
 
 
 def test_update_db_template_name_does_not_exist(bm: BuildingMOTIF):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(TemplateNotFound):
         bm.table_connection.update_db_template_name(-999, "new_name")
 
 
@@ -188,12 +189,12 @@ def test_delete_db_template(bm: BuildingMOTIF):
 
     bm.table_connection.delete_db_template(db_template.id)
 
-    with pytest.raises(NoResultFound):
-        bm.table_connection.get_db_model(db_template.id)
+    with pytest.raises(TemplateNotFound):
+        bm.table_connection.get_db_template(db_template.id)
 
 
 def tests_delete_db_template_does_does_exist(bm: BuildingMOTIF):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(TemplateNotFound):
         bm.table_connection.delete_db_template(-999)
 
 
