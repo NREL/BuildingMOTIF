@@ -87,9 +87,10 @@ class Model:
 
         graph = bm.graph_connection.create_graph(db_model.graph_id, graph)
 
+        # below, we normalize the name to a string so it matches the database type
         return cls(
             _id=db_model.id,
-            _name=db_model.name,
+            _name=str(db_model.name),
             _description=db_model.description,
             graph=graph,
             _bm=bm,
