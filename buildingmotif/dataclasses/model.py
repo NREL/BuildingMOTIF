@@ -56,7 +56,9 @@ class Model:
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
         if description:
-            g.add((rdflib.URIRef(name), rdflib.RDFS.comment, rdflib.Literal(description)))
+            g.add(
+                (rdflib.URIRef(name), rdflib.RDFS.comment, rdflib.Literal(description))
+            )
         return cls.from_graph(g)
 
     @classmethod
