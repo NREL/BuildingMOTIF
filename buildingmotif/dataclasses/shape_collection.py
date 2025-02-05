@@ -17,7 +17,8 @@ from buildingmotif.namespaces import BMOTIF, OWL, SH
 from buildingmotif.utils import Triple, copy_graph, get_template_parts_from_shape
 
 if TYPE_CHECKING:
-    from buildingmotif import BuildingMOTIF, Library
+    from buildingmotif import BuildingMOTIF
+    from buildingmotif.dataclasses import Library
 
 ONTOLOGY_FILE = (
     Path(__file__).resolve().parents[1] / "resources" / "building_motif_ontology.ttl"
@@ -186,6 +187,9 @@ class ShapeCollection:
         :param library: The library to add inferred templates to
         :type library: Library
         """
+        # we need to do the Library import here to avoid circular imports
+        from buildingmotif.dataclasses.library import Library
+
         imports_closure = copy_graph(self.graph)
         for dependency in self.graph.objects(predicate=rdflib.OWL.imports):
             try:
