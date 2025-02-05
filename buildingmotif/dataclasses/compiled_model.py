@@ -21,7 +21,7 @@ from buildingmotif.utils import (
 
 
 @dataclass
-class CompiledModel(Model):
+class CompiledModel:
     """
     This class represents a model that has been compiled against a set of ShapeCollections.
     """

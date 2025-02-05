@@ -8,6 +8,7 @@ import rfc3987
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
+from buildingmotif.dataclasses.validation import ValidationContext
 from buildingmotif.utils import Triple, copy_graph, shacl_inference, skolemize_shapes
 
 if TYPE_CHECKING:
@@ -139,6 +140,33 @@ class Model:
         :type graph: rdflib.Graph
         """
         self.graph += graph
+
+    def validate(
+        self,
+        shape_collections: Optional[List[ShapeCollection]] = None,
+        error_on_missing_imports: bool = True,
+    ) -> "ValidationContext":
+        """Validates this model against the given list of ShapeCollections.
+        If no list is provided, the model will be validated against the model's "manifest".
+        If a list of shape collections is provided, the manifest will *not* be automatically
+        included in the set of shape collections.
+
+        Loads all of the ShapeCollections into a single graph.
+
+        :param shape_collections: a list of ShapeCollections against which the
+            graph should be validated. If an empty list or None is provided, the
+            model will be validated against the model's manifest.
+        :type shape_collections: List[ShapeCollection]
+        :param error_on_missing_imports: if True, raises an error if any of the dependency
+            ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
+            to True
+        :type error_on_missing_imports: bool, optional
+        :return: An object containing useful properties/methods to deal with
+            the validation results
+        :rtype: ValidationContext
+        """
+        compiled_model = self.compile(shape_collections or [self.get_manifest()])
+        return compiled_model.validate(error_on_missing_imports)
 
     def compile(self, shape_collections: List["ShapeCollection"]) -> "CompiledModel":
         """Compile the graph of a model against a set of ShapeCollections.
