@@ -70,7 +70,7 @@ def test_from_graph(clean_building_motif):
     model = Model.from_graph(g)
 
     assert isinstance(model, Model)
-    assert model.name == URIRef("https://example.com")
+    assert model.name == "https://example.com"
     assert model.description == "Example description"
     assert len(model.graph) == 2
 
