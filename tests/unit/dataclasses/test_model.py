@@ -55,7 +55,7 @@ def test_from_file(clean_building_motif):
     model = Model.from_file("tests/unit/fixtures/from_file_test.ttl")
 
     assert isinstance(model, Model)
-    assert model.name == URIRef("https://example.com")
+    assert model.name == "https://example.com"
     assert model.description == "This is an example graph"
     assert len(model.graph) == 2
 
