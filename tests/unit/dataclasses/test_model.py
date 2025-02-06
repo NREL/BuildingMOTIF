@@ -1,6 +1,7 @@
 import pytest
 from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.compare import graph_diff, isomorphic, to_isomorphic
+from rdflib.exceptions import ParserError
 from rdflib.namespace import FOAF
 
 from buildingmotif import BuildingMOTIF
@@ -72,7 +73,7 @@ def test_from_file_weird_extensions(clean_building_motif):
     assert len(model.graph) == 2
 
     # guesses 'turtle' because xmlbadext is not a valid extension
-    with pytest.raises(ValueError):
+    with pytest.raises(ParserError):
         model = Model.from_file("tests/unit/fixtures/from_file_test.xmlbadext")
 
 
