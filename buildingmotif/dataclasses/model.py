@@ -107,6 +107,10 @@ class Model:
         :rtype: Model
         """
         graph = rdflib.Graph()
+        # if guess_format doesn't match anything, it will return None,
+        # which tells graph.parse to guess 'turtle'
+
+        # if graph parsing fails, it will raise an exception
         graph.parse(url_or_path, format=rdflib.util.guess_format(url_or_path))
         return cls.from_graph(graph)
 

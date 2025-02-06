@@ -60,6 +60,22 @@ def test_from_file(clean_building_motif):
     assert len(model.graph) == 2
 
 
+def test_from_file_weird_extensions(clean_building_motif):
+    # Create a model from a file. the from_file_test.xyz is a turtle-formatted file
+    # so even though the extension is .xyz, it should still be able to parse it
+    # because rdflib defaults to turtle if it can't determine the format from the extension
+    model = Model.from_file("tests/unit/fixtures/from_file_test.xyz")
+
+    assert isinstance(model, Model)
+    assert model.name == "https://example.com"
+    assert model.description == "This is an example graph"
+    assert len(model.graph) == 2
+
+    # guesses 'turtle' because xmlbadext is not a valid extension
+    with pytest.raises(ValueError):
+        model = Model.from_file("tests/unit/fixtures/from_file_test.xmlbadext")
+
+
 def test_from_graph(clean_building_motif):
     # Create a graph
     g = Graph()
