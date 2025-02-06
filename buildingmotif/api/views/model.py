@@ -170,8 +170,8 @@ def validate_model(models_id: int) -> flask.Response:
     # we will read the shape collections from the input
     shape_collections = []
 
-    # get shacl_engine from the query params, default to pyshacl
-    shacl_engine = request.args.get("shacl_engine", "default")
+    # get shacl_engine from the query params, defaults to the current engine
+    shacl_engine = request.args.get("shacl_engine", None)
 
     # no body provided -- default to model manifest
     if request.content_length is None:

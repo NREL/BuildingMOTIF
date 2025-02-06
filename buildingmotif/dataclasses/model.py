@@ -147,7 +147,7 @@ class Model:
         self,
         shape_collections: Optional[List[ShapeCollection]] = None,
         error_on_missing_imports: bool = True,
-        shacl_engine: str = "default",
+        shacl_engine: Optional[str] = None,
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
@@ -199,9 +199,8 @@ class Model:
         # remove imports from data graph
         data_graph.remove((None, OWL.imports, None))
 
-        shacl_engine = (
-            shacl_engine if shacl_engine != "default" else self._bm.shacl_engine
-        )
+        # if None, use the default engine
+        shacl_engine = shacl_engine or self._bm.shacl_engine
 
         # validate the data graph
         valid, report_g, report_str = shacl_validate(
@@ -217,7 +216,7 @@ class Model:
         )
 
     def compile(
-        self, shape_collections: List["ShapeCollection"], shacl_engine: str = "default"
+        self, shape_collections: List["ShapeCollection"], shacl_engine: Optional[str] = None
     ):
         """Compile the graph of a model against a set of ShapeCollections.
 
@@ -239,9 +238,7 @@ class Model:
 
         model_graph = copy_graph(self.graph).skolemize()
 
-        shacl_engine = (
-            shacl_engine if shacl_engine != "default" else self._bm.shacl_engine
-        )
+        shacl_engine = shacl_engine or self._bm.shacl_engine
 
         return shacl_inference(model_graph, ontology_graph, engine=shacl_engine)
 
@@ -250,7 +247,7 @@ class Model:
         shape_collections: List["ShapeCollection"],
         shapes_to_test: List[rdflib.URIRef],
         target_class: rdflib.URIRef,
-        shacl_engine: str = "default",
+        shacl_engine: Optional[str] = None,
     ) -> Dict[rdflib.URIRef, "ValidationContext"]:
         """Validates the model against a list of shapes and generates a
         validation report for each.
@@ -291,9 +288,7 @@ class Model:
         # validation through the interpretation of the validation report
         ontology_graph = ontology_graph.skolemize()
 
-        shacl_engine = (
-            shacl_engine if shacl_engine != "default" else self._bm.shacl_engine
-        )
+        shacl_engine = shacl_engine or self._bm.shacl_engine
 
         for shape_uri in shapes_to_test:
             temp_model_graph = copy_graph(model_graph)
