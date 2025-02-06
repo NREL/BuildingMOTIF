@@ -216,7 +216,9 @@ class Model:
         )
 
     def compile(
-        self, shape_collections: List["ShapeCollection"], shacl_engine: Optional[str] = None
+        self,
+        shape_collections: List["ShapeCollection"],
+        shacl_engine: Optional[str] = None,
     ):
         """Compile the graph of a model against a set of ShapeCollections.
 
