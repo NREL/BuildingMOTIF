@@ -416,6 +416,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
 <span class="kn">from</span> <span class="nn">rdflib.plugins.parsers.notation3</span> <span class="kn">import</span> <span class="n">BadSyntax</span>
 
+<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.model</span> <span class="kn">import</span> <span class="n">serialize</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">LibraryNotFound</span><span class="p">,</span>
@@ -579,9 +580,13 @@ document.write(`
     <span class="k">except</span> <span class="n">ModelNotFound</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">models_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
 
+    <span class="c1"># we will read the shape collections from the input</span>
     <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c1"># no body provided -- default to model manifest and default SHACL engine</span>
+    <span class="c1"># get shacl_engine from the query params, default to pyshacl</span>
+    <span class="n">shacl_engine</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;shacl_engine&quot;</span><span class="p">,</span> <span class="s2">&quot;pyshacl&quot;</span><span class="p">)</span>
+
+    <span class="c1"># no body provided -- default to model manifest</span>
     <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">content_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[</span><span class="n">model</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -598,7 +603,6 @@ document.write(`
 
         <span class="k">if</span> <span class="n">body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;body is not dict&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
-        <span class="n">shape_collections</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">body</span> <span class="o">=</span> <span class="n">body</span> <span class="k">if</span> <span class="n">body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="n">nonexistent_libraries</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">library_id</span> <span class="ow">in</span> <span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;library_ids&quot;</span><span class="p">,</span> <span class="p">[]):</span>
@@ -612,9 +616,17 @@ document.write(`
                 <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Libraries with ids </span><span class="si">{</span><span class="n">nonexistent_libraries</span><span class="si">}</span><span class="s2"> do not exist&quot;</span>
             <span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_400_BAD_REQUEST</span>
 
-    <span class="c1"># if shape_collections is empty, model.validate will default</span>
-    <span class="c1"># to the model&#39;s manifest</span>
-    <span class="n">vaildation_context</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">shape_collections</span><span class="p">)</span>
+    <span class="c1"># temporarily change the SHACL engine</span>
+    <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
+    <span class="n">old_shacl_engine</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">shacl_engine</span>
+    <span class="n">bm</span><span class="o">.</span><span class="n">shacl_engine</span> <span class="o">=</span> <span class="n">shacl_engine</span>
+
+    <span class="c1"># if shape_collections is empty, model.validate will default to the model&#39;s manifest</span>
+    <span class="n">vaildation_context</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+        <span class="n">shape_collections</span><span class="p">,</span> <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="c1"># change the SHACL engine back</span>
+    <span class="n">bm</span><span class="o">.</span><span class="n">shacl_engine</span> <span class="o">=</span> <span class="n">old_shacl_engine</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">vaildation_context</span><span class="o">.</span><span class="n">report_string</span><span class="p">,</span>

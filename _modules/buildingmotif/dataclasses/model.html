@@ -464,23 +464,67 @@ document.write(`
 <span class="sd">        :return: new model</span>
 <span class="sd">        :rtype: Model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
-
         <span class="n">_validate_uri</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">db_model</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">create_db_model</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-
         <span class="n">g</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
         <span class="n">g</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">Ontology</span><span class="p">))</span>
-        <span class="n">graph</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">graph_connection</span><span class="o">.</span><span class="n">create_graph</span><span class="p">(</span><span class="n">db_model</span><span class="o">.</span><span class="n">graph_id</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">description</span><span class="p">:</span>
+            <span class="n">g</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">RDFS</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Literal</span><span class="p">(</span><span class="n">description</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_graph</span><span class="p">(</span><span class="n">g</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="Model.from_graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.from_graph">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_graph</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new model from a graph. The name of the model is taken from the</span>
+<span class="sd">        ontology declaration in the graph (subject of rdf:type owl:Ontology triple).</span>
+<span class="sd">        The description of the model can be set through an RDFS comment on the ontology</span>
+
+<span class="sd">        :param graph: graph to create model from</span>
+<span class="sd">        :type graph: rdflib.Graph</span>
+<span class="sd">        :return: new model</span>
+<span class="sd">        :rtype: Model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="nb">object</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">Ontology</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Graph does not contain an ontology declaration&quot;</span><span class="p">)</span>
+        <span class="n">_validate_uri</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># the &#39;description&#39; is the rdfs:comment of the ontology</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">RDFS</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">description</span><span class="p">)</span> <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">db_model</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">create_db_model</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
+
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">graph_connection</span><span class="o">.</span><span class="n">create_graph</span><span class="p">(</span><span class="n">db_model</span><span class="o">.</span><span class="n">graph_id</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
+
+        <span class="c1"># below, we normalize the name to a string so it matches the database type</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">_id</span><span class="o">=</span><span class="n">db_model</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-            <span class="n">_name</span><span class="o">=</span><span class="n">db_model</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">db_model</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
             <span class="n">_description</span><span class="o">=</span><span class="n">db_model</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
             <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
             <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">,</span>
             <span class="n">_manifest_id</span><span class="o">=</span><span class="n">db_model</span><span class="o">.</span><span class="n">manifest_id</span><span class="p">,</span>
         <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Model.from_file"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.from_file">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">url_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new model from a file.</span>
+
+<span class="sd">        :param url_or_path: url or path to file</span>
+<span class="sd">        :type url_or_path: str</span>
+<span class="sd">        :return: new model</span>
+<span class="sd">        :rtype: Model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="c1"># if guess_format doesn&#39;t match anything, it will return None,</span>
+        <span class="c1"># which tells graph.parse to guess &#39;turtle&#39;</span>
+
+        <span class="c1"># if graph parsing fails, it will raise an exception</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">url_or_path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">guess_format</span><span class="p">(</span><span class="n">url_or_path</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.load"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.load">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>

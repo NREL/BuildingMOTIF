@@ -18,6 +18,7 @@ buildingmotif.api.views.template
       get_all_templates
       get_bindings
       get_template
+      get_template_body
    
    
 

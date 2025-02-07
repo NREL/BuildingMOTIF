@@ -547,6 +547,25 @@ document.write(`
     <span class="k">return</span> <span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
 
 
+<div class="viewcode-block" id="get_template_body"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.template.html#buildingmotif.api.views.template.get_template_body">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;template_id&gt;/body&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
+<span class="k">def</span> <span class="nf">get_template_body</span><span class="p">(</span><span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get template body.</span>
+
+<span class="sd">    :param template_id: template id</span>
+<span class="sd">    :type template_id: int</span>
+<span class="sd">    :return: template body</span>
+<span class="sd">    :rtype: flask.Response</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">template</span><span class="p">:</span> <span class="n">Template</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">template_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">TemplateNotFound</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;No template with id </span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">},</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_404_NOT_FOUND</span>
+
+    <span class="k">return</span> <span class="n">template</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
+
+
 <div class="viewcode-block" id="get_bindings"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.template.html#buildingmotif.api.views.template.get_bindings">[docs]</a><span class="k">def</span> <span class="nf">get_bindings</span><span class="p">(</span><span class="n">binding_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;type binding_dict values to nodes</span>
 
