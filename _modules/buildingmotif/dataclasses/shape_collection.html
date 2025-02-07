@@ -416,7 +416,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">rdflib</span>
 <span class="kn">from</span> <span class="nn">pyshacl.helper.path_helper</span> <span class="kn">import</span> <span class="n">shacl_path_to_sparql_path</span>
@@ -426,10 +426,11 @@ document.write(`
 
 <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
 <span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BMOTIF</span><span class="p">,</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">SH</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">Triple</span><span class="p">,</span> <span class="n">copy_graph</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">Triple</span><span class="p">,</span> <span class="n">copy_graph</span><span class="p">,</span> <span class="n">get_template_parts_from_shape</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+    <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span>
 
 <span class="n">ONTOLOGY_FILE</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;resources&quot;</span> <span class="o">/</span> <span class="s2">&quot;building_motif_ontology.ttl&quot;</span>
@@ -591,6 +592,46 @@ document.write(`
             <span class="n">results</span> <span class="o">+=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_included_domains</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">results</span>
+
+<div class="viewcode-block" id="ShapeCollection.infer_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.infer_templates">[docs]</a>    <span class="k">def</span> <span class="nf">infer_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer templates from the graph in this ShapeCollection and add them to the given library.</span>
+
+<span class="sd">        :param library: The library to add inferred templates to</span>
+<span class="sd">        :type library: Library</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># we need to do the Library import here to avoid circular imports</span>
+        <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.library</span> <span class="kn">import</span> <span class="n">Library</span>
+
+        <span class="n">imports_closure</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dependency</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">imports</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">dependency</span><span class="p">))</span>
+                <span class="n">imports_closure</span> <span class="o">+=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span><span class="o">.</span><span class="n">graph</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;An ontology could not resolve a dependency on </span><span class="si">{</span><span class="n">dependency</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">). Check this is loaded into BuildingMOTIF&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+        <span class="n">class_candidates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">Class</span><span class="p">))</span>
+        <span class="n">shape_candidates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">subjects</span><span class="p">(</span><span class="n">rdflib</span><span class="o">.</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">candidates</span> <span class="o">=</span> <span class="n">class_candidates</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">shape_candidates</span><span class="p">)</span>
+
+        <span class="n">template_id_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">dependency_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">)</span>
+            <span class="n">partial_body</span><span class="p">,</span> <span class="n">deps</span> <span class="o">=</span> <span class="n">get_template_parts_from_shape</span><span class="p">(</span>
+                <span class="n">candidate</span><span class="p">,</span> <span class="n">imports_closure</span>
+            <span class="p">)</span>
+            <span class="n">templ</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">create_template</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate</span><span class="p">),</span> <span class="n">partial_body</span><span class="p">)</span>
+            <span class="n">dependency_cache</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">deps</span>
+            <span class="n">template_id_lookup</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">candidate</span><span class="p">)]</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">id</span>
+
+        <span class="n">library</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ShapeCollection.get_shapes_of_definition_type"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.get_shapes_of_definition_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_shapes_of_definition_type</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">definition_type</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">include_labels</span><span class="o">=</span><span class="kc">False</span>

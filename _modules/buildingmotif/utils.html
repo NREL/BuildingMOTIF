@@ -950,6 +950,25 @@ document.write(`
             <span class="n">sg</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">))</span>
 
 
+<span class="k">def</span> <span class="nf">_inline_sh_qualified_value_shape</span><span class="p">(</span><span class="n">sg</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This detects the use of &#39;sh:qualifiedValueShape&#39; on SHACL PropertyShapes and inlines</span>
+<span class="sd">    all of the included shapes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    PREFIX sh: &lt;http://www.w3.org/ns/shacl#&gt;</span>
+<span class="s2">    SELECT ?parent ?child WHERE {</span>
+<span class="s2">        ?parent a sh:PropertyShape ;</span>
+<span class="s2">                sh:qualifiedValueShape ?child .</span>
+<span class="s2">        }&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sg</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">child</span> <span class="o">=</span> <span class="n">row</span>  <span class="c1"># type: ignore</span>
+        <span class="n">sg</span><span class="o">.</span><span class="n">remove</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;qualifiedValueShape&quot;</span><span class="p">],</span> <span class="n">child</span><span class="p">))</span>
+        <span class="n">pobjs</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">predicate_objects</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pobjs</span><span class="p">:</span>
+            <span class="n">sg</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">))</span>
+
+
 <div class="viewcode-block" id="rewrite_shape_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.rewrite_shape_graph">[docs]</a><span class="k">def</span> <span class="nf">rewrite_shape_graph</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Rewrites the input graph to make the resulting validation report more useful.</span>
@@ -967,6 +986,7 @@ document.write(`
         <span class="n">_inline_sh_and</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span>
         <span class="c1"># make sure to handle sh:node *after* sh:and</span>
         <span class="n">_inline_sh_node</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span>
+        <span class="n">_inline_sh_qualified_value_shape</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sg</span></div>
 
 

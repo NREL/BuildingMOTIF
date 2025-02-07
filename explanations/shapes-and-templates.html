@@ -459,6 +459,8 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-shapes-to-templates">Converting Shapes to Templates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-loading-a-library">When Loading a Library</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-shape-collections">From Shape Collections</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
 </ul>
 </li>
@@ -481,7 +483,9 @@ In this document, we explain the utility and function of these interactions.</p>
 a <strong>Template</strong> is a function that generates an RDF graph.</p>
 <section id="converting-shapes-to-templates">
 <h2>Converting Shapes to Templates<a class="headerlink" href="#converting-shapes-to-templates" title="Permalink to this heading">#</a></h2>
-<p>BuildingMOTIF automatically converts shapes to templates.
+<section id="when-loading-a-library">
+<h3>When Loading a Library<a class="headerlink" href="#when-loading-a-library" title="Permalink to this heading">#</a></h3>
+<p>BuildingMOTIF can automatically convert shapes to templates when loading a Library.
 Evaluating the resulting template will generate a graph that validates against the shape.</p>
 <p>When BuildingMOTIF loads a Library, it makes an attempt to find any shapes defined within it.
 The way this happens depends on how the library is loaded:</p>
@@ -509,6 +513,58 @@ BuildingMOTIF currently recognizes the following SHACL properties:</p>
 <p>BuildingMOTIF currently uses the name of the SHACL shape as the name of the generated Template.
 All other parameters (i.e., nodes corresponding to <code class="docutils literal notranslate"><span class="pre">sh:property</span></code>) are given invented names <em>unless</em>
 there is a <code class="docutils literal notranslate"><span class="pre">sh:name</span></code> attribute on the property shape.</p>
+<p>This feature can be disabled by setting <code class="docutils literal notranslate"><span class="pre">infer_templates=False</span></code> when calling <code class="docutils literal notranslate"><span class="pre">Library.load</span></code></p>
+</section>
+<section id="from-shape-collections">
+<h3>From Shape Collections<a class="headerlink" href="#from-shape-collections" title="Permalink to this heading">#</a></h3>
+<p>It is also possible to convert the shapes defined in a Shape Collection to templates.
+This is done by calling the <code class="docutils literal notranslate"><span class="pre">infer_templates</span></code> method on the Shape Collection.
+If <code class="docutils literal notranslate"><span class="pre">infer_templates</span></code> is True when calling <code class="docutils literal notranslate"><span class="pre">Library.load</span></code>, then BuildingMOTIF will automatically call <code class="docutils literal notranslate"><span class="pre">infer_templates</span></code> on the Shape Collection
+within that Library.</p>
+<p>Being able to call <code class="docutils literal notranslate"><span class="pre">infer_templates</span></code> on a Shape Collection is useful when you have
+a graph of shapes that you programmatically created or loaded without packaging them
+in a Library.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">ShapeCollection</span>
+
+<span class="c1"># in-memory instance</span>
+<span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span>
+
+<span class="n">my_shapes_source</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">@prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .</span>
+<span class="s2">@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .</span>
+<span class="s2">@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .</span>
+<span class="s2">@prefix ex: &lt;http://example.org/&gt; .</span>
+
+<span class="s2">ex:SimpleShape a sh:NodeShape, owl:Class ;</span>
+<span class="s2">    sh:property [</span>
+<span class="s2">        sh:path ex:hasPoint ;</span>
+<span class="s2">        sh:qualifiedValueShape [ sh:class brick:Sensor ] ;</span>
+<span class="s2">        sh:qualifiedMinCount 1 ;</span>
+<span class="s2">    ] .</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="c1"># create a ShapeCollection to hold the shapes</span>
+<span class="n">my_shapes</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+<span class="n">my_shapes</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">my_shapes_source</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">)</span>
+
+<span class="c1"># create a Library to hold the generated templates</span>
+<span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;my-library&quot;</span><span class="p">)</span>
+<span class="n">my_shapes</span><span class="o">.</span><span class="n">infer_templates</span><span class="p">(</span><span class="n">lib</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">lib</span><span class="o">.</span><span class="n">get_templates</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[Template(_id=1, _name=&#39;http://example.org/SimpleShape&#39;, body=&lt;Graph identifier=c86c474d-094c-4e48-a91b-222bce76c4cd (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;, optional_args=[], _bm=&lt;buildingmotif.building_motif.building_motif.BuildingMOTIF object at 0x7f5844994a50&gt;)]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 <section id="example">
 <h3>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h3>
 <p>Consider the following shape which has been loaded into BuildingMOTIF as part of a Library:</p>
@@ -621,106 +677,106 @@ there is a <code class="docutils literal notranslate"><span class="pre">sh:name<
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,139 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/dimensionvector (Name: http://qudt.org/2.1/vocab/dimensionvector). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,379 | root |  WARNING: An ontology could not resolve a dependency on https://brickschema.org/schema/Brick/ref (Name: https://brickschema.org/schema/Brick/ref). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,140 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/sou (Name: http://qudt.org/2.1/vocab/sou). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,380 | root |  WARNING: An ontology could not resolve a dependency on http://data.ashrae.org/bacnet/2020 (Name: http://data.ashrae.org/bacnet/2020). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,141 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/prefix (Name: http://qudt.org/2.1/vocab/prefix). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,381 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/prefix (Name: http://qudt.org/2.1/vocab/prefix). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,142 | root |  WARNING: An ontology could not resolve a dependency on https://brickschema.org/schema/Brick/ref (Name: https://brickschema.org/schema/Brick/ref). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,382 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/sou (Name: http://qudt.org/2.1/vocab/sou). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,143 | root |  WARNING: An ontology could not resolve a dependency on http://data.ashrae.org/bacnet/2020 (Name: http://data.ashrae.org/bacnet/2020). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,382 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/dimensionvector (Name: http://qudt.org/2.1/vocab/dimensionvector). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,144 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/schema/shacl/qudt (Name: http://qudt.org/2.1/schema/shacl/qudt). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,383 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/schema/shacl/overlay/qudt (Name: http://qudt.org/2.1/schema/shacl/overlay/qudt). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,145 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/collection/usertest (Name: http://qudt.org/2.1/collection/usertest). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,384 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/schema/facade/qudt (Name: http://qudt.org/2.1/schema/facade/qudt). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,146 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/unit (Name: http://qudt.org/2.1/vocab/unit). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,385 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/schema/shacl/qudt (Name: http://qudt.org/2.1/schema/shacl/qudt). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,147 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/quantitykind (Name: http://qudt.org/2.1/vocab/quantitykind). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,386 | root |  WARNING: An ontology could not resolve a dependency on https://w3id.org/rec/recimports (Name: https://w3id.org/rec/recimports). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,147 | root |  WARNING: An ontology could not resolve a dependency on https://w3id.org/rec/recimports (Name: https://w3id.org/rec/recimports). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,386 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/quantitykind (Name: http://qudt.org/2.1/vocab/quantitykind). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,148 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/schema/shacl/overlay/qudt (Name: http://qudt.org/2.1/schema/shacl/overlay/qudt). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,387 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/vocab/unit (Name: http://qudt.org/2.1/vocab/unit). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,149 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/schema/facade/qudt (Name: http://qudt.org/2.1/schema/facade/qudt). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:40,388 | root |  WARNING: An ontology could not resolve a dependency on http://qudt.org/2.1/collection/usertest (Name: http://qudt.org/2.1/collection/usertest). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,352 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7714 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,429 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7632 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,356 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7710 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,450 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7638 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,361 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7716 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,470 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7634 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,366 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7718 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,491 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7640 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,370 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7712 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,511 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7636 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,374 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7634 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,532 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7642 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,379 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7636 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,552 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7718 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,383 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7640 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,573 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7710 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,387 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7638 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,593 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7716 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,391 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7642 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,614 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7712 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,395 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7632 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,634 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7714 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,402 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7651 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,654 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7602 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,406 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7653 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,674 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7592 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,410 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7657 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,694 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7594 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,414 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7655 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,714 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7600 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,419 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7649 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,734 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7598 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,424 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7596 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,756 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7596 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,428 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7602 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,777 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7649 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,432 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7594 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,799 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7655 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,437 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7600 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,821 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7657 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,441 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7598 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,841 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7651 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,445 | root |  WARNING: Warning: could not find dependee ne95fd423963a4fc5a2914bc073e898e7b7592 in libraries []
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-02-07 06:26:43,861 | root |  WARNING: Warning: could not find dependee n0bc4bfba036348e6bf2252c7b4bc2335b7653 in libraries [rdflib.term.URIRef(&#39;https://brickschema.org/schema/Brick/ref&#39;), rdflib.term.URIRef(&#39;http://data.ashrae.org/bacnet/2020&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/prefix&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/sou&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/dimensionvector&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/overlay/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/facade/qudt&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/schema/shacl/qudt&#39;), rdflib.term.URIRef(&#39;https://w3id.org/rec/recimports&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/quantitykind&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/vocab/unit&#39;), rdflib.term.URIRef(&#39;http://qudt.org/2.1/collection/usertest&#39;)]
 </pre></div>
 </div>
 </div>
@@ -744,7 +800,7 @@ defined explicitly:</p>
 &lt;urn:___param___#name&gt; a brick:Terminal_Unit,
         &lt;urn:example/vav&gt; ;
     brick:hasPart &lt;urn:___param___#hc0&gt; ;
-    brick:hasPoint &lt;urn:___param___#p13&gt;,
+    brick:hasPoint &lt;urn:___param___#p14&gt;,
         &lt;urn:___param___#sat0&gt; .
 
 &lt;urn:___param___#hc0&gt; a &lt;urn:example/heating-coil&gt; .
@@ -769,7 +825,7 @@ defined explicitly:</p>
 &lt;urn:___param___#name&gt; a brick:Terminal_Unit,
         &lt;urn:example/vav&gt; ;
     brick:hasPart &lt;urn:___param___#hc0&gt; ;
-    brick:hasPoint &lt;urn:___param___#p13&gt;,
+    brick:hasPoint &lt;urn:___param___#p14&gt;,
         &lt;urn:___param___#sat0&gt; .
 
 &lt;urn:___param___#hc0&gt; a brick:Heating_Coil,
@@ -848,6 +904,8 @@ defined explicitly:</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-shapes-to-templates">Converting Shapes to Templates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-loading-a-library">When Loading a Library</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-shape-collections">From Shape Collections</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
 </ul>
 </li>
