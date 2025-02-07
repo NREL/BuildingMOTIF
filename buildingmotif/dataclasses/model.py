@@ -52,23 +52,67 @@ class Model:
         :return: new model
         :rtype: Model
         """
-        bm = get_building_motif()
-
         _validate_uri(name)
-        db_model = bm.table_connection.create_db_model(name, description)
-
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
-        graph = bm.graph_connection.create_graph(db_model.graph_id, g)
+        if description:
+            g.add(
+                (rdflib.URIRef(name), rdflib.RDFS.comment, rdflib.Literal(description))
+            )
+        return cls.from_graph(g)
 
+    @classmethod
+    def from_graph(cls, graph: rdflib.Graph) -> "Model":
+        """Create a new model from a graph. The name of the model is taken from the
+        ontology declaration in the graph (subject of rdf:type owl:Ontology triple).
+        The description of the model can be set through an RDFS comment on the ontology
+
+        :param graph: graph to create model from
+        :type graph: rdflib.Graph
+        :return: new model
+        :rtype: Model
+        """
+        bm = get_building_motif()
+
+        name = graph.value(predicate=rdflib.RDF.type, object=rdflib.OWL.Ontology)
+        if name is None:
+            raise ValueError("Graph does not contain an ontology declaration")
+        _validate_uri(name)
+
+        # the 'description' is the rdfs:comment of the ontology
+        description = graph.value(name, rdflib.RDFS.comment)
+        description = str(description) if description is not None else ""
+
+        db_model = bm.table_connection.create_db_model(name, description)
+
+        graph = bm.graph_connection.create_graph(db_model.graph_id, graph)
+
+        # below, we normalize the name to a string so it matches the database type
         return cls(
             _id=db_model.id,
-            _name=db_model.name,
+            _name=str(db_model.name),
             _description=db_model.description,
             graph=graph,
             _bm=bm,
             _manifest_id=db_model.manifest_id,
         )
+
+    @classmethod
+    def from_file(cls, url_or_path: str) -> "Model":
+        """Create a new model from a file.
+
+        :param url_or_path: url or path to file
+        :type url_or_path: str
+        :return: new model
+        :rtype: Model
+        """
+        graph = rdflib.Graph()
+        # if guess_format doesn't match anything, it will return None,
+        # which tells graph.parse to guess 'turtle'
+
+        # if graph parsing fails, it will raise an exception
+        graph.parse(url_or_path, format=rdflib.util.guess_format(url_or_path))
+        return cls.from_graph(graph)
 
     @classmethod
     def load(cls, id: Optional[int] = None, name: Optional[str] = None) -> "Model":
