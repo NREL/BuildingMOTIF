@@ -86,3 +86,30 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+
+  # deploy development distribution with changes to develop
+  deploy-dev-dist:
+    if: github.ref == 'refs/heads/ts/dev-release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: setup-python
+        uses: actions/setup-python@v5
+      - name: install-poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0
+          virtualenvs-in-project: false
+          virtualenvs-path: ~/.virtualenvs
+      - name: increment dev version
+        run: poetry run python scripts/bump_dev_version.py
+      - name: build dist
+        run: poetry build
+      - name: publish dev distribution to Test PyPI
+        id: test-pypi
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+          skip_existing: false
