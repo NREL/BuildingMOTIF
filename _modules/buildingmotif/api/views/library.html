@@ -410,16 +410,16 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.api.views.library</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">import</span> <span class="nn">flask</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span>
-<span class="kn">from</span> <span class="nn">flask_api</span> <span class="kn">import</span> <span class="n">status</span>
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">flask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">URIRef</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.library</span> <span class="kn">import</span> <span class="n">serialize</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="n">LibraryNotFound</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.api.serializers.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">LibraryNotFound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.shape_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShapeCollection</span>
 
 <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;libraries&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 
@@ -438,7 +438,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="get_all_libraries"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.library.html#buildingmotif.api.views.library.get_all_libraries">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_all_libraries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_libraries</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all libraries.</span>
 
 <span class="sd">    :return: all libraries</span>
@@ -450,7 +450,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="get_all_shapes"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.library.html#buildingmotif.api.views.library.get_all_shapes">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/shapes&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_all_shapes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_shapes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all shapes.</span>
 
 <span class="sd">    :return: all shapes</span>
@@ -483,7 +483,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="get_library"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.library.html#buildingmotif.api.views.library.get_library">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;library_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_library</span><span class="p">(</span><span class="n">library_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_library</span><span class="p">(</span><span class="n">library_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get library by id.</span>
 
 <span class="sd">    :param library_id: library id</span>

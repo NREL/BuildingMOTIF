@@ -410,27 +410,27 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.ingresses.xlsx</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">PathLike</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.ingresses.base</span> <span class="kn">import</span> <span class="n">Record</span><span class="p">,</span> <span class="n">RecordIngressHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.ingresses.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Record</span><span class="p">,</span> <span class="n">RecordIngressHandler</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">openpyxl</span> <span class="kn">import</span> <span class="n">load_workbook</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">openpyxl</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_workbook</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
         <span class="s2">&quot;Install the &#39;xlsx-ingress&#39; module, e.g. &#39;pip install buildingmotif[xlsx-ingress]&#39;&quot;</span>
     <span class="p">)</span>
 
 
-<div class="viewcode-block" id="XLSXIngress"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html#buildingmotif.ingresses.xlsx.XLSXIngress">[docs]</a><span class="k">class</span> <span class="nc">XLSXIngress</span><span class="p">(</span><span class="n">RecordIngressHandler</span><span class="p">):</span>
+<div class="viewcode-block" id="XLSXIngress"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.xlsx.html#buildingmotif.ingresses.xlsx.XLSXIngress">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">XLSXIngress</span><span class="p">(</span><span class="n">RecordIngressHandler</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads sheets from a XLSX file and exposes them as records. The &#39;rtype&#39;</span>
 <span class="sd">    field of each Record gives the name of the sheet.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Path to the .xlsx file to be ingested</span>
 
@@ -444,7 +444,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span> <span class="ow">or</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Record</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Record</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of rows in all sheets in the XLSX file.</span>
 
 <span class="sd">        :return: A Record representing a row in a sheet. The sheetname is stored</span>

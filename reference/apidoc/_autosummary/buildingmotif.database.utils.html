@@ -500,12 +500,12 @@ statements using this type from being cached at all without a warning.
 When set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the object’s class and selected elements from its
 state will be used as part of the cache key.  For example, using a
 <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeDecorator</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyType</span><span class="p">(</span><span class="n">TypeDecorator</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyType</span><span class="p">(</span><span class="n">TypeDecorator</span><span class="p">):</span>
     <span class="n">impl</span> <span class="o">=</span> <span class="n">String</span>
 
     <span class="n">cache_ok</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">choices</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">choices</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">internal_only</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
@@ -528,7 +528,7 @@ by assigning hashable structures to the attributes whose names
 correspond with the names of the arguments.  For example, a datatype
 which accepts a dictionary of lookup values may publish this as a sorted
 series of tuples.   Given a previously un-cacheable type as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LookupType</span><span class="p">(</span><span class="n">UserDefinedType</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">LookupType</span><span class="p">(</span><span class="n">UserDefinedType</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;a custom type that accepts a dictionary as a parameter.</span>
 
 <span class="sd">    this is the non-cacheable version, as &quot;self.lookup&quot; is not</span>
@@ -536,13 +536,13 @@ series of tuples.   Given a previously un-cacheable type as:</p>
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lookup</span> <span class="o">=</span> <span class="n">lookup</span>
 
-    <span class="k">def</span> <span class="nf">get_col_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_col_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;VARCHAR(255)&quot;</span>
 
-    <span class="k">def</span> <span class="nf">bind_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bind_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
         <span class="c1"># ...  works with &quot;self.lookup&quot; ...</span>
 </pre></div>
 </div>
@@ -578,7 +578,7 @@ statement cache, since Python dictionaries aren’t hashable:</p>
 </div>
 <p>The type may be made cacheable by assigning a sorted tuple of tuples
 to the “.lookup” attribute:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LookupType</span><span class="p">(</span><span class="n">UserDefinedType</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">LookupType</span><span class="p">(</span><span class="n">UserDefinedType</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;a custom type that accepts a dictionary as a parameter.</span>
 
 <span class="sd">    The dictionary is stored both as itself in a private variable,</span>
@@ -591,7 +591,7 @@ to the “.lookup” attribute:</p>
 
     <span class="n">cache_ok</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span> <span class="o">=</span> <span class="n">lookup</span>
 
         <span class="c1"># assume keys/values of &quot;lookup&quot; are hashable; otherwise</span>
@@ -600,10 +600,10 @@ to the “.lookup” attribute:</p>
             <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">lookup</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">lookup</span><span class="p">)</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_col_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_col_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;VARCHAR(255)&quot;</span>
 
-    <span class="k">def</span> <span class="nf">bind_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bind_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
         <span class="c1"># ...  works with &quot;self._lookup&quot; ...</span>
 </pre></div>
 </div>

@@ -410,21 +410,21 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.database.table_connection</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy.engine</span> <span class="kn">import</span> <span class="n">Engine</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.exc</span> <span class="kn">import</span> <span class="n">NoResultFound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">Engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.exc</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoResultFound</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LibraryNotFound</span><span class="p">,</span>
     <span class="n">ModelNotFound</span><span class="p">,</span>
     <span class="n">ShapeCollectionNotFound</span><span class="p">,</span>
     <span class="n">TemplateNotFound</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.database.tables</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.tables</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DBLibrary</span><span class="p">,</span>
     <span class="n">DBModel</span><span class="p">,</span>
     <span class="n">DBShapeCollection</span><span class="p">,</span>
@@ -433,10 +433,10 @@ document.write(`
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="TableConnection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection">[docs]</a><span class="k">class</span> <span class="nc">TableConnection</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TableConnection</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Controls interaction with the database.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="n">Engine</span><span class="p">,</span> <span class="n">bm</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="n">Engine</span><span class="p">,</span> <span class="n">bm</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Class constructor.</span>
 
 <span class="sd">        :param engine: database engine</span>
@@ -449,7 +449,7 @@ document.write(`
 
     <span class="c1"># model functions</span>
 
-<div class="viewcode-block" id="TableConnection.create_db_model"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.create_db_model">[docs]</a>    <span class="k">def</span> <span class="nf">create_db_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBModel</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.create_db_model"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.create_db_model">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">create_db_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBModel</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a database model.</span>
 
 <span class="sd">        :param name: name of DBModel</span>
@@ -478,7 +478,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">db_model</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_all_db_models"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_all_db_models">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_db_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DBModel</span><span class="p">]:</span>
+<div class="viewcode-block" id="TableConnection.get_all_db_models"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_all_db_models">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_db_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DBModel</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all database models.</span>
 
 <span class="sd">        :return: all DBModels</span>
@@ -486,7 +486,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBModel</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_db_model"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBModel</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.get_db_model"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_model">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBModel</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get database model by id.</span>
 
 <span class="sd">        :param id: id of DBModel</span>
@@ -500,7 +500,7 @@ document.write(`
             <span class="k">raise</span> <span class="n">ModelNotFound</span><span class="p">(</span><span class="n">idnum</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">db_model</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_db_model_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_model_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_model_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBModel</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.get_db_model_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_model_by_name">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_model_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBModel</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get database model by name.</span>
 
 <span class="sd">        :param name: name of DBModel</span>
@@ -511,7 +511,7 @@ document.write(`
         <span class="n">db_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBModel</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBModel</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">db_model</span></div>
 
-<div class="viewcode-block" id="TableConnection.update_db_model_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_model_name">[docs]</a>    <span class="k">def</span> <span class="nf">update_db_model_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.update_db_model_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_model_name">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_db_model_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update database model name.</span>
 
 <span class="sd">        :param id: id of DBModel</span>
@@ -523,7 +523,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating model name from: &#39;</span><span class="si">{</span><span class="n">db_model</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; to: &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="n">db_model</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
 
-<div class="viewcode-block" id="TableConnection.update_db_model_description"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_model_description">[docs]</a>    <span class="k">def</span> <span class="nf">update_db_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.update_db_model_description"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_model_description">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_db_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update database model description.</span>
 
 <span class="sd">        :param id: id of DBModel</span>
@@ -537,7 +537,7 @@ document.write(`
         <span class="p">)</span>
         <span class="n">db_model</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span></div>
 
-<div class="viewcode-block" id="TableConnection.delete_db_model"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_db_model">[docs]</a>    <span class="k">def</span> <span class="nf">delete_db_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.delete_db_model"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_db_model">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_db_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete database model.</span>
 
 <span class="sd">        :param id: id of deleted DBModel</span>
@@ -549,7 +549,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db_model</span><span class="p">)</span></div>
 
     <span class="c1"># shape collection functions</span>
-<div class="viewcode-block" id="TableConnection.create_db_shape_collection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.create_db_shape_collection">[docs]</a>    <span class="k">def</span> <span class="nf">create_db_shape_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBShapeCollection</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.create_db_shape_collection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.create_db_shape_collection">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">create_db_shape_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBShapeCollection</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a database shape collection.</span>
 
 <span class="sd">        :return: DBShapeCollection</span>
@@ -562,7 +562,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">db_shape_collection</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_all_db_shape_collections"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_all_db_shape_collections">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_db_shape_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DBShapeCollection</span><span class="p">]:</span>
+<div class="viewcode-block" id="TableConnection.get_all_db_shape_collections"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_all_db_shape_collections">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_db_shape_collections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DBShapeCollection</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all database shape collections.</span>
 
 <span class="sd">        :return: all DBShapeCollections</span>
@@ -570,7 +570,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBShapeCollection</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_db_shape_collection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_shape_collection">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_shape_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBShapeCollection</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.get_db_shape_collection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_shape_collection">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_shape_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBShapeCollection</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get database shape collection by id.</span>
 
 <span class="sd">        :param id: id of DBShapeCollection</span>
@@ -587,7 +587,7 @@ document.write(`
         <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ShapeCollectionNotFound</span><span class="p">(</span><span class="n">idnum</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TableConnection.delete_db_shape_collection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_db_shape_collection">[docs]</a>    <span class="k">def</span> <span class="nf">delete_db_shape_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.delete_db_shape_collection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_db_shape_collection">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_db_shape_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete database shape collection.</span>
 
 <span class="sd">        :param id: id of deleted DBShapeCollection</span>
@@ -598,7 +598,7 @@ document.write(`
 
     <span class="c1"># library functions</span>
 
-<div class="viewcode-block" id="TableConnection.create_db_library"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.create_db_library">[docs]</a>    <span class="k">def</span> <span class="nf">create_db_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.create_db_library"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.create_db_library">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">create_db_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create database library.</span>
 
 <span class="sd">        :param name: name of DBLibrary</span>
@@ -618,7 +618,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">library</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_all_db_libraries"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_all_db_libraries">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_db_libraries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DBLibrary</span><span class="p">]:</span>
+<div class="viewcode-block" id="TableConnection.get_all_db_libraries"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_all_db_libraries">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_db_libraries</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DBLibrary</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all database libraries.</span>
 
 <span class="sd">        :return: all DBLibrary</span>
@@ -627,7 +627,7 @@ document.write(`
         <span class="n">db_libraries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">db_libraries</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_db_library"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_library">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.get_db_library"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_library">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get database library by id.</span>
 
 <span class="sd">        :param id: id of DBLibrary</span>
@@ -643,7 +643,7 @@ document.write(`
             <span class="k">raise</span> <span class="n">LibraryNotFound</span><span class="p">(</span><span class="n">idnum</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">db_library</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_db_library_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_library_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_library_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.get_db_library_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_library_by_name">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_library_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get database library by name.</span>
 
 <span class="sd">        :param name: name of DBLibrary</span>
@@ -656,7 +656,7 @@ document.write(`
         <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">LibraryNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TableConnection.update_db_library_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_library_name">[docs]</a>    <span class="k">def</span> <span class="nf">update_db_library_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.update_db_library_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_library_name">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_db_library_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update database library name.</span>
 
 <span class="sd">        :param id: id of DBLibrary</span>
@@ -670,7 +670,7 @@ document.write(`
         <span class="p">)</span>
         <span class="n">db_library</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
 
-<div class="viewcode-block" id="TableConnection.delete_db_library"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_db_library">[docs]</a>    <span class="k">def</span> <span class="nf">delete_db_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.delete_db_library"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_db_library">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_db_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete database library.</span>
 
 <span class="sd">        :param id: id of deleted DBLibrary</span>
@@ -684,7 +684,7 @@ document.write(`
 
     <span class="c1"># template functions</span>
 
-<div class="viewcode-block" id="TableConnection.create_db_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.create_db_template">[docs]</a>    <span class="k">def</span> <span class="nf">create_db_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">library_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBTemplate</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.create_db_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.create_db_template">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">create_db_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">library_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBTemplate</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create database template.</span>
 
 <span class="sd">        :param name: name of DBTemplate</span>
@@ -708,7 +708,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">template</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_all_db_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_all_db_templates">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_db_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DBTemplate</span><span class="p">]:</span>
+<div class="viewcode-block" id="TableConnection.get_all_db_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_all_db_templates">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_db_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DBTemplate</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all database templates.</span>
 
 <span class="sd">        :return: all DBTemplate</span>
@@ -717,7 +717,7 @@ document.write(`
         <span class="n">db_templates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBTemplate</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">db_templates</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_db_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBTemplate</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.get_db_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBTemplate</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get database template by id.</span>
 
 <span class="sd">        :param id: id of DBTemplate</span>
@@ -733,7 +733,7 @@ document.write(`
             <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">idnum</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">db_template</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_db_template_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBTemplate</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.get_db_template_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template_by_name">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBTemplate</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get database template by name.</span>
 
 <span class="sd">        :param name: name of DBTemplate</span>
@@ -749,7 +749,7 @@ document.write(`
             <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">db_template</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_library_defining_db_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_library_defining_db_template">[docs]</a>    <span class="k">def</span> <span class="nf">get_library_defining_db_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.get_library_defining_db_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_library_defining_db_template">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_library_defining_db_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBLibrary</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the library defining the given template.</span>
 
 <span class="sd">        :param id: id of template</span>
@@ -759,7 +759,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_db_template</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">library</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_db_template_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template_dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">get_db_template_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DepsAssociation</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<div class="viewcode-block" id="TableConnection.get_db_template_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_template_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DepsAssociation</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a template&#39;s dependencies and its arguments.</span>
 
 <span class="sd">        If you don&#39;t need the arguments, consider using</span>
@@ -778,7 +778,7 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">db_template_dependencies</span></div>
 
-<div class="viewcode-block" id="TableConnection.update_db_template_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_name">[docs]</a>    <span class="k">def</span> <span class="nf">update_db_template_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.update_db_template_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_name">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_db_template_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update database template name.</span>
 
 <span class="sd">        :param id: id of DBTemplate</span>
@@ -792,7 +792,7 @@ document.write(`
         <span class="p">)</span>
         <span class="n">db_template</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
 
-<div class="viewcode-block" id="TableConnection.update_db_template_optional_args"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_optional_args">[docs]</a>    <span class="k">def</span> <span class="nf">update_db_template_optional_args</span><span class="p">(</span>
+<div class="viewcode-block" id="TableConnection.update_db_template_optional_args"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_optional_args">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_db_template_optional_args</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">optional_args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update database template optional arguments.</span>
@@ -807,7 +807,7 @@ document.write(`
         <span class="p">)</span>
         <span class="n">db_template</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">=</span> <span class="n">optional_args</span></div>
 
-<div class="viewcode-block" id="TableConnection.add_template_dependency_preliminary"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.add_template_dependency_preliminary">[docs]</a>    <span class="k">def</span> <span class="nf">add_template_dependency_preliminary</span><span class="p">(</span>
+<div class="viewcode-block" id="TableConnection.add_template_dependency_preliminary"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.add_template_dependency_preliminary">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_template_dependency_preliminary</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dependency_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a *preliminary* dependency between two templates. This dependency</span>
@@ -852,7 +852,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">relationship</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="TableConnection.check_all_template_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.check_all_template_dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">check_all_template_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TableConnection.check_all_template_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.check_all_template_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_all_template_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Verifies that all template dependencies have valid references to the parameters</span>
 <span class="sd">        in the dependency or (recursively) its dependencies. Raises an exception if any</span>
@@ -865,7 +865,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">check_template_dependency_relationship</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TableConnection.check_template_dependency_relationship"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.check_template_dependency_relationship">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">check_template_dependency_relationship</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">:</span> <span class="n">DepsAssociation</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_template_dependency_relationship</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">:</span> <span class="n">DepsAssociation</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Verify that the dependency between two templates is well-formed. This involves</span>
 <span class="sd">        a series of checks:</span>
 <span class="sd">        - existence of the dependent and dependency templates is performed during the</span>
@@ -887,7 +887,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Creating depencency from templates with ids: &#39;</span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&#39; and: &#39;</span><span class="si">{</span><span class="n">dependency_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
         <span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Template</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Template</span>
 
         <span class="n">templ</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">template_id</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">transitive_parameters</span>
@@ -920,7 +920,7 @@ document.write(`
                 <span class="sa">f</span><span class="s2">&quot;&#39;name&#39; was bound to </span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> but available params are </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="TableConnection.delete_template_dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_template_dependency">[docs]</a>    <span class="k">def</span> <span class="nf">delete_template_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dependency_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="TableConnection.delete_template_dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_template_dependency">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_template_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dependency_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete dependency between two templates.</span>
 
 <span class="sd">        :param template_id: dependant template id</span>
@@ -942,7 +942,7 @@ document.write(`
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">relationship</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TableConnection.update_db_template_library"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_library">[docs]</a>    <span class="k">def</span> <span class="nf">update_db_template_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">library_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.update_db_template_library"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_library">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_db_template_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">library_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update database template library.</span>
 
 <span class="sd">        :param id: id of DBTemplate</span>
@@ -956,7 +956,7 @@ document.write(`
         <span class="p">)</span>
         <span class="n">db_template</span><span class="o">.</span><span class="n">library_id</span> <span class="o">=</span> <span class="n">library_id</span></div>
 
-<div class="viewcode-block" id="TableConnection.delete_db_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_db_template">[docs]</a>    <span class="k">def</span> <span class="nf">delete_db_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="TableConnection.delete_db_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.delete_db_template">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">delete_db_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete database template.</span>
 
 <span class="sd">        :param id: id of deleted DBTemplate</span>

@@ -527,10 +527,10 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
 </aside>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Library</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span> <span class="c1"># import this to make writing URIs easier</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Library</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">BRICK</span> <span class="c1"># import this to make writing URIs easier</span>
 
 <span class="c1"># in-memory instance</span>
 <span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span>
@@ -919,7 +919,7 @@ will use these shape collections to validate the model <em>instead of</em> the m
 <p>We can use a couple methods to search the libraries for shapes we might want to use. Let’s start by asking the <code class="docutils literal notranslate"><span class="pre">g36</span></code> library for any system specifications it knows about. This library represents <em>ASHRAE Guideline 36 High-Performance Sequences of Operation for HVAC Systems</em><a class="footnote-reference brackets" href="#id5" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. A system specification will specify all of the metadata required for an entity to run control sequences associated with that system type.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BMOTIF</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">BMOTIF</span>
 <span class="n">shapes</span> <span class="o">=</span> <span class="n">g36</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">shapes</span><span class="o">.</span><span class="n">get_shapes_of_definition_type</span><span class="p">(</span><span class="n">BMOTIF</span><span class="p">[</span><span class="s2">&quot;System_Specification&quot;</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>

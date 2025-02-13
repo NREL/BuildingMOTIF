@@ -495,7 +495,7 @@ Parser combinators are a way of defining parsers by combining smaller parsers to
 In BuildingMOTIF, the “combinators” are defined as Python functions that take a string as input and return a list of <a href="../reference/apidoc/_autosummary/buildingmotif.label_parsing.html#buildingmotif.label_parsing.TokenResult">TokenResult</a>s.
 These combinators can be combined together to create more complex parsers.</p>
 <p>Here is a short example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_ahu_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">parse_ahu_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">sequence</span><span class="p">(</span>
         <span class="n">string</span><span class="p">(</span><span class="s2">&quot;AHU&quot;</span><span class="p">,</span> <span class="n">Constant</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">Air_Handling_Unit</span><span class="p">)),</span>
         <span class="n">string</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">),</span>
@@ -576,7 +576,7 @@ You can use the <code class="docutils literal notranslate"><span class="pre">abb
 <p>Then we can use <code class="docutils literal notranslate"><span class="pre">my_abbreviations_parser</span></code> in our label parsing rules to automatically expand abbreviations.
 Note how the key of the <code class="docutils literal notranslate"><span class="pre">my_abbreviations</span></code> dictionary is the abbreviation and the value is the RDF Brick class that the abbreviation expands to.</p>
 <p>To expand our earlier example to work for other abbreviations, we can rewrite the parser like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">parse_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">parse_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TokenResult</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">sequence</span><span class="p">(</span>
         <span class="n">my_abbreviations_parser</span><span class="p">,</span>
         <span class="n">string</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">),</span>
@@ -643,7 +643,7 @@ This is essentially just an expression of the building point naming convention.<
     <span class="s2">&quot;EffOcc&quot;</span><span class="p">:</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Occupancy_Status</span><span class="p">,</span>
 <span class="p">})</span>
 
-<span class="k">def</span> <span class="nf">custom_parser</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_parser</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">sequence</span><span class="p">(</span>
         <span class="n">string</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">Delimiter</span><span class="p">),</span>
         <span class="c1"># regex until the underscore</span>

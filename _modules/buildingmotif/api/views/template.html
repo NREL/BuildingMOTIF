@@ -410,25 +410,25 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.api.views.template</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">import</span> <span class="nn">flask</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
-<span class="kn">from</span> <span class="nn">flask_api</span> <span class="kn">import</span> <span class="n">status</span>
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">flask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.term</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.template</span> <span class="kn">import</span> <span class="n">serialize</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="n">ModelNotFound</span><span class="p">,</span> <span class="n">TemplateNotFound</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Template</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.ingresses</span> <span class="kn">import</span> <span class="n">CSVIngress</span><span class="p">,</span> <span class="n">TemplateIngress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.api.serializers.template</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelNotFound</span><span class="p">,</span> <span class="n">TemplateNotFound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.ingresses</span><span class="w"> </span><span class="kn">import</span> <span class="n">CSVIngress</span><span class="p">,</span> <span class="n">TemplateIngress</span>
 
 <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_all_templates"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.template.html#buildingmotif.api.views.template.get_all_templates">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_all_templates</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_templates</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all templates.</span>
 
 <span class="sd">    :return: all templates</span>
@@ -440,7 +440,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="get_template"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.template.html#buildingmotif.api.views.template.get_template">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;templates_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_template</span><span class="p">(</span><span class="n">templates_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_template</span><span class="p">(</span><span class="n">templates_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get template by id.</span>
 
 <span class="sd">    :param templates_id: template id</span>
@@ -461,7 +461,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="evaluate_ingress"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.template.html#buildingmotif.api.views.template.evaluate_ingress">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;template_id&gt;/evaluate/ingress&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">evaluate_ingress</span><span class="p">(</span><span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_ingress</span><span class="p">(</span><span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
     <span class="c1"># get template</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">template_id</span><span class="p">)</span>
@@ -505,7 +505,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="evaluate_bindings"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.template.html#buildingmotif.api.views.template.evaluate_bindings">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;template_id&gt;/evaluate/bindings&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">evaluate_bindings</span><span class="p">(</span><span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_bindings</span><span class="p">(</span><span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;evaluate template with giving binding</span>
 
 <span class="sd">    :param template_id: id of template</span>
@@ -548,7 +548,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="get_template_body"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.template.html#buildingmotif.api.views.template.get_template_body">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;template_id&gt;/body&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_template_body</span><span class="p">(</span><span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_template_body</span><span class="p">(</span><span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get template body.</span>
 
 <span class="sd">    :param template_id: template id</span>
@@ -566,7 +566,7 @@ document.write(`
     <span class="k">return</span> <span class="n">template</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">),</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span></div>
 
 
-<div class="viewcode-block" id="get_bindings"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.template.html#buildingmotif.api.views.template.get_bindings">[docs]</a><span class="k">def</span> <span class="nf">get_bindings</span><span class="p">(</span><span class="n">binding_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]:</span>
+<div class="viewcode-block" id="get_bindings"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.template.html#buildingmotif.api.views.template.get_bindings">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_bindings</span><span class="p">(</span><span class="n">binding_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;type binding_dict values to nodes</span>
 
 <span class="sd">    given:</span>

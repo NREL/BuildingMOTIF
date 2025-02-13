@@ -410,32 +410,32 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">secrets</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">pyshacl</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">rdflib.compare</span> <span class="kn">import</span> <span class="n">_TripleCanonicalizer</span>
-<span class="kn">from</span> <span class="nn">rdflib.paths</span> <span class="kn">import</span> <span class="n">ZeroOrOne</span>
-<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyshacl</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.compare</span><span class="w"> </span><span class="kn">import</span> <span class="n">_TripleCanonicalizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZeroOrOne</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.term</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="n">TemplateNotFound</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">SH</span><span class="p">,</span> <span class="n">XSD</span><span class="p">,</span> <span class="n">bind_prefixes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateNotFound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">SH</span><span class="p">,</span> <span class="n">XSD</span><span class="p">,</span> <span class="n">bind_prefixes</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Template</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Template</span>
 
 <span class="n">Triple</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span>
 <span class="n">_gensym_counter</span> <span class="o">=</span> <span class="mi">0</span>
 
 
-<span class="k">def</span> <span class="nf">_strip_param</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_strip_param</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Strips all PARAM namespaces from the input parameter</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -445,7 +445,7 @@ document.write(`
     <span class="k">return</span> <span class="n">param</span>
 
 
-<span class="k">def</span> <span class="nf">_gensym</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">URIRef</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_gensym</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">URIRef</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate a unique identifier.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -454,7 +454,7 @@ document.write(`
     <span class="k">return</span> <span class="n">PARAM</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">_gensym_counter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_param_name</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_param_name</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the name of the param without the prefix.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -462,7 +462,7 @@ document.write(`
     <span class="k">return</span> <span class="n">param</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="p">:]</span>
 
 
-<span class="k">def</span> <span class="nf">_guarantee_unique_template_name</span><span class="p">(</span><span class="n">library</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_guarantee_unique_template_name</span><span class="p">(</span><span class="n">library</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Ensure that the template name is unique in the library by appending an increasing</span>
 <span class="sd">    number. This is only called when we are generating templates from GraphDiffs and</span>
@@ -481,7 +481,7 @@ document.write(`
     <span class="k">return</span> <span class="n">name</span>
 
 
-<div class="viewcode-block" id="copy_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.copy_graph">[docs]</a><span class="k">def</span> <span class="nf">copy_graph</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">preserve_blank_nodes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="copy_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.copy_graph">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">copy_graph</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">preserve_blank_nodes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Copy a graph. Creates new blank nodes so that these remain unique to each Graph</span>
 
@@ -508,7 +508,7 @@ document.write(`
     <span class="k">return</span> <span class="n">c</span></div>
 
 
-<div class="viewcode-block" id="inline_sh_nodes"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.inline_sh_nodes">[docs]</a><span class="k">def</span> <span class="nf">inline_sh_nodes</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+<div class="viewcode-block" id="inline_sh_nodes"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.inline_sh_nodes">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">inline_sh_nodes</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recursively inlines all sh:node properties and objects on the graph.</span>
 
@@ -534,7 +534,7 @@ document.write(`
         <span class="k">break</span></div>
 
 
-<div class="viewcode-block" id="combine_graphs"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.combine_graphs">[docs]</a><span class="k">def</span> <span class="nf">combine_graphs</span><span class="p">(</span><span class="o">*</span><span class="n">graphs</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="combine_graphs"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.combine_graphs">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">combine_graphs</span><span class="p">(</span><span class="o">*</span><span class="n">graphs</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine all of the graphs into a new graph.</span>
 
 <span class="sd">    :return: combined graph</span>
@@ -546,7 +546,7 @@ document.write(`
     <span class="k">return</span> <span class="n">newg</span></div>
 
 
-<div class="viewcode-block" id="graph_size"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.graph_size">[docs]</a><span class="k">def</span> <span class="nf">graph_size</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="graph_size"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.graph_size">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">graph_size</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the number of triples in a graph.</span>
 
 <span class="sd">    :param g: graph to be measured</span>
@@ -557,7 +557,7 @@ document.write(`
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">triples</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))))</span></div>
 
 
-<div class="viewcode-block" id="remove_triples_with_node"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.remove_triples_with_node">[docs]</a><span class="k">def</span> <span class="nf">remove_triples_with_node</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="remove_triples_with_node"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.remove_triples_with_node">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">remove_triples_with_node</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove all triples that include the given node. Edits the graph</span>
 <span class="sd">    in-place.</span>
 
@@ -574,7 +574,7 @@ document.write(`
         <span class="n">g</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="replace_nodes"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.replace_nodes">[docs]</a><span class="k">def</span> <span class="nf">replace_nodes</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">replace</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="replace_nodes"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.replace_nodes">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">replace_nodes</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">replace</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Replace nodes in a graph.</span>
 
 <span class="sd">    :param g: graph to replace nodes in</span>
@@ -593,7 +593,7 @@ document.write(`
         <span class="n">g</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="get_ontology_files"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.get_ontology_files">[docs]</a><span class="k">def</span> <span class="nf">get_ontology_files</span><span class="p">(</span><span class="n">directory</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+<div class="viewcode-block" id="get_ontology_files"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.get_ontology_files">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_ontology_files</span><span class="p">(</span><span class="n">directory</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a list of all ontology files in the given directory.</span>
 
 <span class="sd">    If recursive is true, traverses the directory structure to find ontology</span>
@@ -625,7 +625,7 @@ document.write(`
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">filtered_searches</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="get_template_parts_from_shape"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.get_template_parts_from_shape">[docs]</a><span class="k">def</span> <span class="nf">get_template_parts_from_shape</span><span class="p">(</span>
+<div class="viewcode-block" id="get_template_parts_from_shape"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.get_template_parts_from_shape">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_template_parts_from_shape</span><span class="p">(</span>
     <span class="n">shape_name</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">shape_graph</span><span class="p">:</span> <span class="n">Graph</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Graph</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn a SHACL shape into a template. The following attributes of</span>
@@ -730,7 +730,7 @@ document.write(`
 
 
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_TemplateIndex</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_TemplateIndex</span><span class="p">:</span>
     <span class="n">template</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span>
     <span class="n">param_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span>
     <span class="n">prop_types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">]]</span>
@@ -739,18 +739,18 @@ document.write(`
     <span class="n">target</span><span class="p">:</span> <span class="n">URIRef</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">target_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_types</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_prep_shape_graph</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_prep_shape_graph</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
     <span class="n">shape</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
     <span class="n">bind_prefixes</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
     <span class="n">shape</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;mark&quot;</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">shape</span>
 
 
-<span class="k">def</span> <span class="nf">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TemplateIndex</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TemplateIndex</span><span class="p">:</span>
     <span class="n">templ_graph</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
         <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;mark&quot;</span><span class="p">:</span> <span class="n">PARAM</span><span class="p">}</span>
     <span class="p">)</span>
@@ -798,7 +798,7 @@ document.write(`
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_add_property_shape</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_property_shape</span><span class="p">(</span>
     <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">constraint</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Node</span>
 <span class="p">):</span>
     <span class="n">pshape</span> <span class="o">=</span> <span class="n">BNode</span><span class="p">()</span>
@@ -809,7 +809,7 @@ document.write(`
     <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;maxCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
 
 
-<span class="k">def</span> <span class="nf">_add_qualified_property_shape</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_qualified_property_shape</span><span class="p">(</span>
     <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">constraint</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Node</span>
 <span class="p">):</span>
     <span class="n">pshape</span> <span class="o">=</span> <span class="n">BNode</span><span class="p">()</span>
@@ -822,7 +822,7 @@ document.write(`
     <span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;qualifiedMaxCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
 
 
-<div class="viewcode-block" id="template_to_shape"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.template_to_shape">[docs]</a><span class="k">def</span> <span class="nf">template_to_shape</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="template_to_shape"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.template_to_shape">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">template_to_shape</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn this template into a SHACL shape.</span>
 
 <span class="sd">    :param template: template to convert</span>
@@ -874,7 +874,7 @@ document.write(`
     <span class="k">return</span> <span class="n">shape</span></div>
 
 
-<div class="viewcode-block" id="new_temporary_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.new_temporary_graph">[docs]</a><span class="k">def</span> <span class="nf">new_temporary_graph</span><span class="p">(</span><span class="n">more_namespaces</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="new_temporary_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.new_temporary_graph">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">new_temporary_graph</span><span class="p">(</span><span class="n">more_namespaces</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a new in-memory RDF graph with common and additional namespace</span>
 <span class="sd">    bindings.</span>
 
@@ -891,7 +891,7 @@ document.write(`
     <span class="k">return</span> <span class="n">g</span></div>
 
 
-<div class="viewcode-block" id="get_parameters"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.get_parameters">[docs]</a><span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="get_parameters"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.get_parameters">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_parameters</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the set of parameter names in the given graph.</span>
 
 <span class="sd">    Parameters are identified by the PARAM namespace, `urn:___param___#`. This</span>
@@ -911,7 +911,7 @@ document.write(`
     <span class="k">return</span> <span class="p">{</span><span class="n">node</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="p">:]</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">params</span><span class="p">}</span></div>
 
 
-<span class="k">def</span> <span class="nf">_inline_sh_node</span><span class="p">(</span><span class="n">sg</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_inline_sh_node</span><span class="p">(</span><span class="n">sg</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This detects the use of &#39;sh:node&#39; on SHACL NodeShapes and inlines</span>
 <span class="sd">    the shape they point to.</span>
@@ -930,7 +930,7 @@ document.write(`
             <span class="n">sg</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_inline_sh_and</span><span class="p">(</span><span class="n">sg</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_inline_sh_and</span><span class="p">(</span><span class="n">sg</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This detects the use of &#39;sh:and&#39; on SHACL NodeShapes and inlines</span>
 <span class="sd">    all of the included shapes</span>
@@ -950,7 +950,7 @@ document.write(`
             <span class="n">sg</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_inline_sh_qualified_value_shape</span><span class="p">(</span><span class="n">sg</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_inline_sh_qualified_value_shape</span><span class="p">(</span><span class="n">sg</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This detects the use of &#39;sh:qualifiedValueShape&#39; on SHACL PropertyShapes and inlines</span>
 <span class="sd">    all of the included shapes</span>
@@ -969,7 +969,7 @@ document.write(`
             <span class="n">sg</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">parent</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="rewrite_shape_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.rewrite_shape_graph">[docs]</a><span class="k">def</span> <span class="nf">rewrite_shape_graph</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="rewrite_shape_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.rewrite_shape_graph">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">rewrite_shape_graph</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Rewrites the input graph to make the resulting validation report more useful.</span>
 
@@ -990,7 +990,7 @@ document.write(`
     <span class="k">return</span> <span class="n">sg</span></div>
 
 
-<div class="viewcode-block" id="skip_uri"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.skip_uri">[docs]</a><span class="k">def</span> <span class="nf">skip_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="skip_uri"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.skip_uri">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">skip_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns True if the URI should be skipped during processing</span>
 <span class="sd">    because it is axiomatic or not expected to be imported.</span>
@@ -1012,7 +1012,7 @@ document.write(`
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="shacl_validate"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.shacl_validate">[docs]</a><span class="k">def</span> <span class="nf">shacl_validate</span><span class="p">(</span>
+<div class="viewcode-block" id="shacl_validate"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.shacl_validate">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">shacl_validate</span><span class="p">(</span>
     <span class="n">data_graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
     <span class="n">shape_graph</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Graph</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">engine</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;topquadrant&quot;</span><span class="p">,</span>
@@ -1034,7 +1034,7 @@ document.write(`
 
     <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;topquadrant&quot;</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">brick_tq_shacl.topquadrant_shacl</span> <span class="kn">import</span> <span class="p">(</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">brick_tq_shacl.topquadrant_shacl</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
                 <span class="n">validate</span> <span class="k">as</span> <span class="n">tq_validate</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
 
@@ -1056,7 +1056,7 @@ document.write(`
     <span class="p">)</span>  <span class="c1"># type: ignore</span></div>
 
 
-<div class="viewcode-block" id="shacl_inference"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.shacl_inference">[docs]</a><span class="k">def</span> <span class="nf">shacl_inference</span><span class="p">(</span>
+<div class="viewcode-block" id="shacl_inference"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.shacl_inference">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">shacl_inference</span><span class="p">(</span>
     <span class="n">data_graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
     <span class="n">shape_graph</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Graph</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">engine</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;topquadrant&quot;</span><span class="p">,</span>
@@ -1078,7 +1078,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">engine</span> <span class="o">==</span> <span class="s2">&quot;topquadrant&quot;</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">brick_tq_shacl.topquadrant_shacl</span> <span class="kn">import</span> <span class="n">infer</span> <span class="k">as</span> <span class="n">tq_infer</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">brick_tq_shacl.topquadrant_shacl</span><span class="w"> </span><span class="kn">import</span> <span class="n">infer</span> <span class="k">as</span> <span class="n">tq_infer</span>
 
             <span class="k">return</span> <span class="n">tq_infer</span><span class="p">(</span><span class="n">data_graph</span><span class="p">,</span> <span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span>  <span class="c1"># type: ignore</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -1121,7 +1121,7 @@ document.write(`
     <span class="k">return</span> <span class="n">data_graph</span> <span class="o">-</span> <span class="p">(</span><span class="n">shape_graph</span> <span class="ow">or</span> <span class="n">Graph</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="skolemize_shapes"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.skolemize_shapes">[docs]</a><span class="k">def</span> <span class="nf">skolemize_shapes</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="skolemize_shapes"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.skolemize_shapes">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">skolemize_shapes</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Skolemize the shapes in the graph.</span>
 
@@ -1163,7 +1163,7 @@ document.write(`
     <span class="k">return</span> <span class="n">g</span></div>
 
 
-<div class="viewcode-block" id="graph_hash"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.graph_hash">[docs]</a><span class="k">def</span> <span class="nf">graph_hash</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="graph_hash"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.graph_hash">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">graph_hash</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns a cryptographic hash of the graph contents.</span>
 <span class="sd">    This uses the same method as rdflib&#39;s isomorphic function to generate a cryptographic hash of a given graph.</span>

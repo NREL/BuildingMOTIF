@@ -410,26 +410,26 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.building_motif.singleton</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="Singleton"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html#buildingmotif.building_motif.singleton.Singleton">[docs]</a><span></span><span class="k">class</span> <span class="nc">Singleton</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<div class="viewcode-block" id="Singleton"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html#buildingmotif.building_motif.singleton.Singleton">[docs]</a><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Singleton</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Metaclass that makes a class into a singleton.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">cls_dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">cls_dict</span><span class="p">):</span>
         <span class="n">singleton_cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">cls_dict</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">clean</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">clean</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">singleton_cls</span><span class="p">,</span> <span class="s2">&quot;instance&quot;</span><span class="p">):</span>
                 <span class="nb">delattr</span><span class="p">(</span><span class="n">singleton_cls</span><span class="p">,</span> <span class="s2">&quot;instance&quot;</span><span class="p">)</span>
 
         <span class="nb">setattr</span><span class="p">(</span><span class="n">singleton_cls</span><span class="p">,</span> <span class="s2">&quot;clean&quot;</span><span class="p">,</span> <span class="n">clean</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">singleton_cls</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;instance&quot;</span><span class="p">):</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Singleton</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">instance</span></div>
 
 
-<div class="viewcode-block" id="SingletonNotInstantiatedException"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html#buildingmotif.building_motif.singleton.SingletonNotInstantiatedException">[docs]</a><span class="k">class</span> <span class="nc">SingletonNotInstantiatedException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="SingletonNotInstantiatedException"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.building_motif.singleton.html#buildingmotif.building_motif.singleton.SingletonNotInstantiatedException">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">SingletonNotInstantiatedException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a singelton is accessed without being initialized.&quot;&quot;&quot;</span></div>
 </pre></div>
 

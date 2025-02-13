@@ -410,18 +410,18 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.dataclasses.model</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">rdflib</span>
-<span class="kn">import</span> <span class="nn">rfc3987</span>
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rdflib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rfc3987</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">URIRef</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.validation</span> <span class="kn">import</span> <span class="n">ValidationContext</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">A</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_building_motif</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.shape_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShapeCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">A</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Triple</span><span class="p">,</span>
     <span class="n">copy_graph</span><span class="p">,</span>
     <span class="n">rewrite_shape_graph</span><span class="p">,</span>
@@ -431,10 +431,10 @@ document.write(`
 <span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildingMOTIF</span>
 
 
-<span class="k">def</span> <span class="nf">_validate_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">parsed</span> <span class="o">=</span> <span class="n">rfc3987</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">parsed</span><span class="p">[</span><span class="s2">&quot;scheme&quot;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -443,7 +443,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Model</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Model</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class mirrors :py:class:`database.tables.DBModel`.&quot;&quot;&quot;</span>
 
     <span class="n">_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -454,7 +454,7 @@ document.write(`
     <span class="n">_manifest_id</span><span class="p">:</span> <span class="nb">int</span>
 
 <div class="viewcode-block" id="Model.create"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.create">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new model.</span>
 
 <span class="sd">        :param name: new model name</span>
@@ -474,7 +474,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_graph</span><span class="p">(</span><span class="n">g</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.from_graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.from_graph">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_graph</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_graph</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new model from a graph. The name of the model is taken from the</span>
 <span class="sd">        ontology declaration in the graph (subject of rdf:type owl:Ontology triple).</span>
 <span class="sd">        The description of the model can be set through an RDFS comment on the ontology</span>
@@ -510,7 +510,7 @@ document.write(`
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.from_file"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.from_file">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">url_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">url_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new model from a file.</span>
 
 <span class="sd">        :param url_or_path: url or path to file</span>
@@ -527,7 +527,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Model.load"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get model from database by id or name.</span>
 
 <span class="sd">        :param id: model id, defaults to None</span>
@@ -557,32 +557,32 @@ document.write(`
         <span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
 
     <span class="nd">@id</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Cannot modify db id&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">update_db_model_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">new_name</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
 
     <span class="nd">@description</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_description</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_description</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">update_db_model_description</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">,</span> <span class="n">new_description</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="n">new_description</span>
 
-<div class="viewcode-block" id="Model.add_triples"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.add_triples">[docs]</a>    <span class="k">def</span> <span class="nf">add_triples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">triples</span><span class="p">:</span> <span class="n">Triple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Model.add_triples"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.add_triples">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_triples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">triples</span><span class="p">:</span> <span class="n">Triple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the given triples to the model.</span>
 
 <span class="sd">        :param triples: a sequence of triples to add to the graph</span>
@@ -591,7 +591,7 @@ document.write(`
         <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="n">triples</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.add_graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.add_graph">[docs]</a>    <span class="k">def</span> <span class="nf">add_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Model.add_graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.add_graph">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the given graph to the model.</span>
 
 <span class="sd">        :param graph: the graph to add to the model</span>
@@ -599,7 +599,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">+=</span> <span class="n">graph</span></div>
 
-<div class="viewcode-block" id="Model.validate"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
+<div class="viewcode-block" id="Model.validate"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.validate">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">shape_collections</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ShapeCollection</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">error_on_missing_imports</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -663,7 +663,7 @@ document.write(`
             <span class="bp">self</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.compile"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;ShapeCollection&quot;</span><span class="p">]):</span>
+<div class="viewcode-block" id="Model.compile"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.compile">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;ShapeCollection&quot;</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compile the graph of a model against a set of ShapeCollections.</span>
 
 <span class="sd">        :param shape_collections: list of ShapeCollections to compile the model</span>
@@ -685,7 +685,7 @@ document.write(`
             <span class="n">model_graph</span><span class="p">,</span> <span class="n">ontology_graph</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">shacl_engine</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.test_model_against_shapes"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.test_model_against_shapes">[docs]</a>    <span class="k">def</span> <span class="nf">test_model_against_shapes</span><span class="p">(</span>
+<div class="viewcode-block" id="Model.test_model_against_shapes"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.test_model_against_shapes">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">test_model_against_shapes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">shape_collections</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;ShapeCollection&quot;</span><span class="p">],</span>
         <span class="n">shapes_to_test</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">],</span>
@@ -747,7 +747,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="Model.get_manifest"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.get_manifest">[docs]</a>    <span class="k">def</span> <span class="nf">get_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ShapeCollection</span><span class="p">:</span>
+<div class="viewcode-block" id="Model.get_manifest"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.get_manifest">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ShapeCollection</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get ShapeCollection from model.</span>
 
 <span class="sd">        :return: model&#39;s shape collection</span>
@@ -755,7 +755,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_manifest_id</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Model.update_manifest"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.update_manifest">[docs]</a>    <span class="k">def</span> <span class="nf">update_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">ShapeCollection</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.update_manifest"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.model.html#buildingmotif.dataclasses.model.Model.update_manifest">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">ShapeCollection</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the manifest for this model by adding in the contents</span>
 <span class="sd">        of the shape graph inside the provided SHapeCollection</span>
 

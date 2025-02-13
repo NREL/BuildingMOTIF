@@ -506,7 +506,7 @@ document.write(`
 <p>BuildingMOTIF needs a database to store models, libraries, templates, ontologies, and other data. This database can be <em>in-memory</em> (which will be deleted when the process ends) or <em>persistent</em>. For simplicity, we will start with an in-memory database where <code class="docutils literal notranslate"><span class="pre">bm</span></code> represents a BuildingMOTIF instance.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildingMOTIF</span>
 <span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span> <span class="c1"># in-memory instance</span>
 </pre></div>
 </div>
@@ -522,8 +522,8 @@ document.write(`
 <p>Now that we have a BuildingMOTIF instance, we can create a <code class="docutils literal notranslate"><span class="pre">Model</span></code>. Creating a model requires importing the <code class="docutils literal notranslate"><span class="pre">Model</span></code> class, creating an RDF namespace to hold all of the entities in the model, and telling BuildingMOTIF to create a new model with that namespace. The namespace is a URL used to uniquely identify the model.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">RDF</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">RDF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 
 <span class="c1"># create the namespace</span>
 <span class="n">BLDG</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s1">&#39;urn:bldg/&#39;</span><span class="p">)</span>
@@ -573,7 +573,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load a library</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
 <span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-full.ttl&quot;</span><span class="p">)</span>
 
 <span class="c1"># print the first 10 templates</span>
@@ -591,16 +591,16 @@ document.write(`
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Zone_Air_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#Solar_RadianceShape
-  - https://brickschema.org/schema/Brick#Min_Occupied_Heating_Discharge_Air_Flow_Setpoint_Limit
-  - https://brickschema.org/schema/Brick#On_Status
-  - https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Low_Reset_Setpoint
-  - https://brickschema.org/schema/Brick#Min_Load_Setpoint
-  - https://brickschema.org/schema/Brick#SpeedShape
-  - https://brickschema.org/schema/Brick#Fluid
-  - https://brickschema.org/schema/Brick#Power_Alarm
-  - https://brickschema.org/schema/Brick#Damper_Position_Sensor
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Power_Factor_Sensor
+  - https://brickschema.org/schema/Brick#Radiant_Panel_Temperature_Setpoint
+  - https://brickschema.org/schema/Brick#Temperature_Tolerance_Parameter
+  - https://brickschema.org/schema/Brick#Massage_Room
+  - https://brickschema.org/schema/Brick#Temperature_Low_Reset_Setpoint
+  - https://brickschema.org/schema/Brick#Switch_Status
+  - https://brickschema.org/schema/Brick#Zone_Air_Humidity_Setpoint
+  - https://brickschema.org/schema/Brick#Low_Air_Flow_Alarm
+  - https://brickschema.org/schema/Brick#Lighting_Equipment
+  - https://brickschema.org/schema/Brick#Delay_Parameter
 </pre></div>
 </div>
 </div>
@@ -617,14 +617,14 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import this to make writing URIs easier</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span><span class="p">,</span> <span class="n">RDF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">BRICK</span><span class="p">,</span> <span class="n">RDF</span>
 
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">BLDG</span><span class="p">[</span><span class="s2">&quot;zone-temp&quot;</span><span class="p">],</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">BRICK</span><span class="o">.</span><span class="n">Zone_Air_Temperature_Sensor</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=2b8c7afe-5340-4bc1-9507-42c84dc47e6e (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=74b5f209-07b4-4d15-9109-19542d8fb027 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -643,7 +643,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <p>If you already have an in-memory <code class="docutils literal notranslate"><span class="pre">RDFlib.Graph</span></code> object available (e.g. through an <span class="xref myst">Graph Ingress</span> or loading in a Turtle file), just use <code class="docutils literal notranslate"><span class="pre">Model.add_graph</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rdflib</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">rdflib</span>
 <span class="n">my_graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
 <span class="c1"># parse files:</span>
 <span class="c1"># my_graph.parse(&quot;my_external_file.ttl&quot;)</span>
@@ -670,7 +670,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=2b8c7afe-5340-4bc1-9507-42c84dc47e6e (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=74b5f209-07b4-4d15-9109-19542d8fb027 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -693,7 +693,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import this to make writing URIs easier</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">BRICK</span>
 
 <span class="c1"># get template</span>
 <span class="n">ahu_template</span> <span class="o">=</span> <span class="n">brick</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="n">BRICK</span><span class="o">.</span><span class="n">AHU</span><span class="p">)</span>
@@ -916,7 +916,7 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=2b8c7afe-5340-4bc1-9507-42c84dc47e6e (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=74b5f209-07b4-4d15-9109-19542d8fb027 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>

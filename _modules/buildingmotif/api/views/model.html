@@ -410,26 +410,26 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.api.views.model</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">flask</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
-<span class="kn">from</span> <span class="nn">flask_api</span> <span class="kn">import</span> <span class="n">status</span>
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">rdflib.plugins.parsers.notation3</span> <span class="kn">import</span> <span class="n">BadSyntax</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">flask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.plugins.parsers.notation3</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadSyntax</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.api.serializers.model</span> <span class="kn">import</span> <span class="n">serialize</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_building_motif</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.api.serializers.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LibraryNotFound</span><span class="p">,</span>
     <span class="n">ModelNotFound</span><span class="p">,</span>
     <span class="n">ShapeCollectionNotFound</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ShapeCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ShapeCollection</span>
 
 <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_all_models"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.get_all_models">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_all_models</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_models</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all models.</span>
 
 <span class="sd">    :return: all models</span>
@@ -441,7 +441,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="get_model"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.get_model">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;models_id&gt;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_model</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get Model by id.</span>
 
 <span class="sd">    :param models_id: model id</span>
@@ -458,7 +458,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="get_model_graph"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.get_model_graph">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;models_id&gt;/graph&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_model_graph</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_model_graph</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get model graph by id.</span>
 
 <span class="sd">    :param models_id: model id</span>
@@ -477,7 +477,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="get_target_nodes"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.get_target_nodes">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;models_id&gt;/target_nodes&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;GET&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">get_target_nodes</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_target_nodes</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get model graph by id.</span>
 
 <span class="sd">    :param models_id: model id</span>
@@ -504,7 +504,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="create_model"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.create_model">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">create_model</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_model</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create model</span>
 
 <span class="sd">    :return: new model</span>
@@ -537,7 +537,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="update_model_graph"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.update_model_graph">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;models_id&gt;/graph&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;PATCH&quot;</span><span class="p">,</span> <span class="s2">&quot;PUT&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">update_model_graph</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_model_graph</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Update model graph.</span>
 
 <span class="sd">    Takes xml body of ttl formated graph.</span>
@@ -573,7 +573,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="validate_model"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.validate_model">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;models_id&gt;/validate&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">validate_model</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_model</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
     <span class="c1"># get model</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">models_id</span><span class="p">)</span>
@@ -639,7 +639,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="validate_shape"><a class="viewcode-back" href="../../../../reference/apidoc/_autosummary/buildingmotif.api.views.model.html#buildingmotif.api.views.model.validate_shape">[docs]</a><span class="nd">@blueprint</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&lt;models_id&gt;/validate_shape&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">([</span><span class="s2">&quot;POST&quot;</span><span class="p">]))</span>
-<span class="k">def</span> <span class="nf">validate_shape</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_shape</span><span class="p">(</span><span class="n">models_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">flask</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
     <span class="c1"># get model</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">models_id</span><span class="p">)</span>

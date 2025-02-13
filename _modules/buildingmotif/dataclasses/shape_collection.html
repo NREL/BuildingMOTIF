@@ -410,27 +410,27 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.dataclasses.shape_collection</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">string</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">rdflib</span>
-<span class="kn">from</span> <span class="nn">pyshacl.helper.path_helper</span> <span class="kn">import</span> <span class="n">shacl_path_to_sparql_path</span>
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">RDFS</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">rdflib.paths</span> <span class="kn">import</span> <span class="n">ZeroOrMore</span><span class="p">,</span> <span class="n">ZeroOrOne</span>
-<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rdflib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyshacl.helper.path_helper</span><span class="w"> </span><span class="kn">import</span> <span class="n">shacl_path_to_sparql_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">RDFS</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZeroOrMore</span><span class="p">,</span> <span class="n">ZeroOrOne</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.term</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BMOTIF</span><span class="p">,</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">SH</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">Triple</span><span class="p">,</span> <span class="n">copy_graph</span><span class="p">,</span> <span class="n">get_template_parts_from_shape</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_building_motif</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">BMOTIF</span><span class="p">,</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">SH</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">Triple</span><span class="p">,</span> <span class="n">copy_graph</span><span class="p">,</span> <span class="n">get_template_parts_from_shape</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
 
 <span class="n">ONTOLOGY_FILE</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;resources&quot;</span> <span class="o">/</span> <span class="s2">&quot;building_motif_ontology.ttl&quot;</span>
@@ -439,7 +439,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="ShapeCollection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ShapeCollection</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeCollection</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class mirrors :py:class:`database.tables.DBShapeCollection`.&quot;&quot;&quot;</span>
 
     <span class="n">_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -447,7 +447,7 @@ document.write(`
     <span class="n">_bm</span><span class="p">:</span> <span class="s2">&quot;BuildingMOTIF&quot;</span>
 
 <div class="viewcode-block" id="ShapeCollection.create"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.create">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ShapeCollection&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ShapeCollection&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new ShapeCollection.</span>
 
 <span class="sd">        :return: new ShapeCollection</span>
@@ -462,7 +462,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="n">db_shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ShapeCollection.load"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ShapeCollection&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ShapeCollection&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get ShapeCollection from database by id.</span>
 
 <span class="sd">        :param id: ShapeCollection id</span>
@@ -477,15 +477,15 @@ document.write(`
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="n">db_shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
 
     <span class="nd">@id</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Cannot modify db id&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">graph_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">graph_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the name of the graph (subject of &quot;a owl:Ontology&quot;)</span>
 <span class="sd">        if one exists</span>
@@ -493,7 +493,7 @@ document.write(`
         <span class="c1"># will be None if this is not found</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="nb">object</span><span class="o">=</span><span class="n">OWL</span><span class="o">.</span><span class="n">Ontology</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
-<div class="viewcode-block" id="ShapeCollection.add_triples"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.add_triples">[docs]</a>    <span class="k">def</span> <span class="nf">add_triples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">triples</span><span class="p">:</span> <span class="n">Triple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ShapeCollection.add_triples"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.add_triples">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_triples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">triples</span><span class="p">:</span> <span class="n">Triple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the given triples to the graph.</span>
 
 <span class="sd">        :param triples: a sequence of triples to add to the graph</span>
@@ -502,7 +502,7 @@ document.write(`
         <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="n">triples</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ShapeCollection.add_graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.add_graph">[docs]</a>    <span class="k">def</span> <span class="nf">add_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ShapeCollection.add_graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.add_graph">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add the given graph to the ShapeCollection.</span>
 
 <span class="sd">        :param graph: the graph to add to the ShapeCollection</span>
@@ -510,7 +510,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">+=</span> <span class="n">graph</span></div>
 
-    <span class="k">def</span> <span class="nf">_cbd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_name</span><span class="p">,</span> <span class="n">self_contained</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cbd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_name</span><span class="p">,</span> <span class="n">self_contained</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the Concise Bounded Description (CBD) of the shape.&quot;&quot;&quot;</span>
         <span class="n">cbd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">cbd</span><span class="p">(</span><span class="n">shape_name</span><span class="p">)</span>
         <span class="c1"># if computing self-contained, do the fixed-point computation produced by unioning</span>
@@ -525,7 +525,7 @@ document.write(`
             <span class="n">cbd</span> <span class="o">=</span> <span class="n">new_cbd</span>
         <span class="k">return</span> <span class="n">cbd</span>
 
-<div class="viewcode-block" id="ShapeCollection.resolve_imports"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.resolve_imports">[docs]</a>    <span class="k">def</span> <span class="nf">resolve_imports</span><span class="p">(</span>
+<div class="viewcode-block" id="ShapeCollection.resolve_imports"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.resolve_imports">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_imports</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">recursive_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">error_on_missing_imports</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ShapeCollection&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolves `owl:imports` to as many levels as requested.</span>
@@ -556,7 +556,7 @@ document.write(`
         <span class="k">return</span> <span class="n">new_sc</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_get_subclasses_of_definition_type</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_subclasses_of_definition_type</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">definition_type</span><span class="p">:</span> <span class="n">URIRef</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all the definition types in the ontology that are subclasses in</span>
@@ -576,7 +576,7 @@ document.write(`
         <span class="k">return</span> <span class="n">results</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_get_included_domains</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_included_domains</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all the domains in the ontology that are included in the given</span>
 <span class="sd">        domains.</span>
 
@@ -593,14 +593,14 @@ document.write(`
 
         <span class="k">return</span> <span class="n">results</span>
 
-<div class="viewcode-block" id="ShapeCollection.infer_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.infer_templates">[docs]</a>    <span class="k">def</span> <span class="nf">infer_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ShapeCollection.infer_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.infer_templates">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">infer_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">:</span> <span class="s2">&quot;Library&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer templates from the graph in this ShapeCollection and add them to the given library.</span>
 
 <span class="sd">        :param library: The library to add inferred templates to</span>
 <span class="sd">        :type library: Library</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># we need to do the Library import here to avoid circular imports</span>
-        <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.library</span> <span class="kn">import</span> <span class="n">Library</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
 
         <span class="n">imports_closure</span> <span class="o">=</span> <span class="n">copy_graph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">dependency</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">predicate</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">OWL</span><span class="o">.</span><span class="n">imports</span><span class="p">):</span>
@@ -633,7 +633,7 @@ document.write(`
 
         <span class="n">library</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ShapeCollection.get_shapes_of_definition_type"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.get_shapes_of_definition_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_shapes_of_definition_type</span><span class="p">(</span>
+<div class="viewcode-block" id="ShapeCollection.get_shapes_of_definition_type"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.get_shapes_of_definition_type">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_shapes_of_definition_type</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">definition_type</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">include_labels</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">URIRef</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">URIRef</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get subjects present in shape of the definition type.</span>
@@ -657,7 +657,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="ShapeCollection.get_shapes_of_domain"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.get_shapes_of_domain">[docs]</a>    <span class="k">def</span> <span class="nf">get_shapes_of_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
+<div class="viewcode-block" id="ShapeCollection.get_shapes_of_domain"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.get_shapes_of_domain">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_shapes_of_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get subjects present in shape of domain type.</span>
 
 <span class="sd">        :param domain: desired domain</span>
@@ -673,7 +673,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="ShapeCollection.get_shapes_about_class"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.get_shapes_about_class">[docs]</a>    <span class="k">def</span> <span class="nf">get_shapes_about_class</span><span class="p">(</span>
+<div class="viewcode-block" id="ShapeCollection.get_shapes_about_class"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.get_shapes_about_class">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_shapes_about_class</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">rdf_type</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;ShapeCollection&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of shapes that either target the given class (or</span>
@@ -710,7 +710,7 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>  <span class="c1"># type: ignore</span></div>
 
-<div class="viewcode-block" id="ShapeCollection.shape_to_query"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.shape_to_query">[docs]</a>    <span class="k">def</span> <span class="nf">shape_to_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="ShapeCollection.shape_to_query"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.shape_collection.html#buildingmotif.dataclasses.shape_collection.ShapeCollection.shape_to_query">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">shape_to_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method takes a URI representing a SHACL shape as an argument and returns</span>
 <span class="sd">        a SPARQL query selecting the information which would be used to satisfy that</span>
@@ -729,11 +729,11 @@ document.write(`
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">preamble</span><span class="si">}</span><span class="s2"> SELECT </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project</span><span class="p">)</span><span class="si">}</span><span class="s2"> WHERE </span><span class="se">{{\n</span><span class="si">{</span><span class="n">clauses</span><span class="si">}</span><span class="se">\n}}</span><span class="s2">&quot;</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">_is_list</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_list</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">in</span> <span class="n">graph</span>
 
 
-<span class="k">def</span> <span class="nf">_target_to_sparql</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">nodeshape</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">root_var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;?target&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_target_to_sparql</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">nodeshape</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">root_var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;?target&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes the nodeshape and returns the SPARQL query that would be used to</span>
 <span class="sd">    find the target nodes of that nodeshape. This is a helper function for</span>
@@ -777,7 +777,7 @@ document.write(`
     <span class="k">return</span> <span class="s2">&quot; UNION &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="s2"> </span><span class="si">{</span><span class="n">clause</span><span class="si">}</span><span class="s2"> </span><span class="se">}}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">clause</span> <span class="ow">in</span> <span class="n">all_clauses</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_clauses_on_nodeshape</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_clauses_on_nodeshape</span><span class="p">(</span>
     <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">nodeshape</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">root_variable</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;?target&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;handles the constraint components on a node shape (other than targetClass, targetSubjectsOf, targetObjectsOf, targetNode).</span>
@@ -793,7 +793,7 @@ document.write(`
     <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">clauses</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_shape_to_where</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_shape_to_where</span><span class="p">(</span>
     <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">root_var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;?target&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
     <span class="c1"># we will build the query as a string</span>
@@ -805,7 +805,7 @@ document.write(`
     <span class="n">prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
     <span class="n">variable_counter</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">gensym</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gensym</span><span class="p">():</span>
         <span class="k">nonlocal</span> <span class="n">variable_counter</span>
         <span class="n">varname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">variable_counter</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">variable_counter</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -924,13 +924,13 @@ document.write(`
     <span class="k">return</span> <span class="n">clauses</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_resolve_imports</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_imports</span><span class="p">(</span>
     <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
     <span class="n">recursive_limit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">seen</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">],</span>
     <span class="n">error_on_missing_imports</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.library</span> <span class="kn">import</span> <span class="n">Library</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
 
     <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
 

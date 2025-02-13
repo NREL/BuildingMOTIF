@@ -410,35 +410,35 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.dataclasses.library</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">pathlib</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">pygit2</span>
-<span class="kn">import</span> <span class="nn">rdflib</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_exists</span><span class="p">,</span> <span class="n">resource_filename</span>
-<span class="kn">from</span> <span class="nn">rdflib.exceptions</span> <span class="kn">import</span> <span class="n">ParserError</span>
-<span class="kn">from</span> <span class="nn">rdflib.plugins.parsers.notation3</span> <span class="kn">import</span> <span class="n">BadSyntax</span>
-<span class="kn">from</span> <span class="nn">rdflib.util</span> <span class="kn">import</span> <span class="n">guess_format</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pygit2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rdflib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pkg_resources</span><span class="w"> </span><span class="kn">import</span> <span class="n">resource_exists</span><span class="p">,</span> <span class="n">resource_filename</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParserError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.plugins.parsers.notation3</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadSyntax</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">guess_format</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.database.errors</span> <span class="kn">import</span> <span class="n">LibraryNotFound</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.database.tables</span> <span class="kn">import</span> <span class="n">DBLibrary</span><span class="p">,</span> <span class="n">DBTemplate</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.shape_collection</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.template</span> <span class="kn">import</span> <span class="n">Template</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.schemas</span> <span class="kn">import</span> <span class="n">validate_libraries_yaml</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.template_compilation</span> <span class="kn">import</span> <span class="n">compile_template_spec</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">get_ontology_files</span><span class="p">,</span> <span class="n">shacl_inference</span><span class="p">,</span> <span class="n">skip_uri</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_building_motif</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">LibraryNotFound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.tables</span><span class="w"> </span><span class="kn">import</span> <span class="n">DBLibrary</span><span class="p">,</span> <span class="n">DBTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.shape_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShapeCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.template</span><span class="w"> </span><span class="kn">import</span> <span class="n">Template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_libraries_yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.template_compilation</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_template_spec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ontology_files</span><span class="p">,</span> <span class="n">shacl_inference</span><span class="p">,</span> <span class="n">skip_uri</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildingMOTIF</span>
 
 
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_template_dependency</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_template_dependency</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents early-bound (template_id) or late-bound (template_name and</span>
 <span class="sd">    library) dependency of a template on another template.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -448,14 +448,14 @@ document.write(`
     <span class="n">library</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">template_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;dep&lt;name=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">template_name</span><span class="si">}</span><span class="s2"> bindings=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;library=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="si">}</span><span class="s2"> id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
         <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">dependent_library_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_template_dependency&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a py:class:`_template_dependency` from a dictionary.</span>
@@ -473,7 +473,7 @@ document.write(`
         <span class="n">template_id</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;template_id&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">template_name</span><span class="p">,</span> <span class="n">bindings</span><span class="p">,</span> <span class="n">library</span><span class="p">,</span> <span class="n">template_id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">id_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">id_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve this dependency to a template.</span>
 
 <span class="sd">        :param id_lookup: a local cache of {name: id} for uncommitted templates</span>
@@ -495,7 +495,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Library"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Library</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Library</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class mirrors :py:class:`database.tables.DBLibrary`.&quot;&quot;&quot;</span>
 
     <span class="n">_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -503,7 +503,7 @@ document.write(`
     <span class="n">_bm</span><span class="p">:</span> <span class="s2">&quot;BuildingMOTIF&quot;</span>
 
 <div class="viewcode-block" id="Library.create"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.create">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Library&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Library&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create new Library.</span>
 
 <span class="sd">        :param name: library name</span>
@@ -528,7 +528,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_clear_library</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">library</span><span class="p">:</span> <span class="n">DBLibrary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clear_library</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">library</span><span class="p">:</span> <span class="n">DBLibrary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear contents of a library.</span>
 
 <span class="sd">        :param library: library to clear</span>
@@ -541,7 +541,7 @@ document.write(`
     <span class="c1"># TODO: load library from URI? Does the URI identify the library uniquely?</span>
     <span class="c1"># TODO: can we deduplicate shape graphs? use hash of graph?</span>
 <div class="viewcode-block" id="Library.load"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">db_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ontology_graph</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -625,7 +625,7 @@ document.write(`
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No library information provided&quot;</span><span class="p">)</span></div>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_load_from_db</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Library&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_from_db</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Library&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load library from database by id.</span>
 
 <span class="sd">        :param id: id of library</span>
@@ -639,7 +639,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_load_from_ontology</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_from_ontology</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">ontology</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -700,7 +700,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">lib</span>
 
-    <span class="k">def</span> <span class="nf">_load_shapes_from_directory</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_shapes_from_directory</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">directory</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span>
         <span class="n">infer_templates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -736,7 +736,7 @@ document.write(`
             <span class="n">shape_col</span><span class="o">.</span><span class="n">infer_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_load_from_directory</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_from_directory</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">directory</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -790,7 +790,7 @@ document.write(`
         <span class="k">return</span> <span class="n">lib</span>
 
 <div class="viewcode-block" id="Library.load_from_libraries_yml"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.load_from_libraries_yml">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load_from_libraries_yml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_from_libraries_yml</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads *multiple* libraries from a properly-formatted &#39;libraries.yml&#39;</span>
 <span class="sd">        file. Does not return a Library! You will need to load the libraries by</span>
@@ -808,7 +808,7 @@ document.write(`
             <span class="n">_resolve_library_definition</span><span class="p">(</span><span class="n">description</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_library_exists</span><span class="p">(</span><span class="n">library_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_library_exists</span><span class="p">(</span><span class="n">library_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether a library with the given name exists in the database.&quot;&quot;&quot;</span>
         <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
@@ -817,7 +817,7 @@ document.write(`
         <span class="k">except</span> <span class="n">LibraryNotFound</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_resolve_dependency</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_dependency</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">template</span><span class="p">:</span> <span class="n">Template</span><span class="p">,</span>
         <span class="n">dep</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">_template_dependency</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
@@ -874,7 +874,7 @@ document.write(`
             <span class="sa">f</span><span class="s2">&quot;Warning: could not find dependee </span><span class="si">{</span><span class="n">dep</span><span class="p">[</span><span class="s1">&#39;template&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> in libraries </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_imports</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_resolve_template_dependencies</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_template_dependencies</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">template_id_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
         <span class="n">dependency_cache</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">_template_dependency</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]]],</span>
@@ -891,7 +891,7 @@ document.write(`
         <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
             <span class="n">template</span><span class="o">.</span><span class="n">check_dependencies</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_read_yml_file</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_yml_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">file</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span>
         <span class="n">template_id_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
@@ -921,24 +921,24 @@ document.write(`
             <span class="n">template_id_lookup</span><span class="p">[</span><span class="n">templ</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">id</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
 
     <span class="nd">@id</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Cannot modify db id&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">update_db_library_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">new_name</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">graph_imports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">graph_imports</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the list of owl:imports for this library&#39;s shape collection</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -949,7 +949,7 @@ document.write(`
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">)</span>
         <span class="p">]</span>
 
-<div class="viewcode-block" id="Library.create_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.create_template">[docs]</a>    <span class="k">def</span> <span class="nf">create_template</span><span class="p">(</span>
+<div class="viewcode-block" id="Library.create_template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.create_template">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">create_template</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">body</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -986,7 +986,7 @@ document.write(`
             <span class="n">_bm</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Library.get_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.get_templates">[docs]</a>    <span class="k">def</span> <span class="nf">get_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]:</span>
+<div class="viewcode-block" id="Library.get_templates"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.get_templates">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_templates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Template</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get templates from library.</span>
 
 <span class="sd">        :return: list of templates</span>
@@ -996,7 +996,7 @@ document.write(`
         <span class="n">templates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DBTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="n">db_library</span><span class="o">.</span><span class="n">templates</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Library.get_shape_collection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.get_shape_collection">[docs]</a>    <span class="k">def</span> <span class="nf">get_shape_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ShapeCollection</span><span class="p">:</span>
+<div class="viewcode-block" id="Library.get_shape_collection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.get_shape_collection">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_shape_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ShapeCollection</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get ShapeCollection from library.</span>
 
 <span class="sd">        :return: library&#39;s shape collection</span>
@@ -1008,7 +1008,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">db_library</span><span class="o">.</span><span class="n">shape_collection</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Library.get_template_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.get_template_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
+<div class="viewcode-block" id="Library.get_template_by_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.library.html#buildingmotif.dataclasses.library.Library.get_template_by_name">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get template by name from library.</span>
 
 <span class="sd">        :param name: template name</span>
@@ -1023,7 +1023,7 @@ document.write(`
         <span class="k">return</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dbt</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">_resolve_library_definition</span><span class="p">(</span><span class="n">desc</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_library_definition</span><span class="p">(</span><span class="n">desc</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Loads a library from a description in libraries.yml</span>
 <span class="sd">    &quot;&quot;&quot;</span>

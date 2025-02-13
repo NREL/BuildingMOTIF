@@ -410,26 +410,26 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.dataclasses.template</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span><span class="p">,</span> <span class="n">StringIO</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">PathLike</span>
-<span class="kn">from</span> <span class="nn">secrets</span> <span class="kn">import</span> <span class="n">token_hex</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span><span class="p">,</span> <span class="n">StringIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">secrets</span><span class="w"> </span><span class="kn">import</span> <span class="n">token_hex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">rdflib</span>
-<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rdflib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.term</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">get_building_motif</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.model</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">bind_prefixes</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.template_matcher</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">TemplateMatcher</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_building_motif</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">bind_prefixes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.template_matcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">TemplateMatcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PARAM</span><span class="p">,</span>
     <span class="n">_strip_param</span><span class="p">,</span>
     <span class="n">combine_graphs</span><span class="p">,</span>
@@ -439,12 +439,12 @@ document.write(`
 <span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.library</span> <span class="kn">import</span> <span class="n">Library</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
 
 
 <div class="viewcode-block" id="Template"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Template</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Template</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class mirrors :py:class`database.tables.DBTemplate`.&quot;&quot;&quot;</span>
 
     <span class="n">_id</span><span class="p">:</span> <span class="nb">int</span>
@@ -454,7 +454,7 @@ document.write(`
     <span class="n">_bm</span><span class="p">:</span> <span class="s2">&quot;BuildingMOTIF&quot;</span>
 
 <div class="viewcode-block" id="Template.load"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.load">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Template&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Template&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Load template from database.</span>
 
 <span class="sd">        :param id: id of template</span>
@@ -474,7 +474,7 @@ document.write(`
             <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Template.in_memory_copy"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.in_memory_copy">[docs]</a>    <span class="k">def</span> <span class="nf">in_memory_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Template&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="Template.in_memory_copy"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.in_memory_copy">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">in_memory_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Template&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy this template.</span>
 
 <span class="sd">        :return: copy of this template</span>
@@ -489,23 +489,23 @@ document.write(`
         <span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
 
     <span class="nd">@id</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_id</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Cannot modify db id&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">update_db_template_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">new_name</span>
 
-<div class="viewcode-block" id="Template.get_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.get_dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">get_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="s2">&quot;Dependency&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<div class="viewcode-block" id="Template.get_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.get_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="s2">&quot;Dependency&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the template&#39;s dependencies.</span>
 
 <span class="sd">        :return: a tuple of dependencies</span>
@@ -520,7 +520,7 @@ document.write(`
             <span class="p">]</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Template.add_dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.add_dependency">[docs]</a>    <span class="k">def</span> <span class="nf">add_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Template.add_dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.add_dependency">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add dependency to template.</span>
 
 <span class="sd">        :param dependency: dependency to add</span>
@@ -532,7 +532,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">args</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Template.check_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.check_dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">check_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Template.check_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.check_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Verifies that all dependencies have valid references to the parameters</span>
 <span class="sd">        in the dependency or (recursively) its dependencies. Raises an exception if any</span>
@@ -544,7 +544,7 @@ document.write(`
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_template_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">check_template_dependency_relationship</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Template.remove_dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.remove_dependency">[docs]</a>    <span class="k">def</span> <span class="nf">remove_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Template.remove_dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.remove_dependency">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">remove_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove dependency from template.</span>
 
 <span class="sd">        :param dependency: dependency to remove</span>
@@ -553,7 +553,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">delete_template_dependency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">all_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of all parameters used in this template *including* its</span>
 <span class="sd">        dependencies. Includes optional parameters.</span>
 
@@ -569,7 +569,7 @@ document.write(`
         <span class="k">return</span> <span class="n">params</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of all parameters used in this template *excluding* its</span>
 <span class="sd">        dependencies. Includes optional parameters.</span>
 
@@ -582,7 +582,7 @@ document.write(`
         <span class="k">return</span> <span class="n">params</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dependency_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dependency_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of all parameters used in this template&#39;s dependencies, including</span>
 <span class="sd">        optional parameters.</span>
 
@@ -595,7 +595,7 @@ document.write(`
         <span class="k">return</span> <span class="n">params</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">parameter_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;An addressable histogram of the parameter name counts in this</span>
 <span class="sd">        template and all of its transitive dependencies.</span>
 
@@ -610,7 +610,7 @@ document.write(`
 
     <span class="c1"># TODO: method to get the &#39;types&#39; of the parameters</span>
 
-<div class="viewcode-block" id="Template.dependency_for_parameter"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.dependency_for_parameter">[docs]</a>    <span class="k">def</span> <span class="nf">dependency_for_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
+<div class="viewcode-block" id="Template.dependency_for_parameter"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.dependency_for_parameter">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">dependency_for_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the dependency that uses the given parameter if one exists.</span>
 
 <span class="sd">        :param param: parameter to search for</span>
@@ -623,7 +623,7 @@ document.write(`
                 <span class="k">return</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="Template.to_inline"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.to_inline">[docs]</a>    <span class="k">def</span> <span class="nf">to_inline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preserve_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Template&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="Template.to_inline"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.to_inline">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_inline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preserve_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Template&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return an inline-able copy of this template.</span>
 
 <span class="sd">        Suffixes all parameters with a unique identifier that will avoid</span>
@@ -652,7 +652,7 @@ document.write(`
         <span class="k">return</span> <span class="n">templ</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">transitive_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transitive_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all parameters used in this template and its dependencies.</span>
 
 <span class="sd">        :return: set of all parameters</span>
@@ -671,7 +671,7 @@ document.write(`
             <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">rename_params</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">params</span>
 
-<div class="viewcode-block" id="Template.inline_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.inline_dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">inline_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Template&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="Template.inline_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.inline_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">inline_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Template&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Copies this template with all dependencies recursively inlined.</span>
 
 <span class="sd">        Parameters of dependencies will be renamed to avoid confusion.</span>
@@ -764,7 +764,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">templ</span></div>
 
-<div class="viewcode-block" id="Template.evaluate"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span>
+<div class="viewcode-block" id="Template.evaluate"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.evaluate">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">bindings</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">],</span>
         <span class="n">namespaces</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Namespace</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -835,7 +835,7 @@ document.write(`
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">templ</span></div>
 
-<div class="viewcode-block" id="Template.fill"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.fill">[docs]</a>    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span>
+<div class="viewcode-block" id="Template.fill"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.fill">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">fill</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Namespace</span><span class="p">,</span> <span class="n">include_optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">],</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluates the template with autogenerated bindings within the given</span>
@@ -858,32 +858,32 @@ document.write(`
         <span class="k">return</span> <span class="n">bindings</span><span class="p">,</span> <span class="n">res</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">defining_library</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Library&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">defining_library</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Library&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The library defining this template.</span>
 
 <span class="sd">        :return: library</span>
 <span class="sd">        :rtype: Library</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.library</span> <span class="kn">import</span> <span class="n">Library</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
 
         <span class="k">return</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_library_defining_db_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Template.library_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.library_dependencies">[docs]</a>    <span class="k">def</span> <span class="nf">library_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Library&quot;</span><span class="p">]:</span>
+<div class="viewcode-block" id="Template.library_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.library_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">library_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Library&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get library dependencies for this template.</span>
 
 <span class="sd">        :return: list of libraries</span>
 <span class="sd">        :rtype: List[Library]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.library</span> <span class="kn">import</span> <span class="n">Library</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
 
         <span class="n">libs</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">defining_library</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
             <span class="n">libs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">defining_library</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">libs</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Template.find_subgraphs"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.find_subgraphs">[docs]</a>    <span class="k">def</span> <span class="nf">find_subgraphs</span><span class="p">(</span>
+<div class="viewcode-block" id="Template.find_subgraphs"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.find_subgraphs">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_subgraphs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="o">*</span><span class="n">ontologies</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produces an iterable of subgraphs in the model that are partially or</span>
@@ -906,7 +906,7 @@ document.write(`
         <span class="k">for</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">sg</span> <span class="ow">in</span> <span class="n">matcher</span><span class="o">.</span><span class="n">building_mapping_subgraphs_iter</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">sg</span><span class="p">,</span> <span class="n">matcher</span><span class="o">.</span><span class="n">remaining_template</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Template.generate_csv"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.generate_csv">[docs]</a>    <span class="k">def</span> <span class="nf">generate_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringIO</span><span class="p">]:</span>
+<div class="viewcode-block" id="Template.generate_csv"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.generate_csv">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">generate_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">StringIO</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate a CSV for this template which contains a column for each template parameter.</span>
 <span class="sd">        Once filled out, the resulting CSV file can be passed to a Template Ingress to populate a model.</span>
@@ -934,7 +934,7 @@ document.write(`
         <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span></div>
 
-<div class="viewcode-block" id="Template.generate_spreadsheet"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.generate_spreadsheet">[docs]</a>    <span class="k">def</span> <span class="nf">generate_spreadsheet</span><span class="p">(</span>
+<div class="viewcode-block" id="Template.generate_spreadsheet"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.generate_spreadsheet">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">generate_spreadsheet</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BytesIO</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -948,9 +948,9 @@ document.write(`
 <span class="sd">        :rtype: BytesIO</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">openpyxl</span> <span class="kn">import</span> <span class="n">Workbook</span>
-            <span class="kn">from</span> <span class="nn">openpyxl.utils</span> <span class="kn">import</span> <span class="n">get_column_letter</span>
-            <span class="kn">from</span> <span class="nn">openpyxl.worksheet.table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableStyleInfo</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">openpyxl</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workbook</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">openpyxl.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_column_letter</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">openpyxl.worksheet.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableStyleInfo</span>
         <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
                 <span class="s2">&quot;Install the &#39;xlsx-ingress&#39; module, e.g. &#39;pip install buildingmotif[xlsx-ingress]&#39;&quot;</span>
@@ -991,18 +991,18 @@ document.write(`
 
 
 <div class="viewcode-block" id="Dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Dependency">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Dependency</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Dependency</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dependency&quot;&quot;&quot;</span>
 
     <span class="n">_template_id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">template_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">template_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_template_id</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_template_id</span><span class="p">)</span></div>
 </pre></div>
 

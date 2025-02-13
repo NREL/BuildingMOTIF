@@ -410,13 +410,13 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.database.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
-<span class="kn">import</span> <span class="nn">sqlalchemy</span> <span class="k">as</span> <span class="nn">sa</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.dialects.postgresql</span> <span class="kn">import</span> <span class="n">JSONB</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sa</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span>
 
 
-<div class="viewcode-block" id="JSONType"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.utils.html#buildingmotif.database.utils.JSONType">[docs]</a><span class="k">class</span> <span class="nc">JSONType</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">TypeDecorator</span><span class="p">):</span>
+<div class="viewcode-block" id="JSONType"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.utils.html#buildingmotif.database.utils.JSONType">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">JSONType</span><span class="p">(</span><span class="n">sa</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">TypeDecorator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom JSON type that uses JSONB on Postgres and JSON on other dialects.</span>
 <span class="sd">    This allows us to use our custom JSON serialization below *and* have the</span>
 <span class="sd">    database enforce uniqueness on JSON-encoded dictionaries</span>
@@ -426,10 +426,10 @@ document.write(`
     <span class="n">hashable</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">cache_ok</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="JSONType.load_dialect_impl"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.utils.html#buildingmotif.database.utils.JSONType.load_dialect_impl">[docs]</a>    <span class="k">def</span> <span class="nf">load_dialect_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
+<div class="viewcode-block" id="JSONType.load_dialect_impl"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.utils.html#buildingmotif.database.utils.JSONType.load_dialect_impl">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">load_dialect_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dialect</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">dialect</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;postgresql&quot;</span><span class="p">:</span>
             <span class="c1"># Use the native JSON type.</span>
             <span class="k">return</span> <span class="n">dialect</span><span class="o">.</span><span class="n">type_descriptor</span><span class="p">(</span><span class="n">JSONB</span><span class="p">())</span>
@@ -439,7 +439,7 @@ document.write(`
 
 <span class="c1"># the custom ser/de handlers are to allow the database to ensure</span>
 <span class="c1"># uniqueness of dependency bindings (see https://github.com/NREL/BuildingMOTIF/pull/113)</span>
-<span class="k">def</span> <span class="nf">_custom_json_serializer</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_custom_json_serializer</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Serializes dictionaries as a sorted list of key-value tuples. All</span>
 <span class="sd">    other items are serialized as normal</span>
@@ -452,7 +452,7 @@ document.write(`
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_custom_json_deserializer</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_custom_json_deserializer</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handles deserializing the objects serialied by _custom_json_serializer</span>
 <span class="sd">    &quot;&quot;&quot;</span>

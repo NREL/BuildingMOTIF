@@ -410,15 +410,15 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.label_parsing.tokens</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">URIRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">URIRef</span>
 
 
 <div class="viewcode-block" id="Token"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.Token">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Token</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Token</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Any</span></div>
 
 
@@ -426,7 +426,7 @@ document.write(`
 <span class="n">TokenOrConstructor</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Token</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Token</span><span class="p">]]</span>
 
 
-<div class="viewcode-block" id="ensure_token"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.ensure_token">[docs]</a><span class="k">def</span> <span class="nf">ensure_token</span><span class="p">(</span><span class="n">token_or_constructor</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="ensure_token"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.ensure_token">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">ensure_token</span><span class="p">(</span><span class="n">token_or_constructor</span><span class="p">:</span> <span class="n">TokenOrConstructor</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Ensure a value is a token or constructs one from a given value.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">token_or_constructor</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">token_or_constructor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -434,35 +434,35 @@ document.write(`
 
 
 <div class="viewcode-block" id="Identifier"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.Identifier">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Identifier</span><span class="p">(</span><span class="n">Token</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Identifier</span><span class="p">(</span><span class="n">Token</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An identifier token. Contains a string.&quot;&quot;&quot;</span>
 
     <span class="n">value</span><span class="p">:</span> <span class="nb">str</span></div>
 
 
 <div class="viewcode-block" id="Constant"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.Constant">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Constant</span><span class="p">(</span><span class="n">Token</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Constant</span><span class="p">(</span><span class="n">Token</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A constant token. Contains a URI, probably some sort of Class&quot;&quot;&quot;</span>
 
     <span class="n">value</span><span class="p">:</span> <span class="n">URIRef</span></div>
 
 
 <div class="viewcode-block" id="Delimiter"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.Delimiter">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Delimiter</span><span class="p">(</span><span class="n">Token</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Delimiter</span><span class="p">(</span><span class="n">Token</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A delimiter token.&quot;&quot;&quot;</span>
 
     <span class="n">value</span><span class="p">:</span> <span class="nb">str</span></div>
 
 
 <div class="viewcode-block" id="Null"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.Null">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Null</span><span class="p">(</span><span class="n">Token</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Null</span><span class="p">(</span><span class="n">Token</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A null token.&quot;&quot;&quot;</span>
 
     <span class="n">value</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="TokenResult"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.label_parsing.tokens.html#buildingmotif.label_parsing.TokenResult">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">TokenResult</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TokenResult</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A token result. Contains a token, the type of the token, the length of the token, and a possible error.&quot;&quot;&quot;</span>
 
     <span class="n">value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
@@ -471,7 +471,7 @@ document.write(`
     <span class="n">error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compare two token results on every</span>
 <span class="sd">        field except for the error field.</span>

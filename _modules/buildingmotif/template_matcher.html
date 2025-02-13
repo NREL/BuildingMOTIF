@@ -415,21 +415,21 @@ document.write(`
 <span class="sd">If the found isomorphism is a subgraph of T, then T is not fully matched and additional</span>
 <span class="sd">input is required to fully populate the template.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">permutations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">permutations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">networkx.algorithms.isomorphism</span> <span class="kn">import</span> <span class="n">DiGraphMatcher</span>  <span class="c1"># type: ignore</span>
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">rdflib.extras.external_graph_libs</span> <span class="kn">import</span> <span class="n">rdflib_to_networkx_digraph</span>
-<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">networkx.algorithms.isomorphism</span><span class="w"> </span><span class="kn">import</span> <span class="n">DiGraphMatcher</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.extras.external_graph_libs</span><span class="w"> </span><span class="kn">import</span> <span class="n">rdflib_to_networkx_digraph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.term</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">RDFS</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.utils</span> <span class="kn">import</span> <span class="n">copy_graph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">OWL</span><span class="p">,</span> <span class="n">PARAM</span><span class="p">,</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">RDFS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy_graph</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">buildingmotif.dataclasses.template</span> <span class="kn">import</span> <span class="n">Template</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.template</span><span class="w"> </span><span class="kn">import</span> <span class="n">Template</span>
 
 <span class="n">Mapping</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span>
 
@@ -437,18 +437,18 @@ document.write(`
 <span class="c1"># used to accelerate monomorphism search</span>
 <span class="c1"># outer key is the address of the ontology graph</span>
 <span class="c1"># inner map is from a class to its parent classes</span>
-<span class="k">class</span> <span class="nc">_ontology_lookup_cache</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ontology_lookup_cache</span><span class="p">:</span>
     <span class="n">sc_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]]]</span>
     <span class="n">t_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]]]</span>
     <span class="n">in_cache</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sc_cache</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sp_cache</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t_cache</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_cache</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">parents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ntype</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ntype</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_cache</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sc_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)]</span>
@@ -457,7 +457,7 @@ document.write(`
             <span class="n">cache</span><span class="p">[</span><span class="n">ntype</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ontology</span><span class="o">.</span><span class="n">transitive_objects</span><span class="p">(</span><span class="n">ntype</span><span class="p">,</span> <span class="n">RDFS</span><span class="o">.</span><span class="n">subClassOf</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">ntype</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">superproperties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ntype</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">superproperties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ntype</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sp_cache</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sp_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sp_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ontology</span><span class="p">)]</span>
@@ -466,7 +466,7 @@ document.write(`
             <span class="n">cache</span><span class="p">[</span><span class="n">ntype</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ontology</span><span class="o">.</span><span class="n">transitive_objects</span><span class="p">(</span><span class="n">ntype</span><span class="p">,</span> <span class="n">RDFS</span><span class="o">.</span><span class="n">subPropertyOf</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">ntype</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_cache</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">t_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)]</span>
@@ -477,7 +477,7 @@ document.write(`
             <span class="n">cache</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">OWL</span><span class="o">.</span><span class="n">NamedIndividual</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
 
-    <span class="k">def</span> <span class="nf">defined_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">defined_in</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_cache</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">in_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_cache</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">graph</span><span class="p">)]</span>
@@ -487,7 +487,7 @@ document.write(`
         <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_get_types</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">_cache</span><span class="p">:</span> <span class="n">_ontology_lookup_cache</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_types</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">_cache</span><span class="p">:</span> <span class="n">_ontology_lookup_cache</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">URIRef</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Types for a node should only be URIRefs, so the</span>
 <span class="sd">    type filtering here should be safe.</span>
@@ -496,7 +496,7 @@ document.write(`
     <span class="k">return</span> <span class="n">_cache</span><span class="o">.</span><span class="n">types</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_compatible_types</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compatible_types</span><span class="p">(</span>
     <span class="n">n1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span>
     <span class="n">g1</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
     <span class="n">n2</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span>
@@ -545,7 +545,7 @@ document.write(`
     <span class="k">return</span> <span class="kc">False</span>
 
 
-<div class="viewcode-block" id="get_semantic_feasibility"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.get_semantic_feasibility">[docs]</a><span class="k">def</span> <span class="nf">get_semantic_feasibility</span><span class="p">(</span>
+<div class="viewcode-block" id="get_semantic_feasibility"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.get_semantic_feasibility">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_semantic_feasibility</span><span class="p">(</span>
     <span class="n">G1</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">G2</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">_cache</span><span class="p">:</span> <span class="n">_ontology_lookup_cache</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a function that checks if two nodes are semantically feasible to</span>
@@ -568,7 +568,7 @@ document.write(`
 <span class="sd">    :rtype: Callable[[Node, Node], bool]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: other checks?</span>
-    <span class="k">def</span> <span class="nf">semantic_feasibility</span><span class="p">(</span><span class="n">n1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">n2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">semantic_feasibility</span><span class="p">(</span><span class="n">n1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">n2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if two nodes are semantically feasible to be matched.</span>
 
 <span class="sd">        :param n1: node 1</span>
@@ -597,7 +597,7 @@ document.write(`
     <span class="k">return</span> <span class="n">semantic_feasibility</span></div>
 
 
-<span class="k">class</span> <span class="nc">_VF2SemanticMatcher</span><span class="p">(</span><span class="n">DiGraphMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_VF2SemanticMatcher</span><span class="p">(</span><span class="n">DiGraphMatcher</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A subclass of DiGraphMatcher that incorporates semantic feasibility into the matching</span>
 <span class="sd">    process using the provided ontology.</span>
@@ -607,7 +607,7 @@ document.write(`
 <span class="sd">    :param ontology: ontology that contains the information about node semantics</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">G</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">G</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">ontology</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rdflib_to_networkx_digraph</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">rdflib_to_networkx_digraph</span><span class="p">(</span><span class="n">G</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ontology</span> <span class="o">=</span> <span class="n">ontology</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">_ontology_lookup_cache</span><span class="p">()</span>
@@ -615,7 +615,7 @@ document.write(`
             <span class="n">T</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">ontology</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">semantic_feasibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">g2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">semantic_feasibility</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">g1</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">g2</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns true if the two nodes are semantically feasible to be matched.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -623,7 +623,7 @@ document.write(`
         <span class="k">return</span> <span class="n">val</span>
 
 
-<div class="viewcode-block" id="generate_all_subgraphs"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.generate_all_subgraphs">[docs]</a><span class="k">def</span> <span class="nf">generate_all_subgraphs</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Graph</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<div class="viewcode-block" id="generate_all_subgraphs"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.generate_all_subgraphs">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">generate_all_subgraphs</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Graph</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates all node-induced subgraphs of T in order of decreasing size.</span>
 
 <span class="sd">    We generate subgraphs in decreasing order of size because we want to find</span>
@@ -641,7 +641,7 @@ document.write(`
             <span class="k">yield</span> <span class="n">digraph_to_rdflib</span><span class="p">(</span><span class="n">rdflib_to_networkx_digraph</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">nodelist</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="digraph_to_rdflib"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.digraph_to_rdflib">[docs]</a><span class="k">def</span> <span class="nf">digraph_to_rdflib</span><span class="p">(</span><span class="n">digraph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="digraph_to_rdflib"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.digraph_to_rdflib">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">digraph_to_rdflib</span><span class="p">(</span><span class="n">digraph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turns a `nx.DiGraph` into an `rdflib.Graph`.</span>
 
 <span class="sd">    Expects the nx.DiGraph to have been produced by</span>
@@ -658,7 +658,7 @@ document.write(`
     <span class="k">return</span> <span class="n">g</span></div>
 
 
-<div class="viewcode-block" id="TemplateMatcher"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher">[docs]</a><span class="k">class</span> <span class="nc">TemplateMatcher</span><span class="p">:</span>
+<div class="viewcode-block" id="TemplateMatcher"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TemplateMatcher</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the set of subgraphs of G that are monomorphic to T; these are</span>
 <span class="sd">    organized by how &quot;complete&quot; the monomorphism is.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -669,7 +669,7 @@ document.write(`
     <span class="n">template_bindings</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span>
     <span class="n">template_graph</span><span class="p">:</span> <span class="n">Graph</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">building</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
         <span class="n">template</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">,</span>
@@ -690,7 +690,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_generate_mappings</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_generate_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">template_subgraph</span> <span class="ow">in</span> <span class="n">generate_all_subgraphs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_graph</span><span class="p">):</span>
             <span class="n">matching</span> <span class="o">=</span> <span class="n">_VF2SemanticMatcher</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">building</span><span class="p">,</span> <span class="n">template_subgraph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ontology</span>
@@ -712,7 +712,7 @@ document.write(`
                     <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_parameters</span><span class="p">):</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">add_mapping</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TemplateMatcher.add_mapping"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.add_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">add_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">):</span>
+<div class="viewcode-block" id="TemplateMatcher.add_mapping"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.add_mapping">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a mapping to the set of mappings.</span>
 
 <span class="sd">        :param mapping: mapping</span>
@@ -722,7 +722,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">mappings</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">largest_mapping_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">largest_mapping_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the size of the largest mapping.</span>
 
 <span class="sd">        :return: size of largest mapping</span>
@@ -730,7 +730,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mappings</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
-<div class="viewcode-block" id="TemplateMatcher.building_subgraph_from_mapping"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.building_subgraph_from_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">building_subgraph_from_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="TemplateMatcher.building_subgraph_from_mapping"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.building_subgraph_from_mapping">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">building_subgraph_from_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the subgraph of the building graph that corresponds to the</span>
 <span class="sd">        given mapping.</span>
 
@@ -744,7 +744,7 @@ document.write(`
         <span class="n">sg</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">edge_subgraph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">digraph_to_rdflib</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TemplateMatcher.template_subgraph_from_mapping"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.template_subgraph_from_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">template_subgraph_from_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="TemplateMatcher.template_subgraph_from_mapping"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.template_subgraph_from_mapping">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">template_subgraph_from_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the subgraph of the template graph that corresponds to the</span>
 <span class="sd">        given mapping.</span>
 
@@ -759,7 +759,7 @@ document.write(`
         <span class="n">g</span> <span class="o">=</span> <span class="n">rdflib_to_networkx_digraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_graph</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">digraph_to_rdflib</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">subgraph</span><span class="p">(</span><span class="n">mapping</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span></div>
 
-<div class="viewcode-block" id="TemplateMatcher.remaining_template_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.remaining_template_graph">[docs]</a>    <span class="k">def</span> <span class="nf">remaining_template_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="TemplateMatcher.remaining_template_graph"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.remaining_template_graph">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">remaining_template_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the remaining template graph to be filled out given a</span>
 <span class="sd">        mapping.</span>
 
@@ -771,7 +771,7 @@ document.write(`
         <span class="n">sg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_subgraph_from_mapping</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_graph</span> <span class="o">-</span> <span class="n">sg</span></div>
 
-<div class="viewcode-block" id="TemplateMatcher.remaining_template"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.remaining_template">[docs]</a>    <span class="k">def</span> <span class="nf">remaining_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
+<div class="viewcode-block" id="TemplateMatcher.remaining_template"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.remaining_template">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">remaining_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;Template&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the remaining template to be filled out given a mapping.</span>
 
 <span class="sd">        :param mapping: mapping</span>
@@ -795,7 +795,7 @@ document.write(`
         <span class="k">assert</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">Graph</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
-<div class="viewcode-block" id="TemplateMatcher.mappings_iter"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.mappings_iter">[docs]</a>    <span class="k">def</span> <span class="nf">mappings_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<div class="viewcode-block" id="TemplateMatcher.mappings_iter"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.mappings_iter">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mappings_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an iterator over all of the mappings of the given size.</span>
 
 <span class="sd">        If size is None, then all mappings are returned in descending order</span>
@@ -819,7 +819,7 @@ document.write(`
                     <span class="k">continue</span>
                 <span class="k">yield</span> <span class="n">mapping</span></div>
 
-<div class="viewcode-block" id="TemplateMatcher.building_mapping_subgraphs_iter"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.building_mapping_subgraphs_iter">[docs]</a>    <span class="k">def</span> <span class="nf">building_mapping_subgraphs_iter</span><span class="p">(</span>
+<div class="viewcode-block" id="TemplateMatcher.building_mapping_subgraphs_iter"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.template_matcher.html#buildingmotif.template_matcher.TemplateMatcher.building_mapping_subgraphs_iter">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">building_mapping_subgraphs_iter</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">Graph</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>

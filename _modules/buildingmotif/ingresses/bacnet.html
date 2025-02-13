@@ -411,21 +411,21 @@ document.write(`
                   
   <h1>Source code for buildingmotif.ingresses.bacnet</h1><div class="highlight"><pre>
 <span></span><span class="c1"># configure logging output</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cached_property</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">BAC0</span>
-    <span class="kn">from</span> <span class="nn">BAC0.core.devices.Device</span> <span class="kn">import</span> <span class="n">Device</span> <span class="k">as</span> <span class="n">BACnetDevice</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">BAC0</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">BAC0.core.devices.Device</span><span class="w"> </span><span class="kn">import</span> <span class="n">Device</span> <span class="k">as</span> <span class="n">BACnetDevice</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
         <span class="s2">&quot;Install the &#39;bacnet-ingress&#39; module, e.g. &#39;pip install buildingmotif[bacnet-ingress]&#39;&quot;</span>
     <span class="p">)</span>
 
 
-<span class="kn">from</span> <span class="nn">buildingmotif.ingresses.base</span> <span class="kn">import</span> <span class="n">Record</span><span class="p">,</span> <span class="n">RecordIngressHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.ingresses.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Record</span><span class="p">,</span> <span class="n">RecordIngressHandler</span>
 
 <span class="c1"># We do this little rigamarole to avoid BAC0 spitting out a million</span>
 <span class="c1"># logging messages warning us that we changed the log level, which</span>
@@ -434,8 +434,8 @@ document.write(`
 <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="BACnetNetwork"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html#buildingmotif.ingresses.bacnet.BACnetNetwork">[docs]</a><span class="k">class</span> <span class="nc">BACnetNetwork</span><span class="p">(</span><span class="n">RecordIngressHandler</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BACnetNetwork"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.bacnet.html#buildingmotif.ingresses.bacnet.BACnetNetwork">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BACnetNetwork</span><span class="p">(</span><span class="n">RecordIngressHandler</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads a BACnet network to discover the devices and objects therein</span>
 
@@ -473,13 +473,13 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">unregister_device</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_clean_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_clean_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
         <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
             <span class="c1"># remove trailing/leading whitespace from names</span>
             <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
     <span class="nd">@cached_property</span>
-    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Record</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Record</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list of the BACnet devices and objects discovered in the</span>
 <span class="sd">        BACnet network. The &#39;rtype&#39; field of each Record is either &quot;Device&quot;</span>

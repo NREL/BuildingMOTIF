@@ -410,18 +410,18 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.model_builder</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">secrets</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">rdflib.store</span> <span class="kn">import</span> <span class="n">Store</span>
-<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.store</span><span class="w"> </span><span class="kn">import</span> <span class="n">Store</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.term</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Template</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">RDFS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span><span class="p">,</span> <span class="n">Template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">RDFS</span>
 
 
-<div class="viewcode-block" id="TemplateBuilderContext"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext">[docs]</a><span class="k">class</span> <span class="nc">TemplateBuilderContext</span><span class="p">(</span><span class="n">Graph</span><span class="p">):</span>
+<div class="viewcode-block" id="TemplateBuilderContext"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TemplateBuilderContext</span><span class="p">(</span><span class="n">Graph</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A context for building templates. This class allows the user to</span>
 <span class="sd">    add templates to the context and then access them by name. The</span>
@@ -429,7 +429,7 @@ document.write(`
 <span class="sd">    the context into a single graph.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Store</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Store</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a new TemplateBuilderContext. The context will create</span>
 <span class="sd">        entities in the given namespace.</span>
@@ -445,7 +445,7 @@ document.write(`
             <span class="n">store</span><span class="o">=</span><span class="n">store</span> <span class="ow">or</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="TemplateBuilderContext.add_template"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.add_template">[docs]</a>    <span class="k">def</span> <span class="nf">add_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Template</span><span class="p">):</span>
+<div class="viewcode-block" id="TemplateBuilderContext.add_template"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.add_template">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Template</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a template to the context with all of its dependencies</span>
 <span class="sd">        inlined. Allows the user of the context to access the template</span>
@@ -455,7 +455,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">templates</span><span class="p">[</span><span class="n">template</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="TemplateBuilderContext.add_templates_from_library"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.add_templates_from_library">[docs]</a>    <span class="k">def</span> <span class="nf">add_templates_from_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">:</span> <span class="n">Library</span><span class="p">):</span>
+<div class="viewcode-block" id="TemplateBuilderContext.add_templates_from_library"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.add_templates_from_library">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_templates_from_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">library</span><span class="p">:</span> <span class="n">Library</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds all of the templates from a library to the context</span>
 
@@ -464,7 +464,7 @@ document.write(`
         <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="n">library</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_template</span><span class="p">(</span><span class="n">template</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template_name</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">template_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">templates</span><span class="p">:</span>
             <span class="n">w</span> <span class="o">=</span> <span class="n">TemplateWrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">templates</span><span class="p">[</span><span class="n">template_name</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
@@ -472,7 +472,7 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid template name: </span><span class="si">{</span><span class="n">template_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TemplateBuilderContext.compile"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="TemplateBuilderContext.compile"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateBuilderContext.compile">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compiles all of the template wrappers and concatenates them into a single Graph</span>
 
@@ -492,8 +492,8 @@ document.write(`
         <span class="k">return</span> <span class="n">graph</span></div></div>
 
 
-<div class="viewcode-block" id="TemplateWrapper"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateWrapper">[docs]</a><span class="k">class</span> <span class="nc">TemplateWrapper</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Template</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">):</span>
+<div class="viewcode-block" id="TemplateWrapper"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateWrapper">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TemplateWrapper</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="n">Template</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a new TemplateWrapper. The wrapper is used to bind</span>
 <span class="sd">        parameters to a template and then compile the template into</span>
@@ -506,12 +506,12 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Node</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">ns</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
@@ -521,7 +521,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="n">param</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">secrets</span><span class="o">.</span><span class="n">token_hex</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">param</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">all_parameters</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid parameter: </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="c1"># if value is not a URIRef, Literal or BNode, then put it in the namespace</span>
@@ -533,10 +533,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">bindings</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">parameters</span>
 
-<div class="viewcode-block" id="TemplateWrapper.compile"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateWrapper.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="TemplateWrapper.compile"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.model_builder.html#buildingmotif.model_builder.TemplateWrapper.compile">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compiles the template into a graph. If there are still parameters</span>
 <span class="sd">        to be bound, then the template will be returned. Otherwise, the</span>

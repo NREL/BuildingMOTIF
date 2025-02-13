@@ -1,23 +1,20 @@
 Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
     executenb(
-  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/client.py", line 1269, in execute
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/client.py", line 1305, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/util.py", line 85, in wrapped
-    return just_run(coro(*args, **kwargs))
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/util.py", line 60, in just_run
-    return loop.run_until_complete(coro)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
     return future.result()
            ^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/client.py", line 707, in async_execute
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/client.py", line 705, in async_execute
     await self.async_execute_cell(
-  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/client.py", line 1025, in async_execute_cell
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/client.py", line 1058, in async_execute_cell
     await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/client.py", line 919, in _check_raise_for_error
+  File "/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/nbclient/client.py", line 914, in _check_raise_for_error
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
@@ -28,10 +25,22 @@ for rec in bacnet.records:
     print(rec)
 ------------------
 
+----- stdout -----
+2025-02-13 20:56:40,568 - INFO    | Starting BAC0 version 22.9.21 (Lite)
+----- stdout -----
+2025-02-13 20:56:40,569 - INFO    | Use BAC0.log_level to adjust verbosity of the app.
+----- stdout -----
+2025-02-13 20:56:40,570 - INFO    | Ex. BAC0.log_level('silence') or BAC0.log_level('error')
+----- stdout -----
+2025-02-13 20:56:40,570 - INFO    | Starting TaskManager
+----- stdout -----
+2025-02-13 20:56:40,571 - INFO    | Using ip : 172.24.0.1
+------------------
+
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mInitializationError[0m                       Traceback (most recent call last)
 Cell [0;32mIn[3], line 3[0m
-[1;32m      1[0m [38;5;28;01mfrom[39;00m [38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mingresses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mbacnet[39;00m [38;5;28;01mimport[39;00m BACnetNetwork
+[1;32m      1[0m [38;5;28;01mfrom[39;00m[38;5;250m [39m[38;5;21;01mbuildingmotif[39;00m[38;5;21;01m.[39;00m[38;5;21;01mingresses[39;00m[38;5;21;01m.[39;00m[38;5;21;01mbacnet[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m BACnetNetwork
 [0;32m----> 3[0m bacnet [38;5;241m=[39m [43mBACnetNetwork[49m[43m([49m[38;5;124;43m"[39;49m[38;5;124;43m172.24.0.1/32[39;49m[38;5;124;43m"[39;49m[43m)[49m [38;5;66;03m# don't change this if you are using the docker compose setup[39;00m
 [1;32m      4[0m [38;5;28;01mfor[39;00m rec [38;5;129;01min[39;00m bacnet[38;5;241m.[39mrecords:
 [1;32m      5[0m     [38;5;28mprint[39m(rec)
@@ -77,5 +86,4 @@ File [0;32m/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages
 [1;32m    157[0m [38;5;28mself[39m[38;5;241m.[39msegmentationSupported [38;5;241m=[39m segmentationSupported
 
 [0;31mInitializationError[0m: IP Address provided (172.24.0.1) invalid. Check if another software is using port 47808 on this network interface. If so, you can define multiple IP per interface. Or specify another IP using BAC0.lite(ip='IP/mask')
-InitializationError: IP Address provided (172.24.0.1) invalid. Check if another software is using port 47808 on this network interface. If so, you can define multiple IP per interface. Or specify another IP using BAC0.lite(ip='IP/mask')
 

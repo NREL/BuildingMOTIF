@@ -410,18 +410,18 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.database.tables</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">UniqueConstraint</span>
-<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">declarative_base</span><span class="p">,</span> <span class="n">relationship</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">UniqueConstraint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">declarative_base</span><span class="p">,</span> <span class="n">relationship</span>
 
 <span class="c1"># from sqlalchemy.dialects.postgresql import JSON</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.database.utils</span> <span class="kn">import</span> <span class="n">JSONType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONType</span>
 
 <span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="DBModel"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBModel">[docs]</a><span class="k">class</span> <span class="nc">DBModel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<div class="viewcode-block" id="DBModel"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBModel">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DBModel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Model is a metadata model of all or part of a building.&quot;&quot;&quot;</span>
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;models&quot;</span>
@@ -439,7 +439,7 @@ document.write(`
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DBShapeCollection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBShapeCollection">[docs]</a><span class="k">class</span> <span class="nc">DBShapeCollection</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<div class="viewcode-block" id="DBShapeCollection"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBShapeCollection">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DBShapeCollection</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A ShapeCollection is a collection of shapes, which are used to validate</span>
 <span class="sd">    parts of a model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -449,7 +449,7 @@ document.write(`
     <span class="n">graph_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="DBLibrary"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBLibrary">[docs]</a><span class="k">class</span> <span class="nc">DBLibrary</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<div class="viewcode-block" id="DBLibrary"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBLibrary">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DBLibrary</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Library is a distributable collection of Templates and Shapes.&quot;&quot;&quot;</span>
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;library&quot;</span>
@@ -470,7 +470,7 @@ document.write(`
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DepsAssociation"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DepsAssociation">[docs]</a><span class="k">class</span> <span class="nc">DepsAssociation</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<div class="viewcode-block" id="DepsAssociation"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DepsAssociation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DepsAssociation</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Many-to-many relationship between dependant templates.&quot;&quot;&quot;</span>
 
     <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;deps_association_table&quot;</span>
@@ -491,7 +491,7 @@ document.write(`
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DBTemplate"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBTemplate">[docs]</a><span class="k">class</span> <span class="nc">DBTemplate</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<div class="viewcode-block" id="DBTemplate"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBTemplate">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DBTemplate</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A Template is used to generate content for a model.&quot;&quot;&quot;</span>
 
     <span class="c1"># TODO: doc table properties better.</span>

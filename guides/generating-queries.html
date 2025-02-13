@@ -519,10 +519,10 @@ If you need other patterns supported, please <a class="reference external" href=
 We can create a simple <code class="docutils literal notranslate"><span class="pre">ShapeCollection</span></code> as follows:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">ShapeCollection</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">BRICK</span> <span class="c1"># import this to make writing URIs easier</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShapeCollection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">BRICK</span> <span class="c1"># import this to make writing URIs easier</span>
 
 <span class="c1"># in-memory instance</span>
 <span class="n">bm</span> <span class="o">=</span> <span class="n">BuildingMOTIF</span><span class="p">(</span><span class="s2">&quot;sqlite://&quot;</span><span class="p">)</span>
@@ -565,7 +565,7 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=0ce91fc9-9373-4dab-a0a2-8b7b48b86292 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=52c59835-e573-4a35-bc4b-b415397e4370 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -627,7 +627,7 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 <span class="ne">----&gt; </span><span class="mi">4</span> <span class="nb">print</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">))</span>
 
 <span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:312,</span> in <span class="ni">ShapeCollection.shape_to_query</span><span class="nt">(self, shape)</span>
-<span class="g g-Whitespace">    </span><span class="mi">301</span>     <span class="k">def</span> <span class="nf">shape_to_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">301</span>     <span class="k">def</span><span class="w"> </span><span class="nf">shape_to_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="g g-Whitespace">    </span><span class="mi">302</span><span class="w">         </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="g g-Whitespace">    </span><span class="mi">303</span><span class="sd">         This method takes a URI representing a SHACL shape as an argument and returns</span>
 <span class="g g-Whitespace">    </span><span class="mi">304</span><span class="sd">         a SPARQL query selecting the information which would be used to satisfy that</span>
@@ -670,9 +670,9 @@ We can create a simple <code class="docutils literal notranslate"><span class="p
 create a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> object with the query results.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Namespace</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="c1"># generate and save the query string to a variable</span>
 <span class="n">app_query</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">shape_to_query</span><span class="p">(</span><span class="n">app1_shape</span><span class="p">)</span>

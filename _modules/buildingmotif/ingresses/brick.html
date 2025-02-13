@@ -410,26 +410,26 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.ingresses.brick</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Namespace</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Namespace</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif</span> <span class="kn">import</span> <span class="n">BuildingMOTIF</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.dataclasses</span> <span class="kn">import</span> <span class="n">Library</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.ingresses.bacnet</span> <span class="kn">import</span> <span class="n">BACnetNetwork</span>
-<span class="kn">from</span> <span class="nn">buildingmotif.ingresses.base</span> <span class="kn">import</span> <span class="n">GraphIngressHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">BuildingMOTIF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.ingresses.bacnet</span><span class="w"> </span><span class="kn">import</span> <span class="n">BACnetNetwork</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.ingresses.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphIngressHandler</span>
 
 
-<span class="k">def</span> <span class="nf">_clean_uri</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_clean_uri</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="BACnetToBrickIngress"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html#buildingmotif.ingresses.brick.BACnetToBrickIngress">[docs]</a><span class="k">class</span> <span class="nc">BACnetToBrickIngress</span><span class="p">(</span><span class="n">GraphIngressHandler</span><span class="p">):</span>
+<div class="viewcode-block" id="BACnetToBrickIngress"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html#buildingmotif.ingresses.brick.BACnetToBrickIngress">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BACnetToBrickIngress</span><span class="p">(</span><span class="n">GraphIngressHandler</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turns a BACnetNetwork RecordIngressHandler into a Brick model&quot;&quot;&quot;</span>
 
     <span class="n">BNS</span> <span class="o">=</span> <span class="n">Namespace</span><span class="p">(</span><span class="s2">&quot;urn:brick_bacnet_scan/&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bm</span><span class="p">:</span> <span class="n">BuildingMOTIF</span><span class="p">,</span> <span class="n">upstream</span><span class="p">:</span> <span class="n">BACnetNetwork</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bm</span><span class="p">:</span> <span class="n">BuildingMOTIF</span><span class="p">,</span> <span class="n">upstream</span><span class="p">:</span> <span class="n">BACnetNetwork</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new ignress handler for turning a BACnet network scrape</span>
 <span class="sd">        into a Brick model</span>
 
@@ -444,7 +444,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">device_template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bacnet_lib</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="s2">&quot;brick-device&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">object_template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bacnet_lib</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="s2">&quot;brick-point&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BACnetToBrickIngress.graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html#buildingmotif.ingresses.brick.BACnetToBrickIngress.graph">[docs]</a>    <span class="k">def</span> <span class="nf">graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<div class="viewcode-block" id="BACnetToBrickIngress.graph"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.ingresses.brick.html#buildingmotif.ingresses.brick.BACnetToBrickIngress.graph">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">:</span> <span class="n">Namespace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a Brick graph from the BACnet network with all entities</span>
 <span class="sd">        placed in the given namespace.</span>
 

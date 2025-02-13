@@ -410,19 +410,19 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for buildingmotif.shape_builder.shape</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
-<span class="kn">from</span> <span class="nn">rdflib.collection</span> <span class="kn">import</span> <span class="n">Collection</span>
-<span class="kn">from</span> <span class="nn">rdflib.term</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib</span><span class="w"> </span><span class="kn">import</span> <span class="n">RDF</span><span class="p">,</span> <span class="n">BNode</span><span class="p">,</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">URIRef</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Collection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.term</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
 
-<span class="kn">from</span> <span class="nn">buildingmotif.namespaces</span> <span class="kn">import</span> <span class="n">CONSTRAINT</span><span class="p">,</span> <span class="n">SH</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">bind_prefixes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">CONSTRAINT</span><span class="p">,</span> <span class="n">SH</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">bind_prefixes</span>
 
 
-<div class="viewcode-block" id="Shape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape">[docs]</a><span class="k">class</span> <span class="nc">Shape</span><span class="p">(</span><span class="n">Graph</span><span class="p">):</span>
+<div class="viewcode-block" id="Shape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">(</span><span class="n">Graph</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for constructing shapes programatically&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">identifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -440,7 +440,7 @@ document.write(`
         <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="n">message</span><span class="p">)))</span>
 
-<div class="viewcode-block" id="Shape.add_property"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.add_property">[docs]</a>    <span class="k">def</span> <span class="nf">add_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
+<div class="viewcode-block" id="Shape.add_property"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.add_property">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add property to shape</span>
 
 <span class="sd">        :param property: ref of property</span>
@@ -454,7 +454,7 @@ document.write(`
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Shape.add_list_property"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.add_list_property">[docs]</a>    <span class="k">def</span> <span class="nf">add_list_property</span><span class="p">(</span>
+<div class="viewcode-block" id="Shape.add_list_property"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.add_list_property">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_list_property</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Node</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add property which references list to shape</span>
@@ -470,7 +470,7 @@ document.write(`
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Shape.OR"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.OR">[docs]</a>    <span class="k">def</span> <span class="nf">OR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
+<div class="viewcode-block" id="Shape.OR"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.OR">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">OR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;add OR property</span>
 
 <span class="sd">        :param nodes: list of nodes to OR</span>
@@ -479,7 +479,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">add_list_property</span><span class="p">(</span><span class="n">SH</span><span class="p">[</span><span class="s2">&quot;or&quot;</span><span class="p">],</span> <span class="n">nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Shape.AND"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.AND">[docs]</a>    <span class="k">def</span> <span class="nf">AND</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
+<div class="viewcode-block" id="Shape.AND"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.AND">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">AND</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;add AND property</span>
 
 <span class="sd">        :param nodes: list of nodes to AND</span>
@@ -488,7 +488,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">add_list_property</span><span class="p">(</span><span class="n">SH</span><span class="p">[</span><span class="s2">&quot;and&quot;</span><span class="p">],</span> <span class="n">nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Shape.NOT"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.NOT">[docs]</a>    <span class="k">def</span> <span class="nf">NOT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
+<div class="viewcode-block" id="Shape.NOT"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.NOT">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">NOT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;add NOT property</span>
 
 <span class="sd">        :param nodes: list of nodes to NOT</span>
@@ -498,7 +498,7 @@ document.write(`
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Shape.XONE"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.XONE">[docs]</a>    <span class="k">def</span> <span class="nf">XONE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
+<div class="viewcode-block" id="Shape.XONE"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.XONE">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">XONE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;add XONE property</span>
 
 <span class="sd">        :param nodes: list of nodes to XONE</span>
@@ -507,7 +507,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">add_list_property</span><span class="p">(</span><span class="n">SH</span><span class="p">[</span><span class="s2">&quot;xone&quot;</span><span class="p">],</span> <span class="n">nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="Shape.add"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triple</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">]):</span>
+<div class="viewcode-block" id="Shape.add"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.Shape.add">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">triple</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Node</span><span class="p">]):</span>
         <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span> <span class="o">=</span> <span class="n">triple</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">Shape</span><span class="p">):</span>
             <span class="c1"># if the object being added is of type Shape</span>
@@ -520,10 +520,10 @@ document.write(`
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="NodeShape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape">[docs]</a><span class="k">class</span> <span class="nc">NodeShape</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
+<div class="viewcode-block" id="NodeShape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">NodeShape</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for constructing Node Shapes programatically&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">identifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -539,7 +539,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;NodeShape&quot;</span><span class="p">]))</span>
 
-<div class="viewcode-block" id="NodeShape.of_class"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape.of_class">[docs]</a>    <span class="k">def</span> <span class="nf">of_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="NodeShape.of_class"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape.of_class">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">of_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add constraint that target much be of a certain class</span>
 
 <span class="sd">        :param class_: class of target</span>
@@ -553,14 +553,14 @@ document.write(`
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="NodeShape.always_run"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape.always_run">[docs]</a>    <span class="k">def</span> <span class="nf">always_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="NodeShape.always_run"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape.always_run">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">always_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add blank node target</span>
 <span class="sd">        This target insures that the shape will always be evaluated.</span>
 <span class="sd">        If the shape has properties this can cause it to fail.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;targetNode&quot;</span><span class="p">],</span> <span class="n">BNode</span><span class="p">()))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="NodeShape.count"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape.count">[docs]</a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exactly</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="NodeShape.count"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape.count">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exactly</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an exact count constraint.</span>
 
 <span class="sd">        :param exactly: exact number of instances of class to match</span>
@@ -569,7 +569,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">CONSTRAINT</span><span class="p">[</span><span class="s2">&quot;exactCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="n">exactly</span><span class="p">)))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="NodeShape.has_property"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape.has_property">[docs]</a>    <span class="k">def</span> <span class="nf">has_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">URIRef</span><span class="p">]):</span>
+<div class="viewcode-block" id="NodeShape.has_property"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NodeShape.has_property">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">has_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">property</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="n">URIRef</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add property constraint.</span>
 
 <span class="sd">        :param property: property shape or property to add constraint for</span>
@@ -582,8 +582,8 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
-<div class="viewcode-block" id="PropertyShape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape">[docs]</a><span class="k">class</span> <span class="nc">PropertyShape</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="PropertyShape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PropertyShape</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">identifier</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Node</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -599,7 +599,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;PropertyShape&quot;</span><span class="p">]))</span>
 
-<div class="viewcode-block" id="PropertyShape.has_path"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape.has_path">[docs]</a>    <span class="k">def</span> <span class="nf">has_path</span><span class="p">(</span>
+<div class="viewcode-block" id="PropertyShape.has_path"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape.has_path">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">has_path</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span>
         <span class="n">zero_or_one</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -632,7 +632,7 @@ document.write(`
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="PropertyShape.matches"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape.matches">[docs]</a>    <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span>
+<div class="viewcode-block" id="PropertyShape.matches"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape.matches">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">matches</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span>
         <span class="nb">type</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span>
@@ -683,7 +683,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;maxCount&quot;</span><span class="p">],</span> <span class="n">Literal</span><span class="p">(</span><span class="nb">max</span><span class="p">)))</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="PropertyShape.matches_class"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape.matches_class">[docs]</a>    <span class="k">def</span> <span class="nf">matches_class</span><span class="p">(</span>
+<div class="viewcode-block" id="PropertyShape.matches_class"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape.matches_class">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">matches_class</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">class_</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span>
         <span class="nb">min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -706,7 +706,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">class_</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">exactly</span><span class="p">,</span> <span class="n">qualified</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PropertyShape.matches_shape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape.matches_shape">[docs]</a>    <span class="k">def</span> <span class="nf">matches_shape</span><span class="p">(</span>
+<div class="viewcode-block" id="PropertyShape.matches_shape"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.PropertyShape.matches_shape">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">matches_shape</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">shape</span><span class="p">:</span> <span class="n">Node</span><span class="p">,</span>
         <span class="nb">min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -730,7 +730,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">],</span> <span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">exactly</span><span class="p">,</span> <span class="n">qualified</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="OR"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.OR">[docs]</a><span class="k">def</span> <span class="nf">OR</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shape</span><span class="p">:</span>
+<div class="viewcode-block" id="OR"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.OR">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">OR</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shape</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;add OR property</span>
 
 <span class="sd">    :param nodes: list of nodes to OR</span>
@@ -739,7 +739,7 @@ document.write(`
     <span class="k">return</span> <span class="n">Shape</span><span class="p">()</span><span class="o">.</span><span class="n">OR</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AND"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.AND">[docs]</a><span class="k">def</span> <span class="nf">AND</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shape</span><span class="p">:</span>
+<div class="viewcode-block" id="AND"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.AND">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">AND</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shape</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;add AND property</span>
 
 <span class="sd">    :param nodes: list of nodes to AND</span>
@@ -748,7 +748,7 @@ document.write(`
     <span class="k">return</span> <span class="n">Shape</span><span class="p">()</span><span class="o">.</span><span class="n">AND</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="NOT"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NOT">[docs]</a><span class="k">def</span> <span class="nf">NOT</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shape</span><span class="p">:</span>
+<div class="viewcode-block" id="NOT"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.NOT">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">NOT</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shape</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;add NOT property</span>
 
 <span class="sd">    :param nodes: list of nodes to NOT</span>
@@ -757,7 +757,7 @@ document.write(`
     <span class="k">return</span> <span class="n">Shape</span><span class="p">()</span><span class="o">.</span><span class="n">NOT</span><span class="p">(</span><span class="n">node</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="XONE"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.XONE">[docs]</a><span class="k">def</span> <span class="nf">XONE</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shape</span><span class="p">:</span>
+<div class="viewcode-block" id="XONE"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.shape_builder.shape.html#buildingmotif.shape_builder.shape.XONE">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">XONE</span><span class="p">(</span><span class="o">*</span><span class="n">nodes</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Shape</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;add XONE property</span>
 
 <span class="sd">    :param nodes: list of nodes to XONE</span>
