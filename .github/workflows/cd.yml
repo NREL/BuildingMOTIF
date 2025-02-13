@@ -105,6 +105,8 @@ jobs:
           version: 1.4.0
           virtualenvs-in-project: false
           virtualenvs-path: ~/.virtualenvs
+      - name: install dependencies
+        run: poetry install --no-root --with=dev
       - name: increment dev version
         run: poetry run python scripts/bump_dev_version.py
       - name: build dist
