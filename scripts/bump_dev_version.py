@@ -6,6 +6,7 @@ from typing import Optional
 import requests
 import tomlkit
 
+# Version pattern from https://peps.python.org/pep-0440/#appendix-b-parsing-version-strings-with-regular-expressions
 VERSION_PATTERN = r"""
     v?
     (?:
@@ -42,14 +43,16 @@ _regex = re.compile(
 )
 
 
-def extract_version_components(release_str: str) -> dict:
-    match = _regex.match(release_str)
+def extract_version_components(version_str: str) -> dict:
+    """Splits a version string into its components"""
+    match = _regex.match(version_str)
     if match is not None:
         return match.groupdict()
-    raise Exception(f"Failed to extract components from {release_str}")
+    raise Exception(f"Failed to extract components from {version_str}")
 
 
-def get_release_list(index_url: str, project_name: str):
+def get_release_list(index_url: str, project_name: str) -> list[str]:
+    """Gets a list of release versions from a pypi compliant index"""
     index_url = index_url.rstrip("/")
     response = requests.get(index_url + "/pypi/" + project_name + "/json")
     response.raise_for_status()
@@ -59,6 +62,7 @@ def get_release_list(index_url: str, project_name: str):
 
 
 def components_to_version(components: dict) -> str:
+    """Takes the components of a version and combines them into a string"""
     for key in components.keys():
         if components[key] is None:
             components[key] = ""
@@ -75,6 +79,9 @@ def components_to_version(components: dict) -> str:
 def increment_development_component(
     version_str: str, increment_components: bool = False
 ) -> str:
+    """Increment develop component, and optionally increment the least
+    signification version component if the current version string does
+    not contain a development component."""
     version_groups = extract_version_components(version_str)
 
     if version_groups["dev_n"]:
@@ -115,6 +122,7 @@ def increment_development_component(
 
 
 def version_greater_than(version_a: Optional[str], version_b: Optional[str]) -> bool:
+    """Compare if version a is strictly greater than version b"""
     if version_a is None:
         return False
     if version_b is None:
@@ -193,6 +201,10 @@ def version_greater_than(version_a: Optional[str], version_b: Optional[str]) -> 
 
 
 def get_next_dev_version(local_version: str, release_list: list[str]) -> str:
+    """Compare local_version to list of released versions.
+    If there are already dev builds it will incrment the latest of those builds.
+    If there are not, it will create the version for the first dev build.
+    """
     local_version_components = extract_version_components(local_version)
 
     recent_release = None
@@ -218,18 +230,22 @@ def get_next_dev_version(local_version: str, release_list: list[str]) -> str:
             return increment_development_component(local_version)
 
 
+# Read pyproject.toml
 pyproject_path = Path(os.path.abspath(__file__)).parents[1] / "pyproject.toml"
-
 pyproject_contents = tomlkit.load(pyproject_path.open("r"))
 
+# Query release list
 release_list = get_release_list(
     os.environ.get("PYPI_URL", "https://pypi.org/"),
     pyproject_contents["tool"]["poetry"]["name"].lower(),
 )
+# Get current version from pyproject.toml
 version = pyproject_contents["tool"]["poetry"]["version"]
 
+# Determine name for dev release
 next_dev_version = get_next_dev_version(version, release_list)
 print(next_dev_version)
 pyproject_contents["tool"]["poetry"]["version"] = next_dev_version
 
+# Update pyproject.toml
 tomlkit.dump(pyproject_contents, pyproject_path.open("w"))

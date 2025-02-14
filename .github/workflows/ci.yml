@@ -154,7 +154,7 @@ jobs:
   # deploy development distribution with changes to develop
   deploy-dev-dist:
     needs: testing
-    if: github.ref == 'refs/heads/ts/dev-release'
+    if: github.ref == 'refs/heads/ts/dev-release' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -173,7 +173,7 @@ jobs:
         run: poetry install --no-root --with=dev
       - name: increment dev version
         env:
-          PYPI_URL: https://test.pypi.org
+          PYPI_URL: https://pypi.org
         run: poetry run python scripts/bump_dev_version.py
       - name: build dist
         run: poetry build
@@ -184,3 +184,8 @@ jobs:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
           skip_existing: false
+      - name: publish distribution to PyPI
+        if: steps.test-pypi.outcome == 'success'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
