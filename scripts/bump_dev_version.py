@@ -223,7 +223,8 @@ pyproject_path = Path(os.path.abspath(__file__)).parents[1] / "pyproject.toml"
 pyproject_contents = tomlkit.load(pyproject_path.open("r"))
 
 release_list = get_release_list(
-    "https://pypi.org", pyproject_contents["tool"]["poetry"]["name"].lower()
+    os.environ.get("PYPI_URL", "https://pypi.org/"),
+    pyproject_contents["tool"]["poetry"]["name"].lower(),
 )
 version = pyproject_contents["tool"]["poetry"]["version"]
 
