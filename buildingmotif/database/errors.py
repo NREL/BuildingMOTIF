@@ -47,16 +47,3 @@ class TemplateNotFound(Exception):
         if self.template_name:
             return f"Name: {self.template_name}"
         return f"ID: {self.template_id}"
-
-
-class ShapeCollectionNotFound(Exception):
-    def __init__(self, name: Optional[str] = None, idnum: Optional[int] = None):
-        self.shape_collection_name = name
-        self.shape_collection_id = idnum
-
-    def __str__(self):
-        if self.shape_collection_name:
-            return (
-                f"Name: {self.shape_collection_name}"
-            )
-        return f"ID: {self.shape_collection_id}"
