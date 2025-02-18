@@ -430,7 +430,9 @@ class Library:
         elif isinstance(dep, dict):
             binding_args = dep.get("args", {})
             if "library" in dep:
-                dependee = Library.load(name=dep["library"]).get_template_by_name(dep["template"])
+                dependee = Library.load(name=dep["library"]).get_template_by_name(
+                    dep["template"]
+                )
             elif dep["template"] in template_id_lookup:
                 dependee = Template.load(template_id_lookup[dep["template"]])
             elif skip_uri(dep["template"]):
@@ -442,11 +444,15 @@ class Library:
                         dependee = library.get_template_by_name(dep["template"])
                         break
                     except Exception as e:
-                        logging.debug(f"Could not find dependee {dep['template']} in library {imp}: {e}")
+                        logging.debug(
+                            f"Could not find dependee {dep['template']} in library {imp}: {e}"
+                        )
         if dependee is not None:
             template.add_dependency(dependee, binding_args)
         else:
-            logging.warning(f"Warning: could not find dependee {dep['template']} in libraries {self.graph_imports}")
+            logging.warning(
+                f"Warning: could not find dependee {dep} in libraries {self.graph_imports}"
+            )
 
     def _resolve_template_dependencies(
         self,
