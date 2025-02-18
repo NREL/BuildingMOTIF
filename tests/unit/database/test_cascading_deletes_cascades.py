@@ -54,7 +54,9 @@ def test_cascade_delete_library_cascades(bm):
         bm.table_connection.get_db_shape_collection(shape_collection_id)
 
 
-def test_cascade_delete_multi_library(bm):
+# library1 has template1, library2 has template2, template1 depends on template2
+# then deleting library1 should delete template1 but leave library2 and template2
+def test_cascade_delete_dependent_multi_library(bm):
     # Create two libraries
     library1 = bm.table_connection.create_db_library(name="cascade_library1")
     library2 = bm.table_connection.create_db_library(name="cascade_library2")
@@ -82,3 +84,37 @@ def test_cascade_delete_multi_library(bm):
     # Library2 and its template should still exist
     assert bm.table_connection.get_db_library(library2.id)
     assert bm.table_connection.get_db_template(template2.id)
+
+
+# library1 has template1, library2 has template2, template1 depends on template2
+# deleting library2 should delete template2 but leave library1 and template1
+def test_cascade_delete_dependency_multi_library(bm):
+    # Create two libraries
+    library1 = bm.table_connection.create_db_library(name="cascade_library1")
+    library2 = bm.table_connection.create_db_library(name="cascade_library2")
+    # Create template1 in library1 and template2 in library2
+    template1 = bm.table_connection.create_db_template(
+        name="template1", library_id=library1.id
+    )
+    template2 = bm.table_connection.create_db_template(
+        name="template2", library_id=library2.id
+    )
+    # Load templates to add dependency and verify dependency relationship.
+    template1 = Template.load(template1.id)
+    template2 = Template.load(template2.id)
+    # Add dependency: template1 depends on template2
+    template1.add_dependency(template2, {"name": "dependency"})
+    # Verify dependency exists.
+    deps = bm.table_connection.get_db_template_dependencies(template1.id)
+    assert len(deps) == 1
+    # Delete library2 and ensure cascading deletion
+    bm.table_connection.delete_db_library(library2.id)
+    with pytest.raises(LibraryNotFound):
+        bm.table_connection.get_db_library(library2.id)
+    with pytest.raises(TemplateNotFound):
+        bm.table_connection.get_db_template(template2.id)
+    # Library1 and its template should be gone
+    with pytest.raises(LibraryNotFound):
+        bm.table_connection.get_db_library(library1.id)
+    with pytest.raises(TemplateNotFound):
+        bm.table_connection.get_db_template(template1.id)
