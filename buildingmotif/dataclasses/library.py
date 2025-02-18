@@ -422,45 +422,31 @@ class Library:
         :return: the template instance this dependency points to
         :rtype: Template
         """
-        # if dep is a _template_dependency, turn it into a template
+        dependee = None
+        binding_args = {}
         if isinstance(dep, _template_dependency):
             dependee = dep.to_template(template_id_lookup)
-            template.add_dependency(dependee, dep.bindings)
-            return
-
-        # now, we know that dep is a dict
-
-        # if dependency names a library explicitly, load that library and get the template by name
-        if "library" in dep:
-            dependee = Library.load(name=dep["library"]).get_template_by_name(
-                dep["template"]
-            )
-            template.add_dependency(dependee, dep["args"])
-            return
-        # if no library is provided, try to resolve the dependency from this library
-        if dep["template"] in template_id_lookup:
-            dependee = Template.load(template_id_lookup[dep["template"]])
-            template.add_dependency(dependee, dep["args"])
-            return
-        # check documentation for skip_uri for what URIs get skipped
-        if skip_uri(dep["template"]):
-            return
-
-        # if the dependency is not in the local cache, then search through this library's imports
-        # for the template
-        for imp in self.graph_imports:
-            try:
-                library = Library.load(name=str(imp))
-                dependee = library.get_template_by_name(dep["template"])
-                template.add_dependency(dependee, dep["args"])
+            binding_args = dep.bindings
+        elif isinstance(dep, dict):
+            binding_args = dep.get("args", {})
+            if "library" in dep:
+                dependee = Library.load(name=dep["library"]).get_template_by_name(dep["template"])
+            elif dep["template"] in template_id_lookup:
+                dependee = Template.load(template_id_lookup[dep["template"]])
+            elif skip_uri(dep["template"]):
                 return
-            except Exception as e:
-                logging.debug(
-                    f"Could not find dependee {dep['template']} in library {imp}: {e}"
-                )
-        logging.warning(
-            f"Warning: could not find dependee {dep['template']} in libraries {self.graph_imports}"
-        )
+            else:
+                for imp in self.graph_imports:
+                    try:
+                        library = Library.load(name=str(imp))
+                        dependee = library.get_template_by_name(dep["template"])
+                        break
+                    except Exception as e:
+                        logging.debug(f"Could not find dependee {dep['template']} in library {imp}: {e}")
+        if dependee is not None:
+            template.add_dependency(dependee, binding_args)
+        else:
+            logging.warning(f"Warning: could not find dependee {dep['template']} in libraries {self.graph_imports}")
 
     def _resolve_template_dependencies(
         self,
