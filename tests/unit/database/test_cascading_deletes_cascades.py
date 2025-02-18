@@ -1,11 +1,12 @@
 import pytest
-from buildingmotif.dataclasses.template import Template
+
 from buildingmotif.database.errors import (
     LibraryNotFound,
-    TemplateNotFound,
-    ModelNotFound,
     ShapeCollectionNotFound,
+    TemplateNotFound,
 )
+from buildingmotif.dataclasses.template import Template
+
 
 def test_cascade_delete_model_shape_collection(bm):
     # Create a model; its manifest (shape collection) should be cascading deleted.
@@ -25,8 +26,12 @@ def test_cascade_delete_library_cascades(bm):
     # Create a library, two templates within it, and a dependency relationship.
     db_library = bm.table_connection.create_db_library(name="cascade_library")
     shape_collection_id = db_library.shape_collection.id
-    template1 = bm.table_connection.create_db_template(name="template1", library_id=db_library.id)
-    template2 = bm.table_connection.create_db_template(name="template2", library_id=db_library.id)
+    template1 = bm.table_connection.create_db_template(
+        name="template1", library_id=db_library.id
+    )
+    template2 = bm.table_connection.create_db_template(
+        name="template2", library_id=db_library.id
+    )
 
     # Add a dependency relationship between template1 and template2.
     template1 = Template.load(template1.id)
@@ -48,13 +53,18 @@ def test_cascade_delete_library_cascades(bm):
     with pytest.raises(ShapeCollectionNotFound):
         bm.table_connection.get_db_shape_collection(shape_collection_id)
 
+
 def test_cascade_delete_multi_library(bm):
     # Create two libraries
     library1 = bm.table_connection.create_db_library(name="cascade_library1")
     library2 = bm.table_connection.create_db_library(name="cascade_library2")
     # Create template1 in library1 and template2 in library2
-    template1 = bm.table_connection.create_db_template(name="template1", library_id=library1.id)
-    template2 = bm.table_connection.create_db_template(name="template2", library_id=library2.id)
+    template1 = bm.table_connection.create_db_template(
+        name="template1", library_id=library1.id
+    )
+    template2 = bm.table_connection.create_db_template(
+        name="template2", library_id=library2.id
+    )
     # Load templates to add dependency and verify dependency relationship.
     template1 = Template.load(template1.id)
     template2 = Template.load(template2.id)
