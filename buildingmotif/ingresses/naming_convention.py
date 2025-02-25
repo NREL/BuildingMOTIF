@@ -48,7 +48,6 @@ class NamingConventionIngress(RecordIngressHandler):
             reverse=True,
         )
 
-
     @cached_property
     def records(self) -> List[Record]:
         results, failures = parse_list(

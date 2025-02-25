@@ -4,7 +4,7 @@ import string
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union, Any
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union
 
 import rdflib
 from pyshacl.helper.path_helper import shacl_path_to_sparql_path
@@ -17,7 +17,8 @@ from buildingmotif.namespaces import BMOTIF, OWL, SH
 from buildingmotif.utils import Triple, copy_graph, get_template_parts_from_shape
 
 if TYPE_CHECKING:
-    from buildingmotif import BuildingMOTIF, Library
+    from buildingmotif import BuildingMOTIF
+    from buildingmotif.dataclasses import Library
 
 ONTOLOGY_FILE = (
     Path(__file__).resolve().parents[1] / "resources" / "building_motif_ontology.ttl"
@@ -186,6 +187,9 @@ class ShapeCollection:
         :param library: The library to add inferred templates to
         :type library: Library
         """
+        # we need to do the Library import here to avoid circular imports
+        from buildingmotif.dataclasses.library import Library
+
         imports_closure = copy_graph(self.graph)
         for dependency in self.graph.objects(predicate=rdflib.OWL.imports):
             try:
@@ -198,7 +202,9 @@ class ShapeCollection:
                 continue
 
         class_candidates = set(self.graph.subjects(rdflib.RDF.type, rdflib.OWL.Class))
-        shape_candidates = set(self.graph.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
+        shape_candidates = set(
+            self.graph.subjects(rdflib.RDF.type, rdflib.SH.NodeShape)
+        )
         candidates = class_candidates.intersection(shape_candidates)
 
         template_id_lookup: Dict[str, int] = {}
@@ -206,7 +212,9 @@ class ShapeCollection:
 
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
-            partial_body, deps = get_template_parts_from_shape(candidate, imports_closure)
+            partial_body, deps = get_template_parts_from_shape(
+                candidate, imports_closure
+            )
             templ = library.create_template(str(candidate), partial_body)
             dependency_cache[templ.id] = deps
             template_id_lookup[str(candidate)] = templ.id

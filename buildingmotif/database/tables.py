@@ -1,6 +1,14 @@
 from typing import Dict, List
 
-from sqlalchemy import Column, ForeignKey, Integer, String, Text, UniqueConstraint, event
+from sqlalchemy import (
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    event,
+)
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Mapped, declarative_base, relationship
 
@@ -16,6 +24,7 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
+
 
 class DBModel(Base):
     """A Model is a metadata model of all or part of a building."""
@@ -99,7 +108,9 @@ class DBTemplate(Base):
     body_id: Mapped[str] = Column(String())
     optional_args: Mapped[List[str]] = Column(JSONType)  # type: ignore
 
-    library_id: Mapped[int] = Column(Integer, ForeignKey("library.id", ondelete="CASCADE"), nullable=False)
+    library_id: Mapped[int] = Column(
+        Integer, ForeignKey("library.id", ondelete="CASCADE"), nullable=False
+    )
     library: Mapped[DBLibrary] = relationship("DBLibrary", back_populates="templates")
     dependencies: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",

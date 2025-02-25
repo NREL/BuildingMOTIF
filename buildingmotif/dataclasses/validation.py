@@ -123,8 +123,8 @@ class OrShape(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        #context = ""
-        #for shape in self.shapes:
+        # context = ""
+        # for shape in self.shapes:
         #    # get the CBD of the shape
         #    shape_graph = self.graph.cbd(shape)
         #    # serialize the shape graph to a string

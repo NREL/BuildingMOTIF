@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 import pygit2
 import rdflib
-import sqlalchemy
 import yaml
 from pkg_resources import resource_exists, resource_filename
 from rdflib.exceptions import ParserError
@@ -14,19 +13,13 @@ from rdflib.plugins.parsers.notation3 import BadSyntax
 from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
-from buildingmotif.database.tables import DBLibrary, DBTemplate
 from buildingmotif.database.errors import LibraryNotFound
+from buildingmotif.database.tables import DBLibrary, DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.schemas import validate_libraries_yaml
 from buildingmotif.template_compilation import compile_template_spec
-from buildingmotif.utils import (
-    copy_graph,
-    get_ontology_files,
-    get_template_parts_from_shape,
-    shacl_inference,
-    skip_uri,
-)
+from buildingmotif.utils import get_ontology_files, shacl_inference, skip_uri
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -130,7 +123,7 @@ class Library:
         :type library: DBLibrary
         """
         bm = get_building_motif()
-        #bm.table_connection.delete_db_library(library.id)
+        # bm.table_connection.delete_db_library(library.id)
         for template in library.templates:  # type: ignore
             bm.session.delete(template)
         bm.session.commit()
@@ -296,7 +289,6 @@ class Library:
             shape_col.infer_templates(lib)
 
         return lib
-
 
     def _load_shapes_from_directory(
         self,
