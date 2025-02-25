@@ -457,7 +457,9 @@ def _shape_to_where(
         # in the PropertyShape or generate a unique one
         name = pshape_vars.get(
             pshape,
-            f"?{graph.value(pshape, SH.name|RDFS.label) or gensym()}".replace(" ", "_"),
+            f"?{graph.value(pshape, SH.name | RDFS.label) or gensym()}".replace(
+                " ", "_"
+            ),
         )
         path = shacl_path_to_sparql_path(graph, graph.value(pshape, SH.path))
         qMinCount = graph.value(pshape, SH.qualifiedMinCount) or 0
