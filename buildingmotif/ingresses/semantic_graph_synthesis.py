@@ -1,5 +1,5 @@
-from typing import List
 import logging
+from typing import List
 
 from rdflib import Graph, Namespace
 
@@ -14,7 +14,6 @@ from buildingmotif.graph_generation.semantic_graph_synthesizer import (
 )
 from buildingmotif.ingresses.base import GraphIngressHandler
 from buildingmotif.ingresses.naming_convention import NamingConventionIngress
-
 
 logger = logging.getLogger(__name__)
 

@@ -112,7 +112,9 @@ class SemanticGraphSynthesizer:
             ],
         )
         index_bindings = self.find_bindings_for_label(ontology, index_label)
-        logger.debug(f"Index bindings: {index_bindings.bindings}. Now going through labels")
+        logger.debug(
+            f"Index bindings: {index_bindings.bindings}. Now going through labels"
+        )
 
         bindings_list = []
         for label in labelset.labels:
@@ -149,7 +151,9 @@ class SemanticGraphSynthesizer:
 
         bindings_list = []
         for labelset in labelsets:
-            logger.debug(f"Generating bindings for labelset: {labelset.token_classes} {labelset.labels}")
+            logger.debug(
+                f"Generating bindings for labelset: {labelset.token_classes} {labelset.labels}"
+            )
             bindings_list.extend(self.find_bindings_for_labelset(ontology, labelset))
 
         return bindings_list

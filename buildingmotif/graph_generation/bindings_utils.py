@@ -50,7 +50,9 @@ def evaluate_bindings(
     if bindings.template is None:
         raise ValueError("bindings have no template.")
 
-    logger.debug(f"Evaluating bindings for template {bindings.template.name}. Parameters: {bindings.bindings}")
+    logger.debug(
+        f"Evaluating bindings for template {bindings.template.name}. Parameters: {bindings.bindings}"
+    )
     return bindings.template.evaluate(
         {p: namespace[t.identifier] for p, t in bindings.bindings.items()}
     )
