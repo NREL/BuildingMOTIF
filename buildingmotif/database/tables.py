@@ -62,8 +62,9 @@ class DBLibrary(Base):
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String(), nullable=False, unique=True)
 
+    # do not use passive_deletes here because we want to handle the deletion of templates
     templates: Mapped[List["DBTemplate"]] = relationship(
-        "DBTemplate", back_populates="library", cascade="all", passive_deletes=True
+        "DBTemplate", back_populates="library", cascade="all"
     )
 
     shape_collection_id = Column(
@@ -121,6 +122,7 @@ class DBTemplate(Base):
         cascade="all",
         passive_deletes=True,
     )
+    # do not use passive_deletes on dependants because we want to handle the deletion of dependants
     dependants: Mapped[List["DBTemplate"]] = relationship(
         "DBTemplate",
         secondary="deps_association_table",
@@ -128,7 +130,6 @@ class DBTemplate(Base):
         secondaryjoin=id == DepsAssociation.dependant_id,
         back_populates="dependencies",
         cascade="all",
-        passive_deletes=True,
     )
 
     __table_args__ = (
@@ -138,3 +139,20 @@ class DBTemplate(Base):
             name="name_library_unique_constraint",
         ),
     )
+
+
+@event.listens_for(DBTemplate, "after_delete")
+def handle_template_deletion(mapper, connection, target):
+    """Event listener to handle deletion of a template and its dependents."""
+    from buildingmotif import get_building_motif
+
+    session = get_building_motif().session
+
+    # Identify all dependant templates to delete and delete them (and their libraries).
+    delete_libraries = []
+    dependants = target.dependants[:]
+    for dependant in dependants:
+        session.delete(dependant)
+        delete_libraries.append(dependant.library)
+    for library in delete_libraries:
+        session.delete(library)

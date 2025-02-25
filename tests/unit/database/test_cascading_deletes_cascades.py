@@ -18,6 +18,7 @@ def test_cascade_delete_model_shape_collection(bm):
     assert bm.table_connection.get_db_shape_collection(shape_collection_id)
     # now delete the model, and assert the shape collection is gone
     bm.table_connection.delete_db_model(db_model.id)
+    bm.session.commit()
     with pytest.raises(ShapeCollectionNotFound):
         bm.table_connection.get_db_shape_collection(shape_collection_id)
 
@@ -43,6 +44,7 @@ def test_cascade_delete_library_cascades(bm):
 
     # Deleting the library should cascade-delete the library, its templates, and its associated shape collection.
     bm.table_connection.delete_db_library(db_library.id)
+    bm.session.commit()
 
     with pytest.raises(LibraryNotFound):
         bm.table_connection.get_db_library(db_library.id)
@@ -77,6 +79,7 @@ def test_cascade_delete_dependent_multi_library(bm):
     assert len(deps) == 1
     # Delete library1 and ensure cascading deletion
     bm.table_connection.delete_db_library(library1.id)
+    bm.session.commit()
     with pytest.raises(LibraryNotFound):
         bm.table_connection.get_db_library(library1.id)
     with pytest.raises(TemplateNotFound):
@@ -109,6 +112,7 @@ def test_cascade_delete_dependency_multi_library(bm):
     assert len(deps) == 1
     # Delete library2 and ensure cascading deletion
     bm.table_connection.delete_db_library(library2.id)
+    bm.session.commit()
     with pytest.raises(LibraryNotFound):
         bm.table_connection.get_db_library(library2.id)
     with pytest.raises(TemplateNotFound):
