@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
 
 import pygit2
 import rdflib
-import sqlalchemy
 import yaml
 from pkg_resources import resource_exists, resource_filename
 from rdflib.exceptions import ParserError
@@ -14,18 +13,13 @@ from rdflib.plugins.parsers.notation3 import BadSyntax
 from rdflib.util import guess_format
 
 from buildingmotif import get_building_motif
+from buildingmotif.database.errors import LibraryNotFound
 from buildingmotif.database.tables import DBLibrary, DBTemplate
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.schemas import validate_libraries_yaml
 from buildingmotif.template_compilation import compile_template_spec
-from buildingmotif.utils import (
-    copy_graph,
-    get_ontology_files,
-    get_template_parts_from_shape,
-    shacl_inference,
-    skip_uri,
-)
+from buildingmotif.utils import get_ontology_files, shacl_inference, skip_uri
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
@@ -116,7 +110,7 @@ class Library:
                 logging.warning(
                     f'Library {name} already exists in database. To ovewrite load library with "overwrite=True"'  # noqa
                 )
-        except sqlalchemy.exc.NoResultFound:
+        except LibraryNotFound:
             db_library = bm.table_connection.create_db_library(name)
 
         return cls(_id=db_library.id, _name=db_library.name, _bm=bm)
@@ -282,54 +276,17 @@ class Library:
 
         lib = cls.create(ontology_name, overwrite=overwrite)
 
-        if infer_templates:
-            # infer shapes from any class/nodeshape candidates in the graph
-            lib._infer_templates_from_graph(ontology)
-
         # load the ontology graph as a shape_collection
         shape_col_id = lib.get_shape_collection().id
         assert shape_col_id is not None  # should always pass
         shape_col = ShapeCollection.load(shape_col_id)
         shape_col.add_graph(ontology)
 
+        if infer_templates:
+            # infer shapes from any class/nodeshape candidates in the graph
+            shape_col.infer_templates(lib)
+
         return lib
-
-    def _infer_templates_from_graph(self, graph: rdflib.Graph):
-        """Infer templates from a graph (by interpreting shapes) and add them to this library.
-
-        :param graph: graph to infer templates from
-        :type graph: rdflib.Graph
-        """
-        # add all imports to the same graph so we can resolve everything
-        imports_closure = copy_graph(graph)
-        # import dependencies into 'graph'
-        # get all imports from the graph
-        for dependency in graph.objects(predicate=rdflib.OWL.imports):
-            # attempt to load from BuildingMOTIF
-            try:
-                lib = Library.load(name=str(dependency))
-                imports_closure += lib.get_shape_collection().graph
-            except Exception as e:  # TODO: replace with a more specific exception
-                logging.warning(
-                    f"An ontology could not resolve a dependency on {dependency} ({e}). Check this is loaded into BuildingMOTIF"
-                )
-                continue
-        class_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.OWL.Class))
-        shape_candidates = set(graph.subjects(rdflib.RDF.type, rdflib.SH.NodeShape))
-        candidates = class_candidates.intersection(shape_candidates)
-        template_id_lookup: Dict[str, int] = {}
-        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
-        for candidate in candidates:
-            assert isinstance(candidate, rdflib.URIRef)
-            # TODO: mincount 0 (or unspecified) should be optional args on the generated template
-            partial_body, deps = get_template_parts_from_shape(
-                candidate, imports_closure
-            )
-            templ = self.create_template(str(candidate), partial_body)
-            dependency_cache[templ.id] = deps
-            template_id_lookup[str(candidate)] = templ.id
-
-        self._resolve_template_dependencies(template_id_lookup, dependency_cache)
 
     def _load_shapes_from_directory(
         self,
@@ -364,7 +321,7 @@ class Library:
             )
         # infer shapes from any class/nodeshape candidates in the graph
         if infer_templates:
-            self._infer_templates_from_graph(shape_col.graph)
+            shape_col.infer_templates(self)
 
     @classmethod
     def _load_from_directory(
@@ -445,7 +402,7 @@ class Library:
         try:
             bm.table_connection.get_db_library_by_name(library_name)
             return True
-        except sqlalchemy.exc.NoResultFound:
+        except LibraryNotFound:
             return False
 
     def _resolve_dependency(
