@@ -4,7 +4,6 @@ from flask_api import status
 from rdflib import Graph, URIRef
 from rdflib.plugins.parsers.notation3 import BadSyntax
 
-from buildingmotif import get_building_motif
 from buildingmotif.api.serializers.model import serialize
 from buildingmotif.database.errors import (
     LibraryNotFound,
