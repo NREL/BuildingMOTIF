@@ -167,9 +167,13 @@ def validate_model(models_id: int) -> flask.Response:
     except ModelNotFound:
         return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
+    # we will read the shape collections from the input
     shape_collections = []
 
-    # no body provided -- default to model manifest and default SHACL engine
+    # get shacl_engine from the query params, defaults to the current engine
+    shacl_engine = request.args.get("shacl_engine", None)
+
+    # no body provided -- default to model manifest
     if request.content_length is None:
         shape_collections = [model.get_manifest()]
     else:
@@ -186,7 +190,6 @@ def validate_model(models_id: int) -> flask.Response:
 
         if body is not None and not isinstance(body, dict):
             return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
-        shape_collections = []
         body = body if body is not None else {}
         nonexistent_libraries = []
         for library_id in body.get("library_ids", []):
@@ -200,9 +203,10 @@ def validate_model(models_id: int) -> flask.Response:
                 "message": f"Libraries with ids {nonexistent_libraries} do not exist"
             }, status.HTTP_400_BAD_REQUEST
 
-    # if shape_collections is empty, model.validate will default
-    # to the model's manifest
-    vaildation_context = model.validate(shape_collections)
+    # if shape_collections is empty, model.validate will default to the model's manifest
+    vaildation_context = model.validate(
+        shape_collections, error_on_missing_imports=False, shacl_engine=shacl_engine
+    )
 
     return {
         "message": vaildation_context.report_string,
