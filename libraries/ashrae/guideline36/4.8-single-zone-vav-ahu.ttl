@@ -1,0 +1,207 @@
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix components: <urn:ashrae/g36/components/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix : <urn:ashrae/g36/4.8/single-zone-vav-ahu/> .
+
+:single-zone-vav-ahu a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "Single-Zone VAV Air-Handling Unit" ;
+    sh:class brick:Air_Handling_Unit ;
+    # required
+    sh:property [
+        rdfs:label "Supply Fan with VFD" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:variable-speed-fan-vfd ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Supply air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    # NOTE can 2 dampers with shared actuator be modeled in brick?
+    sh:property [
+        rdfs:label "Outdoor/return air damper" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:damper-modulating ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Outdoor air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Mixed air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Return air temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Filter" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:filter ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Cooling Coil" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:cooling-coil ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional
+    sh:property [
+        rdfs:label "Heating Coil" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:heating-coil ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "Thermostat" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:node components:thermostat] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # required
+    sh:property [
+        rdfs:label "HVAC Zone" ;
+        sh:path brick:feeds ;
+        sh:qualifiedValueShape [ sh:node components:zone ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # For units with an AFMS, include the following point
+    # application
+    sh:property [
+        rdfs:label "Outdoor airflow" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Outside_Air_Flow_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional, relief air
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:or (
+                # option 1
+                sh:node :relief-damper
+                # option 2
+                sh:and (
+                    sh:node :relief-fan
+                    sh:node :relief-fan-damper
+                )
+            )
+        ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # optional, return fan
+    sh:property [
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [
+            sh:or (
+                # option 1
+                sh:node :return-fan
+                # option 2
+                sh:and (
+                    sh:node :return-fan
+                    sh:node :return-fan-speed-control-exhaust-damper
+                )
+                # option 3
+                sh:and (
+                    sh:node :return-fan-pressure-control
+                    sh:node :return-fan-pressure-control-exhaust-damper
+                )
+            )
+        ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] ;
+    # For units with direct building pressure control, include the following point.
+    # application
+    # NOTE It’s not clear whether this point is in addition to the previous options (AND) or is a different and separate application (OR).
+    sh:property [
+        rdfs:label "Building static pressure" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Air_Differential_Pressure_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+# relief air
+
+# option 1
+# For units with actuated relief dampers but no relief fan, include the following points.
+:relief-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Relief Damper" ;
+    sh:node components:damper-modulating .
+
+# option 2
+# For units with a relief fan, include the following four points
+:relief-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Relief Fan with VFD" ;
+    sh:node components:variable-speed-fan-vfd .
+
+:relief-fan-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Relief Damper" ;
+    sh:node components:damper-two-position .
+
+# return air
+
+# option 1
+# For units with a return fan, include the following three points.
+:return-fan a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Return Fan with VFD" ;
+    sh:node components:variable-speed-fan-vfd .
+
+# option 2
+# For units with a return fan and speed tracking control, include the following point.
+:return-fan-speed-control-exhaust-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Exhaust Damper" ;
+    sh:node components:damper-two-position .
+
+# option 3
+# For units with a return fan and direct building pressure control, include the following two points.
+:return-fan-pressure-control a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Return Fan with VFD and direct building pressure control" ;
+    sh:node components:variable-speed-fan-vfd ;
+    sh:property [
+        rdfs:label "Return Fan Discharge Static Pressure" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Air_Differential_Pressure_Sensor ] ;
+        sh:qualifiedMinCount 1 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .
+
+:return-fan-pressure-control-exhaust-damper a sh:NodeShape, owl:Class, bmotif:HVAC ;
+    rdfs:label "Exhaust Damper" ;
+    sh:node components:damper-modulating .

@@ -1,0 +1,25 @@
+dual-duct-terminal-unit-discharge-sensor:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Terminal_Unit ;
+      brick:hasPart
+        p:cold-deck,
+        p:hot-deck,
+        p:thermostat ;
+      brick:hasPoint
+        p:flow ;
+      brick:feeds
+        p:zone .
+  dependencies:
+    - template: cold-deck
+      args: {"name": "cold-deck"}
+    - template: hot-deck
+      args: {"name": "hot-deck"}
+    - template: thermostat
+      args: {"name": "thermostat"}
+    - template: https://brickschema.org/schema/Brick#Discharge_Air_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "flow"}
+    - template: zone
+      args: {"name": "zone"}

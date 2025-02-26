@@ -1,0 +1,351 @@
+# 4.11 Hot Water Plant
+
+hot-water-plant:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name rdf:type rdf:Alt ;
+      rdf:_1 p:primary-only-plant ;
+      rdf:_2 p:primary-secondary-plant .
+  dependencies:
+    - template: primary-only-plant
+      args: {'name': 'primary-only-plant'}
+    - template: primary-secondary-plant
+      args: {'name': 'primary-secondary-plant'}
+
+primary-only-plant:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Hot_Water_System ;
+      brick:hasPart p:boiler,
+        ( _:plant rdf:type rdf:Alt
+          rdf:_1 p:hw-constant-primary-only-loop
+          rdf:_2 p:hw-variable-primary-only-loop ) .
+  optional: ['hw-constant-primary-only-loop', 'hw-variable-primary-only-loop']
+  dependencies:
+    - template: boiler
+      args: {'name': 'boiler'}
+    - template: hw-constant-primary-only-loop
+      args: {'name': 'hw-constant-primary-only-loop'}
+    - template: hw-variable-primary-only-loop
+      args: {'name': 'hw-variable-primary-only-loop'}
+
+primary-secondary-plant:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Hot_Water_System ;
+      brick:hasPart p:boiler,
+        ( _:plant rdf:type rdf:Alt
+          rdf:_1 p:hw-constant-primary-constant-secondary-loop
+          rdf:_2 p:hw-constant-primary-variable-secondary-loop
+          rdf:_3 p:hw-variable-primary-constant-secondary-loop
+          rdf:_4 p:hw-variable-primary-variable-secondary-loop ) .
+  optional: [
+    'hw-constant-primary-constant-secondary-loop',
+    'hw-constant-primary-variable-secondary-loop',
+    'hw-variable-primary-constant-secondary-loop',
+    'hw-variable-primary-variable-secondary-loop'
+  ]
+  dependencies:
+    - template: boiler
+      args: {'name': 'boiler'}
+    - template: hw-constant-primary-constant-secondary-loop
+      args: {'name': 'hw-constant-primary-constant-secondary-loop'}
+    - template: hw-constant-primary-variable-secondary-loop
+      args: {'name': 'hw-constant-primary-variable-secondary-loop'}
+    - template: hw-variable-primary-constant-secondary-loop
+      args: {'name': 'hw-variable-primary-constant-secondary-loop'}
+    - template: hw-variable-primary-variable-secondary-loop
+      args: {'name': 'hw-variable-primary-variable-secondary-loop'}
+
+# 4.11.1 Boilers
+
+boiler:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Boiler ;
+      brick:hasPart p:isolation-valve ;
+      brick:hasPoint p:enable, p:hws-temp-setpt, p:firing-rate, p:nat-gas-flow .
+  optional: ['firing-rate', 'isolation-valve', 'nat-gas-flow']
+  dependencies:
+    - template: isolation-valve
+      args: {'name': 'isolation-valve'}
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'enable'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Temperature_Setpoint
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hws-temp-setpt'}
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'firing-rate'}
+    - template: https://brickschema.org/schema/Brick#Valve_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'nat-gas-flow'}
+
+isolation-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Isolation_Valve ;
+      brick:hasPoint p:iso-valve, p:closed-end-switch, p:open-end-switch .
+  optional: ['closed-switch', 'open-switch']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'iso-valve'}
+    - template: https://brickschema.org/schema/Brick#On_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'closed-end-switch'}
+    - template: https://brickschema.org/schema/Brick#Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'open-end-switch'}
+
+# 4.11.2 HW Pumps (see components.yml)
+
+# 4.11.3 Primary (only) HW Loop
+
+hw-primary-only-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Hot_Water_Loop ;
+      brick:hasPoint
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:hws-flow
+          rdf:_2 p:hwr-flow ),
+        p:hws-temp, p:gauge-pressure .
+  optional: ['gauge-pressure']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hws-flow'}
+    - template: https://brickschema.org/schema/Brick#Entering_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hwr-flow'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hws-temp'}
+    - template: https://brickschema.org/schema/Brick#Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'gauge-pressure'}
+
+hw-constant-primary-only-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:hw-primary-only-loop ;
+      brick:hasPart p:constant-speed-pump .
+  dependencies:
+    - template: hw-primary-only-loop
+      args: {'name': 'hw-primary-only-loop'}
+    - template: constant-speed-pump
+      args: {'name': 'constant-speed-pump'}
+
+# TODO check syntax for loop hwr temp
+hw-variable-primary-only-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:hw-primary-only-loop ;
+      brick:feeds ( p:demand-loop brick:hasPoint p:loop-hwr-temp ) ;
+      brick:hasPart p:variable-speed-pump, p:min-flow-bypass-valve ;
+      brick:hasPoint p:plant-hwr-temp .
+  optional: ['loop-hwr-temp']
+  dependencies:
+    - template: hw-primary-only-loop
+      args: {'name': 'hw-primary-only-loop'}
+    - template: https://brickschema.org/schema/Brick#Hot_Water_Loop
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'demand-loop'}
+    - template: variable-speed-pump
+      args: {'name': 'variable-speed-pump'}
+    - template: min-flow-bypass-valve
+      args: {'name': 'min-flow-bypass-valve'}
+    - template: https://brickschema.org/schema/Brick#Entering_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'loop-hwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Entering_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'plant-hwr-temp'}
+
+# 4.11.4 (Primary) Secondary HW Loop
+
+# common points from 4.11.3
+hw-primary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Hot_Water_Loop ;
+      brick:hasPoint p:hws-temp, p:hwr-temp, p:gauge-pressure .
+  optional: ['hws-temp', 'gauge-pressure']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hws-temp'}
+    - template: https://brickschema.org/schema/Brick#Entering_Hot_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'gauge-pressure'}
+
+hw-constant-primary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:hw-primary-loop ;
+      brick:hasPart p:constant-speed-pump .
+  dependencies:
+    - template: hw-primary-loop
+      args: {'name': 'hw-primary-loop'}
+    - template: constant-speed-pump
+      args: {'name': 'constant-speed-pump'}
+
+hw-variable-primary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:hw-primary-loop ;
+      brick:hasPart p:variable-speed-pump .
+  dependencies:
+    - template: hw-primary-loop
+      args: {'name': 'hw-primary-loop'}
+    - template: variable-speed-pump
+      args: {'name': 'variable-speed-pump'}
+
+hw-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Hot_Water_Loop ;
+      brick:hasPoint p:sec-hws-temp, p:sec-hwr-temp,
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:sec-hws-flow
+          rdf:_2 p:sec-hwr-flow ),
+        p:int-hws-temp .
+  optional: ['sec-hws-flow', 'sec-hwr-flow', 'int-hws-temp']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'sec-hws-temp'}
+    - template: https://brickschema.org/schema/Brick#Entering_Hot_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'sec-hwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'sec-hws-flow'}
+    - template: https://brickschema.org/schema/Brick#Entering_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'sec-hwr-flow'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'int-hws-temp'}
+
+hw-constant-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:hw-secondary-loop ;
+      brick:hasPart p:constant-speed-pump .
+  dependencies:
+    - template: hw-secondary-loop
+      args: {'name': 'hw-secondary-loop'}
+    - template: constant-speed-pump
+      args: {'name': 'constant-speed-pump'}
+
+hw-variable-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:hw-secondary-loop ;
+      brick:hasPart p:variable-speed-pump .
+  dependencies:
+    - template: hw-secondary-loop
+      args: {'name': 'hw-secondary-loop'}
+    - template: variable-speed-pump
+      args: {'name': 'variable-speed-pump'}
+
+hw-constant-primary-constant-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Hot_Water_Loop ;
+      brick:hasPart ( p:hw-constant-primary-loop brick:feeds p:hw-constant-secondary-loop ) .
+  dependencies:
+    - template: hw-constant-primary-loop
+      args: {'name': 'hw-constant-primary-loop'}
+    - template: hw-constant-secondary-loop
+      args: {'name': 'hw-constant-secondary-loop'}
+
+hw-constant-primary-variable-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Hot_Water_Loop ;
+      brick:hasPart
+        ( p:hw-constant-primary-loop brick:feeds p:hw-variable-secondary-loop ) ;
+          brick:hasPoint
+            ( _:point rdf:type rdf:Alt
+              rdf:_1 p:hws-flow
+              rdf:_2 p:hwr-flow ) .
+  dependencies:
+    - template: hw-constant-primary-loop
+      args: {'name': 'hw-constant-primary-loop'}
+    - template: hw-variable-secondary-loop
+      args: {'name': 'hw-variable-secondary-loop'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hws-flow'}
+    - template: https://brickschema.org/schema/Brick#Entering_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hwr-flow'}
+
+hw-variable-primary-constant-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Hot_Water_Loop ;
+      brick:hasPart ( p:hw-variable-primary-loop brick:feeds p:hw-constant-secondary-loop ) .
+  dependencies:
+    - template: hw-variable-primary-loop
+      args: {'name': 'hw-variable-primary-loop'}
+    - template: hw-constant-secondary-loop
+      args: {'name': 'hw-constant-secondary-loop'}
+
+hw-variable-primary-variable-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Hot_Water_Loop ;
+      brick:hasPart
+        ( p:hw-variable-primary-loop brick:feeds p:hw-variable-secondary-loop ) ;
+          brick:hasPoint
+            ( _:point rdf:type rdf:Alt
+              rdf:_1 p:hws-flow
+              rdf:_2 p:hwr-flow ),
+            p:decoupler-flow .
+  optional: ['hws-flow', 'hwr-flow', 'decoupler-flow']
+  dependencies:
+    - template: hw-variable-primary-loop
+      args: {'name': 'hw-variable-primary-loop'}
+    - template: hw-variable-secondary-loop
+      args: {'name': 'hw-variable-secondary-loop'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hws-flow'}
+    - template: https://brickschema.org/schema/Brick#Entering_Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'hwr-flow'}
+    - template: https://brickschema.org/schema/Brick#Hot_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'decoupler-flow'}

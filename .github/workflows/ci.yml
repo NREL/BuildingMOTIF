@@ -103,6 +103,8 @@ jobs:
         run: poetry install --all-extras
       - name: integration tests
         run: poetry run pytest tests/integration
+      - name: library tests
+        run: poetry run pytest tests/library
       - name: bacnet tests
         run: |
           cd tests/integration/fixtures/bacnet

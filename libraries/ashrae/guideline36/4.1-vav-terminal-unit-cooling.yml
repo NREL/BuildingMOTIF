@@ -1,0 +1,22 @@
+vav-terminal-unit-cooling:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Variable_Air_Volume_Box ;
+      brick:hasPart
+        p:damper,
+        p:thermostat ;
+      brick:hasPoint
+        p:flow ;
+      brick:feeds
+        p:zone .
+  dependencies:
+    - template: damper-modulating
+      args: {"name": "damper"}
+    - template: thermostat
+      args: {"name": "thermostat"}
+    - template: https://brickschema.org/schema/Brick#Discharge_Air_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {"name": "flow"}
+    - template: zone
+      args: {"name": "zone"}

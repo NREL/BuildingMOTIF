@@ -2,16 +2,21 @@ constant-speed-exhaust-fan:
   body: >
     @prefix p: <urn:___param___#> .
     @prefix brick: <https://brickschema.org/schema/Brick#> .
-    p:name a brick:Exhaust_Fan ;
-      brick:hasPoint p:start_stop, p:status, p:zat .
-  optional: ["zat"]
+    p:name a brick:Fan ;
+      brick:hasPoint
+        p:start-stop,
+        p:on-off-status,
+        p:temp .
+  optional: [
+    'on-off-status',
+    'temp' ]
   dependencies:
     - template: https://brickschema.org/schema/Brick#Start_Stop_Command
       library: https://brickschema.org/schema/1.4/Brick
-      args: {"name": "start_stop"}
-    - template: https://brickschema.org/schema/Brick#Fan_Status
+      args: {"name": "start-stop"}
+    - template: https://brickschema.org/schema/Brick#Motor_On_Off_Status
       library: https://brickschema.org/schema/1.4/Brick
-      args: {"name": "status"}
-    - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor 
+      args: {"name": "on-off-status"}
+    - template: https://brickschema.org/schema/Brick#Zone_Air_Temperature_Sensor
       library: https://brickschema.org/schema/1.4/Brick
-      args: {"name": "zat"}
+      args: {"name": "temp"}

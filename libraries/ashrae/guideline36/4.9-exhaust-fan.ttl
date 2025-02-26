@@ -1,0 +1,20 @@
+@prefix bmotif: <https://nrel.gov/BuildingMOTIF#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix components: <urn:ashrae/g36/components/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix : <urn:ashrae/g36/4.9/exhaust-fan/> .
+
+:exhaust-fan a sh:NodeShape, owl:Class, bmotif:System_Specification ;
+    rdfs:label "General Constant Speed Exhaust Fan" ;
+    sh:node components:constant-speed-fan ;
+    # For exhaust fans controlled by temperature, include the following point.
+    # application
+    sh:property [
+        rdfs:label "Zone Temperature" ;
+        sh:path brick:hasPoint ;
+        sh:qualifiedValueShape [ sh:class brick:Zone_Air_Temperature_Sensor ] ;
+        sh:qualifiedMinCount 0 ;
+        sh:qualifiedMaxCount 1 ;
+    ] .

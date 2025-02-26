@@ -1,0 +1,857 @@
+# 4.10 Chilled Water Plant
+
+chilled-water-plant:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name rdf:type rdf:Alt ;
+      rdf:_1 p:air-cooled-primary-only-plant ;
+      rdf:_2 p:wtr-cooled-primary-only-plant ;
+      rdf:_3 p:air-cooled-primary-secondary-plant ;
+      rdf:_4 p:wtr-cooled-primary-secondary-plant .
+  optional: [
+    'air-cooled-primary-only-plant',
+    'wtr-cooled-primary-only-plant',
+    'air-cooled-primary-secondary-plant',
+    'wtr-cooled-primary-secondary-plant'
+  ]
+  dependencies:
+    - template: air-cooled-primary-only-plant
+      args: {'name': 'air-cooled-primary-only-plant'}
+    - template: wtr-cooled-primary-only-plant
+      args: {'name': 'wtr-cooled-primary-only-plant'}
+    - template: air-cooled-primary-secondary-plant
+      args: {'name': 'air-cooled-primary-secondary-plant'}
+    - template: wtr-cooled-primary-secondary-plant
+      args: {'name': 'wtr-cooled-primary-secondary-plant'}
+
+air-cooled-primary-only-plant:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Chilled_Water_System ;
+      brick:hasPart
+        ( p:air-cooled-chiller brick:hasPoint p:demand-limit ),
+        ( _:plant rdf:type rdf:Alt
+          rdf:_1 p:chw-constant-primary-only-loop
+          rdf:_2 p:chw-variable-primary-only-loop ) ;
+      brick:hasPoint p:plant-chwr-temp .
+  optional: ['chw-constant-primary-only-loop', 'chw-variable-primary-only-loop']
+  dependencies:
+    - template: air-cooled-chiller
+      args: {'name': 'air-cooled-chiller'}
+    - template: https://brickschema.org/schema/Brick#Cooling_Demand_Setpoint
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'demand-limit'}
+    - template: chw-constant-primary-only-loop
+      args: {'name': 'chw-constant-primary-only-loop'}
+    - template: chw-variable-primary-only-loop
+      args: {'name': 'chw-variable-primary-only-loop'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'plant-chwr-temp'}
+
+wtr-cooled-primary-only-plant:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Chilled_Water_System ;
+      brick:hasPart
+        ( p:wtr-cooled-chiller brick:hasPoint p:demand-limit ),
+        ( _:plant rdf:type rdf:Alt
+          rdf:_1 p:chw-constant-primary-only-loop
+          rdf:_2 p:chw-variable-primary-only-loop ),
+        p:waterside-economizer ;
+      brick:hasPoint p:plant-chwr-temp, p:oa-temp, p:rh-sen ;
+      brick:isFedBy p:condenser-water-plant .
+  optional: ['chw-constant-primary-only-loop', 'chw-variable-primary-only-loop', 'waterside-economizer', 'oa-temp', 'rh-sen']
+  dependencies:
+    - template: wtr-cooled-chiller
+      args: {'name': 'wtr-cooled-chiller'}
+    - template: https://brickschema.org/schema/Brick#Cooling_Demand_Setpoint
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'demand-limit'}
+    - template: chw-constant-primary-only-loop
+      args: {'name': 'chw-constant-primary-only-loop'}
+    - template: chw-variable-primary-only-loop
+      args: {'name': 'chw-variable-primary-only-loop'}
+    - template: waterside-economizer
+      args: {'name': 'waterside-economizer'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'plant-chwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'oa-temp'}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Humidity_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'rh-sen'}
+    - template: condenser-water-plant
+      args: {'name': 'condenser-water-plant'}
+
+air-cooled-primary-secondary-plant:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Chilled_Water_System ;
+      brick:hasPart
+        ( p:air-cooled-chiller brick:hasPoint p:demand-limit ),
+        ( _:loop rdf:type rdf:Alt
+          rdf:_1 p:chw-constant-primary-constant-secondary-loop
+          rdf:_2 p:chw-constant-primary-variable-secondary-loop
+          rdf:_3 p:chw-variable-primary-constant-secondary-loop
+          rdf:_4 p:chw-variable-primary-variable-secondary-loop ) ;
+      brick:hasPoint p:plant-chwr-temp .
+  optional: ['demand-limit',
+    'chw-constant-primary-constant-secondary-loop',
+    'chw-constant-primary-variable-secondary-loop',
+    'chw-variable-primary-constant-secondary-loop',
+    'chw-variable-primary-variable-secondary-loop',
+    'plant-chwr-temp'
+  ]
+  dependencies:
+    - template: air-cooled-chiller
+      args: {'name': 'air-cooled-chiller'}
+    - template: https://brickschema.org/schema/Brick#Cooling_Demand_Setpoint
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'demand-limit'}
+    - template: chw-constant-primary-constant-secondary-loop
+      args: {'name': 'chw-constant-primary-constant-secondary-loop'}
+    - template: chw-constant-primary-variable-secondary-loop
+      args: {'name': 'chw-constant-primary-variable-secondary-loop'}
+    - template: chw-variable-primary-constant-secondary-loop
+      args: {'name': 'chw-variable-primary-constant-secondary-loop'}
+    - template: chw-variable-primary-variable-secondary-loop
+      args: {'name': 'chw-variable-primary-variable-secondary-loop'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'plant-chwr-temp'}
+
+wtr-cooled-primary-secondary-plant:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Chilled_Water_System ;
+      brick:hasPart
+        ( p:wtr-cooled-chiller brick:hasPoint p:demand-limit ),
+        ( _:loop rdf:type rdf:Alt
+          rdf:_1 p:chw-constant-primary-constant-secondary-loop
+          rdf:_2 p:chw-constant-primary-variable-secondary-loop
+          rdf:_3 p:chw-variable-primary-constant-secondary-loop
+          rdf:_4 p:chw-variable-primary-variable-secondary-loop ),
+        p:waterside-economizer ;
+      brick:hasPoint p:plant-chwr-temp, p:oa-temp, p:rh-sen ;
+      brick:isFedBy p:condenser-water-plant .
+  optional: ['demand-limit',
+    'chw-constant-primary-constant-secondary-loop',
+    'chw-constant-primary-variable-secondary-loop',
+    'chw-variable-primary-constant-secondary-loop',
+    'chw-variable-primary-variable-secondary-loop',
+    'waterside-economizer', 'plant-chwr-temp', 'oa-temp', 'rh-sen'
+  ]
+  dependencies:
+    - template: wtr-cooled-chiller
+      args: {'name': 'wtr-cooled-chiller'}
+    - template: https://brickschema.org/schema/Brick#Cooling_Demand_Setpoint
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'demand-limit'}
+    - template: chw-constant-primary-constant-secondary-loop
+      args: {'name': 'chw-constant-primary-constant-secondary-loop'}
+    - template: chw-constant-primary-variable-secondary-loop
+      args: {'name': 'chw-constant-primary-variable-secondary-loop'}
+    - template: chw-variable-primary-constant-secondary-loop
+      args: {'name': 'chw-variable-primary-constant-secondary-loop'}
+    - template: chw-variable-primary-variable-secondary-loop
+      args: {'name': 'chw-variable-primary-variable-secondary-loop'}
+    - template: waterside-economizer
+      args: {'name': 'waterside-economizer'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'plant-chwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'oa-temp'}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Humidity_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'rh-sen'}
+    - template: condenser-water-plant
+      args: {'name': 'condenser-water-plant'}
+
+condenser-water-plant:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Condenser_Water_System ;
+      brick:hasPart p:cooling-tower, p:condenser-water-loop .
+  dependencies:
+    - template: cooling-tower
+      args: {'name': 'cooling-tower'}
+    - template: condenser-water-loop
+      args: {'name': 'condenser-water-loop'}
+
+# 4.10.1 Chillers
+
+chiller:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Chiller ;
+        brick:hasPart p:ch-chw-isolation-valve, p:ch-chw-bypass-valve ;
+      brick:hasPoint
+        p:on-off,
+        p:status,
+        p:chws-temp-setpt-reset,
+        p:fault-code,
+        p:head-pressure,
+        p:chws-temp,
+        p:chwr-temp,
+        p:chw-dp,
+        p:refrig-evap-temp,
+        p:refrig-cond-temp,
+        p:local-auto-switch,
+        p:off-switch .
+  optional: [
+    'ch-chw-isolation-valve',
+    'ch-chw-bypass-valve',
+    'head-pressure',
+    'chws-temp',
+    'chwr-temp',
+    'chw-dp',
+    'refrig-evap-temp',
+    'refrig-cond-temp',
+    'manual-auto-status',
+    'off-switch'
+  ]
+  dependencies:
+    - template: ch-chw-isolation-valve
+      args: {'name': 'ch-chw-isolation-valve'}
+    - template: ch-chw-bypass-valve
+      args: {'name': 'ch-chw-bypass-valve'}
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'on-off'}
+    - template: https://brickschema.org/schema/Brick#On_Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'status'}
+    - template: https://brickschema.org/schema/Brick#Reset_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chws-temp-setpt-reset'}
+    - template: https://brickschema.org/schema/Brick#Last_Fault_Code_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'fault-code'}
+    - template: https://brickschema.org/schema/Brick#Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'head-pressure'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chws-temp'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Chilled_Water_Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chw-dp'}
+    - template: https://brickschema.org/schema/Brick#Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'refrig-evap-temp'}
+    - template: https://brickschema.org/schema/Brick#Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'refrig-cond-temp'}
+    - template: https://brickschema.org/schema/Brick#Manual_Auto_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'local-auto-switch'}
+    - template: https://brickschema.org/schema/Brick#Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'off-switch'}
+
+air-cooled-chiller:
+  body: >
+    @prefix p: <urn:___param___#> .
+    p:name a p:chiller .
+  dependencies:
+    - template: chiller
+      args: {'name': 'chiller'}
+
+wtr-cooled-chiller:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:chiller ;
+      brick:hasPart p:ch-cw-isolation-valve ;
+      brick:hasPoint p:cwr-temp, p:cws-temp, p:cw-dp .
+  optional: ['ch-cw-isolation-valve', 'cwr-temp', 'cws-temp', 'cw-dp']
+  dependencies:
+    - template: chiller
+      args: {'name': 'chiller'}
+    - template: ch-cw-isolation-valve
+      args: {'name': 'ch-cw-isolation-valve'}
+    - template: https://brickschema.org/schema/Brick#Entering_Condenser_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'cwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Condenser_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'cws-temp'}
+    - template: https://brickschema.org/schema/Brick#Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'cw-dp'}
+
+ch-chw-isolation-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Isolation_Valve ;
+      brick:hasPoint
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:valve-position-cmd
+          rdf:_2 p:on-off-cmd ),
+        p:closed-end-switch,
+        p:open-end-switch,
+        p:position-feedback .
+  optional: [
+    'valve-position-cmd',
+    'on-off-cmd',
+    'closed-end-switch',
+    'open-end-switch',
+    'position-feedback'
+  ]
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'valve-position-cmd'}
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'on-off-cmd'}
+    - template: https://brickschema.org/schema/Brick#On_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'closed-end-switch'}
+    - template: https://brickschema.org/schema/Brick#Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'open-end-switch'}
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'position-feedback'}
+
+ch-chw-bypass-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Bypass_Valve ;
+      brick:hasPoint p:bypass-valve .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'bypass-valve'}
+
+ch-cw-isolation-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Condenser_Water_Isolation_Valve ;
+      brick:hasPoint
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:valve-position-cmd
+          rdf:_2 p:on-off-cmd ),
+        p:closed-end-switch,
+        p:open-end-switch,
+        p:position-feedback .
+  optional: [
+    'valve-position-cmd',
+    'on-off-cmd',
+    'closed-end-switch',
+    'open-end-switch',
+    'position-feedback'
+  ]
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'valve-position-cmd'}
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'on-off-cmd'}
+    - template: https://brickschema.org/schema/Brick#On_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'closed-end-switch'}
+    - template: https://brickschema.org/schema/Brick#Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'open-end-switch'}
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'position-feedback'}
+
+# 4.10.2 Chilled Water Pumps (see components.yml)
+
+# 4.10.3 Primary (only) CHW Loop
+
+chw-primary-only-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Chilled_Water_Loop ;
+      brick:hasPoint
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:chws-flow
+          rdf:_2 p:chwr-flow ),
+        p:chws-temp, p:gauge-pressure .
+  optional: ['chws-flow-sen', 'chwr-flow-sen', 'gauge-pressure']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chws-flow'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chwr-flow'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chws-temp'}
+    - template: https://brickschema.org/schema/Brick#Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'gauge-pressure'}
+
+chw-constant-primary-only-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:chw-primary-only-loop ;
+      brick:hasPart p:constant-speed-pump .
+  dependencies:
+    - template: chw-primary-only-loop
+      args: {'name': 'chw-primary-only-loop'}
+    - template: constant-speed-pump
+      args: {'name': 'constant-speed-pump'}
+
+chw-variable-primary-only-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:chw-primary-only-loop ;
+      brick:feeds
+      ( p:chw-demand-loop brick:hasPoint p:dem-chwr-temp ) ;
+      brick:hasPart p:variable-speed-pump, p:min-flow-bypass-valve ;
+      brick:hasPoint p:sup-chwr-temp .
+  optional: ['dem-chwr-temp-sen']
+  dependencies:
+    - template: chw-primary-only-loop
+      args: {'name': 'chw-primary-only-loop'}
+    - template: https://brickschema.org/schema/Brick#Chilled_Water_Loop
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chw-demand-loop'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'dem-chwr-temp'}
+    - template: variable-speed-pump
+      args: {'name': 'variable-speed-pump'}
+    - template: min-flow-bypass-valve
+      args: {'name': 'min-flow-bypass-valve'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'sup-chwr-temp'}
+
+# 4.10.4 (Primary) Secondary CHW Loop
+
+chw-primary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Chilled_Water_Loop ;
+      brick:hasPoint p:chws-temp, p:chwr-temp .
+  optional: ['chws-temp', 'chwr-temp']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chws-temp'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chwr-temp'}
+
+chw-constant-primary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:chw-primary-loop ;
+      brick:hasPart p:constant-speed-pump .
+  dependencies:
+    - template: chw-primary-loop
+      args: {'name': 'chw-primary-loop'}
+    - template: constant-speed-pump
+      args: {'name': 'constant-speed-pump'}
+
+chw-variable-primary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:chw-primary-loop ;
+      brick:hasPart p:variable-speed-pump .
+  dependencies:
+    - template: chw-primary-loop
+      args: {'name': 'chw-primary-loop'}
+    - template: variable-speed-pump
+      args: {'name': 'variable-speed-pump'}
+
+chw-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Chilled_Water_Loop ;
+      brick:hasPoint p:chws-temp, p:chwr-temp,
+        ( _:point rdf:type rdf:Alt
+          rdf:_1 p:chws-flow
+          rdf:_2 p:chwr-flow ) .
+  optional: ['chwr-temp', 'chws-flow', 'chwr-flow']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chws-temp'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chws-flow'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chwr-flow'}
+
+chw-constant-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:chw-secondary-loop ;
+      brick:hasPart p:constant-speed-pump .
+  dependencies:
+    - template: chw-secondary-loop
+      args: {'name': 'chw-secondary-loop'}
+    - template: constant-speed-pump
+      args: {'name': 'constant-speed-pump'}
+
+chw-variable-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a p:chw-secondary-loop ;
+      brick:hasPart p:variable-speed-pump .
+  dependencies:
+    - template: chw-secondary-loop
+      args: {'name': 'chw-secondary-loop'}
+    - template: variable-speed-pump
+      args: {'name': 'variable-speed-pump'}
+
+chw-constant-primary-constant-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Chilled_Water_Loop ;
+      brick:hasPart ( p:chw-constant-primary-loop brick:feeds p:chw-constant-secondary-loop ) .
+  dependencies:
+    - template: chw-constant-primary-loop
+      args: {'name': 'chw-constant-primary-loop'}
+    - template: chw-constant-secondary-loop
+      args: {'name': 'chw-constant-secondary-loop'}
+
+chw-constant-primary-variable-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Chilled_Water_Loop ;
+      brick:hasPart ( p:chw-constant-primary-loop brick:feeds p:chw-variable-secondary-loop ) .
+  dependencies:
+    - template: chw-constant-primary-loop
+      args: {'name': 'chw-constant-primary-loop'}
+    - template: chw-variable-secondary-loop
+      args: {'name': 'chw-variable-secondary-loop'}
+
+chw-variable-primary-constant-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Chilled_Water_Loop ;
+      brick:hasPart ( p:chw-variable-primary-loop brick:feeds p:chw-constant-secondary-loop ) .
+  dependencies:
+    - template: chw-variable-primary-loop
+      args: {'name': 'chw-variable-primary-loop'}
+    - template: chw-constant-secondary-loop
+      args: {'name': 'chw-constant-secondary-loop'}
+
+chw-variable-primary-variable-secondary-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Chilled_Water_Loop ;
+      brick:hasPart
+        ( p:chw-variable-primary-loop brick:feeds p:chw-variable-secondary-loop ),
+        ( brick:hasPoint
+          _:point rdf:type rdf:Alt
+            rdf:_1 p:chws-flow
+            rdf:_2 p:chwr-flow
+          p:decoupler-flow ) .
+  dependencies:
+    - template: chw-variable-primary-loop
+      args: {'name': 'chw-constant-primary-loop'}
+    - template: chw-variable-secondary-loop
+      args: {'name': 'chw-variable-secondary-loop'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chws-flow'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chwr-flow'}
+    - template: https://brickschema.org/schema/Brick#Chilled_Water_Flow_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'decoupler-flow'}
+
+# 4.10.5 Condenser Water Pumps (see components.yml)
+
+# 4.10.6 Cooling Towers
+
+cooling-tower:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Cooling_Tower ;
+      brick:hasPart
+        p:variable-speed-fan,
+        ( _:or rdf:type rdf:Alt
+          p:ct-outlet-isolation-valve
+          ( _:and rdf:type rdf:Bag
+            rdf:_1 p:ct-inlet-isolation-valve
+            rdf:_2 p:ct-outlet-isolation-valve )
+        ),
+        p:ct-bypass-valve, p:ct-basin-heater ;
+      brick:hasPoint p:twr-basin-lvl, p:heat-trace-enable, p:heat-trace-status .
+  optional: [
+    'ct-outlet-isolation-valve', 'ct-inlet-isolation-valve',
+    'ct-bypass-valve', 'ct-basin-heater',
+    'heat-trace-enable', 'heat-trace-status'
+  ]
+  dependencies:
+    - template: variable-speed-fan
+      args: {'name': 'variable-speed-fan'}
+    - template: ct-outlet-isolation-valve
+      args: {'name': 'ct-outlet-isolation-valve'}
+    - template: ct-inlet-isolation-valve
+      args: {'name': 'ct-inlet-isolation-valve'}
+    - template: ct-bypass-valve
+      args: {'name': 'ct-bypass-valve'}
+    - template: ct-basin-heater
+      args: {'name': 'ct-basin-heater'}
+    - template: https://brickschema.org/schema/Brick#Collection_Basin_Water_Level_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'twr-basin-lvl'}
+    - template: https://brickschema.org/schema/Brick#Heating_Enable_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'heat-trace-enable'}
+    - template: https://brickschema.org/schema/Brick#Enable_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'heat-trace-status'}
+
+variable-speed-fan-motor:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Variable_Frequency_Drive ;
+      brick:hasPoint p:start, p:status, p:speed, p:alarm .
+  optional: ['alarm']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'start'}
+    - template: https://brickschema.org/schema/Brick#On_Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'status'}
+    - template: https://brickschema.org/schema/Brick#Speed_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'speed'}
+    - template: https://brickschema.org/schema/Brick#Fault_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'alarm'}
+
+variable-speed-fan:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Cooling_Tower_Fan ;
+      brick:hasPart p:variable-speed-fan-motor .
+  dependencies:
+    - template: variable-speed-fan-motor
+      args: {'name': 'variable-speed-fan-motor'}
+
+ct-inlet-isolation-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Isolation_Valve ;
+      brick:hasPoint p:isolation-valve, p:closed-end-switch, p:open-end-switch .
+  optional: ['isolation-valve', 'closed-end-switch', 'open-end-switch']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'isolation-valve'}
+    - template: https://brickschema.org/schema/Brick#On_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'closed-end-switch'}
+    - template: https://brickschema.org/schema/Brick#Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'open-end-switch'}
+
+ct-outlet-isolation-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Isolation_Valve ;
+      brick:hasPoint p:isolation-valve, p:closed-end-switch, p:open-end-switch .
+  optional: ['isolation-valve', 'closed-end-switch', 'open-end-switch']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'isolation-valve'}
+    - template: https://brickschema.org/schema/Brick#On_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'closed-end-switch'}
+    - template: https://brickschema.org/schema/Brick#Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'open-end-switch'}
+
+ct-bypass-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Bypass_Valve ;
+      brick:hasPoint p:bypass-valve .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'bypass-valve'}
+
+ct-basin-heater:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Collection_Basin_Water_Heater ;
+      brick:hasPoint p:enable, p:status, p:temp .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Heating_Enable_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'enable'}
+    - template: https://brickschema.org/schema/Brick#Enable_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'status'}
+    - template: https://brickschema.org/schema/Brick#Collection_Basin_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'temp'}
+
+# 4.10.7 Condenser Water Loop
+
+condenser-water-loop:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Chilled_Water_Loop ;
+      brick:hasPart
+        ( _:pump rdf:type rdf:Alt
+          rdf:_1 p:constant-speed-pump
+          rdf:_2 p:variable-speed-pump ),
+        ( p:makeup-water-valve brick:hasPoint p:on-off-cmd ) ;
+      brick:hasPoint p:cws-temp, p:cwr-temp .
+  optional: ['constant-speed-pump', 'variable-speed-pump']
+  dependencies:
+    - template: constant-speed-pump
+      args: {'name': 'constant-speed-pump'}
+    - template: variable-speed-pump
+      args: {'name': 'variable-speed-pump'}
+    - template: https://brickschema.org/schema/Brick#Makeup_Water_Valve
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'makeup-water-valve'}
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'on-off-cmd'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Condenser_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'cws-temp'}
+    - template: https://brickschema.org/schema/Brick#Entering_Condenser_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'cwr-temp'}
+
+# 4.10.8 Waterside Economizer
+
+waterside-economizer:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    p:name a brick:Heat_Exchanger ;
+      brick:hasPart
+        p:wse-isolation-valve, p:wse-bypass-valve,
+        ( _:pump rdf:type rdf:Alt
+          rdf:_1 p:constant-speed-pump
+          rdf:_2 p:variable-speed-pump ) ;
+      brick:hasPoint p:cwr-temp, p:chwr-temp, p:chws-temp, p:wse-chwr-temp, p:oa-temp, p:rh-sen .
+  optional: ['wse-bypass-valve', 'constant-speed-pump', 'variable-speed-pump']
+  dependencies:
+    - template: wse-isolation-valve
+      args: {'name': 'wse-isolation-valve'}
+    - template: wse-bypass-valve
+      args: {'name': 'wse-bypass-valve'}
+    - template: constant-speed-pump
+      args: {'name': 'constant-speed-pump'}
+    - template: variable-speed-pump
+      args: {'name': 'variable-speed-pump'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Condenser_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'cwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Leaving_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chws-temp'}
+    - template: https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'wse-chwr-temp'}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Temperature_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'oa-temp'}
+    - template: https://brickschema.org/schema/Brick#Outside_Air_Humidity_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'rh-sen'}
+
+wse-isolation-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Condenser_Water_Isolation_Valve ;
+      brick:hasPoint p:cw-isolation-valve, p:closed-end-switch, p:open-end-switch .
+  optional: ['closed-end-switch', 'open-end-switch']
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#On_Off_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'cw-isolation-valve'}
+    - template: https://brickschema.org/schema/Brick#On_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'closed-end-switch'}
+    - template: https://brickschema.org/schema/Brick#Off_Status
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'open-end-switch'}
+
+wse-bypass-valve:
+  body: >
+    @prefix p: <urn:___param___#> .
+    @prefix brick: <https://brickschema.org/schema/Brick#> .
+    p:name a brick:Bypass_Valve ;
+      brick:hasPoint p:chw-bypass-valve, p:chw-dp .
+  dependencies:
+    - template: https://brickschema.org/schema/Brick#Valve_Position_Command
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chw-bypass-valve'}
+    - template: https://brickschema.org/schema/Brick#Differential_Pressure_Sensor
+      library: https://brickschema.org/schema/1.4/Brick
+      args: {'name': 'chw-dp'}
