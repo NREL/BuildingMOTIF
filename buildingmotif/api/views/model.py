@@ -4,7 +4,6 @@ from flask_api import status
 from rdflib import Graph, URIRef
 from rdflib.plugins.parsers.notation3 import BadSyntax
 
-from buildingmotif import get_building_motif
 from buildingmotif.api.serializers.model import serialize
 from buildingmotif.database.errors import (
     LibraryNotFound,
@@ -170,13 +169,13 @@ def validate_model(models_id: int) -> flask.Response:
 
     # we will read the shape collections from the input
     shape_collections = []
-    # get shacl_engine from the query params, default to pyshacl
-    shacl_engine = request.args.get("shacl_engine", "pyshacl")
+
+    # get shacl_engine from the query params, defaults to the current engine
+    shacl_engine = request.args.get("shacl_engine", None)
 
     # no body provided -- default to model manifest
     if request.content_length is None:
         shape_collections = [model.get_manifest()]
-        shacl_engine = "pyshacl"
     else:
         # get body
         if request.content_type != "application/json":
@@ -204,17 +203,10 @@ def validate_model(models_id: int) -> flask.Response:
                 "message": f"Libraries with ids {nonexistent_libraries} do not exist"
             }, status.HTTP_400_BAD_REQUEST
 
-    # temporarily change the SHACL engine
-    bm = get_building_motif()
-    old_shacl_engine = bm.shacl_engine
-    bm.shacl_engine = shacl_engine
-
     # if shape_collections is empty, model.validate will default to the model's manifest
     vaildation_context = model.validate(
-        shape_collections, error_on_missing_imports=False
+        shape_collections, error_on_missing_imports=False, shacl_engine=shacl_engine
     )
-    # change the SHACL engine back
-    bm.shacl_engine = old_shacl_engine
 
     return {
         "message": vaildation_context.report_string,
