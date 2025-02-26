@@ -189,6 +189,7 @@ class Model:
         self,
         shape_collections: Optional[List[ShapeCollection]] = None,
         error_on_missing_imports: bool = True,
+        shacl_engine: Optional[str] = None,
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
@@ -207,6 +208,10 @@ class Model:
         :type error_on_missing_imports: bool, optional
         :return: An object containing useful properties/methods to deal with
             the validation results
+        :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
+            is set in the BuildingMOTIF object
+        :type shacl_engine: str, optional
+
         :rtype: ValidationContext
         """
         compiled_model = self.compile(shape_collections or [self.get_manifest()])
@@ -218,6 +223,9 @@ class Model:
         :param shape_collections: list of ShapeCollections to compile the model
             against
         :type shape_collections: List[ShapeCollection]
+        :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
+            is set in the BuildingMOTIF object
+        :type shacl_engine: str, optional
         :return: copy of model's graph that has been compiled against the
             ShapeCollections
         :rtype: Graph
