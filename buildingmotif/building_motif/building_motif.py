@@ -44,7 +44,7 @@ class BuildingMOTIF(metaclass=Singleton):
         :default log_level: INFO
         """
         self.db_uri = db_uri
-        self.shacl_engine = shacl_engine
+        self.shacl_engine = shacl_engine or "pyshacl"
         self.engine = create_engine(
             db_uri,
             echo=False,
