@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union
 
 import rdflib
 from pyshacl.helper.path_helper import shacl_path_to_sparql_path
+from pyshacl.shapes_graph import ShapesGraph
 from rdflib import RDF, RDFS, Graph, URIRef
 from rdflib.paths import ZeroOrMore, ZeroOrOne
 from rdflib.term import Node
@@ -399,6 +400,8 @@ def _shape_to_where(
         variable_counter += 1
         return varname
 
+    shape_graph = ShapesGraph(graph)
+
     # get all the target clauses
     clauses += _target_to_sparql(graph, shape, root_var)
 
@@ -409,7 +412,7 @@ def _shape_to_where(
     pshapes_by_path: Dict[Node, List[Node]] = defaultdict(list)
     qualified_pshapes: Set[Node] = set()
     for pshape in graph.objects(shape, SH.property):
-        path = shacl_path_to_sparql_path(graph, graph.value(pshape, SH.path))
+        path = shacl_path_to_sparql_path(shape_graph, graph.value(pshape, SH.path))
         if not graph.value(pshape, SH.qualifiedValueShape):
             pshapes_by_path[path].append(pshape)  # type: ignore
         else:
@@ -421,7 +424,7 @@ def _shape_to_where(
             pshape == shape
         ):  # skip the input 'shape', otherwise this will infinitely recurse
             continue
-        path = shacl_path_to_sparql_path(graph, graph.value(pshape, SH.path))
+        path = shacl_path_to_sparql_path(shape_graph, graph.value(pshape, SH.path))
         if not graph.value(pshape, SH.qualifiedValueShape):
             pshapes_by_path[path].append(pshape)  # type: ignore
         else:
