@@ -458,7 +458,7 @@ def test_test_model_against_shapes(client, building_motif, shacl_engine):
     # assert
     assert (
         len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-3"]) == 0
-    ), results.content
+    ), results.data
     assert (
         len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4"]) == 3
-    ), results.content
+    ), results.data
