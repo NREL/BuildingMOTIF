@@ -312,6 +312,9 @@ def get_template_parts_from_shape(
         # if node is already in deps, skip it
         if any(str(node) == dep["template"] for dep in deps):
             continue
+        # skip non-URIRef nodes
+        if not isinstance(node, URIRef):
+            continue
         deps.append(
             {"template": str(node), "args": {"name": "name"}}
         )  # tie to root param

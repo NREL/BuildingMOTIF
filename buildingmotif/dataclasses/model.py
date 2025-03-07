@@ -217,12 +217,14 @@ class Model:
         compiled_model = self.compile(shape_collections or [self.get_manifest()])
         return compiled_model.validate(error_on_missing_imports)
 
-    def compile(self, shape_collections: List["ShapeCollection"]) -> "CompiledModel":
+    def compile(
+        self, shape_collections: Optional[List["ShapeCollection"]] = None
+    ) -> "CompiledModel":
         """Compile the graph of a model against a set of ShapeCollections.
 
         :param shape_collections: list of ShapeCollections to compile the model
-            against
-        :type shape_collections: List[ShapeCollection]
+            against. Defaults to the model's manifest.
+        :type shape_collections: List[ShapeCollection], optional
         :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
             is set in the BuildingMOTIF object
         :type shacl_engine: str, optional
@@ -233,6 +235,8 @@ class Model:
         from buildingmotif.dataclasses.compiled_model import CompiledModel
 
         ontology_graph = rdflib.Graph()
+        if shape_collections is None:
+            shape_collections = [self.get_manifest()]
         for shape_collection in shape_collections:
             ontology_graph += shape_collection.graph
 
