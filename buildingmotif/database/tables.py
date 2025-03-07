@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from sqlalchemy import (
     Column,
@@ -8,9 +8,12 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     event,
+    select,
 )
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Mapped, declarative_base, relationship
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import Mapped, Session, declarative_base, relationship
 
 # from sqlalchemy.dialects.postgresql import JSON
 from buildingmotif.database.utils import JSONType
@@ -78,27 +81,6 @@ class DBLibrary(Base):
     )
 
 
-class DepsAssociation(Base):
-    """Many-to-many relationship between dependant templates."""
-
-    __tablename__ = "deps_association_table"
-
-    id: Mapped[int] = Column(Integer, primary_key=True)
-    dependant_id: Mapped[int] = Column(ForeignKey("template.id", ondelete="CASCADE"))
-    dependee_id: Mapped[int] = Column(ForeignKey("template.id", ondelete="CASCADE"))
-    # args are a mapping of dependee args to dependant args
-    args: Mapped[Dict[str, str]] = Column(JSONType)  # type: ignore
-
-    __table_args__ = (
-        UniqueConstraint(
-            "dependant_id",
-            "dependee_id",
-            "args",
-            name="deps_association_unique_constraint",
-        ),
-    )
-
-
 class DBTemplate(Base):
     """A Template is used to generate content for a model."""
 
@@ -113,23 +95,9 @@ class DBTemplate(Base):
         Integer, ForeignKey("library.id", ondelete="CASCADE"), nullable=False
     )
     library: Mapped[DBLibrary] = relationship("DBLibrary", back_populates="templates")
-    dependencies: Mapped[List["DBTemplate"]] = relationship(
-        "DBTemplate",
-        secondary="deps_association_table",
-        primaryjoin=id == DepsAssociation.dependant_id,
-        secondaryjoin=id == DepsAssociation.dependee_id,
-        back_populates="dependants",
-        cascade="all",
-        passive_deletes=True,
-    )
-    # do not use passive_deletes on dependants because we want to handle the deletion of dependants
-    dependants: Mapped[List["DBTemplate"]] = relationship(
-        "DBTemplate",
-        secondary="deps_association_table",
-        primaryjoin=id == DepsAssociation.dependee_id,
-        secondaryjoin=id == DepsAssociation.dependant_id,
-        back_populates="dependencies",
-        cascade="all",
+
+    dependencies: Mapped["DBTemplateDependency"] = relationship(
+        "DBTemplateDependency", back_populates="template", cascade="all,delete-orphan"
     )
 
     __table_args__ = (
@@ -141,18 +109,56 @@ class DBTemplate(Base):
     )
 
 
-@event.listens_for(DBTemplate, "after_delete")
-def handle_template_deletion(mapper, connection, target):
-    """Event listener to handle deletion of a template and its dependents."""
-    from buildingmotif import get_building_motif
+class DBTemplateDependency(Base):
+    __tablename__ = "template_dependency"
+    id: Mapped[int] = Column(Integer, primary_key=True)
 
-    session = get_building_motif().session
+    template_id: Mapped[int] = Column(
+        Integer, ForeignKey("template.id", ondelete="CASCADE"), nullable=False
+    )
+    template: Mapped[DBTemplate] = relationship(
+        DBTemplate, back_populates="dependencies"
+    )
 
-    # Identify all dependant templates to delete and delete them (and their libraries).
-    delete_libraries = []
-    dependants = target.dependants[:]
-    for dependant in dependants:
-        session.delete(dependant)
-        delete_libraries.append(dependant.library)
-    for library in delete_libraries:
-        session.delete(library)
+    dependency_library_name: Mapped[str] = Column(String, nullable=False)
+    dependency_template_name: Mapped[str] = Column(String, nullable=False)
+
+    # args are a mapping of dependee args to dependant args
+    args: Mapped[Dict[str, str]] = Column(JSONType)  # type: ignore
+
+    @hybrid_property
+    def dependency_template(self) -> Optional[DBTemplate]:
+        session = Session.object_session(self)
+        statement = (
+            select(DBTemplate)
+            .join(DBTemplate.library)
+            .where(
+                DBTemplate.name == self.dependency_template_name,
+                DBLibrary.name == self.dependency_library_name,
+            )
+        )
+        try:
+            return session.scalars(statement).one()
+        except NoResultFound:
+            return None
+
+    @dependency_template.expression
+    def _dependency_tempalate(self):
+        return (
+            select(DBTemplate)
+            .join(DBTemplate.library)
+            .where(
+                DBTemplate.name == self.dependency_template_name,
+                DBLibrary.name == self.dependency_library_name,
+            )
+        )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "template_id",
+            "dependency_library_name",
+            "dependency_template_name",
+            "args",
+            name="template_dependency_unique_constraint",
+        ),
+    )

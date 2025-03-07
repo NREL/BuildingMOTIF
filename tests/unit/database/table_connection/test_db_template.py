@@ -202,21 +202,21 @@ def test_add_template_dependency(bm: BuildingMOTIF):
     (
         _,
         dependant_template,
-        dependee_template,
+        dependency_template,
     ) = create_dependency_test_fixtures(bm)
 
     bm.table_connection.add_template_dependency_preliminary(
-        dependant_template.id, dependee_template.id, {"name": "ding", "h2": "dong"}
+        dependant_template.id, dependency_template.id, {"name": "ding", "h2": "dong"}
     )
     bm.table_connection.check_all_template_dependencies()
 
-    assert dependant_template.dependencies == [dependee_template]
-    assert dependee_template.dependants == [dependant_template]
+    assert dependant_template.dependencies[0].dependency_template == dependency_template
+
     res = bm.table_connection.get_db_template_dependencies(dependant_template.id)
     assert len(res) == 1
     dep_assoc = res[0]
-    assert dep_assoc.dependant_id == dependant_template.id
-    assert dep_assoc.dependee_id == dependee_template.id
+    assert dep_assoc.template_id == dependant_template.id
+    assert dep_assoc.dependency_template == dependency_template
     assert dep_assoc.args == {"name": "ding", "h2": "dong"}
 
 
@@ -269,8 +269,8 @@ def test_get_dependencies(bm: BuildingMOTIF):
     res = bm.table_connection.get_db_template_dependencies(dependant_template.id)
     assert len(res) == 1
     dep_assoc = res[0]
-    assert dep_assoc.dependant_id == dependant_template.id
-    assert dep_assoc.dependee_id == dependee_template.id
+    assert dep_assoc.template_id == dependant_template.id
+    assert dep_assoc.dependency_template == dependee_template
     assert dep_assoc.args == {"name": "ding", "h2": "dong"}
 
 
@@ -289,8 +289,8 @@ def test_remove_dependencies(bm: BuildingMOTIF):
     res = bm.table_connection.get_db_template_dependencies(dependant_template.id)
     assert len(res) == 1
     dep_assoc = res[0]
-    assert dep_assoc.dependant_id == dependant_template.id
-    assert dep_assoc.dependee_id == dependee_template.id
+    assert dep_assoc.template_id == dependant_template.id
+    assert dep_assoc.dependency_template == dependee_template
     assert dep_assoc.args == {"name": "ding", "h2": "dong"}
 
     bm.table_connection.delete_template_dependency(

@@ -101,7 +101,7 @@ class Template:
         """
         return tuple(
             [
-                Dependency(dep.dependee_id, dep.args)
+                Dependency(dep.dependency_template.id, dep.args)
                 for dep in self._bm.table_connection.get_db_template_dependencies(
                     self._id
                 )

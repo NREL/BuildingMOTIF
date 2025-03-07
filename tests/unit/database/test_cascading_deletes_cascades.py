@@ -117,8 +117,50 @@ def test_cascade_delete_dependency_multi_library(bm):
         bm.table_connection.get_db_library(library2.id)
     with pytest.raises(TemplateNotFound):
         bm.table_connection.get_db_template(template2.id)
-    # Library1 and its template should be gone
+
+    # Library1 and its template should still be here
+    bm.table_connection.get_db_library(library1.id)
+    bm.table_connection.get_db_template(template1.id)
+
+
+def test_depedency_resolves_after_library_replacement(bm):
+    # Create two libraries
+    library1 = bm.table_connection.create_db_library(name="cascade_library1")
+    library2 = bm.table_connection.create_db_library(name="cascade_library2")
+    # Create template1 in library1 and template2 in library2
+    template1 = bm.table_connection.create_db_template(
+        name="template1", library_id=library1.id
+    )
+    template2 = bm.table_connection.create_db_template(
+        name="template2", library_id=library2.id
+    )
+    # Load templates to add dependency and verify dependency relationship.
+    template1 = Template.load(template1.id)
+    template2 = Template.load(template2.id)
+    # Add dependency: template1 depends on template2
+    template1.add_dependency(template2, {"name": "dependency"})
+    # Verify dependency exists.
+    deps = bm.table_connection.get_db_template_dependencies(template1.id)
+    assert len(deps) == 1
+    # Verify dependency resolves
+    assert deps[0].dependency_template == bm.table_connection.get_db_template(
+        template2.id
+    )
+    # Delete library2 and ensure cascading deletion
+    bm.table_connection.delete_db_library(library2.id)
+    bm.session.commit()
     with pytest.raises(LibraryNotFound):
-        bm.table_connection.get_db_library(library1.id)
+        bm.table_connection.get_db_library(library2.id)
     with pytest.raises(TemplateNotFound):
-        bm.table_connection.get_db_template(template1.id)
+        bm.table_connection.get_db_template(template2.id)
+    # Verify dependency does not resolves
+    assert deps[0].dependency_template is None
+    library2 = bm.table_connection.create_db_library(name="cascade_library2")
+    # Recreate template2 in library2
+    template2 = bm.table_connection.create_db_template(
+        name="template2", library_id=library2.id
+    )
+    # Verify dependency resolves
+    assert deps[0].dependency_template == bm.table_connection.get_db_template(
+        template2.id
+    )
