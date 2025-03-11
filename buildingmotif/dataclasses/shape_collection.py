@@ -394,7 +394,19 @@ def _shape_to_where(
     prefix = "".join(random.choice(string.ascii_lowercase) for _ in range(2))
     variable_counter = 0
 
-    def gensym():
+    def get_varname(shape):
+        """
+        Uses graph.value(shape, SH.name | RDFS.label) to get a name if it exists,
+        converting to a string if it is a Literal. Otherwise, generates a new unique
+        variable name.
+        """
+        name = graph.value(shape, SH.name | RDFS.label)
+        if isinstance(name, rdflib.Literal):
+            name = str(name)
+        if name:
+            return name.replace(" ", "_")
+
+        # generate symbol
         nonlocal variable_counter
         varname = f"{prefix}{variable_counter}"
         variable_counter += 1
@@ -449,7 +461,7 @@ def _shape_to_where(
     pshape_vars: Dict[Node, str] = {}
     for pshape_list in pshapes_by_path.values():
         # get name if it exists, otherwise generate a new one
-        pshape_name = graph.value(pshape_list[0], SH.name | RDFS.label) or gensym()
+        pshape_name = get_varname(pshape_list[0])
         varname = f"?{pshape_name}"
         for pshape in pshape_list:
             pshape_vars[pshape] = varname
@@ -460,9 +472,7 @@ def _shape_to_where(
         # in the PropertyShape or generate a unique one
         name = pshape_vars.get(
             pshape,
-            f"?{graph.value(pshape, SH.name | RDFS.label) or gensym()}".replace(
-                " ", "_"
-            ),
+            f"?{get_varname(pshape)}".replace(" ", "_"),
         )
         path = shacl_path_to_sparql_path(graph, graph.value(pshape, SH.path))
         qMinCount = graph.value(pshape, SH.qualifiedMinCount) or 0
@@ -495,7 +505,7 @@ def _shape_to_where(
         if or_values:
             # or clauses share the variable name. Get the variablen name from the SH.name
             # or RDFS.label for the current pshape, or generate a new one
-            or_var = graph.value(pshape, SH.name | RDFS.label) or gensym()
+            or_var = get_varname(pshape)
             or_var = f"?{or_var}".replace(" ", "_")
             # connect ?target to the variable that will be used in the OR clauses
             clauses += f"{root_var} {path} {or_var} .\n"

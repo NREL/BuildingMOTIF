@@ -220,4 +220,6 @@ class CompiledModel:
         metadata = pd.DataFrame(
             self._compiled_graph.query(query).bindings, dtype="string"
         )
+        # metadata.columns will be rdflib.term.Variable objects, so we need to convert them to strings
+        metadata.columns = [str(col) for col in metadata.columns]
         return metadata
