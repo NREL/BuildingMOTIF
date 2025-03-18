@@ -1,25 +1,19 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List, Optional
+from functools import cached_property
+from typing import TYPE_CHECKING, List, Optional
 
 import rdflib
+import rdflib.query
 import rfc3987
-from rdflib import URIRef
 
 from buildingmotif import get_building_motif
 from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.validation import ValidationContext
-from buildingmotif.namespaces import OWL, A
-from buildingmotif.utils import (
-    Triple,
-    copy_graph,
-    rewrite_shape_graph,
-    shacl_inference,
-    shacl_validate,
-    skolemize_shapes,
-)
+from buildingmotif.utils import Triple, copy_graph, shacl_inference, skolemize_shapes
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
+    from buildingmotif.dataclasses.compiled_model import CompiledModel
 
 
 def _validate_uri(uri: str):
@@ -37,7 +31,7 @@ class Model:
     _id: int
     _name: str
     _description: str
-    graph: rdflib.Graph
+    _graph: rdflib.Graph
     _bm: "BuildingMOTIF"
     _manifest_id: int
 
@@ -92,7 +86,7 @@ class Model:
             _id=db_model.id,
             _name=str(db_model.name),
             _description=db_model.description,
-            graph=graph,
+            _graph=graph,
             _bm=bm,
             _manifest_id=db_model.manifest_id,
         )
@@ -139,7 +133,7 @@ class Model:
             _id=db_model.id,
             _name=db_model.name,
             _description=db_model.description,
-            graph=graph,
+            _graph=graph,
             _bm=bm,
             _manifest_id=db_model.manifest_id,
         )
@@ -151,6 +145,10 @@ class Model:
     @id.setter
     def id(self, new_id):
         raise AttributeError("Cannot modify db id")
+
+    @cached_property
+    def graph(self) -> rdflib.Graph:
+        return self._graph
 
     @property
     def name(self):
@@ -216,59 +214,17 @@ class Model:
 
         :rtype: ValidationContext
         """
-        # TODO: determine the return types; At least a bool for valid/invalid,
-        # but also want a report. Is this the base pySHACL report? Or a useful
-        # transformation, like a list of deltas for potential fixes?
-        shapeg = rdflib.Graph()
-        if shape_collections is None or len(shape_collections) == 0:
-            shape_collections = [self.get_manifest()]
-        # aggregate shape graphs
-        for sc in shape_collections:
-            shapeg += sc.resolve_imports(
-                error_on_missing_imports=error_on_missing_imports
-            ).graph
-        # inline sh:node for interpretability
-        shapeg = rewrite_shape_graph(shapeg)
-
-        # remove imports from sg
-        shapeg.remove((None, OWL.imports, None))
-
-        # skolemize the shape graph so we have consistent identifiers across
-        # validation through the interpretation of the validation report
-        shapeg = skolemize_shapes(shapeg)
-
-        # TODO: do we want to preserve the materialized triples added to data_graph via reasoning?
-        data_graph = copy_graph(self.graph)
-
-        # remove imports from data graph
-        data_graph.remove((None, OWL.imports, None))
-
-        # if None, use the default engine
-        shacl_engine = shacl_engine or self._bm.shacl_engine
-
-        # validate the data graph
-        valid, report_g, report_str = shacl_validate(
-            data_graph, shapeg, engine=shacl_engine
-        )
-        return ValidationContext(
-            shape_collections,
-            shapeg,
-            valid,
-            report_g,
-            report_str,
-            self,
-        )
+        compiled_model = self.compile(shape_collections or [self.get_manifest()])
+        return compiled_model.validate(error_on_missing_imports)
 
     def compile(
-        self,
-        shape_collections: List["ShapeCollection"],
-        shacl_engine: Optional[str] = None,
-    ):
+        self, shape_collections: Optional[List["ShapeCollection"]] = None
+    ) -> "CompiledModel":
         """Compile the graph of a model against a set of ShapeCollections.
 
         :param shape_collections: list of ShapeCollections to compile the model
-            against
-        :type shape_collections: List[ShapeCollection]
+            against. Defaults to the model's manifest.
+        :type shape_collections: List[ShapeCollection], optional
         :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
             is set in the BuildingMOTIF object
         :type shacl_engine: str, optional
@@ -276,7 +232,11 @@ class Model:
             ShapeCollections
         :rtype: Graph
         """
+        from buildingmotif.dataclasses.compiled_model import CompiledModel
+
         ontology_graph = rdflib.Graph()
+        if shape_collections is None:
+            shape_collections = [self.get_manifest()]
         for shape_collection in shape_collections:
             ontology_graph += shape_collection.graph
 
@@ -284,77 +244,10 @@ class Model:
 
         model_graph = copy_graph(self.graph).skolemize()
 
-        shacl_engine = shacl_engine or self._bm.shacl_engine
-
-        return shacl_inference(model_graph, ontology_graph, engine=shacl_engine)
-
-    def test_model_against_shapes(
-        self,
-        shape_collections: List["ShapeCollection"],
-        shapes_to_test: List[rdflib.URIRef],
-        target_class: rdflib.URIRef,
-        shacl_engine: Optional[str] = None,
-    ) -> Dict[rdflib.URIRef, "ValidationContext"]:
-        """Validates the model against a list of shapes and generates a
-        validation report for each.
-
-        :param shape_collections: list of ShapeCollections needed to run shapes
-        :type shape_collection: List[ShapeCollection]
-        :param shapes_to_test: list of shape URIs to validate the model against
-        :type shapes_to_test: List[URIRef]
-        :param target_class: the class upon which to run the selected shapes
-        :type target_class: URIRef
-        :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
-            is set in the BuildingMOTIF object
-        :type shacl_engine: str, optional
-        :return: a dictionary that relates each shape to test URIRef to a
-                 ValidationContext
-        :rtype: Dict[URIRef, ValidationContext]
-        """
-        ontology_graph = rdflib.Graph()
-        for shape_collection in shape_collections:
-            ontology_graph += shape_collection.graph
-
-        model_graph = copy_graph(self.graph)
-
-        results = {}
-
-        targets = model_graph.query(
-            f"""
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            SELECT ?target
-            WHERE {{
-                ?target rdf:type/rdfs:subClassOf* <{target_class}>
-
-            }}
-        """
+        compiled_graph = shacl_inference(
+            model_graph, ontology_graph, engine=self._bm.shacl_engine
         )
-        # skolemize the shape graph so we have consistent identifiers across
-        # validation through the interpretation of the validation report
-        ontology_graph = ontology_graph.skolemize()
-
-        shacl_engine = shacl_engine or self._bm.shacl_engine
-
-        for shape_uri in shapes_to_test:
-            temp_model_graph = copy_graph(model_graph)
-            for (s,) in targets:
-                temp_model_graph.add((URIRef(s), A, shape_uri))
-
-            valid, report_g, report_str = shacl_validate(
-                temp_model_graph, ontology_graph, engine=shacl_engine
-            )
-
-            results[shape_uri] = ValidationContext(
-                shape_collections,
-                ontology_graph,
-                valid,
-                report_g,
-                report_str,
-                self,
-            )
-
-        return results
+        return CompiledModel(self, shape_collections, compiled_graph)
 
     def get_manifest(self) -> ShapeCollection:
         """Get ShapeCollection from model.

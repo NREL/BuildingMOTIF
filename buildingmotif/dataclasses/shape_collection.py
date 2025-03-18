@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union
 
 import rdflib
 from pyshacl.helper.path_helper import shacl_path_to_sparql_path
+from pyshacl.shapes_graph import ShapesGraph
 from rdflib import RDF, RDFS, Graph, URIRef
 from rdflib.paths import ZeroOrMore, ZeroOrOne
 from rdflib.term import Node
@@ -393,11 +394,25 @@ def _shape_to_where(
     prefix = "".join(random.choice(string.ascii_lowercase) for _ in range(2))
     variable_counter = 0
 
-    def gensym():
+    def get_varname(shape):
+        """
+        Uses graph.value(shape, SH.name | RDFS.label) to get a name if it exists,
+        converting to a string if it is a Literal. Otherwise, generates a new unique
+        variable name.
+        """
+        name = graph.value(shape, SH.name | RDFS.label)
+        if isinstance(name, rdflib.Literal):
+            name = str(name)
+        if name:
+            return name.replace(" ", "_")
+
+        # generate symbol
         nonlocal variable_counter
         varname = f"{prefix}{variable_counter}"
         variable_counter += 1
         return varname
+
+    shape_graph = ShapesGraph(graph)
 
     # get all the target clauses
     clauses += _target_to_sparql(graph, shape, root_var)
@@ -409,7 +424,7 @@ def _shape_to_where(
     pshapes_by_path: Dict[Node, List[Node]] = defaultdict(list)
     qualified_pshapes: Set[Node] = set()
     for pshape in graph.objects(shape, SH.property):
-        path = shacl_path_to_sparql_path(graph, graph.value(pshape, SH.path))
+        path = shacl_path_to_sparql_path(shape_graph, graph.value(pshape, SH.path))
         if not graph.value(pshape, SH.qualifiedValueShape):
             pshapes_by_path[path].append(pshape)  # type: ignore
         else:
@@ -421,7 +436,7 @@ def _shape_to_where(
             pshape == shape
         ):  # skip the input 'shape', otherwise this will infinitely recurse
             continue
-        path = shacl_path_to_sparql_path(graph, graph.value(pshape, SH.path))
+        path = shacl_path_to_sparql_path(shape_graph, graph.value(pshape, SH.path))
         if not graph.value(pshape, SH.qualifiedValueShape):
             pshapes_by_path[path].append(pshape)  # type: ignore
         else:
@@ -446,18 +461,18 @@ def _shape_to_where(
     pshape_vars: Dict[Node, str] = {}
     for pshape_list in pshapes_by_path.values():
         # get name if it exists, otherwise generate a new one
-        pshape_name = graph.value(pshape_list[0], SH.name | RDFS.label) or gensym()
+        pshape_name = get_varname(pshape_list[0])
         varname = f"?{pshape_name}"
         for pshape in pshape_list:
             pshape_vars[pshape] = varname
 
     for pshape in graph.objects(shape, SH.property):
         # get the varname if we've already assigned one for this pshape above,
-        # or generate a new one. When generating a name, use the SH.name field
+        # or generate a new one. When generating a name, use the SH.name|RDFS.label field
         # in the PropertyShape or generate a unique one
         name = pshape_vars.get(
             pshape,
-            f"?{graph.value(pshape, SH.name|RDFS.label) or gensym()}".replace(" ", "_"),
+            f"?{get_varname(pshape)}".replace(" ", "_"),
         )
         path = shacl_path_to_sparql_path(graph, graph.value(pshape, SH.path))
         qMinCount = graph.value(pshape, SH.qualifiedMinCount) or 0
@@ -490,7 +505,7 @@ def _shape_to_where(
         if or_values:
             # or clauses share the variable name. Get the variablen name from the SH.name
             # or RDFS.label for the current pshape, or generate a new one
-            or_var = graph.value(pshape, SH.name | RDFS.label) or gensym()
+            or_var = get_varname(pshape)
             or_var = f"?{or_var}".replace(" ", "_")
             # connect ?target to the variable that will be used in the OR clauses
             clauses += f"{root_var} {path} {or_var} .\n"
