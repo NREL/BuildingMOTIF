@@ -1,11 +1,12 @@
+import logging
 from typing import List, Union
 
 from rdflib import Graph, Namespace
 
 from buildingmotif.dataclasses import Template
-from buildingmotif.semantic_graph_synthesizer.classes import Bindings, UnifiedBindings
+from buildingmotif.graph_generation.classes import Bindings, UnifiedBindings
 
-BLDG = Namespace("urn:building/")
+logger = logging.getLogger()
 
 
 def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
@@ -43,12 +44,15 @@ def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
 
 
 def evaluate_bindings(
-    bindings: Union[Bindings, UnifiedBindings]
+    namespace: Namespace, bindings: Union[Bindings, UnifiedBindings]
 ) -> Union[Template, Graph]:
     """evaluate bindings"""
     if bindings.template is None:
         raise ValueError("bindings have no template.")
 
+    logger.debug(
+        f"Evaluating bindings for template {bindings.template.name}. Parameters: {bindings.bindings}"
+    )
     return bindings.template.evaluate(
-        {p: BLDG[t.identifier] for p, t in bindings.bindings.items()}
+        {p: namespace[t.identifier] for p, t in bindings.bindings.items()}
     )

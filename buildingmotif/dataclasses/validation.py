@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, U
 
 import rdflib
 from pyshacl.helper.path_helper import shacl_path_to_sparql_path
+from pyshacl.shapes_graph import ShapesGraph
 from rdflib import Graph, URIRef
 from rdflib.collection import Collection
 from rdflib.term import BNode, Node
@@ -122,6 +123,16 @@ class OrShape(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
+        # context = ""
+        # for shape in self.shapes:
+        #    # get the CBD of the shape
+        #    shape_graph = self.graph.cbd(shape)
+        #    # serialize the shape graph to a string
+        #    shape_str = shape_graph.serialize(format="turtle")
+        #    context += f"Shape: {shape}\n{shape_str}\n"
+        # TODO: consider adding this back? I am removing it because it can be quite big, which
+        # causes issues when we buffer the output in the browser localstorage for demos
+
         return f"{self.focus} needs to match one of the following shapes: {', '.join(self.shapes)}"
 
     @classmethod
@@ -216,7 +227,7 @@ class PathClassCount(GraphDiff):
         """Human-readable explanation of this GraphDiff."""
         # interpret a SHACL property path as a sparql property path
         path = shacl_path_to_sparql_path(
-            self.graph, self.path, prefixes=dict(self.graph.namespaces())
+            ShapesGraph(self.graph), self.path, prefixes=dict(self.graph.namespaces())
         )
 
         classname = self.graph.qname(self.classname)
@@ -394,7 +405,7 @@ class RequiredPath(GraphDiff):
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
         path = shacl_path_to_sparql_path(
-            self.graph, self.path, prefixes=dict(self.graph.namespaces())
+            ShapesGraph(self.graph), self.path, prefixes=dict(self.graph.namespaces())
         )
         return self.format_count_error(self.maxc, self.minc, path)
 

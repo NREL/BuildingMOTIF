@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
@@ -8,13 +7,8 @@ from rdflib import Graph
 from scipy.optimize import linear_sum_assignment
 
 from buildingmotif.dataclasses import Template
+from buildingmotif.graph_generation.classes import Cost, Param, Token, URIRef
 from buildingmotif.namespaces import PARAM
-from buildingmotif.semantic_graph_synthesizer.classes import Cost, Param, Token, URIRef
-
-brick = Graph()
-PROJECT_DIR = Path(__file__).resolve().parents[1]
-brick.parse(PROJECT_DIR / "libraries/brick/Brick.ttl")
-
 
 logger = logging.getLogger()
 
@@ -38,25 +32,25 @@ def get_typed_params(template) -> List[Param]:
 
 class BipartiteTokenMapper:
     @staticmethod
-    def _get_parent_class(brick_class: URIRef) -> Optional[URIRef]:
-        """Get the immediate parent of brick class"""
+    def _get_parent_class(ontology: Graph, ontology_class: URIRef) -> Optional[URIRef]:
+        """Get the immediate parent of ontology class"""
         query = """
             SELECT ?parent
             WHERE {{
                 ?child rdfs:subClassOf ?parent
             }}
         """
-        result = brick.query(query, initBindings={"child": brick_class})
+        result = ontology.query(query, initBindings={"child": ontology_class})
         parents = (parent for (parent,) in result)
 
         return next(parents, None)
 
     @staticmethod
     def _get_edge_cost(
-        token_class: URIRef, param_class: URIRef, cost_power: int = 0
+        ontology: Graph, token_class: URIRef, param_class: URIRef, cost_power: int = 0
     ) -> float:
         """
-        Return the cost between brick classes token_class and param_class where cost is:
+        Return the cost between ontology classes token_class and param_class where cost is:
 
         - inf if token_class is not covariant of param_class.
         - 2 to the power of the number of hops between the classes.
@@ -64,16 +58,18 @@ class BipartiteTokenMapper:
         if str(token_class) == str(param_class):
             return 2**cost_power - 1
 
-        parent_class = BipartiteTokenMapper._get_parent_class(token_class)
+        parent_class = BipartiteTokenMapper._get_parent_class(ontology, token_class)
         if parent_class is None:
             return np.inf
 
         return BipartiteTokenMapper._get_edge_cost(
-            parent_class, param_class, cost_power + 1
+            ontology, parent_class, param_class, cost_power + 1
         )
 
     @staticmethod
-    def _create_cost_matrix(tokens: List[Token], params: List[Param]) -> pd.DataFrame:
+    def _create_cost_matrix(
+        ontology: Graph, tokens: List[Token], params: List[Param]
+    ) -> pd.DataFrame:
         """Create cost matrix of the above classes."""
 
         # a cost matrix is a matrix where the rows are the tokens and the columns are the params
@@ -88,7 +84,7 @@ class BipartiteTokenMapper:
         for i, token in enumerate(cost_matrix.columns):
             for j, param in enumerate(cost_matrix.index):
                 cost_matrix.iloc[j, i] = BipartiteTokenMapper._get_edge_cost(
-                    token.classname, param.classname
+                    ontology, token.classname, param.classname
                 )
 
         logger.debug("cost matrix:")
@@ -102,13 +98,14 @@ class BipartiteTokenMapper:
 
     @staticmethod
     def find_bindings_for_tokens_and_params(
+        ontology: Graph,
         tokens: List[Token],
         params: List[Param],
     ) -> Tuple[Dict[URIRef, Token], Cost]:
         """Get the cost of mapping token_classes to param_classes."""
         # create cost matrix based on the distances between the classes of the tokens
         # and the classes of the parameters. The params come from a template.
-        cost_matrix = BipartiteTokenMapper._create_cost_matrix(tokens, params)
+        cost_matrix = BipartiteTokenMapper._create_cost_matrix(ontology, tokens, params)
 
         # This code replaces all occurrences of positive infinity (np.inf) in
         # the cost_matrix with NaN (Not a Number), drops any rows that are all
@@ -158,6 +155,7 @@ class BipartiteTokenMapper:
 
     @staticmethod
     def find_bindings_for_tokens_and_template(
+        ontology: Graph,
         tokens: List[Token],
         template: Template,
     ) -> Tuple[Dict[Param, Token], Cost]:
@@ -166,7 +164,7 @@ class BipartiteTokenMapper:
         params = get_typed_params(template)
         try:
             mapping, cost = BipartiteTokenMapper.find_bindings_for_tokens_and_params(
-                tokens, params
+                ontology, tokens, params
             )
         except ValueError:
             mapping, cost = {}, Cost(

@@ -310,7 +310,6 @@ mypy-extensions = ">=0.4.3"
 pathspec = ">=0.9.0"
 platformdirs = ">=2"
 tomli = {version = ">=1.1.0", markers = "python_full_version < \"3.11.0a7\""}
-typing-extensions = {version = ">=3.10.0.0", markers = "python_version < \"3.10\""}
 
 [package.extras]
 colorama = ["colorama (>=0.4.3)"]
@@ -857,20 +856,20 @@ typing = ["typing-extensions (>=4.12.2) ; python_version < \"3.11\""]
 
 [[package]]
 name = "flake8"
-version = "5.0.4"
+version = "7.1.2"
 description = "the modular source code checker: pep8 pyflakes and co"
 optional = false
-python-versions = ">=3.6.1"
-groups = ["dev"]
+python-versions = ">=3.8.1"
+groups = ["main", "dev"]
 files = [
-    {file = "flake8-5.0.4-py2.py3-none-any.whl", hash = "sha256:7a1cf6b73744f5806ab95e526f6f0d8c01c66d7bbe349562d22dfca20610b248"},
-    {file = "flake8-5.0.4.tar.gz", hash = "sha256:6fbe320aad8d6b95cec8b8e47bc933004678dc63095be98528b7bdd2a9f510db"},
+    {file = "flake8-7.1.2-py2.py3-none-any.whl", hash = "sha256:1cbc62e65536f65e6d754dfe6f1bada7f5cf392d6f5db3c2b85892466c3e7c1a"},
+    {file = "flake8-7.1.2.tar.gz", hash = "sha256:c586ffd0b41540951ae41af572e6790dbd49fc12b3aa2541685d253d9bd504bd"},
 ]
 
 [package.dependencies]
 mccabe = ">=0.7.0,<0.8.0"
-pycodestyle = ">=2.9.0,<2.10.0"
-pyflakes = ">=2.5.0,<2.6.0"
+pycodestyle = ">=2.12.0,<2.13.0"
+pyflakes = ">=3.2.0,<3.3.0"
 
 [[package]]
 name = "flask"
@@ -887,7 +886,6 @@ files = [
 [package.dependencies]
 blinker = ">=1.6.2"
 click = ">=8.1.3"
-importlib-metadata = {version = ">=3.6.0", markers = "python_version < \"3.10\""}
 itsdangerous = ">=2.1.2"
 Jinja2 = ">=3.1.2"
 Werkzeug = ">=2.3.7"
@@ -1135,6 +1133,7 @@ files = [
     {file = "importlib_metadata-8.6.1-py3-none-any.whl", hash = "sha256:02a89390c1e15fdfdc0d7c6b25cb3e62650d0494005c97d6f148bf5b9787525e"},
     {file = "importlib_metadata-8.6.1.tar.gz", hash = "sha256:310b41d755445d74569f993ccfc22838295d9fe005425094fad953d7f15c8580"},
 ]
+markers = {main = "python_version <= \"3.11\""}
 
 [package.dependencies]
 zipp = ">=3.20"
@@ -1196,15 +1195,15 @@ test = ["flaky", "ipyparallel", "pre-commit", "pytest (>=7.0)", "pytest-asyncio 
 
 [[package]]
 name = "ipython"
-version = "8.18.1"
+version = "8.34.0"
 description = "IPython: Productive Interactive Computing"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main", "dev"]
 markers = "python_version < \"3.11\""
 files = [
-    {file = "ipython-8.18.1-py3-none-any.whl", hash = "sha256:e8267419d72d81955ec1177f8a29aaa90ac80ad647499201119e2f05e99aa397"},
-    {file = "ipython-8.18.1.tar.gz", hash = "sha256:ca6f079bb33457c66e233e4580ebfc4128855b4cf6370dddd73842a9563e8a27"},
+    {file = "ipython-8.34.0-py3-none-any.whl", hash = "sha256:0419883fa46e0baa182c5d50ebb8d6b49df1889fdb70750ad6d8cfe678eda6e3"},
+    {file = "ipython-8.34.0.tar.gz", hash = "sha256:c31d658e754673ecc6514583e7dda8069e47136eb62458816b7d1e6625948b5a"},
 ]
 
 [package.dependencies]
@@ -1213,25 +1212,26 @@ decorator = "*"
 exceptiongroup = {version = "*", markers = "python_version < \"3.11\""}
 jedi = ">=0.16"
 matplotlib-inline = "*"
-pexpect = {version = ">4.3", markers = "sys_platform != \"win32\""}
-prompt-toolkit = ">=3.0.41,<3.1.0"
+pexpect = {version = ">4.3", markers = "sys_platform != \"win32\" and sys_platform != \"emscripten\""}
+prompt_toolkit = ">=3.0.41,<3.1.0"
 pygments = ">=2.4.0"
-stack-data = "*"
-traitlets = ">=5"
-typing-extensions = {version = "*", markers = "python_version < \"3.10\""}
+stack_data = "*"
+traitlets = ">=5.13.0"
+typing_extensions = {version = ">=4.6", markers = "python_version < \"3.12\""}
 
 [package.extras]
-all = ["black", "curio", "docrepr", "exceptiongroup", "ipykernel", "ipyparallel", "ipywidgets", "matplotlib", "matplotlib (!=3.2.0)", "nbconvert", "nbformat", "notebook", "numpy (>=1.22)", "pandas", "pickleshare", "pytest (<7)", "pytest (<7.1)", "pytest-asyncio (<0.22)", "qtconsole", "setuptools (>=18.5)", "sphinx (>=1.3)", "sphinx-rtd-theme", "stack-data", "testpath", "trio", "typing-extensions"]
+all = ["ipython[black,doc,kernel,matplotlib,nbconvert,nbformat,notebook,parallel,qtconsole]", "ipython[test,test-extra]"]
 black = ["black"]
-doc = ["docrepr", "exceptiongroup", "ipykernel", "matplotlib", "pickleshare", "pytest (<7)", "pytest (<7.1)", "pytest-asyncio (<0.22)", "setuptools (>=18.5)", "sphinx (>=1.3)", "sphinx-rtd-theme", "stack-data", "testpath", "typing-extensions"]
+doc = ["docrepr", "exceptiongroup", "intersphinx_registry", "ipykernel", "ipython[test]", "matplotlib", "setuptools (>=18.5)", "sphinx (>=1.3)", "sphinx-rtd-theme", "sphinxcontrib-jquery", "tomli ; python_version < \"3.11\"", "typing_extensions"]
 kernel = ["ipykernel"]
+matplotlib = ["matplotlib"]
 nbconvert = ["nbconvert"]
 nbformat = ["nbformat"]
 notebook = ["ipywidgets", "notebook"]
 parallel = ["ipyparallel"]
 qtconsole = ["qtconsole"]
-test = ["pickleshare", "pytest (<7.1)", "pytest-asyncio (<0.22)", "testpath"]
-test-extra = ["curio", "matplotlib (!=3.2.0)", "nbformat", "numpy (>=1.22)", "pandas", "pickleshare", "pytest (<7.1)", "pytest-asyncio (<0.22)", "testpath", "trio"]
+test = ["packaging", "pickleshare", "pytest", "pytest-asyncio (<0.22)", "testpath"]
+test-extra = ["curio", "ipython[test]", "matplotlib (!=3.2.0)", "nbformat", "numpy (>=1.23)", "pandas", "trio"]
 
 [[package]]
 name = "ipython"
@@ -1240,7 +1240,7 @@ description = "IPython: Productive Interactive Computing"
 optional = false
 python-versions = ">=3.11"
 groups = ["main", "dev"]
-markers = "python_version == \"3.11\""
+markers = "python_version >= \"3.11\""
 files = [
     {file = "ipython-9.0.2-py3-none-any.whl", hash = "sha256:143ef3ea6fb1e1bffb4c74b114051de653ffb7737a3f7ab1670e657ca6ae8c44"},
     {file = "ipython-9.0.2.tar.gz", hash = "sha256:ec7b479e3e5656bf4f58c652c120494df1820f4f28f522fb7ca09e213c2aab52"},
@@ -1274,7 +1274,7 @@ description = "Defines a variety of Pygments lexers for highlighting IPython cod
 optional = false
 python-versions = ">=3.8"
 groups = ["main", "dev"]
-markers = "python_version == \"3.11\""
+markers = "python_version >= \"3.11\""
 files = [
     {file = "ipython_pygments_lexers-1.1.1-py3-none-any.whl", hash = "sha256:a9462224a505ade19a605f71f8fa63c2048833ce50abc86768a0d81d876dc81c"},
     {file = "ipython_pygments_lexers-1.1.1.tar.gz", hash = "sha256:09c0138009e56b6854f9535736f4171d855c8c08a563a0dcd8022f78355c7e81"},
@@ -1569,7 +1569,6 @@ files = [
 ]
 
 [package.dependencies]
-importlib-metadata = {version = ">=4.8.3", markers = "python_version < \"3.10\""}
 jupyter-core = ">=4.12,<5.0.dev0 || >=5.1.dev0"
 python-dateutil = ">=2.8.2"
 pyzmq = ">=23.0"
@@ -1666,7 +1665,6 @@ files = [
 ]
 
 [package.dependencies]
-importlib-metadata = {version = ">=4.8.3", markers = "python_version < \"3.10\""}
 jupyter-server = ">=1.1.2"
 
 [[package]]
@@ -1741,7 +1739,6 @@ files = [
 [package.dependencies]
 async-lru = ">=1.0.0"
 httpx = ">=0.25.0"
-importlib-metadata = {version = ">=4.8.3", markers = "python_version < \"3.10\""}
 ipykernel = ">=6.5.0"
 jinja2 = ">=3.0.3"
 jupyter-core = "*"
@@ -1788,7 +1785,6 @@ files = [
 
 [package.dependencies]
 babel = ">=2.10"
-importlib-metadata = {version = ">=4.8.3", markers = "python_version < \"3.10\""}
 jinja2 = ">=3.0.3"
 json5 = ">=0.9.0"
 jsonschema = ">=4.18.0"
@@ -2013,7 +2009,7 @@ version = "0.7.0"
 description = "McCabe checker, plugin for flake8"
 optional = false
 python-versions = ">=3.6"
-groups = ["dev"]
+groups = ["main", "dev"]
 files = [
     {file = "mccabe-0.7.0-py2.py3-none-any.whl", hash = "sha256:6c2d30ab6be0e4a46919781807b4f0d834ebdd6c6e3dca0bda5a15f863427b6e"},
     {file = "mccabe-0.7.0.tar.gz", hash = "sha256:348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325"},
@@ -2221,7 +2217,6 @@ files = [
 beautifulsoup4 = "*"
 bleach = {version = "!=5.0.0", extras = ["css"]}
 defusedxml = "*"
-importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
 jinja2 = ">=3.0"
 jupyter-core = ">=4.7"
 jupyterlab-pygments = "*"
@@ -2574,6 +2569,7 @@ files = [
 numpy = [
     {version = ">=1.22.4", markers = "python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version == \"3.11\""},
+    {version = ">=1.26.0", markers = "python_version >= \"3.12\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -2651,7 +2647,7 @@ description = "Pexpect allows easy control of interactive console applications."
 optional = false
 python-versions = "*"
 groups = ["main", "dev"]
-markers = "python_version < \"3.11\" and sys_platform != \"win32\" or sys_platform != \"win32\" and sys_platform != \"emscripten\""
+markers = "sys_platform != \"win32\" and sys_platform != \"emscripten\""
 files = [
     {file = "pexpect-4.9.0-py2.py3-none-any.whl", hash = "sha256:7236d1e080e4936be2dc3e326cec0af72acf9212a7e1d060210e70a47e253523"},
     {file = "pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f"},
@@ -2892,7 +2888,7 @@ files = [
     {file = "ptyprocess-0.7.0-py2.py3-none-any.whl", hash = "sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35"},
     {file = "ptyprocess-0.7.0.tar.gz", hash = "sha256:5c5d0a3b48ceee0b48485e0c26037c0acd7d29765ca3fbb5cb3831d347423220"},
 ]
-markers = {main = "python_version < \"3.11\" and sys_platform != \"win32\" or sys_platform != \"win32\" and sys_platform != \"emscripten\"", dev = "sys_platform != \"win32\" and python_version < \"3.11\" or sys_platform != \"win32\" and sys_platform != \"emscripten\" or os_name != \"nt\""}
+markers = {main = "sys_platform != \"win32\" and sys_platform != \"emscripten\"", dev = "sys_platform != \"win32\" and sys_platform != \"emscripten\" or os_name != \"nt\""}
 
 [[package]]
 name = "pure-eval"
@@ -2962,14 +2958,14 @@ pybtex = ">=0.16"
 
 [[package]]
 name = "pycodestyle"
-version = "2.9.1"
+version = "2.12.1"
 description = "Python style guide checker"
 optional = false
-python-versions = ">=3.6"
-groups = ["dev"]
+python-versions = ">=3.8"
+groups = ["main", "dev"]
 files = [
-    {file = "pycodestyle-2.9.1-py2.py3-none-any.whl", hash = "sha256:d1735fc58b418fd7c5f658d28d943854f8a849b01a5d0a1e6f3f3fdd0166804b"},
-    {file = "pycodestyle-2.9.1.tar.gz", hash = "sha256:2c9607871d58c76354b697b42f5d57e1ada7d261c261efac224b664affdc5785"},
+    {file = "pycodestyle-2.12.1-py2.py3-none-any.whl", hash = "sha256:46f0fb92069a7c28ab7bb558f05bfc0110dac69a0cd23c61ea0040283a9d78b3"},
+    {file = "pycodestyle-2.12.1.tar.gz", hash = "sha256:6838eae08bbce4f6accd5d5572075c63626a15ee3e6f842df996bf62f6d73521"},
 ]
 
 [[package]]
@@ -3015,59 +3011,59 @@ test = ["pytest", "pytest-cov", "pytest-regressions", "sphinx[test]"]
 
 [[package]]
 name = "pyflakes"
-version = "2.5.0"
+version = "3.2.0"
 description = "passive checker of Python programs"
 optional = false
-python-versions = ">=3.6"
-groups = ["dev"]
+python-versions = ">=3.8"
+groups = ["main", "dev"]
 files = [
-    {file = "pyflakes-2.5.0-py2.py3-none-any.whl", hash = "sha256:4579f67d887f804e67edb544428f264b7b24f435b263c4614f384135cea553d2"},
-    {file = "pyflakes-2.5.0.tar.gz", hash = "sha256:491feb020dca48ccc562a8c0cbe8df07ee13078df59813b83959cbdada312ea3"},
+    {file = "pyflakes-3.2.0-py2.py3-none-any.whl", hash = "sha256:84b5be138a2dfbb40689ca07e2152deb896a65c3a3e24c251c5c62489568074a"},
+    {file = "pyflakes-3.2.0.tar.gz", hash = "sha256:1c61603ff154621fb2a9172037d84dca3500def8c8b630657d1701f026f8af3f"},
 ]
 
 [[package]]
 name = "pygit2"
-version = "1.11.1"
+version = "1.17.0"
 description = "Python bindings for libgit2."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "pygit2-1.11.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:263e05ac655a4ce0a1083aaaedfd0a900b8dee2c3bb3ecf4f4e504a404467d1f"},
-    {file = "pygit2-1.11.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ee6b4a0e181c576cdb64b1568bfbff3d1c2cd7e99808f578c8b08875c0f43739"},
-    {file = "pygit2-1.11.1-cp310-cp310-manylinux_2_24_aarch64.whl", hash = "sha256:d1b5fcaac1f29337f2d1465fa095e2e375b76a06385bda9391cb418c7937fb54"},
-    {file = "pygit2-1.11.1-cp310-cp310-manylinux_2_24_x86_64.whl", hash = "sha256:96ff745d3199909d06cab5e419a6b953be99992414a08ec4dddb682f395de8f1"},
-    {file = "pygit2-1.11.1-cp310-cp310-win32.whl", hash = "sha256:b3c8726f0c9a2b0e04aac37b18027c58c2697b9c021d3458b28bc250b9b6aecf"},
-    {file = "pygit2-1.11.1-cp310-cp310-win_amd64.whl", hash = "sha256:f42409d25bbfc090fd1af1f5f47584d7e0c4212b037a7f86639a02c30420c6ee"},
-    {file = "pygit2-1.11.1-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:29f89d96bbb404ca1566418463521039903094fad2f81a76d7083810d2ea3aad"},
-    {file = "pygit2-1.11.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:d5c158b9430c5e76ca728b1a214bf21d355af6ac6e2da86ed17775b870b6c6eb"},
-    {file = "pygit2-1.11.1-cp311-cp311-manylinux_2_24_aarch64.whl", hash = "sha256:6c3434b143e7570ec45cd1a0e344fe7a12e64b99e7155fa38b74f724c8fc243c"},
-    {file = "pygit2-1.11.1-cp311-cp311-manylinux_2_24_x86_64.whl", hash = "sha256:550aa503c86ef0061ce64d61c3672b15b500c2b1e4224c405acecfac2211b5d9"},
-    {file = "pygit2-1.11.1-cp311-cp311-win32.whl", hash = "sha256:f270f86a0185ca2064e1aa6b8db3bb677b1bf76ee35f48ca5ce28a921fad5632"},
-    {file = "pygit2-1.11.1-cp311-cp311-win_amd64.whl", hash = "sha256:56b9deeab214653805214f05337f5e9552b47bf268c285551f20ea51a6056c3e"},
-    {file = "pygit2-1.11.1-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:3c5838e6516abc4384498f4b4c7f88578221596dc2ba8db2320ff2cfebe9787e"},
-    {file = "pygit2-1.11.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:a886aab5aae8d8db572e20b9f56c13cd506775265222ea7f35b2c781e4fa3a5e"},
-    {file = "pygit2-1.11.1-cp38-cp38-manylinux_2_24_aarch64.whl", hash = "sha256:3be4534180edd53e3e1da93c5b091975566bfdffdc73f21930d79fef096a25d2"},
-    {file = "pygit2-1.11.1-cp38-cp38-manylinux_2_24_x86_64.whl", hash = "sha256:4d6209c703764ae0ba57b17038482f3e54f432f80f88ccd490d7f8b70b167db6"},
-    {file = "pygit2-1.11.1-cp38-cp38-win32.whl", hash = "sha256:ddb032fa71d4b4a64bf101e37eaa21f5369f20a862b5e34bbc33854a3a35f641"},
-    {file = "pygit2-1.11.1-cp38-cp38-win_amd64.whl", hash = "sha256:f8de0091e5eeaea2004f63f7dcb4540780f2124f68c0bcb670ae0fa9ada8bf66"},
-    {file = "pygit2-1.11.1-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:9b44674e53efa9eca36e44f2f3d1a29e53e78649ba13105ae0b037d557f2c076"},
-    {file = "pygit2-1.11.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:0170f31c2efb15f6779689df328c05a8005ecb2b92784a37ff967d713cdafe82"},
-    {file = "pygit2-1.11.1-cp39-cp39-manylinux_2_24_aarch64.whl", hash = "sha256:960a55ff78f48887a7aa8ece952aad0f52f0a2ba1ad7bddd7064fbbefd85dfbb"},
-    {file = "pygit2-1.11.1-cp39-cp39-manylinux_2_24_x86_64.whl", hash = "sha256:df722c90fb54a42fa019dcf8d8f82961c3099c3024f1fda46c53e0886ff8f0f3"},
-    {file = "pygit2-1.11.1-cp39-cp39-win32.whl", hash = "sha256:3b091e7fd00dd2a2cd3a6b5e235b6cbfbc1c07f15ee83a5cb3f188e1d6d1bca1"},
-    {file = "pygit2-1.11.1-cp39-cp39-win_amd64.whl", hash = "sha256:da040dc28800831bcbefef0850466739f103bfc769d952bd10c449646d52ce8f"},
-    {file = "pygit2-1.11.1-pp38-pypy38_pp73-macosx_10_9_x86_64.whl", hash = "sha256:585daa3956f1dc10d08e3459c20b57be42c7f9c0fbde21e797b3a00b5948f061"},
-    {file = "pygit2-1.11.1-pp38-pypy38_pp73-manylinux_2_24_aarch64.whl", hash = "sha256:273878adeced2aec7885745b73fffb91a8e67868c105bf881b61008d42497ad6"},
-    {file = "pygit2-1.11.1-pp38-pypy38_pp73-manylinux_2_24_x86_64.whl", hash = "sha256:48cfd72283a08a9226aca115870799ee92898d692699f541a3b3f519805108ec"},
-    {file = "pygit2-1.11.1-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:a9ca4cb2481d2df14d23c765facef325f717d9a3966a986b86e88d92eef11929"},
-    {file = "pygit2-1.11.1-pp39-pypy39_pp73-manylinux_2_24_aarch64.whl", hash = "sha256:d5f64a424d9123b047458b0107c5dd33559184b56a1f58b10056ea5cbac74360"},
-    {file = "pygit2-1.11.1-pp39-pypy39_pp73-manylinux_2_24_x86_64.whl", hash = "sha256:f13e190cc080bde093138e12bcb609500276227e3e8e8bd8765a2fd49ae2efb8"},
-    {file = "pygit2-1.11.1.tar.gz", hash = "sha256:793f583fd33620f0ac38376db0f57768ef2922b89b459e75b1ac440377eb64ec"},
+    {file = "pygit2-1.17.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:cbe1a3354a3eff0f4e842abcff73b24455ba7205ac959f146d7cb8dcd63cfa45"},
+    {file = "pygit2-1.17.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:578d78fc97d5c16b1ad44c1e2fda093628c3f29793b42be68b93a46ce7a662a0"},
+    {file = "pygit2-1.17.0-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:e59de6138787aa3a5365557fb1ad427d3e877868917e0910257fb11f71f3c736"},
+    {file = "pygit2-1.17.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:66431dba77977b9010fac580eaefcc7567ea0955b030d8e8472fdce0f1a7c5f0"},
+    {file = "pygit2-1.17.0-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:877ce82239de45301fa9953d50b41c46a5300cf7b3993db86bde64e08521a506"},
+    {file = "pygit2-1.17.0-cp310-cp310-win32.whl", hash = "sha256:8b7921016cbec166083206daca20d00f2358b18178122e1b0d1932b410296de1"},
+    {file = "pygit2-1.17.0-cp310-cp310-win_amd64.whl", hash = "sha256:5724683b3d239cc1457b9800d9d7988a00cd0cb1797d5caa6f46d16f3f74f1ca"},
+    {file = "pygit2-1.17.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:39e7087e2affdba2530d1fe1ec04c27fa85db405be84e1cd4759891045324a31"},
+    {file = "pygit2-1.17.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d0ef5c3634317295268ef84b99e8acae37cb2f8b17d966b318c79e5211bf78d3"},
+    {file = "pygit2-1.17.0-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:1ad964b2eea81e0c99d05c6ec0ec8b5715d3d0c99b3b6e09abcdb57c57701592"},
+    {file = "pygit2-1.17.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cce8db6aa40361270b14e1adb3a8e7d4606b9b53088e27321472c9a92f922648"},
+    {file = "pygit2-1.17.0-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:136b1ea44107fb6a3a58e7b1322227e83101bff50a929816d8653a38e0ed0e07"},
+    {file = "pygit2-1.17.0-cp311-cp311-win32.whl", hash = "sha256:5ffce0772167e5c436be57ee3ef0fb421c864657911aeb1a97618e1dd9f8b574"},
+    {file = "pygit2-1.17.0-cp311-cp311-win_amd64.whl", hash = "sha256:0809029cf804f343abdc9eaeaf9d915f9dbf320d79078c20138a3bf642583365"},
+    {file = "pygit2-1.17.0-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:f7224d89a7dda7290e458393941e500c8682f375f41e6d80ee423958a5d4013d"},
+    {file = "pygit2-1.17.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9ae1967b0c8a2438b3b0e4a63307b5c22c80024a2f09b28d14dfde0001fed8dc"},
+    {file = "pygit2-1.17.0-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:507343fa142a82028c8448c2626317dc19885985aba8ea27d381777ac484eefb"},
+    {file = "pygit2-1.17.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6bc04917a680591c6e801df912d7fb722c253b5ac68178ff37b5666dafd06999"},
+    {file = "pygit2-1.17.0-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:7bb1b623cbd16962c3a1ec7f8e1012fa224c9e9642758c65e8e656ecc7ff1574"},
+    {file = "pygit2-1.17.0-cp312-cp312-win32.whl", hash = "sha256:3029331ddf56a6908547278ab4c354b2d6932eb6a53be81e0093adc98a0ae540"},
+    {file = "pygit2-1.17.0-cp312-cp312-win_amd64.whl", hash = "sha256:1011236bab7317b82e6cbc3dff4be8467923b1dcf2ffe28bf2e64805dcb37749"},
+    {file = "pygit2-1.17.0-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:ce938e7a4fdfc816ffceb62babad65fb62e1a5ad261e880b9a072e8da144ccca"},
+    {file = "pygit2-1.17.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:61ff2c8b0fc96fdf45a7a5239cc262b0293a5171f68d67eea239a42c3b2226cb"},
+    {file = "pygit2-1.17.0-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:8101aa723c292892ba46303b19487a9fb0de50d9e30f4c1c2a76e3383b6e4b6d"},
+    {file = "pygit2-1.17.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:36e3e9225e3f01bb6a2d4589c126900bbc571cd0876ca9c01372a6e3d3693c0e"},
+    {file = "pygit2-1.17.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:614cfddbf048900da19b016787f153d44ea9fd7ef80f9e03a77024aa1555d5f4"},
+    {file = "pygit2-1.17.0-cp313-cp313-win32.whl", hash = "sha256:1391762153af9715ed1d0586e3f207c518f03f5874e1f5b8e398697d006a0a82"},
+    {file = "pygit2-1.17.0-cp313-cp313-win_amd64.whl", hash = "sha256:d677d6fb85c426c5f5f8409bdc5a2e391016c99f73b97779b284c4ad25aa75fa"},
+    {file = "pygit2-1.17.0-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c491db4f71fd5d814023f2ad89ad7023c15738bcbe0807acc2313026600bf1b1"},
+    {file = "pygit2-1.17.0-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:89ff254387d23d107dd2b542907d248a3a988e3be8cda99bcc8af04f56e6e5cf"},
+    {file = "pygit2-1.17.0.tar.gz", hash = "sha256:fa2bc050b2c2d3e73b54d6d541c792178561a344f07e409f532d5bb97ac7b894"},
 ]
 
 [package.dependencies]
-cffi = ">=1.9.1"
+cffi = ">=1.17.0"
 
 [[package]]
 name = "pygments"
@@ -3115,7 +3111,10 @@ files = [
 importlib-metadata = {version = ">6", markers = "python_version < \"3.12\""}
 owlrl = ">=6.0.2,<7"
 packaging = ">=21.3"
-prettytable = {version = ">=3.5.0", markers = "python_version >= \"3.8\" and python_version < \"3.12\""}
+prettytable = [
+    {version = ">=3.5.0", markers = "python_version >= \"3.8\" and python_version < \"3.12\""},
+    {version = ">=3.7.0", markers = "python_version >= \"3.12\""},
+]
 rdflib = {version = ">=6.3.2,<8.0", extras = ["html"], markers = "python_full_version >= \"3.8.1\""}
 
 [package.extras]
@@ -3194,9 +3193,6 @@ files = [
     {file = "python_json_logger-3.3.0.tar.gz", hash = "sha256:12b7e74b17775e7d565129296105bbe3910842d9d0eb083fc83a6a617aa8df84"},
 ]
 
-[package.dependencies]
-typing_extensions = {version = "*", markers = "python_version < \"3.10\""}
-
 [package.extras]
 dev = ["backports.zoneinfo ; python_version < \"3.9\"", "black", "build", "freezegun", "mdx_truly_sane_lists", "mike", "mkdocs", "mkdocs-awesome-pages-plugin", "mkdocs-gen-files", "mkdocs-literate-nav", "mkdocs-material (>=8.5)", "mkdocstrings[python]", "msgspec ; implementation_name != \"pypy\"", "mypy", "orjson ; implementation_name != \"pypy\"", "pylint", "pytest", "tzdata", "validate-pyproject[all]"]
 
@@ -3219,7 +3215,7 @@ description = "Python for Window Extensions"
 optional = false
 python-versions = "*"
 groups = ["main", "dev"]
-markers = "sys_platform == \"win32\" and platform_python_implementation != \"PyPy\""
+markers = "platform_python_implementation != \"PyPy\" and sys_platform == \"win32\""
 files = [
     {file = "pywin32-310-cp310-cp310-win32.whl", hash = "sha256:6dd97011efc8bf51d6793a82292419eba2c71cf8e7250cfac03bba284454abc1"},
     {file = "pywin32-310-cp310-cp310-win_amd64.whl", hash = "sha256:c3e78706e4229b915a0821941a84e7ef420bf2b77e08c9dae3c76fd03fd2ae3d"},
@@ -3817,7 +3813,6 @@ babel = ">=1.3"
 colorama = {version = ">=0.3.5", markers = "sys_platform == \"win32\""}
 docutils = ">=0.14,<0.19"
 imagesize = "*"
-importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
 Jinja2 = ">=2.3"
 packaging = "*"
 Pygments = ">=2.0"
@@ -4053,7 +4048,6 @@ files = [
 
 [package.dependencies]
 docutils = ">=0.8"
-importlib-metadata = {version = ">=3.6", markers = "python_version < \"3.10\""}
 pybtex = ">=0.24"
 pybtex-docutils = ">=1.0.0"
 Sphinx = ">=2.1"
@@ -4645,6 +4639,7 @@ files = [
     {file = "zipp-3.21.0-py3-none-any.whl", hash = "sha256:ac1bbe05fd2991f160ebce24ffbac5f6d11d83dc90891255885223d42b3cd931"},
     {file = "zipp-3.21.0.tar.gz", hash = "sha256:2c9958f6430a2040341a52eb608ed6dd93ef4392e02ffe219417c1b28b5dd1f4"},
 ]
+markers = {main = "python_version <= \"3.11\""}
 
 [package.extras]
 check = ["pytest-checkdocs (>=2.4)", "pytest-ruff (>=0.2.1) ; sys_platform != \"cygwin\""]
@@ -4664,5 +4659,5 @@ xlsx-ingress = []
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.9, <3.12"
-content-hash = "cbccb6a770dcf49725a2646f14da231add4d35ee80238a83ef7a03b8d2a97d01"
+python-versions = ">=3.10, <3.13"
+content-hash = "1903f55f6a843bf9503e91ed4a6a7c1bc7cfb8137ecb663e6fd585ccad219c2a"
