@@ -1,6 +1,7 @@
 import datetime
-from typing import Any, List, Tuple
 import os
+from typing import Any, List, Tuple
+
 
 class PIAFElement:
     element_type: str = ""
@@ -115,7 +116,7 @@ class PIAFElement:
                 if not isinstance(arg_value, int):
                     raise TypeError("integer expected")
                 self._text = f"{arg_value:d}"
-            
+
             elif self.element_type == "xs:any":
                 if len(args) > 1:
                     raise RuntimeError("too many arguments")
@@ -230,17 +231,20 @@ class PIAFElement:
         # if no root was provided, make one, otherwise this is a child
         # element of the root
         if root is None:
-            attr_qname = etree.QName("http://www.w3.org/2001/XMLSchema-instance", "noNamespaceSchemaLocation")
+            attr_qname = etree.QName(
+                "http://www.w3.org/2001/XMLSchema-instance", "noNamespaceSchemaLocation"
+            )
             # pattern = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "**/OSIsoft.AF.xsd")
             # xsdpath = None
             # for fname in glob.glob(pattern, recursive=True):
             #     if os.path.isfile(fname):
             #         xsdpath = fname
-            xsdpath = os.path.join(os.path.dirname(__file__), 'OSIsoft.AF.xsd')
+            xsdpath = os.path.join(os.path.dirname(__file__), "OSIsoft.AF.xsd")
             if xsdpath is not None and isinstance(self, AF):
-                myroot = etree.Element(element_name,
+                myroot = etree.Element(
+                    element_name,
                     {attr_qname: xsdpath},
-                    nsmap={'xsi': "http://www.w3.org/2001/XMLSchema-instance"}
+                    nsmap={"xsi": "http://www.w3.org/2001/XMLSchema-instance"},
                 )
             elif xsdpath is not None:
                 myroot = etree.Element(element_name)
@@ -271,192 +275,234 @@ class PIAFElement:
 
 
 class id(PIAFElement):
-    element_type = 'xs:string' #integer decimal bool string
+    element_type = "xs:string"  # integer decimal bool string
+
 
 class Name(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class Description(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class Template(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class IsAnnotated(PIAFElement):
-    element_type = 'xs:boolean'
+    element_type = "xs:boolean"
+
 
 class DefaultAttribute(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class DefaultInputPort(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class DefaultOutputPort(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class DefaultUndirectedPort(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class Type(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class FileName(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class Author(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class ChangeDate(PIAFElement):
-    element_type = 'xs:dateTime'
+    element_type = "xs:dateTime"
+
 
 class Timestamp(PIAFElement):
-    element_type = 'xs:dateTime'
+    element_type = "xs:dateTime"
+
 
 class FileSize(PIAFElement):
-    element_type = 'xs:long'
+    element_type = "xs:long"
+
 
 class Data(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class Abbreviation(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class RefFactor(PIAFElement):
-    element_type = 'xs:double'
+    element_type = "xs:double"
+
 
 class RefOffset(PIAFElement):
-    element_type = 'xs:double'
+    element_type = "xs:double"
+
 
 class RefFormulaFrom(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class RefFormulaTo(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class Factor(PIAFElement):
-    element_type = 'xs:double'
+    element_type = "xs:double"
+
 
 class Offset(PIAFElement):
-    element_type = 'xs:double'
+    element_type = "xs:double"
+
 
 class RefUOM(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class AFClass(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class AFAttributeCategoryRef(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
+
 AFAttributeCategoryRef.element_children = [
-    ('id', id),
+    ("id", id),
 ]
-AFAttributeCategoryRef.element_attributes = [
-    'operation'
-]
+AFAttributeCategoryRef.element_attributes = ["operation"]
+
 
 class UOMGroup(PIAFElement):
     pass
-UOMGroup.element_children = [
-    ('Name', Name),
-    ('id', id),
-    ('Description', Description)
-]
+
+
+UOMGroup.element_children = [("Name", Name), ("id", id), ("Description", Description)]
+
 
 class UOMMapping(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
+
 UOMMapping.element_children = [
-    ('UOMGroup', UOMGroup),
-    ('id', id),
+    ("UOMGroup", UOMGroup),
+    ("id", id),
 ]
-UOMMapping.element_attributes = [
-    'operation'
-]
+UOMMapping.element_attributes = ["operation"]
+
 
 class Status(PIAFElement):
-    element_type = 'xs:string'
-    element_enumerations = ['NotReady', 'Disabled', 'Enabled', 'Error']
+    element_type = "xs:string"
+    element_enumerations = ["NotReady", "Disabled", "Enabled", "Error"]
+
 
 class IsHidden(PIAFElement):
-    element_type = 'xs:boolean'
+    element_type = "xs:boolean"
+
 
 class IsManualDataEntry(PIAFElement):
-    element_type = 'xs:boolean'
+    element_type = "xs:boolean"
+
 
 class IsConfigurationItem(PIAFElement):
-    element_type = 'xs:boolean'
+    element_type = "xs:boolean"
+
 
 class IsExcluded(PIAFElement):
-    element_type = 'xs:boolean'
+    element_type = "xs:boolean"
+
 
 class Trait(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class DefaultUOM(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class DisplayDigits(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class Type(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class TypeQualifier(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
 
-TypeQualifier.element_attributes = [
-    'type'
-]
+
+TypeQualifier.element_attributes = ["type"]
+
 
 class DataReference(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
 
-DataReference.element_children = [
-    ('id', id)
-]
+
+DataReference.element_children = [("id", id)]
+
 
 class ConfigString(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 class Item(PIAFElement):
     pass
 
+
 class AFFile(PIAFElement):
     pass
 
+
 AFFile.element_children = [
-    ('FileName', FileName),
-    ('Description', Description),
-    ('Author', Author),
-    ('ChangeDate', ChangeDate),
-    ('FileSize', FileSize),
-    ('Data', Data),
+    ("FileName", FileName),
+    ("Description", Description),
+    ("Author", Author),
+    ("ChangeDate", ChangeDate),
+    ("FileSize", FileSize),
+    ("Data", Data),
 ]
+
 
 class UOM(PIAFElement):
     pass
+
+
 UOM.element_children = [
-    ('id', id),
-    ('Name', Name),
-    ('Abbreviation', Abbreviation),
-    ('Description', Description),
-    ('RefFactor', RefFactor),
-    ('RefOffset', RefOffset),
-    ('RefFormulaFrom', RefFormulaFrom),
-    ('RefFormulaTo', RefFormulaTo),
-    ('Factor', Factor),
-    ('Offset', Offset),
-    ('RefUOM', RefUOM),
-    ('UOMMapping', UOMMapping),
-    ('Class', AFClass),
+    ("id", id),
+    ("Name", Name),
+    ("Abbreviation", Abbreviation),
+    ("Description", Description),
+    ("RefFactor", RefFactor),
+    ("RefOffset", RefOffset),
+    ("RefFormulaFrom", RefFormulaFrom),
+    ("RefFormulaTo", RefFormulaTo),
+    ("Factor", Factor),
+    ("Offset", Offset),
+    ("RefUOM", RefUOM),
+    ("UOMMapping", UOMMapping),
+    ("Class", AFClass),
 ]
-UOM.element_attributes = [
-    'operation'
-]
+UOM.element_attributes = ["operation"]
+
 
 class Value(PIAFElement):
-    element_type = 'xs:any'
+    element_type = "xs:any"
+
+
 #     class Value(PIAFElement):
-        
+
 
 #     # class Value(PIAFElement):
 #     #     element_type = 'xs:any'
@@ -467,144 +513,163 @@ class Value(PIAFElement):
 #     ('Item', Item),
 # ]
 
-Value.element_attributes = [
-    'default',
-    'type'
-]
+Value.element_attributes = ["default", "type"]
+
 
 class AFExtendedProperty(PIAFElement):
     pass
 
+
 AFExtendedProperty.element_children = [
-    ('id', id),
-    ('Name', Name),
-    ('Type', Type),
-    ('Value', Value),
+    ("id", id),
+    ("Name", Name),
+    ("Type", Type),
+    ("Value", Value),
 ]
+
 
 class AFValue(PIAFElement):
     pass
 
+
 AFValue.element_children = [
-    ('Status', Status),
-    ('Timestamp', Timestamp),
-    ('UOM', UOM),
-    ('Value', Value),
+    ("Status", Status),
+    ("Timestamp", Timestamp),
+    ("UOM", UOM),
+    ("Value", Value),
 ]
+
 
 class AFElementRef(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
+
 class Target(PIAFElement):
     pass
-Target.element_children = [
-    ('AFElementRef', AFElementRef)
-]
+
+
+Target.element_children = [("AFElementRef", AFElementRef)]
+
 
 class AFPlugIn(PIAFElement):
-    element_type = 'xs:string'
-    element_enumerations = [
+    element_type = "xs:string"
+    element_enumerations = []
 
-    ]
 
 class VariableMapping(PIAFElement):
     element_type = "xs:string"
+
+
 class AFAnalysisRule(PIAFElement):
     pass
+
+
 AFAnalysisRule.element_children = [
-    ('AFPlugIn', AFPlugIn),
-    ('ConfigString', ConfigString),
-    ('VariableMapping', VariableMapping),
-    ('AFAnalysisRule', AFAnalysisRule),
+    ("AFPlugIn", AFPlugIn),
+    ("ConfigString", ConfigString),
+    ("VariableMapping", VariableMapping),
+    ("AFAnalysisRule", AFAnalysisRule),
 ]
+
 
 class AFTimeRule(PIAFElement):
     pass
+
+
 AFTimeRule.element_children = [
-    ('AFPlugIn', AFPlugIn),
-    ('ConfigString', ConfigString),
-    ('AFTimeRule', AFTimeRule),
+    ("AFPlugIn", AFPlugIn),
+    ("ConfigString", ConfigString),
+    ("AFTimeRule", AFTimeRule),
 ]
+
 
 class AFAnalysisCategoryRef(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
 
-AFAnalysisCategoryRef.element_children = [
-    ('id', id)
-]
+
+AFAnalysisCategoryRef.element_children = [("id", id)]
+
+
 class AFAnalysis(PIAFElement):
     pass
 
-AFAnalysis.element_children = [
-    ('id', id),
-    ('Name', Name),
-    ('Description', Description),
-    #('Template', Template),
-    #('CaseTemplate', CaseTemplate),
-    #('OutputTime', OutputTime),
-    ('Status', Status),
-    #('PublishResults', PublishResults),
-    #('Priority', Priority),
-    #('MaxQueueSize', MaxQueueSize),
-    #('GroupID', GroupID),
-    ('Target', Target),
-    ('AFExtendedProperty', AFExtendedProperty),
-    ('AFAnalysisCategoryRef', AFAnalysisCategoryRef),
-    ('AFAnalysisRule', AFAnalysisRule),
-    ('AFTimeRule', AFTimeRule),
-    #('AFCase', AFCase),
-    #('SecurityAccessControl', SecurityAccessControl),
 
+AFAnalysis.element_children = [
+    ("id", id),
+    ("Name", Name),
+    ("Description", Description),
+    # ('Template', Template),
+    # ('CaseTemplate', CaseTemplate),
+    # ('OutputTime', OutputTime),
+    ("Status", Status),
+    # ('PublishResults', PublishResults),
+    # ('Priority', Priority),
+    # ('MaxQueueSize', MaxQueueSize),
+    # ('GroupID', GroupID),
+    ("Target", Target),
+    ("AFExtendedProperty", AFExtendedProperty),
+    ("AFAnalysisCategoryRef", AFAnalysisCategoryRef),
+    ("AFAnalysisRule", AFAnalysisRule),
+    ("AFTimeRule", AFTimeRule),
+    # ('AFCase', AFCase),
+    # ('SecurityAccessControl', SecurityAccessControl),
 ]
+
 
 class AFAttribute(AFValue):
     pass
 
+
 AFAttribute.element_children = [
-    ('id', id),
-    ('Name', Name),
-    ('Description', Description),
-    ('IsHidden', IsHidden),
-    ('IsManualDataEntry', IsManualDataEntry),
-    ('IsConfigurationItem', IsConfigurationItem),
-    ('IsExcluded', IsExcluded),
-    ('Trait', Trait),
-    ('DefaultUOM', DefaultUOM),
-    ('DisplayDigits', DisplayDigits),
-    ('Type', Type),
-    ('TypeQualifier', TypeQualifier),
-    ('DataReference', DataReference),
-    ('ConfigString', ConfigString),
-    ('AFAttributeCategoryRef', AFAttributeCategoryRef),
-    ('AFAttribute', AFAttribute),
+    ("id", id),
+    ("Name", Name),
+    ("Description", Description),
+    ("IsHidden", IsHidden),
+    ("IsManualDataEntry", IsManualDataEntry),
+    ("IsConfigurationItem", IsConfigurationItem),
+    ("IsExcluded", IsExcluded),
+    ("Trait", Trait),
+    ("DefaultUOM", DefaultUOM),
+    ("DisplayDigits", DisplayDigits),
+    ("Type", Type),
+    ("TypeQualifier", TypeQualifier),
+    ("DataReference", DataReference),
+    ("ConfigString", ConfigString),
+    ("AFAttributeCategoryRef", AFAttributeCategoryRef),
+    ("AFAttribute", AFAttribute),
 ]
 AFAttribute.element_children.extend(AFValue.element_children)
 
 AFAttribute.element_attributes = [
-    'operation',
+    "operation",
 ]
+
 
 class AFBaseElement(PIAFElement):
     pass
 
+
 AFBaseElement.element_children = [
-    ('id', id),
-    ('Name', Name),
-    ('Description', Description),
-    ('Template', Template),
-    ('IsAnnotated', IsAnnotated),
-    ('DefaultAttribute', DefaultAttribute),
-    ('DefaultInputPort', DefaultInputPort),
-    ('DefaultOutputPort', DefaultOutputPort),
-    ('DefaultUndirectedPort', DefaultUndirectedPort)
+    ("id", id),
+    ("Name", Name),
+    ("Description", Description),
+    ("Template", Template),
+    ("IsAnnotated", IsAnnotated),
+    ("DefaultAttribute", DefaultAttribute),
+    ("DefaultInputPort", DefaultInputPort),
+    ("DefaultOutputPort", DefaultOutputPort),
+    ("DefaultUndirectedPort", DefaultUndirectedPort),
 ]
+
 
 class AFBaseElementChildren(PIAFElement):
     pass
 
+
 AFBaseElementChildren.element_children = [
-    ('AFExtendedProperty', AFExtendedProperty),
-#    ('AFElementCategoryRef', AFElementCategoryRef),
-    ('AFAttribute', AFAttribute),
+    ("AFExtendedProperty", AFExtendedProperty),
+    #    ('AFElementCategoryRef', AFElementCategoryRef),
+    ("AFAttribute", AFAttribute),
     # ('AFPort', AFPort),
     # ('AFAnnotation', AFAnnotation),
 ]
@@ -612,53 +677,61 @@ AFBaseElementChildren.element_children = [
 
 class AFElement(AFBaseElement, AFBaseElementChildren):
     pass
+
+
 AFElement.element_children = []
 AFElement.element_children.extend(AFBaseElement.element_children)
 AFElement.element_children.extend(AFBaseElementChildren.element_children)
-AFElement.element_children.extend([
-    ('AFElement', AFElement),
-    # ('AFModel', AFModel),
-    # ('AFElementRef', AFElementRef),
-    # ('AFModelRef', AFModelRef),
-    ('AFAnalysis', AFAnalysis),
-    # ('AFNotificationRule', AFNotificationRule),
-    # ('SecurityAccessControl', SecurityAccessControl),
-])
+AFElement.element_children.extend(
+    [
+        ("AFElement", AFElement),
+        # ('AFModel', AFModel),
+        # ('AFElementRef', AFElementRef),
+        # ('AFModelRef', AFModelRef),
+        ("AFAnalysis", AFAnalysis),
+        # ('AFNotificationRule', AFNotificationRule),
+        # ('SecurityAccessControl', SecurityAccessControl),
+    ]
+)
 
 
 AFElement.element_attributes = [
-    'ReferenceType',
-    'operation',
+    "ReferenceType",
+    "operation",
 ]
+
 
 class AFAnalysisTemplate(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 AFAnalysisTemplate.element_children = [
-    ('id', id),
-    ('Name', Name),
-    ('Description', Description),
-    #('OutputTime', OutputTime),
-    #('GroupID', GroupID),
+    ("id", id),
+    ("Name", Name),
+    ("Description", Description),
+    # ('OutputTime', OutputTime),
+    # ('GroupID', GroupID),
     ##('CaseTemplate', CaseTemplate),
-    ('Target', Target),
-    #('CreateEnabled', CreateEnabled),
-    ('AFExtendedProperty', AFExtendedProperty),
-    ('AFAnalysisCategoryRef', AFAnalysisCategoryRef),
-    ('AFAnalysisRule', AFAnalysisRule),
-    ('AFTimeRule', AFTimeRule),
-    #('SecurityAccessControl', SecurityAccessControl),
+    ("Target", Target),
+    # ('CreateEnabled', CreateEnabled),
+    ("AFExtendedProperty", AFExtendedProperty),
+    ("AFAnalysisCategoryRef", AFAnalysisCategoryRef),
+    ("AFAnalysisRule", AFAnalysisRule),
+    ("AFTimeRule", AFTimeRule),
+    # ('SecurityAccessControl', SecurityAccessControl),
 ]
 
-AFAnalysisTemplate.element_attributes = [
-    'operation'
-]
+AFAnalysisTemplate.element_attributes = ["operation"]
+
+
 class AFDatabase(PIAFElement):
     pass
+
+
 AFDatabase.element_children = [
-    ('AFExtendedProperty', AFExtendedProperty),
-    ('id', id),
-    ('Name', Name),
+    ("AFExtendedProperty", AFExtendedProperty),
+    ("id", id),
+    ("Name", Name),
     # ('AFAnalysisCategory', AFAnalysisCategory),
     # ('AFAttributeCategory', AFAttributeCategory),
     # ('AFElementCategory', AFElementCategory),
@@ -670,8 +743,8 @@ AFDatabase.element_children = [
     # ('AFElementTemplate', AFElementTemplate),
     # ('AFNotificationTemplate', AFNotificationTemplate),
     # ('AFReferenceType', AFReferenceType),
-    ('AFAnalysisTemplate', AFAnalysisTemplate),
-    ('AFElement', AFElement),
+    ("AFAnalysisTemplate", AFAnalysisTemplate),
+    ("AFElement", AFElement),
     # ('AFModel', AFModel),
     # ('AFElementRef', AFElementRef),
     # ('AFEventFrame', AFEventFrame),
@@ -679,90 +752,93 @@ AFDatabase.element_children = [
     # ('AFAnalysis', AFAnalysis),
     # ('AFModelAnalysis', AFModelAnalysis),
     # ('AFNotification', AFNotification),
-
 ]
 AFDatabase.element_attributes = [
-    'operation',
-]
-class AF(PIAFElement):
-    """Main AF element
-    """
-    pass
-AF.element_children = [
-    ('AFDatabase', AFDatabase),
-]
-AF.element_attributes = [
-    'id',
-    'SoftwareVersion',
-    'SchemaVersion',
-    'ParentKey',
-    'PISystem',
-    'PIPersist',
-    'Identity',
-    'ExportedType',
-    'ExportedObject',
-    'ExportMode',
-    'Description',
-    'Database',
-    'Created',
-    'xmlns:xsi',
-    'xsi:noNamespaceSchemaLocation'
+    "operation",
 ]
 
+
+class AF(PIAFElement):
+    """Main AF element"""
+
+    pass
+
+
+AF.element_children = [
+    ("AFDatabase", AFDatabase),
+]
+AF.element_attributes = [
+    "id",
+    "SoftwareVersion",
+    "SchemaVersion",
+    "ParentKey",
+    "PISystem",
+    "PIPersist",
+    "Identity",
+    "ExportedType",
+    "ExportedObject",
+    "ExportMode",
+    "Description",
+    "Database",
+    "Created",
+    "xmlns:xsi",
+    "xsi:noNamespaceSchemaLocation",
+]
 
 
 class AFAttributeTemplate(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
 
 AFAttributeTemplate.element_children = [
-    ('id', id),
-    ('Name', Name),
-    ('Description', Description),
-    ('IsHidden', IsHidden),
-    ('IsManualDataEntry', IsManualDataEntry),
-    ('IsConfigurationItem', IsConfigurationItem),
-    ('IsExcluded', IsExcluded),
-    #('IsIndexed', IsIndexed),
-    ('Trait', Trait),
-    ('DefaultUOM', DefaultUOM),
-    ('DisplayDigits', DisplayDigits),
-    ('Type', Type),
-    ('TypeQualifier', TypeQualifier),
-    ('Value', Value),
-    ('DataReference', DataReference),
-    ('ConfigString', ConfigString),
-    ('AFAttributeCategoryRef', AFAttributeCategoryRef),
-    ('AFAttributeTemplate', AFAttributeTemplate),
+    ("id", id),
+    ("Name", Name),
+    ("Description", Description),
+    ("IsHidden", IsHidden),
+    ("IsManualDataEntry", IsManualDataEntry),
+    ("IsConfigurationItem", IsConfigurationItem),
+    ("IsExcluded", IsExcluded),
+    # ('IsIndexed', IsIndexed),
+    ("Trait", Trait),
+    ("DefaultUOM", DefaultUOM),
+    ("DisplayDigits", DisplayDigits),
+    ("Type", Type),
+    ("TypeQualifier", TypeQualifier),
+    ("Value", Value),
+    ("DataReference", DataReference),
+    ("ConfigString", ConfigString),
+    ("AFAttributeCategoryRef", AFAttributeCategoryRef),
+    ("AFAttributeTemplate", AFAttributeTemplate),
 ]
-AFAttributeTemplate.element_attributes = [
-    'operation'
-]
+AFAttributeTemplate.element_attributes = ["operation"]
+
+
 class AFElementTemplate(PIAFElement):
-    element_type = 'xs:string'
+    element_type = "xs:string"
+
+
 AFElementTemplate.element_children = [
-    ('id', id),
-    ('Name', Name),
-    ('Description', Description),
+    ("id", id),
+    ("Name", Name),
+    ("Description", Description),
     ##('BaseTemplateOnly', BaseTemplateOnly),
     ##('BaseTemplate', BaseTemplate),
-    ('Type', Type),
-    #('InstanceType', InstanceType),
+    ("Type", Type),
+    # ('InstanceType', InstanceType),
     ##('AllowElementToExtend', AllowElementToExtend),
-    ('DefaultAttribute', DefaultAttribute),
+    ("DefaultAttribute", DefaultAttribute),
     ##('NamingPattern', NamingPattern),
-    ('DefaultInputPort', DefaultInputPort),
-    ('DefaultOutputPort', DefaultOutputPort),
-    ('DefaultUndirectedPort', DefaultUndirectedPort),
+    ("DefaultInputPort", DefaultInputPort),
+    ("DefaultOutputPort", DefaultOutputPort),
+    ("DefaultUndirectedPort", DefaultUndirectedPort),
     ##('Severity', Severity),
     ##('CanBeAcknowledged', CanBeAcknowledged),
-    ('AFExtendedProperty', AFExtendedProperty),
+    ("AFExtendedProperty", AFExtendedProperty),
     ##('AFElementCategoryRef', AFElementCategoryRef),
-    ('AFAttributeTemplate', AFAttributeTemplate),
+    ("AFAttributeTemplate", AFAttributeTemplate),
     ##('AFPort', AFPort),
-    ('AFAnalysisTemplate', AFAnalysisTemplate),
+    ("AFAnalysisTemplate", AFAnalysisTemplate),
     ##('AFNotificationRuleTemplate', AFNotificationRuleTemplate),
-    #('SecurityAccessControl', SecurityAccessControl),
+    # ('SecurityAccessControl', SecurityAccessControl),
 ]
-AFElementTemplate.element_attributes = [
-    'operation'
-]
+AFElementTemplate.element_attributes = ["operation"]

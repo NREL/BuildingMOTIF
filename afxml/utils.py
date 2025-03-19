@@ -1,14 +1,18 @@
-from lxml import etree
-from xmldiff import main, formatting
-from buildingmotif.namespaces import BRICK
-from rdflib import Namespace, Graph, Literal, URIRef, BNode
-import sys, json, random, string
+import json
+import random
+import string
+import sys
 from functools import reduce
-from rdflib.collection import Collection
-from rdflib import RDF, SH, BRICK
-from typing import Dict, Any
+from typing import Any, Dict
 
-BRICK = Namespace('https://brickschema.org/schema/Brick#')
+from lxml import etree
+from rdflib import BRICK, RDF, SH, BNode, Graph, Literal, Namespace, URIRef
+from rdflib.collection import Collection
+from xmldiff import formatting, main
+
+from buildingmotif.namespaces import BRICK
+
+BRICK = Namespace("https://brickschema.org/schema/Brick#")
 
 # build relationship
 RELATIONSHIPS = ["hasPoint", "hasPart", "isPointOf", "isPartOf", "feeds"]
@@ -16,24 +20,32 @@ RELATIONSHIPS += [f"{r}+" for r in RELATIONSHIPS]
 RELATIONSHIPS += [f"{r}?" for r in RELATIONSHIPS]
 RELATIONSHIPS += [f"{r}*" for r in RELATIONSHIPS]
 
+
 def pretty_print(element):
     """Simple printing of an xml element from the bsync library"""
-    print(etree.tostring(element.toxml(), pretty_print=True).decode('utf-8'))
-    
+    print(etree.tostring(element.toxml(), pretty_print=True).decode("utf-8"))
+
+
 def xml_dump(root_element, file="example1.xml"):
     """Write the element to the specified file"""
     doctype = '<?xml version="1.0" encoding="UTF-8"?>'
     as_etree = root_element.toxml()
-    #as_etree.set("xmlns", "http://buildingsync.net/schemas/bedes-auc/2019")
+    # as_etree.set("xmlns", "http://buildingsync.net/schemas/bedes-auc/2019")
     output = etree.tostring(as_etree, doctype=doctype, pretty_print=True)
-    with open(file, 'wb+') as f:
+    with open(file, "wb+") as f:
         f.write(output)
         return True
-    
+
+
 def xml_compare(left, right):
-    file_diff = main.diff_files(left, right, diff_options={'ratio_mode':'faster'},
-                       formatter=formatting.XMLFormatter())
+    file_diff = main.diff_files(
+        left,
+        right,
+        diff_options={"ratio_mode": "faster"},
+        formatter=formatting.XMLFormatter(),
+    )
     return file_diff
+
 
 def _definition_to_sparql(classname, defn, variable):
     """
@@ -53,21 +65,23 @@ def _definition_to_sparql(classname, defn, variable):
     }}"""
     return query
 
+
 def _gensym():
     """generates random sparql variable name"""
-    return 'var' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+    return "var" + "".join(random.choices(string.ascii_uppercase + string.digits, k=4))
+
 
 def _sparql_recurse(defn, varname, hook=None):
     """
     Generate a SPARQL query recursively based on the definition provided.
-    
+
     Args:
         self (object): The instance of the class containing the RDF graph and BRICK definitions.
-        defn (dict or str): The definition to be converted into a SPARQL query. If it's a string, it represents a type. If it's a dictionary, it 
+        defn (dict or str): The definition to be converted into a SPARQL query. If it's a string, it represents a type. If it's a dictionary, it
             can contain relationships or other types.
         varname (str): The base variable name for the current level of recursion in the SPARQL query.
         hook (str or None, optional): A placeholder variable to be used as the subject of certain relationships. Defaults to None.
-    
+
     Returns:
         str: The generated SPARQL query string.
     """
@@ -89,18 +103,20 @@ def _sparql_recurse(defn, varname, hook=None):
         if key == "choice":
             # UNION of the list of descriptions in 'value'
             query += "{\n"
-            query += " UNION ".join([f"{{ {_sparql_recurse(v, varname, hook=hook)} }}\n" for v in value])
+            query += " UNION ".join(
+                [f"{{ {_sparql_recurse(v, varname, hook=hook)} }}\n" for v in value]
+            )
             query += "}\n"
         elif key in relationships:
             # start with a random var
             subject_var = hook or _gensym()
-            
+
             # get the relationship name
             suffix = key[-1] if key[-1] in ["+", "?", "*"] else ""
             relname = key.replace("+", "").replace("?", "").replace("*", "")
             # get the relationship type
             reltype = BRICK[relname]
-            
+
             # the object of the relationship is one of two things:
             # - varname, if 'value' is a type
             # - a new variable, if 'value' is a dict
@@ -113,13 +129,14 @@ def _sparql_recurse(defn, varname, hook=None):
             query += f"?{subject_var} {reltype.n3()}{suffix} ?{object_var} .\n"
             # add the object to the query
             query += _sparql_recurse(value, varname, hook=object_var)
-        else: # key represents a type
+        else:  # key represents a type
             subject_var = hook or _gensym()
             query += f"?{subject_var} rdf:type {BRICK[key].n3()} .\n"
             # value should be a dictionary
             query += _sparql_recurse(value, varname, hook=subject_var)
 
     return query
+
 
 def _definition_to_shape(defn: Dict[str, Any], ns: Namespace) -> Graph:
     """
@@ -179,52 +196,62 @@ def _definition_to_shape(defn: Dict[str, Any], ns: Namespace) -> Graph:
     .
     """
     shape = Graph()
-    shapename = ns[defn['name'].replace(" ", "_")]
-    shape.add((shapename, RDF['type'], SH['NodeShape']))
-    for target in defn['applicability']:
-        shape.add((shapename, SH['targetClass'], BRICK[target]))
+    shapename = ns[defn["name"].replace(" ", "_")]
+    shape.add((shapename, RDF["type"], SH["NodeShape"]))
+    for target in defn["applicability"]:
+        shape.add((shapename, SH["targetClass"], BRICK[target]))
 
-    for key, value in defn['definitions'].items():
+    for key, value in defn["definitions"].items():
         varname = ns[key]
         _defn_to_shape(shapename, varname, value, shape, ns)
 
     return shape
 
 
-def _defn_to_shape(shapename, varname, defn, shape_graph, ns, path = None):
+def _defn_to_shape(shapename, varname, defn, shape_graph, ns, path=None):
     varname = ns[_gensym()]
     if isinstance(defn, str):
         return _string_to_shape(shapename, shape_graph, varname, defn, path=path)
     elif isinstance(defn, dict):
         if "union" in defn:
-            return _union_to_shape(shapename, shape_graph, varname, defn.pop("union"), ns)
+            return _union_to_shape(
+                shapename, shape_graph, varname, defn.pop("union"), ns
+            )
         # handle choice if it is present
         if "choice" in defn:
-            return _choice_to_shape(shapename, shape_graph, varname, defn.pop("choice"), ns)
+            return _choice_to_shape(
+                shapename, shape_graph, varname, defn.pop("choice"), ns
+            )
         # treat the keys as properties
         for key, value in defn.items():
             propname = BRICK[key]
             _prop_to_shape(shapename, shape_graph, varname, propname, value, ns)
     return varname
 
-def _string_to_shape(shapename: URIRef, shape_graph: Graph, varname: URIRef, string_value: str, path = None):
+
+def _string_to_shape(
+    shapename: URIRef, shape_graph: Graph, varname: URIRef, string_value: str, path=None
+):
     """
     Given a string value, create a SHACL shape that requires the sh:class to be that BRICK[string_value]
     """
     if shapename is not None:
-        shape_graph.add((shapename, SH['property'], varname))
-    shape_graph.add((varname, RDF['type'], SH['PropertyShape']))
+        shape_graph.add((shapename, SH["property"], varname))
+    shape_graph.add((varname, RDF["type"], SH["PropertyShape"]))
     if path is not None:
-        shape_graph.add((varname, SH['path'], path))
+        shape_graph.add((varname, SH["path"], path))
     else:
-        shape_graph.add((varname, SH['path'], BRICK['hasPoint']))
+        shape_graph.add((varname, SH["path"], BRICK["hasPoint"]))
     class_shape = BNode()
-    shape_graph.add((varname, SH['qualifiedValueShape'], class_shape))
-    shape_graph.add((class_shape, SH['class'], BRICK[string_value]))
-    shape_graph.add((varname, SH['qualifiedMinCount'], Literal(1)))
+    shape_graph.add((varname, SH["qualifiedValueShape"], class_shape))
+    shape_graph.add((class_shape, SH["class"], BRICK[string_value]))
+    shape_graph.add((varname, SH["qualifiedMinCount"], Literal(1)))
     return varname
 
-def _union_to_shape(shapename: URIRef, shape_graph: Graph, varname: URIRef, union: Dict[str, Any], ns):
+
+def _union_to_shape(
+    shapename: URIRef, shape_graph: Graph, varname: URIRef, union: Dict[str, Any], ns
+):
     """
     "union": [
     "AFDD_rule_a",
@@ -244,11 +271,14 @@ def _union_to_shape(shapename: URIRef, shape_graph: Graph, varname: URIRef, unio
 
     and_list_name = BNode()
     Collection(shape_graph, and_list_name, and_list)
-    shape_graph.add((shapename, SH['and'], and_list_name))
+    shape_graph.add((shapename, SH["and"], and_list_name))
 
     return varname
 
-def _choice_to_shape(shapename: URIRef, shape_graph: Graph, varname: URIRef, choice: Dict[str, Any], ns):
+
+def _choice_to_shape(
+    shapename: URIRef, shape_graph: Graph, varname: URIRef, choice: Dict[str, Any], ns
+):
     """
     "choice": [
     {"hasPoint": "Chilled_Water_Valve_Command"},
@@ -268,22 +298,39 @@ def _choice_to_shape(shapename: URIRef, shape_graph: Graph, varname: URIRef, cho
 
     or_list_name = BNode()
     Collection(shape_graph, or_list_name, or_list)
-    shape_graph.add((shapename, SH['or'], or_list_name))
+    shape_graph.add((shapename, SH["or"], or_list_name))
 
     return varname
 
-def _prop_to_shape(shapename: URIRef, shape_graph: Graph, varname: URIRef, propname: URIRef, value: Any, ns):
+
+def _prop_to_shape(
+    shapename: URIRef,
+    shape_graph: Graph,
+    varname: URIRef,
+    propname: URIRef,
+    value: Any,
+    ns,
+):
     """
     Given a property name and value, create a shape that requires the sh:path to be that propname
     and the sh:qualifiedValueShape to be the shape of the value
     """
-    print("="*80)
+    print("=" * 80)
     if isinstance(value, str):
         # treat like a property shape
         print(f"string value: {value}")
         return _string_to_shape(shapename, shape_graph, varname, value)
 
-    possible_edges = ["hasPoint", "hasPart", "feeds", "hasLocation", "isPartOf", "isLocationOf", "isPointOf", "isFedBy"]
+    possible_edges = [
+        "hasPoint",
+        "hasPart",
+        "feeds",
+        "hasLocation",
+        "isPartOf",
+        "isLocationOf",
+        "isPointOf",
+        "isFedBy",
+    ]
 
     def _consume_edges(vdict, edge_stack):
         key, value = list(vdict.items())[0]
@@ -297,11 +344,15 @@ def _prop_to_shape(shapename: URIRef, shape_graph: Graph, varname: URIRef, propn
             # if no edges, then treat 'value' like a shape
             print(f"returning {value} as leftover")
             property_path = edge_list_to_property_path(edge_stack, shape_graph)
-            return _defn_to_shape(shapename, varname, value, shape_graph, ns, path=property_path)
+            return _defn_to_shape(
+                shapename, varname, value, shape_graph, ns, path=property_path
+            )
         print(f"returning {value} as leftover (string)")
         # if value is a string, treat it like a property
         property_path = edge_list_to_property_path(edge_stack, shape_graph)
-        return _string_to_shape(shapename, shape_graph, varname, value, path=property_path)
+        return _string_to_shape(
+            shapename, shape_graph, varname, value, path=property_path
+        )
 
     # args are
     for key, vdict in value.items():
@@ -316,18 +367,19 @@ def _prop_to_shape(shapename: URIRef, shape_graph: Graph, varname: URIRef, propn
             property_path = propname
 
             if shapename is not None:
-                shape_graph.add((shapename, SH['property'], varname))
-            shape_graph.add((varname, RDF['type'], SH['PropertyShape']))
-            shape_graph.add((varname, SH['path'], property_path))
+                shape_graph.add((shapename, SH["property"], varname))
+            shape_graph.add((varname, RDF["type"], SH["PropertyShape"]))
+            shape_graph.add((varname, SH["path"], property_path))
 
             # key is a 'class'
             qvs = BNode()
-            shape_graph.add((varname, SH['qualifiedValueShape'], qvs))
-            shape_graph.add((varname, SH['qualifiedMinCount'], Literal(1)))
-            shape_graph.add((qvs, SH['class'], BRICK[key]))
+            shape_graph.add((varname, SH["qualifiedValueShape"], qvs))
+            shape_graph.add((varname, SH["qualifiedMinCount"], Literal(1)))
+            shape_graph.add((qvs, SH["class"], BRICK[key]))
             # the 'leftover' is a property shape on qvs
             leftover = _defn_to_shape(shapename, varname, vdict, shape_graph, ns)
-            shape_graph.add((qvs, SH['property'], leftover))
+            shape_graph.add((qvs, SH["property"], leftover))
+
 
 def edge_list_to_property_path(edge_list, shape_graph):
     """
@@ -342,19 +394,19 @@ def edge_list_to_property_path(edge_list, shape_graph):
             edge = URIRef(edge[:-1])
             # make a [ sh:zeroOrOnePath edge ]
             edge_name = BNode()
-            shape_graph.add((edge_name, SH['zeroOrOnePath'], edge))
+            shape_graph.add((edge_name, SH["zeroOrOnePath"], edge))
             edges.append(edge_name)
         elif edge.endswith("*"):
             edge = URIRef(edge[:-1])
             # make a [ sh:zeroOrMorePath edge ]
             edge_name = BNode()
-            shape_graph.add((edge_name, SH['zeroOrMorePath'], edge))
+            shape_graph.add((edge_name, SH["zeroOrMorePath"], edge))
             edges.append(edge_name)
         elif edge.endswith("+"):
             edge = URIRef(edge[:-1])
             # make a [ sh:oneOrMorePath edge ]
             edge_name = BNode()
-            shape_graph.add((edge_name, SH['oneOrMorePath'], edge))
+            shape_graph.add((edge_name, SH["oneOrMorePath"], edge))
             edges.append(edge_name)
         else:
             edges.append(edge)
@@ -362,6 +414,7 @@ def edge_list_to_property_path(edge_list, shape_graph):
         return edges[0]
     Collection(shape_graph, property_path, edges)
     return property_path
+
 
 def generate_manifest(rules_file, output_file):
     data = json.load(open(rules_file))

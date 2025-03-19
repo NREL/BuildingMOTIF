@@ -1,12 +1,16 @@
+import argparse
+import json
+import re
 from collections import defaultdict
 from copy import deepcopy
-import json, re, argparse
-from rdflib import Namespace, URIRef, Graph
-from buildingmotif import BuildingMOTIF
-from buildingmotif.dataclasses import Model, Library, ShapeCollection
+
+from rdflib import Graph, Namespace, URIRef
 from utils import _definition_to_sparql
 
-BRICK = Namespace('https://brickschema.org/schema/Brick#')
+from buildingmotif import BuildingMOTIF
+from buildingmotif.dataclasses import Library, Model, ShapeCollection
+
+BRICK = Namespace("https://brickschema.org/schema/Brick#")
 
 # build relationship
 RELATIONSHIPS = ["hasPoint", "hasPart", "isPointOf", "isPartOf", "feeds"]
@@ -34,12 +38,15 @@ def find_original_shape(model, shape_uri: URIRef) -> URIRef:
         original_shape = list(res)[0][0]
     return original_shape
 
-def generate_markdown_report(grouped_diffs: defaultdict, successful_rules: defaultdict, output_path: str):
+
+def generate_markdown_report(
+    grouped_diffs: defaultdict, successful_rules: defaultdict, output_path: str
+):
     def format_reason(reason):
-        url_pattern = re.compile(r'(http?://[^\s]+)')
-        namespace_pattern = re.compile(r'(\w+:\w+)')
-        formatted_reason = url_pattern.sub(r'\1', reason)
-        formatted_reason = namespace_pattern.sub(r'\1', formatted_reason)
+        url_pattern = re.compile(r"(http?://[^\s]+)")
+        namespace_pattern = re.compile(r"(\w+:\w+)")
+        formatted_reason = url_pattern.sub(r"\1", reason)
+        formatted_reason = namespace_pattern.sub(r"\1", formatted_reason)
         return formatted_reason
 
     def format_successful_rules(successful_rules):
@@ -59,7 +66,9 @@ def generate_markdown_report(grouped_diffs: defaultdict, successful_rules: defau
             formatted += f"## {focus_node}\n\n"
             formatted += "### Reasons for Failure\n\n"
             for reason in reasons:
-                if 'missing point' in format_reason(reason) or 'BRICK attribute' in format_reason(reason):
+                if "missing point" in format_reason(
+                    reason
+                ) or "BRICK attribute" in format_reason(reason):
                     formatted += f"- **Reason**: {format_reason(reason)}\n\n"
         return formatted
 
@@ -72,23 +81,26 @@ def generate_markdown_report(grouped_diffs: defaultdict, successful_rules: defau
     successful_rules_section = format_successful_rules(successful_rules)
     unsuccessful_rules_section = format_unsuccessful_rules(grouped_diffs)
 
-    markdown_content = f'''
+    markdown_content = f"""
 {summary}
 ## Detailed Successful Rules
 {successful_rules_section}
 
 ## Detailed Unsuccessful Rules
 {unsuccessful_rules_section}
-'''
+"""
 
-    if output_path != '':
-        with open(output_path, 'w') as file:
+    if output_path != "":
+        with open(output_path, "w") as file:
             file.write(markdown_content)
         return None
     else:
         return markdown_content
 
-def generate_html_report(grouped_diffs: defaultdict, successful_rules: defaultdict, output_path: str):
+
+def generate_html_report(
+    grouped_diffs: defaultdict, successful_rules: defaultdict, output_path: str
+):
     html_template = """
 <!DOCTYPE html>
 <html lang="en">
@@ -148,12 +160,13 @@ def generate_html_report(grouped_diffs: defaultdict, successful_rules: defaultdi
 </html>
     """
 
-
     def format_reason(reason):
-        url_pattern = re.compile(r'(https?://[^\s]+)')
-        namespace_pattern = re.compile(r'(\w+:\w+)')
-        formatted_reason = url_pattern.sub(r'<b><code>\1</code></b>', reason)
-        formatted_reason = namespace_pattern.sub(r'<b><code>\1</code></b>', formatted_reason)
+        url_pattern = re.compile(r"(https?://[^\s]+)")
+        namespace_pattern = re.compile(r"(\w+:\w+)")
+        formatted_reason = url_pattern.sub(r"<b><code>\1</code></b>", reason)
+        formatted_reason = namespace_pattern.sub(
+            r"<b><code>\1</code></b>", formatted_reason
+        )
         return formatted_reason
 
     def format_diffs(grouped_diffs, successful_rules):
@@ -186,17 +199,23 @@ def generate_html_report(grouped_diffs: defaultdict, successful_rules: defaultdi
         # Build a dict for successful rules
         for rule, focus_nodes in successful_rules.items():
             for focus_node, entries in focus_nodes.items():
-                focus_node_dict[focus_node][rule] = {"entries": entries, "success": True}
+                focus_node_dict[focus_node][rule] = {
+                    "entries": entries,
+                    "success": True,
+                }
 
         with open("focusnode1.json", "w") as f:
             json.dump(focus_node_dict, f, indent=4)
 
         # Build a dict for failed rules
-        #print(grouped_diffs)
+        # print(grouped_diffs)
         # NOTE: for some reason it seems like this loop is using the wrong name for a rule when it produces the output
         for rule, focus_nodes in grouped_diffs.items():
             for focus_node, reasons in focus_nodes.items():
-                focus_node_dict[focus_node][rule] = {"entries": reasons, "success": False}
+                focus_node_dict[focus_node][rule] = {
+                    "entries": reasons,
+                    "success": False,
+                }
 
         with open("focusnode2.json", "w") as f:
             json.dump(focus_node_dict, f, indent=4)
@@ -206,25 +225,39 @@ def generate_html_report(grouped_diffs: defaultdict, successful_rules: defaultdi
         with open("focus_node_dict.json", "w") as f:
             json.dump(focus_node_dict, f, indent=4)
         for focus_node, original_shape_dict in focus_node_dict.items():
-            all_successful = all(data['success'] for data in original_shape_dict.values())
-            none_successful = all(not data['success'] for data in original_shape_dict.values())
-            focus_node_success_class = " success" if all_successful else " failed" if none_successful else " some-success"
+            all_successful = all(
+                data["success"] for data in original_shape_dict.values()
+            )
+            none_successful = all(
+                not data["success"] for data in original_shape_dict.values()
+            )
+            focus_node_success_class = (
+                " success"
+                if all_successful
+                else " failed"
+                if none_successful
+                else " some-success"
+            )
 
-            #print(focus_node, len(original_shape_dict))
+            # print(focus_node, len(original_shape_dict))
             formatted += f"<button class='accordion{focus_node_success_class}'>{focus_node}</button><div class='panel'><ul>"
             for rule, data in original_shape_dict.items():
-                success_class = " success" if data['success'] else ""
+                success_class = " success" if data["success"] else ""
                 formatted += f"<li><button class='accordion{success_class}'>{rule}</button><div class='panel'><ul>"
-                #print(f"focus_node: {focus_node} rule: {rule}")
+                # print(f"focus_node: {focus_node} rule: {rule}")
                 reason_text = ""
                 # If the rule failed, the data['entries'] is a list of reasons. make it an unordered list
-                if not data['success']:
+                if not data["success"]:
                     reason_text += "<ul>"
-                    for reason in data['entries']:
+                    for reason in data["entries"]:
                         reason_text += f"<li>{format_reason(reason)}</li>"
                     reason_text += "</ul>"
-                entry_dict = {str(k): str(v) for k, v in data['entries'].items()} if data['success'] else reason_text
-                entry_class = 'success' if data['success'] else 'failed'
+                entry_dict = (
+                    {str(k): str(v) for k, v in data["entries"].items()}
+                    if data["success"]
+                    else reason_text
+                )
+                entry_class = "success" if data["success"] else "failed"
                 formatted += f"<li class='{entry_class}'>{entry_dict}</li>"
                 formatted += "</ul></div></li>"
             formatted += "</ul></div>"
@@ -235,11 +268,12 @@ def generate_html_report(grouped_diffs: defaultdict, successful_rules: defaultdi
 
     html_content = html_template.format(
         grouped_by_top_level=grouped_by_top_level,
-        grouped_by_focus_node=grouped_by_focus_node
+        grouped_by_focus_node=grouped_by_focus_node,
     )
 
-    with open(output_path, 'w') as file:
+    with open(output_path, "w") as file:
         file.write(html_content)
+
 
 def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
     bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
@@ -271,14 +305,18 @@ def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
                 class_ = BRICK[classname]
                 for variable in defn["definitions"]:
                     # this only queries for 1 variable
-                    query = _definition_to_sparql(class_, defn["definitions"][variable], variable)
+                    query = _definition_to_sparql(
+                        class_, defn["definitions"][variable], variable
+                    )
                     results = model.graph.query(query)
                     for row in results.bindings:
-                        inst = row['root']
+                        inst = row["root"]
                         successful_rules[rule][inst].update(row)
             # loop through all 'inst' for this rule. If the length of its dictionary == len(defn["definitions"]), then it's successful
             for inst in deepcopy(successful_rules[rule]):
-                if len(successful_rules[rule][inst]) != len(defn["definitions"]) + 1: # +1 for the 'root' variable
+                if (
+                    len(successful_rules[rule][inst]) != len(defn["definitions"]) + 1
+                ):  # +1 for the 'root' variable
                     del successful_rules[rule][inst]
 
     res = model.validate(error_on_missing_imports=False)
@@ -289,7 +327,7 @@ def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
         for diff in diffs:
             original_shape = find_original_shape(model, diff.failed_shape)
             ## remove focus_node from the successful rules
-            #if original_shape in successful_rules:
+            # if original_shape in successful_rules:
             #    if focus_node in successful_rules[original_shape]:
             #        del successful_rules[original_shape][focus_node]
             grouped_diffs[original_shape][focus_node].append(diff.reason())
@@ -299,22 +337,25 @@ def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
     with open("grouped_diffs.json", "w") as f:
         json.dump(grouped_diffs, f, indent=4)
     if format == "html":
-        generate_html_report(grouped_diffs, successful_rules, output_path+".html")
+        generate_html_report(grouped_diffs, successful_rules, output_path + ".html")
     else:
-        generate_markdown_report(grouped_diffs, successful_rules, output_path+".md")
+        generate_markdown_report(grouped_diffs, successful_rules, output_path + ".md")
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Validate a model against a manifest and output the results as an HTML file.")
+    parser = argparse.ArgumentParser(
+        description="Validate a model against a manifest and output the results as an HTML file."
+    )
     parser.add_argument("manifest_ttl", help="Path to the manifest.ttl file")
     parser.add_argument("model_ttl", help="Path to the model.ttl file")
     parser.add_argument("rule_json", help="Path to the rule.json file")
     parser.add_argument("output_path", help="Path to the output file")
     parser.add_argument("format", help="Format of the output file [md, html]")
 
-
     args = parser.parse_args()
-    main(args.manifest_ttl, args.model_ttl, args.rule_json, args.output_path, args.format)
-
+    main(
+        args.manifest_ttl, args.model_ttl, args.rule_json, args.output_path, args.format
+    )
 
 
 def apply_rules_to_model(inttl, rulesjson):
@@ -322,22 +363,26 @@ def apply_rules_to_model(inttl, rulesjson):
     with open(rulesjson, "r") as f:
         rules = json.load(f)
     model = Graph()
-    model.parse(inttl)    
+    model.parse(inttl)
     for rule, defn in rules.items():
         rule = f"http://example.org/building#{rule}"
         for classname in defn["applicability"]:
             class_ = BRICK[classname]
             for variable in defn["definitions"]:
-                query = _definition_to_sparql(class_, defn["definitions"][variable], variable)
+                query = _definition_to_sparql(
+                    class_, defn["definitions"][variable], variable
+                )
 
                 results = model.query(query)
                 for row in results.bindings:
-                    inst = row['root']
+                    inst = row["root"]
                     successful_rules[rule][inst].update(row)
 
         # loop through all 'inst' for this rule. If the length of its dictionary == len(defn["definitions"]), then it's successful
         for inst in deepcopy(successful_rules[rule]):
-            if len(successful_rules[rule][inst]) != len(defn["definitions"]) + 1: # +1 for the 'root' variable
+            if (
+                len(successful_rules[rule][inst]) != len(defn["definitions"]) + 1
+            ):  # +1 for the 'root' variable
                 del successful_rules[rule][inst]
 
     return successful_rules
@@ -351,12 +396,13 @@ def get_model_diffs(model):
         for diff in diffs:
             original_shape = find_original_shape(model, diff.failed_shape)
             ## remove focus_node from the successful rules
-            #if original_shape in successful_rules:
+            # if original_shape in successful_rules:
             #    if focus_node in successful_rules[original_shape]:
             #        del successful_rules[original_shape][focus_node]
             grouped_diffs[original_shape][focus_node].append(diff.reason())
 
     return grouped_diffs
 
+
 def get_report(grouped_diffs: defaultdict, successful_rules: defaultdict):
-    return generate_markdown_report(grouped_diffs, successful_rules, '')
+    return generate_markdown_report(grouped_diffs, successful_rules, "")
