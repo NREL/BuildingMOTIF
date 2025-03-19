@@ -1,11 +1,12 @@
 import pytest
 from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.compare import graph_diff, isomorphic, to_isomorphic
+from rdflib.exceptions import ParserError
 from rdflib.namespace import FOAF
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library, Model, ValidationContext
-from buildingmotif.namespaces import BRICK, RDF, RDFS, SH, A
+from buildingmotif.namespaces import BRICK, OWL, RDF, RDFS, SH, A
 
 BLDG = Namespace("urn:building/")
 
@@ -44,6 +45,53 @@ def test_load_model(clean_building_motif):
     assert isomorphic(result.graph, m.graph)
 
 
+def test_from_file_no_ontology_declaration(clean_building_motif):
+    # this should fail because the file does not declare an ontology
+    with pytest.raises(ValueError):
+        Model.from_file("tests/unit/fixtures/smallOffice_brick.ttl")
+
+
+def test_from_file(clean_building_motif):
+    # Create a model from a file
+    model = Model.from_file("tests/unit/fixtures/from_file_test.ttl")
+
+    assert isinstance(model, Model)
+    assert model.name == "https://example.com"
+    assert model.description == "This is an example graph"
+    assert len(model.graph) == 2
+
+
+def test_from_file_weird_extensions(clean_building_motif):
+    # Create a model from a file. the from_file_test.xyz is a turtle-formatted file
+    # so even though the extension is .xyz, it should still be able to parse it
+    # because rdflib defaults to turtle if it can't determine the format from the extension
+    model = Model.from_file("tests/unit/fixtures/from_file_test.xyz")
+
+    assert isinstance(model, Model)
+    assert model.name == "https://example.com"
+    assert model.description == "This is an example graph"
+    assert len(model.graph) == 2
+
+    # guesses 'turtle' because xmlbadext is not a valid extension
+    with pytest.raises(ParserError):
+        model = Model.from_file("tests/unit/fixtures/from_file_test.xmlbadext")
+
+
+def test_from_graph(clean_building_motif):
+    # Create a graph
+    g = Graph()
+    g.add((URIRef("https://example.com"), RDF.type, OWL.Ontology))
+    g.add((URIRef("https://example.com"), RDFS.comment, Literal("Example description")))
+
+    # Create a model from the graph
+    model = Model.from_graph(g)
+
+    assert isinstance(model, Model)
+    assert model.name == "https://example.com"
+    assert model.description == "Example description"
+    assert len(model.graph) == 2
+
+
 def test_update_model_manifest(clean_building_motif):
     m = Model.create(name="https://example.com", description="a very good model")
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
@@ -58,7 +106,7 @@ def test_validate_model_manifest(clean_building_motif, shacl_engine):
     m = Model.create(name="https://example.com", description="a very good model")
     m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
 
-    Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
+    Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
 
@@ -134,7 +182,7 @@ def test_validate_model_manifest_with_imports(clean_building_motif, shacl_engine
 def test_validate_model_explicit_shapes(clean_building_motif, shacl_engine):
     clean_building_motif.shacl_engine = shacl_engine
     # load library
-    Library.load(ontology_graph="tests/unit/fixtures/Brick1.3rc1-equip-only.ttl")
+    Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
 

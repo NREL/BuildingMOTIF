@@ -34,6 +34,7 @@ export class PointlabelParserComponent implements OnInit {
   // program: IProgram;
   pointLabelsFormControl: FormControl = new FormControl('[]'); // graph as in UI
   results: TokenizePointLabel[] = [];
+  parser: any = [];
   codeMirrorOptions: any = {
     // theme: 'material',
     mode: 'application/ld+json',
@@ -43,11 +44,18 @@ export class PointlabelParserComponent implements OnInit {
     gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
     autoCloseBrackets: true,
     matchBrackets: true,
-    lint: true
+    lint: true,
+    fontSize: 30
   };
-
-  constructor(private PointlabelParserService: PointlabelParserService,) {
+  type_by_id: {[id: string]: string} = {}
+  color_by_type: {[type: string]: string} = {
+    "substring_n": "#a55b80",
+    "string-url": "#5ba5a5",
+    "rest": "#a55b5b",
+    "string-token": "#a5a55b",
   }
+
+  constructor(private PointlabelParserService: PointlabelParserService,) {}
 
   ngOnInit(): void {
     this.workspace = Blockly.inject('blocklyDiv', {
@@ -61,7 +69,16 @@ export class PointlabelParserComponent implements OnInit {
     const pointLabels: string | null = localStorage.getItem('pointLabels')
     if (pointLabels) this.pointLabelsFormControl.setValue(JSON.parse(pointLabels))
 
+    this.workspace.addChangeListener(() => {
+      const state = Blockly.serialization.workspaces.save(this.workspace);
+      this.parser = this.block_to_json(state.blocks.blocks[0])    
+    })
   }
+
+  clearResults(){
+    this.results = [];
+  }
+
 
   file: any;
   fileChanged(e: any) {
@@ -97,9 +114,6 @@ export class PointlabelParserComponent implements OnInit {
       });
     }
     fileReader.readAsText(this.file);
-
-
-
   }
 
 
@@ -107,11 +121,13 @@ export class PointlabelParserComponent implements OnInit {
     this.workspace.highlightBlock(token.id)
   }
 
-  block_to_json(block: any): any {
+  block_to_json(block: any, external=false): any {
     const res: any = {
+      uiParser: external? undefined: block.type,
       parser: block.type.split("-")[0],
       args: { id: block.id }
     }
+    this.type_by_id[block.id] = block.type;
 
     // set non nesting args
     Object.assign(res["args"], block.fields)
@@ -119,7 +135,7 @@ export class PointlabelParserComponent implements OnInit {
     // set nesting args
     if (block.inputs) {
       const parers = Object.keys(block.inputs).reduce((acc, key) => {
-        acc[key] = this.block_list_to_json(block.inputs[key].block)
+        acc[key] = this.block_list_to_json(block.inputs[key].block, external)
         return acc
       }, {} as any)
       Object.assign(res["args"], parers)
@@ -128,10 +144,10 @@ export class PointlabelParserComponent implements OnInit {
     return res
   }
 
-  block_list_to_json(block: any): any {
+  block_list_to_json(block: any, external=false): any {
     let res: any = []
     do {
-      res = [...res, this.block_to_json(block)]
+      res = [...res, this.block_to_json(block, external)]
       block = block.next?.block;
     } while (block);
 
@@ -143,11 +159,12 @@ export class PointlabelParserComponent implements OnInit {
     localStorage.setItem('state', JSON.stringify(state))
     localStorage.setItem('pointLabels', JSON.stringify(this.pointLabelsFormControl.value))
 
-    const parser = this.block_to_json(state.blocks.blocks[0])
+    this.type_by_id = {}
+    const my_parser = this.block_to_json(state.blocks.blocks[0], true)
 
     this.PointlabelParserService.parse(
       JSON.parse(this.pointLabelsFormControl.value),
-      parser
+      my_parser
     )
       .subscribe({
         next: (data: TokenizePointLabel[]) => {
@@ -157,5 +174,4 @@ export class PointlabelParserComponent implements OnInit {
         }, // error path
       });
   }
-
 }

@@ -5,6 +5,7 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix ref: <https://brickschema.org/schema/Brick/ref#> .
 @prefix : <urn:shapes_to_query/> .
 
@@ -57,6 +58,32 @@
     ] ;
 .
 
+:multiple_classes a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:Sensor, brick:VAV ;
+    sh:property [
+        sh:name "label" ;
+        sh:path rdfs:label ;
+        sh:datatype xsd:string ;
+    ] ;
+.
+
+:test_sh_or a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:Sensor ;
+    sh:or ( [
+        sh:property [
+            sh:name "unit" ;
+            sh:path brick:hasUnits ;
+            sh:hasValue unit:DEG_C ;
+        ] ;
+    ] [
+        sh:property [
+            sh:name "unit" ;
+            sh:path brick:hasUnits ;
+            sh:hasValue unit:DEG_F ;
+        ] ;
+    ] )
+    .
+
 :subjectTarget a sh:NodeShape, owl:Class ;
     sh:targetSubjectsOf brick:hasPoint ;
     sh:property [
@@ -76,5 +103,23 @@
         sh:qualifiedValueShape [ sh:node :vav ] ;
         sh:qualifiedMaxCount 1 ;
         sh:qualifiedMinCount 1 ;
+    ] ;
+.
+
+:optional_property a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:Sensor ;
+    sh:property [
+        sh:name "unit" ;
+        sh:path brick:hasUnits ;
+        sh:qualifiedValueShape [ sh:class qudt:Unit ] ;
+    ] ;
+.
+
+:or_clauses_qualified_shape a sh:NodeShape, owl:Class ;
+    sh:targetClass brick:VAV ;
+    sh:property [
+        sh:name "part" ;
+        sh:path brick:hasPart ;
+        sh:qualifiedValueShape [ sh:or ( [ sh:class brick:Sensor ] [ sh:node :sensor ] ) ] ;
     ] ;
 .

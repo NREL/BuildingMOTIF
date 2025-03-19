@@ -52,23 +52,67 @@ class Model:
         :return: new model
         :rtype: Model
         """
-        bm = get_building_motif()
-
         _validate_uri(name)
-        db_model = bm.table_connection.create_db_model(name, description)
-
         g = rdflib.Graph()
         g.add((rdflib.URIRef(name), rdflib.RDF.type, rdflib.OWL.Ontology))
-        graph = bm.graph_connection.create_graph(db_model.graph_id, g)
+        if description:
+            g.add(
+                (rdflib.URIRef(name), rdflib.RDFS.comment, rdflib.Literal(description))
+            )
+        return cls.from_graph(g)
 
+    @classmethod
+    def from_graph(cls, graph: rdflib.Graph) -> "Model":
+        """Create a new model from a graph. The name of the model is taken from the
+        ontology declaration in the graph (subject of rdf:type owl:Ontology triple).
+        The description of the model can be set through an RDFS comment on the ontology
+
+        :param graph: graph to create model from
+        :type graph: rdflib.Graph
+        :return: new model
+        :rtype: Model
+        """
+        bm = get_building_motif()
+
+        name = graph.value(predicate=rdflib.RDF.type, object=rdflib.OWL.Ontology)
+        if name is None:
+            raise ValueError("Graph does not contain an ontology declaration")
+        _validate_uri(name)
+
+        # the 'description' is the rdfs:comment of the ontology
+        description = graph.value(name, rdflib.RDFS.comment)
+        description = str(description) if description is not None else ""
+
+        db_model = bm.table_connection.create_db_model(name, description)
+
+        graph = bm.graph_connection.create_graph(db_model.graph_id, graph)
+
+        # below, we normalize the name to a string so it matches the database type
         return cls(
             _id=db_model.id,
-            _name=db_model.name,
+            _name=str(db_model.name),
             _description=db_model.description,
             graph=graph,
             _bm=bm,
             _manifest_id=db_model.manifest_id,
         )
+
+    @classmethod
+    def from_file(cls, url_or_path: str) -> "Model":
+        """Create a new model from a file.
+
+        :param url_or_path: url or path to file
+        :type url_or_path: str
+        :return: new model
+        :rtype: Model
+        """
+        graph = rdflib.Graph()
+        # if guess_format doesn't match anything, it will return None,
+        # which tells graph.parse to guess 'turtle'
+
+        # if graph parsing fails, it will raise an exception
+        graph.parse(url_or_path, format=rdflib.util.guess_format(url_or_path))
+        return cls.from_graph(graph)
 
     @classmethod
     def load(cls, id: Optional[int] = None, name: Optional[str] = None) -> "Model":
@@ -147,6 +191,7 @@ class Model:
         self,
         shape_collections: Optional[List[ShapeCollection]] = None,
         error_on_missing_imports: bool = True,
+        shacl_engine: Optional[str] = None,
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
@@ -165,6 +210,10 @@ class Model:
         :type error_on_missing_imports: bool, optional
         :return: An object containing useful properties/methods to deal with
             the validation results
+        :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
+            is set in the BuildingMOTIF object
+        :type shacl_engine: str, optional
+
         :rtype: ValidationContext
         """
         # TODO: determine the return types; At least a bool for valid/invalid,
@@ -194,9 +243,12 @@ class Model:
         # remove imports from data graph
         data_graph.remove((None, OWL.imports, None))
 
+        # if None, use the default engine
+        shacl_engine = shacl_engine or self._bm.shacl_engine
+
         # validate the data graph
         valid, report_g, report_str = shacl_validate(
-            data_graph, shapeg, engine=self._bm.shacl_engine
+            data_graph, shapeg, engine=shacl_engine
         )
         return ValidationContext(
             shape_collections,
@@ -207,12 +259,19 @@ class Model:
             self,
         )
 
-    def compile(self, shape_collections: List["ShapeCollection"]):
+    def compile(
+        self,
+        shape_collections: List["ShapeCollection"],
+        shacl_engine: Optional[str] = None,
+    ):
         """Compile the graph of a model against a set of ShapeCollections.
 
         :param shape_collections: list of ShapeCollections to compile the model
             against
         :type shape_collections: List[ShapeCollection]
+        :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
+            is set in the BuildingMOTIF object
+        :type shacl_engine: str, optional
         :return: copy of model's graph that has been compiled against the
             ShapeCollections
         :rtype: Graph
@@ -225,15 +284,16 @@ class Model:
 
         model_graph = copy_graph(self.graph).skolemize()
 
-        return shacl_inference(
-            model_graph, ontology_graph, engine=self._bm.shacl_engine
-        )
+        shacl_engine = shacl_engine or self._bm.shacl_engine
+
+        return shacl_inference(model_graph, ontology_graph, engine=shacl_engine)
 
     def test_model_against_shapes(
         self,
         shape_collections: List["ShapeCollection"],
         shapes_to_test: List[rdflib.URIRef],
         target_class: rdflib.URIRef,
+        shacl_engine: Optional[str] = None,
     ) -> Dict[rdflib.URIRef, "ValidationContext"]:
         """Validates the model against a list of shapes and generates a
         validation report for each.
@@ -244,6 +304,9 @@ class Model:
         :type shapes_to_test: List[URIRef]
         :param target_class: the class upon which to run the selected shapes
         :type target_class: URIRef
+        :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
+            is set in the BuildingMOTIF object
+        :type shacl_engine: str, optional
         :return: a dictionary that relates each shape to test URIRef to a
                  ValidationContext
         :rtype: Dict[URIRef, ValidationContext]
@@ -271,13 +334,15 @@ class Model:
         # validation through the interpretation of the validation report
         ontology_graph = ontology_graph.skolemize()
 
+        shacl_engine = shacl_engine or self._bm.shacl_engine
+
         for shape_uri in shapes_to_test:
             temp_model_graph = copy_graph(model_graph)
             for (s,) in targets:
                 temp_model_graph.add((URIRef(s), A, shape_uri))
 
             valid, report_g, report_str = shacl_validate(
-                temp_model_graph, ontology_graph, engine=self._bm.shacl_engine
+                temp_model_graph, ontology_graph, engine=shacl_engine
             )
 
             results[shape_uri] = ValidationContext(
