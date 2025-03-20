@@ -1,7 +1,7 @@
 import logging
 import uuid
 from functools import lru_cache
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import NoResultFound
@@ -366,6 +366,22 @@ class TableConnection:
         )
         return db_template_dependencies
 
+    def get_db_template_dependency(self, id: int) -> Optional[DBTemplateDependency]:
+        """Get template dependency object by its id
+
+        :param id: template dependency id
+        :type id: int
+        :return: the template dependency or None
+        :rtype: Optional[DBTemplateDependency]"""
+        try:
+            return (
+                self.bm.session.query(DBTemplateDependency)
+                .filter(DBTemplateDependency.id == id)
+                .one()
+            )
+        except NoResultFound:
+            return None
+
     def update_db_template_name(self, id: int, name: str) -> None:
         """Update database template name.
 
@@ -396,7 +412,11 @@ class TableConnection:
         db_template.optional_args = optional_args
 
     def add_template_dependency_preliminary(
-        self, template_id: int, dependency_id: int, args: Dict[str, str]
+        self,
+        template_id: int,
+        dependency_library: str,
+        dependency_template: str,
+        args: Dict[str, str],
     ):
         """Creates a *preliminary* dependency between two templates. This dependency
         is preliminary because the bindings between the dependent/dependency templates
@@ -421,26 +441,26 @@ class TableConnection:
         :raises ValueError: if dependant and dependency template don't share a
         """
         self.logger.debug(
-            f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
+            f"Creating depencency from templates with id: '{template_id}' and target: '{dependency_library}:{dependency_template}'"
         )
         templ = self.get_db_template(template_id)
         if "name" not in args.keys():
             raise ValueError(
                 f"The name parameter is required for the dependency '{templ.name}'."
             )
-        dependency_template: DBTemplate = self.get_db_template(dependency_id)
         # In the past we had a check here to make sure the two templates were in the same library.
         # This has been removed because it wasn't actually necessary, but we may add it back in
         # in the future.
         relationship = DBTemplateDependency(
             template_id=template_id,
-            dependency_library_name=dependency_template.library.name,
-            dependency_template_name=dependency_template.name,
+            dependency_library_name=dependency_library,
+            dependency_template_name=dependency_template,
             args=args,  # type: ignore
         )
 
         self.bm.session.add(relationship)
         self.bm.session.flush()
+        self.logger.debug(f"Created Dependency with id: '{relationship.id}'")
 
     def check_all_template_dependencies(self):
         """
@@ -480,6 +500,11 @@ class TableConnection:
 
         templ = Template.load(template_id)
         params = templ.transitive_parameters
+        dependency_db_template = dep.dependency_template
+
+        if dependency_db_template is None:
+            raise TemplateNotFound(name=dep.dependency_template_name)
+
         dep_templ = Template.load(dep.dependency_template.id)
         dep_params = dep_templ.transitive_parameters
 

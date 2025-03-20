@@ -8,12 +8,23 @@ from io import BytesIO, StringIO
 from itertools import chain
 from os import PathLike
 from secrets import token_hex
-from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+    overload,
+)
 
 import rdflib
 from rdflib.term import Node
 
 from buildingmotif import get_building_motif
+from buildingmotif.database.errors import TemplateDependencyNotFound
 from buildingmotif.dataclasses.model import Model
 from buildingmotif.namespaces import bind_prefixes
 from buildingmotif.template_matcher import Mapping, TemplateMatcher
@@ -101,13 +112,14 @@ class Template:
         """
         return tuple(
             [
-                Dependency(dep.dependency_template.id, dep.args)
+                Dependency.load(dep.id)
                 for dep in self._bm.table_connection.get_db_template_dependencies(
                     self._id
                 )
             ]
         )
 
+    @overload
     def add_dependency(self, dependency: "Template", args: Dict[str, str]) -> None:
         """Add dependency to template.
 
@@ -116,9 +128,36 @@ class Template:
         :param args: dictionary of dependency arguments
         :type args: Dict[str, str]
         """
-        self._bm.table_connection.add_template_dependency_preliminary(
-            self.id, dependency.id, args
-        )
+
+    @overload
+    def add_dependency(
+        self, dependency_library: str, dependency_template: str, args: Dict[str, str]
+    ) -> None:
+        """Add dependency to template.
+
+        :param dependency_library: name of library containing depdency
+        :type dependency_library: str
+        :param dependency_template: name of template depedency
+        :type dependency_template: str
+        :param args: dictionary of dependency arguments
+        :type args: Dict[str, str]
+        """
+
+    def add_dependency(self, *args, **kwargs):
+        total_args = len(args) + len(kwargs)
+        if total_args == 2:
+            dependency: "Template" = kwargs.get("dependency", args[0])
+            args: Dict[str, str] = kwargs.get("args", args[1])
+            self._bm.table_connection.add_template_dependency_preliminary(
+                self.id, dependency.defining_library.name, dependency.name, args
+            )
+        elif total_args == 3:
+            dependency_library: str = kwargs.get("dependency_library", args[0])
+            dependency_template: str = kwargs.get("dependency_template", args[1])
+            args: Dict[str, str] = kwargs.get("args", args[2])
+            self._bm.table_connection.add_template_dependency_preliminary(
+                self.id, dependency_library, dependency_template, args
+            )
 
     def check_dependencies(self):
         """
@@ -153,7 +192,8 @@ class Template:
 
         # then handle dependencies
         for dep in self.get_dependencies():
-            params.update(dep.template.parameters)
+            if dep.template is not None:
+                params.update(dep.template.parameters)
         return params
 
     @property
@@ -179,7 +219,8 @@ class Template:
         """
         params: Set[str] = set()
         for dep in self.get_dependencies():
-            params = params.union(dep.template.parameters)
+            if dep.template is not None:
+                params = params.union(dep.template.parameters)
         return params
 
     @property
@@ -193,7 +234,8 @@ class Template:
         counts: Counter = Counter()
         counts.update(self.parameters)
         for dep in self.get_dependencies():
-            counts.update(dep.template.parameter_counts)
+            if dep.template is not None:
+                counts.update(dep.template.parameter_counts)
         return counts
 
     # TODO: method to get the 'types' of the parameters
@@ -248,6 +290,8 @@ class Template:
         """
         params = set(self.parameters)
         for dep in self.get_dependencies():
+            if dep.template is None:
+                continue
             transitive_params = dep.template.transitive_parameters
             rename_params: Dict[str, str] = {
                 ours: theirs for ours, theirs in dep.args.items()
@@ -275,6 +319,8 @@ class Template:
         # start with this template's parameters; this recurses into each
         # dependency to inline dependencies
         for dep in self.get_dependencies():
+            if dep.template is None:
+                continue
             # get the inlined version of the dependency
             deptempl = dep.template.inline_dependencies()
 
@@ -468,6 +514,8 @@ class Template:
 
         libs = {self.defining_library.id}
         for dep in self.get_dependencies():
+            if dep.template is None:
+                continue
             libs.add(dep.template.defining_library.id)
         return [Library.load(id) for id in libs]
 
@@ -582,13 +630,47 @@ class Template:
 class Dependency:
     """Dependency"""
 
-    _template_id: int
-    args: Dict[str, str]
+    _id: int
+    _bm: "BuildingMOTIF"
+
+    _dependency_library_name: str
+    _dependency_template_name: str
+    _args: Dict[str, str]
+
+    @classmethod
+    def load(cls, id: int) -> "Dependency":
+        bm = get_building_motif()
+        dep = bm.table_connection.get_db_template_dependency(id)
+        if dep is None:
+            raise TemplateDependencyNotFound(id)
+
+        return cls(
+            _id=id,
+            _bm=bm,
+            _dependency_library_name=dep.dependency_library_name,
+            _dependency_template_name=dep.dependency_template_name,
+            _args=dep.args,
+        )
 
     @property
-    def template_id(self):
-        return self._template_id
+    def dependency_template_name(self) -> str:
+        return self._dependency_template_name
 
     @property
-    def template(self) -> Template:
-        return Template.load(self._template_id)
+    def dependency_library_name(self) -> str:
+        return self._dependency_library_name
+
+    @property
+    def args(self) -> Dict[str, str]:
+        return self._args
+
+    @property
+    def template(self) -> Optional[Template]:
+        db_dependency = self._bm.table_connection.get_db_template_dependency(self._id)
+        if db_dependency is None:
+            return None
+        db_template = db_dependency.dependency_template
+        if db_template is None:
+            return None
+
+        return Template.load(db_template.id)

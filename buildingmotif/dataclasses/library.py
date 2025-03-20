@@ -2,7 +2,7 @@ import logging
 import pathlib
 import tempfile
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 import pygit2
 import rdflib
@@ -19,67 +19,10 @@ from buildingmotif.dataclasses.shape_collection import ShapeCollection
 from buildingmotif.dataclasses.template import Template
 from buildingmotif.schemas import validate_libraries_yaml
 from buildingmotif.template_compilation import compile_template_spec
-from buildingmotif.utils import get_ontology_files, shacl_inference, skip_uri
+from buildingmotif.utils import get_ontology_files, shacl_inference
 
 if TYPE_CHECKING:
     from buildingmotif import BuildingMOTIF
-
-
-@dataclass
-class _template_dependency:
-    """Represents early-bound (template_id) or late-bound (template_name and
-    library) dependency of a template on another template.
-    """
-
-    template_name: str
-    bindings: Dict[str, Any]
-    library: str
-    template_id: Optional[int] = None
-
-    def __repr__(self):
-        return (
-            f"dep<name={self.template_name} bindings={self.bindings} "
-            f"library={self.library} id={self.template_id}>"
-        )
-
-    @classmethod
-    def from_dict(
-        cls, d: Dict[str, Any], dependent_library_name: str
-    ) -> "_template_dependency":
-        """Creates a py:class:`_template_dependency` from a dictionary.
-
-        :param d: dictionary
-        :type d: Dict[str, Any]
-        :param dependent_library_name: library name
-        :type dependent_library_name: str
-        :return: the _template_dependency from the dict
-        :rtype: _template_dependency
-        """
-        template_name = d["template"]
-        bindings = d.get("args", {})
-        library = d.get("library", dependent_library_name)
-        template_id = d.get("template_id")
-        return cls(template_name, bindings, library, template_id)
-
-    def to_template(self, id_lookup: Dict[str, int]) -> Template:
-        """Resolve this dependency to a template.
-
-        :param id_lookup: a local cache of {name: id} for uncommitted templates
-        :type id_lookup: Dict[str, int]
-        :return: the template instance this dependency points to
-        :rtype: Template
-        """
-        # direct lookup if id is provided
-        if self.template_id is not None:
-            return Template.load(self.template_id)
-        # if id is not provided, look at our local 'cache' of to-be-committed
-        # templates for the id (id_lookup)
-        if self.template_name in id_lookup:
-            return Template.load(id_lookup[self.template_name])
-        # if not in the local cache, then search the database for the template
-        # within the given library
-        library = Library.load(name=self.library)
-        return library.get_template_by_name(self.template_name)
 
 
 @dataclass
@@ -360,18 +303,12 @@ class Library:
 
         lib = cls.create(directory.name, overwrite=overwrite)
 
-        # setup caches for reading templates
-        template_id_lookup: Dict[str, int] = {}
-        dependency_cache: Dict[int, List[_template_dependency]] = {}
-
         # read all .yml files
         for file in directory.rglob("*.yml"):
             # if .ipynb_checkpoints, skip; these are cached files that Jupyter creates
             if ".ipynb_checkpoints" in file.parts:
                 continue
-            lib._read_yml_file(file, template_id_lookup, dependency_cache)
-        # now that we have all the templates, we can populate the dependencies
-        lib._resolve_template_dependencies(template_id_lookup, dependency_cache)
+            lib._read_yml_file(file)
         # load shape collections from all ontology files in the directory
         lib._load_shapes_from_directory(directory)
 
@@ -405,78 +342,7 @@ class Library:
         except LibraryNotFound:
             return False
 
-    def _resolve_dependency(
-        self,
-        template: Template,
-        dep: Union[_template_dependency, dict],
-        template_id_lookup: Dict[str, int],
-    ):
-        """Resolve a dependency to a template.
-
-        :param template: template to resolve dependency for
-        :type template: Template
-        :param dep: dependency
-        :type dep: Union[_template_dependency, dict]
-        :param template_id_lookup: a local cache of {name: id} for uncommitted templates
-        :type template_id_lookup: Dict[str, int]
-        :return: the template instance this dependency points to
-        :rtype: Template
-        """
-        dependee = None
-        binding_args = {}
-        if isinstance(dep, _template_dependency):
-            dependee = dep.to_template(template_id_lookup)
-            binding_args = dep.bindings
-        elif isinstance(dep, dict):
-            binding_args = dep.get("args", {})
-            if "library" in dep:
-                dependee = Library.load(name=dep["library"]).get_template_by_name(
-                    dep["template"]
-                )
-            elif dep["template"] in template_id_lookup:
-                dependee = Template.load(template_id_lookup[dep["template"]])
-            elif skip_uri(dep["template"]):
-                return
-            else:
-                for imp in self.graph_imports:
-                    try:
-                        library = Library.load(name=str(imp))
-                        dependee = library.get_template_by_name(dep["template"])
-                        break
-                    except Exception as e:
-                        logging.debug(
-                            f"Could not find dependee {dep['template']} in library {imp}: {e}"
-                        )
-        if dependee is not None:
-            template.add_dependency(dependee, binding_args)
-        else:
-            logging.warning(
-                f"Warning: could not find dependee {dep} in libraries {self.graph_imports}"
-            )
-
-    def _resolve_template_dependencies(
-        self,
-        template_id_lookup: Dict[str, int],
-        dependency_cache: Mapping[int, Union[List[_template_dependency], List[dict]]],
-    ):
-        """Resolve all dependencies for all templates in this library"""
-        # two phases here: first, add all of the templates and their dependencies
-        # to the database but *don't* check that the dependencies are valid yet
-        for template in self.get_templates():
-            if template.id not in dependency_cache:
-                continue
-            for dep in dependency_cache[template.id]:
-                self._resolve_dependency(template, dep, template_id_lookup)
-        # check that all dependencies are valid (use parameters that exist, etc)
-        for template in self.get_templates():
-            template.check_dependencies()
-
-    def _read_yml_file(
-        self,
-        file: pathlib.Path,
-        template_id_lookup: Dict[str, int],
-        dependency_cache: Dict[int, List[_template_dependency]],
-    ):
+    def _read_yml_file(self, file: pathlib.Path):
         """Read a YML file into this library. Utility function for `_load_from_directory`."""
         contents = yaml.load(open(file, "r"), Loader=yaml.FullLoader)
         for templ_name, templ_spec in contents.items():
@@ -485,20 +351,14 @@ class Library:
             # input name of template
             templ_spec.update({"name": templ_name})
             # remove dependencies so we can resolve them to their IDs later
-            deps = [
-                _template_dependency.from_dict(d, self.name)
-                for d in templ_spec.pop("dependencies", [])
-            ]
             templ_spec["optional_args"] = templ_spec.pop("optional", [])
             try:
-                templ = self.create_template(**templ_spec)
+                self.create_template(**templ_spec)
             except Exception as e:
                 logging.error(
                     f"Error creating template {templ_name} from file {file}: {e}"
                 )
                 raise e
-            dependency_cache[templ.id] = deps
-            template_id_lookup[templ.name] = templ.id
 
     @property
     def id(self) -> Optional[int]:
@@ -534,6 +394,7 @@ class Library:
         name: str,
         body: Optional[rdflib.Graph] = None,
         optional_args: Optional[List[str]] = None,
+        dependencies: Optional[List] = None,
     ) -> Template:
         """Create template in this library.
 
@@ -557,6 +418,22 @@ class Library:
         self._bm.table_connection.update_db_template_optional_args(
             db_template.id, optional_args
         )
+
+        if dependencies is not None:
+            for dependency in dependencies:
+                dependency_template = dependency["template"]
+                dependency_library = None
+                if "library" in dependency:
+                    dependency_library = dependency["library"]
+                else:
+                    dependency_library = self.name
+                dependency_args = dependency["args"]
+                self._bm.table_connection.add_template_dependency_preliminary(
+                    db_template.id,
+                    dependency_library,
+                    dependency_template,
+                    dependency_args,
+                )
 
         return Template(
             _id=db_template.id,
