@@ -338,7 +338,9 @@ def _prep_shape_graph() -> Graph:
     return shape
 
 
-def _index_properties(templ: "Template") -> _TemplateIndex:
+def _index_properties(
+    templ: "Template", error_on_missing_dependency: bool = True
+) -> _TemplateIndex:
     templ_graph = templ.evaluate(
         {p: PARAM[p] for p in templ.parameters}, {"mark": PARAM}
     )
@@ -365,7 +367,9 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
         # maybe_param = str(o).removeprefix(PARAM) Python >=3.9
         maybe_param = str(o)[len(PARAM) :]
         if maybe_param in templ.dependency_parameters:
-            dep = templ.dependency_for_parameter(maybe_param)
+            dep = templ.dependency_for_parameter(
+                maybe_param, error_on_missing_dependency
+            )
             if dep is not None:
                 prop_shapes[p].append(URIRef(dep._name))
         elif o in param_types:

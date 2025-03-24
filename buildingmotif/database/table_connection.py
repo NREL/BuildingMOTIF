@@ -500,10 +500,6 @@ class TableConnection:
 
         templ = Template.load(template_id)
         params = templ.transitive_parameters
-        dependency_db_template = dep.dependency_template
-
-        if dependency_db_template is None:
-            raise TemplateNotFound(name=dep.dependency_template_name)
 
         dep_templ = Template.load(dep.dependency_template.id)
         dep_params = dep_templ.transitive_parameters

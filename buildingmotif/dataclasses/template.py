@@ -24,7 +24,7 @@ import rdflib
 from rdflib.term import Node
 
 from buildingmotif import get_building_motif
-from buildingmotif.database.errors import TemplateDependencyNotFound
+from buildingmotif.database.errors import TemplateDependencyNotFound, TemplateNotFound
 from buildingmotif.dataclasses.model import Model
 from buildingmotif.namespaces import bind_prefixes
 from buildingmotif.template_matcher import Mapping, TemplateMatcher
@@ -180,10 +180,12 @@ class Template:
         self._bm.table_connection.delete_template_dependency(self.id, dependency.id)
 
     @property
-    def all_parameters(self) -> Set[str]:
+    def all_parameters(self, error_on_missing_dependency: bool = True) -> Set[str]:
         """The set of all parameters used in this template *including* its
         dependencies. Includes optional parameters.
 
+        :param error_on_missing_dependency: Raise an erorr if a template has a missing depedency
+        :type error_on_missing_dependency: bool
         :return: set of parameters *with* dependencies
         :rtype: Set[str]
         """
@@ -192,8 +194,11 @@ class Template:
 
         # then handle dependencies
         for dep in self.get_dependencies():
-            if dep.template is not None:
-                params.update(dep.template.parameters)
+            if dep.template is None:
+                if error_on_missing_dependency:
+                    raise TemplateNotFound(name=dep.dependency_template_name)
+                continue
+            params.update(dep.template.parameters)
         return params
 
     @property
@@ -210,32 +215,44 @@ class Template:
         return params
 
     @property
-    def dependency_parameters(self) -> Set[str]:
+    def dependency_parameters(
+        self, error_on_missing_dependency: bool = True
+    ) -> Set[str]:
         """The set of all parameters used in this template's dependencies, including
         optional parameters.
 
+        :param error_on_missing_dependency: Raise an erorr if a template has a missing depedency
+        :type error_on_missing_dependency: bool
         :return: set of parameters used in dependencies
         :rtype: Set[str]
         """
         params: Set[str] = set()
         for dep in self.get_dependencies():
-            if dep.template is not None:
-                params = params.union(dep.template.parameters)
+            if dep.template is None:
+                if error_on_missing_dependency:
+                    raise TemplateNotFound(name=dep.dependency_template_name)
+                continue
+            params = params.union(dep.template.parameters)
         return params
 
     @property
-    def parameter_counts(self) -> Counter:
+    def parameter_counts(self, error_on_missing_dependency: bool = True) -> Counter:
         """An addressable histogram of the parameter name counts in this
         template and all of its transitive dependencies.
 
+        :param error_on_missing_dependency: Raise an erorr if a template has a missing depedency
+        :type error_on_missing_dependency: bool
         :return: count of parameters
         :rtype: Counter
         """
         counts: Counter = Counter()
         counts.update(self.parameters)
         for dep in self.get_dependencies():
-            if dep.template is not None:
-                counts.update(dep.template.parameter_counts)
+            if dep.template is None:
+                if error_on_missing_dependency:
+                    raise TemplateNotFound(name=dep.dependency_template_name)
+                continue
+            counts.update(dep.template.parameter_counts)
         return counts
 
     # TODO: method to get the 'types' of the parameters
@@ -291,7 +308,7 @@ class Template:
         params = set(self.parameters)
         for dep in self.get_dependencies():
             if dep.template is None:
-                continue
+                raise TemplateNotFound(name=dep.dependency_template_name)
             transitive_params = dep.template.transitive_parameters
             rename_params: Dict[str, str] = {
                 ours: theirs for ours, theirs in dep.args.items()
@@ -320,7 +337,7 @@ class Template:
         # dependency to inline dependencies
         for dep in self.get_dependencies():
             if dep.template is None:
-                continue
+                raise TemplateNotFound(name=dep.dependency_template_name)
             # get the inlined version of the dependency
             deptempl = dep.template.inline_dependencies()
 
@@ -504,9 +521,13 @@ class Template:
             self._bm.table_connection.get_library_defining_db_template(self.id).id
         )
 
-    def library_dependencies(self) -> List["Library"]:
+    def library_dependencies(
+        self, error_on_missing_dependency: bool = True
+    ) -> List["Library"]:
         """Get library dependencies for this template.
 
+        :param error_on_missing_dependency: Raise an erorr if a template has a missing depedency
+        :type error_on_missing_dependency: bool
         :return: list of libraries
         :rtype: List[Library]
         """
@@ -515,6 +536,8 @@ class Template:
         libs = {self.defining_library.id}
         for dep in self.get_dependencies():
             if dep.template is None:
+                if error_on_missing_dependency:
+                    raise TemplateNotFound(name=dep.dependency_template_name)
                 continue
             libs.add(dep.template.defining_library.id)
         return [Library.load(id) for id in libs]
@@ -533,7 +556,7 @@ class Template:
         # and all of its dependencies
         if len(ontologies) == 0:
             ontology = rdflib.Graph()
-            for lib in self.library_dependencies():
+            for lib in self.library_dependencies(False):
                 ontology += lib.get_shape_collection().graph
         else:
             ontology = combine_graphs(*ontologies)
