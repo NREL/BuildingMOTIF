@@ -214,7 +214,7 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
 
 
 def get_template_parts_from_shape(
-    shape_name: URIRef, shape_graph: Graph, depedency_graphs: dict[str, Graph]
+    shape_name: URIRef, shape_graph: Graph, depedency_graphs: Dict[str, Graph]
 ) -> Tuple[Graph, List[Dict]]:
     """Turn a SHACL shape into a template. The following attributes of
     NodeShapes will be incorporated into the resulting template:
