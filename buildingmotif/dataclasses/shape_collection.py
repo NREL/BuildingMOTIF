@@ -192,7 +192,6 @@ class ShapeCollection:
 
         imports_closure = copy_graph(self.graph)
         dependency_graphs: dict[str, Graph] = {}
-        dependency_graphs[library.name] = copy_graph(imports_closure)
 
         for dependency in self.graph.objects(predicate=rdflib.OWL.imports):
             try:
