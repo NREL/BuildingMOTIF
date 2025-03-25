@@ -494,7 +494,7 @@ class TableConnection:
         template_id = dep.template_id
         args = dep.args
         self.logger.debug(
-            f"Creating depencency from templates with ids: '{template_id}' and: '{dep.dependency_template.id}'"
+            f"Creating depencency from templates with ids: '{template_id}' and: '{dep.dependency_template_name}'"
         )
         from buildingmotif.dataclasses import Template
 

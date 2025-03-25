@@ -214,7 +214,7 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
 
 
 def get_template_parts_from_shape(
-    shape_name: URIRef, shape_graph: Graph
+    shape_name: URIRef, shape_graph: Graph, depedency_graphs: dict[str, Graph]
 ) -> Tuple[Graph, List[Dict]]:
     """Turn a SHACL shape into a template. The following attributes of
     NodeShapes will be incorporated into the resulting template:
@@ -227,6 +227,8 @@ def get_template_parts_from_shape(
     :type shape_name: URIRef
     :param shape_graph: shape graph
     :type shape_graph: Graph
+    :param depedency_graphs: colleciton of graphs and which depdency library they came from
+    :type depedency_graphs: dict[str, Graph]
     :raises Exception: if more than one object type detected on shape
     :raises Exception: if more than one min count detected on shape
     :return: template parts
@@ -285,7 +287,20 @@ def get_template_parts_from_shape(
             otype_is_nodeshape = (otype, RDF.type, SH.NodeShape) in shape_graph
 
             if (otype_as_class and otype_is_nodeshape) or otype_as_node:
-                deps.append({"template": str(otype), "args": {"name": param}})
+                library = None
+                for library_name, graph in depedency_graphs.items():
+                    if (otype, RDF.type, SH.NodeShape) in graph:
+                        library = library_name
+                        break
+                if library is None:
+                    raise TemplateNotFound(name=str(otype))
+                deps.append(
+                    {
+                        "template": str(otype),
+                        "library": library,
+                        "args": {"name": param},
+                    }
+                )
                 body.add((param, RDF.type, otype))
 
         pvalue = shape_graph.value(pshape, SH["hasValue"])

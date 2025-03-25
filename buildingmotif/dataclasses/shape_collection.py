@@ -191,10 +191,16 @@ class ShapeCollection:
         from buildingmotif.dataclasses.library import Library
 
         imports_closure = copy_graph(self.graph)
+        dependency_graphs: dict[str, Graph] = {}
+        dependency_graphs[library.name] = copy_graph(imports_closure)
+
         for dependency in self.graph.objects(predicate=rdflib.OWL.imports):
             try:
                 lib = Library.load(name=str(dependency))
                 imports_closure += lib.get_shape_collection().graph
+                dependency_graphs[str(dependency)] = copy_graph(
+                    lib.get_shape_collection().graph
+                )
             except Exception as e:
                 logging.warning(
                     f"An ontology could not resolve a dependency on {dependency} ({e}). Check this is loaded into BuildingMOTIF"
@@ -210,7 +216,7 @@ class ShapeCollection:
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
             partial_body, deps = get_template_parts_from_shape(
-                candidate, imports_closure
+                candidate, imports_closure, dependency_graphs
             )
             library.create_template(str(candidate), partial_body, dependencies=deps)
 
