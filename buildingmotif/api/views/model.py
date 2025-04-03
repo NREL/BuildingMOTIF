@@ -264,7 +264,7 @@ def validate_shape(models_id: int) -> flask.Response:
 
     # test
     compiled = model.compile(shape_collections)
-    conformance = compiled.test_model_against_shapes(
+    conformance = compiled.validate_model_against_shapes(
         shapes_to_test=shape_uris,
         target_class=target_class,
     )
