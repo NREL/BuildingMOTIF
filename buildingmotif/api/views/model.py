@@ -203,10 +203,9 @@ def validate_model(models_id: int) -> flask.Response:
                 "message": f"Libraries with ids {nonexistent_libraries} do not exist"
             }, status.HTTP_400_BAD_REQUEST
 
+    compiled = model.compile(shape_collections)
     # if shape_collections is empty, model.validate will default to the model's manifest
-    vaildation_context = model.validate(
-        shape_collections, error_on_missing_imports=False, shacl_engine=shacl_engine
-    )
+    vaildation_context = compiled.validate(error_on_missing_imports=False)
 
     return {
         "message": vaildation_context.report_string,

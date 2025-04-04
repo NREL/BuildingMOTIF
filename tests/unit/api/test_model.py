@@ -342,7 +342,7 @@ def test_validate_model_no_args(client, building_motif, shacl_engine):
     )
 
     # Assert
-    assert results.status_code == 200
+    assert results.status_code == 200, results.data
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
     assert results.get_json()["valid"]
@@ -363,7 +363,7 @@ def test_validate_model_no_library_ids(client, building_motif, shacl_engine):
     )
 
     # Assert
-    assert results.status_code == 200
+    assert results.status_code == 200, results.data
     assert results.get_json().keys() == {"message", "reasons", "valid"}
     assert isinstance(results.get_json()["message"], str)
     assert results.get_json()["valid"]
@@ -383,7 +383,7 @@ def test_validate_model_bad_library_ids(client, building_motif):
     )
 
     # Assert
-    assert results.status_code == 400
+    assert results.status_code == 400, results.data
 
 
 def test_validate_model_bad_args(client, building_motif):
@@ -406,7 +406,7 @@ def test_validate_model_bad_args(client, building_motif):
     )
 
     # Assert 1
-    assert results.status_code == 400
+    assert results.status_code == 400, results.data
 
     # Action 2
     results = client.post(
@@ -416,7 +416,7 @@ def test_validate_model_bad_args(client, building_motif):
     )
 
     # Assert 2
-    assert results.status_code == 400
+    assert results.status_code == 400, results.data
 
 
 def test_validate_model_against_shapes(client, building_motif, shacl_engine):
