@@ -238,7 +238,7 @@ class Model:
         if shape_collections is None:
             shape_collections = [self.get_manifest()]
         for shape_collection in shape_collections:
-            ontology_graph += shape_collection.graph
+            ontology_graph += shape_collection.resolve_imports(error_on_missing_imports=False).graph
 
         ontology_graph = skolemize_shapes(ontology_graph)
 
