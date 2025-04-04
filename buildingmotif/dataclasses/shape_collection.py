@@ -315,7 +315,7 @@ class ShapeCollection:
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         """
-        return f"{preamble} SELECT {' '.join(project)} WHERE {{\n{clauses}\n}}"
+        return f"{preamble} SELECT DISTINCT {' '.join(project)} WHERE {{\n{clauses}\n}}"
 
 
 def _is_list(graph: Graph, node: Node):
