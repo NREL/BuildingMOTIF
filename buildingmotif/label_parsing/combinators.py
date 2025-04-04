@@ -135,8 +135,7 @@ class choice(Parser):
             if result:
                 print(result)
                 errors.extend([r.error for r in result if r.error])
-        print(errors)
-        return [TokenResult(None, Null(), 0, " | ".join(errors), id=None)]  # type: ignore
+        return [TokenResult(None, Null(), 0, " | ".join([str(s) for s in errors]), id=None)]  # type: ignore
 
 
 class constant(Parser):
