@@ -200,6 +200,8 @@ def validate_model(models_id: int) -> flask.Response:
                 shape_collections.append(shape_collection)
             except LibraryNotFound:
                 nonexistent_libraries.append(library_id)
+        if len(shape_collections) == 0:
+            shape_collections = [model.get_manifest()]
         if len(nonexistent_libraries) > 0:
             return {
                 "message": f"Libraries with ids {nonexistent_libraries} do not exist"
