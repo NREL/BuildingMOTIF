@@ -1,3 +1,4 @@
+import logging
 import flask
 from flask import Blueprint, current_app, jsonify, request
 from flask_api import status
@@ -13,6 +14,7 @@ from buildingmotif.database.errors import (
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
 
 blueprint = Blueprint("models", __name__)
+logger = logging.getLogger()
 
 
 @blueprint.route("", methods=(["GET"]))
@@ -203,7 +205,9 @@ def validate_model(models_id: int) -> flask.Response:
                 "message": f"Libraries with ids {nonexistent_libraries} do not exist"
             }, status.HTTP_400_BAD_REQUEST
 
-    print(f"Validating model {model.name} with shape collections {shape_collections}")
+    logger.warning(
+        f"Validating model {model.name} with shape collections {shape_collections}"
+    )
     compiled = model.compile(shape_collections)
     # if shape_collections is empty, model.validate will default to the model's manifest
     vaildation_context = compiled.validate(error_on_missing_imports=False)
