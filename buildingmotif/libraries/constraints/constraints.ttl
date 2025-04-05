@@ -30,10 +30,10 @@ WHERE {
   {
     SELECT ?i
     WHERE {
-      ?i a <YourClassURI> .
+      ?i a $class .
     }
     GROUP BY ?i
-    HAVING (COUNT(DISTINCT ?i) = <exactCount>)
+    HAVING (COUNT(DISTINCT ?i) = $exactCount)
   }
 }""" ;
 
