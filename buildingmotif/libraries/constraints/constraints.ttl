@@ -27,25 +27,14 @@
     sh:ask """
 ASK {
   {
-  SELECT ?i (COUNT(DISTINCT ?i) AS ?count)
+SELECT ?count WHERE {
+  {
+  SELECT ?i (COUNT(DISTINCT ?i) AS ?count) ?key
   	WHERE { 
   		?i a $class . 
-	}
+        BIND (<urn:key> as ?key)
+	}   GROUP BY ?key
   }
   FILTER (?count = $exactCount)
-}""" ;
+}}""" ;
 .
-
-# :assertInstanceRule a sh:NodeShape ;
-#     sh:targetClass sh:NodeShape ;
-#     sh:rule [
-#         a sh:SPARQLRule ;
-#         sh:prefixes rdf: ;
-#         sh:construct """
-#             CONSTRUCT {
-#                 $this a $sourceShape 
-#             }
-#         """ ;
-#         sh:condition 
-#     ] ;
-# .
