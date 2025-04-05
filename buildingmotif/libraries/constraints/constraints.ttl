@@ -27,15 +27,16 @@
     sh:ask """
 ASK {
   {
-SELECT ?count WHERE {
-  {
-  SELECT ?i (COUNT(DISTINCT ?i) AS ?count) ?key
-  	WHERE { 
-  		?i a $class . 
-        BIND (<urn:key> as ?key)
-	}   GROUP BY ?key
+    SELECT ?count WHERE {
+      {
+      SELECT (COUNT(DISTINCT ?i) AS ?count) ?key
+        WHERE { 
+            ?i a $class . 
+            BIND (<urn:key> as ?key)
+        }   GROUP BY ?key
+      }
+      FILTER (?count = $exactCount)
+    }
   }
-  FILTER (?count = $exactCount)
-}}
 }""" ;
 .
