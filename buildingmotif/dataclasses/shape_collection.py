@@ -550,6 +550,7 @@ def _resolve_imports(
         # go find the graph definition from our libraries
         try:
             lib = Library.load(name=ontology)
+            logger.warning("Importing %s", ontology)
             sc_to_add = lib.get_shape_collection()
         except Exception as e:
             logger.warning(
