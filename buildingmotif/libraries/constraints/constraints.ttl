@@ -25,14 +25,17 @@
 :hasExactCount a sh:SPARQLAskValidator ;
     sh:message "Not the right number {$exactCount} of instances of {$class}" ;
     sh:ask """
-        ASK WHERE {
-            {
-                SELECT * 
-                WHERE { ?i a $class . }
-                HAVING (COUNT(DISTINCT ?i) = $exactCount)
-            }
-        }""" ;
-.
+SELECT ?i
+WHERE {
+  {
+    SELECT ?i
+    WHERE {
+      ?i a <YourClassURI> .
+    }
+    GROUP BY ?i
+    HAVING (COUNT(DISTINCT ?i) = <exactCount>)
+  }
+}""" ;
 
 # :assertInstanceRule a sh:NodeShape ;
 #     sh:targetClass sh:NodeShape ;
