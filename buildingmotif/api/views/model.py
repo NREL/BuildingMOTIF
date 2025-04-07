@@ -161,6 +161,25 @@ def update_model_graph(models_id: int) -> flask.Response:
     return model.graph.serialize(format="ttl")
 
 
+@blueprint.route("/<models_id>/manifest", methods=(["GET"]))
+def get_model_manifest(models_id: int) -> flask.Response:
+    """Get model manifest.
+
+    :param models_id: model id
+    :type models_id: int
+    :return: requested model manifest
+    :rtype: flask.Response
+    """
+    try:
+        model = Model.load(models_id)
+    except ModelNotFound:
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    manifest = model.get_manifest()
+    manifest_ttl = manifest.graph.serialize(format="ttl")
+    return manifest_ttl, status.HTTP_200_OK
+
+
 @blueprint.route("/<models_id>/validate", methods=(["POST"]))
 def validate_model(models_id: int) -> flask.Response:
     # get model

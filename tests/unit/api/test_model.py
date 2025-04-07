@@ -152,6 +152,20 @@ def test_update_model_graph_append(client, building_motif):
     assert isomorphic(model.graph, expected_graph + default_graph)
 
 
+def test_model_manifest(client, building_motif):
+    # Set up
+    model = Model.create(name="urn:my_model")
+    library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    model.update_manifest(library_1.get_shape_collection())
+
+    results = client.get(f"/models/{model.id}/manifest")
+    print(results.data)
+    manifest = Graph().parse(data=results.data, format="ttl")
+
+    # Assert
+    assert results.status_code == 200
+    assert isomorphic(manifest, model.get_manifest().graph)
+
 def test_update_model_graph_not_found(client, building_motif):
     # Act
     results = client.patch(
