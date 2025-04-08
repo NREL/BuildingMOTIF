@@ -1,0 +1,281 @@
+{
+    "G36VAV_SAT_POINTS" : {
+        "name" : "Guideline 36 - All supply air temperature control points and sensors are available for AFDD",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["VAV"],
+        "definitions": {
+            "Supply_Air_temperature_Sensor": {
+                "choice": [
+                    {"hasPoint": "Supply_Air_Temperature_Sensor"},
+                    {"hasPoint": "Zone_Air_Temperature_Sensor"}
+                ]
+                },
+            "Supply_Air_Temperature_Setpoint": {
+                "choice": [
+                    {"hasPoint": "Supply_Air_Temperature_Setpoint"},
+                    {"hasPoint": "Zone_Air_Temperature_Setpoint"}
+                ]
+            }
+        },
+        "output" : "Supply_Air_Temperature_Average = MEAN(Supply_Air_temperature_Sensor); Supply_Air_Temperature_Error_Threshold = 3.0;"
+    },
+    "G36VAV_OA_POINTS" : {
+        "name" : "Guideline 36 - All outdoor air temperature control points and sensors are available for AFDD",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["VAV"],
+        "definitions": {
+            "Outdoor_Air_temperature_Sensor": {"hasPoint": "Outdoor_Air_Temperature_Sensor"},
+            "Outdoor_Air_Temperature_Setpoint": {"hasPoint": "Outdoor_Air_Temperature_Setpoint"},
+            "Outdoor_Air_Damper": {
+                "choice": [
+                    {"hasPoint": "Damper_Command"},
+                    {"hasPart": {"Oudtoor_Air_Damper": {"hasPoint": "Damper_Command"}}}
+                ]
+            },
+            "Minimum_OA_Fraction": "Minimum_OA_Fraction",
+            "Airflow_Error_Threshold": "Airflow_Error_Threshold"
+        },
+        "output" : "Outdoor_Air_Temperature_Average = MEAN(Outdoor_Air_temperature_Sensor); Outdoor_Air_Temperature_Error_Threshold = 3.0; Minimum_OA_Fraction=0.08;Airflow_Error_Threshold=0.05;"
+    },
+    "G36VAV_RAT_POINTS" : {
+        "name" : "Guideline 36 - All return air temperature control points and sensors are available for AFDD",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["VAV"],
+        "definitions": {
+            "Return_Air_temperature_Sensor": {"hasPoint": "Return_Air_Temperature_Sensor"},
+            "Return_Air_Temperature_Setpoint": {"hasPoint": "Return_Air_Temperature_Setpoint"}
+        },
+        "output" : "Return_Air_Temperature_Average = MEAN(Return_Air_temperature_Sensor); Return_Air_Temperature_Error_Threshold = 3.0;"
+    },
+    "G36VAV_MAT_POINTS" : {
+        "name" : "Guideline 36 - All mixed air temperature control points and sensors are available for AFDD",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["VAV"],
+        "definitions": {
+            "Mixed_Air_temperature_Sensor": {"hasPoint": "Mixed_Air_Temperature_Sensor"},
+            "Mixed_Air_Temperature_Setpoint": {"hasPoint": "Mixed_Air_Temperature_Setpoint"}
+        },
+        "output" : "Mixed_Air_Temperature_Average = MEAN(Mixed_Air_temperature_Sensor); Mixed_Air_Temperature_Error_Threshold = 3.0;"
+    },
+    "G36VAV_DSP_POINTS" : {
+        "name" : "Guideline 36 - All duct static pressure control points and sensors are available for AFDD",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["VAV"],
+        "definitions": {
+            "Duct_Static_Pressure": {"hasPoint": "Static_Pressure_Sensor"},
+            "Duct_Static_Pressure_Setpoint": {"hasPoint": "Static_Pressure_Setpoint"},
+            "Duct_Static_Pressure_Error_Threshold": {"hasPoint": "Static_Pressure_Threshold"}
+        },
+        "output" : "Duct_Static_Pressure_Average = MEAN(Duct_Static_Pressure_Sensor); Duct_Static_Pressure_Error_Threshold = 3.0;"
+    },
+    "G36VAV_VFD_POINTS" : {
+        "name" : "Guideline 36 - All supply fan control points and sensors are available for AFDD",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["VAV"],
+        "definitions": {
+            "VFD_Fan_Speed": {
+                "choice": [
+                    {"hasPoint": "Fan_Speed_Command"},
+                    {"hasPart": {"Supply_Fan": {"hasPoint": "Speed_Command"}}}
+                ]
+            },
+            "Supply_Air_temperature_Sensor": {
+                "hasPoint": "Supply_Air_Temperature_Sensor"
+            },
+            "Discharge_Air_temperature_Sensor": {
+                "hasPoint": "Discharge_Air_Temperature_Sensor"
+            }
+        },
+        "output" : "VFD_Fan_Speed_Error_Threshold = 3.0; Delta_T_Supply_Fan = Supply_Air_temperature_Sensor - Discharge_Air_temperature_Sensor;"
+    },
+    "G36VAV_QXCOILS_POINTS" : {
+        "name" : "Guideline 36 - All heat exchanger control points and sensors are available for AFDD",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["VAV1"],
+        "definitions": {
+            "Inlet_Temperature": {"hasPart": {"Coil": {"hasPoint": "Entering_Water_Temperature_Sensor"}}},
+            "Outet_Temperature": {"hasPart": {"Coil": {"hasPoint": "Leaving_Water_Temperature_Sensor"}}}
+        },
+        "output" : "Inlet_Temperature_Average = MEAN(Inlet_Temperature_Average); Inlet_Temperature_Error_Threshold = 3.0;Outlet_Temperature_Average = MEAN(Outlet_Temperature_Average); Outlet_Temperature_Error_Threshold = 3.0;"
+    },
+    "G36VAVAHU_FC1" : {
+        "name" : "Guideline 36 - FC#1 - Duct static pressure is too low with fan at full speed",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_DFP_POINTS", "GL36VAV_VFD_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (Duct_Static_Pressure << (Duct_Static_Pressure_Setpoint - Duct_Static_Pressure_Error_Threshold)) AND (VFD_Fan_Speed >= (0.99 - VFD_Fan_Speed_Error_Threshold) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC2" : {
+        "name" : "Guideline 36 - FC#2 - MAT too low; should be between OAT and RAT",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_MAT_POINTS", "GL36VAV_RAT_POINTS", "GL36VAV_OA_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (Mixed_Air_Temperature_Average + Mixed_Air_Temperature_Error_Threshold) << MINIMUM((Return_Air_Temperature_Average - Return_Air_Temperature_Error_Threshold), (Outdoor_Air_Temperature_Average - Outdoor_Air_Temperature_Error_Threshold)) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC3" : {
+        "name" : "Guideline 36 - FC#3 - MAT too high; should be between OAT and RAT",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_MAT_POINTS", "GL36VAV_RAT_POINTS", "GL36VAV_OA_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (Mixed_Air_Temperature_Average - Mixed_Air_Temperature_Error_Threshold) >> MINIMUM((Return_Air_Temperature_Average + Return_Air_Temperature_Error_Threshold), (Outdoor_Air_Temperature_Average + Outdoor_Air_Temperature_Error_Threshold)) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC5" : {
+        "name" : "Guideline 36 - FC#5 - SAT too low; should be higher than MAT",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_MAT_POINTS", "GL36VAV_SAT_POINTS", "GL36VAV_VFD_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (Supply_Air_Temperature_Average + Supply_Air_Temperature_Error_Threshold) <= (Mixed_Air_Temperature_Average - Mixed_Air_Temperature_Error_Threshold + Delta_T_Supply_Fan) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC6" : {
+        "name" : "Guideline 36 - FC#6 - OA fraction is too low or too high; should equal %OAMIN",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_RAT_POINTS", "GL36VAV_OA_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (ABS(Return_Air_Temperature_Average - Outdoor_Air_Temperature_Average) >= Delta_T_Min) AND (ABS(Outdoor_Air_Damper - Minimum_OA_Fraction) > Airflow_Error_Threshold) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC7" : {
+        "name" : "Guideline 36 - FC#7 - Supply air temperature too low in full heating",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_SAT_POINTS"],
+        "definitions": {
+            "Hot_Water_Valve_Command": {
+                "choice": [
+                    {"hasPoint": "Hot_Water_Valve_Command"},
+                    {"hasPart": {"Hot_Water_Valve": {"hasPoint": "Valve_Command"}}}
+                ]
+            }
+        },
+        "output" : "IF (Supply_Air_Temperature_Average << Supply_Air_Temperature_Setpoint - Supply_Air_Temperature_Error_Threshold) AND (Hot_Water_Valve_Command >= 0.99) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC8" : {
+        "name" : "Guideline 36 - FC#8 - SAT and MAT should be approximately equal",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_MAT_POINTS", "GL36VAV_SAT_POINTS", "GL36VAV_VFD_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF ABS(Supply_Air_Temperature_Average - Delta_T_Supply_Fan - Mixed_Air_Temperature_Average) >> SQRT(Supply_Air_temperature_Error_Threshold ** 2 + Mixed_Air_temperature_Error_Threshold ** 2) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC9" : {
+        "name" : "Guideline 36 - FC#9 - OAT is too high for free cooling without additional mechanical cooling",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_MAT_POINTS", "GL36VAV_SAT_POINTS", "GL36VAV_VFD_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (Outside_Air_Temperature_Average - Outdoor_Air_Temperature_Threshold) >> (Supply_Air_temperature_Setpoint - Delta_T_Supply_Fan  + Supply_Air_Temperature_Threshold) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC10" : {
+        "name" : "Guideline 36 - FC#10 - OAT and MAT should be approximately equal",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_MAT_POINTS", "GL36VAV_OA_POINTS", "GL36VAV_VFD_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF ABS(Mixed_Air_Temperature_Average - Outdoor_Air_Temperature_Average) >> SQRT(Mixed_Air_temperature_Error_Threshold ** 2 + Outdoor_Air_temperature_Error_Threshold ** 2) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC11" : {
+        "name" : "Guideline 36 - FC#11 - OAT is too low for mechanical cooling",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_SAT_POINTS", "GL36VAV_OA_POINTS", "GL36VAV_VFD_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (Outside_Air_Temperature_Average + Outdoor_Air_Temperature_Threshold) << (Supply_Air_temperature_Setpoint - Delta_T_Supply_Fan - Supply_Air_Temperature_Threshold) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC12" : {
+        "name" : "Guideline 36 - FC#5 - SAT too high; should be lower than MAT",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_MAT_POINTS", "GL36VAV_SAT_POINTS", "GL36VAV_VFD_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (Supply_Air_Temperature_Average - Supply_Air_Temperature_Error_Threshold - Delta_T_Supply_Fan) >= (Mixed_Air_Temperature_Average + Mixed_Air_Temperature_Error_Threshold) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC13" : {
+        "name" : "Guideline 36 - FC#13 - Supply air temperature too high in full cooling",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_SAT_POINTS"],
+        "definitions": {
+            "Cold_Water_Valve_Command": {
+                "choice": [
+                    {"hasPoint": "Cold_Water_Valve_Command"},
+                    {"hasPart": {"Cold_Water_Valve": {"hasPoint": "Valve_Command"}}}
+                ]
+            }
+        },
+        "output" : "IF (Supply_Air_Temperature_Average >> Supply_Air_Temperature_Setpoint + Supply_Air_Temperature_Error_Threshold) AND (Cold_Water_Valve_Command >= 0.99) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC14" : {
+        "name" : "Guideline 36 - FC#14 - Temperature drop across inactive cooling coil",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_QXCOILS_POINTS", "GL36VAV_VFD_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (Cooling_Coil_Inlet_Temperature_Average - Cooling_Coil_Outlet_Temperature_Average) >= (SQRT(Cooling_Coil_Inlet_Temperature_Error_Threshold ** 2 +Cooling_Coil_Outlet_Temperature_Error_Threshold ** 2) + Delta_T_Supply_Fan) THEN True ELSE False"
+    },
+    "G36VAVAHU_FC15" : {
+        "name" : "Guideline 36 - FC#14 - Temperature rise across inactive heating coil",
+        "aftype" : "analysis",
+        "aftimerule" : "Periodic",
+        "frequency" : 900,
+        "applicability" : ["AHU", "VAV"],
+        "dependencies": ["GL36VAV_QXCOILS_POINTS", "GL36VAV_VFD_POINTS"],
+        "definitions": {
+        },
+        "output" : "IF (Heating_Coil_Inlet_Temperature_Average - Heating_Coil_Outlet_Temperature_Average) >= (SQRT(Heating_Coil_Inlet_Temperature_Error_Threshold ** 2 +Heating_Coil_Outlet_Temperature_Error_Threshold ** 2) + Delta_T_Supply_Fan) THEN True ELSE False"
+    }
+}
