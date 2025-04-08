@@ -1,4 +1,5 @@
 import logging
+
 import flask
 from flask import Blueprint, current_app, jsonify, request
 from flask_api import status
@@ -12,6 +13,7 @@ from buildingmotif.database.errors import (
     ShapeCollectionNotFound,
 )
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
+from buildingmotif.exports.brick2af.validation import generate_report
 
 blueprint = Blueprint("models", __name__)
 logger = logging.getLogger()
@@ -301,3 +303,47 @@ def validate_shape(models_id: int) -> flask.Response:
         result[shape_uri] = reasons
 
     return result, status.HTTP_200_OK
+
+
+@blueprint.route("/<models_id>/add_manifest_rules", methods=(["POST"]))
+def add_fdd_rules_to_manifest(models_id: int) -> flask.Response:
+    """Add FDD rules to the model manifest.
+
+    :param models_id: model id
+    :type models_id: int
+    :return: updated model manifest
+    :rtype: flask.Response
+    """
+    try:
+        model = Model.load(models_id)
+    except ModelNotFound:
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    # get body
+    if request.content_type != "application/json":
+        return flask.Response(
+            {"message": "request content type must be json"},
+            status.HTTP_400_BAD_REQUEST,
+        )
+    try:
+        rules_json = request.json
+    except Exception as e:
+        return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
+
+    if not isinstance(rules_json, dict):
+        return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
+
+    grouped_diffs, successful_rules, validation_report = generate_report(
+        model, rules_json
+    )
+
+    return (
+        jsonify(
+            {
+                "grouped_diffs": grouped_diffs,
+                "successful_rules": successful_rules,
+                "validation_report": validation_report.report.serialize(format="ttl"),
+            }
+        ),
+        status.HTTP_200_OK,
+    )
