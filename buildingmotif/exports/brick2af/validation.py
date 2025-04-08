@@ -401,12 +401,8 @@ if __name__ == "__main__":
     )
 
 
-def apply_rules_to_model(inttl, rulesjson):
+def apply_rules_to_model(model: Model, rules):
     successful_rules = defaultdict(lambda: defaultdict(dict))
-    with open(rulesjson, "r") as f:
-        rules = json.load(f)
-    model = Graph()
-    model.parse(inttl)
     for rule, defn in rules.items():
         rule = f"http://example.org/building#{rule}"
         for classname in defn["applicability"]:
@@ -416,7 +412,7 @@ def apply_rules_to_model(inttl, rulesjson):
                     class_, defn["definitions"][variable], variable
                 )
 
-                results = model.query(query)
+                results = model.graph.query(query)
                 for row in results.bindings:
                     inst = row["root"]
                     successful_rules[rule][inst].update(row)
