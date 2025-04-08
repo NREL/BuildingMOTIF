@@ -426,10 +426,9 @@ def generate_manifest(rules_file, output_file):
     shape_graph.serialize(output_file, format="ttl")
 
 
-def generate_manifest_json(rules_json):
-    ns = Namespace("http://example.org/building#")
+def generate_manifest_json(rules_json: dict, ns: Namespace):
     shapes = Graph()
-    for rule, definition in rules_json.items():
+    for _, definition in rules_json.items():
         sg = _definition_to_shape(definition, ns)
         shapes += sg
     return shapes
