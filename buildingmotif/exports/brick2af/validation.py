@@ -5,10 +5,13 @@ from collections import defaultdict
 from copy import deepcopy
 
 from rdflib import Graph, Namespace, URIRef
-from utils import _definition_to_sparql
 
-from buildingmotif import BuildingMOTIF
+from buildingmotif import get_building_motif
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
+from buildingmotif.exports.brick2af.utils import (
+    _definition_to_shape,
+    _definition_to_sparql,
+)
 
 BRICK = Namespace("https://brickschema.org/schema/Brick#")
 
@@ -275,8 +278,48 @@ def generate_html_report(
         file.write(html_content)
 
 
-def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
-    bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
+def generate_report(model: Model, rules_definition: dict):
+    """
+    rules_definition is the content of one of the rules JSON files
+    """
+    manifest = model.get_manifest()
+    NS = Namespace("urn:fdd_rules/")
+    for rule, defn in rules_definition.items():
+        sg = _definition_to_shape(defn, NS)
+        manifest.graph += sg
+
+    successful_rules = defaultdict(lambda: defaultdict(dict))
+    for rule, defn in rules_definition.items():
+        rule = NS[rule]
+        for classname in defn["applicability"]:
+            class_ = BRICK[classname]
+            for variable in defn["definitions"]:
+                # this only queries for 1 variable
+                query = _definition_to_sparql(
+                    class_, defn["definitions"][variable], variable
+                )
+                results = model.graph.query(query)
+                for row in results.bindings:
+                    inst = row["root"]
+                    successful_rules[rule][inst].update(row)
+        # loop through all 'inst' for this rule. If the length of its dictionary == len(defn["definitions"]), then it's successful
+        for inst in deepcopy(successful_rules[rule]):
+            if len(successful_rules[rule][inst]) != len(defn["definitions"]) + 1:
+                # +1 for the 'root' variable
+                del successful_rules[rule][inst]
+
+    validation_report = model.validate(error_on_missing_imports=False)
+    grouped_diffs = defaultdict(lambda: defaultdict(list))
+    for focus_node, diffs in validation_report.diffset.items():
+        for diff in diffs:
+            original_shape = find_original_shape(model, diff.failed_shape)
+            grouped_diffs[original_shape][focus_node].append(diff.reason())
+
+    return grouped_diffs, successful_rules, validation_report
+
+
+def validate(manifest_ttl, model_ttl, rule_json, output_path, output_format):
+    bm = get_building_motif()
 
     brick = Library.load(ontology_graph="../../../../libraries/brick/Brick.ttl")
     Library.load(ontology_graph="http://qudt.org/2.1/vocab/unit")
@@ -336,7 +379,7 @@ def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
     # doesn't seem to be the same one each time
     with open("grouped_diffs.json", "w") as f:
         json.dump(grouped_diffs, f, indent=4)
-    if format == "html":
+    if output_format == "html":
         generate_html_report(grouped_diffs, successful_rules, output_path + ".html")
     else:
         generate_markdown_report(grouped_diffs, successful_rules, output_path + ".md")

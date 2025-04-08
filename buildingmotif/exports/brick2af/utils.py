@@ -12,8 +12,6 @@ from xmldiff import formatting, main
 
 from buildingmotif.namespaces import BRICK
 
-BRICK = Namespace("https://brickschema.org/schema/Brick#")
-
 # build relationship
 RELATIONSHIPS = ["hasPoint", "hasPart", "isPointOf", "isPartOf", "feeds"]
 RELATIONSHIPS += [f"{r}+" for r in RELATIONSHIPS]

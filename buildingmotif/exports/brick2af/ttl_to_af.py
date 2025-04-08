@@ -4,15 +4,13 @@ import uuid
 from collections import defaultdict
 
 from rdflib import RDF, RDFS, Graph, Namespace
-from utils import xml_dump
 
-import afxml as af
-from buildingmotif import BuildingMOTIF
+import buildingmotif.exports.brick2af.afxml as af
+from buildingmotif.exports.brick2af.utils import xml_dump
 
 
 class Translator:
     def __init__(self) -> None:
-        bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
 
         self.graph = Graph()
         self.BRICK = Namespace("https://brickschema.org/schema/Brick#")
