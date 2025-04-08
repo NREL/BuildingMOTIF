@@ -15,8 +15,8 @@ class Translator:
         self.graph = Graph()
         self.BRICK = Namespace("https://brickschema.org/schema/Brick#")
         self.EX = Namespace("http://example.org/building#")
-        self.defaultserver = "1WV63PTTSAT01"
-        self.defaultdatabase = "ESTCP_CERL_Development"
+        self.defaultserver = "<PIServer>"
+        self.defaultdatabase = "<AFDatabase>"
         self.afddrules = None
         self.manifest = None
         self.bmmodel = None
