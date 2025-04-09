@@ -15,7 +15,11 @@ def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
     """
     unified_bindings_list: List[UnifiedBindings] = []
     for bindings in bindings_list:
-        if bindings.template is None:
+        if (
+            bindings.template is None
+            or "name" not in bindings.bindings
+            or not bindings.bindings["name"]
+        ):
             continue
 
         unified_bindings = next(
