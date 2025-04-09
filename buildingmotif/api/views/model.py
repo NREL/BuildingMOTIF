@@ -216,7 +216,7 @@ def validate_model(models_id: int) -> flask.Response:
         body = body if body is not None else {}
         nonexistent_libraries = []
         for library_id in body.get("library_ids", []):
-            if library_id == "manifest":
+            if library_id == 0:  # 0 is 'model manifest'
                 shape_collections.append(model.get_manifest())
                 continue
             try:
