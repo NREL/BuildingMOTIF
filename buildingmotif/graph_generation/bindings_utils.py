@@ -27,6 +27,7 @@ def unify_bindings(bindings_list: List[Bindings]) -> List[UnifiedBindings]:
                 unified_bindings
                 for unified_bindings in unified_bindings_list
                 if unified_bindings.template.name == bindings.template.name
+                and 'name' in unified_bindings.bindings
                 and unified_bindings.bindings["name"] == bindings.bindings["name"]
             ),
             None,
