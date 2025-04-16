@@ -270,7 +270,7 @@ def test_model_compile(bm: BuildingMOTIF, shacl_engine):
 
     # returns in_both, in_first, in_second
     _, in_first, _ = graph_diff(
-        to_isomorphic(precompiled_model), to_isomorphic(compiled_model)
+        to_isomorphic(precompiled_model), to_isomorphic(compiled_model.graph)
     )
     # passes if everything from precompiled_model is in compiled_model
     assert len(in_first) == 0

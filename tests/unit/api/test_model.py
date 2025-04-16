@@ -419,7 +419,7 @@ def test_validate_model_bad_args(client, building_motif):
     assert results.status_code == 400
 
 
-def test_test_model_against_shapes(client, building_motif, shacl_engine):
+def test_validate_model_against_shapes(client, building_motif, shacl_engine):
     building_motif.shacl_engine = shacl_engine
     # Load libraries
     Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick.ttl"))
@@ -458,7 +458,7 @@ def test_test_model_against_shapes(client, building_motif, shacl_engine):
     # assert
     assert (
         len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-3"]) == 0
-    ), results.content
+    ), results.data
     assert (
         len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4"]) == 3
-    ), results.content
+    ), results.data
