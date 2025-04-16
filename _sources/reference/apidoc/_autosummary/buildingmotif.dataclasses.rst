@@ -27,6 +27,7 @@ buildingmotif.dataclasses
    :toctree:
    :recursive:
 
+   buildingmotif.dataclasses.compiled_model
    buildingmotif.dataclasses.library
    buildingmotif.dataclasses.model
    buildingmotif.dataclasses.shape_collection
