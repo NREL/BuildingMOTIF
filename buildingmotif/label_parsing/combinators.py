@@ -4,6 +4,7 @@ from typing import List
 
 from rdflib import URIRef
 
+from buildingmotif.embeddings import Embedding
 from buildingmotif.label_parsing.parser import Parser
 from buildingmotif.label_parsing.tokens import (
     Constant,
@@ -20,6 +21,28 @@ from buildingmotif.namespaces import BRICK
 logger = logging.getLogger()
 
 
+def split_bms_string(s: str) -> list[str]:
+    """
+    Splits an input string 's' into a list of strings based on specific delimiters:
+    - ':', '_', '.', '-', ' ' and '/' (these are their own token)
+    - character class transition (alphabetic to numeric or vice versa)
+    - lowercase to uppercase transition
+    """
+    # Define the regular expression pattern for splitting.
+    pattern = (
+        r"([:_\.\- /\n])|"  # Match individual delimiters ':', '_', '.', '-', ' ', '/', and '\n'
+        r"(?<=[a-z])(?=[A-Z])|"  # Match transition from lowercase to uppercase
+        r"(?<=[A-Za-z])(?=[0-9])|"  # Match transition from alphabetic to numeric
+        r"(?<=[0-9])(?=[A-Za-z])"  # Match transition from numeric to alphabetic
+    )
+
+    # Use re.split to split the string based on the pattern.
+    parts = re.split(pattern, s)
+
+    # Filter out any None or empty strings resulted from re.split
+    return [p for p in parts if p is not None and p != ""]
+
+
 class string(Parser):
     """Constructs a parser that matches a string."""
 
@@ -27,6 +50,18 @@ class string(Parser):
         self.s = s
         self.type_name = type_name
         self.id = id
+
+    def __repr__(self):
+        return f"string(s={self.s!r}, type_name={self.type_name!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, string):
+            return NotImplemented
+        return (
+            self.s == other.s
+            and self.type_name == other.type_name
+            and self.id == other.id
+        )
 
     def __call__(self, target: str) -> List[TokenResult]:
         if target.startswith(self.s):
@@ -56,6 +91,14 @@ class rest(Parser):
         self.type_name = type_name
         self.id = id
 
+    def __repr__(self):
+        return f"rest(type_name={self.type_name!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, rest):
+            return NotImplemented
+        return self.type_name == other.type_name and self.id == other.id
+
     def __call__(self, target: str) -> List[TokenResult]:
         return [
             TokenResult(
@@ -71,6 +114,18 @@ class substring_n(Parser):
         self.length = length
         self.type_name = type_name
         self.id = id
+
+    def __repr__(self):
+        return f"substring_n(length={self.length!r}, type_name={self.type_name!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, substring_n):
+            return NotImplemented
+        return (
+            self.length == other.length
+            and self.type_name == other.type_name
+            and self.id == other.id
+        )
 
     def __call__(self, target: str) -> List[TokenResult]:
         if len(target) >= self.length:
@@ -99,6 +154,18 @@ class regex(Parser):
         self.type_name = type_name
         self.id = id
 
+    def __repr__(self):
+        return f"regex(r={self.r!r}, type_name={self.type_name!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, regex):
+            return NotImplemented
+        return (
+            self.r == other.r
+            and self.type_name == other.type_name
+            and self.id == other.id
+        )
+
     def __call__(self, target: str) -> List[TokenResult]:
         match = re.match(self.r, target)
         if match:
@@ -126,6 +193,14 @@ class choice(Parser):
         self.parsers = parsers
         self.id = id
 
+    def __repr__(self):
+        return f"choice(parsers={self.parsers!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, choice):
+            return NotImplemented
+        return self.parsers == other.parsers and self.id == other.id
+
     def __call__(self, target: str) -> List[TokenResult]:
         errors = []
         for p in self.parsers:
@@ -144,6 +219,14 @@ class constant(Parser):
         self.id = id
         self.type_name = type_name
 
+    def __repr__(self):
+        return f"constant(type_name={self.type_name!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, constant):
+            return NotImplemented
+        return self.type_name == other.type_name and self.id == other.id
+
     def __call__(self, target: str) -> List[TokenResult]:
         return [TokenResult(None, self.type_name, 0, id=self.id)]
 
@@ -155,6 +238,17 @@ class abbreviations(Parser):
         parsers = [string(s, Constant(URIRef(t))) for s, t in patterns.items()]
         self.choice = choice(*parsers)
         self.id = id
+        self._patterns = patterns  # Store for repr
+
+    def __repr__(self):
+        return f"abbreviations(id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, abbreviations):
+            return NotImplemented
+        # Comparing _patterns as choice objects might be different if parsers are instantiated differently
+        # but have the same string/type pairs.
+        return self._patterns == other._patterns and self.id == other.id
 
     def __call__(self, target: str):
         return self.choice(target)
@@ -166,6 +260,17 @@ class sequence(Parser):
     def __init__(self, *parsers: Parser, id=None):
         self.parsers = parsers
         self.id = id
+
+    def __repr__(self):
+        parsers_repr = ""
+        for parser in self.parsers:
+            parsers_repr += f"\n    {repr(parser)}"  # Indent each element
+        return f"sequence(parsers=[{parsers_repr}\n], id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, sequence):
+            return NotImplemented
+        return self.parsers == other.parsers and self.id == other.id
 
     def __call__(self, target: str) -> List[TokenResult]:
         results = []
@@ -192,6 +297,14 @@ class many(Parser):
         self.seq_parser = seq_parser
         self.id = id
 
+    def __repr__(self):
+        return f"many(seq_parser={self.seq_parser!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, many):
+            return NotImplemented
+        return self.seq_parser == other.seq_parser and self.id == other.id
+
     def __call__(self, target):
         results = []
         while True:
@@ -212,6 +325,14 @@ class maybe(Parser):
         self.parser = parser
         self.id = id
 
+    def __repr__(self):
+        return f"maybe(parser={self.parser!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, maybe):
+            return NotImplemented
+        return self.parser == other.parser and self.id == other.id
+
     def __call__(self, target):
         result = self.parser(target)
         # if the result is not empty and there are no errors, return the result, otherwise return a null token
@@ -230,6 +351,18 @@ class until(Parser):
         self.type_name = type_name
         self.parser = parser
         self.id = id
+
+    def __repr__(self):
+        return f"until(parser={self.parser!r}, type_name={self.type_name!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, until):
+            return NotImplemented
+        return (
+            self.parser == other.parser
+            and self.type_name == other.type_name
+            and self.id == other.id
+        )
 
     def __call__(self, target):
         length = 1
@@ -256,6 +389,81 @@ class until(Parser):
         ]
 
 
+class guess_embedding(Parser):
+    """Constructs a parser that uses an embedding model to guess the type of a token."""
+
+    def __init__(
+        self, emb: Embedding, type_name: TokenOrConstructor, threshold=0.6, id=None
+    ):
+        self.emb = emb
+        self.type_name = type_name
+        self.id = id
+        self.threshold = threshold
+
+    def __repr__(self):
+        return f"guess_embedding(emb={self.emb!r}, type_name={self.type_name!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, guess_embedding):
+            return NotImplemented
+        return self.type_name == other.type_name and self.id == other.id
+
+    def get_best_match(self, target: str) -> tuple[str, float]:
+        matches = self.emb.get_point_matches(target)
+        # get the best match
+        if matches:
+            # only keep matches > self.threshold
+            matches = [(k, v) for k, v in matches if v > self.threshold]
+        return matches[0] if matches else (None, None)
+
+    def __call__(self, target: str) -> List[TokenResult]:
+        # 'res' is a dict with keys 'point' and 'equip' and values
+        # which are the score.
+        target = " ".join(split_bms_string(target))
+
+        # iterate over all prefixes of the target string
+        # and find the best match
+        # matches = {} # prefix -> (token, score)
+        # for i in range(1, len(target) + 1):
+        #    prefix = target[:i]
+        #    cls, score = self.get_best_match(prefix)
+        #    if cls is not None:
+        #        matches[prefix] = (cls, score)
+        # sort matches by score
+        # matches = sorted(matches.items(), key=lambda x: x[1][1], reverse=True)
+        # if there are no matches, return None
+        # if not matches:
+        #    return [
+        #        TokenResult(
+        #            None,
+        #            Null(),
+        #            0,
+        #            f"No match found for {target}",
+        #            id=self.id,
+        #        )
+        #    ]
+        # best_match, score = matches[0]
+        best_match, score = self.get_best_match(target)
+        if not best_match:
+            return [
+                TokenResult(
+                    None,
+                    Null(),
+                    0,
+                    f"No match found for {target}",
+                    id=self.id,
+                )
+            ]
+        return [
+            TokenResult(
+                best_match,
+                ensure_token(self.type_name, best_match),
+                len(target),
+                id=self.id,
+            )
+        ]
+
+
 class extend_if_match(Parser):
     """Adds the type to the token result."""
 
@@ -263,6 +471,18 @@ class extend_if_match(Parser):
         self.parser = parser
         self.type_name = type_name
         self.id = id
+
+    def __repr__(self):
+        return f"extend_if_match(parser={self.parser!r}, type_name={self.type_name!r}, id={self.id!r})"
+
+    def __eq__(self, other):
+        if not isinstance(other, extend_if_match):
+            return NotImplemented
+        return (
+            self.parser == other.parser
+            and self.type_name == other.type_name
+            and self.id == other.id
+        )
 
     def __call__(self, target):
         result = self.parser(target)
@@ -298,6 +518,9 @@ def as_identifier(parser):
 COMMON_EQUIP_ABBREVIATIONS_BRICK = {
     "AHU": BRICK.Air_Handling_Unit,
     "FCU": BRICK.Fan_Coil_Unit,
+    "RF": BRICK.Return_Fan,
+    "EF": BRICK.Exhaust_Fan,
+    "SF": BRICK.Supply_Fan,
     "VAV": BRICK.Variable_Air_Volume_Box,
     "CRAC": BRICK.Computer_Room_Air_Conditioner,
     "HX": BRICK.Heat_Exchanger,
