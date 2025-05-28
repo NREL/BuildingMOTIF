@@ -62,7 +62,7 @@ class CompiledModel:
             g += shape_collection.graph
         return g
 
-    def test_model_against_shapes(
+    def validate_model_against_shapes(
         self,
         shapes_to_test: List[rdflib.URIRef],
         target_class: rdflib.URIRef,
@@ -217,9 +217,8 @@ class CompiledModel:
                 f"Shape {shape} is not defined in any of the shape collections"
             )
         query = defining_sc.shape_to_query(shape)
-        metadata = pd.DataFrame(
-            self._compiled_graph.query(query).bindings, dtype="string"
-        )
+        metadata = pd.DataFrame(self.graph.query(query).bindings, dtype="string")
         # metadata.columns will be rdflib.term.Variable objects, so we need to convert them to strings
         metadata.columns = [str(col) for col in metadata.columns]
-        return metadata
+        # convert the rdflib terms to Python types
+        return metadata.map(lambda x: x.toPython())

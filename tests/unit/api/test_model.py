@@ -419,7 +419,7 @@ def test_validate_model_bad_args(client, building_motif):
     assert results.status_code == 400
 
 
-def test_test_model_against_shapes(client, building_motif, shacl_engine):
+def test_validate_model_against_shapes(client, building_motif, shacl_engine):
     building_motif.shacl_engine = shacl_engine
     # Load libraries
     Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick.ttl"))
