@@ -1,0 +1,1910 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dtype: <http://www.linkedmodel.org/schema/dtype#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix vaem: <http://www.linkedmodel.org/schema/vaem#> .
+
+<http://qudt.org/3.1.0/vocab/datatype>
+  a owl:Ontology ;
+  owl:imports <http://qudt.org/3.1.0/schema/facade/qudt> ;
+  owl:imports <http://www.linkedmodel.org/schema/dtype> ;
+  owl:imports <http://www.linkedmodel.org/schema/vaem> ;
+  rdfs:label "QUDT Vocabulary of Datatypes v3.1.0" ;
+  vaem:hasGraphMetadata <http://qudt.org/vocab/datatype/GMD_datatypes> ;
+  vaem:hasGraphRole vaem:VocabularyGraph .
+
+dcterms:contributor
+  a owl:AnnotationProperty ;
+  rdfs:label "contributor" ;
+  rdfs:range xsd:string .
+
+dcterms:creator
+  a owl:AnnotationProperty ;
+  rdfs:label "creator" ;
+  rdfs:range xsd:string .
+
+dcterms:description
+  a owl:AnnotationProperty ;
+  rdfs:label "description" ;
+  rdfs:range xsd:string .
+
+dcterms:rights
+  a owl:AnnotationProperty ;
+  rdfs:label "rights" ;
+  rdfs:range xsd:string .
+
+dcterms:subject
+  a owl:AnnotationProperty ;
+  rdfs:label "subject" ;
+  rdfs:range xsd:string .
+
+dcterms:title
+  a owl:AnnotationProperty ;
+  rdfs:label "title" ;
+  rdfs:range xsd:string .
+
+<http://qudt.org/vocab/datatype/GMD_datatypes>
+  a vaem:GraphMetaData ;
+  dcterms:description "The QUDT 'Datatype' vocabulary is a specification of scalar and structured data types. Scalar data types are defined for all the commonly encountered forms of numbers, characters and booleans, with their representations in a number of vendor and industry specific technologies. Structured data types cover arrays, lists, trees and many other forms of composite data elements. Specification of coordinate systems is also covered."^^rdf:HTML ;
+  dcterms:modified "2025-03-20T15:47:09Z"^^xsd:dateTime ;
+  dcterms:subject "Datatypes" ;
+  rdfs:label "QUDT Vocabulary for Datatypes - Version 3.1.0" ;
+  vaem:hasGraphRole vaem:VocabularyGraph ;
+  vaem:isMetadataFor <http://qudt.org/3.1.0/vocab/datatype> ;
+  vaem:logo "https://qudt.org/linkedmodels.org/assets/lib/lm/images/logos/qudt_logo-300x110.png"^^xsd:anyURI ;
+  vaem:name "QUDT" ;
+  vaem:namespace "http://qudt.org/schema/qudt/" ;
+  vaem:namespacePrefix "qudt" ;
+  vaem:owner "QUDT.ORG" ;
+  vaem:title "QUDT Vocabulary for Datatypes - Version 3.1.0" ;
+  vaem:usesNonImportedResource dcterms:abstract ;
+  vaem:usesNonImportedResource dcterms:created ;
+  vaem:usesNonImportedResource dcterms:creator ;
+  vaem:usesNonImportedResource dcterms:modified ;
+  vaem:usesNonImportedResource dcterms:rights ;
+  vaem:usesNonImportedResource dcterms:title ;
+  vaem:usesNonImportedResource <http://voag.linkedmodel.org/voag#QUDT-Attribution> ;
+  vaem:withAttributionTo <http://voag.linkedmodel.org/voag#QUDT-Attribution> .
+
+qudt:ALPHANUMERIC
+  a qudt:CharacterType ;
+  dtype:code 106 ;
+  dtype:literal "alphanumeric" ;
+  qudt:bits 8 ;
+  qudt:bytes 1 ;
+  qudt:id "T001-00" ;
+  qudt:rdfsDatatype xsd:byte ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "ALPHANUMERIC" .
+
+qudt:BOOLEAN
+  a qudt:BooleanType ;
+  dcterms:description """
+  <p>In computer science, the Boolean or logical data type is a data type,
+   having two values (usually denoted true and false), intended to represent the truth values of logic and Boolean algebra. 
+  The Boolean data type is the primary result of conditional statements,
+   which allow different actions and change control flow depending on whether a programmer-specified boolean condition evaluates to true or false.
+  </p>
+  """^^rdf:HTML ;
+  dtype:code 1 ;
+  dtype:literal "boolean" ;
+  prov:wasInfluencedBy <http://en.wikipedia.org/wiki/Boolean%5Fdata%5Ftype> ;
+  prov:wasInfluencedBy "http://en.wikipedia.org/wiki/Boolean%5Fdata%5Ftype"^^xsd:anyURI ;
+  prov:wasInfluencedBy <http://msdn.microsoft.com/en-us/library/aa275635(v=sql.80).aspx> ;
+  prov:wasInfluencedBy "http://msdn.microsoft.com/en-us/library/aa275635(v=sql.80).aspx"^^xsd:anyURI ;
+  qudt:ansiSQLName "BOOLEAN" ;
+  qudt:encoding qudt:BooleanEncoding ;
+  qudt:id "T000-01" ;
+  qudt:javaName "boolean" ;
+  qudt:jsName "Boolean()" ;
+  qudt:microsoftSQLServerName "bit" ;
+  qudt:mySQLName "BOOL" ;
+  qudt:mySQLName "BOOLEAN" ;
+  qudt:mySQLName "TINYINT(1)" ;
+  qudt:odbcName "SQL_BIT" ;
+  qudt:oleDBName "DBTYPE_BOOL" ;
+  qudt:oracleSQLName "RAW(1)" ;
+  qudt:protocolBuffersName "bool" ;
+  qudt:pythonName "bool" ;
+  qudt:rdfsDatatype xsd:boolean ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "BOOLEAN" .
+
+qudt:BYTE
+  a qudt:SignedShortIntegerType ;
+  dcterms:description """
+  <p>The byte data type is an 8-bit signed two's complement integer. 
+  It has a minimum value of -128 and a maximum value of 127 (inclusive). 
+  The byte data type can be useful for saving memory in large arrays, where the memory savings actually matters. 
+  They can also be used in place of int where their limits help to clarify your code; the fact that a variable's range is limited can serve as a form of documentation.
+  </p>
+  """^^rdf:HTML ;
+  dtype:code "800" ;
+  dtype:literal "byte" ;
+  prov:wasInfluencedBy <http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html> ;
+  prov:wasInfluencedBy "http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html"^^xsd:anyURI ;
+  qudt:abbreviation "SI8" ;
+  qudt:bytes 1 ;
+  qudt:cName "Byte" ;
+  qudt:encoding qudt:OctetEncoding ;
+  qudt:id "T002-01" ;
+  qudt:maxInclusive 127 ;
+  qudt:minInclusive -128 ;
+  qudt:rdfsDatatype xsd:byte ;
+  qudt:signedness qudt:SIGNED ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Byte" .
+
+qudt:BigEndian
+  a qudt:EndianType ;
+  dcterms:description "A big-endian machine stores the most significant byte first."^^rdf:HTML ;
+  dtype:code 1 ;
+  dtype:literal "big" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Big Endian" .
+
+qudt:BitAligned
+  a qudt:AlignmentType ;
+  dcterms:description "Alignment at a bit level."^^rdf:HTML ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit aligned" .
+
+qudt:BitEncoding
+  a qudt:BitEncodingType ;
+  qudt:bits 1 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Encoding" .
+
+qudt:BitField01
+  a rdfs:Datatype ;
+  dtype:literal "B1" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf1" ;
+  qudt:bits 1 ;
+  qudt:id "T010-01" ;
+  qudt:mySQLName "BIT(1)" ;
+  qudt:rdfsDatatype qudt:BitField01 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 1 bit" ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField02
+  a rdfs:Datatype ;
+  dtype:code 182 ;
+  dtype:literal "B2" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf2" ;
+  qudt:bits 2 ;
+  qudt:id "T010-02" ;
+  qudt:mySQLName "BIT(2)" ;
+  qudt:rdfsDatatype qudt:BitField02 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 2 bits" ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField03
+  a rdfs:Datatype ;
+  dtype:code 183 ;
+  dtype:literal "B3" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf3" ;
+  qudt:bits 3 ;
+  qudt:id "T010-03" ;
+  qudt:mySQLName "BIT(3)" ;
+  qudt:rdfsDatatype qudt:BitField03 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 3 bits" ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField04
+  a rdfs:Datatype ;
+  dtype:code 184 ;
+  dtype:literal "B4" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf4" ;
+  qudt:bits 4 ;
+  qudt:id "T010-04" ;
+  qudt:mySQLName "BIT(4)" ;
+  qudt:rdfsDatatype qudt:BitField04 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 4 bits" ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField05
+  a rdfs:Datatype ;
+  dtype:code 185 ;
+  dtype:literal "B5" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf5" ;
+  qudt:bits 5 ;
+  qudt:id "T010-05" ;
+  qudt:mySQLName "BIT(5)" ;
+  qudt:rdfsDatatype qudt:BitField05 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 5 bits" ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField06
+  a rdfs:Datatype ;
+  dtype:code 186 ;
+  dtype:literal "B6" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf6" ;
+  qudt:bits 6 ;
+  qudt:id "T010-06" ;
+  qudt:mySQLName "BIT(6)" ;
+  qudt:rdfsDatatype qudt:BitField06 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 6 bits" ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField07
+  a rdfs:Datatype ;
+  dtype:code 187 ;
+  dtype:literal "B7" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf7" ;
+  qudt:bits 7 ;
+  qudt:id "T010-07" ;
+  qudt:mySQLName "BIT(7)" ;
+  qudt:rdfsDatatype qudt:BitField07 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 7 bits" ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField08
+  a rdfs:Datatype ;
+  dtype:code 188 ;
+  dtype:literal "B8" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf8" ;
+  qudt:bits 8 ;
+  qudt:id "T010-08" ;
+  qudt:mySQLName "BIT(8)" ;
+  qudt:rdfsDatatype qudt:BitField08 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 8 bits" ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField09
+  a rdfs:Datatype ;
+  dtype:code 189 ;
+  dtype:literal "B9" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf9" ;
+  qudt:bits 9 ;
+  qudt:id "T010-09" ;
+  qudt:mySQLName "BIT(9)" ;
+  qudt:rdfsDatatype qudt:BitField09 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 9 bits" ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField10
+  a rdfs:Datatype ;
+  dtype:code 190 ;
+  dtype:literal "B10" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf10" ;
+  qudt:bitOrder qudt:BigEndian ;
+  qudt:bits 10 ;
+  qudt:byteOrder qudt:BigEndian ;
+  qudt:id "T010-02" ;
+  qudt:mySQLName "BIT(10)" ;
+  qudt:rdfsDatatype qudt:BitField10 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field Of 10 Bits" ;
+  rdfs:subClassOf qudt:BitField ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField11
+  a rdfs:Datatype ;
+  dtype:code 191 ;
+  dtype:literal "B11" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/bit-type.html> ;
+  prov:wasInfluencedBy "http://dev.mysql.com/doc/refman/5.0/en/bit-type.html"^^xsd:anyURI ;
+  qudt:abbreviation "bf11" ;
+  qudt:bits 11 ;
+  qudt:id "T010-11" ;
+  qudt:mySQLName "BIT(11)" ;
+  qudt:rdfsDatatype qudt:BitField11 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field Of 11 Bits" ;
+  rdfs:subClassOf qudt:BitField ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BitField12
+  a rdfs:Datatype ;
+  dtype:literal "B12" ;
+  qudt:abbreviation "bf12" ;
+  qudt:bits 12 ;
+  qudt:mySQLName "BIT(12)" ;
+  qudt:rdfsDatatype qudt:BitField12 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Bit Field of 12 bits" ;
+  rdfs:subClassOf qudt:BitField ;
+  rdfs:subClassOf rdfs:Literal .
+
+qudt:BooleanEncoding
+  a qudt:BooleanEncodingType ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Boolean Encoding" .
+
+qudt:ByteAligned
+  a qudt:AlignmentType ;
+  dcterms:description "Alignment of a field at a byte boundary."^^rdf:HTML ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Byte aligned" .
+
+qudt:CCT_EarthCentered
+  a qudt:CoordinateCenterType ;
+  dtype:literal "earthCentered" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth-centered Coordinate System Type" .
+
+qudt:CCT_MarsCentered
+  a qudt:CoordinateCenterType ;
+  dtype:literal "marsCentered" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Mars-centered Coordinate System Type" .
+
+qudt:CCT_MoonCentered
+  a qudt:CoordinateCenterType ;
+  dtype:literal "moonCentered" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Moon-centered Coordinate System Type" .
+
+qudt:CCT_SunCentered
+  a qudt:CoordinateCenterType ;
+  dtype:literal "sunCentered" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Sun-centered Coordinate System Type" .
+
+qudt:CCT_VehicleCentered
+  a qudt:CoordinateCenterType ;
+  dtype:literal "vehicleCentered" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Vehicle-centered Coordinate System Type" .
+
+qudt:CDF
+  a qudt:MultiDimensionalDataFormat ;
+  dcterms:description "CDF (Common Data format), a data format for storing and manipulating scalar and multidimensional data in a platform and discipline independent manner, making interoperability between applications and tools easier. CDF provides device independent view of the CDF data model by software programming interface insulting developers from actual physical file format. CDF was developed by NASA, and is described at http://cdf.gsfc.nasa.gov/."^^rdf:HTML ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Common Data Format (CDF)" .
+
+qudt:CFN_ConcatenateMatrixRows
+  a qudt:CompositionFunction ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Concatenate Matrix Rows" .
+
+qudt:CHAR
+  a qudt:CharacterType ;
+  dtype:literal "char" ;
+  qudt:bits 8 ;
+  qudt:bytes 1 ;
+  qudt:encoding qudt:CharEncoding ;
+  qudt:id "T001-01" ;
+  qudt:rdfsDatatype xsd:byte ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "CHAR" .
+
+qudt:COLOR_AMBER
+  a qudt:ColorCue ;
+  dtype:literal "amber" ;
+  qudt:rgbCode "#FFBF00" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Amber Color" .
+
+qudt:COLOR_GREEN
+  a qudt:ColorCue ;
+  dtype:literal "green" ;
+  qudt:rgbCode "#008000" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Green color" .
+
+qudt:COLOR_ORANGE
+  a qudt:ColorCue ;
+  dtype:literal "orange" ;
+  qudt:rgbCode "#FFA500" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Orange color" .
+
+qudt:COLOR_RED
+  a qudt:ColorCue ;
+  dtype:literal "red" ;
+  qudt:rgbCode "#FF0000" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Red color" .
+
+qudt:COLOR_YELLOW
+  a qudt:ColorCue ;
+  dtype:literal "yellow" ;
+  qudt:rgbCode "#FFFF00" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Yellow color" .
+
+qudt:CharEncoding
+  a qudt:BooleanEncodingType, qudt:CharEncodingType ;
+  qudt:bytes 1 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Char Encoding" .
+
+qudt:DATE
+  a qudt:DateStringType ;
+  dcterms:description """
+  <p>Provides the date expressed in year, month and day.
+  Expressed as "YYYY:MM:DD", where YYYY is a 4 digit year, MM is a 2 digit month and DD is a 2 digit day.
+  </p>
+  """^^rdf:HTML ;
+  dtype:code 255 ;
+  dtype:literal "date" ;
+  qudt:dimensionality 1 ;
+  qudt:id "T004-01" ;
+  qudt:rdfsDatatype xsd:date ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Date" .
+
+qudt:DATETIME
+  a qudt:DateStringType ;
+  dcterms:description "A time stamp encoded as a string 'YYYY-MM-DDThh:mm:ss[.dd]' or 'YYYY-DDDThh:mm:ss[.dd]', where 'YYYY' is the year, 'MM' is the two-digit month, 'DD' is the two-digit day, 'DDD' is the three digit day of year, 'T' is constant, 'hh:mm:ss[.dd]' is the UTC time in hours, minutes, seconds, and optional fractional seconds. As many 'd' characters to the right of the period as required may be used to obtain the required precision. All fields require leading zeros."^^rdf:HTML ;
+  dtype:literal "datetime" ;
+  qudt:dimensionality 1 ;
+  qudt:exactMatch qudt:UTC-DATETIME ;
+  qudt:rdfsDatatype xsd:dateTime ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Date Time" .
+
+qudt:DECIMAL
+  a qudt:NumericType ;
+  dtype:code 101 ;
+  dtype:literal "numeric" ;
+  qudt:ansiSQLName "DECIMAL(p,s)" ;
+  qudt:odbcName "SQL_DECIMAL(p,s)" ;
+  qudt:oracleSQLName "NUMBER(p,s)" ;
+  qudt:rdfsDatatype xsd:decimal ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Decimal" .
+
+qudt:DIGIT
+  a qudt:CharacterType ;
+  dtype:literal "digit" ;
+  qudt:bits 8 ;
+  qudt:bytes 1 ;
+  qudt:id "T001-02" ;
+  qudt:rdfsDatatype xsd:byte ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "DIGIT" .
+
+qudt:DoublePrecisionEncoding
+  a qudt:FloatingPointEncodingType ;
+  qudt:bytes 64 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Double Precision Encoding" .
+
+qudt:ECS_EC-EMEPM
+  a qudt:EarthCoordinateSystem ;
+  dtype:code 10 ;
+  dtype:literal "EC-EMEP" ;
+  qudt:coordinateCenter qudt:CCT_EarthCentered ;
+  qudt:id "TECS-03" ;
+  qudt:referenceFrame qudt:RRF_EMEPM ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth centered earth mean equator and prime meridian coordinate system" ;
+  skos:definition "Earth Centered Earth Mean Equator And Prime Meridian Coordinate System" ;
+  vaem:acronym "EC-EMEP" .
+
+qudt:ECS_EC-ETEPME
+  a qudt:EarthCoordinateSystem ;
+  dtype:code 12 ;
+  dtype:literal "EC-ETEP" ;
+  qudt:coordinateCenter qudt:CCT_EarthCentered ;
+  qudt:id "TECS-04" ;
+  qudt:referenceFrame qudt:NRIF_ETEPME ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth centered earth true equator and prime meridian of epoch coordinate system" ;
+  skos:definition "Earth Centered Earth True Equator And Prime Meridian Of Epoch Coordinate System" .
+
+qudt:ECS_EC-ICRF
+  a qudt:EarthCoordinateSystem ;
+  dtype:code 14 ;
+  dtype:literal "EC-IC" ;
+  qudt:coordinateCenter qudt:CCT_EarthCentered ;
+  qudt:id "TECS-01" ;
+  qudt:referenceFrame qudt:NRIF_ICRF ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth centered international celestial reference system" ;
+  skos:definition "Earth Centered International Celestial Reference System" .
+
+qudt:ECS_EC-ITRF
+  a qudt:EarthCoordinateSystem ;
+  dtype:code 16 ;
+  dtype:literal "EC-IT" ;
+  qudt:coordinateCenter qudt:CCT_EarthCentered ;
+  qudt:id "TECS-02" ;
+  qudt:referenceFrame qudt:RRF_ITRF ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth centered international terrestrial reference system" ;
+  skos:definition "Earth Centered International Terrestrial Reference System" .
+
+qudt:ECS_SC-ICRF
+  a qudt:EarthCoordinateSystem ;
+  dtype:code 90 ;
+  qudt:coordinateCenter qudt:CCT_EarthCentered ;
+  qudt:id "TECS-05" ;
+  qudt:referenceFrame qudt:NRIF_ICRF ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Sun-Centered international celestial reference system" ;
+  skos:definition "Sun Centered International Celestial Reference System" .
+
+qudt:ECS_VC-ICRF
+  a qudt:EarthCoordinateSystem ;
+  dtype:code 100 ;
+  dtype:literal "VC-IC" ;
+  qudt:coordinateCenter qudt:CCT_EarthCentered ;
+  qudt:id "TECS-06" ;
+  qudt:referenceFrame qudt:NRIF_ICRF ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Vehicle centered international celestial reference system" ;
+  skos:definition "Vehicle Centered International Celestial Reference System" .
+
+qudt:FALSE
+  a qudt:BooleanTypeEnumeratedValue ;
+  dtype:literal "false" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "False" .
+
+qudt:FLAG
+  a qudt:BooleanType ;
+  dtype:code 2 ;
+  dtype:literal "flag" ;
+  qudt:id "T000-02" ;
+  qudt:rdfsDatatype xsd:boolean ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "FLAG" .
+
+qudt:FLOAT-DP
+  a qudt:RealDoublePrecisionType ;
+  dcterms:description """
+  <p>A double precision floating point datatype. 
+  Numbers of this type are stored using 64 bits, they require more memory than numbers of type single, which use 32 bits. 
+  However, because they are stored with more bits, numbers of type double are represented to more precision than numbers of type single. 
+  The double-precision (or double) data type is represented according to IEEE Standard 754 for double precision. 
+  A value is formatted with bit-fields for sign, mantissa and exponent.
+  </p>
+  """^^rdf:HTML ;
+  dtype:code 405 ;
+  dtype:literal "double" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/floating-point-types.html> ;
+  prov:wasInfluencedBy <http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html> ;
+  prov:wasInfluencedBy <http://en.wikipedia.org/wiki/Floating_point> ;
+  prov:wasInfluencedBy <http://en.wikipedia.org/wiki/IEEE_floating_point> ;
+  prov:wasInfluencedBy <http://msdn.microsoft.com/en-us/library/aa275635(v=sql.80).aspx> ;
+  prov:wasInfluencedBy <http://www.mathworks.com/help/matlab/matlab_prog/floating-point-numbers.html> ;
+  qudt:abbreviation "F64" ;
+  qudt:ansiSQLName "DOUPLE PRECISION" ;
+  qudt:base 2 ;
+  qudt:bits 64 ;
+  qudt:bytes 8 ;
+  qudt:encoding qudt:DoublePrecisionEncoding ;
+  qudt:exactMatch qudt:FLOAT_IEEE754-BINARY64 ;
+  qudt:id "T006-03" ;
+  qudt:javaName "double" ;
+  qudt:jsName "double" ;
+  qudt:matlabName "double" ;
+  qudt:maxExclusive "(1-2^{-53}) \\times 2^{1024}" ;
+  qudt:maxExponent 1023 ;
+  qudt:maxMantissa 9007199254740991 ;
+  qudt:microsoftSQLServerName "float" ;
+  qudt:minExclusive "-(1-2^{-53}) \\times 2^{1024}" ;
+  qudt:minMantissa -9007199254740991 ;
+  qudt:mySQLName "DOUBLE" ;
+  qudt:odbcName "SQL_DOUBLE" ;
+  qudt:oleDBName "DBTYPE_R8" ;
+  qudt:oracleSQLName "FLOAT(49)" ;
+  qudt:rdfsDatatype xsd:double ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Double Precision Real" .
+
+qudt:FLOAT-SP
+  a qudt:RealSinglePrecisionType ;
+  dcterms:description """
+  <p>
+  A single precision real is a 32 bit signed floating point representation. 
+  Numbers of type single are stored using 32 bits, they require less memory than numbers of type double, which use 64 bits. 
+  However, because they are stored with fewer bits, numbers of type single are represented to less precision than numbers of type double.
+  </p>
+  """^^rdf:HTML ;
+  dtype:literal "single" ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/floating-point-types.html> ;
+  prov:wasInfluencedBy <http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html> ;
+  prov:wasInfluencedBy <http://en.wikipedia.org/wiki/Floating_point> ;
+  prov:wasInfluencedBy <http://msdn.microsoft.com/en-us/library/aa275635(v=sql.80).aspx> ;
+  prov:wasInfluencedBy <http://www-01.ibm.com/support/docview.wss?uid=swg21325957> ;
+  prov:wasInfluencedBy <http://www.mathworks.com/help/matlab/matlab_prog/floating-point-numbers.html> ;
+  prov:wasInfluencedBy <http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10764/apb.htm> ;
+  qudt:ansiSQLName "FLOAT" ;
+  qudt:bits 32 ;
+  qudt:bytes 4 ;
+  qudt:cName "float" ;
+  qudt:encoding qudt:SinglePrecisionRealEncoding ;
+  qudt:id "T006-01" ;
+  qudt:javaName "float" ;
+  qudt:jsName "float" ;
+  qudt:matlabName "single" ;
+  qudt:maxExclusive "$(2-2^{-23}) \\times 2^127$" ;
+  qudt:maxExponent 23 ;
+  qudt:microsoftSQLServerName "real" ;
+  qudt:minExclusive "-(2-2^{-23}) \\times 2^{127}" ;
+  qudt:mySQLName "FLOAT" ;
+  qudt:odbcName "SQL_FLOAT" ;
+  qudt:oleDBName "DBTYPE_R4" ;
+  qudt:oracleSQLName "FLOAT(23)" ;
+  qudt:rdfsDatatype xsd:float ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Single Precision Real" .
+
+qudt:FLOAT_IEEE754-BINARY64
+  a qudt:RealDoublePrecisionType ;
+  dcterms:description """
+  <p>The IEEE-754 floating point datatype is a technical standard established in 1985 by the Institute of Electrical and Electronics Engineers (IEEE). 
+  Many hardware floating point units use the IEEE 754 standard.
+  </p>"""^^rdf:HTML ;
+  prov:wasInfluencedBy <http://en.wikipedia.org/wiki/IEEE_floating_point> ;
+  qudt:base 2 ;
+  qudt:bits 64 ;
+  qudt:exactMatch qudt:FLOAT-DP ;
+  qudt:id "T006-05" ;
+  qudt:maxExponent 970 ;
+  qudt:maxMantissa 9007199254740991 ;
+  qudt:minMantissa -9007199254740991 ;
+  qudt:rdfsDatatype xsd:double ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "IEEE754 BINARY64" .
+
+qudt:FT_INERTIAL
+  a qudt:FrameType ;
+  dtype:literal "inertial" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Inertial Frame Type" .
+
+qudt:FT_NON-ROTATING
+  a qudt:FrameType ;
+  dtype:literal "nonrotating" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Non-rotating Frame Type" .
+
+qudt:FT_ROTATING
+  a qudt:FrameType ;
+  dtype:literal "rotating" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Rotating Frame Type" .
+
+qudt:GlobalPositionVector-DP
+  a qudt:StateSpaceVector ;
+  dtype:code 360 ;
+  qudt:datatype qudt:FLOAT-DP ;
+  qudt:dimensionality 1 ;
+  qudt:dimensions ( 3 ) ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Global Position Vector - double precision" .
+
+qudt:HDF5
+  a qudt:MultiDimensionalDataFormat ;
+  dcterms:description """
+  <p>The Hierarchical Data Format (HDF) is a common data format and a collection of application programming libraries developed at the NSCA primarily for the scientific community and for the exchange of scientific datasets. 
+  A commonly-used version of HDF is HDF5 which offers a simple data model and application interfaces for encoding and exchanging data without the added burden of defining mappings to the underlying machine representations.
+  </p>
+  """^^rdf:HTML ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "HDF5" .
+
+qudt:HDF6
+  a qudt:MultiDimensionalDataFormat ;
+  dcterms:description "A \"Hierarchical Data Format\"." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "HDF6" .
+
+qudt:HEXBINARY
+  a qudt:HexBinaryType ;
+  dtype:code 803 ;
+  dtype:literal "hexbinary" ;
+  qudt:dimensionality 1 ;
+  qudt:rdfsDatatype qudt:hexbinary ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "HEXBINARY" .
+
+qudt:HighToLow
+  a qudt:MemoryOrderType ;
+  dtype:literal "high_to_low" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "High to Low" .
+
+qudt:IEEE754_1985RealEncoding
+  a qudt:FloatingPointEncodingType ;
+  qudt:bytes 32 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "IEEE 754 1985 Real Encoding" .
+
+qudt:IERS-TN-32-2004
+  a qudt:Citation ;
+  dcterms:description """
+  <p>IERS Conventions (2003), D. D. McCarthy and Gérard Petit (eds.), IERS Technical Note No. 32, 2004;
+   <a href="http://www.iers.org/iers/publications/tn/tn32">http://www.iers.org/iers/publications/tn/tn32</a>.
+  </p>"""^^rdf:HTML ;
+  qudt:url "http://www.iers.org/iers/publications/tn/tn32."^^xsd:anyURI ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "IERS-TN-32-2004" .
+
+qudt:INTEGER
+  a qudt:SignedIntegerType ;
+  dcterms:description """
+  <p>An <em>Integer</em> is an XML Schema Definition (XSD) datatype that represents arbitrary-precision whole numbers
+   (positive, negative, or zero) without fractional or decimal components. 
+  It is derived from xsd:decimal by restricting values to integers only..
+  </p>"""^^rdf:HTML ;
+  dtype:code 104 ;
+  dtype:literal "SI" ;
+  qudt:abbreviation "SI" ;
+  qudt:ansiSQLName "INT" ;
+  qudt:bits 16 ;
+  qudt:bytes 2 ;
+  qudt:encoding qudt:ShortSignedIntegerEncoding ;
+  qudt:id "T002-03" ;
+  qudt:javaName "integer" ;
+  qudt:jsName "integer" ;
+  qudt:matlabName "int" ;
+  qudt:microsoftSQLServerName "int" ;
+  qudt:mySQLName "INT" ;
+  qudt:rdfsDatatype xsd:integer ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Integer" .
+
+qudt:ISO8601-UTCDateTime-BasicFormat
+  a qudt:DateTimeStringEncodingType ;
+  qudt:allowedPattern "[0-9]{4}[0-9]{2}[0-9]{2}T[0-9]{2}[0-9]{2}[0-9]{2}.[0-9]+Z" ;
+  qudt:allowedPattern "[0-9]{4}[0-9]{2}[0-9]{2}T[0-9]{2}[0-9]{2}[0-9]{2}Z" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "ISO 8601 UTC Date Time - Basic Format" .
+
+qudt:InterpolatedTABLE
+  a qudt:InterpolatedTable ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Interpolated table" .
+
+qudt:Konopliv2001
+  a qudt:Citation ;
+  dcterms:description """
+  <p>"Recent Gravity Models as a Result of the Lunar Prospector Mission", A. S. Konopliv, S. W. Asmar, E. Carranza, W. L. Sjogren,
+   and D. N. Yuan, Academic Press, Icarus 150, 1-18 (2001).
+  </p>"""^^rdf:HTML ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Konopliv2001" .
+
+qudt:LCS_LC-LMEBF
+  a qudt:LunarCoordinateSystem ;
+  dtype:code 40 ;
+  dtype:literal "LMEBF" ;
+  qudt:coordinateCenter qudt:CCT_MoonCentered ;
+  qudt:id "TLCS-01" ;
+  qudt:referenceFrame qudt:RRF_LMEBF ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Lunar mean earth body fixed Coordinate System" ;
+  skos:definition "Lunar Mean Earth Body Fixed Coordinate System" .
+
+qudt:LCS_LC-LPABF
+  a qudt:LunarCoordinateSystem ;
+  dcterms:description "Lunar body-fixed coordinate frame aligned with the principal axes of the Moon."^^rdf:HTML ;
+  dtype:code 42 ;
+  dtype:literal "LPABF" ;
+  qudt:coordinateCenter qudt:CCT_MoonCentered ;
+  qudt:id "TLCS-02" ;
+  qudt:realization "This is a fixed rotation from LMEBF" ;
+  qudt:referenceFrame qudt:RRF_LPABF ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Lunar principal axis body fixed Coordinate System" ;
+  skos:definition "Lunar Principal Axis Body Fixed Coordinate System" .
+
+qudt:LCS_LC-LPAE
+  a qudt:LunarCoordinateSystem ;
+  dtype:code 42 ;
+  dtype:literal "LPABF" ;
+  qudt:coordinateCenter qudt:CCT_MoonCentered ;
+  qudt:id "TLCS-03" ;
+  qudt:referenceFrame qudt:NRIF_LPAE ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Lunar Principal Axis of Epoch Coordinate System" .
+
+qudt:LETTER
+  a qudt:CharacterType ;
+  dtype:literal "letter" ;
+  qudt:bits 8 ;
+  qudt:bytes 1 ;
+  qudt:id "T001-03" ;
+  qudt:rdfsDatatype xsd:byte ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "LETTER" .
+
+qudt:LittleEndian
+  a qudt:EndianType ;
+  dcterms:description "A little-endian machine stores the least significant byte first."^^rdf:HTML ;
+  dtype:code 2 ;
+  dtype:literal "little" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Little Endian" .
+
+qudt:LongUnsignedIntegerEncoding
+  a qudt:IntegerEncodingType ;
+  qudt:bytes 8 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Long Unsigned Integer Encoding" .
+
+qudt:LowToHigh
+  a qudt:MemoryOrderType ;
+  dtype:literal "low_to_high" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Low to High" .
+
+qudt:MCS_MC-MMEIAUE
+  a qudt:MarsCoordinateSystem ;
+  dtype:code 50 ;
+  dtype:literal "MMEIAUE" ;
+  qudt:coordinateCenter qudt:CCT_MarsCentered ;
+  qudt:id "TMCS-01" ;
+  qudt:referenceFrame qudt:NRIF_MMEIAUE ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Mars mean equator and IAU-Node of epoch Coordinate System" ;
+  skos:definition "Mars Mean Equator And IAU-Node Of Epoch Coordinate System" .
+
+qudt:MCS_MC-MMEPMBF
+  a qudt:MarsCoordinateSystem ;
+  dtype:code 52 ;
+  dtype:literal "MMEPMBF" ;
+  qudt:coordinateCenter qudt:CCT_MarsCentered ;
+  qudt:id "TMCS-02" ;
+  qudt:referenceFrame qudt:RRF_MMEPMBF ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Mars mean equator and prime meridian body-fixed Coordinate System" ;
+  skos:definition "Mars Mean Equator And Prime Meridian Body-Fixed Coordinate System" .
+
+qudt:NRIF_ETEPMBF
+  a qudt:NonRotatingInertialFrame ;
+  dtype:literal "ETEPMBF" ;
+  qudt:exactMatch qudt:RRF_ITRF ;
+  qudt:frameType qudt:FT_NON-ROTATING ;
+  qudt:id "T110-01" ;
+  qudt:realization "The International Terrestrial Reference Frame (ITRF) is realized by the locations of a set of points or stations on a tide-free Earth. As measurements and models have improved or changed, these locations have been changed also and the ITRF has moved slightly with respect to the physical Earth every few years." ;
+  qudt:xAxisDefinition "The intersection of the prime meridian and the rotation equator of the Earth." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "The rotation pole of the Earth." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth True Equator and Prime Meridian Body Fixed" .
+
+qudt:NRIF_ETEPME
+  a qudt:NonRotatingInertialFrame ;
+  dcterms:description """
+  The "Earth's True Equator and Prime Meridian of Epoch" refers to a coordinate system defined by Earth’s equator and prime meridian at a specific moment in time, called the “epoch.”
+  This system is used as a reference in astronomy, geodesy, and celestial mechanics.
+  The NASA Deep Space Network uses the Lieske precession model (1976).
+  """ ;
+  dtype:literal "ETEPME" ;
+  qudt:frameType qudt:FT_NON-ROTATING ;
+  qudt:id "T110-02" ;
+  qudt:informativeReference qudt:IERS-TN-32-2004 ;
+  qudt:realization "The International Terrestrial Reference Frame as defined for 1993 (ITRF93), as located in the ICRF at the epoch given using a consistent set of precession, nutation, and timing and polar motion models." ;
+  qudt:xAxisDefinition "The intersection of the prime meridian and the rotation equator of the Earth, in the ICRF and at the epoch given." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "The rotation pole of the Earth, in the ICRF and at the epoch given." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth True Equator and Prime Meridian of Epoch" ;
+  skos:prefLabel "Earth True Equator and Prime Meridian of Epoch" .
+
+qudt:NRIF_ICRF
+  a qudt:NonRotatingInertialFrame ;
+  dcterms:description "The International celestial reference frame (ICRF) is the best-determined and most stable reference frame and is the root frame.  Other reference frames are often given with respect to the ICRF."^^rdf:HTML ;
+  dtype:literal "ICRF" ;
+  qudt:exactMatch qudt:RRF_ICRF ;
+  qudt:frameType qudt:FT_NON-ROTATING ;
+  qudt:id "T110-03" ;
+  qudt:realization "The International Celestial Reference Frame (ICRF) was defined in 1995 with locations given for 22 quasars and other bright radio objects. This definition was extended by the addition of more sources in 2000." ;
+  qudt:xAxisDefinition "Defined as the cross product of the Z-axis (as defined above) and the Earth mean orbit pole of J2000 (i.e. the ecliptic pole of J2000). The X-axis of this coordinate frame is the Earth vernal equinox of J2000." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "Defined as the pole vector of the Earth Mean Equator of J2000 (where J2000 = Julian date 2451545.0 TDB (Barycentric Dynamical Time))." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "International celestial reference frame" .
+
+qudt:NRIF_LPAE
+  a qudt:NonRotatingInertialFrame ;
+  dtype:code 44 ;
+  dtype:literal "LPAE" ;
+  qudt:abbreviation "LPAE" ;
+  qudt:frameType qudt:FT_NON-ROTATING ;
+  qudt:id "T110-04" ;
+  qudt:xAxisDefinition "Points in the direction of the Moon’s prime meridian principal axis of Epoch (minimum moment of inertia)." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "Points in the direction of the Moon’s North pole principal axis of Epoch (maximum moment of inertia)." ;
+  rdfs:comment "Finding the principal axes depends on solving for the dynamics of the Moon’s orientation, which must be done in conjunction with solving for its motion in space, though the Moon’s motion in space can also be solved for independently. The terms “north pole” and “prime meridian” are loosely used for the Z and X axes respectively of both this and the Lunar Mean Earth frames." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Lunar Principal Axis of Epoch" ;
+  skos:definition "Lunar Principal Axis Of Epoch Coordinate System" ;
+  skos:prefLabel "Lunar Principal Axis of Epoch" .
+
+qudt:NRIF_MMEIAUE
+  a qudt:NonRotatingInertialFrame ;
+  dtype:code 50 ;
+  dtype:literal "MMEIAUE" ;
+  qudt:frameType qudt:FT_NON-ROTATING ;
+  qudt:id "T110-05" ;
+  qudt:realization "This frame is realized from the ICRF, precessed and rotated Relationships: according to the formulae in IAU2000, [Seidelmann2000]" ;
+  qudt:xAxisDefinition "Defined as the cross product of the ICRF Z-axis with the Z-axis (as defined above)." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "Defined as the pole vector of the Mars Mean Equator of Epoch." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Mars Mean Equator and IAU-Node of Epoch" ;
+  skos:definition "Mars Mean Equator And IAU-Node Of Epoch Coordinate System" ;
+  skos:prefLabel "Mars Mean Equator and IAU-Node of Epoch" .
+
+qudt:NUMERIC
+  a qudt:NumericType ;
+  dtype:code 101 ;
+  dtype:literal "numeric" ;
+  qudt:ansiSQLName "DECIMAL(p,s)" ;
+  qudt:odbcName "SQL_DECIMAL(p,s)" ;
+  qudt:oracleSQLName "NUMBER(p,s)" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Numeric" .
+
+qudt:NegativeX
+  a qudt:AxialOrientationType ;
+  dcterms:description "The axis that is in the negative X direction."^^rdf:HTML ;
+  dtype:code 1 ;
+  dtype:literal "negativeX" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Negative X" .
+
+qudt:NegativeY
+  a qudt:AxialOrientationType ;
+  dcterms:description "The axis that is in the negative Y direction."^^rdf:HTML ;
+  dtype:code 2 ;
+  dtype:literal "negativeY" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Negative Y" .
+
+qudt:NegativeZ
+  a qudt:AxialOrientationType ;
+  dcterms:description "The axis that is in the negative Z direction."^^rdf:HTML ;
+  dtype:code 3 ;
+  dtype:literal "negativeZ" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Negative Z" .
+
+qudt:NetCDF
+  a qudt:MultiDimensionalDataFormat ;
+  dcterms:description """
+  <p><em>NetCDF</em> (network Common Data Form) is a set of interfaces for array-oriented data access and a freely-distributed collection of data access libraries for C, Fortran, C++, Java, and other languages. 
+  The netCDF libraries support a machine-independent format for representing scientific data. 
+  Together, the interfaces, libraries, and format support the creation, access, and sharing of scientific data.
+  </p>"""^^rdf:HTML ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "NetCDF" .
+
+qudt:OCTET
+  a qudt:OctetType ;
+  dtype:code "800" ;
+  dtype:literal "octet" ;
+  qudt:abbreviation "octet" ;
+  qudt:bits 8 ;
+  qudt:bytes 1 ;
+  qudt:cName "Byte" ;
+  qudt:encoding qudt:OctetEncoding ;
+  qudt:id "T002-01" ;
+  qudt:maxInclusive 255 ;
+  qudt:minInclusive 0 ;
+  qudt:rdfsDatatype xsd:byte ;
+  qudt:signedness qudt:UNSIGNED ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Octet" .
+
+qudt:OOST_OFF
+  a qudt:OnOffStateType ;
+  dtype:code "0" ;
+  dtype:literal "off" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Off" .
+
+qudt:OOST_ON
+  a qudt:OnOffStateType ;
+  dtype:code "0" ;
+  dtype:literal "on" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "On" .
+
+qudt:OOST_ZERO-MEANS-OFF
+  a qudt:OnOffStateType ;
+  dtype:literal "zero-means-off" ;
+  qudt:inverted true ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Zero means off" .
+
+qudt:OOST_ZERO-MEANS-ON
+  a qudt:OnOffStateType ;
+  dtype:literal "zero-means-on" ;
+  qudt:inverted true ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/schema/datatype> ;
+  rdfs:label "Zero means on" .
+
+qudt:OctetEncoding
+  a qudt:BooleanEncodingType, qudt:ByteEncodingType ;
+  qudt:bytes 1 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "OCTET Encoding" .
+
+qudt:POSITIVE-BIG-INTEGER
+  a qudt:PositiveBigIntegerType ;
+  dtype:literal "PI64" ;
+  qudt:abbreviation "PI64" ;
+  qudt:bits 64 ;
+  qudt:bytes 8 ;
+  qudt:maxInclusive "2^{64}-1" ;
+  qudt:minInclusive "1" ;
+  qudt:mySQLName "BIGINT" ;
+  qudt:rdfsDatatype xsd:unsignedLong ;
+  qudt:signedness qudt:UNSIGNED ;
+  rdfs:label "Positive Big Integer" .
+
+qudt:POSITIVE-LONG-INTEGER
+  a qudt:PositiveIntegerType ;
+  dtype:literal "PI32" ;
+  qudt:abbreviation "UI32" ;
+  qudt:bits 32 ;
+  qudt:bytes 4 ;
+  qudt:encoding qudt:UnsignedIntegerEncoding ;
+  qudt:maxInclusive "2^{32}-1" ;
+  qudt:minInclusive "1" ;
+  qudt:mySQLName "INT" ;
+  qudt:rdfsDatatype xsd:unsignedInt ;
+  qudt:signedness qudt:UNSIGNED ;
+  rdfs:label "Unsigned Long Integer" .
+
+qudt:PadWithAny
+  a qudt:PaddingType ;
+  dcterms:description """
+  <p>Pad with either a one or a zero. 
+  In other words, this is the "don't care" option.
+  <p>
+  """^^rdf:HTML ;
+  dtype:literal "none" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Pad with any" .
+
+qudt:PadWithOnes
+  a qudt:PaddingType ;
+  dcterms:description "Pad unused bits of a field with a one."^^rdf:HTML ;
+  dtype:literal "ones" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Pad with ones" .
+
+qudt:PadWithZeros
+  a qudt:PaddingType ;
+  dcterms:description "Pad unused bits of a field with a zero."^^rdf:HTML ;
+  dtype:literal "zeros" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Pad with zeros" .
+
+qudt:Pointer
+  a qudt:ReferenceDatatype ;
+  dcterms:description """
+  A pointer is a programming language data type whose value refers directly to (or "points to") another value stored elsewhere in the computer memory using its address. 
+  It references a value stored elsewhere in memory, and obtaining or requesting the value to which a pointer refers is called dereferencing the pointer. 
+  A pointer is a simple implementation of the general reference data type. 
+  Pointers to data improve performance for repetitive operations such as traversing string and tree structures.
+  While "pointer" has been used to refer to references in general, it more properly applies to data structures whose interface explicitly allows the pointer to be manipulated as a memory address.
+  """ ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Pointer" .
+
+qudt:PositiveX
+  a qudt:AxialOrientationType ;
+  dcterms:description "The axis that is in the positive X direction."^^rdf:HTML ;
+  dtype:code 4 ;
+  dtype:literal "positiveX" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Positive X" .
+
+qudt:PositiveY
+  a qudt:AxialOrientationType ;
+  dcterms:description "The axis that is in the positive Y direction."^^rdf:HTML ;
+  dtype:code 5 ;
+  dtype:literal "positiveY" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Positive Y" .
+
+qudt:PositiveZ
+  a qudt:AxialOrientationType ;
+  dcterms:description "The axis that is in the positive Z direction."^^rdf:HTML ;
+  dtype:code 6 ;
+  dtype:literal "positiveZ" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Positive Z" .
+
+qudt:QuaternionVector-DP
+  a qudt:Vector ;
+  dcterms:description """
+  <p>This vector type is intended to hold the (real-valued) coefficients to a quaternion number. 
+  That is, if $V=[a,b,c,d]$ is a vector of type <i>QUATERNION-VECTOR</i>,
+   then the proper interpretation of this vector is with respect to the basis elements $1,i,j,k$ of the quaternion algebra. 
+  Specifically, the V corresponds to the quaternion $v = a*1 + b*i + c*j + d*k$. 
+  Note that for most computations, the quaternion basis elements will be replaced with their 4 X 4 dimensional matrix representations,
+   which are elements of type <i>QuaternionBasisMatrix</i>. 
+  In this case, the resulting quaternion will be a 4 X 4 dimensional matrix of the form:
+  </p>
+<pre>
+ a   b  c  d
+-b   a -d  c
+-c   d  a -b
+-d  -c  b  a
+</pre>
+"""^^rdf:HTML ;
+  dtype:code 340 ;
+  qudt:datatype qudt:FLOAT-DP ;
+  qudt:dimensionality 4 ;
+  qudt:dimensions ( 4 4 4 4 ) ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Quaternion Vector - double precision" .
+
+qudt:RELATIVE-DATETIME
+  a qudt:DateStringType ;
+  dcterms:description "Days and time relative to some Epoch"^^rdf:HTML ;
+  dtype:code 76 ;
+  dtype:literal "reldate" ;
+  qudt:dimensionality 1 ;
+  qudt:id "T004-08" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Relative Date And Time" .
+
+qudt:RN_BINARY-BASE
+  a qudt:RealNumberType ;
+  dcterms:description "A rational number can be expressed in the form m*b^e, where m (the mantissa), b (the base), and e (the exponent) are integers. In this case b is chosen to be 2, and then the values of m and e are determined given this choice of base." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Real number binary base" .
+
+qudt:RN_DECIMAL-BASE
+  a qudt:RealNumberType ;
+  dcterms:description "A rational number can be expressed in the form m*b^e, where m (the mantissa), b (the base), and e (the exponent) are integers. In this case b is chosen to be 10, and then the values of m and e are determined given this choice of base." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Real number decminal base" .
+
+qudt:RRF_EMEPM
+  a qudt:RotatingReferenceFrame ;
+  dcterms:description """
+  A rotating reference frame is a coordinate system that rotates relative to an inertial (non-accelerating) reference frame. 
+  It is often used in physics, engineering, and mechanics to analyze motion from the perspective of an observer within the rotating frame.
+  A rotating reference frame is non-inertial because it experiences angular acceleration or constant angular velocity relative to an inertial frame. 
+  This requires the inclusion of fictitious forces (e.g., centrifugal and Coriolis forces) when applying Newton's laws of motion.
+\tEarth can be treated as a rotating reference frame to account for the Coriolis effect, which affects weather patterns and ocean currents.
+\tAnalysis of systems like rotating machinery, merry-go-rounds, or gyroscopes often involves rotating reference frames.
+\tIn astronomy it is used to simplify calculations in celestial mechanics by considering rotating planetary orbits.
+\tTo relate observations in the rotating frame to an inertial frame, one must account for the angular velocity vector and apply transformations like:
+  
+  $$\\vec{F}{\\text{inertial}} = \\vec{F}{\\text{rotating}} - 2m (\\vec{\\omega} \\times \\vec{v}) - m \\vec{\\omega} \\times (\\vec{\\omega} \\times \\vec{r})$$
+  
+  
+  where  $\\vec{\\omega}$ is the angular velocity,  $\\vec{v}$  is velocity in the rotating frame, and $\\vec{r}$ is the position vector.
+  """^^qudt:LatexString ;
+  dtype:literal "EMEPM" ;
+  qudt:frameType qudt:FT_NON-ROTATING ;
+  qudt:id "T110-07" ;
+  qudt:realization "This frame is realized from the ICRF, precessed and rotated according to the formulae in IAU2000." ;
+  qudt:xAxisDefinition "The intersection of the prime meridian and the rotation equator of the Earth, in the ICRF and as a function of time." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "The mean rotation pole of the Earth, in the ICRF and as a function of time." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth Mean Equator and Prime Meridian" ;
+  skos:prefLabel "Earth Mean Equator and Prime Meridian" .
+
+qudt:RRF_EMR
+  a qudt:RotatingReferenceFrame ;
+  dcterms:description """
+  <p>In this coordinate frame, the two collinear Lagrange points LL_1 and LL_2 (sometimes called Libration points) both lie along the positive X-axis approximately 60000 kilometers from the Moon. 
+  The LL_1 point lies on the X-axis between the Moon and the Earth and the LL_2 point lies on the X-axis on the other side of the Moon away from the Earth. 
+  See [Roncoli2005] for more information about Lagrange points.
+  </p>"""^^rdf:HTML ;
+  dtype:code 20 ;
+  dtype:literal "EM-ROT" ;
+  qudt:frameType qudt:FT_ROTATING ;
+  qudt:id "T110-08" ;
+  qudt:xAxisDefinition "Points in the direction of the vector from the Earth to the Moon." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "Points in the direction of the instantaneous orbit normal of the Moon about the Earth." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth-Moon Rotating" ;
+  skos:definition "Earth-Moon Rotating Coordinate System" ;
+  skos:prefLabel "Earth-Moon Rotating" .
+
+qudt:RRF_ICRF
+  a qudt:ReferenceFrame ;
+  dcterms:description """
+  The ICRF is the best-determined and most stable reference frame and is the “root” frame—other reference frames are often given with respect to the ICRF.
+  The vehicle-centered, EME2000 coordinate system is useful for vehicle attitude determination since the positions of stars in star catalogs used with star trackers,
+   and other celestial sensors are generally expressed using the EME2000 coordinate frame. 
+  However, caution must be exercised here since the EME2000 frames realized in the past by various star catalogs (such as FK5) and ephemerides (such as DE205) were actually slightly different frames,
+   because estimates of the actual location EME2000 changed with improvements in models and new data. 
+  For this reason the ICRF is the recommended standard.
+  """^^rdf:HTML ;
+  dtype:literal "ICRF" ;
+  qudt:exactMatch qudt:NRIF_ICRF ;
+  qudt:frameType qudt:FT_NON-ROTATING ;
+  qudt:id "T110-06" ;
+  qudt:realization "The International Celestial Reference Frame (ICRF) was defined in 1995 with locations given for 22 quasars and other bright radio objects. This definition was extended by the addition of more sources in 2000. See Reference 8 for further information." ;
+  qudt:xAxisDefinition "Defined as the cross product of the Z-axis (as defined above) and the Earth mean orbit pole of J2000 (i.e. the ecliptic pole of J2000). The X-axis of this coordinate frame is the Earth vernal equinox of J2000." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "Defined as the pole vector of the Earth Mean Equator of J2000 (where J2000 = Julian date 2451545.0 TDB (Barycentric Dynamical Time))." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "International Celestial Reference Frame" ;
+  skos:altLabel "Earth Mean Equator and Equinox of J2000" ;
+  skos:prefLabel "International Celestial Reference Frame" .
+
+qudt:RRF_ITRF
+  a qudt:RotatingReferenceFrame ;
+  dcterms:description "At current levels of accuracy and precision the location of the ITRF at any point in time with respect to the ICRF cannot be predicted because the Earth (and its weather!) are not modeled that accurately. The location of the true pole depends on modeling precession and nutation and then measuring the actual rotation pole relative to the modeled pole with respect to both the ITRF and the ICRF. One can use either the NASA Deep Space Network’s models and file of pole locations, which also includes timing information to tell where the prime meridian was OR one can use the IERS models and file of pole locations and timing called the Earth Orientation Parameters (EOP) file BUT NOT BOTH, e.g., do not use the IERS EOP with the DSN models for precession and nutation. The IERS information is more publicly available and is recommended. See Reference 8 for more information, including the relationships between the various ITRF frames."^^rdf:HTML ;
+  dtype:literal "ITRF" ;
+  qudt:exactMatch qudt:NRIF_ETEPMBF ;
+  qudt:frameType qudt:FT_ROTATING ;
+  qudt:id "T110-09" ;
+  qudt:realization "The International Terrestrial Reference Frame (ITRF) is realized by the locations of a set of points or stations on a tide-free Earth. As measurements and models have improved or changed, these locations have been changed also and the ITRF has moved slightly with respect to the physical Earth every few years; ITRF93 is recommended." ;
+  qudt:xAxisDefinition "The intersection of the prime meridian and the rotation equator of the Earth." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "The rotation pole of the Earth." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "International Terrestrial Reference Frame" ;
+  rdfs:seeAlso qudt:RRF_ICRF ;
+  skos:prefLabel "International Terrestrial Reference Frame" .
+
+qudt:RRF_LMEBF
+  a qudt:RotatingReferenceFrame ;
+  dcterms:description """
+  <p>Lunar body-fixed coordinate frame aligned with the rotation axis of the Moon.
+  The location of the LMEBF is a fixed rotation from the LPABF given in [Williams96] as:
+   “The three rotations (in arcseconds) from Principal (P) to Mean (M) axes are:
+    M = R_1(-0.15') R_2(-79.12') R_3(-66.48') P."
+  Historical data and surface maps are given in this frame. 
+  </p>
+  """^^rdf:HTML ;
+  dtype:code 40 ;
+  dtype:literal "LMEBF" ;
+  qudt:frameType qudt:FT_ROTATING ;
+  qudt:id "T110-10" ;
+  qudt:realization "This is realized by the locations of the three Apollo and one Lunar laser ranging retroreflectors" ;
+  qudt:xAxisDefinition "Points in the direction of the Moon’s historical prime meridian (mean direction toward Earth)." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "Points in the direction of the Moon’s North rotation pole (mean rotation axis)." ;
+  rdfs:comment """
+  Reference: “Lunar moments, tides, orientation, and coordinate frames,” J. G. Williams, X. X. Newhall, and J. O. Dickey, Planet. Space Sci. 44:1077-1080, 1996.
+  """ ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Lunar Mean Earth Body-Fixed" ;
+  skos:definition "Lunar Mean Earth Body Fixed Coordinate System" ;
+  skos:prefLabel "Lunar Mean Earth Body-Fixed" .
+
+qudt:RRF_LPABF
+  a qudt:RotatingReferenceFrame ;
+  dcterms:description """
+  <p>
+  Lunar body-fixed coordinate frame aligned with the principal axes of the Moon. 
+  The location of the LPABF in the ICRF should be solved for in conjunction with solving for the Moon’s motion in space.
+  </p>
+  <p>
+  Lunar gravity fields are defined in this frame. 
+  Finding the principal axes depends on solving for the dynamics of the Moon's orientation,
+   which must be done in conjunction with solving for its motion in space, though the Moon's motion in space can also be solved for independently. 
+  The terms “north pole” and “prime meridian” are loosely used for the Z and X axes respectively of both this and the Lunar Mean Earth frames.
+  </p>"""^^rdf:HTML ;
+  dtype:code 42 ;
+  dtype:literal "LPABF" ;
+  qudt:frameType qudt:FT_ROTATING ;
+  qudt:id "T110-11" ;
+  qudt:realization "This is a fixed rotation from LMEBF" ;
+  qudt:xAxisDefinition "Points in the direction of the Moon's prime meridian principal axis (minimum moment of inertia)." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "Points in the direction of the Moon's North pole principal axis (maximum moment of inertia)." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Lunar Principal Axis Body-Fixed" ;
+  skos:prefLabel "Lunar Principal Axis Body-Fixed" .
+
+qudt:RRF_LVC
+  a qudt:RotatingReferenceFrame ;
+  dcterms:description """
+  <p>
+  Since this coordinate system is non-Euclidean, the axes are not defined by vectors but are lines and circles in space through an origin at a vehicle in orbit around a central body.
+  </p>"""^^rdf:HTML ;
+  dtype:literal "LVC" ;
+  qudt:frameType qudt:FT_NON-ROTATING ;
+  qudt:id "T110-12" ;
+  qudt:realization "Defined by the position and velocity vectors associated with a vehicle and thus directly related to the coordinate system in which those vectors are expressed." ;
+  qudt:xAxisDefinition "Defined as the circle that intersects the vehicle center-of-mass, is centered on the central body center, and lies in the vehicle orbit plane, positive in the direction of motion." ;
+  qudt:xCoordinateDefinition "Defined as the distance on C between the radial projection of P onto C and the Y-axis; this is taken to be positive if P is on the same side from the Y-Z plane as the vehicle velocity vector points and negative otherwise. Equivalently, if we let θ be the centralbody-centered angle from the vehicle to the projection of P onto the orbit plane (measured positively in a right-handed sense with respect to the vehicle orbit angular momentum), then the xcoordinate of the point is θ (in radians) times the radius of the vehicle. Note that the LVC x-coordinate is arbitrary for P located on N." ;
+  qudt:yAxisDefinition "Defined as the line that intersects the vehicle center-of-mass and is normal to the vehicle orbit plane, positive opposite the direction of the orbit angular momentum vector (thus completing a right-handed coordinate system)." ;
+  qudt:yCoordinateDefinition "Defined as the distance from the orbit plane, positive on the side opposite the angular momentum direction." ;
+  qudt:zAxisDefinition "Defined as the line through the vehicle center-of-mass and the central body center, positive toward the central body center." ;
+  qudt:zCoordinateDefinition "Defined as the distance from the central body center to the vehicle center-of-mass minus the distance between P and N; equivalently, the radius of C minus the radius of the projection of P onto the vehicle orbit plane." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Local Vertical Curvilinear" ;
+  skos:prefLabel "Local Vertical Curvilinear" .
+
+qudt:RRF_LVLH
+  a qudt:RotatingReferenceFrame ;
+  dtype:literal "LVLH" ;
+  qudt:frameType qudt:FT_ROTATING ;
+  qudt:id "T110-13" ;
+  qudt:realization "Defined by the position and velocity vectors associated with a Relationships: vehicle and thus directly related to the coordinate system in which those vectors are expressed." ;
+  qudt:xAxisDefinition "Defined as the circle that intersects the vehicle center-of-mass, is centered on the central body center, and lies in the vehicle orbit plane, positive in the direction of motion." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame and is positive in the direction of vehicle motion." ;
+  qudt:zAxisDefinition "Defined as a line that lies along the radius vector from the central body center to the vehicle center-of-mass and is positive toward the central body center." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Local Vertical Local Horizontal" .
+
+qudt:RRF_MMEPMBF
+  a qudt:RotatingReferenceFrame ;
+  dcterms:description """
+  <p>Mars body-fixed coordinate frame with the Mars North pole and prime meridian directions defined by the IAU/IAG [@Seidelmann:2000].
+  """^^rdf:HTML ;
+  dtype:code 52 ;
+  dtype:literal "MMEPMBF" ;
+  qudt:frameType qudt:FT_ROTATING ;
+  qudt:id "T110-14" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Mars Mean Equator and Prime Meridian Body-Fixed" ;
+  skos:definition "Mars Mean Equator And Prime Meridian Body-Fixed Coordinate System" ;
+  skos:prefLabel "Mars Mean Equator and Prime Meridian Body-Fixed" .
+
+qudt:RRF_SER
+  a qudt:RotatingReferenceFrame ;
+  dcterms:description """
+  <p>In this coordinate frame, the two collinear Lagrange points EL_1 and EL_2 (sometimes called Libration points) both lie along the positive X-axis approximately 1.5 million kilometers from the Earth. 
+  The EL_1 point lies on the X-axis between the Earth and the Sun and the EL_2 point lies on the X-axis on the other side of the Earth away from the Sun. 
+  See [Roncoli2005] for more information about Lagrange points.
+  </p>"""^^rdf:HTML ;
+  dtype:code 92 ;
+  dtype:literal "SE-ROT" ;
+  qudt:frameType qudt:FT_ROTATING ;
+  qudt:id "T110-15" ;
+  qudt:informativeReference qudt:Roncoli2005 ;
+  qudt:xAxisDefinition "Points in the direction of the vector from the Sun to the Earth." ;
+  qudt:yAxisDefinition "Completes a standard, right-handed coordinate frame." ;
+  qudt:zAxisDefinition "Points in the direction of the instantaneous orbit normal of the Earth about the Sun." ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Sun-Earth Rotating" .
+
+qudt:Roncoli2005
+  a qudt:Citation ;
+  dcterms:description "\"Lunar Constants and Models Document”, R. Roncoli, JPL D-32296, September 23, 2005, http://ssd.jpl.nasa.gov/?lunar_doc."^^rdf:HTML ;
+  qudt:url "http://ssd.jpl.nasa.gov/?lunar_doc"^^xsd:anyURI ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Roncoli2005" ;
+  skos:prefLabel "Roncoli2005" .
+
+qudt:SIGNED-BIG-INTEGER
+  a qudt:SignedBigIntegerType ;
+  dcterms:description """
+  <p>The <em>Signed Big Integer</em>, (<em>long</em> in Java) data type is a 64-bit signed two's complement integer. 
+  It has a minimum value of -9,223,372,036,854,775,808 and a maximum value of 9,223,372,036,854,775,807 (inclusive). 
+  Use this data type when you need a range of values wider than those provided by int.
+  </p>"""^^rdf:HTML ;
+  dtype:code 109 ;
+  dtype:literal "SI64" ;
+  prov:wasInfluencedBy <http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html> ;
+  prov:wasInfluencedBy "http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html"^^xsd:anyURI ;
+  prov:wasInfluencedBy <http://docs.python.org/2/library/stdtypes.html> ;
+  prov:wasInfluencedBy "http://docs.python.org/2/library/stdtypes.html"^^xsd:anyURI ;
+  prov:wasInfluencedBy <http://msdn.microsoft.com/en-us/library/4xwz0t37(v=vs.71).aspx> ;
+  prov:wasInfluencedBy "http://msdn.microsoft.com/en-us/library/4xwz0t37(v=vs.71).aspx"^^xsd:anyURI ;
+  prov:wasInfluencedBy <http://www.mathworks.com/help/matlab/ref/int16.html> ;
+  prov:wasInfluencedBy "http://www.mathworks.com/help/matlab/ref/int16.html"^^xsd:anyURI ;
+  qudt:abbreviation "SI64" ;
+  qudt:bits 64 ;
+  qudt:bytes 8 ;
+  qudt:encoding qudt:LongUnsignedIntegerEncoding ;
+  qudt:id "T002-02" ;
+  qudt:javaName "long" ;
+  qudt:matlabName "int64" ;
+  qudt:maxInclusive "2^{63}-1" ;
+  qudt:minInclusive "-2^{63}" ;
+  qudt:mySQLName "BIGINT" ;
+  qudt:protocolBuffersName "int64" ;
+  qudt:rdfsDatatype xsd:long ;
+  qudt:signedness qudt:SIGNED ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Signed Big Integer" .
+
+qudt:SIGNED-INTEGER
+  a qudt:SignedIntegerType ;
+  dcterms:description """
+  <p>A <em>Signed Integer</em> or 'short' data type is a 16-bit signed two's complement integer. 
+  It has a minimum value of -32,768 and a maximum (inclusive) value of 32,767. 
+  As with byte, the same guidelines apply: you can use a short to save memory in large arrays,
+   in situations where the memory savings actually matters.
+  </p>"""^^rdf:HTML ;
+  dtype:code 105 ;
+  dtype:literal "SI16" ;
+  prov:wasInfluencedBy <http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html> ;
+  prov:wasInfluencedBy <http://docs.python.org/2/library/stdtypes.html> ;
+  prov:wasInfluencedBy <http://msdn.microsoft.com/en-us/library/4xwz0t37(v=vs.71).aspx> ;
+  prov:wasInfluencedBy <http://www.mathworks.com/help/matlab/ref/int16.html> ;
+  qudt:abbreviation "SI16" ;
+  qudt:ansiSQLName "SMALLINT" ;
+  qudt:bits 16 ;
+  qudt:bytes 2 ;
+  qudt:encoding qudt:ShortSignedIntegerEncoding ;
+  qudt:id "T002-03" ;
+  qudt:javaName "short" ;
+  qudt:jsName "short" ;
+  qudt:matlabName "int16" ;
+  qudt:maxInclusive "32767" ;
+  qudt:microsoftSQLServerName "smallint" ;
+  qudt:minInclusive "-32767" ;
+  qudt:mySQLName "SMALLINT" ;
+  qudt:rdfsDatatype xsd:short ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Signed Integer" .
+
+qudt:SIGNED-LONG-INTEGER
+  a qudt:SignedLongIntegerType ;
+  dcterms:description """
+  <p>A <em>Signed Long Integer</em> is a 32 bit signed integer in 2's complement form.  
+  It has a minimum value of -2,147,483,648 and a maximum value of 2,147,483,647 (inclusive). 
+  For integral values, this data type is generally the default choice unless there is a reason (like the above) to choose something else. 
+  This data type will most likely be large enough for the numbers a program will use.
+  If a wider range of values is needed use long instead.
+  </p>"""^^rdf:HTML ;
+  dtype:literal "SI32" ;
+  prov:wasInfluencedBy <http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html> ;
+  prov:wasInfluencedBy "http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html"^^xsd:anyURI ;
+  prov:wasInfluencedBy <http://docs.python.org/2/library/stdtypes.html> ;
+  prov:wasInfluencedBy "http://docs.python.org/2/library/stdtypes.html"^^xsd:anyURI ;
+  prov:wasInfluencedBy <http://msdn.microsoft.com/en-us/library/4xwz0t37(v=vs.71).aspx> ;
+  prov:wasInfluencedBy "http://msdn.microsoft.com/en-us/library/4xwz0t37(v=vs.71).aspx"^^xsd:anyURI ;
+  qudt:abbreviation "SI32" ;
+  qudt:ansiSQLName "INTEGER" ;
+  qudt:bits 32 ;
+  qudt:bytes 4 ;
+  qudt:cName "int" ;
+  qudt:id "T002-04" ;
+  qudt:javaName "int" ;
+  qudt:jsName "int" ;
+  qudt:matlabName "int32" ;
+  qudt:maxInclusive "2^{31}-1" ;
+  qudt:microsoftSQLServerName "integer" ;
+  qudt:minInclusive "-2^{31}" ;
+  qudt:mySQLName "INT" ;
+  qudt:odbcName "SQL_INTEGER" ;
+  qudt:oleDBName "DBTYPE_I4" ;
+  qudt:oracleSQLName "NUMBER(10)" ;
+  qudt:protocolBuffersName "int32" ;
+  qudt:rdfsDatatype xsd:int ;
+  qudt:signedness qudt:SIGNED ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Signed Long Integer" .
+
+qudt:SIGNED-MEDIUM-INTEGER
+  a qudt:SignedMediumIntegerType ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/integer-types.html> ;
+  qudt:abbreviation "SI24" ;
+  qudt:bits 24 ;
+  qudt:bytes 3 ;
+  qudt:maxInclusive 8388607 ;
+  qudt:minInclusive -8388608 ;
+  qudt:mySQLName "MEDIUMINT" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Signed Medium Integer" .
+
+qudt:SIGNED-SHORT-INTEGER
+  a qudt:SignedShortIntegerType ;
+  dcterms:description "Unsigned 8 bit integer."^^rdf:HTML ;
+  dtype:code 103 ;
+  dtype:literal "SI8" ;
+  qudt:abbreviation "SI8" ;
+  qudt:ansiSQLName "NUMERIC(3,0)" ;
+  qudt:bits 8 ;
+  qudt:bytes 1 ;
+  qudt:encoding qudt:OctetEncoding ;
+  qudt:id "T002-06" ;
+  qudt:maxInclusive "127" ;
+  qudt:microsoftSQLServerName "tinyint" ;
+  qudt:minInclusive "-127" ;
+  qudt:mySQLName "TINYINT" ;
+  qudt:odbcName "SQL_TINYINT" ;
+  qudt:oleDBName "DBTYPE_I1" ;
+  qudt:rdfsDatatype xsd:byte ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Signed Short Integer" .
+
+qudt:STRING
+  a qudt:StringType ;
+  dcterms:description """
+  <p>A <em>String</em> is an ordered list of characters.
+  Typically the characters are UTF-8 characters.
+  """^^rdf:HTML ;
+  dtype:literal "string" ;
+  qudt:dimensionality 1 ;
+  qudt:memberDatatype qudt:CHAR ;
+  qudt:protocolBuffersName "string" ;
+  qudt:rdfsDatatype xsd:string ;
+  rdfs:label "String" .
+
+qudt:Seidelmann2000
+  a qudt:Citation ;
+  dcterms:description """
+  <p>“Report of the IAU/IAG Working Group on Cartographic Coordinates and Rotational Elements of the Planets and Satellites: 2000”,
+   P.K. Seidelmann, V. K. Abalakin, M. Bursa, M. E. Davies, C. DeBergh, J. H. Lieske, J. Oberst, J. L. Simon, E. M. Standish, P. Stooke, and P. C. Thomas,
+   Celestial Mechanics and Dynamical Astronomy 82: 83-110, 2002 (http://springerlink.metapress.com,
+   follow the links from “Browse by Online Libraries (subject areas)”, then “Physics and Astronomy”,
+   then “Celestial Mechanics and Dynamical Astronomy”, then “Volume 82 - Number 1/January 2002”,
+   then follow the links to download the paper.
+  </p>"""^^rdf:HTML ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Seidelmann2000" .
+
+qudt:ShortSignedIntegerEncoding
+  a qudt:IntegerEncodingType ;
+  qudt:bytes 2 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Short Signed Integer Encoding" .
+
+qudt:ShortUnsignedIntegerEncoding
+  a qudt:BooleanEncodingType, qudt:IntegerEncodingType ;
+  qudt:bytes 2 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Short Unsigned Integer Encoding" .
+
+qudt:SignedIntegerEncoding
+  a qudt:IntegerEncodingType ;
+  qudt:bytes 4 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Signed Integer Encoding" .
+
+qudt:SinglePrecisionRealEncoding
+  a qudt:FloatingPointEncodingType ;
+  qudt:bytes 32 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Single Precision Real Encoding" .
+
+qudt:TBRCS_EC-EMR
+  a qudt:ThreeBodyRotatingCoordinateSystem ;
+  dtype:code 20 ;
+  dtype:literal "EM-ROT" ;
+  qudt:coordinateCenter qudt:CCT_EarthCentered ;
+  qudt:id "TTBRCS-01" ;
+  qudt:referenceFrame qudt:RRF_EMR ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth-Centered Earth-Moon Rotating Coordinate System" .
+
+qudt:TBRCS_EC-SER
+  a qudt:ThreeBodyRotatingCoordinateSystem ;
+  dtype:code 92 ;
+  dtype:literal "SE-ROT" ;
+  qudt:coordinateCenter qudt:CCT_EarthCentered ;
+  qudt:id "TTBRCS-02" ;
+  qudt:referenceFrame qudt:RRF_SER ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Earth-Centered Sun Earth Rotating Coordinate System" ;
+  skos:definition "Earth-Centered Sun Earth Rotating Coordinate System" .
+
+qudt:TBRCS_MC-EMR
+  a qudt:ThreeBodyRotatingCoordinateSystem ;
+  dtype:code 20 ;
+  dtype:literal "EM-ROT" ;
+  qudt:coordinateCenter qudt:CCT_MoonCentered ;
+  qudt:id "TTBRCS-03" ;
+  qudt:referenceFrame qudt:RRF_EMR ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Moon-Centered Earth-Moon Rotating Coordinate System" .
+
+qudt:TBRCS_SC-SER
+  a qudt:ThreeBodyRotatingCoordinateSystem ;
+  dtype:code 92 ;
+  dtype:literal "SE-ROT" ;
+  qudt:coordinateCenter qudt:CCT_SunCentered ;
+  qudt:id "TTBRCS-04" ;
+  qudt:referenceFrame qudt:RRF_SER ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Sun-Centered Sun Earth Rotating Coordinate System" ;
+  skos:definition "Sun-Centered Sun Earth Rotating Coordinate System" .
+
+qudt:TIME
+  a qudt:TimeStringType ;
+  dcterms:description "Time in hh:mm:ss[Z|(+|-)hh:mm]format." ;
+  dtype:code 68 ;
+  dtype:literal "time" ;
+  qudt:dimensionality 1 ;
+  qudt:id "T004-12" ;
+  qudt:rdfsDatatype xsd:time ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "TIME" .
+
+qudt:TRUE
+  a qudt:BooleanTypeEnumeratedValue ;
+  dtype:literal "true" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "True" .
+
+qudt:TYPE-MATRIX-4by4-FLOATDP
+  a qudt:TypeList ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "TYPE-MATRIX-4by4-FLOATDP" .
+
+qudt:UNARY-FUNCTION
+  a qudt:FunctionDatatype ;
+  dcterms:description "This type identifies functions that have exactly one argument."^^rdf:HTML ;
+  qudt:functionArity 1 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "UNARY-FUNCTION" .
+
+qudt:UNSIGNED-BIG-INTEGER
+  a qudt:UnsignedBigIntegerType ;
+  dtype:code 117 ;
+  dtype:literal "UI64" ;
+  qudt:abbreviation "UI64" ;
+  qudt:bits 64 ;
+  qudt:bytes 8 ;
+  qudt:id "T002-08" ;
+  qudt:maxInclusive "2^{64}-1" ;
+  qudt:minInclusive "0" ;
+  qudt:mySQLName "BIGINT" ;
+  qudt:rdfsDatatype xsd:unsignedLong ;
+  qudt:signedness qudt:UNSIGNED ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Unsigned Big Integer" .
+
+qudt:UNSIGNED-INTEGER
+  a qudt:UnsignedIntegerType ;
+  dcterms:description "An unsigned 16-bit integer in the range 0 to 65,535"^^rdf:HTML ;
+  dtype:code 113 ;
+  dtype:literal "UI16" ;
+  qudt:abbreviation "UI16" ;
+  qudt:bits 16 ;
+  qudt:id "T002-09" ;
+  qudt:maxInclusive "65535" ;
+  qudt:microsoftSQLServerName "smallint" ;
+  qudt:minInclusive "0" ;
+  qudt:mySQLName "SMALLINT" ;
+  qudt:rdfsDatatype xsd:unsignedShort ;
+  qudt:signedness qudt:UNSIGNED ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Unsigned Integer" .
+
+qudt:UNSIGNED-LONG-INTEGER
+  a qudt:UnsignedLongIntegerType ;
+  dtype:code 115 ;
+  dtype:literal "UI32" ;
+  qudt:abbreviation "UI32" ;
+  qudt:bits 32 ;
+  qudt:bytes 4 ;
+  qudt:encoding qudt:UnsignedIntegerEncoding ;
+  qudt:id "T002-10" ;
+  qudt:maxInclusive "2^{32}-1" ;
+  qudt:minInclusive "0" ;
+  qudt:mySQLName "INT" ;
+  qudt:rdfsDatatype xsd:unsignedInt ;
+  qudt:signedness qudt:UNSIGNED ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Unsigned Long Integer" .
+
+qudt:UNSIGNED-MEDIUM-INTEGER
+  a qudt:UnsignedMediumIntegerType ;
+  prov:wasInfluencedBy <http://dev.mysql.com/doc/refman/5.0/en/integer-types.html> ;
+  qudt:abbreviation "UI24" ;
+  qudt:bits 24 ;
+  qudt:bytes 3 ;
+  qudt:maxInclusive 8388607 ;
+  qudt:minInclusive -8388608 ;
+  qudt:mySQLName "MEDIUMINT" ;
+  qudt:signedness qudt:UNSIGNED ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Unsigned Medium Integer" .
+
+qudt:UNSIGNED-SHORT-INTEGER
+  a qudt:OctetType ;
+  dtype:code 111 ;
+  dtype:literal "UI8" ;
+  prov:wasInfluencedBy <http://msdn.microsoft.com/en-us/library/aa275635(v=sql.80).aspx> ;
+  prov:wasInfluencedBy "http://msdn.microsoft.com/en-us/library/aa275635(v=sql.80).aspx"^^xsd:anyURI ;
+  qudt:abbreviation "UI8" ;
+  qudt:bits 8 ;
+  qudt:bytes 1 ;
+  qudt:id "T002-13" ;
+  qudt:maxInclusive 255 ;
+  qudt:microsoftSQLServerName "tinyint" ;
+  qudt:minInclusive 0 ;
+  qudt:oleDBName "DBTYPE_UI1" ;
+  qudt:rdfsDatatype xsd:unsignedByte ;
+  qudt:signedness qudt:UNSIGNED ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Unsigned Short Integer" .
+
+qudt:UTC-DATETIME
+  a qudt:DateStringType ;
+  dcterms:description """
+  <p>UTC is the time-scale maintained by the BIPM, with assistance from the IERS, which forms the basis of a coordinated dissemination of standard frequencies and time signals. 
+  It corresponds exactly in rate with  the international reference scale of atomic time (TAI) but differs from it by an integer number of seconds.  
+  TAI, based on the second (SI), as realized on the rotating geoid, is formed by the BIPM on the basis of clock data supplied by cooperating establishments. 
+  It is in the form of a continuous scale, e.g. in days, hours, minutes and seconds from the origin 1 January, 1958 (adopted by the CGPM 1971).
+  </p>
+  <p>UTC date times are expressed as "YYYY-MM-DDThh:mm:ss[.dd]"" or "YYYY-DDDThh:mm:ss[.dd]"",
+   where 'YYYY' is the year, 'MM' is the two-digit month, 'DD' is the two-digit day, 'DDD' is the three digit day of year, 'T' is constant,
+    'hh:mm:ss[.dd]' is the UTC time in hours, minutes, seconds, and optional fractional seconds. 
+  As many 'd' characters to the right of the period as required may be used to obtain the required precision. All fields require leading zeros."
+  """^^rdf:HTML ;
+  dtype:code 78 ;
+  dtype:literal "utc-date" ;
+  qudt:dimensionality 1 ;
+  qudt:exactMatch qudt:DATETIME ;
+  qudt:id "T004-13" ;
+  qudt:rdfsDatatype xsd:dateTime ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "UTC Date Time" .
+
+qudt:UTC-DAYTIME
+  a qudt:DateStringType ;
+  dcterms:description """
+  <p>
+  UTC day time is expressed as "YYYY-DDDThh:mm:ss.ddZ", where each character is an ASCII character using one octet with the following meanings:
+   YYYY = Year in four-character subfield with values 0001-9999,
+   DDD = Day of year in three-character subfield with values 001-365 or -366,
+   T =  Calendar-Time separator,
+   hh = Hour in two-character subfield with values 00-23,
+   mm = Minute in two-character subfield with values 00-59,
+   ss = Second in two-character subfield with values 00-59 (-58 or -60 during leap seconds),
+   dd = Decimal fraction of second in one- to n-character subfield, each d has values 0-9, and Z = time code terminator (optional)" 
+  </p>
+  """^^rdf:HTML ;
+  dtype:code 79 ;
+  dtype:literal "utc-dayTime" ;
+  qudt:dimensionality 1 ;
+  qudt:id "T004-14" ;
+  qudt:rdfsDatatype qudt:UTC-DayTime ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "UTC DAY TIME" .
+
+qudt:UTC-DayTime
+  a rdfs:Datatype ;
+  dcterms:description "YYYY-DDDThh:mm:ss.ddZ, where each character is an ASCII character using one octet with the following meanings: YYYY = Year in four-character subfield with values 0001-9999, DDD = Day of year in three-character subfield with values 001-365 or -366, T =  Calendar-Time separator, hh = Hour in two-character subfield with values 00-23,  mm = Minute in two-character subfield with values 00-59, ss = Second in two-character subfield with values 00-59 (-58 or -60 during leap seconds), dd = Decimal fraction of second in one- to n-character subfield, each d has values 0-9, and Z = time code terminator (optional)" ;
+  rdfs:comment "[0-9]{4}\\\\-[0-9]{3}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\\\.[0-9]{2}Z?" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "UTC Day time" ;
+  rdfs:subClassOf xsd:string .
+
+qudt:UTF16-CHAR
+  a qudt:CharacterType ;
+  dtype:code 150 ;
+  dtype:literal "utf16" ;
+  qudt:bits 16 ;
+  qudt:bytes 2 ;
+  qudt:id "T001-04" ;
+  qudt:rdfsDatatype xsd:short ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "UTF16 CHAR" .
+
+qudt:UTF16-STRING
+  a qudt:StringUTF16 ;
+  dtype:literal "utf16" ;
+  qudt:dimensionality 1 ;
+  qudt:encoding qudt:UTF16-StringEncoding ;
+  qudt:memberDatatype qudt:UTF16-CHAR ;
+  qudt:rdfsDatatype xsd:string ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "UTF16 String" .
+
+qudt:UTF16-StringEncoding
+  a qudt:StringEncodingType ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "UTF-16 String" .
+
+qudt:UTF8-CHAR
+  a qudt:CharacterType ;
+  dtype:code 122 ;
+  dtype:literal "utf8" ;
+  qudt:bits 8 ;
+  qudt:bytes 1 ;
+  qudt:id "T001-05" ;
+  qudt:rdfsDatatype xsd:byte ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "UTF8 CHAR" .
+
+qudt:UTF8-STRING
+  a qudt:StringUTF8 ;
+  dcterms:description "String consisting of UTF-8 characters"^^rdf:HTML ;
+  dtype:literal "utf8" ;
+  qudt:dimensionality 1 ;
+  qudt:encoding qudt:UTF8-StringEncoding ;
+  qudt:memberDatatype qudt:UTF8-CHAR ;
+  qudt:rdfsDatatype xsd:string ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/schema/datatype> ;
+  rdfs:label "UTF8 String" .
+
+qudt:UTF8-StringEncoding
+  a qudt:StringEncodingType ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "UTF-8 Encoding" .
+
+qudt:Unsigned
+  a qudt:SignednessType ;
+  dtype:literal "unsigned" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Unsigned" .
+
+qudt:UnsignedIntegerEncoding
+  a qudt:IntegerEncodingType ;
+  qudt:bytes 4 ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Unsigned Integer Encoding" .
+
+qudt:VCS_VC-LVC
+  a qudt:LocalCoordinateSystem, qudt:VehicleCoordinateSystem ;
+  dtype:code 30 ;
+  dtype:literal "VC-LVC" ;
+  qudt:coordinateCenter qudt:CCT_VehicleCentered ;
+  qudt:id "TVCS-01" ;
+  qudt:referenceFrame qudt:RRF_LVC ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Vehicle centered local vertical curvilinear coordinate system" .
+
+qudt:VCS_VC-LVLH
+  a qudt:LocalCoordinateSystem, qudt:VehicleCoordinateSystem ;
+  dtype:code 32 ;
+  dtype:literal "LVLH" ;
+  qudt:coordinateCenter qudt:CCT_VehicleCentered ;
+  qudt:id "TVCS-02" ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Local vertical local horizontal coordinate system" ;
+  skos:definition "Local Vertical Local Horizontal Coordinate System" .
+
+qudt:WordAligned
+  a qudt:AlignmentType ;
+  dcterms:description "Alignment of a field at a word boundary, that is 2 bytes."^^rdf:HTML ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Word aligned" .
+
+qudt:YDT
+  a qudt:DateStringType ;
+  dtype:code 215 ;
+  dtype:literal "YDT" ;
+  qudt:dimensionality 1 ;
+  qudt:id "T004-16" ;
+  qudt:rdfsDatatype xsd:string ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "Year Day Time" .
+
+qudt:integer1to12
+  a rdfs:Datatype, sh:NodeShape ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "integer 1..12" ;
+  rdfs:subClassOf xsd:int ;
+  sh:datatype xsd:int ;
+  sh:maxInclusive 12 ;
+  sh:minInclusive 1 .
+
+qudt:integer1to31
+  a rdfs:Datatype ;
+  rdfs:isDefinedBy <http://qudt.org/3.1.0/vocab/datatype> ;
+  rdfs:label "integer 1..31" ;
+  rdfs:subClassOf xsd:int ;
+  sh:datatype xsd:int ;
+  sh:maxInclusive 31 ;
+  sh:minInclusive 1 .
+
+

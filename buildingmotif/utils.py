@@ -289,6 +289,8 @@ def get_template_parts_from_shape(
             otype_is_nodeshape = (otype, RDF.type, SH.NodeShape) in shape_graph
 
             if (otype_as_class and otype_is_nodeshape) or otype_as_node:
+                if not isinstance(otype, URIRef):
+                    continue
                 library = None
                 for library_name, graph in depedency_graphs.items():
                     if (otype, RDF.type, SH.NodeShape) in graph:
@@ -327,6 +329,9 @@ def get_template_parts_from_shape(
     for node in nodes:
         # if node is already in deps, skip it
         if any(str(node) == dep["template"] for dep in deps):
+            continue
+        # skip non-URIRef nodes
+        if not isinstance(node, URIRef):
             continue
         deps.append(
             {"template": str(node), "args": {"name": "name"}}
