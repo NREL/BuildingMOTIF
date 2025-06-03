@@ -123,10 +123,8 @@ class Library:
         :type library: DBLibrary
         """
         bm = get_building_motif()
-        # bm.table_connection.delete_db_library(library.id)
         for template in library.templates:  # type: ignore
             bm.session.delete(template)
-        bm.session.commit()
 
     # TODO: load library from URI? Does the URI identify the library uniquely?
     # TODO: can we deduplicate shape graphs? use hash of graph?

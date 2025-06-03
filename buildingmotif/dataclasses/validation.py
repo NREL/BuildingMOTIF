@@ -123,16 +123,6 @@ class OrShape(GraphDiff):
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        # context = ""
-        # for shape in self.shapes:
-        #    # get the CBD of the shape
-        #    shape_graph = self.graph.cbd(shape)
-        #    # serialize the shape graph to a string
-        #    shape_str = shape_graph.serialize(format="turtle")
-        #    context += f"Shape: {shape}\n{shape_str}\n"
-        # TODO: consider adding this back? I am removing it because it can be quite big, which
-        # causes issues when we buffer the output in the browser localstorage for demos
-
         return f"{self.focus} needs to match one of the following shapes: {', '.join(self.shapes)}"
 
     @classmethod
