@@ -35,9 +35,10 @@ class BipartiteTokenMapper:
     def _get_parent_class(ontology: Graph, ontology_class: URIRef) -> Optional[URIRef]:
         """Get the immediate parent of ontology class"""
         query = """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
             SELECT ?parent
             WHERE {{
-                ?child rdfs:subClassOf ?parent
+                ?child rdfs:subClassOf ?parent .
             }}
         """
         result = ontology.query(query, initBindings={"child": ontology_class})
@@ -127,15 +128,15 @@ class BipartiteTokenMapper:
         kept_costs = list(zip(row_ind, col_ind))
         # turns the optimal assignment into a dictionary of bindings
         bindings = {
-            cost_matrix.index[x].name: cost_matrix.columns[y] for x, y in kept_costs
+            cost_matrix.index[row]: cost_matrix.columns[col] for row, col in kept_costs
         }
 
         logger.debug("\nkept edges:")
-        for token_idx, param_idx in kept_costs:
-            token = cost_matrix.index[token_idx]
-            param = cost_matrix.columns[param_idx]
+        for row, col in kept_costs:
+            param = cost_matrix.index[row]
+            token = cost_matrix.columns[col]
             logger.debug(
-                f"{token.class_} <- {cost_matrix.iloc[token_idx, param_idx]} -> {param.class_}"
+                f"{param.class_} <- {cost_matrix.iloc[row, col]} -> {token.class_}"
             )
 
         # if no edges, give the cost as infinity

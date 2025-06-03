@@ -41,8 +41,7 @@ class SemanticGraphSynthesizer:
         labelsets: List[LabelSet] = []
 
         for label in labels:
-            label.tokens.sort(key=lambda t: t.classname)
-            token_classes = [t.classname for t in label.tokens]
+            token_classes = sorted(t.classname for t in label.tokens)
 
             # proper labelset for tokenized_label
             labelset = next(
@@ -118,7 +117,8 @@ class SemanticGraphSynthesizer:
 
         bindings_list = []
         for label in labelset.labels:
-            token_identifiers = [t.identifier for t in label.tokens]
+            sorted_tokens = sorted(label.tokens, key=lambda t: t.classname)
+            token_identifiers = [t.identifier for t in sorted_tokens]
             bindings = {
                 param: Token(
                     identifier=token_identifiers[int(token.identifier)],
