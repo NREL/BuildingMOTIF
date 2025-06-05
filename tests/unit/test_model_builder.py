@@ -209,13 +209,6 @@ def test_variadic_parameter(ctx: TemplateBuilderContext):
     assert wrapper.bindings["occ0"] == occ_sensor1_name
     assert wrapper.bindings["occ1"] == occ_sensor2_name
 
-    # Test retrieving all variadic values
-    occ_values = wrapper["occ"]  # __getitem__ with variadic param name
-    assert isinstance(occ_values, list)
-    assert len(occ_values) == 2
-    assert occ_sensor1_name in occ_values
-    assert occ_sensor2_name in occ_values
-
     graph = wrapper.compile()
 
     # Check that both occupancy sensors are linked
@@ -292,3 +285,23 @@ def test_variadic_parameter_with_optional_related_parameter(
 
     # check the zone itself is created and typed
     assert (zone_name, RDF.type, BRICK.HVAC_Zone) in graph2
+
+
+def test_variadic_parameter_late_binding(ctx: TemplateBuilderContext):
+    """
+    Tests that variadic parameters mint fresh params when used in a late binding context
+    """
+    vav_name = BLDG["late_binding_vav"]
+    vav = ctx["vav"](name=vav_name)
+    vav.to_variadic("sen")
+
+    sensor1 = ctx["temp-sensor"]
+    sensor1["name"] = vav["sen"]
+    sensor2 = ctx["temp-sensor"]
+    sensor2["name"] = vav["sen"]
+
+    graph = vav.compile()
+
+    # check that there are only 2 Temperature_Sensor instances
+    sensors = list(graph.subjects(RDF.type, BRICK.Temperature_Sensor))
+    assert len(sensors) == 2, "Expected exactly 2 Temperature_Sensor instances"

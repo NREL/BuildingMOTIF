@@ -102,11 +102,8 @@ class TemplateWrapper:
 
     def __getitem__(self, param):
         if self._is_variadic(param):
-            # return ALL values associated with any variadic
-            # parameter that starts with the given name
-            return [
-                self.bindings[name] for name in self.bindings if name.startswith(param)
-            ]
+            # use a fresh parameter
+            param = self._get_fresh_variadic(param)
         elif param in self.bindings:
             return self.bindings[param]
         elif param not in self.template.all_parameters:
@@ -170,6 +167,18 @@ class TemplateWrapper:
             and parameter in self.template.parameters
         )
 
+    def _has_variadic_values(self, parameter: str) -> bool:
+        """
+        Checks if the given parameter has any variadic values bound to it.
+        This is used to determine if the parameter can be made variadic.
+
+        :param parameter: The parameter to check
+        :return: True if the parameter has variadic values, False otherwise
+        """
+        if not self._is_variadic(parameter):
+            raise ValueError(f"Parameter {parameter} is not variadic")
+        return any(name.startswith(parameter) for name in self.bindings)
+
     def _get_fresh_variadic(self, parameter: str) -> str:
         """
         returns the smallest parameter{i} that is not bound yet, where i is an integer
@@ -211,8 +220,27 @@ class TemplateWrapper:
         tmp = self.template.evaluate(self.bindings)
         # if this is true, there are still parameters to be bound
         if isinstance(tmp, Template):
+            # remove all variadic_parameters if they have any bindings.
+            # do this by looping through all parameters in the template.
+            # IF any are variadic, then remove all triplets that have the parameter in the subject, predicate or object
+            for param in tmp.parameters:
+                if self._is_variadic(param) and self._has_variadic_values(param):
+                    remove_triples_with_param(tmp.body, param)
             bindings, graph = tmp.fill(self.ns, include_optional=False)
             self.bindings.update(bindings)
             return graph
         else:
             return tmp
+
+
+def remove_triples_with_param(graph: Graph, param: str):
+    """
+    Removes all triples from the graph that have the given parameter
+    in the subject, predicate or object.
+
+    :param graph: The graph to remove triples from
+    :param param: The parameter to remove
+    """
+    for s, p, o in list(graph):
+        if s == PARAM[param] or p == PARAM[param] or o == PARAM[param]:
+            graph.remove((s, p, o))
