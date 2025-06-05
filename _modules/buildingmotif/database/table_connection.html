@@ -418,7 +418,7 @@ document.write(`
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">Engine</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.exc</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoResultFound</span>
@@ -434,7 +434,7 @@ document.write(`
     <span class="n">DBModel</span><span class="p">,</span>
     <span class="n">DBShapeCollection</span><span class="p">,</span>
     <span class="n">DBTemplate</span><span class="p">,</span>
-    <span class="n">DepsAssociation</span><span class="p">,</span>
+    <span class="n">DBTemplateDependency</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -704,7 +704,7 @@ document.write(`
         <span class="n">template</span> <span class="o">=</span> <span class="n">DBTemplate</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
             <span class="n">body_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span>
-            <span class="n">optional_args</span><span class="o">=</span><span class="p">[],</span>
+            <span class="n">optional_args</span><span class="o">=</span><span class="p">[],</span>  <span class="c1"># type: ignore</span>
             <span class="n">library</span><span class="o">=</span><span class="n">library</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -764,7 +764,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_db_template</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">library</span></div>
 
-<div class="viewcode-block" id="TableConnection.get_db_template_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_template_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DepsAssociation</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<div class="viewcode-block" id="TableConnection.get_db_template_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_template_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DBTemplateDependency</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a template&#39;s dependencies and its arguments.</span>
 
 <span class="sd">        If you don&#39;t need the arguments, consider using</span>
@@ -777,11 +777,27 @@ document.write(`
 <span class="sd">        :rtype: tuple[tuple[int, list[str]]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">db_template_dependencies</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DepsAssociation</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DepsAssociation</span><span class="o">.</span><span class="n">dependant_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBTemplateDependency</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBTemplateDependency</span><span class="o">.</span><span class="n">template_id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span>
             <span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">db_template_dependencies</span></div>
+
+<div class="viewcode-block" id="TableConnection.get_db_template_dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.get_db_template_dependency">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_db_template_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DBTemplateDependency</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get template dependency object by its id</span>
+
+<span class="sd">        :param id: template dependency id</span>
+<span class="sd">        :type id: int</span>
+<span class="sd">        :return: the template dependency or None</span>
+<span class="sd">        :rtype: Optional[DBTemplateDependency]&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBTemplateDependency</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBTemplateDependency</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="nb">id</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">one</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="TableConnection.update_db_template_name"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.update_db_template_name">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_db_template_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update database template name.</span>
@@ -813,7 +829,11 @@ document.write(`
         <span class="n">db_template</span><span class="o">.</span><span class="n">optional_args</span> <span class="o">=</span> <span class="n">optional_args</span></div>
 
 <div class="viewcode-block" id="TableConnection.add_template_dependency_preliminary"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.add_template_dependency_preliminary">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_template_dependency_preliminary</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dependency_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">template_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">dependency_library</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">dependency_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates a *preliminary* dependency between two templates. This dependency</span>
 <span class="sd">        is preliminary because the bindings between the dependent/dependency templates</span>
@@ -838,7 +858,7 @@ document.write(`
 <span class="sd">        :raises ValueError: if dependant and dependency template don&#39;t share a</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Creating depencency from templates with ids: &#39;</span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&#39; and: &#39;</span><span class="si">{</span><span class="n">dependency_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Creating depencency from templates with id: &#39;</span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&#39; and target: &#39;</span><span class="si">{</span><span class="n">dependency_library</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">dependency_template</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
         <span class="p">)</span>
         <span class="n">templ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_db_template</span><span class="p">(</span><span class="n">template_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -848,14 +868,16 @@ document.write(`
         <span class="c1"># In the past we had a check here to make sure the two templates were in the same library.</span>
         <span class="c1"># This has been removed because it wasn&#39;t actually necessary, but we may add it back in</span>
         <span class="c1"># in the future.</span>
-        <span class="n">relationship</span> <span class="o">=</span> <span class="n">DepsAssociation</span><span class="p">(</span>
-            <span class="n">dependant_id</span><span class="o">=</span><span class="n">template_id</span><span class="p">,</span>
-            <span class="n">dependee_id</span><span class="o">=</span><span class="n">dependency_id</span><span class="p">,</span>
-            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+        <span class="n">relationship</span> <span class="o">=</span> <span class="n">DBTemplateDependency</span><span class="p">(</span>
+            <span class="n">template_id</span><span class="o">=</span><span class="n">template_id</span><span class="p">,</span>
+            <span class="n">dependency_library_name</span><span class="o">=</span><span class="n">dependency_library</span><span class="p">,</span>
+            <span class="n">dependency_template_name</span><span class="o">=</span><span class="n">dependency_template</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">relationship</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Created Dependency with id: &#39;</span><span class="si">{</span><span class="n">relationship</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TableConnection.check_all_template_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.check_all_template_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_all_template_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -870,7 +892,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">check_template_dependency_relationship</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TableConnection.check_template_dependency_relationship"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.table_connection.html#buildingmotif.database.table_connection.TableConnection.check_template_dependency_relationship">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">check_template_dependency_relationship</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">:</span> <span class="n">DepsAssociation</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_template_dependency_relationship</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">:</span> <span class="n">DBTemplateDependency</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Verify that the dependency between two templates is well-formed. This involves</span>
 <span class="sd">        a series of checks:</span>
 <span class="sd">        - existence of the dependent and dependency templates is performed during the</span>
@@ -886,17 +908,17 @@ document.write(`
 <span class="sd">        :raises ValueError: if dependant and dependency template don&#39;t share a</span>
 <span class="sd">            library</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">template_id</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">dependant_id</span>
-        <span class="n">dependency_id</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">dependee_id</span>
+        <span class="n">template_id</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">template_id</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Creating depencency from templates with ids: &#39;</span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&#39; and: &#39;</span><span class="si">{</span><span class="n">dependency_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Creating depencency from templates with ids: &#39;</span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&#39; and: &#39;</span><span class="si">{</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
         <span class="p">)</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Template</span>
 
         <span class="n">templ</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">template_id</span><span class="p">)</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">transitive_parameters</span>
-        <span class="n">dep_templ</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dependency_id</span><span class="p">)</span>
+
+        <span class="n">dep_templ</span> <span class="o">=</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_template</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="n">dep_params</span> <span class="o">=</span> <span class="n">dep_templ</span><span class="o">.</span><span class="n">transitive_parameters</span>
 
         <span class="c1"># check parameters are valid</span>
@@ -937,11 +959,16 @@ document.write(`
             <span class="sa">f</span><span class="s2">&quot;Deleting depencency from templates with ids: &#39;</span><span class="si">{</span><span class="n">template_id</span><span class="si">}</span><span class="s2">&#39; and: &#39;</span><span class="si">{</span><span class="n">dependency_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span>  <span class="c1"># noqa</span>
         <span class="p">)</span>
 
+        <span class="n">dependency_template</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_db_template</span><span class="p">(</span><span class="n">dependency_id</span><span class="p">)</span>
+
         <span class="n">relationship</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DepsAssociation</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBTemplateDependency</span><span class="p">)</span>
             <span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-                <span class="n">DepsAssociation</span><span class="o">.</span><span class="n">dependant_id</span> <span class="o">==</span> <span class="n">template_id</span><span class="p">,</span>
-                <span class="n">DepsAssociation</span><span class="o">.</span><span class="n">dependee_id</span> <span class="o">==</span> <span class="n">dependency_id</span><span class="p">,</span>
+                <span class="n">DBTemplateDependency</span><span class="o">.</span><span class="n">template_id</span> <span class="o">==</span> <span class="n">template_id</span><span class="p">,</span>
+                <span class="n">DBTemplateDependency</span><span class="o">.</span><span class="n">dependency_library_name</span>
+                <span class="o">==</span> <span class="n">dependency_template</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">DBTemplateDependency</span><span class="o">.</span><span class="n">dependency_template_name</span>
+                <span class="o">==</span> <span class="n">dependency_template</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="o">.</span><span class="n">one</span><span class="p">()</span>
         <span class="p">)</span>

@@ -24,6 +24,7 @@ buildingmotif.database.errors
       LibraryNotFound
       ModelNotFound
       ShapeCollectionNotFound
+      TemplateDependencyNotFound
       TemplateNotFound
    
    

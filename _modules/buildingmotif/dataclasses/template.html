@@ -425,12 +425,23 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathLike</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">secrets</span><span class="w"> </span><span class="kn">import</span> <span class="n">token_hex</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TYPE_CHECKING</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">Generator</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">Set</span><span class="p">,</span>
+    <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">overload</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">rdflib</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rdflib.term</span><span class="w"> </span><span class="kn">import</span> <span class="n">Node</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_building_motif</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateDependencyNotFound</span><span class="p">,</span> <span class="n">TemplateNotFound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.namespaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">bind_prefixes</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.template_matcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">TemplateMatcher</span>
@@ -518,14 +529,15 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="n">Dependency</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">dependee_id</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+                <span class="n">Dependency</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_template_dependencies</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
                 <span class="p">)</span>
             <span class="p">]</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Template.add_dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.add_dependency">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add dependency to template.</span>
 
 <span class="sd">        :param dependency: dependency to add</span>
@@ -533,9 +545,36 @@ document.write(`
 <span class="sd">        :param args: dictionary of dependency arguments</span>
 <span class="sd">        :type args: Dict[str, str]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">add_template_dependency_preliminary</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">args</span>
-        <span class="p">)</span></div>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_dependency</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dependency_library</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dependency_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add dependency to template.</span>
+
+<span class="sd">        :param dependency_library: name of library containing depdency</span>
+<span class="sd">        :type dependency_library: str</span>
+<span class="sd">        :param dependency_template: name of template depedency</span>
+<span class="sd">        :type dependency_template: str</span>
+<span class="sd">        :param args: dictionary of dependency arguments</span>
+<span class="sd">        :type args: Dict[str, str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Template.add_dependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.add_dependency">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_dependency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">total_args</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">total_args</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">dependency</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dependency&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">add_template_dependency_preliminary</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">defining_library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">args</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">total_args</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">dependency_library</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dependency_library&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">dependency_template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dependency_template&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">add_template_dependency_preliminary</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">dependency_library</span><span class="p">,</span> <span class="n">dependency_template</span><span class="p">,</span> <span class="n">args</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Template.check_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.check_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">check_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -558,10 +597,12 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">delete_template_dependency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">all_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_on_missing_dependency</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of all parameters used in this template *including* its</span>
 <span class="sd">        dependencies. Includes optional parameters.</span>
 
+<span class="sd">        :param error_on_missing_dependency: Raise an erorr if a template has a missing depedency</span>
+<span class="sd">        :type error_on_missing_dependency: bool</span>
 <span class="sd">        :return: set of parameters *with* dependencies</span>
 <span class="sd">        :rtype: Set[str]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -570,6 +611,10 @@ document.write(`
 
         <span class="c1"># then handle dependencies</span>
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">error_on_missing_dependency</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="p">)</span>
+                <span class="k">continue</span>
             <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">params</span>
 
@@ -587,29 +632,43 @@ document.write(`
         <span class="k">return</span> <span class="n">params</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">dependency_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dependency_parameters</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">error_on_missing_dependency</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The set of all parameters used in this template&#39;s dependencies, including</span>
 <span class="sd">        optional parameters.</span>
 
+<span class="sd">        :param error_on_missing_dependency: Raise an erorr if a template has a missing depedency</span>
+<span class="sd">        :type error_on_missing_dependency: bool</span>
 <span class="sd">        :return: set of parameters used in dependencies</span>
 <span class="sd">        :rtype: Set[str]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">error_on_missing_dependency</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="p">)</span>
+                <span class="k">continue</span>
             <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">params</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_on_missing_dependency</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Counter</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;An addressable histogram of the parameter name counts in this</span>
 <span class="sd">        template and all of its transitive dependencies.</span>
 
+<span class="sd">        :param error_on_missing_dependency: Raise an erorr if a template has a missing depedency</span>
+<span class="sd">        :type error_on_missing_dependency: bool</span>
 <span class="sd">        :return: count of parameters</span>
 <span class="sd">        :rtype: Counter</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">counts</span><span class="p">:</span> <span class="n">Counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
         <span class="n">counts</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">error_on_missing_dependency</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="p">)</span>
+                <span class="k">continue</span>
             <span class="n">counts</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">parameter_counts</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">counts</span>
 
@@ -665,6 +724,8 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">params</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="p">)</span>
             <span class="n">transitive_params</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">transitive_parameters</span>
             <span class="n">rename_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">ours</span><span class="p">:</span> <span class="n">theirs</span> <span class="k">for</span> <span class="n">ours</span><span class="p">,</span> <span class="n">theirs</span> <span class="ow">in</span> <span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -692,6 +753,8 @@ document.write(`
         <span class="c1"># start with this template&#39;s parameters; this recurses into each</span>
         <span class="c1"># dependency to inline dependencies</span>
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="p">)</span>
             <span class="c1"># get the inlined version of the dependency</span>
             <span class="n">deptempl</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">inline_dependencies</span><span class="p">()</span>
 
@@ -875,9 +938,13 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_library_defining_db_template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">id</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Template.library_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.library_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">library_dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Library&quot;</span><span class="p">]:</span>
+<div class="viewcode-block" id="Template.library_dependencies"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Template.library_dependencies">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">library_dependencies</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">error_on_missing_dependency</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;Library&quot;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get library dependencies for this template.</span>
 
+<span class="sd">        :param error_on_missing_dependency: Raise an erorr if a template has a missing depedency</span>
+<span class="sd">        :type error_on_missing_dependency: bool</span>
 <span class="sd">        :return: list of libraries</span>
 <span class="sd">        :rtype: List[Library]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -885,6 +952,10 @@ document.write(`
 
         <span class="n">libs</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">defining_library</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dependencies</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">dep</span><span class="o">.</span><span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">error_on_missing_dependency</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">TemplateNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="p">)</span>
+                <span class="k">continue</span>
             <span class="n">libs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">defining_library</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">libs</span><span class="p">]</span></div>
 
@@ -902,7 +973,7 @@ document.write(`
         <span class="c1"># and all of its dependencies</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ontologies</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">ontology</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">library_dependencies</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">library_dependencies</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
                 <span class="n">ontology</span> <span class="o">+=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_shape_collection</span><span class="p">()</span><span class="o">.</span><span class="n">graph</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ontology</span> <span class="o">=</span> <span class="n">combine_graphs</span><span class="p">(</span><span class="o">*</span><span class="n">ontologies</span><span class="p">)</span>
@@ -999,16 +1070,50 @@ document.write(`
 <span class="k">class</span><span class="w"> </span><span class="nc">Dependency</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Dependency&quot;&quot;&quot;</span>
 
-    <span class="n">_template_id</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+    <span class="n">_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">_bm</span><span class="p">:</span> <span class="s2">&quot;BuildingMOTIF&quot;</span>
+
+    <span class="n">_dependency_library_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">_dependency_template_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Dependency.load"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.dataclasses.template.html#buildingmotif.dataclasses.template.Dependency.load">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dependency&quot;</span><span class="p">:</span>
+        <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
+        <span class="n">dep</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_template_dependency</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dep</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TemplateDependencyNotFound</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">_id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+            <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">,</span>
+            <span class="n">_dependency_library_name</span><span class="o">=</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_library_name</span><span class="p">,</span>
+            <span class="n">_dependency_template_name</span><span class="o">=</span><span class="n">dep</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="p">,</span>
+            <span class="n">_args</span><span class="o">=</span><span class="n">dep</span><span class="o">.</span><span class="n">args</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">template_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_template_id</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dependency_template_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dependency_template_name</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_template_id</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dependency_library_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dependency_library_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Template</span><span class="p">]:</span>
+        <span class="n">db_dependency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_template_dependency</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">db_dependency</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">db_template</span> <span class="o">=</span> <span class="n">db_dependency</span><span class="o">.</span><span class="n">dependency_template</span>
+        <span class="k">if</span> <span class="n">db_template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">db_template</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
 </pre></div>
 
                 </article>

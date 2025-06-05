@@ -9,6 +9,12 @@ buildingmotif.database.tables
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      set_sqlite_pragma
+   
    
 
    
@@ -21,7 +27,7 @@ buildingmotif.database.tables
       DBModel
       DBShapeCollection
       DBTemplate
-      DepsAssociation
+      DBTemplateDependency
    
    
 

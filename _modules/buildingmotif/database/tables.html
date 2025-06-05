@@ -415,15 +415,35 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for buildingmotif.database.tables</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">UniqueConstraint</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">declarative_base</span><span class="p">,</span> <span class="n">relationship</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Column</span><span class="p">,</span>
+    <span class="n">ForeignKey</span><span class="p">,</span>
+    <span class="n">Integer</span><span class="p">,</span>
+    <span class="n">String</span><span class="p">,</span>
+    <span class="n">Text</span><span class="p">,</span>
+    <span class="n">UniqueConstraint</span><span class="p">,</span>
+    <span class="n">event</span><span class="p">,</span>
+    <span class="n">select</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">Engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.exc</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoResultFound</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.hybrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">hybrid_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">Session</span><span class="p">,</span> <span class="n">declarative_base</span><span class="p">,</span> <span class="n">relationship</span>
 
 <span class="c1"># from sqlalchemy.dialects.postgresql import JSON</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.database.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONType</span>
 
 <span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+
+
+<span class="c1"># https://docs.sqlalchemy.org/en/14/dialects/sqlite.html#foreign-key-support</span>
+<div class="viewcode-block" id="set_sqlite_pragma"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.set_sqlite_pragma">[docs]</a><span class="nd">@event</span><span class="o">.</span><span class="n">listens_for</span><span class="p">(</span><span class="n">Engine</span><span class="p">,</span> <span class="s2">&quot;connect&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_sqlite_pragma</span><span class="p">(</span><span class="n">dbapi_connection</span><span class="p">,</span> <span class="n">connection_record</span><span class="p">):</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">dbapi_connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;PRAGMA foreign_keys=ON&quot;</span><span class="p">)</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DBModel"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBModel">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DBModel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
@@ -435,12 +455,13 @@ document.write(`
     <span class="n">description</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Text</span><span class="p">(),</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">graph_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">())</span>
     <span class="n">manifest_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span>
-        <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;shape_collection.id&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;shape_collection.id&quot;</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">&quot;CASCADE&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>
     <span class="n">manifest</span><span class="p">:</span> <span class="s2">&quot;DBShapeCollection&quot;</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
         <span class="s2">&quot;DBShapeCollection&quot;</span><span class="p">,</span>
         <span class="n">uselist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all,delete&quot;</span><span class="p">,</span>
+        <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -461,38 +482,19 @@ document.write(`
     <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">(),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+    <span class="c1"># do not use passive_deletes here because we want to handle the deletion of templates</span>
     <span class="n">templates</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;DBTemplate&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
-        <span class="s2">&quot;DBTemplate&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;library&quot;</span><span class="p">,</span> <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all,delete&quot;</span>
+        <span class="s2">&quot;DBTemplate&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;library&quot;</span><span class="p">,</span> <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all&quot;</span>
     <span class="p">)</span>
 
     <span class="n">shape_collection_id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span>
-        <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;shape_collection.id&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;shape_collection.id&quot;</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">&quot;CASCADE&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>
     <span class="n">shape_collection</span><span class="p">:</span> <span class="n">DBShapeCollection</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
         <span class="s2">&quot;DBShapeCollection&quot;</span><span class="p">,</span>
         <span class="n">uselist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all,delete&quot;</span><span class="p">,</span>
-    <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="DepsAssociation"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DepsAssociation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DepsAssociation</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Many-to-many relationship between dependant templates.&quot;&quot;&quot;</span>
-
-    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;deps_association_table&quot;</span>
-
-    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">dependant_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;template.id&quot;</span><span class="p">))</span>
-    <span class="n">dependee_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;template.id&quot;</span><span class="p">))</span>
-    <span class="c1"># args are a mapping of dependee args to dependant args</span>
-    <span class="n">args</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">JSONType</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-    <span class="n">__table_args__</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">UniqueConstraint</span><span class="p">(</span>
-            <span class="s2">&quot;dependant_id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;dependee_id&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;args&quot;</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;deps_association_unique_constraint&quot;</span><span class="p">,</span>
-        <span class="p">),</span>
+        <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="n">passive_deletes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -506,21 +508,13 @@ document.write(`
     <span class="n">body_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">())</span>
     <span class="n">optional_args</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">JSONType</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
-    <span class="n">library_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;library.id&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">library</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">DBLibrary</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;DBLibrary&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">)</span>
-    <span class="n">dependencies</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;DBTemplate&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
-        <span class="s2">&quot;DBTemplate&quot;</span><span class="p">,</span>
-        <span class="n">secondary</span><span class="o">=</span><span class="s2">&quot;deps_association_table&quot;</span><span class="p">,</span>
-        <span class="n">primaryjoin</span><span class="o">=</span><span class="nb">id</span> <span class="o">==</span> <span class="n">DepsAssociation</span><span class="o">.</span><span class="n">dependant_id</span><span class="p">,</span>
-        <span class="n">secondaryjoin</span><span class="o">=</span><span class="nb">id</span> <span class="o">==</span> <span class="n">DepsAssociation</span><span class="o">.</span><span class="n">dependee_id</span><span class="p">,</span>
-        <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;dependants&quot;</span><span class="p">,</span>
+    <span class="n">library_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span>
+        <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;library.id&quot;</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">&quot;CASCADE&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>
-    <span class="n">dependants</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;DBTemplate&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
-        <span class="s2">&quot;DBTemplate&quot;</span><span class="p">,</span>
-        <span class="n">secondary</span><span class="o">=</span><span class="s2">&quot;deps_association_table&quot;</span><span class="p">,</span>
-        <span class="n">primaryjoin</span><span class="o">=</span><span class="nb">id</span> <span class="o">==</span> <span class="n">DepsAssociation</span><span class="o">.</span><span class="n">dependee_id</span><span class="p">,</span>
-        <span class="n">secondaryjoin</span><span class="o">=</span><span class="nb">id</span> <span class="o">==</span> <span class="n">DepsAssociation</span><span class="o">.</span><span class="n">dependant_id</span><span class="p">,</span>
-        <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;dependencies&quot;</span><span class="p">,</span>
+    <span class="n">library</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">DBLibrary</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;DBLibrary&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">)</span>
+
+    <span class="n">dependencies</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="s2">&quot;DBTemplateDependency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
+        <span class="s2">&quot;DBTemplateDependency&quot;</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;template&quot;</span><span class="p">,</span> <span class="n">cascade</span><span class="o">=</span><span class="s2">&quot;all,delete-orphan&quot;</span>
     <span class="p">)</span>
 
     <span class="n">__table_args__</span> <span class="o">=</span> <span class="p">(</span>
@@ -528,6 +522,61 @@ document.write(`
             <span class="s2">&quot;name&quot;</span><span class="p">,</span>
             <span class="s2">&quot;library_id&quot;</span><span class="p">,</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;name_library_unique_constraint&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DBTemplateDependency"><a class="viewcode-back" href="../../../reference/apidoc/_autosummary/buildingmotif.database.tables.html#buildingmotif.database.tables.DBTemplateDependency">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">DBTemplateDependency</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;template_dependency&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">template_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span>
+        <span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;template.id&quot;</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">&quot;CASCADE&quot;</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">DBTemplate</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
+        <span class="n">DBTemplate</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;dependencies&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">dependency_library_name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">dependency_template_name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># args are a mapping of dependee args to dependant args</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">JSONType</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="nd">@hybrid_property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dependency_template</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DBTemplate</span><span class="p">]:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="o">.</span><span class="n">object_session</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">statement</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">DBTemplate</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DBTemplate</span><span class="o">.</span><span class="n">library</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">DBTemplate</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="p">,</span>
+                <span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependency_library_name</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">scalars</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@dependency_template</span><span class="o">.</span><span class="n">expression</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dependency_tempalate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">select</span><span class="p">(</span><span class="n">DBTemplate</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DBTemplate</span><span class="o">.</span><span class="n">library</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">DBTemplate</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependency_template_name</span><span class="p">,</span>
+                <span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependency_library_name</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">__table_args__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">UniqueConstraint</span><span class="p">(</span>
+            <span class="s2">&quot;template_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dependency_library_name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dependency_template_name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;args&quot;</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;template_dependency_unique_constraint&quot;</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">)</span></div>
 </pre></div>

@@ -631,7 +631,9 @@ document.write(`
 
 
 <div class="viewcode-block" id="get_template_parts_from_shape"><a class="viewcode-back" href="../../reference/apidoc/_autosummary/buildingmotif.utils.html#buildingmotif.utils.get_template_parts_from_shape">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_template_parts_from_shape</span><span class="p">(</span>
-    <span class="n">shape_name</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span> <span class="n">shape_graph</span><span class="p">:</span> <span class="n">Graph</span>
+    <span class="n">shape_name</span><span class="p">:</span> <span class="n">URIRef</span><span class="p">,</span>
+    <span class="n">shape_graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span>
+    <span class="n">depedency_graphs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Graph</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Graph</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn a SHACL shape into a template. The following attributes of</span>
 <span class="sd">    NodeShapes will be incorporated into the resulting template:</span>
@@ -644,6 +646,8 @@ document.write(`
 <span class="sd">    :type shape_name: URIRef</span>
 <span class="sd">    :param shape_graph: shape graph</span>
 <span class="sd">    :type shape_graph: Graph</span>
+<span class="sd">    :param depedency_graphs: colleciton of graphs and which depdency library they came from</span>
+<span class="sd">    :type depedency_graphs: dict[str, Graph]</span>
 <span class="sd">    :raises Exception: if more than one object type detected on shape</span>
 <span class="sd">    :raises Exception: if more than one min count detected on shape</span>
 <span class="sd">    :return: template parts</span>
@@ -704,7 +708,21 @@ document.write(`
             <span class="k">if</span> <span class="p">(</span><span class="n">otype_as_class</span> <span class="ow">and</span> <span class="n">otype_is_nodeshape</span><span class="p">)</span> <span class="ow">or</span> <span class="n">otype_as_node</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">otype</span><span class="p">,</span> <span class="n">URIRef</span><span class="p">):</span>
                     <span class="k">continue</span>
-                <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">otype</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
+                <span class="n">library</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">for</span> <span class="n">library_name</span><span class="p">,</span> <span class="n">graph</span> <span class="ow">in</span> <span class="n">depedency_graphs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">otype</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">SH</span><span class="o">.</span><span class="n">NodeShape</span><span class="p">)</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>
+                        <span class="n">library</span> <span class="o">=</span> <span class="n">library_name</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="n">library</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">otype</span><span class="p">),</span> <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">}})</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">deps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">otype</span><span class="p">),</span>
+                            <span class="s2">&quot;library&quot;</span><span class="p">:</span> <span class="n">library</span><span class="p">,</span>
+                            <span class="s2">&quot;args&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">param</span><span class="p">},</span>
+                        <span class="p">}</span>
+                    <span class="p">)</span>
                 <span class="n">body</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">param</span><span class="p">,</span> <span class="n">RDF</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">otype</span><span class="p">))</span>
 
         <span class="n">pvalue</span> <span class="o">=</span> <span class="n">shape_graph</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">pshape</span><span class="p">,</span> <span class="n">SH</span><span class="p">[</span><span class="s2">&quot;hasValue&quot;</span><span class="p">])</span>
@@ -760,7 +778,9 @@ document.write(`
     <span class="k">return</span> <span class="n">shape</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_index_properties</span><span class="p">(</span><span class="n">templ</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TemplateIndex</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_index_properties</span><span class="p">(</span>
+    <span class="n">templ</span><span class="p">:</span> <span class="s2">&quot;Template&quot;</span><span class="p">,</span> <span class="n">error_on_missing_dependency</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TemplateIndex</span><span class="p">:</span>
     <span class="n">templ_graph</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
         <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="n">PARAM</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">templ</span><span class="o">.</span><span class="n">parameters</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;mark&quot;</span><span class="p">:</span> <span class="n">PARAM</span><span class="p">}</span>
     <span class="p">)</span>
@@ -787,7 +807,9 @@ document.write(`
         <span class="c1"># maybe_param = str(o).removeprefix(PARAM) Python &gt;=3.9</span>
         <span class="n">maybe_param</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)[</span><span class="nb">len</span><span class="p">(</span><span class="n">PARAM</span><span class="p">)</span> <span class="p">:]</span>
         <span class="k">if</span> <span class="n">maybe_param</span> <span class="ow">in</span> <span class="n">templ</span><span class="o">.</span><span class="n">dependency_parameters</span><span class="p">:</span>
-            <span class="n">dep</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">dependency_for_parameter</span><span class="p">(</span><span class="n">maybe_param</span><span class="p">)</span>
+            <span class="n">dep</span> <span class="o">=</span> <span class="n">templ</span><span class="o">.</span><span class="n">dependency_for_parameter</span><span class="p">(</span>
+                <span class="n">maybe_param</span><span class="p">,</span> <span class="n">error_on_missing_dependency</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="n">dep</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">prop_shapes</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">URIRef</span><span class="p">(</span><span class="n">dep</span><span class="o">.</span><span class="n">_name</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">param_types</span><span class="p">:</span>

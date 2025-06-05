@@ -465,6 +465,15 @@ document.write(`
                   
   <section id="module-buildingmotif.database.tables">
 <span id="buildingmotif-database-tables"></span><h1>buildingmotif.database.tables<a class="headerlink" href="#module-buildingmotif.database.tables" title="Permalink to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.database.tables.set_sqlite_pragma" title="buildingmotif.database.tables.set_sqlite_pragma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_sqlite_pragma</span></code></a>(dbapi_connection, ...)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p class="rubric">Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table autosummary">
 <tbody>
@@ -480,12 +489,17 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="#buildingmotif.database.tables.DBTemplate" title="buildingmotif.database.tables.DBTemplate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBTemplate</span></code></a>(**kwargs)</p></td>
 <td><p>A Template is used to generate content for a model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.database.tables.DepsAssociation" title="buildingmotif.database.tables.DepsAssociation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DepsAssociation</span></code></a>(**kwargs)</p></td>
-<td><p>Many-to-many relationship between dependant templates.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#buildingmotif.database.tables.DBTemplateDependency" title="buildingmotif.database.tables.DBTemplateDependency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBTemplateDependency</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="buildingmotif.database.tables.set_sqlite_pragma">
+<span class="sig-name descname"><span class="pre">set_sqlite_pragma</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dbapi_connection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">connection_record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/tables.html#set_sqlite_pragma"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.tables.set_sqlite_pragma" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="buildingmotif.database.tables.DBModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DBModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/tables.html#DBModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.tables.DBModel" title="Permalink to this definition">#</a></dt>
@@ -571,32 +585,6 @@ parts of a model.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="buildingmotif.database.tables.DepsAssociation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DepsAssociation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/tables.html#DepsAssociation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.tables.DepsAssociation" title="Permalink to this definition">#</a></dt>
-<dd><p>Many-to-many relationship between dependant templates.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildingmotif.database.tables.DepsAssociation.id">
-<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DepsAssociation.id" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildingmotif.database.tables.DepsAssociation.dependant_id">
-<span class="sig-name descname"><span class="pre">dependant_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DepsAssociation.dependant_id" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildingmotif.database.tables.DepsAssociation.dependee_id">
-<span class="sig-name descname"><span class="pre">dependee_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DepsAssociation.dependee_id" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="buildingmotif.database.tables.DepsAssociation.args">
-<span class="sig-name descname"><span class="pre">args</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DepsAssociation.args" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplate">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DBTemplate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/tables.html#DBTemplate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.tables.DBTemplate" title="Permalink to this definition">#</a></dt>
 <dd><p>A Template is used to generate content for a model.</p>
@@ -632,12 +620,47 @@ parts of a model.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplate.dependencies">
-<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.database.tables.DBTemplate" title="buildingmotif.database.tables.DBTemplate"><span class="pre">DBTemplate</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DBTemplate.dependencies" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">dependencies</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.database.tables.DBTemplateDependency" title="buildingmotif.database.tables.DBTemplateDependency"><span class="pre">DBTemplateDependency</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DBTemplate.dependencies" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplateDependency">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DBTemplateDependency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/buildingmotif/database/tables.html#DBTemplateDependency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#buildingmotif.database.tables.DBTemplateDependency" title="Permalink to this definition">#</a></dt>
+<dd><dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplateDependency.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DBTemplateDependency.id" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplate.dependants">
-<span class="sig-name descname"><span class="pre">dependants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.database.tables.DBTemplate" title="buildingmotif.database.tables.DBTemplate"><span class="pre">DBTemplate</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DBTemplate.dependants" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplateDependency.template_id">
+<span class="sig-name descname"><span class="pre">template_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DBTemplateDependency.template_id" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplateDependency.template">
+<span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#buildingmotif.database.tables.DBTemplate" title="buildingmotif.database.tables.DBTemplate"><span class="pre">DBTemplate</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DBTemplateDependency.template" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplateDependency.dependency_library_name">
+<span class="sig-name descname"><span class="pre">dependency_library_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DBTemplateDependency.dependency_library_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplateDependency.dependency_template_name">
+<span class="sig-name descname"><span class="pre">dependency_template_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DBTemplateDependency.dependency_template_name" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplateDependency.args">
+<span class="sig-name descname"><span class="pre">args</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#buildingmotif.database.tables.DBTemplateDependency.args" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="buildingmotif.database.tables.DBTemplateDependency.dependency_template">
+<span class="sig-name descname"><span class="pre">dependency_template</span></span><a class="headerlink" href="#buildingmotif.database.tables.DBTemplateDependency.dependency_template" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

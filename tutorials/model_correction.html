@@ -529,109 +529,14 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/pyshacl/extras/__init__.py:46: Warning: Extra &quot;js&quot; is not satisfied because requirement pyduktape2 is not installed.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.11.12/x64/lib/python3.11/site-packages/pyshacl/extras/__init__.py:46: Warning: Extra &quot;js&quot; is not satisfied because requirement pyduktape2 is not installed.
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NoResultFound</span><span class="g g-Whitespace">                             </span>Traceback (most recent call last)
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:243,</span> in <span class="ni">TableConnection.get_db_library_by_name</span><span class="nt">(self, name)</span>
-<span class="g g-Whitespace">    </span><span class="mi">242</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">243</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">244</span> <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/sqlalchemy/orm/query.py:2870,</span> in <span class="ni">Query.one</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2853</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Return exactly one result or raise an exception.</span>
-<span class="g g-Whitespace">   </span><span class="mi">2854</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">2855</span><span class="sd"> Raises ``sqlalchemy.orm.exc.NoResultFound`` if the query selects</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">2868</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">2869</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">2870</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">()</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:1522,</span> in <span class="ni">ScalarResult.one</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1515</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Return exactly one object or raise an exception.</span>
-<span class="g g-Whitespace">   </span><span class="mi">1516</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">1517</span><span class="sd"> Equivalent to :meth:`_engine.Result.one` except that</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1520</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">1521</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">1522</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_only_one_row</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1523</span>     <span class="n">raise_for_second_row</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">raise_for_none</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scalar</span><span class="o">=</span><span class="kc">False</span>
-<span class="g g-Whitespace">   </span><span class="mi">1524</span> <span class="p">)</span>
-
-<span class="nn">File /opt/hostedtoolcache/Python/3.11.11/x64/lib/python3.11/site-packages/sqlalchemy/engine/result.py:562,</span> in <span class="ni">ResultInternal._only_one_row</span><span class="nt">(self, raise_for_second_row, raise_for_none, scalar)</span>
-<span class="g g-Whitespace">    </span><span class="mi">561</span> <span class="k">if</span> <span class="n">raise_for_none</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">562</span>     <span class="k">raise</span> <span class="n">exc</span><span class="o">.</span><span class="n">NoResultFound</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">563</span>         <span class="s2">&quot;No row was found when one was required&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">564</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">565</span> <span class="k">else</span><span class="p">:</span>
-
-<span class="ne">NoResultFound</span>: No row was found when one was required
-
-<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
-
-<span class="ne">LibraryNotFound</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">20</span>
-<span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="c1"># load libraries excluded from the python package (available from the repository)</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">20</span> <span class="n">g36</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../libraries/ashrae/guideline36&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">23</span> <span class="c1"># load tutorial 2 model and manifest</span>
-<span class="g g-Whitespace">     </span><span class="mi">24</span> <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;tutorial2_model.ttl&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:202,</span> in <span class="ni">Library.load</span><span class="nt">(cls, db_id, ontology_graph, directory, name, overwrite, infer_templates, run_shacl_inference)</span>
-<span class="g g-Whitespace">    </span><span class="mi">200</span>     <span class="k">if</span> <span class="ow">not</span> <span class="n">src</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-<span class="g g-Whitespace">    </span><span class="mi">201</span>         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Directory </span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2"> does not exist&quot;</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">202</span>     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_load_from_directory</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">203</span>         <span class="n">src</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">204</span>         <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">205</span>         <span class="n">infer_templates</span><span class="o">=</span><span class="n">infer_templates</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">206</span>         <span class="n">run_shacl_inference</span><span class="o">=</span><span class="n">run_shacl_inference</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">207</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">208</span> <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">209</span>     <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:374,</span> in <span class="ni">Library._load_from_directory</span><span class="nt">(cls, directory, overwrite, infer_templates, run_shacl_inference)</span>
-<span class="g g-Whitespace">    </span><span class="mi">372</span>     <span class="n">lib</span><span class="o">.</span><span class="n">_read_yml_file</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">373</span> <span class="c1"># now that we have all the templates, we can populate the dependencies</span>
-<span class="ne">--&gt; </span><span class="mi">374</span> <span class="n">lib</span><span class="o">.</span><span class="n">_resolve_template_dependencies</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">,</span> <span class="n">dependency_cache</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">375</span> <span class="c1"># load shape collections from all ontology files in the directory</span>
-<span class="g g-Whitespace">    </span><span class="mi">376</span> <span class="n">lib</span><span class="o">.</span><span class="n">_load_shapes_from_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:477,</span> in <span class="ni">Library._resolve_template_dependencies</span><span class="nt">(self, template_id_lookup, dependency_cache)</span>
-<span class="g g-Whitespace">    </span><span class="mi">475</span>         <span class="k">continue</span>
-<span class="g g-Whitespace">    </span><span class="mi">476</span>     <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">dependency_cache</span><span class="p">[</span><span class="n">template</span><span class="o">.</span><span class="n">id</span><span class="p">]:</span>
-<span class="ne">--&gt; </span><span class="mi">477</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_dependency</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">dep</span><span class="p">,</span> <span class="n">template_id_lookup</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">478</span> <span class="c1"># check that all dependencies are valid (use parameters that exist, etc)</span>
-<span class="g g-Whitespace">    </span><span class="mi">479</span> <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_templates</span><span class="p">():</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:427,</span> in <span class="ni">Library._resolve_dependency</span><span class="nt">(self, template, dep, template_id_lookup)</span>
-<span class="g g-Whitespace">    </span><span class="mi">425</span> <span class="c1"># if dep is a _template_dependency, turn it into a template</span>
-<span class="g g-Whitespace">    </span><span class="mi">426</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">_template_dependency</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">427</span>     <span class="n">dependee</span> <span class="o">=</span> <span class="n">dep</span><span class="o">.</span><span class="n">to_template</span><span class="p">(</span><span class="n">template_id_lookup</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">428</span>     <span class="n">template</span><span class="o">.</span><span class="n">add_dependency</span><span class="p">(</span><span class="n">dependee</span><span class="p">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">bindings</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">429</span>     <span class="k">return</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:81,</span> in <span class="ni">_template_dependency.to_template</span><span class="nt">(self, id_lookup)</span>
-<span class="g g-Whitespace">     </span><span class="mi">78</span>     <span class="k">return</span> <span class="n">Template</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">id_lookup</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">template_name</span><span class="p">])</span>
-<span class="g g-Whitespace">     </span><span class="mi">79</span> <span class="c1"># if not in the local cache, then search the database for the template</span>
-<span class="g g-Whitespace">     </span><span class="mi">80</span> <span class="c1"># within the given library</span>
-<span class="ne">---&gt; </span><span class="mi">81</span> <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">82</span> <span class="k">return</span> <span class="n">library</span><span class="o">.</span><span class="n">get_template_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_name</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/library.py:210,</span> in <span class="ni">Library.load</span><span class="nt">(cls, db_id, ontology_graph, directory, name, overwrite, infer_templates, run_shacl_inference)</span>
-<span class="g g-Whitespace">    </span><span class="mi">208</span> <span class="k">elif</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">209</span>     <span class="n">bm</span> <span class="o">=</span> <span class="n">get_building_motif</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">210</span>     <span class="n">db_library</span> <span class="o">=</span> <span class="n">bm</span><span class="o">.</span><span class="n">table_connection</span><span class="o">.</span><span class="n">get_db_library_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">211</span>     <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">_id</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">_name</span><span class="o">=</span><span class="n">db_library</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_bm</span><span class="o">=</span><span class="n">bm</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">212</span> <span class="k">else</span><span class="p">:</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/database/table_connection.py:245,</span> in <span class="ni">TableConnection.get_db_library_by_name</span><span class="nt">(self, name)</span>
-<span class="g g-Whitespace">    </span><span class="mi">243</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bm</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DBLibrary</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">DBLibrary</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">244</span> <span class="k">except</span> <span class="n">NoResultFound</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">245</span>     <span class="k">raise</span> <span class="n">LibraryNotFound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-
-<span class="ne">LibraryNotFound</span>: Name: https://brickschema.org/schema/1.4/Brick
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-05 15:16:35,915 | root |  WARNING: An ontology could not resolve a dependency on https://brickschema.org/schema/1.4/Brick (Name: https://brickschema.org/schema/1.4/Brick). Check this is loaded into BuildingMOTIF
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-05 15:16:36,332 | root |  WARNING: An ontology could not resolve a dependency on urn:ashrae/g36 (Name: urn:ashrae/g36). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
 </div>
@@ -649,6 +554,90 @@ document.write(`
 <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">diffset</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">diffset</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-05 15:16:36,767 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (Name: urn:ashrae/g36). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-05 15:16:36,774 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-05 15:16:36,801 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of https://brickschema.org/schema/1.4/Brick from Libraries (Name: https://brickschema.org/schema/1.4/Brick). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-05 15:16:36,808 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of https://brickschema.org/schema/1.4/Brick from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">Exception</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># print reasons</span>
+
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:218,</span> in <span class="ni">Model.validate</span><span class="nt">(self, shape_collections, error_on_missing_imports, shacl_engine)</span>
+<span class="g g-Whitespace">    </span><span class="mi">194</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Validates this model against the given list of ShapeCollections.</span>
+<span class="g g-Whitespace">    </span><span class="mi">195</span><span class="sd"> If no list is provided, the model will be validated against the model&#39;s &quot;manifest&quot;.</span>
+<span class="g g-Whitespace">    </span><span class="mi">196</span><span class="sd"> If a list of shape collections is provided, the manifest will *not* be automatically</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">    </span><span class="mi">215</span><span class="sd"> :rtype: ValidationContext</span>
+<span class="g g-Whitespace">    </span><span class="mi">216</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">217</span> <span class="n">compiled_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">shape_collections</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()])</span>
+<span class="ne">--&gt; </span><span class="mi">218</span> <span class="k">return</span> <span class="n">compiled_model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">error_on_missing_imports</span><span class="p">)</span>
+
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/compiled_model.py:145,</span> in <span class="ni">CompiledModel.validate</span><span class="nt">(self, error_on_missing_imports)</span>
+<span class="g g-Whitespace">    </span><span class="mi">143</span> <span class="c1"># aggregate shape graphs</span>
+<span class="g g-Whitespace">    </span><span class="mi">144</span> <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape_collections</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">145</span>     <span class="n">shapeg</span> <span class="o">+=</span> <span class="n">sc</span><span class="o">.</span><span class="n">resolve_imports</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">146</span>         <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span>
+<span class="g g-Whitespace">    </span><span class="mi">147</span>     <span class="p">)</span><span class="o">.</span><span class="n">graph</span>
+<span class="g g-Whitespace">    </span><span class="mi">148</span> <span class="c1"># inline sh:node for interpretability</span>
+<span class="g g-Whitespace">    </span><span class="mi">149</span> <span class="n">shapeg</span> <span class="o">=</span> <span class="n">rewrite_shape_graph</span><span class="p">(</span><span class="n">shapeg</span><span class="p">)</span>
+
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:137,</span> in <span class="ni">ShapeCollection.resolve_imports</span><span class="nt">(self, recursive_limit, error_on_missing_imports)</span>
+<span class="g g-Whitespace">    </span><span class="mi">120</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Resolves `owl:imports` to as many levels as requested.</span>
+<span class="g g-Whitespace">    </span><span class="mi">121</span><span class="sd"> </span>
+<span class="g g-Whitespace">    </span><span class="mi">122</span><span class="sd"> By default, all `owl:imports` are recursively resolved. This limit can</span>
+<span class="sd">   (...)</span>
+<span class="g g-Whitespace">    </span><span class="mi">134</span><span class="sd"> :rtype: ShapeCollection</span>
+<span class="g g-Whitespace">    </span><span class="mi">135</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">136</span> <span class="n">resolved_namespaces</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="ne">--&gt; </span><span class="mi">137</span> <span class="n">resolved</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">138</span>     <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">139</span>     <span class="n">recursive_limit</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">140</span>     <span class="n">resolved_namespaces</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">141</span>     <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">142</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">143</span> <span class="n">new_sc</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">144</span> <span class="n">new_sc</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">resolved</span><span class="p">)</span>
+
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:577,</span> in <span class="ni">_resolve_imports</span><span class="nt">(graph, recursive_limit, seen, error_on_missing_imports)</span>
+<span class="g g-Whitespace">    </span><span class="mi">574</span>             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">575</span>         <span class="k">continue</span>
+<span class="ne">--&gt; </span><span class="mi">577</span>     <span class="n">dependency</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">578</span>         <span class="n">sc_to_add</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">579</span>         <span class="n">recursive_limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">580</span>         <span class="n">seen</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">581</span>         <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">582</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">583</span>     <span class="n">new_g</span> <span class="o">+=</span> <span class="n">dependency</span>
+<span class="g g-Whitespace">    </span><span class="mi">584</span> <span class="k">return</span> <span class="n">new_g</span>
+
+<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:574,</span> in <span class="ni">_resolve_imports</span><span class="nt">(graph, recursive_limit, seen, error_on_missing_imports)</span>
+<span class="g g-Whitespace">    </span><span class="mi">572</span> <span class="k">if</span> <span class="n">sc_to_add</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">573</span>     <span class="k">if</span> <span class="n">error_on_missing_imports</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">574</span>         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">575</span>     <span class="k">continue</span>
+<span class="g g-Whitespace">    </span><span class="mi">577</span> <span class="n">dependency</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">578</span>     <span class="n">sc_to_add</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">579</span>     <span class="n">recursive_limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">580</span>     <span class="n">seen</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">581</span>     <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">582</span> <span class="p">)</span>
+
+<span class="ne">Exception</span>: (&#39;Could not resolve import of %s&#39;, rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.4/Brick&#39;))
 </pre></div>
 </div>
 </div>
