@@ -24,15 +24,15 @@ def test_create_db_model(mock_uuid4, table_connection):
     assert db_model.manifest.graph_id == str(mocked_manifest_uuid)
 
 
-def test_get_db_models(table_connection):
-    table_connection.create_db_model(
+def test_get_db_models(bm):
+    bm.table_connection.create_db_model(
         name="my_db_model", description="a very good model"
     )
-    table_connection.create_db_model(
+    bm.table_connection.create_db_model(
         name="your_db_model", description="an ok good model"
     )
 
-    db_models = table_connection.get_all_db_models()
+    db_models = bm.table_connection.get_all_db_models()
 
     assert len(db_models) == 2
     assert all(type(m) == DBModel for m in db_models)
@@ -43,13 +43,13 @@ def test_get_db_models(table_connection):
 
 
 @mock.patch("uuid.uuid4")
-def test_get_db_model(mock_uuid4, table_connection):
+def test_get_db_model(mock_uuid4, bm):
     mocked_graph_uuid = uuid.uuid4()
     mocked_manifest_uuid = uuid.uuid4()
     mock_uuid4.side_effect = [mocked_graph_uuid, mocked_manifest_uuid]
 
-    db_model = table_connection.create_db_model(name="my_db_model")
-    db_model = table_connection.get_db_model(id=db_model.id)
+    db_model = bm.table_connection.create_db_model(name="my_db_model")
+    db_model = bm.table_connection.get_db_model(id=db_model.id)
 
     assert db_model.name == "my_db_model"
     assert db_model.graph_id == str(mocked_graph_uuid)
