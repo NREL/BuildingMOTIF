@@ -128,7 +128,8 @@ class BipartiteTokenMapper:
         kept_costs = list(zip(row_ind, col_ind))
         # turns the optimal assignment into a dictionary of bindings
         bindings = {
-            cost_matrix.index[row]: cost_matrix.columns[col] for row, col in kept_costs
+            cost_matrix.index[row].name: cost_matrix.columns[col]
+            for row, col in kept_costs
         }
 
         logger.debug("\nkept edges:")
