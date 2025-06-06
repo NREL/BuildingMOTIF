@@ -6,7 +6,6 @@ from rdflib.namespace import FOAF
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from buildingmotif.dataclasses import Library, Template
-from buildingmotif.dataclasses.template import Dependency
 from buildingmotif.template_compilation import compile_template_spec
 from buildingmotif.utils import graph_size
 
@@ -100,9 +99,9 @@ def test_add_dependency(clean_building_motif):
 
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
 
-    assert dependant.get_dependencies() == (
-        Dependency(dependee.id, {"name": "1", "param": "2"}),
-    )
+    assert dependant.get_dependencies()[0].template == dependee
+    assert dependant.get_dependencies()[0].args == {"name": "1", "param": "2"}
+
     dependant.check_dependencies()
 
 
@@ -114,14 +113,12 @@ def test_add_multiple_dependencies(clean_building_motif):
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
     dependant.add_dependency(dependee, {"name": "3", "param": "4"})
 
-    assert (
-        Dependency(dependee.id, {"name": "1", "param": "2"})
-        in dependant.get_dependencies()
-    )
-    assert (
-        Dependency(dependee.id, {"name": "3", "param": "4"})
-        in dependant.get_dependencies()
-    )
+    dependencies = [
+        (dependency.template, dependency.args)
+        for dependency in dependant.get_dependencies()
+    ]
+    assert (dependee, {"name": "1", "param": "2"}) in dependencies
+    assert (dependee, {"name": "3", "param": "4"}) in dependencies
     assert len(dependant.get_dependencies()) == 2
     dependant.check_dependencies()
 
@@ -156,9 +153,8 @@ def test_get_dependencies(clean_building_motif):
 
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
 
-    assert dependant.get_dependencies() == (
-        Dependency(dependee.id, {"name": "1", "param": "2"}),
-    )
+    assert dependant.get_dependencies()[0].template == dependee
+    assert dependant.get_dependencies()[0].args == {"name": "1", "param": "2"}
 
 
 def test_remove_dependency(clean_building_motif):
@@ -167,9 +163,9 @@ def test_remove_dependency(clean_building_motif):
     dependee = lib.create_template("dependee", dependency_template_body)
 
     dependant.add_dependency(dependee, {"name": "1", "param": "2"})
-    assert dependant.get_dependencies() == (
-        Dependency(dependee.id, {"name": "1", "param": "2"}),
-    )
+
+    assert dependant.get_dependencies()[0].template == dependee
+    assert dependant.get_dependencies()[0].args == {"name": "1", "param": "2"}
 
     dependant.remove_dependency(dependee)
     assert dependant.get_dependencies() == ()
@@ -205,8 +201,12 @@ def test_get_library_dependencies_from_ttl(clean_building_motif):
     for templ in lib.get_templates():
         print(templ.name)
     templ = lib.get_template_by_name("urn:shape/vav_shape")
+    for dep in templ.get_dependencies():
+        print(dep.dependency_library_name)
+        print(dep.dependency_template_name)
+    templ.check_dependencies()
     assert len(templ.get_dependencies()) == 2, "Expected 2 dependencies"
-    dep_names = [d.template.name for d in templ.get_dependencies()]
+    dep_names = [d.dependency_template_name for d in templ.get_dependencies()]
     assert "urn:shape/Air_Flow_Sensor" in dep_names
     assert "https://brickschema.org/schema/Brick#Air_Temperature_Sensor" in dep_names
 

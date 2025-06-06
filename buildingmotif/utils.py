@@ -214,7 +214,9 @@ def get_ontology_files(directory: Path, recursive: bool = True) -> List[Path]:
 
 
 def get_template_parts_from_shape(
-    shape_name: URIRef, shape_graph: Graph
+    shape_name: URIRef,
+    shape_graph: Graph,
+    depedency_graphs: Dict[str, Graph] = {},
 ) -> Tuple[Graph, List[Dict]]:
     """Turn a SHACL shape into a template. The following attributes of
     NodeShapes will be incorporated into the resulting template:
@@ -227,6 +229,8 @@ def get_template_parts_from_shape(
     :type shape_name: URIRef
     :param shape_graph: shape graph
     :type shape_graph: Graph
+    :param depedency_graphs: colleciton of graphs and which depdency library they came from
+    :type depedency_graphs: dict[str, Graph]
     :raises Exception: if more than one object type detected on shape
     :raises Exception: if more than one min count detected on shape
     :return: template parts
@@ -287,7 +291,21 @@ def get_template_parts_from_shape(
             if (otype_as_class and otype_is_nodeshape) or otype_as_node:
                 if not isinstance(otype, URIRef):
                     continue
-                deps.append({"template": str(otype), "args": {"name": param}})
+                library = None
+                for library_name, graph in depedency_graphs.items():
+                    if (otype, RDF.type, SH.NodeShape) in graph:
+                        library = library_name
+                        break
+                if library is None:
+                    deps.append({"template": str(otype), "args": {"name": param}})
+                else:
+                    deps.append(
+                        {
+                            "template": str(otype),
+                            "library": library,
+                            "args": {"name": param},
+                        }
+                    )
                 body.add((param, RDF.type, otype))
 
         pvalue = shape_graph.value(pshape, SH["hasValue"])
@@ -343,7 +361,9 @@ def _prep_shape_graph() -> Graph:
     return shape
 
 
-def _index_properties(templ: "Template") -> _TemplateIndex:
+def _index_properties(
+    templ: "Template", error_on_missing_dependency: bool = True
+) -> _TemplateIndex:
     templ_graph = templ.evaluate(
         {p: PARAM[p] for p in templ.parameters}, {"mark": PARAM}
     )
@@ -370,7 +390,9 @@ def _index_properties(templ: "Template") -> _TemplateIndex:
         # maybe_param = str(o).removeprefix(PARAM) Python >=3.9
         maybe_param = str(o)[len(PARAM) :]
         if maybe_param in templ.dependency_parameters:
-            dep = templ.dependency_for_parameter(maybe_param)
+            dep = templ.dependency_for_parameter(
+                maybe_param, error_on_missing_dependency
+            )
             if dep is not None:
                 prop_shapes[p].append(URIRef(dep._name))
         elif o in param_types:
