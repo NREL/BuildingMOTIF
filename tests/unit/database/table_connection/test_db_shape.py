@@ -6,7 +6,7 @@ from buildingmotif.database.errors import ShapeCollectionNotFound
 from buildingmotif.database.tables import DBShapeCollection
 
 
-def test_create_db_shape_collection(monkeypatch, table_connection):
+def test_create_db_shape_collection(monkeypatch, bm):
     mocked_uuid = uuid.uuid4()
 
     def mockreturn():
@@ -14,16 +14,16 @@ def test_create_db_shape_collection(monkeypatch, table_connection):
 
     monkeypatch.setattr(uuid, "uuid4", mockreturn)
 
-    db_shape_collection = table_connection.create_db_shape_collection()
+    db_shape_collection = bm.table_connection.create_db_shape_collection()
 
     assert db_shape_collection.graph_id == str(mocked_uuid)
 
 
-def test_get_db_shape_collections(table_connection):
-    shape_collection1 = table_connection.create_db_shape_collection()
-    shape_collection2 = table_connection.create_db_shape_collection()
+def test_get_db_shape_collections(bm):
+    shape_collection1 = bm.table_connection.create_db_shape_collection()
+    shape_collection2 = bm.table_connection.create_db_shape_collection()
 
-    db_shape_collections = table_connection.get_all_db_shape_collections()
+    db_shape_collections = bm.table_connection.get_all_db_shape_collections()
 
     assert len(db_shape_collections) == 2
     assert all(type(m) == DBShapeCollection for m in db_shape_collections)
