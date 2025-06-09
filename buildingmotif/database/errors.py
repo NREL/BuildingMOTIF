@@ -47,3 +47,11 @@ class TemplateNotFound(Exception):
         if self.template_name:
             return f"Name: {self.template_name}"
         return f"ID: {self.template_id}"
+
+
+class TemplateDependencyNotFound(Exception):
+    def __init__(self, idnum: int):
+        self.template_dependency_id = idnum
+
+    def __str__(self):
+        return f"ID: {self.template_dependency_id}"
