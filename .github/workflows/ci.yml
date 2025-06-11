@@ -119,7 +119,7 @@ jobs:
   # These tests detect if changes to ontologies, libraries, models and BuildingMOTIF
   # affect correct operation of templates, shapes, and validation
   libraries:
-    if: github.event.review.state == 'approved' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    # if: github.event.review.state == 'approved' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -143,8 +143,10 @@ jobs:
           virtualenvs-path: ~/.virtualenvs
       - name: poetry install
         run: poetry install --all-extras
+      - name: install pytest-xdist for parallel tests
+        run: poetry run pip install pytest-xdist
       - name: library tests
-        run: poetry run pytest tests/library
+        run: poetry run pytest -n auto tests/library
 
   coverage:
     needs: testing
