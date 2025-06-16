@@ -77,7 +77,7 @@ def pytest_generate_tests(metafunc):
         ids = []
         for library_name in libraries:
             library = Library.load(directory=library_name, run_shacl_inference=False)
-            templates = library.get_templates()
+            templates = sorted(library.get_templates(), key=lambda t: t.name)
             params.extend([(bm, brick, library, template) for template in templates])
             ids.extend([f"{library.name}-{template.name}" for template in templates])
         metafunc.parametrize("bm,brick,library,template", params, ids=ids)
