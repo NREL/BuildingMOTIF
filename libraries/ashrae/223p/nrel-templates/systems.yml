@@ -11,7 +11,7 @@ makeup-air-unit:
     P:name a s223:AirHandlingUnit ;
       s223:contains P:oad, P:pre-filter, P:final-filter, P:MAU-HRC, P:supply-fan,
                     P:heating-coil,
-                    P:cooling-coil, P:evaporative-cooler, P:sa_pressure_sensor ;
+                    P:cooling-coil, P:evaporative-cooler, P:sa_pressure_sensor, P:oa_rh_sensor ;
       s223:hasProperty P:oa_rh, P:sa_sp ;
       s223:hasConnectionPoint P:air-supply, P:outside-air .
     P:oad-in s223:mapsTo P:outside-air .
@@ -83,6 +83,8 @@ makeup-air-unit:
       args: {"name": "sa_sp"}
     - template: relative-humidity
       args: {"name": "oa_rh"}
+    - template: sensor
+      args: {"name": "oa_rh_sensor", "property": "oa_rh", "where": "outside-air"}
     - template: air-outlet-cp
       args: {"name": "air-supply"}
     - template: air-inlet-cp
