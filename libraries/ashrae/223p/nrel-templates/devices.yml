@@ -4,6 +4,7 @@ damper:
     @prefix s223: <http://data.ashrae.org/standard223#> .
 
     P:name a s223:Damper ;
+      s223:actuatedByProperty P:command ;
       s223:hasProperty P:command, P:feedback ;
       s223:contains P:feedback-sensor ;
       s223:hasConnectionPoint P:in, P:out .
@@ -25,6 +26,7 @@ vlv-dmp:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Valve ;
+      s223:actuatedByProperty P:command ;
       s223:hasConnectionPoint P:in, P:out ;
       #s223:hasMedium s223:Fluid-Air ;
       s223:contains P:feedback-sensor ;
@@ -46,6 +48,7 @@ fan:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Fan ;
+      s223:actuatedByProperty P:start-cmd, P:vfd-spd ;
       s223:hasProperty P:start-cmd, P:motor-status, P:oa-flow-switch, P:vfd-cur, P:vfd-energy, P:vfd-volt, P:vfd-frq, P:vfd-flt, P:vfd-pwr, P:vfd-spd, P:vfd-fb ;
       s223:contains P:motor-status-sensor, P:oa-flow-switch-sensor, P:vfd-cur-sensor, P:vfd-energy-sensor, P:vfd-volt-sensor, P:vfd-frq-sensor, P:vfd-flt-sensor, P:vfd-pwr-sensor, P:vfd-fb-sensor ;
       s223:hasConnectionPoint P:in, P:out .
@@ -228,6 +231,7 @@ chw-pump:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Pump ;
+      s223:actuatedByProperty P:onoff-cmd, P:vfd-spd ;
       s223:hasConnectionPoint P:in, P:out ;
       #s223:hasMedium s223:Water-ChilledWater ;
       s223:contains P:onoff-sts-sensor, P:vfd-cur-sensor, P:vfd-energy-sensor, P:vfd-volt-sensor, P:vfd-frq-sensor, P:vfd-flt-sensor, P:vfd-pwr-sensor, P:vfd-fb-sensor ;
@@ -284,6 +288,7 @@ hw-pump:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Pump ;
+      s223:actuatedByProperty P:onoff-cmd, P:vfd-spd ;
       s223:hasConnectionPoint P:in, P:out ;
       #s223:hasMedium s223:Water-HotWater ;
       s223:contains P:onoff-sts-sensor, P:vfd-cur-sensor, P:vfd-energy-sensor, P:vfd-volt-sensor, P:vfd-frq-sensor, P:vfd-flt-sensor, P:vfd-pwr-sensor, P:vfd-fb-sensor ;
@@ -336,6 +341,7 @@ HR-pump:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Pump ;
+      s223:actuatedByProperty P:onoff-cmd, P:vfd-spd ;
       s223:hasConnectionPoint P:in, P:out ;
       #s223:hasMedium s223:Water ;
       s223:contains P:onoff-sts-sensor, P:vfd-cur-sensor, P:vfd-energy-sensor, P:vfd-volt-sensor, P:vfd-frq-sensor, P:vfd-flt-sensor, P:vfd-pwr-sensor, P:vfd-fb-sensor ;
@@ -746,6 +752,7 @@ exhaust-fan:
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
     P:name a s223:Fan ;
+      s223:actuatedByProperty P:start-cmd, P:vfd-spd ;
       s223:contains P:iso-dmp, P:low-sp-sensor, P:motor-status-sensor, P:vfd-cur-sensor, P:vfd-energy-sensor, P:vfd-volt-sensor, P:vfd-frq-sensor, P:vfd-flt-sensor, P:vfd-pwr-sensor, P:vfd-fb-sensor ;
       s223:hasProperty P:start-cmd, P:motor-status, P:low-sp, P:vfd-cur, P:vfd-energy, P:vfd-volt, P:vfd-frq, P:vfd-flt, P:vfd-pwr, P:vfd-spd, P:vfd-fb ;
       s223:hasConnectionPoint P:in, P:out .
