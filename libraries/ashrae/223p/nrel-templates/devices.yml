@@ -183,12 +183,13 @@ chw-pump:
     P:name a s223:Pump ;
       s223:hasConnectionPoint P:in, P:out ;
       #s223:hasMedium s223:Water-ChilledWater ;
+      s223:contains P:vfd-energy-sensor, P:vfd-current-sensor ;
       s223:hasProperty P:onoff-cmd, P:onoff-sts, P:vfd-cur, 
                        P:vfd-energy, P:vfd-volt, P:vfd-frq, P:vfd-flt,
                        P:vfd-pwr, P:vfd-spd, P:vfd-fb,
                        P:vfd-cur, P:vfd-energy .
                        
-  #optional: ["in", "out"]
+  optional: ["vfd-volt", "vfd-frq", "vfd-flt", "vfd-pwr", "vfd-spd", "vfd-fb"]
   dependencies:
     - template: start-command
       args: {"name": "onoff-cmd"}
@@ -200,8 +201,12 @@ chw-pump:
       args: {"name": "out"}
     - template: vfd-current
       args: {"name": "vfd-cur"}
+    - template: sensor
+      args: {"name": "vfd-current-sensor", "property": "vfd-cur"}
     - template: vfd-energy
       args: {"name": "vfd-energy"}
+    - template: sensor
+      args: {"name": "vfd-energy-sensor", "property": "vfd-energy"}
     - template: vfd-voltage
       args: {"name": "vfd-volt"}
     - template: vfd-frequency
@@ -214,6 +219,7 @@ chw-pump:
       args: {"name": "vfd-spd"}
     - template: vfd-feedback
       args: {"name": "vfd-fb"}
+
 
 hw-pump:
   body: >
@@ -292,6 +298,7 @@ chw-valve:
     P:name a s223:Valve ;
       s223:hasConnectionPoint P:in, P:out ;
       #      s223:hasMedium s223:Water-ChilledWater ;
+      s223:actuatedByProperty P:command ;
       s223:hasProperty P:command, P:feedback .
   dependencies:
     - template: water-inlet-cp
@@ -310,6 +317,7 @@ hw-valve:
     P:name a s223:Valve ;
       s223:hasConnectionPoint P:in, P:out ;
       #s223:hasMedium s223:Water-HotWater ;
+      s223:actuatedByProperty P:command ;
       s223:hasProperty P:command, P:feedback .
   dependencies:
     - template: water-inlet-cp
@@ -369,7 +377,7 @@ evaporative-cooler:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
-    P:name a s223:HeatExchanger ;
+    P:name a s223:Equipment ;
       s223:hasRole s223:Role-Evaporator ;
       s223:hasConnectionPoint P:in, P:out, P:water-in, P:water-out ;
       s223:hasProperty P:entering-air-temp, P:leaving-air-temp, P:leaving-air-humidity ;
