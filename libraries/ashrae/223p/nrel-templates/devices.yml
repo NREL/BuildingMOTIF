@@ -166,9 +166,9 @@ chilled-water-coil:
                        P:return-water-temp, P:leaving-air-wetbulb-temp .
   dependencies:
     - template: chw-pump
-      args: {"name": "pump"}
+      args: {"name": "pump", "mapsTo": "water-in"}
     - template: chw-valve
-      args: {"name": "valve"}
+      args: {"name": "valve", "mapsTo": "water-out"}
     - template: air-inlet-cp
       args: {"name": "air-in"}
     - template: air-outlet-cp
@@ -234,7 +234,7 @@ chw-pump:
       s223:actuatedByProperty P:onoff-cmd, P:vfd-spd ;
       s223:hasConnectionPoint P:in, P:out ;
       #s223:hasMedium s223:Water-ChilledWater ;
-      s223:contains P:onoff-sts-sensor, P:vfd-cur-sensor, P:vfd-energy-sensor, P:vfd-volt-sensor, P:vfd-frq-sensor, P:vfd-flt-sensor, P:vfd-pwr-sensor, P:vfd-fb-sensor ;
+      s223:contains P:onoff-sts-sensor, P:vfd-current-sensor, P:vfd-energy-sensor, P:vfd-volt-sensor, P:vfd-frq-sensor, P:vfd-flt-sensor, P:vfd-pwr-sensor, P:vfd-fb-sensor ;
       s223:hasProperty P:onoff-cmd, P:onoff-sts, P:vfd-cur,
                        P:vfd-energy, P:vfd-volt, P:vfd-frq, P:vfd-flt,
                        P:vfd-pwr, P:vfd-spd, P:vfd-fb .
@@ -471,9 +471,9 @@ differential-sensor:
   body: >
     @prefix P: <urn:___param___#> .
     @prefix s223: <http://data.ashrae.org/standard223#> .
-    P:name a s223:DifferentialSensor ;
-      s223:hasObservationLocationHigh P:whereA ;
-      s223:hasObservationLocationLow P:whereB ;
+    P:name a s223:Sensor ;
+      s223:hasObservationLocation P:whereA ;
+      s223:hasReferenceLocation P:whereB ;
       s223:observes P:property .
   optional: ["whereA", "whereB"]
 
@@ -578,7 +578,7 @@ fcu:
       s223:hasConnectionPoint P:in, P:out .
   dependencies:
     - template: chilled-water-coil
-      args: {"name": "cooling-coil"}
+      args: {"name": "cooling-coil", "air-out-mapsTo": "out"}
     - template: hot-water-coil
       args: {"name": "heating-coil"}
     - template: fan
