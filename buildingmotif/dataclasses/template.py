@@ -50,6 +50,7 @@ class Template:
     _name: str
     body: rdflib.Graph
     optional_args: List[str]
+    variadic_args: List[str]
     _bm: "BuildingMOTIF"
 
     @classmethod
@@ -69,6 +70,7 @@ class Template:
             _id=db_template.id,
             _name=db_template.name,
             optional_args=db_template.optional_args,
+            variadic_args=db_template.variadic_args,
             body=body,
             _bm=bm,
         )
@@ -84,6 +86,7 @@ class Template:
             _name=self._name,
             body=copy_graph(self.body, preserve_blank_nodes=False),
             optional_args=self.optional_args[:],
+            variadic_args=self.variadic_args[:],
             _bm=self._bm,
         )
 
