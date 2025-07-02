@@ -89,18 +89,18 @@ def pytest_generate_tests(metafunc):
     if "library" in metafunc.fixturenames:
         libdir = pathlib.Path("libraries")
         libraries_files = libdir.rglob("*.yml")
-        libraries = {str(lib.parent) for lib in libraries_files}
+        libraries = [str(lib.parent) for lib in libraries_files]
 
         metafunc.parametrize("library", libraries)
 
     if "builtin_library" in metafunc.fixturenames:
-        builtin_library = {"brick", "constraints"}
+        builtin_library = ["brick", "constraints"]
         metafunc.parametrize("builtin_library", builtin_library)
 
     if "builtin_ontology" in metafunc.fixturenames:
-        builtin_ontology = {"brick/Brick.ttl", "constraints/constraints.ttl"}
+        builtin_ontology = ["brick/Brick.ttl", "constraints/constraints.ttl"]
         metafunc.parametrize("builtin_ontology", builtin_ontology)
 
     if "shacl_engine" in metafunc.fixturenames:
-        shacl_engine = {"pyshacl", "topquadrant"}
+        shacl_engine = ["pyshacl", "topquadrant"]
         metafunc.parametrize("shacl_engine", shacl_engine)

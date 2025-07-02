@@ -102,7 +102,9 @@ def pytest_generate_tests(metafunc):
                 run_shacl_inference=False,
                 infer_templates=False,
             )
-            templates = library.get_templates()
+            templates = templates = sorted(
+                library.get_templates(), key=lambda t: t.name
+            )
             params.extend([(bm, s223, library, template) for template in templates])
 
         # remove all templates in 'to skip'
