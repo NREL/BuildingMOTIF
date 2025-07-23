@@ -1,3 +1,4 @@
+import json
 import logging
 import pathlib
 import tempfile
@@ -7,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 import pygit2
 import rdflib
 import yaml
+from jsonschema import validate
 from pkg_resources import resource_exists, resource_filename
 from rdflib.exceptions import ParserError
 from rdflib.plugins.parsers.notation3 import BadSyntax
@@ -133,10 +135,10 @@ class Library:
                 run_shacl_inference=run_shacl_inference,
             )
         elif directory is not None:
-            if resource_exists("buildingmotif.libraries", directory):
+            if resource_exists("buildingmotif.libraries", str(directory)):
                 logging.debug(f"Loading builtin library: {directory}")
                 src = pathlib.Path(
-                    resource_filename("buildingmotif.libraries", directory)
+                    resource_filename("buildingmotif.libraries", str(directory))
                 )
             else:
                 src = pathlib.Path(directory)
@@ -293,24 +295,47 @@ class Library:
         :return: library
         :rtype: Library
         """
+        library_yml = directory / "library.yml"
+        library_yml_schema = json.load(
+            open(resource_filename("buildingmotif.resources", "library.schema.json"))
+        )
+        if not library_yml.exists():
+            raise FileNotFoundError(
+                f"Library directory {directory} does not contain a library.yml file."
+            )
+
+        library_spec = yaml.load(open(library_yml, "r"), Loader=yaml.FullLoader)
+        validate(instance=library_spec, schema=library_yml_schema)
+
+        name = library_spec["name"]
 
         if not overwrite:
-            if cls._library_exists(directory.name):
+            if cls._library_exists(name):
                 logging.warning(
-                    f'Library "{directory.name}" already exists in database and "overwrite=False". Returning existing library.'  # noqa
+                    f'Library "{name}" already exists in database and "overwrite=False". Returning existing library.'  # noqa
                 )
-                return Library.load(name=directory.name)
+                return Library.load(name=name)
 
-        lib = cls.create(directory.name, overwrite=overwrite)
+        if "dependencies" in library_spec:
+            for dependency in library_spec["dependencies"]:
+                _resolve_library_definition(dependency, directory=directory)
+
+        lib = cls.create(name=name, overwrite=overwrite)
 
         # read all .yml files
         for file in directory.rglob("*.yml"):
+            if "library.yml" in file.name:
+                continue  # skip the library.yml file itself
             # if .ipynb_checkpoints, skip; these are cached files that Jupyter creates
             if ".ipynb_checkpoints" in file.parts:
                 continue
             lib._read_yml_file(file)
         # load shape collections from all ontology files in the directory
-        lib._load_shapes_from_directory(directory)
+        lib._load_shapes_from_directory(
+            directory,
+            infer_templates=infer_templates,
+            run_shacl_inference=run_shacl_inference,
+        )
 
         return lib
 
@@ -480,12 +505,17 @@ class Library:
         return Template.load(dbt.id)
 
 
-def _resolve_library_definition(desc: Dict[str, Any]):
+def _resolve_library_definition(
+    desc: Dict[str, Any], directory: Optional[pathlib.Path] = None
+):
     """
     Loads a library from a description in libraries.yml
     """
     if "directory" in desc:
-        spath = pathlib.Path(desc["directory"]).absolute()
+        spath = pathlib.Path(desc["directory"])
+        if directory is not None:
+            spath = directory / spath
+        spath = spath.absolute()
         if spath.exists() and spath.is_dir():
             logging.info(f"Load local library {spath} (directory)")
             Library.load(directory=str(spath))
