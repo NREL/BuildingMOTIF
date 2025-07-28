@@ -1,6 +1,7 @@
 """
 Generates tests automatically
 """
+
 import glob
 from pathlib import Path
 

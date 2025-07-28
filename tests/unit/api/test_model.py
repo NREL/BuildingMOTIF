@@ -262,7 +262,9 @@ def test_validate_model(client, building_motif, shacl_engine):
     assert library_1 is not None
     library_2 = Library.load(directory="tests/unit/fixtures/templates")
     assert library_2 is not None
-    brick = Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    brick = Library.load(
+        ontology_graph="tests/unit/fixtures/Brick.ttl", overwrite=False
+    )
     assert brick is not None
 
     BLDG = Namespace("urn:building/")
@@ -419,7 +421,7 @@ def test_validate_model_bad_args(client, building_motif):
     assert results.status_code == 400
 
 
-def test_test_model_against_shapes(client, building_motif, shacl_engine):
+def test_validate_model_against_shapes(client, building_motif, shacl_engine):
     building_motif.shacl_engine = shacl_engine
     # Load libraries
     Library.load(ontology_graph=str(PROJECT_DIR / "libraries/brick/Brick.ttl"))

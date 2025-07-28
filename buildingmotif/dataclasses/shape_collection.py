@@ -4,7 +4,7 @@ import string
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, Tuple, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Set, Tuple, Union
 
 import rdflib
 from pyshacl.helper.path_helper import shacl_path_to_sparql_path
@@ -192,10 +192,15 @@ class ShapeCollection:
         from buildingmotif.dataclasses.library import Library
 
         imports_closure = copy_graph(self.graph)
+        dependency_graphs: dict[str, Graph] = {}
+
         for dependency in self.graph.objects(predicate=rdflib.OWL.imports):
             try:
                 lib = Library.load(name=str(dependency))
                 imports_closure += lib.get_shape_collection().graph
+                dependency_graphs[str(dependency)] = copy_graph(
+                    lib.get_shape_collection().graph
+                )
             except Exception as e:
                 logging.warning(
                     f"An ontology could not resolve a dependency on {dependency} ({e}). Check this is loaded into BuildingMOTIF"
@@ -208,19 +213,12 @@ class ShapeCollection:
         )
         candidates = class_candidates.intersection(shape_candidates)
 
-        template_id_lookup: Dict[str, int] = {}
-        dependency_cache: Dict[int, List[Dict[Any, Any]]] = {}
-
         for candidate in candidates:
             assert isinstance(candidate, rdflib.URIRef)
             partial_body, deps = get_template_parts_from_shape(
-                candidate, imports_closure
+                candidate, imports_closure, dependency_graphs
             )
-            templ = library.create_template(str(candidate), partial_body)
-            dependency_cache[templ.id] = deps
-            template_id_lookup[str(candidate)] = templ.id
-
-        library._resolve_template_dependencies(template_id_lookup, dependency_cache)
+            library.create_template(str(candidate), partial_body, dependencies=deps)
 
     def get_shapes_of_definition_type(
         self, definition_type: URIRef, include_labels=False
@@ -315,7 +313,7 @@ class ShapeCollection:
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         """
-        return f"{preamble} SELECT {' '.join(project)} WHERE {{\n{clauses}\n}}"
+        return f"{preamble} SELECT DISTINCT {' '.join(project)} WHERE {{\n{clauses}\n}}"
 
 
 def _is_list(graph: Graph, node: Node):
