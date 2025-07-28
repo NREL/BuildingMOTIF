@@ -1,3 +1,5 @@
+import logging
+
 import flask
 from flask import Blueprint, current_app, jsonify, request
 from flask_api import status
@@ -11,8 +13,10 @@ from buildingmotif.database.errors import (
     ShapeCollectionNotFound,
 )
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
+from buildingmotif.exports.brick2af.validation import generate_report
 
 blueprint = Blueprint("models", __name__)
+logger = logging.getLogger()
 
 
 @blueprint.route("", methods=(["GET"]))
@@ -159,6 +163,25 @@ def update_model_graph(models_id: int) -> flask.Response:
     return model.graph.serialize(format="ttl")
 
 
+@blueprint.route("/<models_id>/manifest", methods=(["GET"]))
+def get_model_manifest(models_id: int) -> flask.Response:
+    """Get model manifest.
+
+    :param models_id: model id
+    :type models_id: int
+    :return: requested model manifest
+    :rtype: flask.Response
+    """
+    try:
+        model = Model.load(models_id)
+    except ModelNotFound:
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    manifest = model.get_manifest()
+    manifest_ttl = manifest.graph.serialize(format="ttl")
+    return manifest_ttl, status.HTTP_200_OK
+
+
 @blueprint.route("/<models_id>/validate", methods=(["POST"]))
 def validate_model(models_id: int) -> flask.Response:
     # get model
@@ -193,20 +216,27 @@ def validate_model(models_id: int) -> flask.Response:
         body = body if body is not None else {}
         nonexistent_libraries = []
         for library_id in body.get("library_ids", []):
+            if library_id == 0:  # 0 is 'model manifest'
+                shape_collections.append(model.get_manifest())
+                continue
             try:
                 shape_collection = Library.load(library_id).get_shape_collection()
                 shape_collections.append(shape_collection)
             except LibraryNotFound:
                 nonexistent_libraries.append(library_id)
+        if len(shape_collections) == 0:
+            shape_collections = [model.get_manifest()]
         if len(nonexistent_libraries) > 0:
             return {
                 "message": f"Libraries with ids {nonexistent_libraries} do not exist"
             }, status.HTTP_400_BAD_REQUEST
 
-    # if shape_collections is empty, model.validate will default to the model's manifest
-    vaildation_context = model.validate(
-        shape_collections, error_on_missing_imports=False, shacl_engine=shacl_engine
+    logger.warning(
+        f"Validating model {model.name} with shape collections {shape_collections}"
     )
+    compiled = model.compile(shape_collections)
+    # if shape_collections is empty, model.validate will default to the model's manifest
+    vaildation_context = compiled.validate(error_on_missing_imports=False)
 
     return {
         "message": vaildation_context.report_string,
@@ -276,3 +306,47 @@ def validate_shape(models_id: int) -> flask.Response:
         result[shape_uri] = reasons
 
     return result, status.HTTP_200_OK
+
+
+@blueprint.route("/<models_id>/add_manifest_rules", methods=(["POST"]))
+def add_fdd_rules_to_manifest(models_id: int) -> flask.Response:
+    """Add FDD rules to the model manifest.
+
+    :param models_id: model id
+    :type models_id: int
+    :return: updated model manifest
+    :rtype: flask.Response
+    """
+    try:
+        model = Model.load(models_id)
+    except ModelNotFound:
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    # get body
+    if request.content_type != "application/json":
+        return flask.Response(
+            {"message": "request content type must be json"},
+            status.HTTP_400_BAD_REQUEST,
+        )
+    try:
+        rules_json = request.json
+    except Exception as e:
+        return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
+
+    if not isinstance(rules_json, dict):
+        return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
+
+    grouped_diffs, successful_rules, validation_report = generate_report(
+        model, rules_json
+    )
+
+    return (
+        jsonify(
+            {
+                "grouped_diffs": grouped_diffs,
+                "successful_rules": successful_rules,
+                "validation_report": validation_report.report.serialize(format="ttl"),
+            }
+        ),
+        status.HTTP_200_OK,
+    )

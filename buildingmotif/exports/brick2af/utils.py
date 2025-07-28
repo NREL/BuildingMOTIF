@@ -12,8 +12,6 @@ from xmldiff import formatting, main
 
 from buildingmotif.namespaces import BRICK
 
-BRICK = Namespace("https://brickschema.org/schema/Brick#")
-
 # build relationship
 RELATIONSHIPS = ["hasPoint", "hasPart", "isPointOf", "isPartOf", "feeds"]
 RELATIONSHIPS += [f"{r}+" for r in RELATIONSHIPS]
@@ -426,3 +424,11 @@ def generate_manifest(rules_file, output_file):
     shape_graph = reduce(lambda x, y: x + y, shapes)
     print(shape_graph.serialize(format="ttl"))
     shape_graph.serialize(output_file, format="ttl")
+
+
+def generate_manifest_json(rules_json: dict, ns: Namespace):
+    shapes = Graph()
+    for _, definition in rules_json.items():
+        sg = _definition_to_shape(definition, ns)
+        shapes += sg
+    return shapes

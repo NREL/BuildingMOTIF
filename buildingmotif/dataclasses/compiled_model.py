@@ -119,7 +119,7 @@ class CompiledModel:
 
     def validate(
         self,
-        error_on_missing_imports: bool = True,
+        error_on_missing_imports: Optional[bool] = True,
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
