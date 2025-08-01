@@ -711,22 +711,9 @@ def shacl_inference(
     # We use a fixed-point computation approach to 'compiling' RDF models.
     # We accomlish this by keeping track of the size of the graph before and after
     # the inference step. If the size of the graph changes, then we know that the
-    # inference has had some effect. We do this at most 3 times to avoid looping
-    # forever.
-    pre_compile_length = len(data_graph)  # type: ignore
-    pyshacl.validate(
-        data_graph=data_graph,
-        shacl_graph=shape_graph,
-        ont_graph=shape_graph,
-        advanced=True,
-        inplace=True,
-        js=True,
-        allow_warnings=True,
-    )
-    post_compile_length = len(data_graph)  # type: ignore
-
-    attempts = 3
-    while attempts > 0 and post_compile_length != pre_compile_length:
+    # inference has had some effect. We do this at least 'min_iterations' times
+    # and at most 'max_iterations' times.
+    for i in range(max_iterations):
         pre_compile_length = len(data_graph)  # type: ignore
         pyshacl.validate(
             data_graph=data_graph,
@@ -738,7 +725,8 @@ def shacl_inference(
             allow_warnings=True,
         )
         post_compile_length = len(data_graph)  # type: ignore
-        attempts -= 1
+        if i >= min_iterations - 1 and post_compile_length == pre_compile_length:
+            break
     return data_graph - (shape_graph or Graph())
 
 
