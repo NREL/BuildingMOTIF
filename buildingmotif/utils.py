@@ -649,7 +649,7 @@ def shacl_validate(
 
     if engine == "topquadrant":
         try:
-            from brick_tq_shacl.topquadrant_shacl import (
+            from brick_tq_shacl import (
                 validate as tq_validate,  # type: ignore
             )
 
@@ -675,6 +675,8 @@ def shacl_inference(
     data_graph: Graph,
     shape_graph: Optional[Graph] = None,
     engine: Optional[str] = "topquadrant",
+    min_iterations: int = 1,
+    max_iterations: int = 10,
 ) -> Graph:
     """
     Infer new triples in the data graph using the shape graph.
@@ -688,14 +690,18 @@ def shacl_inference(
     :type shape_graph: Optional[Graph]
     :param engine: the SHACL engine to use, defaults to "topquadrant"
     :type engine: str, optional
+    :param min_iterations: minimum number of iterations to run, defaults to 1
+    :type min_iterations: int, optional
+    :param max_iterations: maximum number of iterations to run, defaults to 10
+    :type max_iterations: int, optional
     :return: the data graph with inferred triples
     :rtype: Graph
     """
     if engine == "topquadrant":
         try:
-            from brick_tq_shacl.topquadrant_shacl import infer as tq_infer
+            from brick_tq_shacl import infer as tq_infer
 
-            return tq_infer(data_graph, shape_graph or Graph())  # type: ignore
+            return tq_infer(data_graph, shape_graph or Graph(), min_iterations=min_iterations, max_iterations=max_iterations)  # type: ignore
         except ImportError:
             logging.info(
                 "TopQuadrant SHACL engine not available. Using PySHACL instead."
