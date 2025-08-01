@@ -649,9 +649,7 @@ def shacl_validate(
 
     if engine == "topquadrant":
         try:
-            from brick_tq_shacl import (
-                validate as tq_validate,  # type: ignore
-            )
+            from brick_tq_shacl import validate as tq_validate  # type: ignore
 
             return tq_validate(data_graph, shape_graph or Graph())  # type: ignore
         except ImportError:
@@ -706,6 +704,7 @@ def shacl_inference(
             logging.info(
                 "TopQuadrant SHACL engine not available. Using PySHACL instead."
             )
+            raise
             pass
 
     # We use a fixed-point computation approach to 'compiling' RDF models.
