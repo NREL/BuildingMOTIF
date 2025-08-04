@@ -100,3 +100,59 @@ def test_get_library_not_found(client):
     # Assert
     assert results.status_code == 404
     assert results.json == {"message": "ID: -1"}
+
+
+def test_get_library_classes(client, building_motif):
+    # Setup
+    lib = Library.create("my_library")
+    shape_collection = lib.get_shape_collection()
+    shape_collection.graph.parse(
+        data="""@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix : <urn:test#> .
+
+:class1 a owl:Class ;
+    rdfs:label "Class 1" ;
+    skos:definition "This is class 1" .
+
+:class2 a rdfs:Class ;
+    rdfs:label "Class 2" .
+
+:class3 a owl:Class .
+
+:not_a_class a owl:NamedIndividual .
+
+[ a owl:Class ] .
+""",
+        format="turtle",
+    )
+
+    # Act
+    results = client.get(f"/libraries/{lib.id}/classes")
+
+    # Assert
+    assert results.status_code == 200
+
+    expected_data = [
+        {
+            "uri": "urn:test#class1",
+            "label": "Class 1",
+            "definition": "This is class 1",
+        },
+        {"uri": "urn:test#class2", "label": "Class 2", "definition": None},
+        {"uri": "urn:test#class3", "label": None, "definition": None},
+    ]
+
+    assert sorted(results.json, key=lambda x: x["uri"]) == sorted(
+        expected_data, key=lambda x: x["uri"]
+    )
+
+
+def test_get_library_classes_not_found(client):
+    # Act
+    results = client.get("/libraries/-1/classes")
+
+    # Assert
+    assert results.status_code == 404
+    assert results.json == {"message": "ID: -1"}
