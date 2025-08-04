@@ -85,3 +85,49 @@ def get_library(library_id: int) -> flask.Response:
         return {"message": f"ID: {library_id}"}, status.HTTP_404_NOT_FOUND
 
     return jsonify(serialize(db_lib)), status.HTTP_200_OK
+
+
+@blueprint.route("/<library_id>/classes", methods=(["GET"]))
+def get_library_classes(library_id: int) -> flask.Response:
+    """Get all classes from a library's shape collection.
+
+    :param library_id: library id
+    :type library_id: int
+    :return: all classes in shape collection
+    :rtype: flask.Response
+    """
+    try:
+        db_lib = current_app.building_motif.table_connection.get_db_library(
+            library_id
+        )
+    except LibraryNotFound:
+        return {"message": f"ID: {library_id}"}, status.HTTP_404_NOT_FOUND
+
+    shape_collection = ShapeCollection.load(db_lib.shape_collection.id)
+
+    query = """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+        SELECT ?cls ?label ?definition
+        WHERE {
+            { ?cls a rdfs:Class . }
+            UNION
+            { ?cls a owl:Class . }
+            FILTER(!isBlank(?cls))
+            OPTIONAL { ?cls rdfs:label ?label . }
+            OPTIONAL { ?cls skos:definition ?definition . }
+        }
+    """
+    query_results = shape_collection.graph.query(query)
+
+    results = [
+        {
+            "uri": str(res.cls),
+            "label": str(res.label) if res.label else None,
+            "definition": str(res.definition) if res.definition else None,
+        }
+        for res in query_results
+    ]
+
+    return jsonify(results), status.HTTP_200_OK
