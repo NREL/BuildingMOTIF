@@ -350,19 +350,21 @@ files = [
 
 [[package]]
 name = "brick-tq-shacl"
-version = "0.3.4"
-description = "Wraps topquadrant's SHACL implementation in a simple Python wrapper"
+version = "0.4.0a10"
+description = "Wraps topquadrant's SHACL implementation in a simple Python wrapper to be API-compatible with pySHACL"
 optional = true
-python-versions = "<4.0,>=3.8.1"
+python-versions = "<4.0,>=3.9"
 groups = ["main"]
 markers = "extra == \"topquadrant\""
 files = [
-    {file = "brick_tq_shacl-0.3.4-py3-none-any.whl", hash = "sha256:6cdbbeda99efadc74f2db7aa3603f28be3b0389be70767a7b4115340b982ce4d"},
-    {file = "brick_tq_shacl-0.3.4.tar.gz", hash = "sha256:229ebab84e1fb38f45d8496c89cc02789f13b68788868c4d70c2e39d88b55c0b"},
+    {file = "brick_tq_shacl-0.4.0a10-py3-none-any.whl", hash = "sha256:5f7ea9d1e5f839820698c4fa560b97d0b77bfacc05f660909e5f9342c506e357"},
+    {file = "brick_tq_shacl-0.4.0a10.tar.gz", hash = "sha256:bfa3b756dc13a83274bf9759009702a418277973a9a7e3e1efd20153850c474a"},
 ]
 
 [package.dependencies]
-rdflib = ">=7.0,<8.0"
+pyontoenv = ">=0.3.1a1"
+pytqshacl = ">=140"
+rdflib = ">=7.0"
 
 [[package]]
 name = "certifi"
@@ -2552,6 +2554,23 @@ files = [
 rdflib = ">=7.1.3"
 
 [[package]]
+name = "oxrdflib"
+version = "0.4.0"
+description = "rdflib stores based on pyoxigraph"
+optional = true
+python-versions = ">=3.8"
+groups = ["main"]
+markers = "extra == \"topquadrant\""
+files = [
+    {file = "oxrdflib-0.4.0-py3-none-any.whl", hash = "sha256:c6203636b05817e21fbe7c469154b2e312593d0801cdaa14058c2d99dcfc12a6"},
+    {file = "oxrdflib-0.4.0.tar.gz", hash = "sha256:37d4c025d4e39c5e5472527c393998bfd10e5ac185a30e080b5b510f6dd7da86"},
+]
+
+[package.dependencies]
+pyoxigraph = ">=0.4.2,<0.5.0"
+rdflib = ">=6.3,<8.0"
+
+[[package]]
 name = "packaging"
 version = "24.2"
 description = "Core utilities for Python packages"
@@ -3044,6 +3063,108 @@ files = [
 windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
+name = "pyontoenv"
+version = "0.3.1a1"
+description = "Python bindings for the OntoEnv Rust library. Manages ontology-based environments for building knowledge graphs."
+optional = true
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "extra == \"topquadrant\""
+files = [
+    {file = "pyontoenv-0.3.1a1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:08e4f42e879cc9040563e57793677e940b8b9610af9dea1420f681ce01b4515c"},
+    {file = "pyontoenv-0.3.1a1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c814339525de85287c96c36bf66dd3a15a92813a9f133ce74751bf5581524c48"},
+    {file = "pyontoenv-0.3.1a1-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:f860787ccd3e52a557cd7583c632d0b74e0f3a1f417f7bc6503745d9f9fd7177"},
+    {file = "pyontoenv-0.3.1a1-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:e9313b44dcd9875a8212516876f05ed9e4806416da819270efeb9a296c39d514"},
+    {file = "pyontoenv-0.3.1a1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ec75f5be51c4216ae5341fee10df538d8c88a231dbb03f6ee5b88ffaab1f8c2d"},
+    {file = "pyontoenv-0.3.1a1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:468ce63243d34ae390b64a1a3f8f15ec05ddbd20df227ef470724e1851b60557"},
+    {file = "pyontoenv-0.3.1a1-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:0c79217fcb54e3e7c08fe69d168cd965a7a573335a19613af0854b4b2b9c231b"},
+    {file = "pyontoenv-0.3.1a1-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:2f4817d26831ca271cef8fc973ad255e41e719f80cf2b73d6443095c33b392d2"},
+    {file = "pyontoenv-0.3.1a1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ba4100d062774ba1b814e272856602d3f96ca8481f726b9814bfc05bf5ffabf9"},
+    {file = "pyontoenv-0.3.1a1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3f491559d939ddebcdc4209d435f651564413dc16f7351902ca2b8795726684c"},
+    {file = "pyontoenv-0.3.1a1-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:e56d9464b026becdca714dd17edf146a14e49d39dfc24b9500c71c167611e48b"},
+    {file = "pyontoenv-0.3.1a1-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:4ce5c9a323b6156cf51b65b15f812d1f354de8bbe19f1bbb83be0470a5454732"},
+    {file = "pyontoenv-0.3.1a1-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c4912bcc1de48e8c9ef2049b2e36e6c4285d7512ced647e3bc2df0494c82c28e"},
+    {file = "pyontoenv-0.3.1a1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5e29380efc275c29cf6068448ee85e7d03c0c2364d5bd5bc5b80011251178c74"},
+    {file = "pyontoenv-0.3.1a1-cp38-cp38-musllinux_1_2_aarch64.whl", hash = "sha256:d106252067405d91cedf2890e021e8a40d4c6c943b3c5f59c4f4b0ed40d4481b"},
+    {file = "pyontoenv-0.3.1a1-cp38-cp38-musllinux_1_2_x86_64.whl", hash = "sha256:72da8f3ad336b9ae362e74cce288835dfcd0b58c13c9b2f6e17ba943b3bf0e28"},
+    {file = "pyontoenv-0.3.1a1-cp39-abi3-macosx_10_14_x86_64.macosx_11_0_arm64.macosx_10_14_universal2.whl", hash = "sha256:eeccc9d38f47138b122cd5a17ee89bb066913f0c6ec1c989b7fd48e8af5398c9"},
+    {file = "pyontoenv-0.3.1a1-cp39-abi3-macosx_10_14_x86_64.whl", hash = "sha256:54030b2caa53e1dee427512777297a2baa0bb3b215de84b5db2b911396d307c6"},
+    {file = "pyontoenv-0.3.1a1-cp39-abi3-macosx_11_0_arm64.whl", hash = "sha256:cbdfd24d94045138f4f1a16ae848c610155849ec3fc5c0cd6c587eea52a72c3c"},
+    {file = "pyontoenv-0.3.1a1-cp39-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f02f7fa83174f6792c2cc8fd3ba9bac72f2cd64940866cc0a78bd2c01ef0b027"},
+    {file = "pyontoenv-0.3.1a1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:70f36bb2ddee8d5098314ea0421816a87cf325cbc5858109156e84fc6f7a04f8"},
+    {file = "pyontoenv-0.3.1a1-cp39-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:89d4115d6432651c246b78d4f9990710f792ce25ab1dd6ff1628773ceb656d2b"},
+    {file = "pyontoenv-0.3.1a1-cp39-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:ed70c41013ed3bef3200aac8be3dc1065e6a921f4594ad03258833087879e279"},
+    {file = "pyontoenv-0.3.1a1-cp39-abi3-win_amd64.whl", hash = "sha256:f2239933bd7d1cf357a1346c2ff62e916b173a5a7b6f4c4f7f85ed345b23d9b0"},
+    {file = "pyontoenv-0.3.1a1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:539c82e76048581b951eb1876a9c7939037a730f1f600a190b28ada304d04367"},
+    {file = "pyontoenv-0.3.1a1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ad60f0e3581d10947be698fa6341f0ccf78ad62edd4c29da8d33e643f30073ac"},
+    {file = "pyontoenv-0.3.1a1-cp39-cp39-musllinux_1_2_aarch64.whl", hash = "sha256:642b6472e7debe03d9a7c8744e0e7bf7711489cadfe90afe2ebf259e8ba99a5e"},
+    {file = "pyontoenv-0.3.1a1-cp39-cp39-musllinux_1_2_x86_64.whl", hash = "sha256:4f2a9badb0abf3017932e979ef6af31aa3f12bda2c5624e0878e0c03f048a1c9"},
+    {file = "pyontoenv-0.3.1a1-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:fd0ccf47b149f9fd5cedb5405bf42d2a005db1043799895d6a579d9fde020ac9"},
+    {file = "pyontoenv-0.3.1a1-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6caa2dc91d73213ab7c77fd53edf1b7f2dc387bcf3b9cd3499531c7c551eab38"},
+    {file = "pyontoenv-0.3.1a1-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c415918393ae2ef10bb7b0b43d803b234269e98a44e9c4cbba8868aa3c9a0305"},
+    {file = "pyontoenv-0.3.1a1-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fe04f164c34568b4d8211068a155bbc941f1d780ee535d99eb2c1e2511974644"},
+    {file = "pyontoenv-0.3.1a1.tar.gz", hash = "sha256:60194f815c92417493992881ff498b4d7f25a4275047aa865d65a0a888f88b7d"},
+]
+
+[package.dependencies]
+oxrdflib = ">=0.4.0"
+rdflib = ">=7.1.3"
+
+[[package]]
+name = "pyoxigraph"
+version = "0.4.11"
+description = "Python bindings of Oxigraph, a SPARQL database and RDF toolkit"
+optional = true
+python-versions = ">=3.8"
+groups = ["main"]
+markers = "extra == \"topquadrant\""
+files = [
+    {file = "pyoxigraph-0.4.11-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:008dd50b7dcab025d9a64df7de178220d197d684cdff3da53442ae759d8d700c"},
+    {file = "pyoxigraph-0.4.11-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:91e74596d0d9dc234ca77873369bb047672e38be11dfcde8b2db0fa0d0f3bd34"},
+    {file = "pyoxigraph-0.4.11-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:cd86f7f04624a23ccb821716ad34943d301524d266b9ac415e5f9cb4f4f339e6"},
+    {file = "pyoxigraph-0.4.11-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:7a0a3d84c887820473f1218e2e9633c2322eafed5e785b22a955ee0caaff882d"},
+    {file = "pyoxigraph-0.4.11-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1ff9c48ebb0faa48c17691d56d0dab88fa15fadef70e494153bb1511d3fc17ab"},
+    {file = "pyoxigraph-0.4.11-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9dcba1517a42a7d1a9f96b8d248579a8773e9256e35762f353207a486bdbf25b"},
+    {file = "pyoxigraph-0.4.11-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:6ae5f76d69498862fde26aa84ddf8d10a30478cf7f3be1fa8c82380e2f57af78"},
+    {file = "pyoxigraph-0.4.11-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:1e58de7bd2b1b6df2aa8a7bb95ce898c78c1309f9fb0d0658c51be38bf630620"},
+    {file = "pyoxigraph-0.4.11-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cc89ed499f0816119bad6955e41db51d7ee3b79f1f78bdb32bc3b7792a21ab51"},
+    {file = "pyoxigraph-0.4.11-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ec1f74e92c1ccb108e7b79bd1395cf12c1c6f9d4a3d9d2c2ddc7955e2a527c6d"},
+    {file = "pyoxigraph-0.4.11-cp312-cp312-musllinux_1_2_aarch64.whl", hash = "sha256:720e15d44a33fd153f8985e242e4e428ee913087ad9582d008adf84b55e57e0f"},
+    {file = "pyoxigraph-0.4.11-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:63ed10e9b398718350e08b08ffa5086c1c4123c45a1440818a130bf80d9b4a50"},
+    {file = "pyoxigraph-0.4.11-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6b6c280f474df35480ebcf644f5500e3ac835a8469c74ee150f3eab63c096b3b"},
+    {file = "pyoxigraph-0.4.11-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b51b40fbb69ccb77875f98c48bb73338f7488c59fe7470557d2dc954f81cf0ab"},
+    {file = "pyoxigraph-0.4.11-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:3249aca824cf641262d7a3083281cae4bef99b5eb21149e468ca59cb2c483b4b"},
+    {file = "pyoxigraph-0.4.11-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:033cd1e517c218958e621845192770d6214c433e63eff5eff8b189a359b11594"},
+    {file = "pyoxigraph-0.4.11-cp313-cp313-win_amd64.whl", hash = "sha256:429b0d709197b766c08f6b48d59158e878fce350a229848823781d614ad8a73e"},
+    {file = "pyoxigraph-0.4.11-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:13388877324e66dfa65461800505598fb5805a625f23e14b879df4fd52444b24"},
+    {file = "pyoxigraph-0.4.11-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ae090cb684331623f7b2460620d85b20cd3a312e0a1c172ad8a6cfd3a260cfdc"},
+    {file = "pyoxigraph-0.4.11-cp313-cp313t-musllinux_1_2_aarch64.whl", hash = "sha256:3dba53ac72f922607bb9db49e0f49824f74729839873b7a0d1ccf8f518cc80da"},
+    {file = "pyoxigraph-0.4.11-cp313-cp313t-musllinux_1_2_x86_64.whl", hash = "sha256:5965d40cb90852225eb3957a310e359a1f024a9ab21851f0a4555bc9666edc95"},
+    {file = "pyoxigraph-0.4.11-cp38-abi3-macosx_10_14_x86_64.whl", hash = "sha256:d6725d754893e81d5f397f3c6c29664b17eb52c99c9b705d4b800cc4416a53f4"},
+    {file = "pyoxigraph-0.4.11-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:b5757598733e38e3fee70513cfb38a2d10191dbbe1522af0329c70801a1f715e"},
+    {file = "pyoxigraph-0.4.11-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2eaf4f7421ba2815cf9f60c7bc2379344a03afe0ef6e749df9689a2d0c970b8a"},
+    {file = "pyoxigraph-0.4.11-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0826ed60ec53f3c539cdf4f2b9977089302478d02927293a09da49dedc604660"},
+    {file = "pyoxigraph-0.4.11-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:9322083f3854b26324f4f2aa23b0823c87802e404eb3e19d490f5d40f82a28bd"},
+    {file = "pyoxigraph-0.4.11-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:e035770fa70ba818073ea20de1989dc24e111f5ad93e52f44b5bd84c77d3057b"},
+    {file = "pyoxigraph-0.4.11-cp38-abi3-win_amd64.whl", hash = "sha256:26d862905a378ac922dda56ff6e36b047aea106203a2b5503a6dfc5feda55273"},
+    {file = "pyoxigraph-0.4.11-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:86acdd2e72f42a89778d8b5837e477c8609f0c4d87f8453cb3eeb014217ba268"},
+    {file = "pyoxigraph-0.4.11-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bd162020913e44088c94b566b51600d58d76ac8e7983d3001bc5e5fac667d34f"},
+    {file = "pyoxigraph-0.4.11-cp38-cp38-musllinux_1_2_aarch64.whl", hash = "sha256:1d9a6fdfeb06b895767353b9837d4d822d28fcf3ecf9580eca4b38669aff4e90"},
+    {file = "pyoxigraph-0.4.11-cp38-cp38-musllinux_1_2_x86_64.whl", hash = "sha256:97ab378c23e14b1465d7ad0bc4ce64ebce51cbf953ec9b9afe180fe93d1069d6"},
+    {file = "pyoxigraph-0.4.11-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8abfb7ee202d7f5a7694415e3e4c782d4b376097db08d2cbc92707fd3097b1da"},
+    {file = "pyoxigraph-0.4.11-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ae8b8f6fdf6613aa5d0e092e33e07279757d3b846dcf11d5c05a6aaad9d9cd06"},
+    {file = "pyoxigraph-0.4.11-cp39-cp39-musllinux_1_2_aarch64.whl", hash = "sha256:cf5075d9e17ecc63ea744fc3777fbdce5c02dd66f3085202507174fff90cedcc"},
+    {file = "pyoxigraph-0.4.11-cp39-cp39-musllinux_1_2_x86_64.whl", hash = "sha256:c1b5cb7ddd4434be0b835192451eb6ed3222bd2255f06c59d9f9861f60ffeb87"},
+    {file = "pyoxigraph-0.4.11-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:aed2ee7b60daaf096e3c652ecb4ccdd36ec4e507194a9002b63456b25c0af5c6"},
+    {file = "pyoxigraph-0.4.11-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c8afe83fd73f9f071302f451d987991a280a9703d19508a6dbcd63e9d5222e77"},
+    {file = "pyoxigraph-0.4.11-pp311-pypy311_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2dbb7dd027645ca74dfa588740e9beb8f148a19c70350eeb307448fbfd566ce5"},
+    {file = "pyoxigraph-0.4.11-pp311-pypy311_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9c6c3024541bd3dd03a5c838ce2feaedbf19463232417bdbf396291c4d9d2add"},
+    {file = "pyoxigraph-0.4.11-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0ebe04cb782cc359d8c782b1c8843accf5b8568ff942bc5cf204e9e395522c65"},
+    {file = "pyoxigraph-0.4.11-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ac504982b5e6d19a51a303db9ad4913889b08b2dcd2276cc832b2f0054124f50"},
+    {file = "pyoxigraph-0.4.11.tar.gz", hash = "sha256:19da535c5026eacb11140ee03e2055d8757eb0e9800e722476f52fa46fe96658"},
+]
+
+[[package]]
 name = "pyparsing"
 version = "3.2.3"
 description = "pyparsing module - Classes and methods to define and execute parsing grammars"
@@ -3158,6 +3279,23 @@ files = [
 
 [package.extras]
 dev = ["backports.zoneinfo ; python_version < \"3.9\"", "black", "build", "freezegun", "mdx_truly_sane_lists", "mike", "mkdocs", "mkdocs-awesome-pages-plugin", "mkdocs-gen-files", "mkdocs-literate-nav", "mkdocs-material (>=8.5)", "mkdocstrings[python]", "msgspec ; implementation_name != \"pypy\"", "mypy", "orjson ; implementation_name != \"pypy\"", "pylint", "pytest", "tzdata", "validate-pyproject[all]"]
+
+[[package]]
+name = "pytqshacl"
+version = "140"
+description = "Python wrapper around TopQuadrant SHACL processor"
+optional = true
+python-versions = "*"
+groups = ["main"]
+markers = "extra == \"topquadrant\""
+files = [
+    {file = "pytqshacl-140-py2.py3-none-any.whl", hash = "sha256:9af70c436dd37cacae8c0c9187a01860e05bc0c50514730930a8502c36f15fb7"},
+    {file = "pytqshacl-140.tar.gz", hash = "sha256:b6849b622d2e0082ee42296cc8ee5f0cea6d2290e557017e2cf5f8ef0f6665f7"},
+]
+
+[package.extras]
+cli = ["fire"]
+java = ["install-jdk"]
 
 [[package]]
 name = "pytz"
@@ -4598,4 +4736,4 @@ xlsx-ingress = []
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10, <3.13"
-content-hash = "07a3e909777800fb07c4ff6c2a561d1a2a086b3f0a7fed0e7e7685e0127d44d5"
+content-hash = "4563f90852a0d51479565843d4ecad640e9aa45db2215cc27f0f54a3cbff92ec"
