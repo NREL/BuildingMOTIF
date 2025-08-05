@@ -101,10 +101,9 @@ def get_library_classes(library_id: int) -> flask.Response:
     :rtype: flask.Response
     """
     try:
-        db_lib = current_app.building_motif.table_connection.get_db_library(
-            library_id
-        )
+        db_lib = current_app.building_motif.table_connection.get_db_library(library_id)
     except LibraryNotFound:
+        current_app.logger.error(f"Library with ID {library_id} not found.")
         return {"message": f"ID: {library_id}"}, status.HTTP_404_NOT_FOUND
 
     shape_collection = ShapeCollection.load(db_lib.shape_collection.id)
@@ -112,6 +111,9 @@ def get_library_classes(library_id: int) -> flask.Response:
     subclass_of_uri = flask.request.args.get("subclasses_of")
     if subclass_of_uri:
         subclass_of_uri = unquote(subclass_of_uri)
+    current_app.logger.info(
+        f"Fetching classes from library {library_id} with subclass_of_uri: {subclass_of_uri}"
+    )
 
     try:
         if subclass_of_uri:
@@ -141,6 +143,7 @@ def get_library_classes(library_id: int) -> flask.Response:
                     OPTIONAL { ?cls skos:definition ?definition . }
                 }
             """
+        print(f"Executing query: {query}")
         query_results = shape_collection.graph.query(query)
 
         results = [
@@ -154,9 +157,7 @@ def get_library_classes(library_id: int) -> flask.Response:
 
         return jsonify(results), status.HTTP_200_OK
     except Exception:
-        current_app.logger.error(
-            "Error processing get_library_classes", exc_info=True
-        )
+        current_app.logger.error("Error processing get_library_classes", exc_info=True)
         return (
             {"message": "Internal Server Error"},
             status.HTTP_500_INTERNAL_SERVER_ERROR,
