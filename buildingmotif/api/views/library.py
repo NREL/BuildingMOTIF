@@ -143,7 +143,7 @@ def get_library_classes(library_id: int) -> flask.Response:
                     OPTIONAL { ?cls skos:definition ?definition . }
                 }
             """
-        print(f"Executing query: {query}")
+        current_app.logger.info(f"Executing query: {query}")
         query_results = shape_collection.graph.query(query)
 
         results = [
