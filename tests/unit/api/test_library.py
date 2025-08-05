@@ -156,3 +156,64 @@ def test_get_library_classes_not_found(client):
     # Assert
     assert results.status_code == 404
     assert results.json == {"message": "ID: -1"}
+
+
+def test_get_library_subclasses(client, building_motif):
+    # Setup
+    lib = Library.create("my_library")
+    shape_collection = lib.get_shape_collection()
+    shape_collection.graph.parse(
+        data="""@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix : <urn:test#> .
+:parent a owl:Class ;
+    rdfs:label "Parent" .
+:child1 a owl:Class ;
+    rdfs:subClassOf :parent ;
+    rdfs:label "Child 1" .
+:child2 a rdfs:Class ;
+    rdfs:subClassOf :parent ;
+    rdfs:label "Child 2" .
+:grandchild1 a owl:Class ;
+    rdfs:subClassOf :child1 ;
+    rdfs:label "Grandchild 1" .
+:unrelated a owl:Class ;
+    rdfs:label "Unrelated" .
+""",
+        format="turtle",
+    )
+
+    # Act - get subclasses of :parent
+    results = client.get(f"/libraries/{lib.id}/classes?subclasses_of=urn:test#parent")
+
+    # Assert
+    assert results.status_code == 200
+    expected_data = [
+        {"uri": "urn:test#child1", "label": "Child 1", "definition": None},
+        {"uri": "urn:test#child2", "label": "Child 2", "definition": None},
+        {"uri": "urn:test#grandchild1", "label": "Grandchild 1", "definition": None},
+    ]
+    assert sorted(results.json, key=lambda x: x["uri"]) == sorted(
+        expected_data, key=lambda x: x["uri"]
+    )
+
+    # Act - get subclasses of :child1
+    results = client.get(f"/libraries/{lib.id}/classes?subclasses_of=urn:test#child1")
+    assert results.status_code == 200
+    expected_data = [
+        {"uri": "urn:test#grandchild1", "label": "Grandchild 1", "definition": None},
+    ]
+    assert results.json == expected_data
+
+    # Act - get subclasses of unrelated (should be none)
+    results = client.get(f"/libraries/{lib.id}/classes?subclasses_of=urn:test#unrelated")
+    assert results.status_code == 200
+    assert results.json == []
+
+    # Act - get subclasses of grandchild1 (should be none)
+    results = client.get(
+        f"/libraries/{lib.id}/classes?subclasses_of=urn:test#grandchild1"
+    )
+    assert results.status_code == 200
+    assert results.json == []

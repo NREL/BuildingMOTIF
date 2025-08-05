@@ -91,6 +91,9 @@ def get_library(library_id: int) -> flask.Response:
 def get_library_classes(library_id: int) -> flask.Response:
     """Get all classes from a library's shape collection.
 
+    An optional 'subclasses_of' query parameter can be provided to get all
+    subclasses of a given class.
+
     :param library_id: library id
     :type library_id: int
     :return: all classes in shape collection
@@ -105,20 +108,35 @@ def get_library_classes(library_id: int) -> flask.Response:
 
     shape_collection = ShapeCollection.load(db_lib.shape_collection.id)
 
-    query = """
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        PREFIX owl: <http://www.w3.org/2002/07/owl#>
-        PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-        SELECT ?cls ?label ?definition
-        WHERE {
-            { ?cls a rdfs:Class . }
-            UNION
-            { ?cls a owl:Class . }
-            FILTER(!isBlank(?cls))
-            OPTIONAL { ?cls rdfs:label ?label . }
-            OPTIONAL { ?cls skos:definition ?definition . }
-        }
-    """
+    subclass_of_uri = flask.request.args.get("subclasses_of")
+
+    if subclass_of_uri:
+        query = f"""
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT ?cls ?label ?definition
+            WHERE {{
+                ?cls rdfs:subClassOf+ <{subclass_of_uri}> .
+                FILTER(!isBlank(?cls))
+                OPTIONAL {{ ?cls rdfs:label ?label . }}
+                OPTIONAL {{ ?cls skos:definition ?definition . }}
+            }}
+        """
+    else:
+        query = """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT ?cls ?label ?definition
+            WHERE {
+                { ?cls a rdfs:Class . }
+                UNION
+                { ?cls a owl:Class . }
+                FILTER(!isBlank(?cls))
+                OPTIONAL { ?cls rdfs:label ?label . }
+                OPTIONAL { ?cls skos:definition ?definition . }
+            }
+        """
     query_results = shape_collection.graph.query(query)
 
     results = [
