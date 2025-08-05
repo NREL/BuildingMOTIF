@@ -1,3 +1,6 @@
+from urllib.parse import quote
+from unittest.mock import MagicMock, patch
+
 from buildingmotif.dataclasses import Library
 
 
@@ -217,3 +220,35 @@ def test_get_library_subclasses(client, building_motif):
     )
     assert results.status_code == 200
     assert results.json == []
+
+    # Act - get subclasses of :parent with escaped URI
+    escaped_uri = quote("urn:test#parent")
+    results = client.get(f"/libraries/{lib.id}/classes?subclasses_of={escaped_uri}")
+
+    # Assert
+    assert results.status_code == 200
+    expected_data = [
+        {"uri": "urn:test#child1", "label": "Child 1", "definition": None},
+        {"uri": "urn:test#child2", "label": "Child 2", "definition": None},
+        {"uri": "urn:test#grandchild1", "label": "Grandchild 1", "definition": None},
+    ]
+    assert sorted(results.json, key=lambda x: x["uri"]) == sorted(
+        expected_data, key=lambda x: x["uri"]
+    )
+
+
+def test_get_library_classes_server_error(client, building_motif):
+    # Setup
+    lib = Library.create("my_library")
+
+    # Act
+    with patch("buildingmotif.api.views.library.ShapeCollection.load") as mock_load:
+        mock_sc = MagicMock()
+        mock_sc.graph.query.side_effect = Exception("DB error")
+        mock_load.return_value = mock_sc
+
+        results = client.get(f"/libraries/{lib.id}/classes")
+
+    # Assert
+    assert results.status_code == 500
+    assert results.json == {"message": "Internal Server Error"}

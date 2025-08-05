@@ -1,4 +1,5 @@
 from typing import Dict, List
+from urllib.parse import unquote
 
 import flask
 from flask import Blueprint, current_app, jsonify
@@ -109,43 +110,54 @@ def get_library_classes(library_id: int) -> flask.Response:
     shape_collection = ShapeCollection.load(db_lib.shape_collection.id)
 
     subclass_of_uri = flask.request.args.get("subclasses_of")
-
     if subclass_of_uri:
-        query = f"""
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-            SELECT ?cls ?label ?definition
-            WHERE {{
-                ?cls rdfs:subClassOf+ <{subclass_of_uri}> .
-                FILTER(!isBlank(?cls))
-                OPTIONAL {{ ?cls rdfs:label ?label . }}
-                OPTIONAL {{ ?cls skos:definition ?definition . }}
-            }}
-        """
-    else:
-        query = """
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            PREFIX owl: <http://www.w3.org/2002/07/owl#>
-            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-            SELECT ?cls ?label ?definition
-            WHERE {
-                { ?cls a rdfs:Class . }
-                UNION
-                { ?cls a owl:Class . }
-                FILTER(!isBlank(?cls))
-                OPTIONAL { ?cls rdfs:label ?label . }
-                OPTIONAL { ?cls skos:definition ?definition . }
+        subclass_of_uri = unquote(subclass_of_uri)
+
+    try:
+        if subclass_of_uri:
+            query = f"""
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                SELECT ?cls ?label ?definition
+                WHERE {{
+                    ?cls rdfs:subClassOf+ <{subclass_of_uri}> .
+                    FILTER(!isBlank(?cls))
+                    OPTIONAL {{ ?cls rdfs:label ?label . }}
+                    OPTIONAL {{ ?cls skos:definition ?definition . }}
+                }}
+            """
+        else:
+            query = """
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX owl: <http://www.w3.org/2002/07/owl#>
+                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                SELECT ?cls ?label ?definition
+                WHERE {
+                    { ?cls a rdfs:Class . }
+                    UNION
+                    { ?cls a owl:Class . }
+                    FILTER(!isBlank(?cls))
+                    OPTIONAL { ?cls rdfs:label ?label . }
+                    OPTIONAL { ?cls skos:definition ?definition . }
+                }
+            """
+        query_results = shape_collection.graph.query(query)
+
+        results = [
+            {
+                "uri": str(res.cls),
+                "label": str(res.label) if res.label else None,
+                "definition": str(res.definition) if res.definition else None,
             }
-        """
-    query_results = shape_collection.graph.query(query)
+            for res in query_results
+        ]
 
-    results = [
-        {
-            "uri": str(res.cls),
-            "label": str(res.label) if res.label else None,
-            "definition": str(res.definition) if res.definition else None,
-        }
-        for res in query_results
-    ]
-
-    return jsonify(results), status.HTTP_200_OK
+        return jsonify(results), status.HTTP_200_OK
+    except Exception:
+        current_app.logger.error(
+            "Error processing get_library_classes", exc_info=True
+        )
+        return (
+            {"message": "Internal Server Error"},
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
