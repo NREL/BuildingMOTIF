@@ -188,7 +188,9 @@ def test_get_library_subclasses(client, building_motif):
     )
 
     # Act - get subclasses of :parent
-    results = client.get(f"/libraries/{lib.id}/classes?subclasses_of=urn:test#parent")
+    results = client.get(
+        f"/libraries/{lib.id}/classes?subclasses_of={quote('urn:test#parent')}"
+    )
 
     # Assert
     assert results.status_code == 200
@@ -202,7 +204,9 @@ def test_get_library_subclasses(client, building_motif):
     )
 
     # Act - get subclasses of :child1
-    results = client.get(f"/libraries/{lib.id}/classes?subclasses_of=urn:test#child1")
+    results = client.get(
+        f"/libraries/{lib.id}/classes?subclasses_of={quote('urn:test#child1')}"
+    )
     assert results.status_code == 200
     expected_data = [
         {"uri": "urn:test#grandchild1", "label": "Grandchild 1", "definition": None},
@@ -210,13 +214,15 @@ def test_get_library_subclasses(client, building_motif):
     assert results.json == expected_data
 
     # Act - get subclasses of unrelated (should be none)
-    results = client.get(f"/libraries/{lib.id}/classes?subclasses_of=urn:test#unrelated")
+    results = client.get(
+        f"/libraries/{lib.id}/classes?subclasses_of={quote('urn:test#unrelated')}"
+    )
     assert results.status_code == 200
     assert results.json == []
 
     # Act - get subclasses of grandchild1 (should be none)
     results = client.get(
-        f"/libraries/{lib.id}/classes?subclasses_of=urn:test#grandchild1"
+        f"/libraries/{lib.id}/classes?subclasses_of={quote('urn:test#grandchild1')}"
     )
     assert results.status_code == 200
     assert results.json == []
