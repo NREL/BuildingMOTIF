@@ -1,0 +1,32 @@
+<div class="manifest-container">
+  <div class="column">
+    <div class="column-title">Libraries</div>
+    <mat-progress-bar *ngIf="loadingLibraries" mode="indeterminate"></mat-progress-bar>
+    <form [formGroup]="selectedLibrariesForm">
+      <mat-selection-list>
+        <mat-list-option *ngFor="let lib of libraries">
+          <mat-checkbox [formControlName]="lib.id">{{ lib.name }}</mat-checkbox>
+        </mat-list-option>
+      </mat-selection-list>
+    </form>
+  </div>
+
+  <div class="column">
+    <div class="column-title">Templates</div>
+    <mat-progress-bar *ngIf="loadingTemplates" mode="indeterminate"></mat-progress-bar>
+    <form [formGroup]="selectedTemplatesForm">
+      <mat-selection-list>
+        <mat-list-option *ngFor="let t of templates">
+          <mat-checkbox [formControlName]="(t as any).id">
+            {{ (t as any).name || (t as any).id }}
+          </mat-checkbox>
+        </mat-list-option>
+      </mat-selection-list>
+    </form>
+  </div>
+</div>
+
+<div class="actions">
+  <button mat-raised-button color="primary" (click)="saveManifest()" [disabled]="saving">Save Manifest</button>
+  <mat-progress-bar *ngIf="saving" mode="indeterminate"></mat-progress-bar>
+</div>

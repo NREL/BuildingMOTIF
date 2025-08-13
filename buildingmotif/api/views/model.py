@@ -14,6 +14,7 @@ from buildingmotif.database.errors import (
 )
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
 from buildingmotif.exports.brick2af.validation import generate_report
+from buildingmotif.namespaces import OWL
 
 blueprint = Blueprint("models", __name__)
 logger = logging.getLogger()
@@ -180,6 +181,64 @@ def get_model_manifest(models_id: int) -> flask.Response:
     manifest = model.get_manifest()
     manifest_ttl = manifest.graph.serialize(format="ttl")
     return manifest_ttl, status.HTTP_200_OK
+
+
+@blueprint.route("/<models_id>/manifest/imports", methods=(["GET", "POST"]))
+def manage_manifest_imports(models_id: int) -> flask.Response:
+    try:
+        model = Model.load(models_id)
+    except ModelNotFound:
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    manifest = model.get_manifest()
+    g = manifest.graph
+
+    # We will encode library IDs as URIs with this prefix
+    lib_prefix = "https://nrel.gov/BuildingMOTIF/library/"
+
+    if request.method == "GET":
+        library_ids = []
+        for _, _, o in g.triples((None, OWL.imports, None)):
+            if isinstance(o, URIRef) and str(o).startswith(lib_prefix):
+                try:
+                    library_ids.append(int(str(o).split("/")[-1]))
+                except Exception:
+                    continue
+        library_ids = sorted(list(set(library_ids)))
+        return jsonify({"library_ids": library_ids}), status.HTTP_200_OK
+
+    if request.content_type != "application/json":
+        return {"message": "request content type must be json"}, status.HTTP_400_BAD_REQUEST
+
+    try:
+        body = request.json or {}
+    except Exception as e:
+        return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
+
+    library_ids = body.get("library_ids", []) or []
+    selected_template_ids = body.get("selected_template_ids", []) or []
+
+    # Remove existing imports that match our library prefix
+    to_remove = []
+    for s, p, o in g.triples((None, OWL.imports, None)):
+        if isinstance(o, URIRef) and str(o).startswith(lib_prefix):
+            to_remove.append((s, p, o))
+    for triple in to_remove:
+        g.remove(triple)
+
+    # Use the model's URI as the subject for owl:imports
+    subject = URIRef(str(model.name))
+
+    # Add new imports
+    for lib_id in library_ids:
+        o = URIRef(f"{lib_prefix}{lib_id}")
+        g.add((subject, OWL.imports, o))
+
+    current_app.building_motif.session.commit()
+
+    logger.info(f"Selected templates for model {models_id}: {selected_template_ids}")
+
+    return jsonify({"library_ids": library_ids, "selected_template_ids": selected_template_ids}), status.HTTP_200_OK
 
 
 @blueprint.route("/<models_id>/validate", methods=(["POST"]))

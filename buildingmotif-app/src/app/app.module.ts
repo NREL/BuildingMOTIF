@@ -43,6 +43,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import { PointlabelParserComponent } from './pointlabel-parser/pointlabel-parser.component';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { ParserVisComponent } from './parser-vis/parser-vis.component'; 
+import { ModelManifestComponent } from './model-manifest/model-manifest.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { ParserVisComponent } from './parser-vis/parser-vis.component';
     ShapeValidationComponent,
     PointlabelParserComponent,
     ParserVisComponent,
+    ModelManifestComponent,
   ],
   imports: [
     BrowserModule,
