@@ -115,7 +115,7 @@ def inline_sh_nodes(g: Graph):
     original_size = 0
     while original_size != len(g):  # type: ignore
         original_size = len(g)  # type: ignore
-        for (s, p, o) in g.query(q):  # type: ignore
+        for s, p, o in g.query(q):  # type: ignore
             if p == RDF.type and o == SH.NodeShape:
                 continue
             g.add((s, p, o))
@@ -376,7 +376,7 @@ def _index_properties(
 
     # store the classes for each parameter
     param_types: Dict[Node, List[Node]] = defaultdict(list)
-    for (param, ptype) in templ_graph.subject_objects(RDF.type):
+    for param, ptype in templ_graph.subject_objects(RDF.type):
         param_types[param].append(ptype)
 
     # store the properties and their types for the target
@@ -541,7 +541,7 @@ def _inline_sh_node(sg: Graph):
         parent, child = row  # type: ignore
         sg.remove((parent, SH.node, child))
         pos = sg.predicate_objects(child)
-        for (p, o) in pos:
+        for p, o in pos:
             sg.add((parent, p, o))
 
 
@@ -561,7 +561,7 @@ def _inline_sh_and(sg: Graph):
         parent, child, to_remove = row  # type: ignore
         sg.remove((parent, SH["and"], to_remove))
         pos = sg.predicate_objects(child)
-        for (p, o) in pos:
+        for p, o in pos:
             sg.add((parent, p, o))
 
 
@@ -580,7 +580,7 @@ def _inline_sh_qualified_value_shape(sg: Graph):
         parent, child = row  # type: ignore
         sg.remove((parent, SH["qualifiedValueShape"], child))
         pobjs = sg.predicate_objects(child)
-        for (p, o) in pobjs:
+        for p, o in pobjs:
             sg.add((parent, p, o))
 
 
@@ -649,9 +649,7 @@ def shacl_validate(
 
     if engine == "topquadrant":
         try:
-            from brick_tq_shacl.topquadrant_shacl import (
-                validate as tq_validate,  # type: ignore
-            )
+            from brick_tq_shacl import validate as tq_validate  # type: ignore
 
             return tq_validate(data_graph, shape_graph or Graph())  # type: ignore
         except ImportError:
@@ -693,7 +691,7 @@ def shacl_inference(
     """
     if engine == "topquadrant":
         try:
-            from brick_tq_shacl.topquadrant_shacl import infer as tq_infer
+            from brick_tq_shacl import infer as tq_infer
 
             return tq_infer(data_graph, shape_graph or Graph())  # type: ignore
         except ImportError:
