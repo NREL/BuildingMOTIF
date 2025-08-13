@@ -3,6 +3,7 @@ from typing import Optional
 
 from flask import Flask, current_app
 from flask_api import status
+from flask_cors import CORS
 from sqlalchemy.exc import SQLAlchemyError
 
 from buildingmotif.api.views.library import blueprint as library_blueprint
@@ -26,10 +27,6 @@ def _after_request(response):
         current_app.building_motif.session.rollback()
 
     current_app.building_motif.Session.remove()
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-
     return response
 
 
@@ -69,6 +66,9 @@ def create_app(DB_URI, shacl_engine: Optional[str] = "pyshacl"):
     app.register_blueprint(template_blueprint, url_prefix="/templates")
     app.register_blueprint(model_blueprint, url_prefix="/models")
     app.register_blueprint(parsers_blueprint, url_prefix="/parsers")
+
+    # Enable CORS for all origins using flask-cors
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     return app
 
