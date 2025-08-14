@@ -479,4 +479,4 @@ Add FDD rules to the model’s manifest.
 - Manifest endpoint supports content negotiation on GET (JSON vs Turtle).
 - Ontology name (graph_name) for a library’s shape collection is available at:
   - GET /libraries/{library_id}/shape_collection/ontology_name
-- When posting JSON to manifest, prefer library_ids to avoid hardcoding URIs; the API resolves them to the proper graph_id URIs.
+- When posting JSON to manifest, prefer library_ids to avoid hardcoding URIs; the API resolves them to the proper graph_name URIs.
