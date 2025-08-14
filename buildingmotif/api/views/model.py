@@ -192,12 +192,19 @@ def get_model_manifest(models_id: int) -> flask.Response:
     if flask.request.method == "GET":
         ttl_body = g.serialize(format="ttl")
         # Collect all owl:imports objects as URIs
-        library_uris = sorted(list({str(o) for _, _, o in g.triples((None, OWL.imports, None))}))
+        library_uris = sorted(
+            list({str(o) for _, _, o in g.triples((None, OWL.imports, None))})
+        )
 
         # Content negotiation: return JSON only if explicitly requested
-        best = request.accept_mimetypes.best_match(["application/json", "text/turtle", "text/plain"])
+        best = request.accept_mimetypes.best_match(
+            ["application/json", "text/turtle", "text/plain"]
+        )
         if best == "application/json":
-            return jsonify({"body": ttl_body, "library_uris": library_uris}), status.HTTP_200_OK
+            return (
+                jsonify({"body": ttl_body, "library_uris": library_uris}),
+                status.HTTP_200_OK,
+            )
         return ttl_body, status.HTTP_200_OK
 
     # POST: update/replace manifest
@@ -215,18 +222,26 @@ def get_model_manifest(models_id: int) -> flask.Response:
         library_ids = body.get("library_ids", []) or []
         library_uris_in = body.get("library_uris", []) or []
 
-        if not isinstance(library_ids, list) or not all(isinstance(x, int) for x in library_ids):
-            return {"message": "library_ids must be an array of integers"}, status.HTTP_400_BAD_REQUEST
-        if not isinstance(library_uris_in, list) or not all(isinstance(x, str) for x in library_uris_in):
-            return {"message": "library_uris must be an array of strings"}, status.HTTP_400_BAD_REQUEST
+        if not isinstance(library_ids, list) or not all(
+            isinstance(x, int) for x in library_ids
+        ):
+            return {
+                "message": "library_ids must be an array of integers"
+            }, status.HTTP_400_BAD_REQUEST
+        if not isinstance(library_uris_in, list) or not all(
+            isinstance(x, str) for x in library_uris_in
+        ):
+            return {
+                "message": "library_uris must be an array of strings"
+            }, status.HTTP_400_BAD_REQUEST
 
         # Resolve library_ids to shape collection identifiers (URIs)
         nonexistent_libraries = []
         resolved_uris = []
         for lib_id in library_ids:
             try:
-                db_lib = current_app.building_motif.table_connection.get_db_library(lib_id)
-                ident = db_lib.shape_collection.graph_id
+                db_lib = Library.load(lib_id)
+                ident = db_lib.get_shape_collection().graph_name
                 if ident is not None:
                     resolved_uris.append(str(ident))
             except LibraryNotFound:
@@ -297,7 +312,9 @@ def manage_manifest_imports(models_id: int) -> flask.Response:
         return jsonify({"library_ids": library_ids}), status.HTTP_200_OK
 
     if request.content_type != "application/json":
-        return {"message": "request content type must be json"}, status.HTTP_400_BAD_REQUEST
+        return {
+            "message": "request content type must be json"
+        }, status.HTTP_400_BAD_REQUEST
 
     try:
         body = request.json or {}
@@ -327,7 +344,12 @@ def manage_manifest_imports(models_id: int) -> flask.Response:
 
     logger.info(f"Selected templates for model {models_id}: {selected_template_ids}")
 
-    return jsonify({"library_ids": library_ids, "selected_template_ids": selected_template_ids}), status.HTTP_200_OK
+    return (
+        jsonify(
+            {"library_ids": library_ids, "selected_template_ids": selected_template_ids}
+        ),
+        status.HTTP_200_OK,
+    )
 
 
 @blueprint.route("/<models_id>/validate", methods=(["POST"]))
