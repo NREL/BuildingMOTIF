@@ -25,7 +25,7 @@ def test_post_model_manifest_with_library_ids_sets_imports(client, building_moti
     model = Model.create(name="urn:my_model_ids")
     lib = Library.create("lib_ids")
     db_lib = building_motif.table_connection.get_db_library(lib.id)
-    db_lib.shape_collection.graph_id = "urn:test:lib_ids_sc"
+    db_lib.shape_collection.graph_name = "urn:test:lib_ids_sc"
     building_motif.session.commit()
 
     # Act
