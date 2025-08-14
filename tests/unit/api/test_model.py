@@ -158,7 +158,7 @@ def test_model_manifest(client, building_motif):
     library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     model.update_manifest(library_1.get_shape_collection())
 
-    results = client.get(f"/models/{model.id}/manifest")
+    results = client.get(f"/models/{model.id}/manifest", headers={"Accept": "text/turtle"})
     print(results.data)
     manifest = Graph().parse(data=results.data, format="ttl")
 
