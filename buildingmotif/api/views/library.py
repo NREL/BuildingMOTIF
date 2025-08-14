@@ -162,3 +162,23 @@ def get_library_classes(library_id: int) -> flask.Response:
             {"message": "Internal Server Error"},
             status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+
+@blueprint.route("/<library_id>/shape_collection/ontology_name", methods=(["GET"]))
+def get_library_shape_collection_ontology_name(library_id: int) -> flask.Response:
+    """Get the ontology name (graph identifier) of the library's shape collection.
+
+    :param library_id: library id
+    :type library_id: int
+    :return: {"ontology_name": string | null}
+    :rtype: flask.Response
+    """
+    try:
+        db_lib = current_app.building_motif.table_connection.get_db_library(library_id)
+    except LibraryNotFound:
+        current_app.logger.error(f"Library with ID {library_id} not found.")
+        return {"message": f"ID: {library_id}"}, status.HTTP_404_NOT_FOUND
+
+    shape_collection = ShapeCollection.load(db_lib.shape_collection.id)
+    ident = shape_collection.graph.identifier
+    return jsonify({"ontology_name": str(ident) if ident is not None else None}), status.HTTP_200_OK
