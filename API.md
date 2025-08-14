@@ -281,7 +281,7 @@ Example:
 
 ---
 
-### GET /models/{model_id}/cbd
+### GET /models/{model_id}/node_subgraph
 Return the Concise Bounded Description (CBD) of a node within the model graph.
 
 - Path params:
@@ -295,8 +295,8 @@ Return the Concise Bounded Description (CBD) of a node within the model graph.
   - 404 for missing model
 
 Example:
-- GET /models/5/cbd?node=urn%3Aexample%3Asubject
-- GET /models/5/cbd?node=urn%3Aexample%3Asubject&self_contained=false
+- GET /models/5/node_subgraph?node=urn%3Aexample%3Asubject
+- GET /models/5/node_subgraph?node=urn%3Aexample%3Asubject&self_contained=false
 
 ### GET /models/{model_id}/target_nodes
 Return a list of target node types found in the model graph.

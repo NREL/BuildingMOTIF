@@ -185,7 +185,7 @@ class Model:
         """
         self.graph += graph
 
-    def cbd(self, node: rdflib.term.Node, self_contained: bool = True) -> rdflib.Graph:
+    def node_subgraph(self, node: rdflib.term.Node, self_contained: bool = True) -> rdflib.Graph:
         """Return the Concise Bounded Description (CBD) of a node in this model's graph.
 
         If self_contained is True, compute a fixed-point closure by iteratively

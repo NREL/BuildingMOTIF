@@ -68,8 +68,8 @@ def get_model_graph(models_id: int) -> Graph:
     return g.serialize(format="ttl"), status.HTTP_200_OK
 
 
-@blueprint.route("/<models_id>/cbd", methods=(["GET"]))
-def get_model_cbd(models_id: int) -> flask.Response:
+@blueprint.route("/<models_id>/node_subgraph", methods=(["GET"]))
+def get_model_node_subgraph(models_id: int) -> flask.Response:
     """Return the Concise Bounded Description (CBD) of a node within the model graph.
 
     Query params:
@@ -99,7 +99,7 @@ def get_model_cbd(models_id: int) -> flask.Response:
     except Exception:
         return {"message": "invalid 'node' URI"}, status.HTTP_400_BAD_REQUEST
 
-    cbd_graph = model.cbd(node_ref, self_contained=self_contained)
+    cbd_graph = model.node_subgraph(node_ref, self_contained=self_contained)
     return cbd_graph.serialize(format="ttl"), status.HTTP_200_OK
 
 
