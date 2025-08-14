@@ -134,6 +134,10 @@ class CompiledModel:
             ontologies are missing (i.e. they need to be loaded into BuildingMOTIF), defaults
             to True
         :type error_on_missing_imports: bool, optional
+        :param min_iterations: minimum number of SHACL validation passes to run before allowing early convergence. Defaults to 1.
+        :type min_iterations: int, optional
+        :param max_iterations: maximum number of SHACL validation passes to run; validation stops early if the graph size converges after at least min_iterations. Defaults to 3.
+        :type max_iterations: int, optional
         :return: An object containing useful properties/methods to deal with
             the validation results
         :rtype: ValidationContext

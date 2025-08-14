@@ -220,17 +220,16 @@ class Model:
     def compile(
         self, shape_collections: Optional[List["ShapeCollection"]] = None, min_iterations: int = 1, max_iterations: int = 3
     ) -> "CompiledModel":
-        """Compile the graph of a model against a set of ShapeCollections.
+        """Compile the graph of this model against one or more ShapeCollections.
 
-        :param shape_collections: list of ShapeCollections to compile the model
-            against. Defaults to the model's manifest.
+        :param shape_collections: list of ShapeCollections to compile the model against. Defaults to the model's manifest when None.
         :type shape_collections: List[ShapeCollection], optional
-        :param shacl_engine: the SHACL engine to use for validation, defaults to whatever
-            is set in the BuildingMOTIF object
-        :type shacl_engine: str, optional
-        :return: copy of model's graph that has been compiled against the
-            ShapeCollections
-        :rtype: Graph
+        :param min_iterations: minimum number of SHACL inference passes to run before allowing early convergence. Defaults to 1.
+        :type min_iterations: int, optional
+        :param max_iterations: maximum number of SHACL inference passes to run; compilation stops early if the graph size converges after at least min_iterations. Defaults to 3.
+        :type max_iterations: int, optional
+        :return: a CompiledModel wrapping the compiled graph and the ShapeCollections used
+        :rtype: CompiledModel
         """
         from buildingmotif.dataclasses.compiled_model import CompiledModel
 

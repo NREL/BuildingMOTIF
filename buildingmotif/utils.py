@@ -645,6 +645,10 @@ def shacl_validate(
     :type shape_graph: Graph, optional
     :param engine: the SHACL engine to use, defaults to "topquadrant"
     :type engine: str, optional
+    :param min_iterations: minimum number of validation passes to run before allowing early convergence, when supported by the selected engine. Currently ignored by the PySHACL backend.
+    :type min_iterations: Optional[int], optional
+    :param max_iterations: maximum number of validation passes to run, when supported by the selected engine. Currently ignored by the PySHACL backend.
+    :type max_iterations: Optional[int], optional
     :return: a tuple containing the validation result, the validation report, and the validation report string
     :rtype: Tuple[bool, Graph, str]
     """
@@ -690,6 +694,10 @@ def shacl_inference(
     :type shape_graph: Optional[Graph]
     :param engine: the SHACL engine to use, defaults to "topquadrant"
     :type engine: str, optional
+    :param min_iterations: minimum number of SHACL inference passes to run before allowing early convergence. Defaults to 1.
+    :type min_iterations: int, optional
+    :param max_iterations: maximum number of SHACL inference passes to run; inference stops early if the graph size converges after at least min_iterations. Defaults to 3.
+    :type max_iterations: int, optional
     :return: the data graph with inferred triples
     :rtype: Graph
     """
