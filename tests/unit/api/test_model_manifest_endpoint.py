@@ -12,7 +12,7 @@ def test_get_model_manifest_json_includes_body_and_uris(client, building_motif):
     res = client.get(f"/models/{model.id}/manifest", headers={"Accept": "application/json"})
 
     # Assert
-    assert res.status_code == 200
+    assert res.status_code == 200, res.data
     payload = res.get_json()
     assert set(payload.keys()) == {"body", "library_uris"}
     # body should be parseable TTL
@@ -36,7 +36,7 @@ def test_post_model_manifest_with_library_ids_sets_imports(client, building_moti
     )
 
     # Assert
-    assert res.status_code == 200
+    assert res.status_code == 200, res.data
     g = Graph().parse(data=res.data, format="turtle")
     subject = URIRef(str(model.name))
     assert (subject, OWL.imports, URIRef("urn:test:lib_ids_sc")) in g
@@ -55,7 +55,7 @@ def test_post_model_manifest_with_library_uris_sets_imports(client, building_mot
     )
 
     # Assert
-    assert res.status_code == 200
+    assert res.status_code == 200, res.data
     g = Graph().parse(data=res.data, format="turtle")
     subject = URIRef(str(model.name))
     for u in uris:
@@ -78,7 +78,7 @@ def test_post_model_manifest_replace_with_turtle_body(client, building_motif):
     )
 
     # Assert
-    assert res.status_code == 200
+    assert res.status_code == 200, res.data
     returned = Graph().parse(data=res.data, format="turtle")
     posted = Graph().parse(data=manifest_ttl, format="turtle")
     assert set(returned) == set(posted)
@@ -95,7 +95,7 @@ def test_get_model_manifest_turtle_when_requested(client, building_motif):
     )
 
     # Assert
-    assert res.status_code == 200
+    assert res.status_code == 200, res.data
     Graph().parse(data=res.data, format="turtle")  # parses without error
 
 
