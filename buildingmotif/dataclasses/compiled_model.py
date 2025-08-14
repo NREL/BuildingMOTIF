@@ -62,6 +62,10 @@ class CompiledModel:
             g += shape_collection.graph
         return g
 
+    def get_manifest(self) -> ShapeCollection:
+        """Return the manifest ShapeCollection associated with this compiled model's underlying Model."""
+        return self.model.get_manifest()
+
     def node_subgraph(self, node: rdflib.term.Node, self_contained: bool = True) -> rdflib.Graph:
         """Return a subgraph describing the given node from the compiled model graph.
 
