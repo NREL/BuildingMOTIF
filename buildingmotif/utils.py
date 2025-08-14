@@ -631,6 +631,8 @@ def shacl_validate(
     data_graph: Graph,
     shape_graph: Optional[Graph] = None,
     engine: Optional[str] = "topquadrant",
+    min_iterations: Optional[int] = None,
+    max_iterations: Optional[int] = None,
 ) -> Tuple[bool, Graph, str]:
     """
     Validate the data graph against the shape graph.
@@ -673,6 +675,8 @@ def shacl_inference(
     data_graph: Graph,
     shape_graph: Optional[Graph] = None,
     engine: Optional[str] = "topquadrant",
+    min_iterations: int = 1,
+    max_iterations: int = 3,
 ) -> Graph:
     """
     Infer new triples in the data graph using the shape graph.
@@ -701,25 +705,14 @@ def shacl_inference(
             pass
 
     # We use a fixed-point computation approach to 'compiling' RDF models.
-    # We accomlish this by keeping track of the size of the graph before and after
-    # the inference step. If the size of the graph changes, then we know that the
-    # inference has had some effect. We do this at most 3 times to avoid looping
-    # forever.
-    pre_compile_length = len(data_graph)  # type: ignore
-    pyshacl.validate(
-        data_graph=data_graph,
-        shacl_graph=shape_graph,
-        ont_graph=shape_graph,
-        advanced=True,
-        inplace=True,
-        js=True,
-        allow_warnings=True,
-    )
-    post_compile_length = len(data_graph)  # type: ignore
+    # We accomplish this by keeping track of the size of the graph before and after
+    # each inference step. We will run at least `min_iterations` passes and at most
+    # `max_iterations` passes, stopping early if the graph size converges.
+    if max_iterations < min_iterations:
+        max_iterations = min_iterations
 
-    attempts = 3
-    while attempts > 0 and post_compile_length != pre_compile_length:
-        pre_compile_length = len(data_graph)  # type: ignore
+    prev_len = len(data_graph)  # type: ignore
+    for i in range(max_iterations):
         pyshacl.validate(
             data_graph=data_graph,
             shacl_graph=shape_graph,
@@ -729,8 +722,12 @@ def shacl_inference(
             js=True,
             allow_warnings=True,
         )
-        post_compile_length = len(data_graph)  # type: ignore
-        attempts -= 1
+        curr_len = len(data_graph)  # type: ignore
+        # Only allow early exit once we've hit the minimum number of iterations
+        if i + 1 >= min_iterations and curr_len == prev_len:
+            break
+        prev_len = curr_len
+
     return data_graph - (shape_graph or Graph())
 
 

@@ -120,6 +120,8 @@ class CompiledModel:
     def validate(
         self,
         error_on_missing_imports: Optional[bool] = True,
+        min_iterations: int = 1,
+        max_iterations: int = 3,
     ) -> "ValidationContext":
         """Validates this model against the given list of ShapeCollections.
         If no list is provided, the model will be validated against the model's "manifest".
@@ -160,7 +162,10 @@ class CompiledModel:
 
         # validate the data graph
         valid, report_g, report_str = shacl_validate(
-            shapeg, engine=self.model._bm.shacl_engine
+            shapeg,
+            engine=self.model._bm.shacl_engine,
+            min_iterations=min_iterations,
+            max_iterations=max_iterations,
         )
         return ValidationContext(
             self.shape_collections,

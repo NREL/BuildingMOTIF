@@ -218,7 +218,7 @@ class Model:
         return compiled_model.validate(error_on_missing_imports)
 
     def compile(
-        self, shape_collections: Optional[List["ShapeCollection"]] = None
+        self, shape_collections: Optional[List["ShapeCollection"]] = None, min_iterations: int = 1, max_iterations: int = 3
     ) -> "CompiledModel":
         """Compile the graph of a model against a set of ShapeCollections.
 
@@ -245,7 +245,11 @@ class Model:
         model_graph = copy_graph(self.graph).skolemize()
 
         compiled_graph = shacl_inference(
-            model_graph, ontology_graph, engine=self._bm.shacl_engine
+            model_graph,
+            ontology_graph,
+            engine=self._bm.shacl_engine,
+            min_iterations=min_iterations,
+            max_iterations=max_iterations,
         )
         return CompiledModel(self, shape_collections, compiled_graph)
 
