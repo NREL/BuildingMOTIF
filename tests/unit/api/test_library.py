@@ -1,5 +1,6 @@
 from urllib.parse import quote
 from unittest.mock import MagicMock, patch
+from rdflib import URIRef
 
 from buildingmotif.dataclasses import Library
 
@@ -258,3 +259,27 @@ def test_get_library_classes_server_error(client, building_motif):
     # Assert
     assert results.status_code == 500
     assert results.json == {"message": "Internal Server Error"}
+
+
+def test_get_library_shape_collection_ontology_name(client, building_motif):
+    # Setup
+    lib = Library.create("my_library")
+    sc = lib.get_shape_collection()
+    sc.graph.identifier = URIRef("urn:test:ontology")
+    building_motif.session.commit()
+
+    # Act
+    results = client.get(f"/libraries/{lib.id}/shape_collection/ontology_name")
+
+    # Assert
+    assert results.status_code == 200
+    assert results.json == {"ontology_name": "urn:test:ontology"}
+
+
+def test_get_library_shape_collection_ontology_name_not_found(client):
+    # Act
+    results = client.get("/libraries/-1/shape_collection/ontology_name")
+
+    # Assert
+    assert results.status_code == 404
+    assert results.json == {"message": "ID: -1"}
