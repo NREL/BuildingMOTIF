@@ -164,14 +164,22 @@ def update_model_graph(models_id: int) -> flask.Response:
     return model.graph.serialize(format="ttl")
 
 
-@blueprint.route("/<models_id>/manifest", methods=(["GET"]))
+@blueprint.route("/<models_id>/manifest", methods=(["GET", "POST"]))
 def get_model_manifest(models_id: int) -> flask.Response:
-    """Get model manifest.
+    """GET: Return both the manifest body (TTL) and the list of library import URIs (JSON if requested).
+       POST: Replace the manifest by either:
+         - JSON body with {"library_ids": [...]} to resolve to URIs and set as owl:imports, or
+           {"library_uris": [...]} to directly set imports (or both, merged).
+         - text/turtle body to replace the manifest graph directly.
 
-    :param models_id: model id
-    :type models_id: int
-    :return: requested model manifest
-    :rtype: flask.Response
+    GET behavior:
+      - If client requests application/json (Accept header), return:
+          {"body": "<ttl string>", "library_uris": ["uri", ...]}
+      - Otherwise, return the TTL string as before.
+
+    POST behavior:
+      - Content-Type application/json: expects library_ids (ints) and/or library_uris (strings)
+      - Content-Type text/turtle: body is a TTL graph to replace the manifest
     """
     try:
         model = Model.load(models_id)
@@ -179,8 +187,90 @@ def get_model_manifest(models_id: int) -> flask.Response:
         return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
     manifest = model.get_manifest()
-    manifest_ttl = manifest.graph.serialize(format="ttl")
-    return manifest_ttl, status.HTTP_200_OK
+    g = manifest.graph
+
+    if flask.request.method == "GET":
+        ttl_body = g.serialize(format="ttl")
+        # Collect all owl:imports objects as URIs
+        library_uris = sorted(list({str(o) for _, _, o in g.triples((None, OWL.imports, None))}))
+
+        # Content negotiation: return JSON only if explicitly requested
+        best = request.accept_mimetypes.best_match(["application/json", "text/turtle", "text/plain"])
+        if best == "application/json":
+            return jsonify({"body": ttl_body, "library_uris": library_uris}), status.HTTP_200_OK
+        return ttl_body, status.HTTP_200_OK
+
+    # POST: update/replace manifest
+    ct = (request.content_type or "").lower()
+
+    if "application/json" in ct:
+        try:
+            body = request.json
+        except Exception as e:
+            return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
+
+        if not isinstance(body, dict):
+            return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
+
+        library_ids = body.get("library_ids", []) or []
+        library_uris_in = body.get("library_uris", []) or []
+
+        if not isinstance(library_ids, list) or not all(isinstance(x, int) for x in library_ids):
+            return {"message": "library_ids must be an array of integers"}, status.HTTP_400_BAD_REQUEST
+        if not isinstance(library_uris_in, list) or not all(isinstance(x, str) for x in library_uris_in):
+            return {"message": "library_uris must be an array of strings"}, status.HTTP_400_BAD_REQUEST
+
+        # Resolve library_ids to shape collection identifiers (URIs)
+        nonexistent_libraries = []
+        resolved_uris = []
+        for lib_id in library_ids:
+            try:
+                lib = Library.load(lib_id)
+                sc = lib.get_shape_collection()
+                ident = sc.graph.identifier
+                if ident is not None:
+                    resolved_uris.append(str(ident))
+            except LibraryNotFound:
+                nonexistent_libraries.append(lib_id)
+
+        if len(nonexistent_libraries) > 0:
+            return {
+                "message": f"Libraries with ids {nonexistent_libraries} do not exist"
+            }, status.HTTP_400_BAD_REQUEST
+
+        # Merge and uniquify URIs, preserving input order
+        seen = set()
+        import_uris = []
+        for uri in resolved_uris + library_uris_in:
+            if uri not in seen:
+                seen.add(uri)
+                import_uris.append(uri)
+
+        # Replace manifest with minimal graph containing owl:imports
+        g.remove((None, None, None))
+        subject = URIRef(str(model.name))
+        for uri in import_uris:
+            g.add((subject, OWL.imports, URIRef(uri)))
+
+        current_app.building_motif.session.commit()
+        return g.serialize(format="ttl"), status.HTTP_200_OK
+
+    elif "turtle" in ct:
+        try:
+            new_graph = Graph().parse(data=request.data, format="ttl")
+        except BadSyntax as e:
+            return {"message": f"data is unreadable: {e}"}, status.HTTP_400_BAD_REQUEST
+
+        g.remove((None, None, None))
+        for triple in new_graph:
+            g.add(triple)
+
+        current_app.building_motif.session.commit()
+        return g.serialize(format="ttl"), status.HTTP_200_OK
+
+    return {
+        "message": "Unsupported Content-Type. Use application/json or text/turtle."
+    }, status.HTTP_400_BAD_REQUEST
 
 
 @blueprint.route("/<models_id>/manifest/imports", methods=(["GET", "POST"]))
