@@ -70,7 +70,7 @@ Example:
 ---
 
 ### GET /libraries/{library_id}/shape_collection/ontology_name
-Return the ontology name (graph_id) of the library’s shape collection.
+Return the ontology name (graph_name) of the library’s shape collection.
 
 - Path params:
   - library_id: number
@@ -325,7 +325,7 @@ Replace/update the manifest. Two modes:
 - Body JSON (either or both):
   - { "library_ids"?: number[], "library_uris"?: string[] }
 - Behavior:
-  - Resolves library_ids to their shape collection graph_id (URI).
+  - Resolves library_ids to their shape collection graph_name (URI).
   - Merges resolved URIs and library_uris (deduplicated, preserving order).
   - Replaces the manifest with a minimal graph that contains owl:imports pointing to those URIs.
 - Response 200 body: text/turtle (updated manifest)
@@ -383,6 +383,8 @@ Validate the model using SHACL shapes.
   - model_id: number
 - Query params:
   - shacl_engine: string (optional)
+  - min_iterations: integer (optional; minimum 1; default 1)
+  - max_iterations: integer (optional; minimum 1; default 3)
 - Content:
   - No/empty body → validates against the model’s manifest
   - JSON body:
@@ -397,6 +399,7 @@ Validate the model using SHACL shapes.
     }
 - Errors:
   - 400 for invalid library IDs
+  - 400 for invalid min_iterations/max_iterations
   - 404 for missing model
 
 Example:
@@ -408,6 +411,9 @@ Example:
 ### POST /models/{model_id}/validate_shape
 Validate the model against specific shapes.
 
+- Query params:
+  - min_iterations: integer (optional; minimum 1; default 1)
+  - max_iterations: integer (optional; minimum 1; default 3)
 - Headers:
   - Content-Type: application/json
 - Body JSON:
@@ -454,6 +460,6 @@ Add FDD rules to the model’s manifest.
 
 - Turtle in graph endpoints: Use Content-Type: application/xml (compat header), even though the body is Turtle text (for PATCH/PUT /graph).
 - Manifest endpoint supports content negotiation on GET (JSON vs Turtle).
-- Ontology name (graph_id) for a library’s shape collection is available at:
+- Ontology name (graph_name) for a library’s shape collection is available at:
   - GET /libraries/{library_id}/shape_collection/ontology_name
 - When posting JSON to manifest, prefer library_ids to avoid hardcoding URIs; the API resolves them to the proper graph_id URIs.
