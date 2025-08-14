@@ -179,6 +179,5 @@ def get_library_shape_collection_ontology_name(library_id: int) -> flask.Respons
         current_app.logger.error(f"Library with ID {library_id} not found.")
         return {"message": f"ID: {library_id}"}, status.HTTP_404_NOT_FOUND
 
-    shape_collection = ShapeCollection.load(db_lib.shape_collection.id)
-    ident = shape_collection.graph.identifier
-    return jsonify({"ontology_name": str(ident) if ident is not None else None}), status.HTTP_200_OK
+    ident = db_lib.shape_collection.graph_id
+    return jsonify({"ontology_name": ident}), status.HTTP_200_OK

@@ -264,8 +264,8 @@ def test_get_library_classes_server_error(client, building_motif):
 def test_get_library_shape_collection_ontology_name(client, building_motif):
     # Setup
     lib = Library.create("my_library")
-    sc = lib.get_shape_collection()
-    sc.graph.identifier = URIRef("urn:test:ontology")
+    db_lib = building_motif.table_connection.get_db_library(lib.id)
+    db_lib.shape_collection.graph_id = "urn:test:ontology"
     building_motif.session.commit()
 
     # Act

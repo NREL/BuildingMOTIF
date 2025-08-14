@@ -225,9 +225,8 @@ def get_model_manifest(models_id: int) -> flask.Response:
         resolved_uris = []
         for lib_id in library_ids:
             try:
-                lib = Library.load(lib_id)
-                sc = lib.get_shape_collection()
-                ident = sc.graph.identifier
+                db_lib = current_app.building_motif.table_connection.get_db_library(lib_id)
+                ident = db_lib.shape_collection.graph_id
                 if ident is not None:
                     resolved_uris.append(str(ident))
             except LibraryNotFound:
