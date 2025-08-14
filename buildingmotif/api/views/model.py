@@ -68,6 +68,41 @@ def get_model_graph(models_id: int) -> Graph:
     return g.serialize(format="ttl"), status.HTTP_200_OK
 
 
+@blueprint.route("/<models_id>/cbd", methods=(["GET"]))
+def get_model_cbd(models_id: int) -> flask.Response:
+    """Return the Concise Bounded Description (CBD) of a node within the model graph.
+
+    Query params:
+      - node: URI of the node to describe (required)
+      - self_contained: boolean (optional; default true). When true, iteratively
+        expands the CBD by including CBDs of discovered nodes until convergence.
+
+    :param models_id: model id
+    :type models_id: int
+    :return: TTL-serialized CBD graph
+    :rtype: flask.Response
+    """
+    try:
+        model = Model.load(models_id)
+    except ModelNotFound:
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    node_param = request.args.get("node")
+    if not node_param:
+        return {"message": "missing required query parameter 'node'"}, status.HTTP_400_BAD_REQUEST
+
+    self_contained_param = request.args.get("self_contained", "true").lower()
+    self_contained = self_contained_param in ("1", "true", "yes", "y", "on")
+
+    try:
+        node_ref = URIRef(node_param)
+    except Exception:
+        return {"message": "invalid 'node' URI"}, status.HTTP_400_BAD_REQUEST
+
+    cbd_graph = model.cbd(node_ref, self_contained=self_contained)
+    return cbd_graph.serialize(format="ttl"), status.HTTP_200_OK
+
+
 @blueprint.route("/<models_id>/target_nodes", methods=(["GET"]))
 def get_target_nodes(models_id: int) -> Graph:
     """Get model graph by id.

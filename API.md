@@ -281,6 +281,23 @@ Example:
 
 ---
 
+### GET /models/{model_id}/cbd
+Return the Concise Bounded Description (CBD) of a node within the model graph.
+
+- Path params:
+  - model_id: number
+- Query params:
+  - node: URI (required) — the node to describe
+  - self_contained: boolean (optional; default true) — when true, iteratively expands the CBD by including CBDs of discovered nodes until convergence
+- Response 200 body: text/turtle (TTL graph of the CBD)
+- Errors:
+  - 400 for missing/invalid query params
+  - 404 for missing model
+
+Example:
+- GET /models/5/cbd?node=urn%3Aexample%3Asubject
+- GET /models/5/cbd?node=urn%3Aexample%3Asubject&self_contained=false
+
 ### GET /models/{model_id}/target_nodes
 Return a list of target node types found in the model graph.
 

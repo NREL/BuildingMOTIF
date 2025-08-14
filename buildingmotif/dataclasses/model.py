@@ -185,6 +185,33 @@ class Model:
         """
         self.graph += graph
 
+    def cbd(self, node: rdflib.term.Node, self_contained: bool = True) -> rdflib.Graph:
+        """Return the Concise Bounded Description (CBD) of a node in this model's graph.
+
+        If self_contained is True, compute a fixed-point closure by iteratively
+        unioning the CBDs of all nodes encountered until the graph stops growing.
+
+        :param node: the node for which to compute the CBD
+        :type node: rdflib.term.Node
+        :param self_contained: when True, include the CBDs of discovered nodes until convergence
+        :type self_contained: bool, optional
+        :return: a graph containing the CBD
+        :rtype: rdflib.Graph
+        """
+        cbd = self.graph.cbd(node)
+        if not self_contained:
+            return cbd
+
+        changed = True
+        while changed:
+            new_g = rdflib.Graph()
+            for n in cbd.all_nodes():
+                new_g += self.graph.cbd(n)
+            new_cbd = new_g + cbd
+            changed = len(new_cbd) > len(cbd)  # type: ignore
+            cbd = new_cbd
+        return cbd
+
     def validate(
         self,
         shape_collections: Optional[List[ShapeCollection]] = None,
