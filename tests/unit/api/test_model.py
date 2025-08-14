@@ -158,7 +158,9 @@ def test_model_manifest(client, building_motif):
     library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     model.update_manifest(library_1.get_shape_collection())
 
-    results = client.get(f"/models/{model.id}/manifest", headers={"Accept": "text/turtle"})
+    results = client.get(
+        f"/models/{model.id}/manifest", headers={"Accept": "text/turtle"}
+    )
     print(results.data)
     manifest = Graph().parse(data=results.data, format="ttl")
 
@@ -479,3 +481,49 @@ def test_validate_model_against_shapes(client, building_motif, shacl_engine):
     assert (
         len(results.json["urn:ashrae/g36/5.16.14/multiple-zone-vav-ahu-afdd/fc-4"]) == 3
     ), results.data
+
+
+def test_get_model_node_subgraph_endpoint_basic_and_self_contained(
+    client, building_motif
+):
+    # Setup
+    model = Model.create(name="urn:my_model_node_subgraph_api")
+    s = URIRef("urn:ex:s")
+    p = URIRef("urn:ex:p")
+    o1 = URIRef("urn:ex:o1")
+    o2 = URIRef("urn:ex:o2")
+
+    # s -> o1; and o1 -> o2
+    model.add_triples((s, p, o1))
+    model.add_triples((o1, p, o2))
+
+    # Persist if needed
+    building_motif.session.commit()
+
+    # Act: self_contained=false should only include triples where subject == s
+    res = client.get(
+        f"/models/{model.id}/node_subgraph",
+        query_string={"node": str(s), "self_contained": "false"},
+    )
+    assert res.status_code == 200, res.data
+    g = Graph().parse(data=res.data, format="turtle")
+    assert (s, p, o1) in g
+    assert (o1, p, o2) not in g
+
+    # Act: self_contained=true should include follow-on triples starting at o1
+    res2 = client.get(
+        f"/models/{model.id}/node_subgraph",
+        query_string={"node": str(s), "self_contained": "true"},
+    )
+    assert res2.status_code == 200, res2.data
+    g2 = Graph().parse(data=res2.data, format="turtle")
+    assert (s, p, o1) in g2
+    assert (o1, p, o2) in g2
+
+
+def test_get_model_node_subgraph_endpoint_missing_node_returns_400(
+    client, building_motif
+):
+    model = Model.create(name="urn:my_model_node_subgraph_api2")
+    res = client.get(f"/models/{model.id}/node_subgraph")
+    assert res.status_code == 400

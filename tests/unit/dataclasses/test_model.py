@@ -261,7 +261,7 @@ def test_model_compile(bm: BuildingMOTIF, shacl_engine):
     )
 
     brick = Library.load(
-        ontology_graph="libraries/brick/Brick-full.ttl", infer_templates=False
+        ontology_graph="libraries/brick/Brick.ttl", infer_templates=False
     )
 
     compiled_model = small_office_model.compile([brick.get_shape_collection()])
@@ -411,3 +411,26 @@ def test_get_validation_severity(clean_building_motif, shacl_engine):
         reasons = ctx.get_reasons_with_severity(severity)
         assert set(reasons.keys()) == {NS["a"]}
         assert len(reasons[NS["a"]]) == 1, f"Expected 1 warning, got {reasons}"
+
+
+def test_model_cbd_method(clean_building_motif):
+    # Setup
+    model = Model.create(name="urn:my_model_cbd_method")
+    s = URIRef("urn:ex:s")
+    p = URIRef("urn:ex:p")
+    o1 = URIRef("urn:ex:o1")
+    o2 = URIRef("urn:ex:o2")
+
+    # s -> o1; and o1 -> o2
+    model.add_triples((s, p, o1))
+    model.add_triples((o1, p, o2))
+
+    # Act: non self-contained
+    cbd = model.node_subgraph(s, self_contained=False)
+    assert (s, p, o1) in cbd
+    assert (o1, p, o2) not in cbd
+
+    # Act: self-contained expands
+    cbd2 = model.node_subgraph(s, self_contained=True)
+    assert (s, p, o1) in cbd2
+    assert (o1, p, o2) in cbd2
