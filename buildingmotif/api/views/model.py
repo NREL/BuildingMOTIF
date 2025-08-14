@@ -365,6 +365,20 @@ def validate_model(models_id: int) -> flask.Response:
 
     # get shacl_engine from the query params, defaults to the current engine
     shacl_engine = request.args.get("shacl_engine", None)
+    # Optional SHACL iteration parameters
+    min_iterations_arg = request.args.get("min_iterations")
+    max_iterations_arg = request.args.get("max_iterations")
+    min_iterations = 1
+    max_iterations = 3
+    try:
+        if min_iterations_arg is not None:
+            min_iterations = int(min_iterations_arg)
+        if max_iterations_arg is not None:
+            max_iterations = int(max_iterations_arg)
+    except ValueError:
+        return {"message": "min_iterations and max_iterations must be integers"}, status.HTTP_400_BAD_REQUEST
+    if min_iterations < 1 or max_iterations < 1:
+        return {"message": "min_iterations and max_iterations must be >= 1"}, status.HTTP_400_BAD_REQUEST
 
     # no body provided -- default to model manifest
     if request.content_length is None:
@@ -404,9 +418,17 @@ def validate_model(models_id: int) -> flask.Response:
     logger.warning(
         f"Validating model {model.name} with shape collections {shape_collections}"
     )
-    compiled = model.compile(shape_collections)
+    compiled = model.compile(
+        shape_collections,
+        min_iterations=min_iterations,
+        max_iterations=max_iterations,
+    )
     # if shape_collections is empty, model.validate will default to the model's manifest
-    vaildation_context = compiled.validate(error_on_missing_imports=False)
+    vaildation_context = compiled.validate(
+        error_on_missing_imports=False,
+        min_iterations=min_iterations,
+        max_iterations=max_iterations,
+    )
 
     return {
         "message": vaildation_context.report_string,
@@ -463,7 +485,26 @@ def validate_shape(models_id: int) -> flask.Response:
     target_class = URIRef(body.get("target_class"))
 
     # test
-    compiled = model.compile(shape_collections)
+    # Optional SHACL inference iteration parameters
+    min_iterations_arg = request.args.get("min_iterations")
+    max_iterations_arg = request.args.get("max_iterations")
+    min_iterations = 1
+    max_iterations = 3
+    try:
+        if min_iterations_arg is not None:
+            min_iterations = int(min_iterations_arg)
+        if max_iterations_arg is not None:
+            max_iterations = int(max_iterations_arg)
+    except ValueError:
+        return {"message": "min_iterations and max_iterations must be integers"}, status.HTTP_400_BAD_REQUEST
+    if min_iterations < 1 or max_iterations < 1:
+        return {"message": "min_iterations and max_iterations must be >= 1"}, status.HTTP_400_BAD_REQUEST
+
+    compiled = model.compile(
+        shape_collections,
+        min_iterations=min_iterations,
+        max_iterations=max_iterations,
+    )
     conformance = compiled.validate_model_against_shapes(
         shapes_to_test=shape_uris,
         target_class=target_class,
