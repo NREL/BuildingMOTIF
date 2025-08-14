@@ -62,6 +62,34 @@ class CompiledModel:
             g += shape_collection.graph
         return g
 
+    def node_subgraph(self, node: rdflib.term.Node, self_contained: bool = True) -> rdflib.Graph:
+        """Return a subgraph describing the given node from the compiled model graph.
+
+        This behaves like Model.node_subgraph but operates on the compiled data graph
+        (without the shapes graphs merged in). When self_contained is True, iteratively
+        expands by including the CBDs of discovered nodes until the graph stops growing.
+
+        :param node: the node for which to compute the subgraph
+        :type node: rdflib.term.Node
+        :param self_contained: when True, include the CBDs of discovered nodes until convergence
+        :type self_contained: bool, optional
+        :return: a graph containing the node's subgraph
+        :rtype: rdflib.Graph
+        """
+        cbd = self._compiled_graph.cbd(node)
+        if not self_contained:
+            return cbd
+
+        changed = True
+        while changed:
+            new_g = rdflib.Graph()
+            for n in cbd.all_nodes():
+                new_g += self._compiled_graph.cbd(n)
+            new_cbd = new_g + cbd
+            changed = len(new_cbd) > len(cbd)  # type: ignore
+            cbd = new_cbd
+        return cbd
+
     def validate_model_against_shapes(
         self,
         shapes_to_test: List[rdflib.URIRef],
