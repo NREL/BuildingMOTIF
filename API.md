@@ -196,6 +196,34 @@ Example body:
 
 ---
 
+## Graphs
+
+### GET /graph/{graph_id}
+Return an RDF graph by its identifier.
+
+- Path params:
+  - graph_id: string — the graph identifier (typically a URI); must be URL-encoded in the path
+- Content negotiation:
+  - If the request includes Content-Type or Accept headers, the server uses them to choose a serialization:
+    - text/turtle → Turtle (default)
+    - application/ld+json or application/json → JSON-LD
+    - application/rdf+xml → RDF/XML
+    - application/n-triples or text/plain → N-Triples
+    - text/n3 → Notation3
+    - application/n-quads → N-Quads
+    - application/trig → TriG
+  - If multiple media types are provided, the first one is used; parameters are ignored.
+- Response 200 body: the graph serialized in the negotiated format
+- Errors:
+  - 404: { "message": "ID: {graph_id}" } when the named graph is not found or is empty
+
+Examples:
+- GET /graph/urn%3Amy%3Agraph%3Aid            (defaults to text/turtle)
+- GET /graph/urn%3Amy%3Agraph%3Aid  (Content-Type: application/ld+json)
+- GET /graph/urn%3Amy%3Agraph%3Aid  (Accept: application/rdf+xml)
+
+---
+
 ## Models
 
 ### GET /models
@@ -475,7 +503,8 @@ Add FDD rules to the model’s manifest.
 
 ## Notes and Tips
 
-- Turtle in graph endpoints: Use Content-Type: application/xml (compat header), even though the body is Turtle text (for PATCH/PUT /graph).
+- Graph retrieval: GET /graph/{graph_id} uses Content-Type or Accept to negotiate the RDF serialization; defaults to text/turtle.
+- Model graph updates: For PATCH/PUT /models/{model_id}/graph, send Turtle in the body but keep Content-Type: application/xml (compatibility header).
 - Manifest endpoint supports content negotiation on GET (JSON vs Turtle).
 - Ontology name (graph_name) for a library’s shape collection is available at:
   - GET /libraries/{library_id}/shape_collection/ontology_name
