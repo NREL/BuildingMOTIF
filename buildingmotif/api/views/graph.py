@@ -1,5 +1,5 @@
 import flask
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, request
 from flask_api import status
 from rdflib import Graph
 
@@ -31,4 +31,32 @@ def get_graph_by_id(graph_id: str) -> flask.Response:
         current_app.logger.warning(f"Graph with ID {graph_id} not found.", exc_info=True)
         return {"message": f"ID: {graph_id}"}, status.HTTP_404_NOT_FOUND
 
-    return g.serialize(format="ttl"), status.HTTP_200_OK
+    # Negotiate serialization format based on Content-Type (and fallback to Accept), defaulting to Turtle
+    mime_to_format = {
+        "text/turtle": ("turtle", "text/turtle"),
+        "application/x-turtle": ("turtle", "text/turtle"),
+        "application/ld+json": ("json-ld", "application/ld+json"),
+        "application/json": ("json-ld", "application/ld+json"),
+        "application/rdf+xml": ("xml", "application/rdf+xml"),
+        "application/n-triples": ("nt", "application/n-triples"),
+        "text/plain": ("nt", "application/n-triples"),
+        "text/n3": ("n3", "text/n3"),
+        "application/n-quads": ("nquads", "application/n-quads"),
+        "application/trig": ("trig", "application/trig"),
+    }
+
+    header_ct = (request.headers.get("Content-Type") or "").strip().lower()
+    header_accept = (request.headers.get("Accept") or "").strip().lower()
+
+    def pick_mime(h: str) -> str:
+        if not h:
+            return ""
+        # choose the first media type, strip parameters
+        first = h.split(",")[0].strip()
+        return first.split(";")[0].strip()
+
+    desired_mime = pick_mime(header_ct) or pick_mime(header_accept)
+    fmt, out_mime = mime_to_format.get(desired_mime, ("turtle", "text/turtle"))
+
+    data = g.serialize(format=fmt)
+    return flask.Response(data, status=status.HTTP_200_OK, mimetype=out_mime)
