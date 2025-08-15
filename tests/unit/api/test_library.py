@@ -283,3 +283,51 @@ def test_get_library_shape_collection_ontology_name_not_found(client):
     # Assert
     assert results.status_code == 404
     assert results.json == {"message": "ID: -1"}
+
+
+def test_get_library_shape_collection_shapes(client, building_motif):
+    # Setup
+    lib = Library.create("lib_shapes_list")
+    sc = lib.get_shape_collection()
+    sc.graph.parse(
+        data="""
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix : <urn:test#> .
+
+:Shape1 a sh:NodeShape ;
+  rdfs:label "S1" ;
+  sh:targetClass :SomeClass .
+
+:Shape2 a sh:NodeShape ;
+  sh:targetNode :x .
+
+:Prop1 a sh:PropertyShape .
+""",
+        format="turtle",
+    )
+    building_motif.session.commit()
+
+    # Act
+    results = client.get(f"/libraries/{lib.id}/shape_collection/shapes")
+
+    # Assert
+    assert results.status_code == 200
+    # Only NodeShapes should be included
+    uris = [r["shape_uri"] for r in results.json]
+    assert "urn:test#Shape1" in uris
+    assert "urn:test#Shape2" in uris
+    # labels included when present
+    shape1 = next(r for r in results.json if r["shape_uri"] == "urn:test#Shape1")
+    assert shape1["label"] == "S1"
+    shape2 = next(r for r in results.json if r["shape_uri"] == "urn:test#Shape2")
+    assert shape2["label"] is None
+
+
+def test_get_library_shape_collection_shapes_not_found(client):
+    # Act
+    results = client.get("/libraries/-1/shape_collection/shapes")
+
+    # Assert
+    assert results.status_code == 404
+    assert results.json == {"message": "ID: -1"}

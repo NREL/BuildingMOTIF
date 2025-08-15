@@ -83,6 +83,21 @@ Example:
 
 ---
 
+### GET /libraries/{library_id}/shape_collection/shapes
+List all SHACL NodeShapes defined in a library’s shape collection.
+
+- Path params:
+  - library_id: number
+- Response 200 JSON: array of:
+  - { "shape_uri": string, "label": string|null }
+- Errors:
+  - 404: { "message": "ID: {library_id}" }
+
+Example:
+- GET /libraries/1/shape_collection/shapes
+
+---
+
 ## Templates
 
 ### GET /templates

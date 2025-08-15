@@ -181,3 +181,40 @@ def get_library_shape_collection_ontology_name(library_id: int) -> flask.Respons
 
     ident = db_lib.shape_collection.graph_id
     return jsonify({"ontology_name": ident}), status.HTTP_200_OK
+
+
+@blueprint.route("/<library_id>/shape_collection/shapes", methods=(["GET"]))
+def get_library_shape_collection_shapes(library_id: int) -> flask.Response:
+    """List all SHACL NodeShapes defined in a library's shape collection.
+
+    :param library_id: library id
+    :type library_id: int
+    :return: array of {shape_uri, label}
+    :rtype: flask.Response
+    """
+    try:
+        db_lib = current_app.building_motif.table_connection.get_db_library(library_id)
+    except LibraryNotFound:
+        current_app.logger.error(f"Library with ID {library_id} not found.")
+        return {"message": f"ID: {library_id}"}, status.HTTP_404_NOT_FOUND
+
+    shape_collection = ShapeCollection.load(db_lib.shape_collection.id)
+
+    query = """
+        PREFIX sh: <http://www.w3.org/ns/shacl#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        SELECT DISTINCT ?shape ?label
+        WHERE {
+            ?shape a sh:NodeShape .
+            OPTIONAL { ?shape rdfs:label ?label . }
+        }
+    """
+    rows = shape_collection.graph.query(query)
+    results = [
+        {"shape_uri": str(r.shape), "label": str(r.label) if r.label else None}
+        for r in rows
+    ]
+
+    # sort for deterministic output
+    results.sort(key=lambda x: x["shape_uri"])
+    return jsonify(results), status.HTTP_200_OK
