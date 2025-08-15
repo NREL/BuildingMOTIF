@@ -10,6 +10,7 @@ from buildingmotif.api.views.library import blueprint as library_blueprint
 from buildingmotif.api.views.model import blueprint as model_blueprint
 from buildingmotif.api.views.parser import blueprint as parsers_blueprint
 from buildingmotif.api.views.template import blueprint as template_blueprint
+from buildingmotif.api.views.graph import blueprint as graph_blueprint
 from buildingmotif.building_motif.building_motif import BuildingMOTIF
 
 
@@ -66,6 +67,7 @@ def create_app(DB_URI, shacl_engine: Optional[str] = "pyshacl"):
     app.register_blueprint(template_blueprint, url_prefix="/templates")
     app.register_blueprint(model_blueprint, url_prefix="/models")
     app.register_blueprint(parsers_blueprint, url_prefix="/parsers")
+    app.register_blueprint(graph_blueprint, url_prefix="/graph")
 
     # Enable CORS for all origins using flask-cors
     CORS(app, resources={r"/*": {"origins": "*"}})
