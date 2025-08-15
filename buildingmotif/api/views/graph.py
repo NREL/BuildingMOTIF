@@ -1,5 +1,3 @@
-from typing import cast
-
 import flask
 from flask import Blueprint, current_app
 from flask_api import status
@@ -26,6 +24,8 @@ def get_graph_by_id(graph_id: str) -> flask.Response:
         current_app.logger.error(f"Graph with ID {graph_id} not found.", exc_info=True)
         return {"message": f"ID: {graph_id}"}, status.HTTP_404_NOT_FOUND
 
-    # Ensure we have a Graph to serialize
-    g = cast(Graph, g)
+    if len(g) == 0:
+        current_app.logger.warning(f"Graph with ID {graph_id} is empty.")
+        return {"message": f"Graph with ID {graph_id} is empty."}, status.HTTP_404_NOT_FOUND
+
     return g.serialize(format="ttl"), status.HTTP_200_OK
