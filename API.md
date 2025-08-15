@@ -183,12 +183,15 @@ Return the raw template body (graph) as TTL.
 
 - Path params:
   - template_id: number
+- Query params:
+  - inline: boolean (optional; when true, returns the inlined template body with dependencies merged)
 - Response 200 body: text/turtle
 - Errors:
   - 404: { "message": "ID: {template_id}" }
 
 Example:
 - GET /templates/10/body
+- GET /templates/10/body?inline=true
 
 ---
 

@@ -149,7 +149,11 @@ def get_template_body(template_id: int) -> flask.Response:
     except TemplateNotFound:
         return {"message": f"ID: {template_id}"}, status.HTTP_404_NOT_FOUND
 
-    return template.body.serialize(format="ttl"), status.HTTP_200_OK
+    inline_param = flask.request.args.get("inline", "").lower()
+    inline = inline_param in ("1", "true", "yes", "y", "on")
+    t = template.inline_dependencies() if inline else template
+
+    return t.body.serialize(format="ttl"), status.HTTP_200_OK
 
 
 def get_bindings(binding_dict) -> Dict[str, Node]:
