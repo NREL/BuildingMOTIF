@@ -24,8 +24,11 @@ def get_graph_by_id(graph_id: str) -> flask.Response:
         current_app.logger.error(f"Graph with ID {graph_id} not found.", exc_info=True)
         return {"message": f"ID: {graph_id}"}, status.HTTP_404_NOT_FOUND
 
+    # the graph_connection API returns an empty graph if the ID is not found. This
+    # is helpful when we are creating models and shape collections and templates, but
+    # here we want to return a 404 if the graph is not found.
     if len(g) == 0:
-        current_app.logger.warning(f"Graph with ID {graph_id} is empty.")
-        return {"message": f"Graph with ID {graph_id} is empty."}, status.HTTP_404_NOT_FOUND
+        current_app.logger.warning(f"Graph with ID {graph_id} not found.", exc_info=True)
+        return {"message": f"ID: {graph_id}"}, status.HTTP_404_NOT_FOUND
 
     return g.serialize(format="ttl"), status.HTTP_200_OK

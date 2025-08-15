@@ -21,8 +21,10 @@ def test_get_graph_by_id_returns_graph(client, building_motif):
     # Resolve its underlying named graph identifier
     db_lib = building_motif.table_connection.get_db_library(lib.id)
     graph_id = db_lib.shape_collection.graph_id
+    print(f"Graph ID: {graph_id}")
 
     # Act
+    print(f"Fetching graph with ID: {quote(graph_id, safe='')}")
     results = client.get(f"/graph/{quote(graph_id, safe='')}")
 
     # Assert
@@ -34,5 +36,6 @@ def test_get_graph_by_id_returns_graph(client, building_motif):
 def test_get_graph_by_id_not_found(client):
     missing = "urn:does:not:exist"
     results = client.get(f"/graph/{quote(missing, safe='')}")
+    print(f"Results: {results.data}")
     assert results.status_code == 404
     assert results.json == {"message": f"ID: {missing}"}
