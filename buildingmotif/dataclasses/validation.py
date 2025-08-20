@@ -661,6 +661,46 @@ def _detect_required_path(
     )
 
 
+def _expand_or_result_to_diffs(
+    g: Graph, result: Node, focus: Optional[URIRef]
+) -> List["GraphDiff"]:
+    """Expand an sh:OrConstraintComponent result into concrete GraphDiffs by
+    recursing into its sh:detail children and running the standard detectors.
+
+    If no sh:detail children are present, returns an empty list.
+    """
+    diffs: List["GraphDiff"] = []
+    for child in g.objects(result, SH.detail):
+        # Prefer the child's own focus node if present
+        child_focus = g.value(child, SH.focusNode) or focus
+
+        gc = _detect_graph_class_cardinality(g, child)
+        if gc is not None:
+            diffs.append(gc)
+            continue
+
+        pcc = _detect_path_class_count(g, child, child_focus)  # type: ignore[arg-type]
+        if pcc is not None:
+            diffs.append(pcc)
+            continue
+
+        psc = _detect_path_shape_count(g, child, child_focus)  # type: ignore[arg-type]
+        if psc is not None:
+            diffs.append(psc)
+            continue
+
+        rp = _detect_required_path(g, child, child_focus)  # type: ignore[arg-type]
+        if rp is not None:
+            diffs.append(rp)
+            continue
+
+        rc = _detect_required_class(g, child, child_focus)  # type: ignore[arg-type]
+        if rc is not None:
+            diffs.append(rc)
+            continue
+    return diffs
+
+
 @dataclass
 class ValidationContext:
     """Holds the necessary information for processing the results of SHACL
@@ -759,6 +799,12 @@ class ValidationContext:
 
         for result in g.objects(predicate=SH.result):
             focus = g.value(result, SH.focusNode)
+            comp = g.value(result, SH.sourceConstraintComponent)
+            # Handle OR constraint by recursing into sh:detail and converting children to GraphDiffs
+            if comp == SH.OrConstraintComponent:
+                for d in _expand_or_result_to_diffs(g, result, focus):
+                    diffs[focus].add(d)
+                continue
 
             # 1) Graph-level class cardinality (custom CONSTRAINT component)
             graph_card = _detect_graph_class_cardinality(g, result)
@@ -795,11 +841,6 @@ class ValidationContext:
                 # Currently unhandled; reserved for future expansion
                 continue
 
-        # TODO: this is still kind of broken...ideally we would actually interpret the shapes
-        # inside the or clause
-        candidates = OrShape.from_validation_report(g)
-        for c in candidates:
-            diffs[c.focus].add(c)
         return diffs
 
 
