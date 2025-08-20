@@ -323,7 +323,7 @@ class PathShapeCount(GraphDiff):
 
         }"""
         results = report.query(query)
-        for (focus, path, minc, maxc, shapename) in results:
+        for focus, path, minc, maxc, shapename in results:
             extra_body, deps = get_template_parts_from_shape(shapename, report)
             yield cls(
                 focus,
@@ -547,9 +547,15 @@ def _detect_qvs_class_min_pattern(
 # Helper detectors for GraphDiffs
 # -------------------------------
 
-def _detect_graph_class_cardinality(g: Graph, result: Node) -> Optional["GraphClassCardinality"]:
+
+def _detect_graph_class_cardinality(
+    g: Graph, result: Node
+) -> Optional["GraphClassCardinality"]:
     """Detect a graph-level class cardinality violation produced by custom CONSTRAINT component."""
-    if g.value(result, SH.sourceConstraintComponent) == CONSTRAINT.countConstraintComponent:
+    if (
+        g.value(result, SH.sourceConstraintComponent)
+        == CONSTRAINT.countConstraintComponent
+    ):
         expected_count = g.value(result, SH.sourceShape / CONSTRAINT.exactCount)  # type: ignore
         of_class = g.value(result, SH.sourceShape / CONSTRAINT["class"])  # type: ignore
         if expected_count is not None and of_class is not None:
@@ -564,9 +570,14 @@ def _detect_required_class(
     g: Graph, result: Node, focus: Optional[URIRef]
 ) -> Optional["RequiredClass"]:
     """Detect a RequiredClass violation (focus must be an instance of a class)."""
-    if g.value(result, SH.sourceConstraintComponent) == SH.ClassConstraintComponent and focus:
+    if (
+        g.value(result, SH.sourceConstraintComponent) == SH.ClassConstraintComponent
+        and focus
+    ):
         requiring_shape = g.value(result, SH.sourceShape)
-        expected_class = g.value(requiring_shape, SH["class"]) if requiring_shape else None
+        expected_class = (
+            g.value(requiring_shape, SH["class"]) if requiring_shape else None
+        )
         if isinstance(expected_class, URIRef):
             validation_report = g.cbd(result)
             return RequiredClass(focus, validation_report, g, expected_class)
@@ -586,7 +597,9 @@ def _detect_path_class_count(
     if qvs_match:
         path, minc_i, maxc_i, classname = qvs_match
         validation_report = g.cbd(result)
-        return PathClassCount(focus, validation_report, g, path, minc_i, maxc_i, classname)
+        return PathClassCount(
+            focus, validation_report, g, path, minc_i, maxc_i, classname
+        )
 
     # Fall back to standard class/minCount detection on the source shape
     classpath = SH["class"] | (SH.qualifiedValueShape / SH["class"])  # type: ignore
@@ -729,11 +742,10 @@ def _collect_or_messages(g: Graph, result: Node) -> List[str]:
                     if isinstance(m, Literal):
                         messages.append(str(m))
 
-    # 3) If still none, generate reasons from nested diffs
-    if not messages:
-        focus = g.value(result, SH.focusNode)
-        diffs = _expand_or_result_to_diffs(g, result, focus)
-        messages.extend(d.reason() for d in diffs)
+    # 3) generate reasons from nested diffs
+    focus = g.value(result, SH.focusNode)
+    diffs = _expand_or_result_to_diffs(g, result, focus)
+    messages.extend(d.reason() for d in diffs)
 
     # De-duplicate while preserving order
     return list(dict.fromkeys(messages))
@@ -845,7 +857,13 @@ class ValidationContext:
                 validation_report = g.cbd(result)
                 msgs = _collect_or_messages(g, result)
                 diffs[focus].add(
-                    OrShape(focus, validation_report, g, tuple(), tuple(msgs) if msgs else None)
+                    OrShape(
+                        focus,
+                        validation_report,
+                        g,
+                        tuple(),
+                        tuple(msgs) if msgs else None,
+                    )
                 )
                 for d in _expand_or_result_to_diffs(g, result, focus):
                     diffs[focus].add(d)
@@ -882,7 +900,10 @@ class ValidationContext:
                 continue
 
             # 6) NodeConstraintComponent handling (TODO)
-            if g.value(result, SH.sourceConstraintComponent) == SH.NodeConstraintComponent:
+            if (
+                g.value(result, SH.sourceConstraintComponent)
+                == SH.NodeConstraintComponent
+            ):
                 # Currently unhandled; reserved for future expansion
                 continue
 
@@ -890,7 +911,7 @@ class ValidationContext:
 
 
 def diffset_to_templates(
-    grouped_diffset: Dict[Optional[URIRef], Set[GraphDiff]]
+    grouped_diffset: Dict[Optional[URIRef], Set[GraphDiff]],
 ) -> List["Template"]:
     """Combine GraphDiff by focus node to generate a list of templates that
     reconcile what is "wrong" with the Graph with respect to the GraphDiffs.
