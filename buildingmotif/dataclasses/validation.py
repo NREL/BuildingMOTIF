@@ -540,6 +540,127 @@ def _detect_qvs_class_min_pattern(
     return None
 
 
+# -------------------------------
+# Helper detectors for GraphDiffs
+# -------------------------------
+
+def _detect_graph_class_cardinality(g: Graph, result: Node) -> Optional["GraphClassCardinality"]:
+    """Detect a graph-level class cardinality violation produced by custom CONSTRAINT component."""
+    if g.value(result, SH.sourceConstraintComponent) == CONSTRAINT.countConstraintComponent:
+        expected_count = g.value(result, SH.sourceShape / CONSTRAINT.exactCount)  # type: ignore
+        of_class = g.value(result, SH.sourceShape / CONSTRAINT["class"])  # type: ignore
+        if expected_count is not None and of_class is not None:
+            validation_report = g.cbd(result)
+            return GraphClassCardinality(
+                None, validation_report, g, of_class, int(expected_count)  # type: ignore[arg-type]
+            )
+    return None
+
+
+def _detect_required_class(
+    g: Graph, result: Node, focus: Optional[URIRef]
+) -> Optional["RequiredClass"]:
+    """Detect a RequiredClass violation (focus must be an instance of a class)."""
+    if g.value(result, SH.sourceConstraintComponent) == SH.ClassConstraintComponent and focus:
+        requiring_shape = g.value(result, SH.sourceShape)
+        expected_class = g.value(requiring_shape, SH["class"]) if requiring_shape else None
+        if isinstance(expected_class, URIRef):
+            validation_report = g.cbd(result)
+            return RequiredClass(focus, validation_report, g, expected_class)
+    return None
+
+
+def _detect_path_class_count(
+    g: Graph, result: Node, focus: Optional[URIRef]
+) -> Optional["PathClassCount"]:
+    """Detect missing related entities with a given class along a path (supports qualifiedValueShape)."""
+    if not focus:
+        return None
+
+    # First, handle the qualifiedValueShape + qualifiedMinCount pattern even if the engine
+    # surfaces a ClassConstraintComponent on a value node.
+    qvs_match = _detect_qvs_class_min_pattern(g, result)
+    if qvs_match:
+        path, minc_i, maxc_i, classname = qvs_match
+        validation_report = g.cbd(result)
+        return PathClassCount(focus, validation_report, g, path, minc_i, maxc_i, classname)
+
+    # Fall back to standard class/minCount detection on the source shape
+    classpath = SH["class"] | (SH.qualifiedValueShape / SH["class"])  # type: ignore
+    path = g.value(result, SH.resultPath)
+    if not path:
+        return None
+    min_count_lit = g.value(result, SH.sourceShape / (SH.minCount | SH.qualifiedMinCount))  # type: ignore
+    max_count_lit = g.value(result, SH.sourceShape / (SH.maxCount | SH.qualifiedMaxCount))  # type: ignore
+    classname = g.value(result, SH.sourceShape / classpath)
+    if classname is None:
+        return None
+    minc = _to_int_maybe(min_count_lit)
+    maxc = _to_int_maybe(max_count_lit)
+    if minc is None and maxc is None:
+        return None
+    validation_report = g.cbd(result)
+    return PathClassCount(focus, validation_report, g, path, minc, maxc, classname)  # type: ignore[arg-type]
+
+
+def _detect_path_shape_count(
+    g: Graph, result: Node, focus: Optional[URIRef]
+) -> Optional["PathShapeCount"]:
+    """Detect missing related entities that must conform to a node shape along a path."""
+    if not focus:
+        return None
+    shapepath = SH["node"] | (SH.qualifiedValueShape / SH["node"])  # type: ignore
+    path = g.value(result, SH.resultPath)
+    shapename = g.value(result, SH.sourceShape / shapepath)  # type: ignore
+    if not (path and shapename):
+        return None
+    min_count_lit = g.value(result, SH.sourceShape / (SH.minCount | SH.qualifiedMinCount))  # type: ignore
+    max_count_lit = g.value(result, SH.sourceShape / (SH.maxCount | SH.qualifiedMaxCount))  # type: ignore
+    minc = _to_int_maybe(min_count_lit)
+    maxc = _to_int_maybe(max_count_lit)
+    if minc is None and maxc is None:
+        return None
+    extra_body, deps = get_template_parts_from_shape(shapename, g)  # type: ignore[arg-type]
+    validation_report = g.cbd(result)
+    return PathShapeCount(
+        focus,
+        validation_report,
+        g,
+        path,  # type: ignore[arg-type]
+        minc,
+        maxc,
+        shapename,  # type: ignore[arg-type]
+        extra_body,
+        tuple(deps) if deps else None,
+    )
+
+
+def _detect_required_path(
+    g: Graph, result: Node, focus: Optional[URIRef]
+) -> Optional["RequiredPath"]:
+    """Detect a missing path with min/max constraints and no specific class/shape requirement."""
+    if not focus:
+        return None
+    path = g.value(result, SH.resultPath)
+    if not path:
+        return None
+    min_count_lit = g.value(result, SH.sourceShape / (SH.minCount | SH.qualifiedMinCount))  # type: ignore
+    max_count_lit = g.value(result, SH.sourceShape / (SH.maxCount | SH.qualifiedMaxCount))  # type: ignore
+    minc = _to_int_maybe(min_count_lit)
+    maxc = _to_int_maybe(max_count_lit)
+    if minc is None and maxc is None:
+        return None
+    validation_report = g.cbd(result)
+    return RequiredPath(
+        focus,
+        validation_report,
+        g,
+        path,  # type: ignore[arg-type]
+        minc,
+        maxc,
+    )
+
+
 @dataclass
 class ValidationContext:
     """Holds the necessary information for processing the results of SHACL
@@ -629,139 +750,50 @@ class ValidationContext:
     def _report_to_diffset(self) -> Dict[Optional[URIRef], Set[GraphDiff]]:
         """Interpret a SHACL validation report and say what is missing.
 
-        :return: a set of GraphDiffs that each abstract a SHACL shape violation
-        :rtype: Set[GraphDiff]
+        This implementation is organized as a sequence of small, focused detectors
+        that each attempt to interpret a single ValidationResult node as a specific
+        GraphDiff. The first matching detector wins for a given result.
         """
-        classpath = SH["class"] | (SH.qualifiedValueShape / SH["class"])  # type: ignore
-        shapepath = SH["node"] | (SH.qualifiedValueShape / SH["node"])  # type: ignore
-        # TODO: for future use
-        # proppath = SH["property"] | (SH.qualifiedValueShape / SH["property"])  # type: ignore
-
         g = self.report + self.shapes_graph
         diffs: Dict[Optional[URIRef], Set[GraphDiff]] = defaultdict(set)
 
         for result in g.objects(predicate=SH.result):
-            # check if the failure is due to our count constraint component
             focus = g.value(result, SH.focusNode)
-            # get the subgraph corresponding to this ValidationReport -- see
-            # https://www.w3.org/TR/shacl/#results-validation-result for details
-            # on the structure and expected properties
-            validation_report = g.cbd(result)
 
-            # First, detect the qualifiedValueShape + qualifiedMinCount pattern.
-            # Even when the engine reports a ClassConstraintComponent on a value node,
-            # the actionable fix is typically to add a new related entity of the required class.
-            qvs_match = _detect_qvs_class_min_pattern(g, result)
-            if qvs_match and focus:
-                path, minc_i, maxc_i, classname = qvs_match
-                diffs[focus].add(
-                    PathClassCount(
-                        focus,
-                        validation_report,
-                        g,
-                        path,
-                        minc_i,
-                        maxc_i,
-                        classname,
-                    )
-                )
-                # We handled this result explicitly; move to the next one.
+            # 1) Graph-level class cardinality (custom CONSTRAINT component)
+            graph_card = _detect_graph_class_cardinality(g, result)
+            if graph_card is not None:
+                diffs[None].add(graph_card)
                 continue
-            if (
-                g.value(result, SH.sourceConstraintComponent)
-                == CONSTRAINT.countConstraintComponent
-            ):
-                expected_count = g.value(
-                    result, SH.sourceShape / CONSTRAINT.exactCount  # type: ignore
-                )
-                of_class = g.value(result, SH.sourceShape / CONSTRAINT["class"])  # type: ignore
-                # here, our 'self.focus' is the graph itself, which we don't want to have bound
-                # to the templates during evaluation (for this specific kind of diff).
-                # For this reason we override focus to be None
-                diffs[None].add(
-                    GraphClassCardinality(
-                        None, validation_report, g, of_class, int(expected_count)
-                    )
-                )
-            elif (
-                g.value(result, SH.sourceConstraintComponent)
-                == SH.ClassConstraintComponent
-            ):
-                requiring_shape = g.value(result, SH.sourceShape)
-                expected_class = g.value(requiring_shape, SH["class"])
-                if expected_class is None or isinstance(expected_class, BNode):
-                    continue
-                diffs[focus].add(
-                    RequiredClass(focus, validation_report, g, expected_class)
-                )
-            elif (
-                g.value(result, SH.sourceConstraintComponent)
-                == SH.NodeConstraintComponent
-            ):
-                # TODO: handle node constraint components
-                pass
-            # check if property shape
-            elif g.value(result, SH.resultPath):
-                path = g.value(result, SH.resultPath)
-                min_count = g.value(
-                    result, SH.sourceShape / (SH.minCount | SH.qualifiedMinCount)  # type: ignore
-                )
-                max_count = g.value(
-                    result, SH.sourceShape / (SH.maxCount | SH.qualifiedMaxCount)  # type: ignore
-                )
-                classname = g.value(
-                    result,
-                    SH.sourceShape / classpath,
-                )
 
-                # TODO: finish this for some shapes
-                # shapes_of_object = g.value(result, SH.sourceShape / SH.qualifiedValueShape)
-                # for soo in shapes_of_object:
-                #     soo_graph = g.cbd(soo)
-                # handle properties (on qualifiedValueShapes?)
-                # extra = g.value(result, SH.sourceShape / proppath)  # type: ignore
+            # 2) Path to class (handles qualifiedValueShape + qualifiedMinCount pattern)
+            pcc = _detect_path_class_count(g, result, focus)
+            if pcc is not None:
+                diffs[focus].add(pcc)
+                continue
 
-                if focus and (min_count or max_count) and classname:
-                    diffs[focus].add(
-                        PathClassCount(
-                            focus,
-                            validation_report,
-                            g,
-                            path,
-                            int(min_count) if min_count else None,
-                            int(max_count) if max_count else None,
-                            classname,
-                        )
-                    )
-                    continue
-                shapename = g.value(result, SH.sourceShape / shapepath)  # type: ignore
-                if focus and (min_count or max_count) and shapename:
-                    extra_body, deps = get_template_parts_from_shape(shapename, g)
-                    diffs[focus].add(
-                        PathShapeCount(
-                            focus,
-                            validation_report,
-                            g,
-                            path,
-                            int(min_count) if min_count else None,
-                            int(max_count) if max_count else None,
-                            shapename,
-                            extra_body,
-                            tuple(deps),
-                        )
-                    )
-                    continue
-                if focus and (min_count or max_count):
-                    diffs[focus].add(
-                        RequiredPath(
-                            focus,
-                            validation_report,
-                            g,
-                            path,
-                            int(min_count) if min_count else None,
-                            int(max_count) if max_count else None,
-                        )
-                    )
+            # 3) Path to node shape
+            psc = _detect_path_shape_count(g, result, focus)
+            if psc is not None:
+                diffs[focus].add(psc)
+                continue
+
+            # 4) Required path only (min/max count without class/shape requirement)
+            rp = _detect_required_path(g, result, focus)
+            if rp is not None:
+                diffs[focus].add(rp)
+                continue
+
+            # 5) Required class on the (focus or value) node
+            rc = _detect_required_class(g, result, focus)
+            if rc is not None:
+                diffs[focus].add(rc)
+                continue
+
+            # 6) NodeConstraintComponent handling (TODO)
+            if g.value(result, SH.sourceConstraintComponent) == SH.NodeConstraintComponent:
+                # Currently unhandled; reserved for future expansion
+                continue
 
         # TODO: this is still kind of broken...ideally we would actually interpret the shapes
         # inside the or clause
