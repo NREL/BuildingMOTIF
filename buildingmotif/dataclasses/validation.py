@@ -148,10 +148,13 @@ class OrShape(GraphDiff):
     """Represents an entity that is missing one of several possible shapes, via sh:or"""
 
     shapes: Tuple[URIRef]
+    messages: Optional[Tuple[str, ...]] = None
 
     def reason(self) -> str:
         """Human-readable explanation of this GraphDiff."""
-        return f"{self.focus} needs to match one of the following shapes: {', '.join(self.shapes)}"
+        if self.messages:
+            return f"{self.focus} must satisfy one of: " + " | ".join(self.messages)
+        return f"{self.focus} needs to match one of the following shapes: {', '.join(str(s) for s in self.shapes)}"
 
     @classmethod
     def from_validation_report(cls, report: Graph) -> List["OrShape"]:
@@ -701,6 +704,24 @@ def _expand_or_result_to_diffs(
     return diffs
 
 
+def _collect_or_messages(g: Graph, result: Node) -> List[str]:
+    """Collect human-readable messages for the alternatives under an sh:OrConstraintComponent.
+    Prefer sh:resultMessage from sh:detail children; if not present, fall back to detector
+    reasons for each child."""
+    messages: List[str] = []
+    for child in g.objects(result, SH.detail):
+        for m in g.objects(child, SH.resultMessage):
+            if isinstance(m, Literal):
+                messages.append(str(m))
+    if messages:
+        # de-duplicate while preserving order
+        return list(dict.fromkeys(messages))
+    # fallback to generated reasons based on detected diffs
+    focus = g.value(result, SH.focusNode)
+    diffs = _expand_or_result_to_diffs(g, result, focus)
+    return list(dict.fromkeys([d.reason() for d in diffs]))
+
+
 @dataclass
 class ValidationContext:
     """Holds the necessary information for processing the results of SHACL
@@ -802,6 +823,13 @@ class ValidationContext:
             comp = g.value(result, SH.sourceConstraintComponent)
             # Handle OR constraint by recursing into sh:detail and converting children to GraphDiffs
             if comp == SH.OrConstraintComponent:
+                # Preserve the "or" context by adding an OrShape that lists the messages
+                # produced by each alternative, instead of raw shape references.
+                validation_report = g.cbd(result)
+                msgs = _collect_or_messages(g, result)
+                diffs[focus].add(
+                    OrShape(focus, validation_report, g, tuple(), tuple(msgs) if msgs else None)
+                )
                 for d in _expand_or_result_to_diffs(g, result, focus):
                     diffs[focus].add(d)
                 continue
