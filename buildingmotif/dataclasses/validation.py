@@ -706,20 +706,37 @@ def _expand_or_result_to_diffs(
 
 def _collect_or_messages(g: Graph, result: Node) -> List[str]:
     """Collect human-readable messages for the alternatives under an sh:OrConstraintComponent.
-    Prefer sh:resultMessage from sh:detail children; if not present, fall back to detector
-    reasons for each child."""
+
+    Priority of sources:
+    1) sh:resultMessage values on each sh:detail child (if provided by the engine)
+    2) sh:message values declared on each child's sh:sourceShape (shape-authored copy)
+    3) Generated reasons from our nested GraphDiff detectors for each child
+    """
     messages: List[str] = []
+
+    # 1) Collect engine-produced child result messages
     for child in g.objects(result, SH.detail):
         for m in g.objects(child, SH.resultMessage):
             if isinstance(m, Literal):
                 messages.append(str(m))
-    if messages:
-        # de-duplicate while preserving order
-        return list(dict.fromkeys(messages))
-    # fallback to generated reasons based on detected diffs
-    focus = g.value(result, SH.focusNode)
-    diffs = _expand_or_result_to_diffs(g, result, focus)
-    return list(dict.fromkeys([d.reason() for d in diffs]))
+
+    # 2) If none, fall back to sh:message on the child's source shape
+    if not messages:
+        for child in g.objects(result, SH.detail):
+            shape = g.value(child, SH.sourceShape)
+            if shape is not None:
+                for m in g.objects(shape, SH.message):
+                    if isinstance(m, Literal):
+                        messages.append(str(m))
+
+    # 3) If still none, generate reasons from nested diffs
+    if not messages:
+        focus = g.value(result, SH.focusNode)
+        diffs = _expand_or_result_to_diffs(g, result, focus)
+        messages.extend(d.reason() for d in diffs)
+
+    # De-duplicate while preserving order
+    return list(dict.fromkeys(messages))
 
 
 @dataclass
