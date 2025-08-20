@@ -505,6 +505,41 @@ class GraphClassCardinality(GraphDiff):
         return templs
 
 
+def _to_int_maybe(val: Optional[Literal]) -> Optional[int]:
+    """Safely cast a Literal integer to int if present."""
+    if isinstance(val, Literal):
+        try:
+            return int(val)
+        except Exception:
+            return None
+    return None
+
+
+def _detect_qvs_class_min_pattern(
+    g: Graph, result: Node
+) -> Optional[Tuple[Node, Optional[int], Optional[int], URIRef]]:
+    """Detect the 'qualifiedValueShape' + 'qualifiedMinCount' pattern that often
+    manifests as a ClassConstraintComponent on a value node, but whose actionable
+    fix is to add a missing value of a required class along the resultPath.
+
+    Returns:
+        (result_path, qualifiedMinCount, qualifiedMaxCount, expected_class) if pattern matches.
+    """
+    shape = g.value(result, SH.sourceShape)
+    if shape is None:
+        return None
+    qvs = g.value(shape, SH.qualifiedValueShape)
+    if qvs is None:
+        return None
+    result_path = g.value(result, SH.resultPath)
+    expected_class = g.value(qvs, SH["class"])
+    qmin = g.value(shape, SH.qualifiedMinCount)
+    qmax = g.value(shape, SH.qualifiedMaxCount)
+    if result_path and isinstance(expected_class, URIRef) and qmin is not None:
+        return (result_path, _to_int_maybe(qmin), _to_int_maybe(qmax), expected_class)
+    return None
+
+
 @dataclass
 class ValidationContext:
     """Holds the necessary information for processing the results of SHACL
@@ -612,6 +647,26 @@ class ValidationContext:
             # https://www.w3.org/TR/shacl/#results-validation-result for details
             # on the structure and expected properties
             validation_report = g.cbd(result)
+
+            # First, detect the qualifiedValueShape + qualifiedMinCount pattern.
+            # Even when the engine reports a ClassConstraintComponent on a value node,
+            # the actionable fix is typically to add a new related entity of the required class.
+            qvs_match = _detect_qvs_class_min_pattern(g, result)
+            if qvs_match and focus:
+                path, minc_i, maxc_i, classname = qvs_match
+                diffs[focus].add(
+                    PathClassCount(
+                        focus,
+                        validation_report,
+                        g,
+                        path,
+                        minc_i,
+                        maxc_i,
+                        classname,
+                    )
+                )
+                # We handled this result explicitly; move to the next one.
+                continue
             if (
                 g.value(result, SH.sourceConstraintComponent)
                 == CONSTRAINT.countConstraintComponent
