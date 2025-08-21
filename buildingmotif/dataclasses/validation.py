@@ -717,23 +717,118 @@ def _expand_or_result_to_diffs(
     return diffs
 
 
+def _diffs_from_shape_node(g: Graph, shape_node: Node, focus: Optional[URIRef]) -> List[GraphDiff]:
+    """Derive GraphDiffs from the structure of a shape node in the shapes graph (no reliance on report).
+
+    Supports:
+      - Property shapes with sh:path and:
+          * sh:class or sh:qualifiedValueShape/sh:class  -> PathClassCount
+          * sh:node or sh:qualifiedValueShape/sh:node    -> PathShapeCount
+          * otherwise                                    -> RequiredPath
+      - Node shapes with sh:property children            -> recursively derive diffs for each property shape
+      - Node shapes with sh:class                        -> simple RequiredClass-like message (via RequiredClass)
+    """
+    diffs: List[GraphDiff] = []
+
+    # Property shape
+    path = g.value(shape_node, SH.path)
+    if path is not None:
+        # min/max from shape or qualified variants
+        minc_lit = g.value(shape_node, SH.minCount) or g.value(shape_node, SH.qualifiedMinCount)
+        maxc_lit = g.value(shape_node, SH.maxCount) or g.value(shape_node, SH.qualifiedMaxCount)
+        minc = _to_int_maybe(minc_lit) if isinstance(minc_lit, Literal) else _to_int_maybe(minc_lit)
+        maxc = _to_int_maybe(maxc_lit) if isinstance(maxc_lit, Literal) else _to_int_maybe(maxc_lit)
+
+        qvs = g.value(shape_node, SH.qualifiedValueShape)
+        cls_uri = g.value(shape_node, SH["class"]) or (g.value(qvs, SH["class"]) if qvs else None)
+        node_shape = g.value(shape_node, SH.node) or (g.value(qvs, SH.node) if qvs else None)
+
+        if isinstance(cls_uri, URIRef):
+            diffs.append(PathClassCount(focus, Graph(), g, path, minc, maxc, cls_uri))  # type: ignore[arg-type]
+            return diffs
+        if isinstance(node_shape, URIRef):
+            diffs.append(
+                PathShapeCount(  # type: ignore[arg-type]
+                    focus, Graph(), g, path, minc, maxc, node_shape, None, None
+                )
+            )
+            return diffs
+
+        diffs.append(RequiredPath(focus, Graph(), g, path, minc, maxc))  # type: ignore[arg-type]
+        return diffs
+
+    # Node shape: collect property shapes
+    props = list(g.objects(shape_node, SH.property))
+    if props:
+        for ps in props:
+            diffs.extend(_diffs_from_shape_node(g, ps, focus))
+        return diffs
+
+    # Node shape with a direct class requirement
+    cls_req = g.value(shape_node, SH["class"])
+    if isinstance(cls_req, URIRef) and focus:
+        # Create a tiny faux validation_result graph so RequiredClass.reason can render
+        valres = Graph()
+        vr = BNode()
+        valres.add((vr, RDF.type, SH.ValidationResult))
+        valres.add((vr, SH.value, focus))
+        diffs.append(RequiredClass(focus, valres, g, cls_req))
+        return diffs
+
+    return diffs
+
+
+def _messages_from_or_shapes(g: Graph, shapes_list: Node, focus: Optional[URIRef]) -> List[str]:
+    """Produce messages for each shape alternative by analyzing the shape graph structure."""
+    messages: List[str] = []
+    try:
+        alts = list(Collection(g, shapes_list))
+    except Exception:
+        alts = []
+    for alt in alts:
+        alt_diffs = _diffs_from_shape_node(g, alt, focus)
+        if alt_diffs:
+            combined = " and ".join(d.reason() for d in alt_diffs)
+            messages.append(combined)
+            continue
+        # Fall back to authored messages on the shape
+        authored = [str(m) for m in g.objects(alt, SH.message) if isinstance(m, Literal)]
+        if authored:
+            messages.append(" ".join(authored))
+        else:
+            label = g.qname(alt) if isinstance(alt, URIRef) else str(alt)
+            messages.append(f"{focus} must satisfy shape {label}")
+    # De-duplicate while preserving order
+    return list(dict.fromkeys(messages))
+
+
 def _collect_or_messages(g: Graph, result: Node) -> List[str]:
     """Collect human-readable messages for the alternatives under an sh:OrConstraintComponent.
 
     Priority of sources:
-    1) sh:resultMessage values on each sh:detail child (if provided by the engine)
-    2) sh:message values declared on each child's sh:sourceShape (shape-authored copy)
-    3) Generated reasons from our nested GraphDiff detectors for each child
+    1) Analyze the referenced shapes list (sh:sourceShape/sh:or ...) and derive messages from shape structure
+    2) sh:resultMessage values on each sh:detail child (if provided by the engine)
+    3) sh:message values declared on each child's sh:sourceShape (shape-authored copy)
+    4) Generated reasons from our nested GraphDiff detectors for each child in the report
     """
+    focus = g.value(result, SH.focusNode)
+
+    # 1) Prefer shape-graph analysis of the OR alternatives
+    shapes_list = g.value(result, SH.sourceShape / SH["or"])
+    if shapes_list is not None:
+        msgs = _messages_from_or_shapes(g, shapes_list, focus)
+        if msgs:
+            return msgs
+
     messages: List[str] = []
 
-    # 1) Collect engine-produced child result messages
+    # 2) Collect engine-produced child result messages
     for child in g.objects(result, SH.detail):
         for m in g.objects(child, SH.resultMessage):
             if isinstance(m, Literal):
                 messages.append(str(m))
 
-    # 2) If none, fall back to sh:message on the child's source shape
+    # 3) If none, fall back to sh:message on the child's source shape
     if not messages:
         for child in g.objects(result, SH.detail):
             shape = g.value(child, SH.sourceShape)
@@ -742,10 +837,10 @@ def _collect_or_messages(g: Graph, result: Node) -> List[str]:
                     if isinstance(m, Literal):
                         messages.append(str(m))
 
-    # 3) generate reasons from nested diffs
-    focus = g.value(result, SH.focusNode)
-    diffs = _expand_or_result_to_diffs(g, result, focus)
-    messages.extend(d.reason() for d in diffs)
+    # 4) If still none, generate reasons from nested diffs using the report structure
+    if not messages:
+        diffs = _expand_or_result_to_diffs(g, result, focus)
+        messages.extend(d.reason() for d in diffs)
 
     # De-duplicate while preserving order
     return list(dict.fromkeys(messages))
