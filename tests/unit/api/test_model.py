@@ -527,3 +527,56 @@ def test_get_model_node_subgraph_endpoint_missing_node_returns_400(
     model = Model.create(name="urn:my_model_node_subgraph_api2")
     res = client.get(f"/models/{model.id}/node_subgraph")
     assert res.status_code == 400
+
+
+def test_validate_templates_endpoint_returns_inlined_templates_with_parameters_and_types(
+    client, building_motif, shacl_engine
+):
+    # Ensure SHACL engine configured
+    building_motif.shacl_engine = shacl_engine
+
+    # Load libraries used for validation (shapes and Brick ontology)
+    brick = Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    library_2 = Library.load(directory="tests/unit/fixtures/templates")
+
+    # Build a simple model with a VAV missing required sensors
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+    model.add_triples((BLDG["vav1"], A, BRICK.VAV))
+
+    # Call the new endpoint to get generated templates
+    res = client.post(
+        f"/models/{model.id}/validate/templates",
+        headers={"Content-Type": "application/json"},
+        json={"library_ids": [library_1.id, library_2.id, brick.id]},
+    )
+    assert res.status_code == 200, res.data
+
+    data = res.get_json()
+    assert "templates" in data
+    assert isinstance(data["templates"], list)
+    assert len(data["templates"]) >= 1
+
+    # Verify each template payload includes in-lined TTL body and parameter types,
+    # and that the TTL body contains the rdf:type triples for the declared parameters.
+    all_types = set()
+    for t in data["templates"]:
+        assert "body" in t and "parameters" in t
+        ttl_body = t["body"]
+        params = t["parameters"]
+        # Body should parse as TTL
+        g = Graph().parse(data=ttl_body, format="ttl")
+
+        # For each parameter, ensure the reported rdf:type values are actually present in the body
+        for p in params:
+            pname = p["name"]
+            pnode = URIRef(f"urn:___param___#{pname}")
+            types_in_graph = {str(o) for o in g.objects(pnode, RDF.type)}
+            assert len(p["types"]) >= 1
+            assert set(p["types"]).issubset(types_in_graph)
+            all_types.update(p["types"])
+
+    # Expect at least the two missing sensor classes from shape1 constraints
+    assert "https://brickschema.org/schema/Brick#Temperature_Sensor" in all_types
+    assert "https://brickschema.org/schema/Brick#Air_Flow_Sensor" in all_types
