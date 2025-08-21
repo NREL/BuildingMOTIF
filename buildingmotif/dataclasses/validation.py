@@ -717,7 +717,9 @@ def _expand_or_result_to_diffs(
     return diffs
 
 
-def _diffs_from_shape_node(g: Graph, shape_node: Node, focus: Optional[URIRef]) -> List[GraphDiff]:
+def _diffs_from_shape_node(
+    g: Graph, shape_node: Node, focus: Optional[URIRef]
+) -> List[GraphDiff]:
     """Derive GraphDiffs from the structure of a shape node in the shapes graph (no reliance on report).
 
     Supports:
@@ -734,14 +736,30 @@ def _diffs_from_shape_node(g: Graph, shape_node: Node, focus: Optional[URIRef]) 
     path = g.value(shape_node, SH.path)
     if path is not None:
         # min/max from shape or qualified variants
-        minc_lit = g.value(shape_node, SH.minCount) or g.value(shape_node, SH.qualifiedMinCount)
-        maxc_lit = g.value(shape_node, SH.maxCount) or g.value(shape_node, SH.qualifiedMaxCount)
-        minc = _to_int_maybe(minc_lit) if isinstance(minc_lit, Literal) else _to_int_maybe(minc_lit)
-        maxc = _to_int_maybe(maxc_lit) if isinstance(maxc_lit, Literal) else _to_int_maybe(maxc_lit)
+        minc_lit = g.value(shape_node, SH.minCount) or g.value(
+            shape_node, SH.qualifiedMinCount
+        )
+        maxc_lit = g.value(shape_node, SH.maxCount) or g.value(
+            shape_node, SH.qualifiedMaxCount
+        )
+        minc = (
+            _to_int_maybe(minc_lit)
+            if isinstance(minc_lit, Literal)
+            else _to_int_maybe(minc_lit)
+        )
+        maxc = (
+            _to_int_maybe(maxc_lit)
+            if isinstance(maxc_lit, Literal)
+            else _to_int_maybe(maxc_lit)
+        )
 
         qvs = g.value(shape_node, SH.qualifiedValueShape)
-        cls_uri = g.value(shape_node, SH["class"]) or (g.value(qvs, SH["class"]) if qvs else None)
-        node_shape = g.value(shape_node, SH.node) or (g.value(qvs, SH.node) if qvs else None)
+        cls_uri = g.value(shape_node, SH["class"]) or (
+            g.value(qvs, SH["class"]) if qvs else None
+        )
+        node_shape = g.value(shape_node, SH.node) or (
+            g.value(qvs, SH.node) if qvs else None
+        )
 
         if isinstance(cls_uri, URIRef):
             diffs.append(PathClassCount(focus, Graph(), g, path, minc, maxc, cls_uri))  # type: ignore[arg-type]
@@ -778,7 +796,9 @@ def _diffs_from_shape_node(g: Graph, shape_node: Node, focus: Optional[URIRef]) 
     return diffs
 
 
-def _messages_from_or_shapes(g: Graph, shapes_list: Node, focus: Optional[URIRef]) -> List[str]:
+def _messages_from_or_shapes(
+    g: Graph, shapes_list: Node, focus: Optional[URIRef]
+) -> List[str]:
     """Produce messages for each shape alternative by analyzing the shape graph structure."""
     messages: List[str] = []
     try:
@@ -792,7 +812,9 @@ def _messages_from_or_shapes(g: Graph, shapes_list: Node, focus: Optional[URIRef
             messages.append(combined)
             continue
         # Fall back to authored messages on the shape
-        authored = [str(m) for m in g.objects(alt, SH.message) if isinstance(m, Literal)]
+        authored = [
+            str(m) for m in g.objects(alt, SH.message) if isinstance(m, Literal)
+        ]
         if authored:
             messages.append(" ".join(authored))
         else:
@@ -951,6 +973,7 @@ class ValidationContext:
                 # produced by each alternative, instead of raw shape references.
                 validation_report = g.cbd(result)
                 msgs = _collect_or_messages(g, result)
+                print(f"OR constraint detected for focus {focus}, messages: {msgs}")
                 diffs[focus].add(
                     OrShape(
                         focus,
@@ -961,6 +984,7 @@ class ValidationContext:
                     )
                 )
                 for d in _expand_or_result_to_diffs(g, result, focus):
+                    print(f"From expanding OR: Adding diff {d} for focus {focus}")
                     diffs[focus].add(d)
                 continue
 
