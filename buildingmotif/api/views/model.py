@@ -14,7 +14,7 @@ from buildingmotif.database.errors import (
 )
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
 from buildingmotif.exports.brick2af.validation import generate_report
-from buildingmotif.namespaces import OWL
+from buildingmotif.namespaces import OWL, RDF, PARAM, bind_prefixes
 
 blueprint = Blueprint("models", __name__)
 logger = logging.getLogger()
@@ -473,6 +473,110 @@ def validate_model(models_id: int) -> flask.Response:
             for focus_node, grahdiffs in vaildation_context.diffset.items()
         },
     }, status.HTTP_200_OK
+
+
+@blueprint.route("/<models_id>/validate/templates", methods=(["POST"]))
+def get_validation_templates(models_id: int) -> flask.Response:
+    # Load model
+    try:
+        model = Model.load(models_id)
+    except ModelNotFound:
+        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
+
+    # Parse optional iteration params
+    min_iterations_arg = request.args.get("min_iterations")
+    max_iterations_arg = request.args.get("max_iterations")
+    min_iterations = 1
+    max_iterations = 3
+    try:
+        if min_iterations_arg is not None:
+            min_iterations = int(min_iterations_arg)
+        if max_iterations_arg is not None:
+            max_iterations = int(max_iterations_arg)
+    except ValueError:
+        return {"message": "min_iterations and max_iterations must be integers"}, status.HTTP_400_BAD_REQUEST
+    if min_iterations < 1 or max_iterations < 1:
+        return {"message": "min_iterations and max_iterations must be >= 1"}, status.HTTP_400_BAD_REQUEST
+
+    # Determine shapes (reuse logic from /validate)
+    shape_collections = []
+    if request.content_length is None:
+        shape_collections = [model.get_manifest()]
+    else:
+        if request.content_type != "application/json":
+            return flask.Response(
+                {"message": "request content type must be json"},
+                status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            body = request.json
+        except Exception as e:
+            return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
+
+        if body is not None and not isinstance(body, dict):
+            return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
+
+        body = body if body is not None else {}
+        nonexistent_libraries = []
+        for library_id in body.get("library_ids", []):
+            if library_id == 0:  # 0 is 'model manifest'
+                shape_collections.append(model.get_manifest())
+                continue
+            try:
+                shape_collection = Library.load(library_id).get_shape_collection()
+                shape_collections.append(shape_collection)
+            except LibraryNotFound:
+                nonexistent_libraries.append(library_id)
+        if len(shape_collections) == 0:
+            shape_collections = [model.get_manifest()]
+        if len(nonexistent_libraries) > 0:
+            return {
+                "message": f"Libraries with ids {nonexistent_libraries} do not exist"
+            }, status.HTTP_400_BAD_REQUEST
+
+    # Compile and validate to obtain a ValidationContext
+    compiled = model.compile(
+        shape_collections,
+        min_iterations=min_iterations,
+        max_iterations=max_iterations,
+    )
+    ctx = compiled.validate(
+        error_on_missing_imports=False,
+        min_iterations=min_iterations,
+        max_iterations=max_iterations,
+    )
+
+    # Generate templates from diffs
+    templates = ctx.as_templates()
+
+    # Build response with in-lined bodies and parameter rdf:type metadata
+    payload = []
+    for templ in templates:
+        # Ensure in-lined body
+        inlined = templ.inline_dependencies()
+        body_graph = inlined.body
+        bind_prefixes(body_graph)
+        ttl_body = body_graph.serialize(format="ttl")
+
+        # Collect parameter names robustly
+        params_attr = getattr(inlined, "parameters", None)
+        if isinstance(params_attr, dict):
+            param_names = list(params_attr.keys())
+        elif isinstance(params_attr, (list, tuple, set)):
+            param_names = list(params_attr)
+        else:
+            param_names = []
+
+        # Gather rdf:type for each parameter in the template body
+        parameters = []
+        for pname in param_names:
+            pnode = PARAM[pname]
+            types = sorted({str(o) for o in body_graph.objects(pnode, RDF.type)})
+            parameters.append({"name": pname, "types": types})
+
+        payload.append({"body": ttl_body, "parameters": parameters})
+
+    return jsonify({"templates": payload}), status.HTTP_200_OK
 
 
 @blueprint.route("/<models_id>/validate_shape", methods=(["POST"]))
