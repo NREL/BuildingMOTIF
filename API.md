@@ -471,6 +471,41 @@ Example:
 
 ---
 
+### POST /models/{model_id}/validate/templates
+Return templates that, if applied, can resolve validation differences for the model.
+
+- Path params:
+  - model_id: number
+- Query params:
+  - min_iterations: integer (optional; minimum 1; default 1)
+  - max_iterations: integer (optional; minimum 1; default 3)
+- Content:
+  - No/empty body → uses the model’s manifest
+  - JSON body:
+    - Headers: Content-Type: application/json
+    - Body JSON: { "library_ids"?: number[] } (same semantics as /validate)
+- Response 200 JSON:
+  - {
+      "templates": [
+        {
+          "body": "<ttl string>",            // inlined template body
+          "parameters": [
+            { "name": "<param>", "types": ["<uri>", ...] } // rdf:type(s) found for PARAM:<name>
+          ]
+        },
+        ...
+      ]
+    }
+- Errors:
+  - 400 for invalid library IDs or iteration params
+  - 404 for missing model
+
+Example:
+- POST /models/5/validate/templates
+- POST /models/5/validate/templates with JSON { "library_ids": [0, 1] }
+
+---
+
 ### POST /models/{model_id}/validate_shape
 Validate the model against specific shapes.
 
