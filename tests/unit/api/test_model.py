@@ -529,7 +529,7 @@ def test_get_model_node_subgraph_endpoint_missing_node_returns_400(
     assert res.status_code == 400
 
 
-def test_validate_templates_endpoint_returns_inlined_templates_with_parameters_and_types(
+def test_validate_endpoint_include_templates_returns_inlined_templates_with_parameters_and_types(
     client, building_motif, shacl_engine
 ):
     # Ensure SHACL engine configured
@@ -545,9 +545,9 @@ def test_validate_templates_endpoint_returns_inlined_templates_with_parameters_a
     model = Model.create(name=BLDG)
     model.add_triples((BLDG["vav1"], A, BRICK.VAV))
 
-    # Call the new endpoint to get generated templates
+    # Call the validate endpoint with include_templates=true to get generated templates
     res = client.post(
-        f"/models/{model.id}/validate/templates",
+        f"/models/{model.id}/validate?include_templates=true",
         headers={"Content-Type": "application/json"},
         json={"library_ids": [library_1.id, library_2.id, brick.id]},
     )
