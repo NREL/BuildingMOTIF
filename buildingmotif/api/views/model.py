@@ -20,6 +20,107 @@ blueprint = Blueprint("models", __name__)
 logger = logging.getLogger()
 
 
+def _parse_bool_param(name: str, default: bool = False) -> bool:
+    val = request.args.get(name)
+    if val is None:
+        return default
+    return str(val).lower() in ("1", "true", "yes", "y", "on")
+
+
+def _parse_iteration_params():
+    min_iterations_arg = request.args.get("min_iterations")
+    max_iterations_arg = request.args.get("max_iterations")
+    min_iterations = 1
+    max_iterations = 3
+    try:
+        if min_iterations_arg is not None:
+            min_iterations = int(min_iterations_arg)
+        if max_iterations_arg is not None:
+            max_iterations = int(max_iterations_arg)
+    except ValueError:
+        raise ValueError("min_iterations and max_iterations must be integers")
+    if min_iterations < 1 or max_iterations < 1:
+        raise ValueError("min_iterations and max_iterations must be >= 1")
+    return min_iterations, max_iterations
+
+
+def _select_shape_collections(model):
+    # Determine which shape collections to use for validation
+    if request.content_length is None:
+        return [model.get_manifest()], []
+    if request.content_type != "application/json":
+        raise ValueError("request content type must be json")
+    try:
+        body = request.json
+    except Exception as e:
+        raise ValueError(f"cannot read body {e}")
+
+    if body is not None and not isinstance(body, dict):
+        raise ValueError("body is not dict")
+
+    body = body if body is not None else {}
+    nonexistent_libraries = []
+    shape_collections = []
+    for library_id in body.get("library_ids", []):
+        if library_id == 0:  # 0 is 'model manifest'
+            shape_collections.append(model.get_manifest())
+            continue
+        try:
+            shape_collection = Library.load(library_id).get_shape_collection()
+            shape_collections.append(shape_collection)
+        except LibraryNotFound:
+            nonexistent_libraries.append(library_id)
+
+    if len(shape_collections) == 0:
+        shape_collections = [model.get_manifest()]
+
+    return shape_collections, nonexistent_libraries
+
+
+def _compute_validation_context(model, shape_collections, min_iterations, max_iterations):
+    compiled = model.compile(
+        shape_collections,
+        min_iterations=min_iterations,
+        max_iterations=max_iterations,
+    )
+    ctx = compiled.validate(
+        error_on_missing_imports=False,
+        min_iterations=min_iterations,
+        max_iterations=max_iterations,
+    )
+    return ctx
+
+
+def _templates_payload_from_context(ctx):
+    # Generate templates from diffs and serialize bodies + parameter metadata
+    payload = []
+    templates = ctx.as_templates()
+
+    for templ in templates:
+        inlined = templ.inline_dependencies()
+        body_graph = inlined.body
+        bind_prefixes(body_graph)
+        ttl_body = body_graph.serialize(format="ttl")
+
+        params_attr = getattr(inlined, "parameters", None)
+        if isinstance(params_attr, dict):
+            param_names = list(params_attr.keys())
+        elif isinstance(params_attr, (list, tuple, set)):
+            param_names = list(params_attr)
+        else:
+            param_names = []
+
+        parameters = []
+        for pname in param_names:
+            pnode = PARAM[pname]
+            types = sorted({str(o) for o in body_graph.objects(pnode, RDF.type)})
+            parameters.append({"name": pname, "types": types})
+
+        payload.append({"body": ttl_body, "parameters": parameters})
+
+    return payload
+
+
 @blueprint.route("", methods=(["GET"]))
 def get_all_models() -> flask.Response:
     """Get all models.
@@ -395,188 +496,50 @@ def validate_model(models_id: int) -> flask.Response:
     except ModelNotFound:
         return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
 
-    # we will read the shape collections from the input
-    shape_collections = []
-
-    # get shacl_engine from the query params, defaults to the current engine
-    shacl_engine = request.args.get("shacl_engine", None)
-    # Optional SHACL iteration parameters
-    min_iterations_arg = request.args.get("min_iterations")
-    max_iterations_arg = request.args.get("max_iterations")
-    min_iterations = 1
-    max_iterations = 3
+    # parse iteration params
     try:
-        if min_iterations_arg is not None:
-            min_iterations = int(min_iterations_arg)
-        if max_iterations_arg is not None:
-            max_iterations = int(max_iterations_arg)
-    except ValueError:
-        return {"message": "min_iterations and max_iterations must be integers"}, status.HTTP_400_BAD_REQUEST
-    if min_iterations < 1 or max_iterations < 1:
-        return {"message": "min_iterations and max_iterations must be >= 1"}, status.HTTP_400_BAD_REQUEST
+        min_iterations, max_iterations = _parse_iteration_params()
+    except ValueError as e:
+        return {"message": str(e)}, status.HTTP_400_BAD_REQUEST
 
-    # no body provided -- default to model manifest
-    if request.content_length is None:
-        shape_collections = [model.get_manifest()]
-    else:
-        # get body
-        if request.content_type != "application/json":
-            return flask.Response(
-                {"message": "request content type must be json"},
-                status.HTTP_400_BAD_REQUEST,
-            )
-        try:
-            body = request.json
-        except Exception as e:
-            return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
+    # determine shape collections
+    try:
+        shape_collections, nonexistent_libraries = _select_shape_collections(model)
+    except ValueError as e:
+        return {"message": str(e)}, status.HTTP_400_BAD_REQUEST
 
-        if body is not None and not isinstance(body, dict):
-            return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
-        body = body if body is not None else {}
-        nonexistent_libraries = []
-        for library_id in body.get("library_ids", []):
-            if library_id == 0:  # 0 is 'model manifest'
-                shape_collections.append(model.get_manifest())
-                continue
-            try:
-                shape_collection = Library.load(library_id).get_shape_collection()
-                shape_collections.append(shape_collection)
-            except LibraryNotFound:
-                nonexistent_libraries.append(library_id)
-        if len(shape_collections) == 0:
-            shape_collections = [model.get_manifest()]
-        if len(nonexistent_libraries) > 0:
-            return {
-                "message": f"Libraries with ids {nonexistent_libraries} do not exist"
-            }, status.HTTP_400_BAD_REQUEST
+    if len(nonexistent_libraries) > 0:
+        return {
+            "message": f"Libraries with ids {nonexistent_libraries} do not exist"
+        }, status.HTTP_400_BAD_REQUEST
 
     logger.warning(
         f"Validating model {model.name} with shape collections {shape_collections}"
     )
-    compiled = model.compile(
-        shape_collections,
-        min_iterations=min_iterations,
-        max_iterations=max_iterations,
-    )
-    # if shape_collections is empty, model.validate will default to the model's manifest
-    vaildation_context = compiled.validate(
-        error_on_missing_imports=False,
-        min_iterations=min_iterations,
-        max_iterations=max_iterations,
+
+    # compute validation context
+    ctx = _compute_validation_context(
+        model, shape_collections, min_iterations, max_iterations
     )
 
-    return {
-        "message": vaildation_context.report_string,
-        "valid": vaildation_context.valid,
-        "reasons": {
-            focus_node: list(set(gd.reason() for gd in grahdiffs))
-            for focus_node, grahdiffs in vaildation_context.diffset.items()
-        },
-    }, status.HTTP_200_OK
+    reasons = {
+        focus_node: list({gd.reason() for gd in grahdiffs})
+        for focus_node, grahdiffs in ctx.diffset.items()
+    }
+
+    response = {
+        "message": ctx.report_string,
+        "valid": ctx.valid,
+        "reasons": reasons,
+    }
+
+    # optionally include generated templates
+    if _parse_bool_param("include_templates", False):
+        response["templates"] = _templates_payload_from_context(ctx)
+
+    return response, status.HTTP_200_OK
 
 
-@blueprint.route("/<models_id>/validate/templates", methods=(["POST"]))
-def get_validation_templates(models_id: int) -> flask.Response:
-    # Load model
-    try:
-        model = Model.load(models_id)
-    except ModelNotFound:
-        return {"message": f"ID: {models_id}"}, status.HTTP_404_NOT_FOUND
-
-    # Parse optional iteration params
-    min_iterations_arg = request.args.get("min_iterations")
-    max_iterations_arg = request.args.get("max_iterations")
-    min_iterations = 1
-    max_iterations = 3
-    try:
-        if min_iterations_arg is not None:
-            min_iterations = int(min_iterations_arg)
-        if max_iterations_arg is not None:
-            max_iterations = int(max_iterations_arg)
-    except ValueError:
-        return {"message": "min_iterations and max_iterations must be integers"}, status.HTTP_400_BAD_REQUEST
-    if min_iterations < 1 or max_iterations < 1:
-        return {"message": "min_iterations and max_iterations must be >= 1"}, status.HTTP_400_BAD_REQUEST
-
-    # Determine shapes (reuse logic from /validate)
-    shape_collections = []
-    if request.content_length is None:
-        shape_collections = [model.get_manifest()]
-    else:
-        if request.content_type != "application/json":
-            return flask.Response(
-                {"message": "request content type must be json"},
-                status.HTTP_400_BAD_REQUEST,
-            )
-        try:
-            body = request.json
-        except Exception as e:
-            return {"message": f"cannot read body {e}"}, status.HTTP_400_BAD_REQUEST
-
-        if body is not None and not isinstance(body, dict):
-            return {"message": "body is not dict"}, status.HTTP_400_BAD_REQUEST
-
-        body = body if body is not None else {}
-        nonexistent_libraries = []
-        for library_id in body.get("library_ids", []):
-            if library_id == 0:  # 0 is 'model manifest'
-                shape_collections.append(model.get_manifest())
-                continue
-            try:
-                shape_collection = Library.load(library_id).get_shape_collection()
-                shape_collections.append(shape_collection)
-            except LibraryNotFound:
-                nonexistent_libraries.append(library_id)
-        if len(shape_collections) == 0:
-            shape_collections = [model.get_manifest()]
-        if len(nonexistent_libraries) > 0:
-            return {
-                "message": f"Libraries with ids {nonexistent_libraries} do not exist"
-            }, status.HTTP_400_BAD_REQUEST
-
-    # Compile and validate to obtain a ValidationContext
-    compiled = model.compile(
-        shape_collections,
-        min_iterations=min_iterations,
-        max_iterations=max_iterations,
-    )
-    ctx = compiled.validate(
-        error_on_missing_imports=False,
-        min_iterations=min_iterations,
-        max_iterations=max_iterations,
-    )
-
-    # Generate templates from diffs
-    templates = ctx.as_templates()
-
-    # Build response with in-lined bodies and parameter rdf:type metadata
-    payload = []
-    for templ in templates:
-        # Ensure in-lined body
-        inlined = templ.inline_dependencies()
-        body_graph = inlined.body
-        bind_prefixes(body_graph)
-        ttl_body = body_graph.serialize(format="ttl")
-
-        # Collect parameter names robustly
-        params_attr = getattr(inlined, "parameters", None)
-        if isinstance(params_attr, dict):
-            param_names = list(params_attr.keys())
-        elif isinstance(params_attr, (list, tuple, set)):
-            param_names = list(params_attr)
-        else:
-            param_names = []
-
-        # Gather rdf:type for each parameter in the template body
-        parameters = []
-        for pname in param_names:
-            pnode = PARAM[pname]
-            types = sorted({str(o) for o in body_graph.objects(pnode, RDF.type)})
-            parameters.append({"name": pname, "types": types})
-
-        payload.append({"body": ttl_body, "parameters": parameters})
-
-    return jsonify({"templates": payload}), status.HTTP_200_OK
 
 
 @blueprint.route("/<models_id>/validate_shape", methods=(["POST"]))
