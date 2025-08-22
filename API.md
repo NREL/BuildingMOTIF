@@ -448,6 +448,7 @@ Validate the model using SHACL shapes.
   - shacl_engine: string (optional)
   - min_iterations: integer (optional; minimum 1; default 1)
   - max_iterations: integer (optional; minimum 1; default 3)
+  - include_templates: boolean (optional; default false) — when true, also return generated templates that can resolve validation differences
 - Content:
   - No/empty body → validates against the model’s manifest
   - JSON body:
@@ -455,38 +456,14 @@ Validate the model using SHACL shapes.
     - Body JSON: { "library_ids"?: number[] }
       - 0 means “use the model’s manifest”; other IDs load corresponding libraries’ shape collections
 - Response 200 JSON:
-  - {
-      "message": string,   // validation report string
-      "valid": boolean,
-      "reasons": { [focus_node_uri: string]: string[] }
-    }
-- Errors:
-  - 400 for invalid library IDs
-  - 400 for invalid min_iterations/max_iterations
-  - 404 for missing model
-
-Example:
-- POST /models/5/validate
-- POST /models/5/validate with JSON { "library_ids": [0, 1, 2] }
-
----
-
-### POST /models/{model_id}/validate/templates
-Return templates that, if applied, can resolve validation differences for the model.
-
-- Path params:
-  - model_id: number
-- Query params:
-  - min_iterations: integer (optional; minimum 1; default 1)
-  - max_iterations: integer (optional; minimum 1; default 3)
-- Content:
-  - No/empty body → uses the model’s manifest
-  - JSON body:
-    - Headers: Content-Type: application/json
-    - Body JSON: { "library_ids"?: number[] } (same semantics as /validate)
-- Response 200 JSON:
-  - {
-      "templates": [
+  - Always includes:
+    - {
+        "message": string,   // validation report string
+        "valid": boolean,
+        "reasons": { [focus_node_uri: string]: string[] }
+      }
+  - If include_templates=true is provided, the response also includes:
+    - "templates": [
         {
           "body": "<ttl string>",            // inlined template body
           "parameters": [
@@ -495,16 +472,22 @@ Return templates that, if applied, can resolve validation differences for the mo
         },
         ...
       ]
-    }
 - Errors:
-  - 400 for invalid library IDs or iteration params
+  - 400 for invalid library IDs
+  - 400 for invalid min_iterations/max_iterations
   - 404 for missing model
 
+Note:
+- The former endpoint POST /models/{model_id}/validate/templates has been removed. Use include_templates=true on this endpoint instead.
+
 Example:
-- POST /models/5/validate/templates
-- POST /models/5/validate/templates with JSON { "library_ids": [0, 1] }
+- POST /models/5/validate
+- POST /models/5/validate?include_templates=true
+- POST /models/5/validate with JSON { "library_ids": [0, 1, 2] }
+- POST /models/5/validate?include_templates=true with JSON { "library_ids": [0, 1] }
 
 ---
+
 
 ### POST /models/{model_id}/validate_shape
 Validate the model against specific shapes.
