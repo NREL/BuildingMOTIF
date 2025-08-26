@@ -468,7 +468,8 @@ Validate the model using SHACL shapes.
           "body": "<ttl string>",            // inlined template body
           "parameters": [
             { "name": "<param>", "types": ["<uri>", ...] } // rdf:type(s) found for PARAM:<name>
-          ]
+          ],
+          "focus": "<uri string or null>"    // focus node URI; null for graph-level diffs
         },
         ...
       ]
