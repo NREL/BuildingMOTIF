@@ -586,3 +586,33 @@ def test_validate_endpoint_include_templates_returns_inlined_templates_with_para
     # Expect at least the two missing sensor classes from shape1 constraints
     assert "https://brickschema.org/schema/Brick#Temperature_Sensor" in all_types
     assert "https://brickschema.org/schema/Brick#Air_Flow_Sensor" in all_types
+
+
+def test_validate_endpoint_include_templates_via_json_body(client, building_motif, shacl_engine):
+    # Ensure SHACL engine configured
+    building_motif.shacl_engine = shacl_engine
+
+    # Load libraries used for validation (shapes and Brick ontology)
+    brick = Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    library_1 = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
+    library_2 = Library.load(directory="tests/unit/fixtures/templates")
+
+    # Build a simple model with a VAV missing required sensors
+    BLDG = Namespace("urn:building/")
+    model = Model.create(name=BLDG)
+    model.add_triples((BLDG["vav1"], A, BRICK.VAV))
+
+    # Call the validate endpoint with include_templates=True in the JSON body
+    res = client.post(
+        f"/models/{model.id}/validate",
+        headers={"Content-Type": "application/json"},
+        json={"library_ids": [library_1.id, library_2.id, brick.id], "include_templates": True},
+    )
+    assert res.status_code == 200, res.data
+
+    data = res.get_json()
+    assert "templates" in data
+    assert isinstance(data["templates"], list)
+    assert len(data["templates"]) >= 1
+    # Verify at least one template is focused on the VAV we created
+    assert any(t.get("focus") == str(BLDG["vav1"]) for t in data["templates"])
