@@ -128,6 +128,7 @@ def _templates_payload_from_context(ctx):
             types = sorted({str(o) for o in body_graph.objects(pnode, RDF.type)})
             parameters.append({"name": pname, "types": types})
 
+        # Include the focus node this template was generated for (None indicates graph-level template)
         payload.append({
             "body": ttl_body,
             "parameters": parameters,
