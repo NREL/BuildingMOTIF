@@ -272,6 +272,7 @@ class PathClassCount(GraphDiff):
             body.add((self.focus, self.path, inst))
             body.add((inst, A, self.classname))
         template_name = _guarantee_unique_template_name(lib, f"resolve{focus}{name}")
+        print(f"Generated template body for {template_name}:\n", body.serialize(format="turtle"))
         return [lib.create_template(template_name, body)]
 
 
@@ -1053,8 +1054,10 @@ def diffset_to_templates(
                 templates.extend(diff.resolve(lib))
             continue
 
+        print(f"Processing diffs for focus {focus}: {diffset}")
         templ_lists = (diff.resolve(lib) for diff in diffset)
         templs: List[Template] = list(filter(None, chain.from_iterable(templ_lists)))
+        print(f"Generated templates for focus {focus}: {templs}")
         if len(templs) <= 1:
             templates.extend(templs)
             continue
