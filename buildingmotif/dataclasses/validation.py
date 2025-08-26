@@ -896,14 +896,44 @@ class ValidationContext:
         """
         return self._report_to_diffset()
 
-    def as_templates(self) -> List["Template"]:
-        """Produces the set of templates that reconcile the GraphDiffs from the
-        SHACL validation report.
-
-        :return: reconciling templates
-        :rtype: List[Template]
+    def as_templates_with_focus(self) -> List[Tuple[Optional[URIRef], "Template"]]:
         """
-        return diffset_to_templates(self.diffset)
+        Produces the set of templates along with the focus node they are for.
+        Returns a list of (focus, Template) pairs. focus may be None for graph-level diffs.
+        """
+        from buildingmotif.dataclasses import Library, Template
+        lib = Library.create(f"resolve_{token_hex(4)}")
+        results: List[Tuple[Optional[URIRef], Template]] = []
+        for focus, diffset in self.diffset.items():
+            if focus is None:
+                for diff in diffset:
+                    for t in diff.resolve(lib):
+                        results.append((None, t))
+                continue
+            templ_lists = (diff.resolve(lib) for diff in diffset)
+            templs: List[Template] = list(filter(None, chain.from_iterable(templ_lists)))
+            if len(templs) <= 1:
+                for t in templs:
+                    results.append((focus, t))
+                continue
+            base = templs[0]
+            for templ in templs[1:]:
+                if "name" in templ.parameters:
+                    base.add_dependency(templ, {"name": "name"})
+                else:
+                    base.body += templ.body
+            unified = base.inline_dependencies()
+            if len(unified.parameters) > 0:
+                unified_evaluated = unified.evaluate({"name": focus})
+            else:
+                unified_evaluated = unified
+            assert isinstance(unified_evaluated, Template)
+            results.append((focus, unified_evaluated))
+        return results
+
+    def as_templates(self) -> List["Template"]:
+        """Produces the set of templates that reconcile the GraphDiffs from the SHACL validation report."""
+        return [templ for _, templ in self.as_templates_with_focus()]
 
     def get_broken_entities(self) -> Set[URIRef]:
         """Get the set of entities that are broken in the model.

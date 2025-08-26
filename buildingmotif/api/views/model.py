@@ -94,9 +94,7 @@ def _compute_validation_context(model, shape_collections, min_iterations, max_it
 def _templates_payload_from_context(ctx):
     # Generate templates from diffs and serialize bodies + parameter metadata
     payload = []
-    templates = ctx.as_templates()
-
-    for templ in templates:
+    for focus, templ in ctx.as_templates_with_focus():
         inlined = templ.inline_dependencies()
         body_graph = inlined.body
         bind_prefixes(body_graph)
@@ -116,7 +114,11 @@ def _templates_payload_from_context(ctx):
             types = sorted({str(o) for o in body_graph.objects(pnode, RDF.type)})
             parameters.append({"name": pname, "types": types})
 
-        payload.append({"body": ttl_body, "parameters": parameters})
+        payload.append({
+            "body": ttl_body,
+            "parameters": parameters,
+            "focus": (str(focus) if focus is not None else None),
+        })
 
     return payload
 
