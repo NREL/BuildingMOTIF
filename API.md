@@ -448,7 +448,7 @@ Validate the model using SHACL shapes.
   - shacl_engine: string (optional)
   - min_iterations: integer (optional; minimum 1; default 1)
   - max_iterations: integer (optional; minimum 1; default 3)
-  - include_templates: boolean (optional; default false) — when true, also return generated templates that can resolve validation differences
+  - include_templates: boolean (optional; default false) — when true, also return generated templates that can resolve validation differences. Accepted truthy values: true, 1, yes, y, on (case-insensitive).
 - Content:
   - No/empty body → validates against the model’s manifest
   - JSON body:
