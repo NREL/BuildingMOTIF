@@ -156,6 +156,12 @@ class OrShape(GraphDiff):
             return f"{self.focus} must satisfy one of: " + " | ".join(self.messages)
         return f"{self.focus} needs to match one of the following shapes: {', '.join(str(s) for s in self.shapes)}"
 
+    def resolve(self, lib: "Library") -> List["Template"]:
+        """OrShape represents an OR between alternatives and cannot produce a
+        single unambiguous corrective template. Return an empty list so that
+        template synthesis for other diffs can proceed without error."""
+        return []
+
     @classmethod
     def from_validation_report(cls, report: Graph) -> List["OrShape"]:
         """Construct OrShape objects from a SHACL validation report.
