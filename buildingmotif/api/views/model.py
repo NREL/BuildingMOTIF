@@ -21,10 +21,23 @@ logger = logging.getLogger()
 
 
 def _parse_bool_param(name: str, default: bool = False) -> bool:
+    # Prefer query string (?name=true)
     val = request.args.get(name)
-    if val is None:
-        return default
-    return str(val).lower() in ("1", "true", "yes", "y", "on")
+    if val is not None:
+        return str(val).lower() in ("1", "true", "yes", "y", "on")
+
+    # Fallback to JSON body if present
+    try:
+        body = request.get_json(silent=True)
+    except Exception:
+        body = None
+    if isinstance(body, dict) and name in body:
+        v = body[name]
+        if isinstance(v, bool):
+            return v
+        return str(v).lower() in ("1", "true", "yes", "y", "on")
+
+    return default
 
 
 def _parse_iteration_params():
