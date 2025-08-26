@@ -557,6 +557,12 @@ def test_validate_endpoint_include_templates_returns_inlined_templates_with_para
     assert "templates" in data
     assert isinstance(data["templates"], list)
     assert len(data["templates"]) >= 1
+    # Verify focus is included for each template and includes the VAV focus node
+    for t in data["templates"]:
+        assert "focus" in t
+        # focus should be a string URI or null
+        assert (t["focus"] is None) or isinstance(t["focus"], str)
+    assert any(t["focus"] == str(BLDG["vav1"]) for t in data["templates"])
 
     # Verify each template payload includes in-lined TTL body and parameter types,
     # and that the TTL body contains the rdf:type triples for the declared parameters.
