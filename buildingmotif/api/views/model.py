@@ -78,6 +78,7 @@ def _select_shape_collections(model):
 
 
 def _compute_validation_context(model, shape_collections, min_iterations, max_iterations):
+    # Ensure iteration bounds from the endpoint are honored by both compilation and validation.
     compiled = model.compile(
         shape_collections,
         min_iterations=min_iterations,
