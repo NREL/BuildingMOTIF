@@ -466,17 +466,8 @@ class Library:
         return ShapeCollection.load(db_library.shape_collection.id)
 
     def get_template_by_name(self, name: str) -> Template:
-        """Get template by name from library.
-
-        :param name: template name
-        :type name: str
-        :raises ValueError: if template not in library
-        :return: template
-        :rtype: Template
-        """
-        dbt = self._bm.table_connection.get_db_template_by_name(name)
-        if dbt.library_id != self._id:
-            raise ValueError(f"Template {name} not in library {self._name}")
+        """Get template by name from this library."""
+        dbt = self._bm.table_connection.get_db_template_by_name_in_library(name, self._id)
         return Template.load(dbt.id)
 
 

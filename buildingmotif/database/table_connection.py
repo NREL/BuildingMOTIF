@@ -337,6 +337,17 @@ class TableConnection:
             raise TemplateNotFound(name=name)
         return db_template
 
+    def get_db_template_by_name_in_library(self, name: str, library_id: int) -> DBTemplate:
+        """Get database template by name within a specific library."""
+        try:
+            return (
+                self.bm.session.query(DBTemplate)
+                .filter(DBTemplate.name == name, DBTemplate.library_id == library_id)
+                .one()
+            )
+        except NoResultFound:
+            raise TemplateNotFound(name=name)
+
     def get_library_defining_db_template(self, id: int) -> DBLibrary:
         """Returns the library defining the given template.
 
