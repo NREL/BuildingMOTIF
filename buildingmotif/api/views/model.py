@@ -115,6 +115,15 @@ def _templates_payload_from_context(ctx):
         bind_prefixes(body_graph)
         ttl_body = body_graph.serialize(format="ttl")
 
+        # Try to capture a concrete identifier for the template we return
+        template_id = getattr(inlined, "id", None)
+        if template_id is None:
+            template_id = getattr(templ, "id", None)
+        if template_id is None:
+            dbt = getattr(inlined, "db_template", None)
+            if dbt is not None:
+                template_id = getattr(dbt, "id", None)
+
         params_attr = getattr(inlined, "parameters", None)
         if isinstance(params_attr, dict):
             param_names = list(params_attr.keys())
@@ -131,6 +140,7 @@ def _templates_payload_from_context(ctx):
 
         # Include the focus node this template was generated for (None indicates graph-level template)
         payload.append({
+            "template_id": template_id,
             "body": ttl_body,
             "parameters": parameters,
             "focus": (str(focus) if focus is not None else None),
