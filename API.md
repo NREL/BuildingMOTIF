@@ -465,6 +465,7 @@ Validate the model using SHACL shapes.
   - If include_templates=true is provided, the response also includes:
     - "templates": [
         {
+          "template_id": number|null,        // template database ID if available; null for synthesized/unpersisted
           "body": "<ttl string>",            // inlined template body
           "parameters": [
             { "name": "<param>", "types": ["<uri>", ...] } // rdf:type(s) found for PARAM:<name>
