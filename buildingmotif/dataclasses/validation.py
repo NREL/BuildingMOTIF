@@ -114,6 +114,14 @@ class GraphDiff:
     def __hash__(self):
         return hash(self.reason())
 
+    @property
+    def dedup_key(self) -> Optional[Tuple[Node, Tuple[str, Optional[Node]]]]:
+        """Key used to deduplicate diffs that express the same requirement.
+        Subclasses should override to opt into deduplication.
+        Returns a tuple of (path, ("kind", class_or_node)) or None to skip deduplication.
+        """
+        return None
+
     def format_count_error(
         self, max_count, min_count, path, object_type: Optional[str] = None
     ) -> str:
@@ -260,6 +268,10 @@ class PathClassCount(GraphDiff):
         classname = self.graph.qname(self.classname)
         return self.format_count_error(self.maxc, self.minc, path, classname)
 
+    @property
+    def dedup_key(self) -> Optional[Tuple[Node, Tuple[str, Optional[Node]]]]:
+        return (self.path, ("class", self.classname))
+
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff.
 
@@ -347,6 +359,10 @@ class PathShapeCount(GraphDiff):
         """Human-readable explanation of this GraphDiff."""
         shapename = self.graph.qname(self.shapename)
         return self.format_count_error(self.maxc, self.minc, self.path, shapename)
+
+    @property
+    def dedup_key(self) -> Optional[Tuple[Node, Tuple[str, Optional[Node]]]]:
+        return (self.path, ("node", self.shapename))
 
     def resolve(self, lib: "Library") -> List["Template"]:
         """Produces a list of templates to resolve this GraphDiff."""
@@ -454,6 +470,10 @@ class RequiredPath(GraphDiff):
             body.add((self.focus, self.path, inst))
         template_name = _guarantee_unique_template_name(lib, f"resolve{focus}{name}")
         return [lib.create_template(template_name, body)]
+
+    @property
+    def dedup_key(self) -> Optional[Tuple[Node, Tuple[str, Optional[Node]]]]:
+        return (self.path, ("none", None))
 
 
 @dataclass(frozen=True)
@@ -877,20 +897,13 @@ def _collect_or_messages(g: Graph, result: Node) -> List[str]:
 def _deduplicate_diffs_by_focus_path_classnode(
     diffs: Dict[Optional[URIRef], Set[GraphDiff]]
 ) -> Dict[Optional[URIRef], Set[GraphDiff]]:
-    """Deduplicate diffs by (focus, path, class/node) so we don't generate multiple
-    templates for the same requirement reported by multiple ValidationResults."""
+    """Deduplicate diffs using each diff's declared dedup_key."""
     new_diffs: Dict[Optional[URIRef], Set[GraphDiff]] = {}
     for focus, s in diffs.items():
         seen: Set[Tuple[Node, Tuple[str, Optional[Node]]]] = set()
         kept: List[GraphDiff] = []
         for d in s:
-            key: Optional[Tuple[Node, Tuple[str, Optional[Node]]]] = None
-            if isinstance(d, PathClassCount):
-                key = (d.path, ("class", d.classname))  # type: ignore[arg-type]
-            elif isinstance(d, PathShapeCount):
-                key = (d.path, ("node", d.shapename))  # type: ignore[arg-type]
-            elif isinstance(d, RequiredPath):
-                key = (d.path, ("none", None))  # type: ignore[arg-type]
+            key = d.dedup_key
             if key is not None:
                 if key in seen:
                     continue
