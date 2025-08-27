@@ -568,7 +568,8 @@ def test_validate_endpoint_include_templates_returns_inlined_templates_with_para
     # and that the TTL body contains the rdf:type triples for the declared parameters.
     all_types = set()
     for t in data["templates"]:
-        assert "body" in t and "parameters" in t
+        assert "body" in t and "parameters" in t and "template_id" in t
+        assert (t["template_id"] is None) or isinstance(t["template_id"], int)
         ttl_body = t["body"]
         params = t["parameters"]
         # Body should parse as TTL
@@ -614,5 +615,8 @@ def test_validate_endpoint_include_templates_via_json_body(client, building_moti
     assert "templates" in data
     assert isinstance(data["templates"], list)
     assert len(data["templates"]) >= 1
+    for t in data["templates"]:
+        assert "template_id" in t
+        assert (t["template_id"] is None) or isinstance(t["template_id"], int)
     # Verify at least one template is focused on the VAV we created
     assert any(t.get("focus") == str(BLDG["vav1"]) for t in data["templates"])
