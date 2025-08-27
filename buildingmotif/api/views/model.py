@@ -23,6 +23,7 @@ logger = logging.getLogger()
 def _parse_bool_param(name: str, default: bool = False) -> bool:
     # Prefer query string (?name=true)
     val = request.args.get(name)
+    print(f"Parsing bool param {name} with val {val}")
     if val is not None:
         return str(val).lower() in ("1", "true", "yes", "y", "on")
 
