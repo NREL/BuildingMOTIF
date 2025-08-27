@@ -874,6 +874,32 @@ def _collect_or_messages(g: Graph, result: Node) -> List[str]:
     return list(dict.fromkeys(messages))
 
 
+def _deduplicate_diffs_by_focus_path_classnode(
+    diffs: Dict[Optional[URIRef], Set[GraphDiff]]
+) -> Dict[Optional[URIRef], Set[GraphDiff]]:
+    """Deduplicate diffs by (focus, path, class/node) so we don't generate multiple
+    templates for the same requirement reported by multiple ValidationResults."""
+    new_diffs: Dict[Optional[URIRef], Set[GraphDiff]] = {}
+    for focus, s in diffs.items():
+        seen: Set[Tuple[Node, Tuple[str, Optional[Node]]]] = set()
+        kept: List[GraphDiff] = []
+        for d in s:
+            key: Optional[Tuple[Node, Tuple[str, Optional[Node]]]] = None
+            if isinstance(d, PathClassCount):
+                key = (d.path, ("class", d.classname))  # type: ignore[arg-type]
+            elif isinstance(d, PathShapeCount):
+                key = (d.path, ("node", d.shapename))  # type: ignore[arg-type]
+            elif isinstance(d, RequiredPath):
+                key = (d.path, ("none", None))  # type: ignore[arg-type]
+            if key is not None:
+                if key in seen:
+                    continue
+                seen.add(key)
+            kept.append(d)
+        new_diffs[focus] = set(kept)
+    return new_diffs
+
+
 @dataclass
 class ValidationContext:
     """Holds the necessary information for processing the results of SHACL
@@ -1062,7 +1088,7 @@ class ValidationContext:
                 # Currently unhandled; reserved for future expansion
                 continue
 
-        return diffs
+        return _deduplicate_diffs_by_focus_path_classnode(diffs)
 
 
 def diffset_to_templates(
