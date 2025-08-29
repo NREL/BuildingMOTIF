@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from functools import cached_property
 from itertools import chain
 from secrets import token_hex
+from datetime import datetime
 from typing import TYPE_CHECKING, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rdflib
@@ -942,6 +943,8 @@ class ValidationContext:
         """
         from buildingmotif.dataclasses import Library, Template
         lib = Library.create(f"resolve_{token_hex(4)}")
+        # Persist final unified templates in a timestamped library so they have real IDs
+        save_lib = Library.create(datetime.utcnow().strftime("resolved_%Y%m%dT%H%M%S%fZ"))
         results: List[Tuple[Optional[URIRef], Template]] = []
         for focus, diffset in self.diffset.items():
             if focus is None:
@@ -967,7 +970,9 @@ class ValidationContext:
             else:
                 unified_evaluated = unified
             assert isinstance(unified_evaluated, Template)
-            results.append((focus, unified_evaluated))
+            saved_name = f"{base.name}_unified"
+            saved = save_lib.create_template(saved_name, unified_evaluated.body)
+            results.append((focus, saved))
         return results
 
     def as_templates(self) -> List["Template"]:
@@ -1119,6 +1124,8 @@ def diffset_to_templates(
     from buildingmotif.dataclasses import Library, Template
 
     lib = Library.create(f"resolve_{token_hex(4)}")
+    # Persist final unified templates in a timestamped library so they have real IDs
+    save_lib = Library.create(datetime.utcnow().strftime("resolved_%Y%m%dT%H%M%S%fZ"))
 
     templates = []
     # now merge all tempaltes together for each focus node
@@ -1156,10 +1163,7 @@ def diffset_to_templates(
         else:
             unified_evaluated = unified
         assert isinstance(unified_evaluated, Template)
-        # Propagate the original DB-backed template ID so API responses include an id
-        try:
-            unified_evaluated.id = base.id  # type: ignore[attr-defined]
-        except Exception:
-            pass
-        templates.append(unified_evaluated)
+        saved_name = f"{base.name}_unified"
+        saved = save_lib.create_template(saved_name, unified_evaluated.body)
+        templates.append(saved)
     return templates
