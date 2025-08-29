@@ -967,11 +967,6 @@ class ValidationContext:
             else:
                 unified_evaluated = unified
             assert isinstance(unified_evaluated, Template)
-            # Propagate the original DB-backed template ID so API responses include an id
-            try:
-                unified_evaluated.id = base.id  # type: ignore[attr-defined]
-            except Exception:
-                pass
             results.append((focus, unified_evaluated))
         return results
 
