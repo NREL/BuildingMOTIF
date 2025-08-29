@@ -569,7 +569,7 @@ def test_validate_endpoint_include_templates_returns_inlined_templates_with_para
     all_types = set()
     for t in data["templates"]:
         assert "body" in t and "parameters" in t and "template_id" in t
-        assert (t["template_id"] is None) or isinstance(t["template_id"], int)
+        assert isinstance(t["template_id"], int)
         ttl_body = t["body"]
         params = t["parameters"]
         # Body should parse as TTL
