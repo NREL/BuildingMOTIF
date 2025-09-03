@@ -657,7 +657,7 @@ def shacl_validate(
         try:
             from brick_tq_shacl import validate as tq_validate  # type: ignore
 
-            return tq_validate(data_graph, shape_graph or Graph())  # type: ignore
+            return tq_validate(data_graph, shape_graph or Graph(), min_iterations=min_iterations, max_iterations=max_iterations)  # type: ignore
         except ImportError:
             logging.info(
                 "TopQuadrant SHACL engine not available. Using PySHACL instead."
