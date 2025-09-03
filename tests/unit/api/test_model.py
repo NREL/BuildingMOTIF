@@ -557,6 +557,7 @@ def test_validate_endpoint_include_templates_returns_inlined_templates_with_para
     assert "templates" in data
     assert isinstance(data["templates"], list)
     assert len(data["templates"]) >= 1
+    assert all(isinstance(t.get("template_id"), int) and t["template_id"] > 0 for t in data["templates"])
     # Verify focus is included for each template and includes the VAV focus node
     for t in data["templates"]:
         assert "focus" in t
@@ -570,7 +571,6 @@ def test_validate_endpoint_include_templates_returns_inlined_templates_with_para
     for t in data["templates"]:
         assert "body" in t and "parameters" in t and "template_id" in t
         assert isinstance(t["template_id"], int) and t["template_id"] > 0
-        assert isinstance(t["template_id"], int)
         ttl_body = t["body"]
         params = t["parameters"]
         # Body should parse as TTL
@@ -616,6 +616,7 @@ def test_validate_endpoint_include_templates_via_json_body(client, building_moti
     assert "templates" in data
     assert isinstance(data["templates"], list)
     assert len(data["templates"]) >= 1
+    assert all(isinstance(t.get("template_id"), int) and t["template_id"] > 0 for t in data["templates"])
     for t in data["templates"]:
         assert "template_id" in t
         assert isinstance(t["template_id"], int) and t["template_id"] > 0
