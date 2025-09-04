@@ -14,7 +14,7 @@ from buildingmotif.database.errors import (
 )
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
 from buildingmotif.exports.brick2af.validation import generate_report
-from buildingmotif.namespaces import OWL, RDF, PARAM, bind_prefixes
+from buildingmotif.namespaces import OWL, PARAM, RDF, bind_prefixes
 
 blueprint = Blueprint("models", __name__)
 logger = logging.getLogger()
@@ -91,7 +91,9 @@ def _select_shape_collections(model):
     return shape_collections, nonexistent_libraries
 
 
-def _compute_validation_context(model, shape_collections, min_iterations, max_iterations):
+def _compute_validation_context(
+    model, shape_collections, min_iterations, max_iterations
+):
     # Ensure iteration bounds from the endpoint are honored by both compilation and validation.
     compiled = model.compile(
         shape_collections,
@@ -109,16 +111,13 @@ def _compute_validation_context(model, shape_collections, min_iterations, max_it
 def _templates_payload_from_context(ctx):
     # Generate templates from diffs and serialize bodies + parameter metadata
     payload = []
-    for focus, templ in ctx.as_templates_with_focus():
-        inlined = templ.inline_dependencies()
+    for focus, inlined in ctx.as_templates_with_focus():
         body_graph = inlined.body
         bind_prefixes(body_graph)
         ttl_body = body_graph.serialize(format="ttl")
 
         # Try to capture a concrete identifier for the template we return
         template_id = getattr(inlined, "id", None)
-        if template_id is None:
-            template_id = getattr(templ, "id", None)
         if template_id is None:
             dbt = getattr(inlined, "db_template", None)
             if dbt is not None:
@@ -139,12 +138,15 @@ def _templates_payload_from_context(ctx):
             parameters.append({"name": pname, "types": types})
 
         # Include the focus node this template was generated for (None indicates graph-level template)
-        payload.append({
-            "template_id": template_id,
-            "body": ttl_body,
-            "parameters": parameters,
-            "focus": (str(focus) if focus is not None else None),
-        })
+        print(f"Template {template_id} has focus {focus}")
+        payload.append(
+            {
+                "template_id": template_id,
+                "body": ttl_body,
+                "parameters": parameters,
+                "focus": (str(focus) if focus is not None else None),
+            }
+        )
 
     return payload
 
@@ -218,7 +220,9 @@ def get_model_node_subgraph(models_id: int) -> flask.Response:
 
     node_param = request.args.get("node")
     if not node_param:
-        return {"message": "missing required query parameter 'node'"}, status.HTTP_400_BAD_REQUEST
+        return {
+            "message": "missing required query parameter 'node'"
+        }, status.HTTP_400_BAD_REQUEST
 
     self_contained_param = request.args.get("self_contained", "true").lower()
     self_contained = self_contained_param in ("1", "true", "yes", "y", "on")
@@ -568,8 +572,6 @@ def validate_model(models_id: int) -> flask.Response:
     return response, status.HTTP_200_OK
 
 
-
-
 @blueprint.route("/<models_id>/validate_shape", methods=(["POST"]))
 def validate_shape(models_id: int) -> flask.Response:
     # get model
@@ -626,9 +628,13 @@ def validate_shape(models_id: int) -> flask.Response:
         if max_iterations_arg is not None:
             max_iterations = int(max_iterations_arg)
     except ValueError:
-        return {"message": "min_iterations and max_iterations must be integers"}, status.HTTP_400_BAD_REQUEST
+        return {
+            "message": "min_iterations and max_iterations must be integers"
+        }, status.HTTP_400_BAD_REQUEST
     if min_iterations < 1 or max_iterations < 1:
-        return {"message": "min_iterations and max_iterations must be >= 1"}, status.HTTP_400_BAD_REQUEST
+        return {
+            "message": "min_iterations and max_iterations must be >= 1"
+        }, status.HTTP_400_BAD_REQUEST
 
     compiled = model.compile(
         shape_collections,
