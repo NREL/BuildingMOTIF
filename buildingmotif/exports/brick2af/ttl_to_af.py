@@ -6,7 +6,7 @@ from collections import defaultdict
 from rdflib import RDF, RDFS, Graph, Namespace
 
 import buildingmotif.exports.brick2af.afxml as af
-from buildingmotif.exports.brick2af.utils import xml_dump
+from buildingmotif.exports.brick2af.utils import _definition_to_sparql, xml_dump
 
 
 class Translator:
@@ -87,10 +87,31 @@ class Translator:
         with open(rulespath, "r") as f:
             self.afddrules = json.load(f)
         with open(validatedpath, "r") as f:
-            self.validrules = json.load(f)
+            print("Loading validated rules from", validatedpath)
+            vr = json.load(f)
+            # Normalize to a list of result dicts expected by addAnalysis
+            if isinstance(vr, dict):
+                results = []
+                for rule_uri, focus_map in vr.items():
+                    for focus_node, entries in focus_map.items():
+                        details = {}
+                        for k, v in entries.items():
+                            if str(k) == "root":
+                                continue
+                            details[str(k)] = str(v)
+                        results.append(
+                            {
+                                "success": True,
+                                "focus_node": str(focus_node),
+                                "rule": str(rule_uri),
+                                "details": details,
+                            }
+                        )
+                self.validrules = results
+            else:
+                self.validrules = vr
 
     def inspect(self, subject=None, predicate=None, object=None):
-
         """
         Inspect triples in the graph based on optional criteria.
 
@@ -165,7 +186,7 @@ class Translator:
             for classname in defn["applicability"]:
                 class_ = self.BRICK[classname]
                 for variable in defn["definitions"]:
-                    query = self.definition_to_sparql(
+                    query = _definition_to_sparql(
                         class_, defn["definitions"][variable], variable
                     )
                     results = model.query(query)
@@ -183,7 +204,6 @@ class Translator:
         return rules
 
     def createAFTree(self, firstttl, outpath, merge=None):
-
         """
         Create an Asset Framework (AF) tree from a given RDF/TTL file and save it as an XML file.
 

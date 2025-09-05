@@ -3,10 +3,12 @@ import json
 import re
 from collections import defaultdict
 from copy import deepcopy
+from pathlib import Path
+from typing import Any, DefaultDict, Dict, List
 
 from rdflib import Graph, Namespace, URIRef
 
-from buildingmotif import get_building_motif
+from buildingmotif import BuildingMOTIF, get_building_motif
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
 from buildingmotif.exports.brick2af.utils import (
     _definition_to_shape,
@@ -237,9 +239,7 @@ def generate_html_report(
             focus_node_success_class = (
                 " success"
                 if all_successful
-                else " failed"
-                if none_successful
-                else " some-success"
+                else " failed" if none_successful else " some-success"
             )
 
             # print(focus_node, len(original_shape_dict))
@@ -288,7 +288,9 @@ def generate_report(model: Model, rules_definition: dict):
         sg = _definition_to_shape(defn, NS)
         manifest.graph += sg
 
-    successful_rules = defaultdict(lambda: defaultdict(dict))
+    successful_rules: DefaultDict[str, DefaultDict[Any, Dict[Any, Any]]] = defaultdict(
+        lambda: defaultdict(dict)
+    )
     for rule, defn in rules_definition.items():
         rule = NS[rule]
         for classname in defn["applicability"]:
@@ -309,7 +311,9 @@ def generate_report(model: Model, rules_definition: dict):
                 del successful_rules[rule][inst]
 
     validation_report = model.validate(error_on_missing_imports=False)
-    grouped_diffs = defaultdict(lambda: defaultdict(list))
+    grouped_diffs: DefaultDict[Any, DefaultDict[Any, List[str]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
     for focus_node, diffs in validation_report.diffset.items():
         for diff in diffs:
             original_shape = find_original_shape(model, diff.failed_shape)
@@ -319,15 +323,33 @@ def generate_report(model: Model, rules_definition: dict):
 
 
 def validate(manifest_ttl, model_ttl, rule_json, output_path, output_format):
-    bm = get_building_motif()
+    # Ensure a BuildingMOTIF instance exists (use in-memory SQLite by default)
+    try:
+        bm = get_building_motif()
+    except Exception:
+        bm = BuildingMOTIF("sqlite://")
 
-    brick = Library.load(ontology_graph="../../../../libraries/brick/Brick.ttl")
-    Library.load(ontology_graph="http://qudt.org/2.1/vocab/unit")
-    Library.load(ontology_graph="http://qudt.org/2.1/vocab/quantitykind")
-    Library.load(ontology_graph="http://qudt.org/2.1/vocab/dimensionvector")
-    Library.load(ontology_graph="http://qudt.org/2.1/schema/facade/qudt")
+    here = Path(__file__).resolve()
+    # Prefer bundled libraries to avoid network access
+    builtin_lib_dir = here.parents[2] / "libraries"  # buildingmotif/libraries
+    repo_lib_dir = here.parents[3] / "libraries"  # repo-level libraries
 
-    constraints = Library.load(ontology_graph="constraints/constraints.ttl")
+    # Brick + constraints
+    Library.load(ontology_graph=str(builtin_lib_dir / "brick" / "Brick.ttl"))
+    Library.load(
+        ontology_graph=str(builtin_lib_dir / "constraints" / "constraints.ttl")
+    )
+
+    # QUDT (local copies under repo-level libraries/qudt)
+    qudt_dir = repo_lib_dir / "qudt"
+    for qudt_file in [
+        qudt_dir / "unit.ttl",
+        qudt_dir / "quantitykind.ttl",
+        qudt_dir / "VOCAB_QUDT-DIMENSION-VECTORS.ttl",
+        qudt_dir / "SCHEMA-FACADE_QUDT.ttl",
+    ]:
+        if qudt_file.exists():
+            Library.load(ontology_graph=str(qudt_file))
 
     O27 = Namespace("http://example.org/building#")
 
@@ -363,7 +385,10 @@ def validate(manifest_ttl, model_ttl, rule_json, output_path, output_format):
                     del successful_rules[rule][inst]
 
     res = model.validate(error_on_missing_imports=False)
-    res.report.serialize("output.ttl", format="ttl")
+    try:
+        res.report.serialize("output.ttl", format="ttl")
+    except Exception:
+        pass
 
     grouped_diffs = defaultdict(lambda: defaultdict(list))
     for focus_node, diffs in res.diffset.items():
@@ -396,13 +421,15 @@ if __name__ == "__main__":
     parser.add_argument("format", help="Format of the output file [md, html]")
 
     args = parser.parse_args()
-    main(
+    validate(
         args.manifest_ttl, args.model_ttl, args.rule_json, args.output_path, args.format
     )
 
 
-def apply_rules_to_model(model: Model, rules):
-    successful_rules = defaultdict(lambda: defaultdict(dict))
+def apply_rules_to_model(model: Model, rules: Dict[str, Any]):
+    successful_rules: DefaultDict[str, DefaultDict[Any, Dict[Any, Any]]] = defaultdict(
+        lambda: defaultdict(dict)
+    )
     for rule, defn in rules.items():
         rule = f"http://example.org/building#{rule}"
         for classname in defn["applicability"]:
@@ -425,6 +452,49 @@ def apply_rules_to_model(model: Model, rules):
                 del successful_rules[rule][inst]
 
     return successful_rules
+
+
+def _successful_rules_to_results_list(
+    successful_rules: Dict[str, Dict[Any, Dict[Any, Any]]],
+) -> List[Dict[str, Any]]:
+    """Convert nested successful_rules mapping into a flat list of result
+    objects expected by the AF XML translator."""
+    results = []
+    for rule_uri, focus_map in successful_rules.items():
+        for focus_node, entries in focus_map.items():
+            details = {}
+            for k, v in entries.items():
+                if str(k) == "root":
+                    continue
+                details[str(k)] = str(v)
+            results.append(
+                {
+                    "success": True,
+                    "focus_node": str(focus_node),
+                    "rule": str(rule_uri),
+                    "details": details,
+                }
+            )
+    return results
+
+
+def apply_rules_to_model_paths(
+    model_ttl_path: str, rules_json_path: str
+) -> List[Dict[str, Any]]:
+    """Convenience wrapper: load a Model from a TTL path and apply rules from a JSON file."""
+    # Ensure BM exists
+    try:
+        _ = get_building_motif()
+    except Exception:
+        BuildingMOTIF("sqlite://")
+
+    O27 = Namespace("http://example.org/building#")
+    model = Model.create(O27)
+    model.graph.parse(model_ttl_path, format="ttl")
+    with open(rules_json_path, "r") as f:
+        rules = json.load(f)
+    successful_rules = apply_rules_to_model(model, rules)
+    return _successful_rules_to_results_list(successful_rules)
 
 
 def get_model_diffs(model):

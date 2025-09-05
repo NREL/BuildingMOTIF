@@ -5,8 +5,11 @@ import sys
 from functools import reduce
 from typing import Any, Dict
 
-from lxml import etree
-from rdflib import BRICK, RDF, SH, BNode, Graph, Literal, Namespace, URIRef
+try:  # prefer lxml for pretty output
+    from lxml import etree  # type: ignore
+except Exception:  # fallback to stdlib
+    from xml.etree import ElementTree as etree  # type: ignore
+from rdflib import RDF, SH, BNode, Graph, Literal, Namespace, URIRef
 from rdflib.collection import Collection
 from xmldiff import formatting, main
 

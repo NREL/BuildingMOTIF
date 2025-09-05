@@ -2,6 +2,12 @@ import datetime
 import os
 from typing import Any, List, Tuple
 
+# Prefer lxml for pretty printing; fall back to stdlib if unavailable
+try:  # pragma: no cover - environment dependent
+    from lxml import etree  # type: ignore
+except Exception:  # pragma: no cover - fallback
+    from xml.etree import ElementTree as etree  # type: ignore
+
 
 class PIAFElement:
     element_type: str = ""
@@ -432,10 +438,6 @@ class DefaultUOM(PIAFElement):
 
 
 class DisplayDigits(PIAFElement):
-    element_type = "xs:string"
-
-
-class Type(PIAFElement):
     element_type = "xs:string"
 
 
