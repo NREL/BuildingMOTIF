@@ -12,19 +12,40 @@ from buildingmotif import BuildingMOTIF
 
 class Translator:
     def __init__(self) -> None:
-        bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
+        self.init_graph()
+        self.read_config_file()
 
-        self.graph = Graph()
-        self.BRICK = Namespace("https://brickschema.org/schema/Brick#")
-        self.EX = Namespace("http://example.org/building#")
-        self.defaultserver = "1WV63PTTSAT01"
-        self.defaultdatabase = "ESTCP_CERL_Development"
+        self.datas = {}
         self.afddrules = None
         self.manifest = None
         self.bmmodel = None
         self.validation = True
-        self.piexportpath = "C:\Program Files\PIPC\AF\AFExport.exe"
-        self.piimportpath = "C:\Program Files\PIPC\AF\AFImport.exe"
+        self.templates = {'Analysis': {}, 'Element': {}, 'Attribute': {}}
+        
+    def init_graph(self):
+        """
+            Initialize an RDF graph and set up its namespaces
+        """
+        bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
+        self.graph = Graph()
+        self.af_root = af.AF()
+        self.BRICK = Namespace('https://brickschema.org/schema/Brick#')
+        self.EX = Namespace('http://example.org/building#')
+
+    def read_config_file(self):
+        """
+            Read a configuration file for default PI Server URIs
+        """
+        if not os.path.exists("pi_config.json"):
+            raise Error("Cannot find pi_config.json") 
+        else:
+            with open("pi_config.json", 'rb') as f:
+                config = json.load(f)
+        self.piexportpath = config.piexportpath
+        self.piimportpath = config.piimportpath
+        self.defaultserver = config.server
+        self.defaultdatabase = config.database
+        self.defaulturi = f"\\{self.defaultserver}\{self.defaultdatabase}"
 
     def export_pi_database(self, database, outpath):
         """
@@ -406,44 +427,13 @@ class Translator:
 
     def getUOMs(self, obj):
         """
-            Retrieve the unit of measure (UOM), type, and value from an object node.
-
-            Args:
-                self: The instance of the class containing this method.
-                obj (any): The node in the graph for which to retrieve UOMs.
-
-            Returns:
-                tuple: A tuple containing the unit of measure (`uom`), type (`aftype`), and value (`value`). If no unit is found, all return values will
-        be set to None.
+            Find the correct PI AFXML unit of measure in the config file
         """
-        uom = None  # Initialize UOM as None
-        aftype = None  # Initialize type as None
-        value = None  # Initialize value as None
-
-        for _, _, unit in self.graph.triples((obj, self.BRICK["hasUnit"], None)):
-            unit_str = unit.split("#")[-1]  # Extract the type from the URI
-
-            if unit_str == "DEG_F":
-                uom = "°F"
-                aftype = "Int32"
-                value = ""
-            elif unit_str == "OnOff":
-                uom = ""
-                aftype = "Boolean"
-                value = "False"
-            elif unit_str == "Percent" or unit_str == "HR":
-                uom = "%"
-                aftype = "Int32"
-                value = ""
-            elif unit_str == "PPM":
-                uom = "ppm"
-                aftype = "Int32"
-                value = ""
-            elif unit_str == "GAL_UK-PER-MIN":
-                uom = "US gal/min"
-                aftype = "Int32"
-                value = ""
-
+        for __, __, unit in self.graph.triples((obj, self.BRICK['hasUnit'], None)):
+            unit = unit.split('#')[-1]
+            uom = self.units[unit].uom
+            aftype = self.units[unit].aftype
+            value = self.units[unit].value
         return uom, aftype, value
 
     def addAnalysis(self, candidate):

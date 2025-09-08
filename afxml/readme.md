@@ -4,17 +4,23 @@ This library is used to generate an XML file that transposes a BRICK model and a
 
 ## Library contents
 
-### afxml.py
-This script is inspired by [bsyncpy](https://github.com/BuildingSync/bsyncpy). It translates the XML structure of the Asset Framework XML (AFXML) schema into a Python object that represents the draft XML file and can be edited interactively.
-Each AFXML element is defined as a new class, and child elements and enumerations are defined for each element with new classes.
-Helper methods allow us to add and modify objects that define the XML elements.
-The AFXML schema is proprietary and it is not included in this library. It is available with all installations of OSISoft's PI Systems.
+### An example
+This example demonstrates how to use BuildingMOTIF to configure a PI Server instance and enable certain applications such as automatic fault detection and diagnosis, building monitoring, and other labor-intensive tasks that can be automated with semantic metadata.
 
-### validation.py
-This script uses BuildingMOTIF to validate AFDD rules against a list of requirements for a given building model. The user supplies a JSON file that represents the AFDD rules, and their prerequisites, that they would like to consider for a given BRICK building model. The script translates the JSON file in a series of SPARQL queries, executes those on the BRICK building model, and returns a list of AFDD rules from the JSON file that can be applied to the BRICK building model, if all the requirements for the rule are met. This script also provides a list of failing rules with a reason for failure.
+### PI Configuration file
 
-### ttl_to_af.py
-This script translates a BRICK model into an XML file that can be imported into an OSISoft PI Asset Framework database. If supplied with a list of AFDD rules, the script will use the validation workflow to also generate AF Analysis for these elements. This allows the automatic configuration of large PI AF databases.
+The `pi_config.json` file contains fields that **must** be configured prior to importing the XML file into a PI Server instance. Please indicate the **server** name and the **database** name. Please input the name or IP address of the machine running the server instance for **server**. For **database**, enter either the name of an existing database that you wish to update, or a new name to create a new one.
+Please refer to `docs\CONFIGURING-PI-manual.md` for additional information on the configuration file.
 
-### examples/
-In this folder you will find all the files required to generate an AF XML file from a BRICK model and a list of AFDD definitions,
+#### AFXML reference
+
+Asset Framework XML (AFXML) is the XML schema used in the PI software suite for storing and exchanging data across systems. It is proprietary, and is typically included with the installation files of PI Asset Framework. We have partially represented it in Python, along with a simple API for creating and modifying XML files that respect the AFXML schema. This method is directly inspired by the solution used in the [bsyncpy project](https://github.com/BuildingSync/bsyncpy).
+We recommend against modifying `afxml.py` without reading `docs\AFXML-manual.md` first. 
+
+#### TTL_to_AF library
+
+This file is the core library that converts a BRICK model into a hierarchical structure compatible with PI Server. It reads a Turtle (`.ttl`) file and parses a BRICK model, assigns it a hierarchy compatible with an XML tree, translates relationships and other graph information into attributes and finally exports a new model into an XML file that can be loaded into a PI Server database. An extensive explanation on how the models are assembled is given in `docs\TTL_TO_AF-manual.md`
+
+#### Utilities library
+
+The `utilities.py` file contains utilities for configuring SPARQL queries and SHACL shapes.
