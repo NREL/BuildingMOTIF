@@ -16,7 +16,7 @@ reportformat = "html"
 # Generate a manifest file from the JSON rules
 generate_manifest(injson, outmanifest)
 
-# Validate the model against the rules (u lil' punk). Generate an HTML report.
+# Validate the model against the rules. Generate an HTML report.
 validate(outmanifest, inttl, injson, outxml, reportformat)
 
 # Output an XML file that can be loaded in OSISoft PI Asset Explorer
