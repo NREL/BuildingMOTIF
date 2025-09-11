@@ -36,15 +36,15 @@ class Translator:
         """
             Read a configuration file for default PI Server URIs
         """
-        if not os.path.exists("pi_config.json"):
-            raise Error("Cannot find pi_config.json") 
+        if not os.path.exists("../pi_config.json"):
+            raise NameError("Cannot find pi_config.json") 
         else:
-            with open("pi_config.json", 'rb') as f:
+            with open("../pi_config.json", 'rb') as f:
                 config = json.load(f)
-        self.piexportpath = config.piexportpath
-        self.piimportpath = config.piimportpath
-        self.defaultserver = config.server
-        self.defaultdatabase = config.database
+        self.piexportpath = config["piexportpath"]
+        self.piimportpath = config["piimportpath"]
+        self.defaultserver = config["server"]
+        self.defaultdatabase = config["database"]
         self.defaulturi = f"\\{self.defaultserver}\{self.defaultdatabase}"
 
     def export_pi_database(self, database, outpath):
@@ -239,7 +239,7 @@ class Translator:
                     objtype = bricktype.split("#")[-1]
 
                 # Create or update AF elements for subject and object if not already in afdict
-                if subj not in afdict:
+                if subj is not None and subj not in afdict:
                     name = subj.split("#")[-1]
                     for _, _, label in self.graph.triples((subj, RDFS["label"], None)):
                         name = label
@@ -255,7 +255,7 @@ class Translator:
                             newel += a
                     afdict[subj] = newel
 
-                if obj not in afdict:
+                if obj is not None and obj not in afdict:
                     name = obj.split("#")[-1]
                     for _, _, label in self.graph.triples((obj, RDFS["label"], None)):
                         name = label
@@ -434,7 +434,11 @@ class Translator:
             uom = self.units[unit].uom
             aftype = self.units[unit].aftype
             value = self.units[unit].value
-        return uom, aftype, value
+        try:
+            return uom, aftype, value
+        except UnboundLocalError:
+            print(f"No units of measure available for {obj}. Skipping.")
+            return None, None, None
 
     def addAnalysis(self, candidate):
         """
@@ -446,31 +450,31 @@ class Translator:
         Returns:
             list: A list of newly created AFAnalysis objects.
         """
+
         all_analyses = []
-        for res in self.validrules:
-            if res["success"] and res["focus_node"] == str(candidate):
-                rulename = res["rule"].split("#")[-1]
-                aname = f"{candidate.split('#')[-1]} {rulename}"
-                newanalysis = af.AFAnalysis(af.Name(aname))
-                newanalysis += af.Status("Enabled")
-                parent_path = self.findFullPath(self.getParent(candidate))
-                newanalysis += af.Target(af.AFElementRef(parent_path))
-                newanalysis += af.AFAnalysisCategoryRef("Analytics")
-                analysisrule = af.AFAnalysisRule()
-                analysisrule += af.AFPlugIn("PerformanceEquation")
-                perfstr = self.match_equation(
-                    res["details"], self.afddrules[rulename]["output"]
-                )
-                analysisrule += af.ConfigString(perfstr)
-                analysisrule += af.VariableMapping(f"Output||{aname};")
-                newanalysis += analysisrule
-                newanalysis += af.AFTimeRule(
-                    af.AFPlugIn(self.afddrules[rulename]["aftimerule"]),
-                    af.ConfigString(
-                        f"Frequency={self.afddrules[rulename]['frequency']}"
-                    ),
-                )
-                all_analyses.append(newanalysis)
+        for key, inner in self.validrules.items():           # key = top-level URI, inner = dict of nodes
+            for node_uri, node_obj in inner.items():        # node_uri = 'http://example.org#vav1', node_obj = {...}
+                if node_obj.get("root") == str(candidate):
+                    rulename = key.split("#")[-1]
+                    aname = f"{candidate.split('#')[-1]} {rulename}"
+                    newanalysis = af.AFAnalysis(af.Name(aname))
+                    newanalysis += af.Status("Enabled")
+                    parent_path = self.findFullPath(self.getParent(candidate))
+                    newanalysis += af.Target(af.AFElementRef(parent_path))
+                    newanalysis += af.AFAnalysisCategoryRef("Analytics")
+                    analysisrule = af.AFAnalysisRule()
+                    analysisrule += af.AFPlugIn("PerformanceEquation")
+                    perfstr = self.match_equation(node_obj, self.afddrules[rulename]["output"])
+                    analysisrule += af.ConfigString(perfstr)
+                    analysisrule += af.VariableMapping(f"Output||{aname};")
+                    newanalysis += analysisrule
+                    newanalysis += af.AFTimeRule(
+                        af.AFPlugIn(self.afddrules[rulename]["aftimerule"]),
+                        af.ConfigString(
+                            f"Frequency={self.afddrules[rulename]['frequency']}"
+                        ),
+                    )
+                    all_analyses.append(newanalysis)
         if all_analyses:
             print(all_analyses)
         return all_analyses
@@ -521,6 +525,7 @@ class Translator:
                 and s == obj
             ):
                 return o
+        return obj
 
     def findFullPath(self, obj):
         """

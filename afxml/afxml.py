@@ -1,6 +1,7 @@
 import datetime
 import os
 from typing import Any, List, Tuple
+from lxml import etree
 
 
 class PIAFElement:

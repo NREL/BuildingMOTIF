@@ -278,7 +278,7 @@ def generate_html_report(
 def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
     bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
 
-    brick = Library.load(ontology_graph="../../../../libraries/brick/Brick.ttl")
+    brick = Library.load(ontology_graph="../libraries/brick/Brick.ttl")
     Library.load(ontology_graph="http://qudt.org/2.1/vocab/unit")
     Library.load(ontology_graph="http://qudt.org/2.1/vocab/quantitykind")
     Library.load(ontology_graph="http://qudt.org/2.1/vocab/dimensionvector")
