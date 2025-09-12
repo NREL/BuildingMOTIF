@@ -582,10 +582,10 @@ def validate_shape(models_id: int) -> flask.Response:
 
     # get body
     if request.content_type != "application/json":
-        return flask.Response(
-            {"message": "request content type must be json"},
-            status.HTTP_400_BAD_REQUEST,
-        )
+        # Return a proper JSON response for consistent client handling
+        return {
+            "message": "request content type must be json"
+        }, status.HTTP_400_BAD_REQUEST
     try:
         body = request.json
     except Exception as e:
@@ -646,13 +646,15 @@ def validate_shape(models_id: int) -> flask.Response:
         target_class=target_class,
     )
 
+    # Ensure JSON-serializable response: keys must be strings, not URIRefs
     result = {}
     for shape_uri, validation_context in conformance.items():
         diffsets = validation_context.diffset.values()
         reasons = [diff.reason() for diffset in diffsets for diff in diffset]
-        result[shape_uri] = reasons
+        result[str(shape_uri)] = reasons
 
-    return result, status.HTTP_200_OK
+    # Explicitly jsonify to ensure JSON mimetype and avoid ambiguity
+    return flask.jsonify(result), status.HTTP_200_OK
 
 
 @blueprint.route("/<models_id>/add_manifest_rules", methods=(["POST"]))
