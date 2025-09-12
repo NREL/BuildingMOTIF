@@ -2,6 +2,8 @@ import datetime
 import os
 from typing import Any, List, Tuple
 
+from lxml import etree
+
 # Prefer lxml for pretty printing; fall back to stdlib if unavailable
 try:  # pragma: no cover - environment dependent
     from lxml import etree  # type: ignore

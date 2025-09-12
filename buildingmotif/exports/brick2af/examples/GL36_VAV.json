@@ -4,7 +4,7 @@
         "aftype" : "analysis",
         "aftimerule" : "Periodic",
         "frequency" : 900,
-        "applicability" : ["VAV"],
+        "applicability" : ["AHU", "VAV"],
         "definitions": {
             "Supply_Air_temperature_Sensor": {
                 "choice": [
@@ -26,7 +26,7 @@
         "aftype" : "analysis",
         "aftimerule" : "Periodic",
         "frequency" : 900,
-        "applicability" : ["VAV"],
+        "applicability" : ["AHU", "VAV"],
         "definitions": {
             "Outdoor_Air_temperature_Sensor": {"hasPoint": "Outdoor_Air_Temperature_Sensor"},
             "Outdoor_Air_Temperature_Setpoint": {"hasPoint": "Outdoor_Air_Temperature_Setpoint"},
@@ -46,7 +46,7 @@
         "aftype" : "analysis",
         "aftimerule" : "Periodic",
         "frequency" : 900,
-        "applicability" : ["VAV"],
+        "applicability" : ["AHU", "VAV"],
         "definitions": {
             "Return_Air_temperature_Sensor": {"hasPoint": "Return_Air_Temperature_Sensor"},
             "Return_Air_Temperature_Setpoint": {"hasPoint": "Return_Air_Temperature_Setpoint"}
@@ -58,7 +58,7 @@
         "aftype" : "analysis",
         "aftimerule" : "Periodic",
         "frequency" : 900,
-        "applicability" : ["VAV"],
+        "applicability" : ["AHU", "VAV"],
         "definitions": {
             "Mixed_Air_temperature_Sensor": {"hasPoint": "Mixed_Air_Temperature_Sensor"},
             "Mixed_Air_Temperature_Setpoint": {"hasPoint": "Mixed_Air_Temperature_Setpoint"}
@@ -70,7 +70,7 @@
         "aftype" : "analysis",
         "aftimerule" : "Periodic",
         "frequency" : 900,
-        "applicability" : ["VAV"],
+        "applicability" : ["AHU", "VAV"],
         "definitions": {
             "Duct_Static_Pressure": {"hasPoint": "Static_Pressure_Sensor"},
             "Duct_Static_Pressure_Setpoint": {"hasPoint": "Static_Pressure_Setpoint"},
@@ -83,7 +83,7 @@
         "aftype" : "analysis",
         "aftimerule" : "Periodic",
         "frequency" : 900,
-        "applicability" : ["VAV"],
+        "applicability" : ["AHU", "VAV"],
         "definitions": {
             "VFD_Fan_Speed": {
                 "choice": [
@@ -98,14 +98,14 @@
                 "hasPoint": "Discharge_Air_Temperature_Sensor"
             }
         },
-        "output" : "VFD_Fan_Speed_Error_Threshold = 3.0; Delta_T_Supply_Fan = Supply_Air_temperature_Sensor - Discharge_Air_temperature_Sensor;"
+        "output" : "VFD_Fan_Speed_Error_Threshold = 3.0; Delta_T_Supply_Fan = Supply_Air_temperature_Sensor - Supply_Air_temperature_Sensor;"
     },
     "G36VAV_QXCOILS_POINTS" : {
         "name" : "Guideline 36 - All heat exchanger control points and sensors are available for AFDD",
         "aftype" : "analysis",
         "aftimerule" : "Periodic",
         "frequency" : 900,
-        "applicability" : ["VAV1"],
+        "applicability" : ["VAV"],
         "definitions": {
             "Inlet_Temperature": {"hasPart": {"Coil": {"hasPoint": "Entering_Water_Temperature_Sensor"}}},
             "Outet_Temperature": {"hasPart": {"Coil": {"hasPoint": "Leaving_Water_Temperature_Sensor"}}}

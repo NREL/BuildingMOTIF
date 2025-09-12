@@ -1,0 +1,276 @@
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/building#Guideline_36_-_All_duct_static_pressure_control_points_and_sensors_are_available_for_AFDD> a sh:NodeShape ;
+    sh:property <http://example.org/building#var1SLW>,
+        <http://example.org/building#var8WYY>,
+        <http://example.org/building#varBG1D> ;
+    sh:targetClass brick:VAV .
+
+<http://example.org/building#Guideline_36_-_All_heat_exchanger_control_points_and_sensors_are_available_for_AFDD> a sh:NodeShape ;
+    sh:property <http://example.org/building#var2OU7>,
+        <http://example.org/building#var6H5J>,
+        <http://example.org/building#varA6H2>,
+        <http://example.org/building#varDZU7> ;
+    sh:targetClass brick:VAV1 .
+
+<http://example.org/building#Guideline_36_-_All_mixed_air_temperature_control_points_and_sensors_are_available_for_AFDD> a sh:NodeShape ;
+    sh:property <http://example.org/building#varH1X6>,
+        <http://example.org/building#varMNMN> ;
+    sh:targetClass brick:VAV .
+
+<http://example.org/building#Guideline_36_-_All_outdoor_air_temperature_control_points_and_sensors_are_available_for_AFDD> a sh:NodeShape ;
+    sh:or ( <http://example.org/building#varDIGT> <http://example.org/building#var37ZD> ) ;
+    sh:property <http://example.org/building#var0B39>,
+        <http://example.org/building#var8H7M>,
+        <http://example.org/building#varTPHV>,
+        <http://example.org/building#varW5C4> ;
+    sh:targetClass brick:VAV .
+
+<http://example.org/building#Guideline_36_-_All_return_air_temperature_control_points_and_sensors_are_available_for_AFDD> a sh:NodeShape ;
+    sh:property <http://example.org/building#varNLQ6>,
+        <http://example.org/building#varRAZG> ;
+    sh:targetClass brick:VAV .
+
+<http://example.org/building#Guideline_36_-_All_supply_air_temperature_control_points_and_sensors_are_available_for_AFDD> a sh:NodeShape ;
+    sh:or ( <http://example.org/building#varUS1V> <http://example.org/building#varK3N4> ),
+        ( <http://example.org/building#varEUAW> <http://example.org/building#varPN5C> ) ;
+    sh:targetClass brick:VAV .
+
+<http://example.org/building#Guideline_36_-_All_supply_fan_control_points_and_sensors_are_available_for_AFDD> a sh:NodeShape ;
+    sh:or ( <http://example.org/building#varFWNW> <http://example.org/building#varMTDG> ) ;
+    sh:property <http://example.org/building#var1WVZ>,
+        <http://example.org/building#var9WQO> ;
+    sh:targetClass brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#10_-_OAT_and_MAT_should_be_approximately_equal> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#11_-_OAT_is_too_low_for_mechanical_cooling> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#13_-_Supply_air_temperature_too_high_in_full_cooling> a sh:NodeShape ;
+    sh:or ( <http://example.org/building#var9VF4> <http://example.org/building#varTGIJ> ) ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#14_-_Temperature_drop_across_inactive_cooling_coil> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#14_-_Temperature_rise_across_inactive_heating_coil> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#1_-_Duct_static_pressure_is_too_low_with_fan_at_full_speed> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#2_-_MAT_too_low;_should_be_between_OAT_and_RAT> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#3_-_MAT_too_high;_should_be_between_OAT_and_RAT> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#5_-_SAT_too_high;_should_be_lower_than_MAT> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#5_-_SAT_too_low;_should_be_higher_than_MAT> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#6_-_OA_fraction_is_too_low_or_too_high;_should_equal_%OAMIN> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#7_-_Supply_air_temperature_too_low_in_full_heating> a sh:NodeShape ;
+    sh:or ( <http://example.org/building#varOLNS> <http://example.org/building#varSUV4> ) ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#8_-_SAT_and_MAT_should_be_approximately_equal> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#Guideline_36_-_FC#9_-_OAT_is_too_high_for_free_cooling_without_additional_mechanical_cooling> a sh:NodeShape ;
+    sh:targetClass brick:AHU,
+        brick:VAV .
+
+<http://example.org/building#var0B39> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Airflow_Error_Threshold ] .
+
+<http://example.org/building#var1SLW> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Static_Pressure_Threshold ] .
+
+<http://example.org/building#var1WVZ> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] .
+
+<http://example.org/building#var37ZD> a sh:PropertyShape ;
+    sh:path brick:hasPart ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Oudtoor_Air_Damper ;
+            sh:property <http://example.org/building#varVVCE> ] .
+
+<http://example.org/building#var6H5J> a sh:PropertyShape ;
+    sh:path brick:hasPart ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Coil ;
+            sh:property <http://example.org/building#varA6H2> ] .
+
+<http://example.org/building#var8H7M> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Outdoor_Air_Temperature_Setpoint ] .
+
+<http://example.org/building#var8WYY> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Static_Pressure_Sensor ] .
+
+<http://example.org/building#var9ORL> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Valve_Command ] .
+
+<http://example.org/building#var9VF4> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Cold_Water_Valve_Command ] .
+
+<http://example.org/building#var9WQO> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Discharge_Air_Temperature_Sensor ] .
+
+<http://example.org/building#varBG1D> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Static_Pressure_Setpoint ] .
+
+<http://example.org/building#varCOY6> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Valve_Command ] .
+
+<http://example.org/building#varDIGT> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Damper_Command ] .
+
+<http://example.org/building#varDZU7> a sh:PropertyShape ;
+    sh:path brick:hasPart ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Coil ;
+            sh:property <http://example.org/building#var2OU7> ] .
+
+<http://example.org/building#varEUAW> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Sensor ] .
+
+<http://example.org/building#varFWNW> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Fan_Speed_Command ] .
+
+<http://example.org/building#varH1X6> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Sensor ] .
+
+<http://example.org/building#varK3N4> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Zone_Air_Temperature_Setpoint ] .
+
+<http://example.org/building#varMNMN> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Mixed_Air_Temperature_Setpoint ] .
+
+<http://example.org/building#varMTDG> a sh:PropertyShape ;
+    sh:path brick:hasPart ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Supply_Fan ;
+            sh:property <http://example.org/building#varTYVR> ] .
+
+<http://example.org/building#varNLQ6> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Sensor ] .
+
+<http://example.org/building#varOLNS> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Hot_Water_Valve_Command ] .
+
+<http://example.org/building#varPN5C> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Zone_Air_Temperature_Sensor ] .
+
+<http://example.org/building#varRAZG> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Return_Air_Temperature_Setpoint ] .
+
+<http://example.org/building#varSUV4> a sh:PropertyShape ;
+    sh:path brick:hasPart ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Hot_Water_Valve ;
+            sh:property <http://example.org/building#var9ORL> ] .
+
+<http://example.org/building#varTGIJ> a sh:PropertyShape ;
+    sh:path brick:hasPart ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Cold_Water_Valve ;
+            sh:property <http://example.org/building#varCOY6> ] .
+
+<http://example.org/building#varTPHV> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Outdoor_Air_Temperature_Sensor ] .
+
+<http://example.org/building#varTYVR> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Speed_Command ] .
+
+<http://example.org/building#varUS1V> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Supply_Air_Temperature_Setpoint ] .
+
+<http://example.org/building#varVVCE> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Damper_Command ] .
+
+<http://example.org/building#varW5C4> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Minimum_OA_Fraction ] .
+
+<http://example.org/building#var2OU7> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Leaving_Water_Temperature_Sensor ] .
+
+<http://example.org/building#varA6H2> a sh:PropertyShape ;
+    sh:path brick:hasPoint ;
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedValueShape [ sh:class brick:Entering_Water_Temperature_Sensor ] .
+
