@@ -435,3 +435,14 @@ def generate_manifest_json(rules_json: dict, ns: Namespace):
         sg = _definition_to_shape(definition, ns)
         shapes += sg
     return shapes
+
+
+def generate_manifest_from_dict(rules_json: dict, ns: Namespace | None = None) -> Graph:
+    """Object-based entrypoint: build a SHACL shape graph from a loaded rules dict.
+
+    - rules_json: loaded JSON object describing AFDD rules
+    - ns: optional base namespace for generated shape/node names
+    Returns an rdflib.Graph containing the shapes; does not write to disk.
+    """
+    ns = ns or Namespace("urn:fdd_rules/")
+    return generate_manifest_json(rules_json, ns)
