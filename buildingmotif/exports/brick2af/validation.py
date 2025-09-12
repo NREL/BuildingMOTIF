@@ -6,7 +6,7 @@ from copy import deepcopy
 
 from rdflib import Graph, Namespace, URIRef
 
-from buildingmotif import BuildingMOTIF
+from buildingmotif import BuildingMOTIF, get_building_motif
 from buildingmotif.dataclasses import Library, Model, ShapeCollection
 from buildingmotif.exports.brick2af.utils import (
     _definition_to_shape,
@@ -317,7 +317,11 @@ def generate_html_report(
 
 
 def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
-    bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
+    # Ensure a BuildingMOTIF instance exists
+    try:
+        bm = get_building_motif()
+    except Exception:
+        bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
 
     brick = Library.load(ontology_graph="../libraries/brick/Brick.ttl")
     Library.load(ontology_graph="http://qudt.org/2.1/vocab/unit")
@@ -385,48 +389,51 @@ def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Validate a model against a manifest and output the results as an HTML file."
+        description="Validate a model against a manifest and output the results as an HTML or Markdown file."
     )
     parser.add_argument("manifest_ttl", help="Path to the manifest.ttl file")
     parser.add_argument("model_ttl", help="Path to the model.ttl file")
     parser.add_argument("rule_json", help="Path to the rule.json file")
-    parser.add_argument("output_path", help="Path to the output file")
+    parser.add_argument("output_path", help="Path to the output file (no extension)")
     parser.add_argument("format", help="Format of the output file [md, html]")
 
     args = parser.parse_args()
-    main(
+    validate(
         args.manifest_ttl, args.model_ttl, args.rule_json, args.output_path, args.format
     )
 
 
-def apply_rules_to_model(inttl, rulesjson):
+def apply_rules_to_model(model: Model, rules: dict):
+    """Compute rule bindings for a BuildingMOTIF Model and rules dict.
+
+    Returns mapping: rule_uri -> focus_node -> { var: value }
+    """
     successful_rules = defaultdict(lambda: defaultdict(dict))
-    with open(rulesjson, "r") as f:
-        rules = json.load(f)
-    model = Graph()
-    model.parse(inttl)
     for rule, defn in rules.items():
-        rule = f"http://example.org/building#{rule}"
+        rule_uri = f"http://example.org/building#{rule}"
         for classname in defn["applicability"]:
             class_ = BRICK[classname]
             for variable in defn["definitions"]:
                 query = _definition_to_sparql(
                     class_, defn["definitions"][variable], variable
                 )
-
-                results = model.query(query)
+                results = model.graph.query(query)
                 for row in results.bindings:
                     inst = row["root"]
-                    successful_rules[rule][inst].update(row)
-
-        # loop through all 'inst' for this rule. If the length of its dictionary == len(defn["definitions"]), then it's successful
-        for inst in deepcopy(successful_rules[rule]):
-            if (
-                len(successful_rules[rule][inst]) != len(defn["definitions"]) + 1
-            ):  # +1 for the 'root' variable
-                del successful_rules[rule][inst]
-
+                    successful_rules[rule_uri][inst].update(row)
+        # prune incomplete bindings (must have all variables + root)
+        for inst in deepcopy(successful_rules[rule_uri]):
+            if len(successful_rules[rule_uri][inst]) != len(defn["definitions"]) + 1:
+                del successful_rules[rule_uri][inst]
     return successful_rules
+
+
+def apply_rules_to_model_paths(model_ttl: str, rules_json_path: str):
+    """Convenience wrapper: takes file paths, builds a Model, and applies rules."""
+    model = Model.from_file(model_ttl)
+    with open(rules_json_path, "r") as f:
+        rules = json.load(f)
+    return apply_rules_to_model(model, rules)
 
 
 def get_model_diffs(model):

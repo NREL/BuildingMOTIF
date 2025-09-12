@@ -4,10 +4,13 @@ import uuid
 from collections import defaultdict
 
 from rdflib import RDF, RDFS, Graph, Namespace
-from utils import xml_dump
 
-import afxml as af
-from buildingmotif import BuildingMOTIF
+from buildingmotif import BuildingMOTIF, get_building_motif
+from buildingmotif.dataclasses import Model
+from buildingmotif.namespaces import BRICK
+
+from . import afxml as af
+from .utils import _definition_to_sparql, xml_dump
 
 
 class Translator:
@@ -21,10 +24,16 @@ class Translator:
         self.templates = {"Analysis": {}, "Element": {}, "Attribute": {}}
 
     def init_graph(self):
-        bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
-        self.graph = Graph()
+        # Ensure a BuildingMOTIF instance exists
+        try:
+            bm = get_building_motif()
+        except Exception:
+            bm = BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
+        self.bm = bm
+        # Model is created/loaded when creating AF tree
+        self.model = None
         self.af_root = af.AF()
-        self.BRICK = Namespace("https://brickschema.org/schema/Brick#")
+        self.BRICK = BRICK
         self.EX = Namespace("http://example.org/building#")
 
     def read_config_file(self):
@@ -38,6 +47,8 @@ class Translator:
         self.defaultserver = c["server"]
         self.defaultdatabase = c["database"]
         self.defaulturi = f"\\{self.defaultserver}\\{self.defaultdatabase}"
+        # Units mapping for AF attribute typing and defaults
+        self.units = c.get("units", {})
 
     def export_pi_database(self, database, outpath):
         args = "/A /U"
@@ -50,13 +61,22 @@ class Translator:
         os.system(cmd)
 
     def load(self, ttlpath, merge=None):
-        self.graph.parse(ttlpath)
+        """Deprecated shim: use createAFTree which initializes a Model.
+
+        Kept for backward-compatibility in local scripts.
+        """
+        model = Model.from_file(ttlpath)
         if merge:
             if isinstance(merge, str):
-                self.graph.parse(merge)
+                g = Graph()
+                g.parse(merge)
+                model.add_graph(g)
             else:
                 for p in merge:
-                    self.graph.parse(p)
+                    g = Graph()
+                    g.parse(p)
+                    model.add_graph(g)
+        self.model = model
 
     def add_rules(self, rulespath, validatedpath):
         with open(rulespath) as f:
@@ -71,16 +91,16 @@ class Translator:
             if predicate == "type"
             else self.BRICK[predicate] if predicate else None
         )
-        for ns_prefix, ns in self.graph.namespaces():
+        g = self.model.graph if self.model is not None else Graph()
+        for ns_prefix, ns in g.namespaces():
             nsub = (ns + subject) if subject and ns not in subject else subject
             nob = (ns + object) if object and ns not in object else object
-            for s, o, p in self.graph.triples((nsub, pred, nob)):
+            for s, o, p in g.triples((nsub, pred, nob)):
                 results.append((s, o, p))
         return results
 
     def get_rule_bindings(self, firstttl):
-        model = Graph()
-        model.parse(firstttl)
+        model = Model.from_file(firstttl)
         assert self.afddrules is not None, "No rules found."
         rules = {}
         for rule, defn in self.afddrules.items():
@@ -88,8 +108,8 @@ class Translator:
             for classname in defn["applicability"]:
                 cls = self.BRICK[classname]
                 for var, dfn in defn["definitions"].items():
-                    q = self.definition_to_sparql(cls, dfn, var)
-                    for row in model.query(q).bindings:
+                    q = _definition_to_sparql(cls, dfn, var)
+                    for row in model.graph.query(q).bindings:
                         row = {str(k): v for k, v in row.items()}
                         instances[row["root"]].update(row)
             instances = {
@@ -101,17 +121,28 @@ class Translator:
         return rules
 
     def createAFTree(self, firstttl, outpath, merge=None):
-        self.load(firstttl, merge)
+        # Build a BuildingMOTIF Model from the input BRICK TTL(s)
+        self.model = Model.from_file(firstttl)
+        if merge:
+            if isinstance(merge, str):
+                g = Graph()
+                g.parse(merge)
+                self.model.add_graph(g)
+            else:
+                for p in merge:
+                    g = Graph()
+                    g.parse(p)
+                    self.model.add_graph(g)
         newaf = af.AF()
         afdict = {}
         ignored = []
 
-        for subj, pred, obj in self.graph.triples((None, None, None)):
+        for subj, pred, obj in self.model.graph.triples((None, None, None)):
             if pred in (RDF["type"], RDFS["label"]):
                 continue
 
             def get_type(node):
-                for _, _, t in self.graph.triples((node, RDF["type"], None)):
+                for _, _, t in self.model.graph.triples((node, RDF["type"], None)):
                     return str(t).split("#")[-1]
                 return None
 
@@ -119,7 +150,9 @@ class Translator:
                 if node in afdict or node is None:
                     return
                 name = node.split("#")[-1]
-                for _, _, label in self.graph.triples((node, RDFS["label"], None)):
+                for _, _, label in self.model.graph.triples(
+                    (node, RDFS["label"], None)
+                ):
                     name = label
                 el = af.AFElement(af.Name(name))
                 el += af.id(uuid.uuid4().hex)
@@ -178,7 +211,7 @@ class Translator:
 
         if merge:
             xml_dump(newaf, file=outpath.replace(".xml", "_updated.xml"))
-            self.graph.serialize(
+            self.model.graph.serialize(
                 outpath.replace(".xml", "_updated.ttl"), format="turtle"
             )
         else:
@@ -225,7 +258,7 @@ class Translator:
 
     def addTag(self, parent, point, attr):
         ispt = False
-        for tagname in self.graph.objects(
+        for tagname in self.model.graph.objects(
             subject=point, predicate=self.BRICK["hasTag"]
         ):
             if not ispt:
@@ -237,11 +270,12 @@ class Translator:
         return attr, ispt
 
     def getUOMs(self, obj):
-        for _, _, unit in self.graph.triples((obj, self.BRICK["hasUnit"], None)):
+        for _, _, unit in self.model.graph.triples((obj, self.BRICK["hasUnit"], None)):
             unit = str(unit).split("#")[-1]
-            u = self.units[unit].uom
-            t = self.units[unit].aftype
-            v = self.units[unit].value
+            if unit in self.units:
+                u = self.units[unit].get("uom")
+                t = self.units[unit].get("aftype")
+                v = self.units[unit].get("value")
         try:
             return u, t, v
         except UnboundLocalError:
@@ -285,7 +319,7 @@ class Translator:
         return output
 
     def getParent(self, obj):
-        for s, p, o in self.graph.triples((None, None, None)):
+        for s, p, o in self.model.graph.triples((None, None, None)):
             if (
                 p
                 in (
@@ -310,11 +344,11 @@ class Translator:
 
     def findFullPath(self, obj):
         objpath = obj.split("#")[-1]
-        for _, _, label in self.graph.triples((obj, RDFS["label"], None)):
+        for _, _, label in self.model.graph.triples((obj, RDFS["label"], None)):
             objpath = label
         while True:
             parent = ""
-            for s, p, o in self.graph.triples((obj, None, None)):
+            for s, p, o in self.model.graph.triples((obj, None, None)):
                 if (
                     p
                     in (
@@ -326,10 +360,10 @@ class Translator:
                 ):
                     obj = o
                     name = o.split("#")[-1]
-                    for _, _, lab in self.graph.triples((o, RDFS["label"], None)):
+                    for _, _, lab in self.model.graph.triples((o, RDFS["label"], None)):
                         name = lab
                     parent = name
-            for s, p, o in self.graph.triples((None, None, obj)):
+            for s, p, o in self.model.graph.triples((None, None, obj)):
                 if (
                     p
                     in (
@@ -341,7 +375,7 @@ class Translator:
                 ):
                     obj = s
                     name = s.split("#")[-1]
-                    for _, _, lab in self.graph.triples((s, RDFS["label"], None)):
+                    for _, _, lab in self.model.graph.triples((s, RDFS["label"], None)):
                         name = lab
                     parent = name
             if parent == "":
