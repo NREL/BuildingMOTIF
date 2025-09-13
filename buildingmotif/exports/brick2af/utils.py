@@ -417,16 +417,12 @@ def edge_list_to_property_path(edge_list, shape_graph):
     return property_path
 
 
-def generate_manifest(rules_file, output_file):
-    data = json.load(open(rules_file))
-    ns = Namespace("http://example.org/building#")
-    shapes = []
-    for rule, definition in data.items():
+def generate_manifest(rules_json: dict, ns: Namespace = Namespace("http://example.org/building#")) -> Graph:
+    shapes = Graph()
+    for _, definition in rules_json.items():
         sg = _definition_to_shape(definition, ns)
-        shapes.append(sg)
-    shape_graph = reduce(lambda x, y: x + y, shapes)
-    print(shape_graph.serialize(format="ttl"))
-    shape_graph.serialize(output_file, format="ttl")
+        shapes += sg
+    return shapes
 
 
 def generate_manifest_json(rules_json: dict, ns: Namespace):
