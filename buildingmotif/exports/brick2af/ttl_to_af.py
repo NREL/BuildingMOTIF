@@ -114,6 +114,94 @@ class Translator:
 
         self.validrules = out
 
+    def create_af_tree_from_model(self, model: Model, merge_graph=None):
+        """Build an AF tree from an in-memory BuildingMOTIF Model.
+
+        Returns an AF object that can be serialized by calling str(af_obj).
+        """
+        # Use provided model and optionally merge an additional graph
+        self.model = model
+        if merge_graph is not None:
+            self.model.add_graph(merge_graph)
+
+        newaf = af.AF()
+        afdict = {}
+        ignored = []
+
+        for subj, pred, obj in self.model.graph.triples((None, None, None)):
+            if pred in (RDF["type"], RDFS["label"]):
+                continue
+
+            def get_type(node):
+                for _, _, t in self.model.graph.triples((node, RDF["type"], None)):
+                    return str(t).split("#")[-1]
+                return None
+
+            def make_element(node):
+                if node in afdict or node is None:
+                    return
+                name = node.split("#")[-1]
+                for _, _, label in self.model.graph.triples(
+                    (node, RDFS["label"], None)
+                ):
+                    name = label
+                el = af.AFElement(af.Name(name))
+                el += af.id(uuid.uuid4().hex)
+                el += (
+                    af.Description(get_type(node))
+                    if get_type(node)
+                    else af.Description("No description")
+                )
+                analyses = self.addAnalysis(node) if self.validrules else []
+                if analyses:
+                    for a in analyses:
+                        el += a
+                afdict[node] = el
+
+            subjtype, objtype = get_type(subj), get_type(obj)
+            make_element(subj)
+            make_element(obj)
+
+            if pred in (
+                self.BRICK["hasTag"],
+                self.BRICK["Max_Limit"],
+                self.BRICK["Min_limit"],
+                self.BRICK["hasUnit"],
+                self.BRICK["lastKnownValue"],
+            ):
+                ignored.append(afdict.get(obj))
+            elif pred == self.BRICK["isTagOf"]:
+                ignored.append(afdict.get(subj))
+
+            if pred in (self.BRICK["hasPoint"], self.BRICK["isPointOf"]):
+                afdict, ignored = self.addpoint(
+                    subj, pred, obj, subjtype, objtype, ignored, afdict
+                )
+
+            if pred in (self.BRICK["hasPart"], self.BRICK["isLocationOf"]):
+                afdict[obj]["ReferenceType"] = "Parent-Child"
+                afdict[subj] += afdict[obj]
+            elif pred in (self.BRICK["isPartOf"], self.BRICK["hasLocation"]):
+                afdict[subj]["ReferenceType"] = "Parent-Child"
+                afdict[obj] += afdict[subj]
+
+        db = af.AFDatabase(af.Name(self.defaultdatabase))
+        for key, val in afdict.items():
+            if val not in ignored:
+                try:
+                    if val["ReferenceType"] != "Parent-Child":
+                        db += val
+                except KeyError:
+                    db += val
+
+        newaf += db
+        newaf["PISystem"] = self.defaultserver
+        newaf["ExportedType"] = "AFDatabase"
+        newaf["Identity"] = "Database"
+        newaf["Database"] = self.defaultdatabase
+
+        return newaf
+
     def inspect(self, subject=None, predicate=None, object=None):
         results = []
         pred = (
