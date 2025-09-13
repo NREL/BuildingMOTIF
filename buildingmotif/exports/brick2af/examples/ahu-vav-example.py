@@ -1,6 +1,7 @@
 import json
 
 from buildingmotif import BuildingMOTIF
+from buildingmotif.dataclasses import Model
 from buildingmotif.exports.brick2af.ttl_to_af import Translator
 from buildingmotif.exports.brick2af.utils import generate_manifest
 from buildingmotif.exports.brick2af.validation import (
@@ -25,7 +26,8 @@ with open(injson, "r") as f:
 manifest_graph = generate_manifest(rules)
 
 # Validate the model against the rules. Generate an HTML report.
-validate(manifest_graph, inttl, rules, outreport, reportformat)
+model = Model.from_file(inttl)
+validate(manifest_graph, model, rules, outreport, reportformat)
 
 print(injson, "rules have been validated against", inttl)
 # Output an XML file that can be loaded in OSISoft PI Asset Explorer

@@ -316,7 +316,7 @@ def generate_html_report(
         file.write(html_content)
 
 
-def validate(manifest, model_ttl, rules, output_path, format):
+def validate(manifest, model, rules, output_path, format):
     # Ensure a BuildingMOTIF instance exists
     try:
         bm = get_building_motif()
@@ -331,10 +331,7 @@ def validate(manifest, model_ttl, rules, output_path, format):
 
     constraints = Library.load(ontology_graph="constraints/constraints.ttl")
 
-    O27 = "http://example.org/building#"
-
-    model = Model.create(O27)
-    model.graph.parse(model_ttl, format="ttl")
+    # Use the provided BuildingMOTIF Model instance
 
     manifest_sc = ShapeCollection.create()
     if isinstance(manifest, Graph):
@@ -404,8 +401,11 @@ if __name__ == "__main__":
     parser.add_argument("format", help="Format of the output file [md, html]")
 
     args = parser.parse_args()
+    manifest_g = Graph()
+    manifest_g.parse(args.manifest_ttl, format="ttl")
+    model = Model.from_file(args.model_ttl)
     validate(
-        args.manifest_ttl, args.model_ttl, args.rule_json, args.output_path, args.format
+        manifest_g, model, args.rule_json, args.output_path, args.format
     )
 
 
