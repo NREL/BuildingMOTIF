@@ -84,11 +84,6 @@ class Translator:
         with open(validatedpath) as f:
             self.validrules = json.load(f)
 
-    # Object-based entrypoint: set rules from loaded dicts
-    def add_rules_from_dict(self, rules: dict, validated: dict) -> None:
-        self.afddrules = rules
-        self.validrules = validated
-
     def inspect(self, subject=None, predicate=None, object=None):
         results = []
         pred = (
@@ -126,7 +121,7 @@ class Translator:
         return rules
 
     def createAFTree(self, firstttl, outpath, merge=None):
-        # Build a BuildingMOTIF Model from the input BRICK TTL(s), then write XML to outpath
+        # Build a BuildingMOTIF Model from the input BRICK TTL(s)
         self.model = Model.from_file(firstttl)
         if merge:
             if isinstance(merge, str):
@@ -138,28 +133,6 @@ class Translator:
                     g = Graph()
                     g.parse(p)
                     self.model.add_graph(g)
-        newaf, _, _ = self._build_af()
-        if merge:
-            xml_dump(newaf, file=outpath.replace(".xml", "_updated.xml"))
-            self.model.graph.serialize(
-                outpath.replace(".xml", "_updated.ttl"), format="turtle"
-            )
-        else:
-            xml_dump(newaf, file=outpath)
-        return newaf
-
-    # Object-based entrypoint: build AF from an in-memory Model (no file IO)
-    def create_af_tree_from_model(
-        self, model: Model, merge_graph: Graph | None = None
-    ) -> af.AF:
-        self.model = model
-        if merge_graph is not None:
-            self.model.add_graph(merge_graph)
-        newaf, _, _ = self._build_af()
-        return newaf
-
-    # Internal: construct AF tree from self.model
-    def _build_af(self):
         newaf = af.AF()
         afdict = {}
         ignored = []
@@ -236,7 +209,15 @@ class Translator:
         newaf["Identity"] = "Database"
         newaf["Database"] = self.defaultdatabase
 
-        return newaf, afdict, ignored
+        if merge:
+            xml_dump(newaf, file=outpath.replace(".xml", "_updated.xml"))
+            self.model.graph.serialize(
+                outpath.replace(".xml", "_updated.ttl"), format="turtle"
+            )
+        else:
+            xml_dump(newaf, file=outpath)
+
+        return newaf
 
     def addpoint(self, s, p, o, stype, otype, ign, afd):
         if p == self.BRICK["hasPoint"]:
