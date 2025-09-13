@@ -19,11 +19,13 @@ reportformat = "html"
 # Ensure a BuildingMOTIF instance exists (in-memory DB for local runs)
 BuildingMOTIF("sqlite://", shacl_engine="topquadrant")
 
-# Generate a manifest file from the JSON rules
-generate_manifest(injson, outmanifest)
+# Load rules JSON and generate a manifest graph in-memory
+with open(injson, "r") as f:
+    rules = json.load(f)
+manifest_graph = generate_manifest(rules)
 
-# Validate the model against the rules (u lil' punk). Generate an HTML report.
-validate(outmanifest, inttl, injson, outreport, reportformat)
+# Validate the model against the rules. Generate an HTML report.
+validate(manifest_graph, inttl, rules, outreport, reportformat)
 
 print(injson, "rules have been validated against", inttl)
 # Output an XML file that can be loaded in OSISoft PI Asset Explorer

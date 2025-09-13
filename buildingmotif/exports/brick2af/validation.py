@@ -316,7 +316,7 @@ def generate_html_report(
         file.write(html_content)
 
 
-def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
+def validate(manifest, model_ttl, rules, output_path, format):
     # Ensure a BuildingMOTIF instance exists
     try:
         bm = get_building_motif()
@@ -331,38 +331,44 @@ def validate(manifest_ttl, model_ttl, rule_json, output_path, format):
 
     constraints = Library.load(ontology_graph="constraints/constraints.ttl")
 
-    O27 = Namespace("http://example.org/building#")
+    O27 = "http://example.org/building#"
 
     model = Model.create(O27)
     model.graph.parse(model_ttl, format="ttl")
 
-    manifest = ShapeCollection.create()
-    manifest.graph.parse(manifest_ttl, format="ttl")
-    model.update_manifest(manifest)
+    manifest_sc = ShapeCollection.create()
+    if isinstance(manifest, Graph):
+        manifest_sc.graph += manifest
+    else:
+        manifest_sc.graph.parse(manifest, format="ttl")
+    model.update_manifest(manifest_sc)
 
     successful_rules = defaultdict(lambda: defaultdict(dict))
     # get the SPARQL query for each rule
-    with open(rule_json, "r") as f:
-        rules = json.load(f)
-        for rule, defn in rules.items():
-            rule = f"http://example.org/building#{rule}"
-            for classname in defn["applicability"]:
-                class_ = BRICK[classname]
-                for variable in defn["definitions"]:
-                    # this only queries for 1 variable
-                    query = _definition_to_sparql(
-                        class_, defn["definitions"][variable], variable
-                    )
-                    results = model.graph.query(query)
-                    for row in results.bindings:
-                        inst = row["root"]
-                        successful_rules[rule][inst].update(row)
-            # loop through all 'inst' for this rule. If the length of its dictionary == len(defn["definitions"]), then it's successful
-            for inst in deepcopy(successful_rules[rule]):
-                if (
-                    len(successful_rules[rule][inst]) != len(defn["definitions"]) + 1
-                ):  # +1 for the 'root' variable
-                    del successful_rules[rule][inst]
+    if isinstance(rules, dict):
+        rules_dict = rules
+    else:
+        with open(rules, "r") as f:
+            rules_dict = json.load(f)
+    for rule, defn in rules_dict.items():
+        rule = f"http://example.org/building#{rule}"
+        for classname in defn["applicability"]:
+            class_ = BRICK[classname]
+            for variable in defn["definitions"]:
+                # this only queries for 1 variable
+                query = _definition_to_sparql(
+                    class_, defn["definitions"][variable], variable
+                )
+                results = model.graph.query(query)
+                for row in results.bindings:
+                    inst = row["root"]
+                    successful_rules[rule][inst].update(row)
+        # loop through all 'inst' for this rule. If the length of its dictionary == len(defn["definitions"]), then it's successful
+        for inst in deepcopy(successful_rules[rule]):
+            if (
+                len(successful_rules[rule][inst]) != len(defn["definitions"]) + 1
+            ):  # +1 for the 'root' variable
+                del successful_rules[rule][inst]
 
     res = model.validate(error_on_missing_imports=False)
     res.report.serialize("output.ttl", format="ttl")
