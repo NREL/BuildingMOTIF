@@ -84,6 +84,36 @@ class Translator:
         with open(validatedpath) as f:
             self.validrules = json.load(f)
 
+    def add_rules_from_dict(self, rules: dict, valid_rules: dict):
+        """Load rules and validated rule bindings from in-memory dicts.
+
+        rules: dict mapping rule_name -> rule_definition
+        valid_rules: mapping rule_uri -> focus_node -> { var: value }
+        Values may be rdflib terms; this function stringifies keys and values for internal use.
+        """
+        # Set rules directly
+        self.afddrules = rules
+
+        # Convert bindings to JSON-serializable strings just like file-based path
+        out = {}
+        for rule_uri, focus_map in valid_rules.items():
+            rule_key = str(rule_uri)
+            out_rule = {}
+            for focus_node, vars_map in focus_map.items():
+                entry = {"root": str(focus_node)}
+                # Defensive: vars_map may be an rdflib QueryResultRow or dict-like
+                try:
+                    items_iter = vars_map.items()
+                except AttributeError:
+                    items_iter = []
+                for k, v in items_iter:
+                    ks = str(k)
+                    entry[ks] = str(v)
+                out_rule[str(focus_node)] = entry
+            out[rule_key] = out_rule
+
+        self.validrules = out
+
     def inspect(self, subject=None, predicate=None, object=None):
         results = []
         pred = (
