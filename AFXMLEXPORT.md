@@ -10,8 +10,8 @@
 - A PI AF export configuration JSON (`pi_config.json` with server, database, and units). The translator currently looks for this at a path relative to your working directory. See “PI Config” below.
 
 **Core APIs You Will Use**
-- `buildingmotif.exports.brick2af.utils.generate_manifest(rules_file, output_ttl)` and `generate_manifest_from_dict(rules_dict, ns=None)`
-- `buildingmotif.exports.brick2af.validation.validate(manifest_ttl, model_ttl, rule_json, output_base, format)`
+- `buildingmotif.exports.brick2af.utils.generate_manifest(rules_dict, ns=None)` (returns an rdflib.Graph of shapes)
+- `buildingmotif.exports.brick2af.validation.validate(manifest_graph, model, rules, output_base, format)`
 - `buildingmotif.exports.brick2af.validation.apply_rules_to_model(model, rules_dict)` (object-based)
 - `buildingmotif.exports.brick2af.ttl_to_af.Translator`
   - Object-based: `add_rules_from_dict(rules_dict, validated_bindings)` and `create_af_tree_from_model(model, merge_graph=None)`
@@ -28,11 +28,11 @@ from rdflib import Graph
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Model
 from buildingmotif.exports.brick2af.utils import (
-    generate_manifest_from_dict,
+    generate_manifest,
     xml_dump,
 )
 from buildingmotif.exports.brick2af.validation import (
-    apply_rules_to_model,   # accepts Model or rdflib.Graph
+    apply_rules_to_model,   # accepts Model
     validate,               # validate(manifest_graph, model, rules, output_base, format)
 )
 from buildingmotif.exports.brick2af.ttl_to_af import Translator
@@ -50,13 +50,12 @@ rules = json.loads(open(RULES_PATH).read())
 
 # 2) Optional: prepare a base manifest graph (can be empty). validate() will
 #    augment it with rule-derived shapes automatically.
-manifest_graph = generate_manifest_from_dict(rules)  # or Graph() if you have your own
+manifest_graph = generate_manifest(rules)  # returns an rdflib.Graph
 m = Model.from_graph(model_graph)
 validate(manifest_graph, m, rules, "/tmp/report", format="html")
 
-# 3) Compute which rules apply to your model (rule bindings) from compiled graph
-compiled = m.compile()
-valid_bindings = apply_rules_to_model(compiled.graph, rules)
+# 3) Compute which rules apply to your model (rule bindings)
+valid_bindings = apply_rules_to_model(m, rules)
 
 # 4) Build the AF tree directly from loaded objects (no intermediate files)
 tr = Translator()
@@ -77,12 +76,12 @@ To generate a quick pass/fail report across all rules for a model using in-memor
 
 ```python
 from rdflib import Graph
-from buildingmotif.exports.brick2af.utils import generate_manifest_from_dict
+from buildingmotif.exports.brick2af.utils import generate_manifest
 from buildingmotif.exports.brick2af.validation import validate
 
 model_graph = Graph(); model_graph.parse(MODEL_TTL, format="turtle")
 rules = json.loads(open(RULES_PATH).read())
-manifest_graph = generate_manifest_from_dict(rules)
+manifest_graph = generate_manifest(rules)
 m = Model.from_graph(model_graph)
 validate(manifest_graph, m, rules, "/tmp/validation_report", format="html")
 ```
