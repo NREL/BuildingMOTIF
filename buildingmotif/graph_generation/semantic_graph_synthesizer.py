@@ -107,7 +107,7 @@ class SemanticGraphSynthesizer:
             label="Index Label",
             tokens=[
                 Token(identifier=str(i), classname=tc)
-                for i, tc in enumerate(labelset.token_classes)
+                for i, tc in enumerate(sorted(labelset.token_classes))
             ],
         )
         index_bindings = self.find_bindings_for_label(ontology, index_label)
