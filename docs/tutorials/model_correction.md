@@ -123,13 +123,13 @@ ahu_name = "Core_ZN-PSC_AC"
 
 # lookup for the name of the template to the name of the point or part
 points_and_parts = {
-    "resolve_Core_ZN-PSC_ACMixed_Air_Temperature_Sensor": "-MAT",
-    "resolve_Core_ZN-PSC_ACFilter_Differential_Pressure_Sensor": "-FilterDPS",
-    "resolve_Core_ZN-PSC_ACCooling_Command": "-CCmd",
-    "resolve_Core_ZN-PSC_ACHeating_Command": "-HCmd",
-    "resolve_Core_ZN-PSC_ACOutside_Air_Temperature_Sensor": "-OAT",
-    "resolve_Core_ZN-PSC_ACSupply_Air_Temperature_Sensor": "-SAT",
-    "resolve_Core_ZN-PSC_ACReturn_Air_Temperature_Sensor": "-RAT",
+    "resolveCore_ZN-PSC_ACMixed_Air_Temperature_Sensor": "-MAT",
+    "resolveCore_ZN-PSC_ACFilter_Differential_Pressure_Sensor": "-FilterDPS",
+    "resolveCore_ZN-PSC_ACCooling_Command": "-CCmd",
+    "resolveCore_ZN-PSC_ACHeating_Command": "-HCmd",
+    "resolveCore_ZN-PSC_ACOutside_Air_Temperature_Sensor": "-OAT",
+    "resolveCore_ZN-PSC_ACSupply_Air_Temperature_Sensor": "-SAT",
+    "resolveCore_ZN-PSC_ACReturn_Air_Temperature_Sensor": "-RAT",
     "resolveCore_ZN-PSC_ACsa-fan": "-Fan", # this is an existing fan in the model!
 }
 
