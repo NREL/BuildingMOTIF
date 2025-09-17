@@ -106,7 +106,7 @@ Here is the header of a manifest file. This should also suffice for most of your
 @prefix : <urn:my_site_constraints/> .
 
 : a owl:Ontology ;
-    owl:imports <https://brickschema.org/schema/1.3/Brick>,
+    owl:imports <https://brickschema.org/schema/1.4/Brick>,
                 <https://nrel.gov/BuildingMOTIF/constraints>,
                 <urn:ashrae/g36> .
 ```
@@ -183,7 +183,7 @@ with open("tutorial1_manifest.ttl", "w") as f:
 @prefix : <urn:my_site_constraints/> .
 
 : a owl:Ontology ;
-    owl:imports <https://brickschema.org/schema/1.3/Brick>,
+    owl:imports <https://brickschema.org/schema/1.4/Brick>,
                 <https://nrel.gov/BuildingMOTIF/constraints>,
                 <urn:ashrae/g36> .
 
