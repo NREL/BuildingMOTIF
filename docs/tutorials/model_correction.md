@@ -51,7 +51,6 @@ constraints = Library.load(ontology_graph="constraints/constraints.ttl")
 brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
 g36 = Library.load(directory="../../libraries/ashrae/guideline36")
 
-
 # load tutorial 2 model and manifest
 model.graph.parse("tutorial2_model.ttl", format="ttl")
 manifest = Library.load(ontology_graph="tutorial2_manifest.ttl")
