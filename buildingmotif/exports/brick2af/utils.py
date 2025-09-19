@@ -22,6 +22,18 @@ RELATIONSHIPS += [f"{r}?" for r in RELATIONSHIPS]
 RELATIONSHIPS += [f"{r}*" for r in RELATIONSHIPS]
 
 
+def _describe_path_component(value) -> str:
+    """Return a short descriptive label for a property path element."""
+    if isinstance(value, URIRef):
+        text = str(value)
+        if "#" in text:
+            return text.split("#")[-1]
+        if "/" in text:
+            return text.rstrip("/").split("/")[-1]
+        return text
+    return "specified path"
+
+
 def pretty_print(element):
     """Simple printing of an xml element from the bsync library"""
     print(etree.tostring(element.toxml(), pretty_print=True).decode("utf-8"))
@@ -199,20 +211,42 @@ def _definition_to_shape(defn: Dict[str, Any], ns: Namespace) -> Graph:
     shape = Graph()
     shapename = ns[defn["name"].replace(" ", "_")]
     shape.add((shapename, RDF["type"], SH["NodeShape"]))
+    shape.add((shapename, SH["name"], Literal(defn["name"])))
+    applicability = ", ".join(defn.get("applicability", []))
+    if applicability:
+        message = f"Applies to {applicability}."
+    else:
+        message = "Applies the BuildingMOTIF diagnostic rule."
+    shape.add((shapename, SH["message"], Literal(message)))
     for target in defn["applicability"]:
         shape.add((shapename, SH["targetClass"], BRICK[target]))
 
     for key, value in defn["definitions"].items():
         varname = ns[key]
-        _defn_to_shape(shapename, varname, value, shape, ns)
+        _defn_to_shape(shapename, varname, value, shape, ns, name_hint=key)
 
     return shape
 
 
-def _defn_to_shape(shapename, varname, defn, shape_graph, ns, path=None):
+def _defn_to_shape(
+    shapename,
+    varname,
+    defn,
+    shape_graph,
+    ns,
+    path=None,
+    name_hint: str | None = None,
+):
     varname = ns[_gensym()]
     if isinstance(defn, str):
-        return _string_to_shape(shapename, shape_graph, varname, defn, path=path)
+        return _string_to_shape(
+            shapename,
+            shape_graph,
+            varname,
+            defn,
+            path=path,
+            name_hint=name_hint or defn,
+        )
     elif isinstance(defn, dict):
         if "union" in defn:
             return _union_to_shape(
@@ -221,17 +255,35 @@ def _defn_to_shape(shapename, varname, defn, shape_graph, ns, path=None):
         # handle choice if it is present
         if "choice" in defn:
             return _choice_to_shape(
-                shapename, shape_graph, varname, defn.pop("choice"), ns
+                shapename,
+                shape_graph,
+                varname,
+                defn.pop("choice"),
+                ns,
+                name_hint=name_hint,
             )
         # treat the keys as properties
         for key, value in defn.items():
             propname = BRICK[key]
-            _prop_to_shape(shapename, shape_graph, varname, propname, value, ns)
+            _prop_to_shape(
+                shapename,
+                shape_graph,
+                varname,
+                propname,
+                value,
+                ns,
+                name_hint=key,
+            )
     return varname
 
 
 def _string_to_shape(
-    shapename: URIRef, shape_graph: Graph, varname: URIRef, string_value: str, path=None
+    shapename: URIRef,
+    shape_graph: Graph,
+    varname: URIRef,
+    string_value: str,
+    path=None,
+    name_hint: str | None = None,
 ):
     """
     Given a string value, create a SHACL shape that requires the sh:class to be that BRICK[string_value]
@@ -239,13 +291,23 @@ def _string_to_shape(
     if shapename is not None:
         shape_graph.add((shapename, SH["property"], varname))
     shape_graph.add((varname, RDF["type"], SH["PropertyShape"]))
-    if path is not None:
-        shape_graph.add((varname, SH["path"], path))
-    else:
-        shape_graph.add((varname, SH["path"], BRICK["hasPoint"]))
+    actual_path = path or BRICK["hasPoint"]
+    shape_graph.add((varname, SH["path"], actual_path))
+    display_name = name_hint or string_value
+    shape_graph.add((varname, SH["name"], Literal(display_name)))
+    message = (
+        f"Ensure at least one {string_value} is related via "
+        f"{_describe_path_component(actual_path)}."
+    )
+    shape_graph.add((varname, SH["message"], Literal(message)))
     class_shape = BNode()
     shape_graph.add((varname, SH["qualifiedValueShape"], class_shape))
+    shape_graph.add((class_shape, RDF["type"], SH["NodeShape"]))
     shape_graph.add((class_shape, SH["class"], BRICK[string_value]))
+    shape_graph.add((class_shape, SH["name"], Literal(f"{string_value} shape")))
+    shape_graph.add(
+        (class_shape, SH["message"], Literal(f"Value must be a {string_value}."))
+    )
     shape_graph.add((varname, SH["qualifiedMinCount"], Literal(1)))
     return varname
 
@@ -266,7 +328,7 @@ def _union_to_shape(
     and_list = []
     for option in union:
         print(f"shapename: {shapename}, varname: {varname}, option: {option}")
-        oshape = _defn_to_shape(None, varname, option, shape_graph, ns)
+        oshape = _defn_to_shape(None, None, option, shape_graph, ns)
         and_list.append(oshape)
     print(and_list)
 
@@ -278,7 +340,12 @@ def _union_to_shape(
 
 
 def _choice_to_shape(
-    shapename: URIRef, shape_graph: Graph, varname: URIRef, choice: Dict[str, Any], ns
+    shapename: URIRef,
+    shape_graph: Graph,
+    varname: URIRef,
+    choice: Dict[str, Any],
+    ns,
+    name_hint: str | None = None,
 ):
     """
     "choice": [
@@ -291,15 +358,32 @@ def _choice_to_shape(
     includes all the options.
     """
     or_list = []
-    for option in choice:
+    for idx, option in enumerate(choice, start=1):
         print(f"shapename: {shapename}, varname: {varname}, option: {option}")
-        oshape = _defn_to_shape(None, varname, option, shape_graph, ns)
-        or_list.append(oshape)
+        oshape = _defn_to_shape(
+            None, None, option, shape_graph, ns, name_hint=name_hint
+        )
+        option_node = BNode()
+        label_base = name_hint or "Choice"
+        shape_graph.add((option_node, RDF["type"], SH["NodeShape"]))
+        shape_graph.add((option_node, SH["property"], oshape))
+        shape_graph.add(
+            (option_node, SH["name"], Literal(f"{label_base} option {idx}"))
+        )
+        shape_graph.add(
+            (
+                option_node,
+                SH["message"],
+                Literal(f"Satisfy option {idx} for {label_base}."),
+            )
+        )
+        or_list.append(option_node)
     print(or_list)
 
     or_list_name = BNode()
     Collection(shape_graph, or_list_name, or_list)
-    shape_graph.add((shapename, SH["or"], or_list_name))
+    target_shape = shapename if shapename is not None else varname
+    shape_graph.add((target_shape, SH["or"], or_list_name))
 
     return varname
 
@@ -311,6 +395,7 @@ def _prop_to_shape(
     propname: URIRef,
     value: Any,
     ns,
+    name_hint: str | None = None,
 ):
     """
     Given a property name and value, create a shape that requires the sh:path to be that propname
@@ -320,7 +405,14 @@ def _prop_to_shape(
     if isinstance(value, str):
         # treat like a property shape
         print(f"string value: {value}")
-        return _string_to_shape(shapename, shape_graph, varname, value)
+        return _string_to_shape(
+            shapename,
+            shape_graph,
+            varname,
+            value,
+            path=propname,
+            name_hint=name_hint or value,
+        )
 
     possible_edges = [
         "hasPoint",
@@ -346,13 +438,24 @@ def _prop_to_shape(
             print(f"returning {value} as leftover")
             property_path = edge_list_to_property_path(edge_stack, shape_graph)
             return _defn_to_shape(
-                shapename, varname, value, shape_graph, ns, path=property_path
+                shapename,
+                varname,
+                value,
+                shape_graph,
+                ns,
+                path=property_path,
+                name_hint=name_hint,
             )
         print(f"returning {value} as leftover (string)")
         # if value is a string, treat it like a property
         property_path = edge_list_to_property_path(edge_stack, shape_graph)
         return _string_to_shape(
-            shapename, shape_graph, varname, value, path=property_path
+            shapename,
+            shape_graph,
+            varname,
+            value,
+            path=property_path,
+            name_hint=name_hint or value,
         )
 
     # args are
@@ -371,14 +474,31 @@ def _prop_to_shape(
                 shape_graph.add((shapename, SH["property"], varname))
             shape_graph.add((varname, RDF["type"], SH["PropertyShape"]))
             shape_graph.add((varname, SH["path"], property_path))
+            display_name = name_hint or key
+            shape_graph.add((varname, SH["name"], Literal(display_name)))
+            message = (
+                f"Ensure at least one {key} is related via "
+                f"{_describe_path_component(property_path)}."
+            )
+            shape_graph.add((varname, SH["message"], Literal(message)))
 
             # key is a 'class'
             qvs = BNode()
             shape_graph.add((varname, SH["qualifiedValueShape"], qvs))
             shape_graph.add((varname, SH["qualifiedMinCount"], Literal(1)))
             shape_graph.add((qvs, SH["class"], BRICK[key]))
+            shape_graph.add((qvs, RDF["type"], SH["NodeShape"]))
+            shape_graph.add((qvs, SH["name"], Literal(f"{key} shape")))
+            shape_graph.add((qvs, SH["message"], Literal(f"Value must be a {key}.")))
             # the 'leftover' is a property shape on qvs
-            leftover = _defn_to_shape(shapename, varname, vdict, shape_graph, ns)
+            leftover = _defn_to_shape(
+                shapename,
+                varname,
+                vdict,
+                shape_graph,
+                ns,
+                name_hint=name_hint,
+            )
             shape_graph.add((qvs, SH["property"], leftover))
 
 
@@ -417,7 +537,9 @@ def edge_list_to_property_path(edge_list, shape_graph):
     return property_path
 
 
-def generate_manifest(rules_json: dict, ns: Namespace = Namespace("http://example.org/building#")) -> Graph:
+def generate_manifest(
+    rules_json: dict, ns: Namespace = Namespace("http://example.org/building#")
+) -> Graph:
     shapes = Graph()
     for _, definition in rules_json.items():
         sg = _definition_to_shape(definition, ns)
