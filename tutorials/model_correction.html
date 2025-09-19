@@ -119,9 +119,6 @@ const thebe_selector_output = ".output, .cell_output"
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-<aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
-</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -518,7 +515,6 @@ document.write(`
 <span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
 <span class="n">g36</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;../../libraries/ashrae/guideline36&quot;</span><span class="p">)</span>
 
-
 <span class="c1"># load tutorial 2 model and manifest</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;tutorial2_model.ttl&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">)</span>
 <span class="n">manifest</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;tutorial2_manifest.ttl&quot;</span><span class="p">)</span>
@@ -533,10 +529,7 @@ document.write(`
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:33:51,193 | root |  WARNING: An ontology could not resolve a dependency on https://brickschema.org/schema/1.4/Brick (Name: https://brickschema.org/schema/1.4/Brick). Check this is loaded into BuildingMOTIF
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:33:51,427 | root |  WARNING: An ontology could not resolve a dependency on urn:ashrae/g36 (Name: urn:ashrae/g36). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:48:49,337 | root |  WARNING: An ontology could not resolve a dependency on urn:ashrae/g36 (Name: urn:ashrae/g36). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
 </div>
@@ -558,86 +551,21 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:33:51,836 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (Name: urn:ashrae/g36). Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:48:49,773 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (Name: urn:ashrae/g36). Trying shape collections
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:33:51,842 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:48:49,779 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:33:51,928 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of https://brickschema.org/schema/1.4/Brick from Libraries (Name: https://brickschema.org/schema/1.4/Brick). Trying shape collections
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:33:51,934 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of https://brickschema.org/schema/1.4/Brick from Libraries. Trying shape collections
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">Exception</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># print reasons</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:218,</span> in <span class="ni">Model.validate</span><span class="nt">(self, shape_collections, error_on_missing_imports, shacl_engine)</span>
-<span class="g g-Whitespace">    </span><span class="mi">194</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Validates this model against the given list of ShapeCollections.</span>
-<span class="g g-Whitespace">    </span><span class="mi">195</span><span class="sd"> If no list is provided, the model will be validated against the model&#39;s &quot;manifest&quot;.</span>
-<span class="g g-Whitespace">    </span><span class="mi">196</span><span class="sd"> If a list of shape collections is provided, the manifest will *not* be automatically</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">215</span><span class="sd"> :rtype: ValidationContext</span>
-<span class="g g-Whitespace">    </span><span class="mi">216</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">217</span> <span class="n">compiled_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">shape_collections</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()])</span>
-<span class="ne">--&gt; </span><span class="mi">218</span> <span class="k">return</span> <span class="n">compiled_model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">error_on_missing_imports</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/compiled_model.py:145,</span> in <span class="ni">CompiledModel.validate</span><span class="nt">(self, error_on_missing_imports)</span>
-<span class="g g-Whitespace">    </span><span class="mi">143</span> <span class="c1"># aggregate shape graphs</span>
-<span class="g g-Whitespace">    </span><span class="mi">144</span> <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape_collections</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">145</span>     <span class="n">shapeg</span> <span class="o">+=</span> <span class="n">sc</span><span class="o">.</span><span class="n">resolve_imports</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">146</span>         <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span>
-<span class="g g-Whitespace">    </span><span class="mi">147</span>     <span class="p">)</span><span class="o">.</span><span class="n">graph</span>
-<span class="g g-Whitespace">    </span><span class="mi">148</span> <span class="c1"># inline sh:node for interpretability</span>
-<span class="g g-Whitespace">    </span><span class="mi">149</span> <span class="n">shapeg</span> <span class="o">=</span> <span class="n">rewrite_shape_graph</span><span class="p">(</span><span class="n">shapeg</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:137,</span> in <span class="ni">ShapeCollection.resolve_imports</span><span class="nt">(self, recursive_limit, error_on_missing_imports)</span>
-<span class="g g-Whitespace">    </span><span class="mi">120</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Resolves `owl:imports` to as many levels as requested.</span>
-<span class="g g-Whitespace">    </span><span class="mi">121</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">122</span><span class="sd"> By default, all `owl:imports` are recursively resolved. This limit can</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">134</span><span class="sd"> :rtype: ShapeCollection</span>
-<span class="g g-Whitespace">    </span><span class="mi">135</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">136</span> <span class="n">resolved_namespaces</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">137</span> <span class="n">resolved</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">138</span>     <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">139</span>     <span class="n">recursive_limit</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">140</span>     <span class="n">resolved_namespaces</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">141</span>     <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">142</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">143</span> <span class="n">new_sc</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">144</span> <span class="n">new_sc</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">resolved</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:577,</span> in <span class="ni">_resolve_imports</span><span class="nt">(graph, recursive_limit, seen, error_on_missing_imports)</span>
-<span class="g g-Whitespace">    </span><span class="mi">574</span>             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">575</span>         <span class="k">continue</span>
-<span class="ne">--&gt; </span><span class="mi">577</span>     <span class="n">dependency</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">578</span>         <span class="n">sc_to_add</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">579</span>         <span class="n">recursive_limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">580</span>         <span class="n">seen</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">581</span>         <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">582</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">583</span>     <span class="n">new_g</span> <span class="o">+=</span> <span class="n">dependency</span>
-<span class="g g-Whitespace">    </span><span class="mi">584</span> <span class="k">return</span> <span class="n">new_g</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:574,</span> in <span class="ni">_resolve_imports</span><span class="nt">(graph, recursive_limit, seen, error_on_missing_imports)</span>
-<span class="g g-Whitespace">    </span><span class="mi">572</span> <span class="k">if</span> <span class="n">sc_to_add</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">573</span>     <span class="k">if</span> <span class="n">error_on_missing_imports</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">574</span>         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">575</span>     <span class="k">continue</span>
-<span class="g g-Whitespace">    </span><span class="mi">577</span> <span class="n">dependency</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">578</span>     <span class="n">sc_to_add</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">579</span>     <span class="n">recursive_limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">580</span>     <span class="n">seen</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">581</span>     <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">582</span> <span class="p">)</span>
-
-<span class="ne">Exception</span>: (&#39;Could not resolve import of %s&#39;, rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.4/Brick&#39;))
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Heating_Command on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Return_Air_Temperature_Sensor on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of ns1:sa-fan on path https://brickschema.org/schema/Brick#hasPart
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Outside_Air_Temperature_Sensor on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Supply_Air_Temperature_Sensor on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Filter_Differential_Pressure_Sensor on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Cooling_Command on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Mixed_Air_Temperature_Sensor on path brick:hasPoint
 </pre></div>
 </div>
 </div>
@@ -651,12 +579,29 @@ For example, asking for all the entities which have failed validation:</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:bldg/Core_ZN-PSC_AC
+</pre></div>
+</div>
+</div>
 </div>
 <p>We can also get all reasons a particular entity has failed validation:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">get_diffs_for_entity</span><span class="p">(</span><span class="n">BLDG</span><span class="p">[</span><span class="s2">&quot;Core_ZN-PSC_AC&quot;</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Heating_Command on path brick:hasPoint
+urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Return_Air_Temperature_Sensor on path brick:hasPoint
+urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of ns1:sa-fan on path https://brickschema.org/schema/Brick#hasPart
+urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Outside_Air_Temperature_Sensor on path brick:hasPoint
+urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Supply_Air_Temperature_Sensor on path brick:hasPoint
+urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Filter_Differential_Pressure_Sensor on path brick:hasPoint
+urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Cooling_Command on path brick:hasPoint
+urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Mixed_Air_Temperature_Sensor on path brick:hasPoint
 </pre></div>
 </div>
 </div>
@@ -685,6 +630,108 @@ For example, asking for all the entities which have failed validation:</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Name (autogenerated): resolveCore_ZN-PSC_ACHeating_Command
+Parameters (autogenerated): {&#39;p141&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p141&gt; .
+
+&lt;urn:___param___#p141&gt; a brick:Heating_Command .
+
+
+-------------------------------------------------------------------------------
+Name (autogenerated): resolveCore_ZN-PSC_ACReturn_Air_Temperature_Sensor
+Parameters (autogenerated): {&#39;p142&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p142&gt; .
+
+&lt;urn:___param___#p142&gt; a brick:Return_Air_Temperature_Sensor .
+
+
+-------------------------------------------------------------------------------
+Name (autogenerated): resolveCore_ZN-PSC_ACsa-fan
+Parameters (autogenerated): {&#39;p140&#39;, &#39;p138&#39;, &#39;name&#39;, &#39;p139&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPart &lt;urn:___param___#name&gt; .
+
+&lt;urn:___param___#name&gt; a brick:Supply_Fan,
+        &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sa-fan&gt; ;
+    brick:hasPoint &lt;urn:___param___#p138&gt;,
+        &lt;urn:___param___#p139&gt;,
+        &lt;urn:___param___#p140&gt; .
+
+&lt;urn:___param___#p138&gt; a brick:Frequency_Command .
+
+&lt;urn:___param___#p139&gt; a brick:Start_Stop_Command .
+
+&lt;urn:___param___#p140&gt; a brick:Fan_Status .
+
+
+-------------------------------------------------------------------------------
+Name (autogenerated): resolveCore_ZN-PSC_ACOutside_Air_Temperature_Sensor
+Parameters (autogenerated): {&#39;p143&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p143&gt; .
+
+&lt;urn:___param___#p143&gt; a brick:Outside_Air_Temperature_Sensor .
+
+
+-------------------------------------------------------------------------------
+Name (autogenerated): resolveCore_ZN-PSC_ACSupply_Air_Temperature_Sensor
+Parameters (autogenerated): {&#39;p144&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p144&gt; .
+
+&lt;urn:___param___#p144&gt; a brick:Supply_Air_Temperature_Sensor .
+
+
+-------------------------------------------------------------------------------
+Name (autogenerated): resolveCore_ZN-PSC_ACFilter_Differential_Pressure_Sensor
+Parameters (autogenerated): {&#39;p145&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p145&gt; .
+
+&lt;urn:___param___#p145&gt; a brick:Filter_Differential_Pressure_Sensor .
+
+
+-------------------------------------------------------------------------------
+Name (autogenerated): resolveCore_ZN-PSC_ACCooling_Command
+Parameters (autogenerated): {&#39;p146&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p146&gt; .
+
+&lt;urn:___param___#p146&gt; a brick:Cooling_Command .
+
+
+-------------------------------------------------------------------------------
+Name (autogenerated): resolveCore_ZN-PSC_ACMixed_Air_Temperature_Sensor
+Parameters (autogenerated): {&#39;p147&#39;}
+Template body (autogenerated):
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; brick:hasPoint &lt;urn:___param___#p147&gt; .
+
+&lt;urn:___param___#p147&gt; a brick:Mixed_Air_Temperature_Sensor .
+
+
+-------------------------------------------------------------------------------
+</pre></div>
+</div>
+</div>
 </div>
 <p>In this case, the generated templates are fairly simple. They require an input for the name of the supply fan and the names of several missing points. We can loop through each of these generated templates and create the names. Here, we are creating arbitrary names for the points but in a real setting you would likely pull the equipment or point names from an external source like a Building Information Model or BACnet network<a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> (see future tutorials for how to do this!) Another challenge is the fact that we already have a supply fan in the model. Here, we can take advantage of the fact that the name of the fan in the existing model are just the name of the AHU wtih the <code class="docutils literal notranslate"><span class="pre">-Fan</span></code> postfix. The name of the AHU is in the generated templates (see above) so we can just pull out the name of the AHU, add the postfix, and use that as the value for the <code class="docutils literal notranslate"><span class="pre">name</span></code> parameter.</p>
 <p>If we just add the generated templates to the building model, we will probably pass validation <em>but</em> the entity names will have no significance to the building. It is highly recommended to use the template evaluation features (demonstrated below) to fill in the parameters with the “real” names of the entities as they appear in the building and/or building management system.</p>
@@ -695,13 +742,13 @@ For example, asking for all the entities which have failed validation:</p>
 
 <span class="c1"># lookup for the name of the template to the name of the point or part</span>
 <span class="n">points_and_parts</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;resolve_Core_ZN-PSC_ACMixed_Air_Temperature_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-MAT&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;resolve_Core_ZN-PSC_ACFilter_Differential_Pressure_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-FilterDPS&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;resolve_Core_ZN-PSC_ACCooling_Command&quot;</span><span class="p">:</span> <span class="s2">&quot;-CCmd&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;resolve_Core_ZN-PSC_ACHeating_Command&quot;</span><span class="p">:</span> <span class="s2">&quot;-HCmd&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;resolve_Core_ZN-PSC_ACOutside_Air_Temperature_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-OAT&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;resolve_Core_ZN-PSC_ACSupply_Air_Temperature_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-SAT&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;resolve_Core_ZN-PSC_ACReturn_Air_Temperature_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-RAT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resolveCore_ZN-PSC_ACMixed_Air_Temperature_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-MAT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resolveCore_ZN-PSC_ACFilter_Differential_Pressure_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-FilterDPS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resolveCore_ZN-PSC_ACCooling_Command&quot;</span><span class="p">:</span> <span class="s2">&quot;-CCmd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resolveCore_ZN-PSC_ACHeating_Command&quot;</span><span class="p">:</span> <span class="s2">&quot;-HCmd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resolveCore_ZN-PSC_ACOutside_Air_Temperature_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-OAT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resolveCore_ZN-PSC_ACSupply_Air_Temperature_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-SAT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;resolveCore_ZN-PSC_ACReturn_Air_Temperature_Sensor&quot;</span><span class="p">:</span> <span class="s2">&quot;-RAT&quot;</span><span class="p">,</span>
     <span class="s2">&quot;resolveCore_ZN-PSC_ACsa-fan&quot;</span><span class="p">:</span> <span class="s2">&quot;-Fan&quot;</span><span class="p">,</span> <span class="c1"># this is an existing fan in the model!</span>
 <span class="p">}</span>
 
@@ -724,6 +771,12 @@ For example, asking for all the entities which have failed validation:</p>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/template.py:483: UserWarning: Parameters &quot;p138, name, p139&quot; were not provided during evaluation
+  warnings.warn(
+</pre></div>
+</div>
+</div>
 </div>
 <p>We use the same code as before to ask BuildingMOTIF if the model is now valid:</p>
 <div class="cell docutils container">
@@ -734,6 +787,18 @@ For example, asking for all the entities which have failed validation:</p>
 <span class="k">for</span> <span class="n">uri</span><span class="p">,</span> <span class="n">diffset</span> <span class="ow">in</span> <span class="n">validation_result</span><span class="o">.</span><span class="n">diffset</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">diff</span> <span class="ow">in</span> <span class="n">diffset</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">diff</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:48:51,460 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (Name: urn:ashrae/g36). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:48:51,467 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+ - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Supply_Fan
 </pre></div>
 </div>
 </div>
@@ -798,6 +863,33 @@ Let’s use the same process above to get templates we can fill out to repair th
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:48:52,926 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (Name: urn:ashrae/g36). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:48:52,932 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+@prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+[] a sh:ValidationReport ;
+    sh:conforms false ;
+    sh:result [ a sh:ValidationResult ;
+            sh:focusNode &lt;urn:my_site_constraints/&gt; ;
+            sh:resultMessage &quot;Not the right number 1 of instances of https://brickschema.org/schema/Brick#Supply_Fan&quot;,
+                &quot;need 1 supply fan&quot; ;
+            sh:resultSeverity sh:Violation ;
+            sh:sourceConstraintComponent &lt;https://nrel.gov/BuildingMOTIF/constraints#countConstraintComponent&gt; ;
+            sh:sourceShape &lt;urn:my_site_constraints/fan-count&gt; ;
+            sh:value &lt;urn:my_site_constraints/&gt; ] .
+
+
+ - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Supply_Fan
+</pre></div>
+</div>
+</div>
 </div>
 <p>Success! The model is valid with respect to the targeted use case, i.e. the model can support the high-performance sequences of operation for single zone VAV AHUs from ASHRAE Guideline 36. Let’s take a look at the validated model and save it for use in future tutorials.</p>
 <div class="cell docutils container">
@@ -807,6 +899,79 @@ Let’s use the same process above to get templates we can fill out to repair th
 
 <span class="c1">#save model</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial3_model.ttl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix bldg: &lt;urn:ex/&gt; .
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix vav48: &lt;urn:ashrae/g36/4.8/sz-vav-ahu/&gt; .
+
+&lt;urn:bldg/&gt; a owl:Ontology ;
+    rdfs:comment &quot;This is a test model for a simple building&quot; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
+    brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt;,
+        &lt;urn:bldg/name_7d8d3642&gt; ;
+    brick:hasPoint &lt;urn:bldg/Core_ZN-PSC_AC-CCmd&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-FilterDPS&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-HCmd&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-MAT&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-OAT&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-RAT&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-SAT&gt;,
+        &lt;urn:bldg/zone-temp&gt; .
+
+bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-CCmd&gt; a brick:Cooling_Command .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-FilterDPS&gt; a brick:Filter_Differential_Pressure_Sensor .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-HCmd&gt; a brick:Heating_Command .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; a brick:Heating_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-MAT&gt; a brick:Mixed_Air_Temperature_Sensor .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-OAT&gt; a brick:Outside_Air_Temperature_Sensor .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt; a brick:Outside_Damper ;
+    brick:hasPoint &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; a brick:Damper_Position_Command .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-RAT&gt; a brick:Return_Air_Temperature_Sensor .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-SAT&gt; a brick:Supply_Air_Temperature_Sensor .
+
+&lt;urn:bldg/name_7d8d3642&gt; a brick:Supply_Fan,
+        vav48:sa-fan ;
+    brick:hasPoint &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt;,
+        &lt;urn:bldg/p138_ff9a1fc0&gt;,
+        &lt;urn:bldg/p139_bdfd7a7f&gt; .
+
+&lt;urn:bldg/p138_ff9a1fc0&gt; a brick:Frequency_Command .
+
+&lt;urn:bldg/p139_bdfd7a7f&gt; a brick:Start_Stop_Command .
+
+&lt;urn:bldg/zone-temp&gt; a brick:Zone_Air_Temperature_Sensor .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Fan_Status,
+        brick:Supply_Fan .
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=f6b4ff25-d6b3-4e99-bc92-ebf7127e41aa (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -910,7 +1075,7 @@ By NREL
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2025.
       <br/>
     
   </p>

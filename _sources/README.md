@@ -17,32 +17,6 @@ Currently, ***BuildingMOTIF*** is planned to support [Brick](https://brickschema
 
 # Documentation
 
-The documentation uses Diataxis[^1] as a framework for its structure, which is organized into the following sections.
+[Documentation](https://buildingmotif.readthedocs.io/) is organized into sections for *References*, *Tutorials*, *Guides*, and *Explanations* following the framework Diataxis[^1].
 
 [^1]: https://diataxis.fr/
-
-## Reference
-
-- [Developer Documentation](https://nrel.github.io/BuildingMOTIF/reference/developer_documentation.html)
-- [Command Line Interface](https://nrel.github.io/BuildingMOTIF/reference/cli_tool.html)
-- [Code Documentation](https://nrel.github.io/BuildingMOTIF/reference/apidoc/index.html)
-
-## Tutorials
-
-- [Model Creation](https://nrel.github.io/BuildingMOTIF/tutorials/model_creation.html)
-- [Model Validation](https://nrel.github.io/BuildingMOTIF/tutorials/model_validation.html)
-- [Model Correction](https://nrel.github.io/BuildingMOTIF/tutorials/model_correction.html)
-- [Template Writing](https://nrel.github.io/BuildingMOTIF/tutorials/template_writing.html)
-
-## Guides
-
-- [CSV Import](https://nrel.github.io/BuildingMOTIF/guides/csv-import.html)
-- [Brick model from BACnet network guide](https://nrel.github.io/BuildingMOTIF/guides/bacnet-to-brick.html)
-
-## Explanations
-
-- [Ingresses](https://nrel.github.io/BuildingMOTIF/explainations/ingresses.html)
-
-## Appendix
-
-- [Bibiography](https://nrel.github.io/BuildingMOTIF/bibliography.html)

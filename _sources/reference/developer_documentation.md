@@ -3,7 +3,7 @@
 ## Installing
 
 1. Install prerequisites:
-   - [Python >= 3.8.0](https://www.python.org/downloads/)
+   - [Python >= 3.10.0, < 3.13](https://www.python.org/downloads/)
    - [Poetry 1.4.0](https://python-poetry.org/docs/#installation)
 2. Clone this repository.
 3. Change directory to the new `/BuildingMOTIF` directory.
@@ -15,7 +15,7 @@
    ```
 5. Install dependencies and pre-commit.
     ```
-    poetry install --with dev  # includes development dependencies
+    poetry install --with dev # includes development dependencies
     poetry run pre-commit install
     ```
 
@@ -68,8 +68,8 @@ pre-commit run -a
 
 Pre-commit commands can be run individually with the following commands. Configuration of `isort`, `black`, and `mypy` are done in [pyproject.toml](https://github.com/NREL/BuildingMOTIF/blob/develop/pyproject.toml) and configuration of `flake8` is done in [.flake8](https://github.com/NREL/BuildingMOTIF/blob/develop/.flake8).
 ```
-poetry run isort
-poetry run black
+poetry run isort .
+poetry run black .
 poetry run flake8 buildingmotif
 poetry run mypy --install-types --non-interactive --ignore-missing-imports
 ```

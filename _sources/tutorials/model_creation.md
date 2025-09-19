@@ -85,7 +85,7 @@ Currently, libraries in `../../buildingmotif/libraries/` are *included* and libr
 ```{code-cell}
 # load a library
 from buildingmotif.dataclasses import Library
-brick = Library.load(ontology_graph="../../libraries/brick/Brick-full.ttl")
+brick = Library.load(ontology_graph="../../libraries/brick/Brick-subset.ttl")
 
 # print the first 10 templates
 print("The Brick library contains the following templates:")
@@ -120,7 +120,7 @@ You should not load ontologies, schemas, rules, etc. into a Model. These belong 
 
 It is also possible to import RDF graphs into a `Model`.
 
-If you already have an in-memory `RDFlib.Graph` object available (e.g. through an [Graph Ingress](/guides/ingresses) or loading in a Turtle file), just use `Model.add_graph`:
+If you already have an in-memory `RDFlib.Graph` object available (e.g. through an [Graph Ingress](../explanations/ingresses) or loading in a Turtle file), just use `Model.add_graph`:
 
 ```{code-cell}
 import rdflib

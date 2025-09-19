@@ -119,9 +119,6 @@ const thebe_selector_output = ".output, .cell_output"
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-<aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
-</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -577,7 +574,7 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># load a library</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">buildingmotif.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
-<span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-full.ttl&quot;</span><span class="p">)</span>
+<span class="n">brick</span> <span class="o">=</span> <span class="n">Library</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">ontology_graph</span><span class="o">=</span><span class="s2">&quot;../../libraries/brick/Brick-subset.ttl&quot;</span><span class="p">)</span>
 
 <span class="c1"># print the first 10 templates</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The Brick library contains the following templates:&quot;</span><span class="p">)</span>
@@ -592,18 +589,16 @@ document.write(`
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The Brick library contains the following templates:
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  - https://brickschema.org/schema/Brick#Effective_Room_Air_Temperature_Setpoint
-  - https://brickschema.org/schema/Brick#Low_Battery_Alarm
-  - https://brickschema.org/schema/Brick#Supply_Air_Velocity_Pressure_Sensor
-  - https://brickschema.org/schema/Brick#Computer_Room_Air_Handler
-  - https://brickschema.org/schema/Brick#Luminous_IntensityShape
-  - https://brickschema.org/schema/Brick#Compressor
-  - https://brickschema.org/schema/Brick#Exhaust_Air_Stack_Flow_Integral_Time_Parameter
-  - https://brickschema.org/schema/Brick#Cooling_Supply_Air_Flow_Setpoint
-  - https://brickschema.org/schema/Brick#Security_Service_Room
-  - https://brickschema.org/schema/Brick#Entering_Chilled_Water_Temperature_Setpoint
+  - https://brickschema.org/schema/Brick#Max_Discharge_Air_Temperature_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Fresh_Air_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Discharge_Air_Temperature_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Min_Supply_Air_Temperature_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Exhaust_Air_Stack_Flow_Deadband_Setpoint
+  - https://brickschema.org/schema/Brick#Max_Air_Flow_Setpoint_Limit
+  - https://brickschema.org/schema/Brick#Point
+  - https://brickschema.org/schema/Brick#Contact_Sensor
+  - https://brickschema.org/schema/Brick#Chilled_Water_Differential_Pressure_Proportional_Band_Parameter
+  - https://brickschema.org/schema/Brick#Enable_Hot_Water_System_Outside_Air_Temperature_Setpoint
 </pre></div>
 </div>
 </div>
@@ -627,7 +622,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=bc130d2c-d672-494c-ae91-0c6302b3bbd1 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=c4097d05-ff9d-4134-98df-3f3ce8b48e21 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -643,7 +638,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </aside>
 <p>It is also possible to import RDF graphs into a <code class="docutils literal notranslate"><span class="pre">Model</span></code>.</p>
-<p>If you already have an in-memory <code class="docutils literal notranslate"><span class="pre">RDFlib.Graph</span></code> object available (e.g. through an <span class="xref myst">Graph Ingress</span> or loading in a Turtle file), just use <code class="docutils literal notranslate"><span class="pre">Model.add_graph</span></code>:</p>
+<p>If you already have an in-memory <code class="docutils literal notranslate"><span class="pre">RDFlib.Graph</span></code> object available (e.g. through an <a class="reference internal" href="../explanations/ingresses.html"><span class="doc std std-doc">Graph Ingress</span></a> or loading in a Turtle file), just use <code class="docutils literal notranslate"><span class="pre">Model.add_graph</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">rdflib</span>
@@ -673,7 +668,7 @@ BuildingMOTIF supports adding <em>individual triples</em> to models as well as <
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=bc130d2c-d672-494c-ae91-0c6302b3bbd1 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=c4097d05-ff9d-4134-98df-3f3ce8b48e21 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -919,7 +914,7 @@ bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=bc130d2c-d672-494c-ae91-0c6302b3bbd1 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=c4097d05-ff9d-4134-98df-3f3ce8b48e21 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -1046,7 +1041,7 @@ By NREL
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2025.
       <br/>
     
   </p>

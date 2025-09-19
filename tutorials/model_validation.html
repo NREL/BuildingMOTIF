@@ -119,9 +119,6 @@ const thebe_selector_output = ".output, .cell_output"
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
-<aside class="bd-header-announcement" aria-label="Announcement">
-  <div class="bd-header-announcement__content">⚠️ This is an BETA release for testing purposes only ⚠️</div>
-</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -561,9 +558,6 @@ The <code class="docutils literal notranslate"><span class="pre">constraints.ttl
   warn(Warning(f&quot;Extra \&quot;{extra_name}\&quot; is not satisfied because requirement {req} is not installed.&quot;))
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:34:31,906 | root |  WARNING: An ontology could not resolve a dependency on https://brickschema.org/schema/1.4/Brick (Name: https://brickschema.org/schema/1.4/Brick). Check this is loaded into BuildingMOTIF
-</pre></div>
-</div>
 </div>
 </div>
 </section>
@@ -606,7 +600,7 @@ Here is the header of a manifest file. This should also suffice for most of your
 @<span class="nv">prefix</span><span class="w"> </span>:<span class="w"> </span><span class="o">&lt;</span><span class="nv">urn</span>:<span class="nv">my_site_constraints</span><span class="o">/&gt;</span><span class="w"> </span>.
 
 :<span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">owl</span>:<span class="nv">Ontology</span><span class="w"> </span><span class="c1">;</span>
-<span class="w">    </span><span class="nv">owl</span>:<span class="nv">imports</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">brickschema</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">schema</span><span class="o">/</span><span class="mi">1</span>.<span class="mi">3</span><span class="o">/</span><span class="nv">Brick</span><span class="o">&gt;</span>,
+<span class="w">    </span><span class="nv">owl</span>:<span class="nv">imports</span><span class="w"> </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">brickschema</span>.<span class="nv">org</span><span class="o">/</span><span class="nv">schema</span><span class="o">/</span><span class="mi">1</span>.<span class="mi">4</span><span class="o">/</span><span class="nv">Brick</span><span class="o">&gt;</span>,
 <span class="w">                </span><span class="o">&lt;</span><span class="nv">https</span>:<span class="o">//</span><span class="nv">nrel</span>.<span class="nv">gov</span><span class="o">/</span><span class="nv">BuildingMOTIF</span><span class="o">/</span><span class="nv">constraints</span><span class="o">&gt;</span>,
 <span class="w">                </span><span class="o">&lt;</span><span class="nv">urn</span>:<span class="nv">ashrae</span><span class="o">/</span><span class="nv">g36</span><span class="o">&gt;</span><span class="w"> </span>.
 </pre></div>
@@ -679,7 +673,7 @@ Here is the header of a manifest file. This should also suffice for most of your
 <span class="s2">@prefix : &lt;urn:my_site_constraints/&gt; .</span>
 
 <span class="s2">: a owl:Ontology ;</span>
-<span class="s2">    owl:imports &lt;https://brickschema.org/schema/1.3/Brick&gt;,</span>
+<span class="s2">    owl:imports &lt;https://brickschema.org/schema/1.4/Brick&gt;,</span>
 <span class="s2">                &lt;https://nrel.gov/BuildingMOTIF/constraints&gt;,</span>
 <span class="s2">                &lt;urn:ashrae/g36&gt; .</span>
 
@@ -734,7 +728,7 @@ the most common use case, so this is treated specially in BuildingMOTIF.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:34:34,027 | root |  WARNING: An ontology could not resolve a dependency on urn:ashrae/g36 (Name: urn:ashrae/g36). Check this is loaded into BuildingMOTIF
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:49:05,131 | root |  WARNING: An ontology could not resolve a dependency on urn:ashrae/g36 (Name: urn:ashrae/g36). Check this is loaded into BuildingMOTIF
 </pre></div>
 </div>
 </div>
@@ -760,86 +754,15 @@ to load in the Brick and Guideline36 libraries at the top of this tutorial.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:34:34,260 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (Name: urn:ashrae/g36). Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:49:05,371 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (Name: urn:ashrae/g36). Trying shape collections
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:34:34,266 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:49:05,377 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:34:34,366 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of https://brickschema.org/schema/1.4/Brick from Libraries (Name: https://brickschema.org/schema/1.4/Brick). Trying shape collections
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-06-16 23:34:34,374 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of https://brickschema.org/schema/1.4/Brick from Libraries. Trying shape collections
-</pre></div>
-</div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">Exception</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">validation_result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model is valid? </span><span class="si">{</span><span class="n">validation_result</span><span class="o">.</span><span class="n">valid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># print reasons</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/model.py:218,</span> in <span class="ni">Model.validate</span><span class="nt">(self, shape_collections, error_on_missing_imports, shacl_engine)</span>
-<span class="g g-Whitespace">    </span><span class="mi">194</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Validates this model against the given list of ShapeCollections.</span>
-<span class="g g-Whitespace">    </span><span class="mi">195</span><span class="sd"> If no list is provided, the model will be validated against the model&#39;s &quot;manifest&quot;.</span>
-<span class="g g-Whitespace">    </span><span class="mi">196</span><span class="sd"> If a list of shape collections is provided, the manifest will *not* be automatically</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">215</span><span class="sd"> :rtype: ValidationContext</span>
-<span class="g g-Whitespace">    </span><span class="mi">216</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">217</span> <span class="n">compiled_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">shape_collections</span> <span class="ow">or</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_manifest</span><span class="p">()])</span>
-<span class="ne">--&gt; </span><span class="mi">218</span> <span class="k">return</span> <span class="n">compiled_model</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">error_on_missing_imports</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/compiled_model.py:145,</span> in <span class="ni">CompiledModel.validate</span><span class="nt">(self, error_on_missing_imports)</span>
-<span class="g g-Whitespace">    </span><span class="mi">143</span> <span class="c1"># aggregate shape graphs</span>
-<span class="g g-Whitespace">    </span><span class="mi">144</span> <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape_collections</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">145</span>     <span class="n">shapeg</span> <span class="o">+=</span> <span class="n">sc</span><span class="o">.</span><span class="n">resolve_imports</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">146</span>         <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span>
-<span class="g g-Whitespace">    </span><span class="mi">147</span>     <span class="p">)</span><span class="o">.</span><span class="n">graph</span>
-<span class="g g-Whitespace">    </span><span class="mi">148</span> <span class="c1"># inline sh:node for interpretability</span>
-<span class="g g-Whitespace">    </span><span class="mi">149</span> <span class="n">shapeg</span> <span class="o">=</span> <span class="n">rewrite_shape_graph</span><span class="p">(</span><span class="n">shapeg</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:137,</span> in <span class="ni">ShapeCollection.resolve_imports</span><span class="nt">(self, recursive_limit, error_on_missing_imports)</span>
-<span class="g g-Whitespace">    </span><span class="mi">120</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Resolves `owl:imports` to as many levels as requested.</span>
-<span class="g g-Whitespace">    </span><span class="mi">121</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">122</span><span class="sd"> By default, all `owl:imports` are recursively resolved. This limit can</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">134</span><span class="sd"> :rtype: ShapeCollection</span>
-<span class="g g-Whitespace">    </span><span class="mi">135</span><span class="sd"> &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">136</span> <span class="n">resolved_namespaces</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">rdflib</span><span class="o">.</span><span class="n">URIRef</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">137</span> <span class="n">resolved</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">138</span>     <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">139</span>     <span class="n">recursive_limit</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">140</span>     <span class="n">resolved_namespaces</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">141</span>     <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">142</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">143</span> <span class="n">new_sc</span> <span class="o">=</span> <span class="n">ShapeCollection</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">144</span> <span class="n">new_sc</span><span class="o">.</span><span class="n">add_graph</span><span class="p">(</span><span class="n">resolved</span><span class="p">)</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:577,</span> in <span class="ni">_resolve_imports</span><span class="nt">(graph, recursive_limit, seen, error_on_missing_imports)</span>
-<span class="g g-Whitespace">    </span><span class="mi">574</span>             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">575</span>         <span class="k">continue</span>
-<span class="ne">--&gt; </span><span class="mi">577</span>     <span class="n">dependency</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">578</span>         <span class="n">sc_to_add</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">579</span>         <span class="n">recursive_limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">580</span>         <span class="n">seen</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">581</span>         <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">582</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">583</span>     <span class="n">new_g</span> <span class="o">+=</span> <span class="n">dependency</span>
-<span class="g g-Whitespace">    </span><span class="mi">584</span> <span class="k">return</span> <span class="n">new_g</span>
-
-<span class="nn">File ~/work/BuildingMOTIF/BuildingMOTIF/buildingmotif/dataclasses/shape_collection.py:574,</span> in <span class="ni">_resolve_imports</span><span class="nt">(graph, recursive_limit, seen, error_on_missing_imports)</span>
-<span class="g g-Whitespace">    </span><span class="mi">572</span> <span class="k">if</span> <span class="n">sc_to_add</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">573</span>     <span class="k">if</span> <span class="n">error_on_missing_imports</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">574</span>         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not resolve import of </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ontology</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">575</span>     <span class="k">continue</span>
-<span class="g g-Whitespace">    </span><span class="mi">577</span> <span class="n">dependency</span> <span class="o">=</span> <span class="n">_resolve_imports</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">578</span>     <span class="n">sc_to_add</span><span class="o">.</span><span class="n">graph</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">579</span>     <span class="n">recursive_limit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">580</span>     <span class="n">seen</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">581</span>     <span class="n">error_on_missing_imports</span><span class="o">=</span><span class="n">error_on_missing_imports</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">582</span> <span class="p">)</span>
-
-<span class="ne">Exception</span>: (&#39;Could not resolve import of %s&#39;, rdflib.term.URIRef(&#39;https://brickschema.org/schema/1.4/Brick&#39;))
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+None
+ - Graph did not have 1 instances of https://brickschema.org/schema/Brick#Heating_Coil
 </pre></div>
 </div>
 </div>
@@ -894,6 +817,42 @@ will use these shape collections to validate the model <em>instead of</em> the m
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@prefix bldg: &lt;urn:ex/&gt; .
+@prefix brick: &lt;https://brickschema.org/schema/Brick#&gt; .
+@prefix owl: &lt;http://www.w3.org/2002/07/owl#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+
+&lt;urn:bldg/&gt; a owl:Ontology ;
+    rdfs:comment &quot;This is a test model for a simple building&quot; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC&gt; a brick:AHU ;
+    brick:hasPart &lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt;,
+        &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt; ;
+    brick:hasPoint &lt;urn:bldg/zone-temp&gt; .
+
+bldg:Core_ZN-PSC_AC a brick:Air_Handler_Unit .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Clg_Coil&gt; a brick:Cooling_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Damper&gt; a brick:Damper .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Fan&gt; a brick:Supply_Fan .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-Htg_Coil&gt; a brick:Heating_Coil .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamper&gt; a brick:Outside_Damper ;
+    brick:hasPoint &lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; .
+
+&lt;urn:bldg/Core_ZN-PSC_AC-OutsideDamperPosition&gt; a brick:Damper_Position_Command .
+
+&lt;urn:bldg/zone-temp&gt; a brick:Zone_Air_Temperature_Sensor .
+</pre></div>
+</div>
+</div>
 </div>
 <p>We can see that the heating coil was added to the model and connected to the AHU so let’s check if the manifest validation failure was fixed.</p>
 <div class="cell docutils container">
@@ -906,6 +865,17 @@ will use these shape collections to validate the model <em>instead of</em> the m
     <span class="nb">print</span><span class="p">(</span><span class="n">entity</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">reason</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:49:06,820 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (Name: urn:ashrae/g36). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:49:06,825 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? True
 </pre></div>
 </div>
 </div>
@@ -927,6 +897,25 @@ will use these shape collections to validate the model <em>instead of</em> the m
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu
+urn:ashrae/g36/4.4/dual-duct-terminal-unit-with-inlet-sensors/terminal-unit
+urn:ashrae/g36/4.5/dual-duct-terminal-unit-with-discharge/terminal-unit
+urn:ashrae/g36/4.6/mz-vav-ahu/AHU
+urn:ashrae/g36/4.6/mz-vav-ahu/supply-fan
+urn:ashrae/g36/4.6/mz-vav-ahu/return-damper
+urn:ashrae/g36/4.6/mz-vav-ahu/heating-coil
+urn:ashrae/g36/4.6/mz-vav-ahu/cooling-coil
+urn:ashrae/g36/4.3/fan-powered/terminal-unit
+urn:ashrae/g36/4.3/fan-powered/fan
+urn:ashrae/g36/4.3/fan-powered/damper
+urn:ashrae/g36/4.2/vav-with-reheat/vav-with-reheat
+urn:ashrae/g36/components/cooling_damper
+urn:ashrae/g36/components/heating_damper
+urn:ashrae/g36/4.1/vav-cooling-only/vav-cooling-only
+</pre></div>
+</div>
+</div>
 </div>
 <p>The model represents the Small Office Commercial Prototype Building model, which has single zone packaged AHUs, so we’re interested in validating it against Section 4.8 of Guideline 36 for single zone variable air volume (VAV) AHUs.</p>
 <p>Let’s update our manifest to include the requirement that AHUs must match the “single zone AHU” shape from G36:</p>
@@ -941,6 +930,11 @@ will use these shape collections to validate the model <em>instead of</em> the m
 <span class="s2">    sh:targetClass brick:AHU ;</span>
 <span class="s2">    sh:node &lt;urn:ashrae/g36/4.8/sz-vav-ahu/sz-vav-ahu&gt; .</span>
 <span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=4751f964-24f7-4e41-a3bb-72ddbb62c00f (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -974,6 +968,17 @@ print(f"Model is valid? {validation_result.valid}")
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:49:08,248 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries (Name: urn:ashrae/g36). Trying shape collections
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2025-09-19 17:49:08,254 | buildingmotif.dataclasses.shape_collection |  WARNING: Could not resolve import of urn:ashrae/g36 from Libraries. Trying shape collections
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is valid? False
+</pre></div>
+</div>
+</div>
 </div>
 <p>The AHU fails validation because it doesn’t match the <code class="docutils literal notranslate"><span class="pre">sz-vav-ahu-control-sequences</span></code> requirements.
 Take a look at the first bit of output, which is the official SHACL validation report text format. This can be difficult to interpret without a background in SHACL, so BuildingMOTIF provides a more easily understood version of the same information.</p>
@@ -984,6 +989,63 @@ Take a look at the first bit of output, which is the official SHACL validation r
 
 <span class="c1"># separator</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">79</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Validation Report
+Conforms: False
+Results (8):
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/592c715d&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/996d0a0c&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/d28f1273&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/cf4e630d&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/4c4c4734&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPart
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/b6e26d47&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/d6c32548&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/b18385ae&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/2b1f938d&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/e3a73fec&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/ecc61f90&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/6c2e74c5&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/c393428e&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/c550e737&gt;
+Constraint Violation in QualifiedValueShapeConstraintComponent (http://www.w3.org/ns/shacl#QualifiedMinCountConstraintComponent):
+	Severity: sh:Violation
+	Source Shape: &lt;urn:well-known/3a1c0798&gt;
+	Focus Node: &lt;urn:bldg/Core_ZN-PSC_AC&gt;
+	Result Path: brick:hasPoint
+	Message: Focus node does not conform to shape MinCount 1 MaxCount 1: &lt;urn:well-known/03a80bd6&gt;
+
+-------------------------------------------------------------------------------
 </pre></div>
 </div>
 </div>
@@ -1000,6 +1062,20 @@ Take a look at the first bit of output, which is the official SHACL validation r
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Model is invalid for these reasons:
+urn:bldg/Core_ZN-PSC_AC
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of ns1:sa-fan on path https://brickschema.org/schema/Brick#hasPart
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Heating_Command on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Return_Air_Temperature_Sensor on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Supply_Air_Temperature_Sensor on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Filter_Differential_Pressure_Sensor on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Mixed_Air_Temperature_Sensor on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Cooling_Command on path brick:hasPoint
+ - urn:bldg/Core_ZN-PSC_AC expected 1 instance(s) of brick:Outside_Air_Temperature_Sensor on path brick:hasPoint
+</pre></div>
+</div>
+</div>
 </div>
 <p>The model is failing because the AHU doesn’t have the required points. We could find those templates manually, evaluate them, and add the resulting graphs to the model. However, this can be a bit
 tedious. To address this issue, BuildingMOTIF can find those templates automatically for us. We’ll cover this feature in the next tutorial so let’s save the model.</p>
@@ -1007,6 +1083,11 @@ tedious. To address this issue, BuildingMOTIF can find those templates automatic
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#save model</span>
 <span class="n">model</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="s2">&quot;tutorial2_model.ttl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Graph identifier=091b36fb-9d02-441f-ab79-d85969af5730 (&lt;class &#39;rdflib.graph.Graph&#39;&gt;)&gt;
 </pre></div>
 </div>
 </div>
@@ -1126,7 +1207,7 @@ By NREL
 
   <p class="copyright">
     
-      © Copyright 2023.
+      © Copyright 2025.
       <br/>
     
   </p>
