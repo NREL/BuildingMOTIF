@@ -1,11 +1,12 @@
 import pytest
 from rdflib import Graph, Literal, Namespace, URIRef
-from rdflib.compare import graph_diff, isomorphic, to_isomorphic
+from rdflib.compare import isomorphic
+from rdflib.exceptions import ParserError
 from rdflib.namespace import FOAF
 
 from buildingmotif import BuildingMOTIF
 from buildingmotif.dataclasses import Library, Model, ValidationContext
-from buildingmotif.namespaces import BRICK, RDF, RDFS, SH, A
+from buildingmotif.namespaces import BRICK, OWL, RDF, RDFS, SH, A
 
 BLDG = Namespace("urn:building/")
 
@@ -42,6 +43,53 @@ def test_load_model(clean_building_motif):
     assert result.name == m.name
     assert result.description == m.description
     assert isomorphic(result.graph, m.graph)
+
+
+def test_from_file_no_ontology_declaration(clean_building_motif):
+    # this should fail because the file does not declare an ontology
+    with pytest.raises(ValueError):
+        Model.from_file("tests/unit/fixtures/smallOffice_brick.ttl")
+
+
+def test_from_file(clean_building_motif):
+    # Create a model from a file
+    model = Model.from_file("tests/unit/fixtures/from_file_test.ttl")
+
+    assert isinstance(model, Model)
+    assert model.name == "https://example.com"
+    assert model.description == "This is an example graph"
+    assert len(model.graph) == 2
+
+
+def test_from_file_weird_extensions(clean_building_motif):
+    # Create a model from a file. the from_file_test.xyz is a turtle-formatted file
+    # so even though the extension is .xyz, it should still be able to parse it
+    # because rdflib defaults to turtle if it can't determine the format from the extension
+    model = Model.from_file("tests/unit/fixtures/from_file_test.xyz")
+
+    assert isinstance(model, Model)
+    assert model.name == "https://example.com"
+    assert model.description == "This is an example graph"
+    assert len(model.graph) == 2
+
+    # guesses 'turtle' because xmlbadext is not a valid extension
+    with pytest.raises(ParserError):
+        model = Model.from_file("tests/unit/fixtures/from_file_test.xmlbadext")
+
+
+def test_from_graph(clean_building_motif):
+    # Create a graph
+    g = Graph()
+    g.add((URIRef("https://example.com"), RDF.type, OWL.Ontology))
+    g.add((URIRef("https://example.com"), RDFS.comment, Literal("Example description")))
+
+    # Create a model from the graph
+    model = Model.from_graph(g)
+
+    assert isinstance(model, Model)
+    assert model.name == "https://example.com"
+    assert model.description == "Example description"
+    assert len(model.graph) == 2
 
 
 def test_update_model_manifest(clean_building_motif):
@@ -212,7 +260,9 @@ def test_model_compile(bm: BuildingMOTIF, shacl_engine):
         "tests/unit/fixtures/smallOffice_brick.ttl", format="ttl"
     )
 
-    brick = Library.load(ontology_graph="libraries/brick/Brick-full.ttl")
+    brick = Library.load(
+        ontology_graph="libraries/brick/Brick-full.ttl", infer_templates=False
+    )
 
     compiled_model = small_office_model.compile([brick.get_shape_collection()])
 
@@ -220,10 +270,8 @@ def test_model_compile(bm: BuildingMOTIF, shacl_engine):
         "tests/unit/fixtures/smallOffice_brick_compiled.ttl", format="ttl"
     )
 
-    # returns in_both, in_first, in_second
-    _, in_first, _ = graph_diff(
-        to_isomorphic(precompiled_model), to_isomorphic(compiled_model)
-    )
+    in_first = precompiled_model - compiled_model.graph
+
     # passes if everything from precompiled_model is in compiled_model
     assert len(in_first) == 0
 

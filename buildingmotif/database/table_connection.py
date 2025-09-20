@@ -1,17 +1,23 @@
 import logging
 import uuid
 from functools import lru_cache
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import NoResultFound
 
+from buildingmotif.database.errors import (
+    LibraryNotFound,
+    ModelNotFound,
+    ShapeCollectionNotFound,
+    TemplateNotFound,
+)
 from buildingmotif.database.tables import (
     DBLibrary,
     DBModel,
     DBShapeCollection,
     DBTemplate,
-    DepsAssociation,
+    DBTemplateDependency,
 )
 
 
@@ -76,7 +82,10 @@ class TableConnection:
         :return: DBModel
         :rtype: DBModel
         """
-        db_model = self.bm.session.query(DBModel).filter(DBModel.id == id).one()
+        try:
+            db_model = self.bm.session.query(DBModel).filter(DBModel.id == id).one()
+        except NoResultFound:
+            raise ModelNotFound(idnum=id)
         return db_model
 
     def get_db_model_by_name(self, name: str) -> DBModel:
@@ -157,11 +166,14 @@ class TableConnection:
         :return: DBShapeCollection
         :rtype: DBShapeCollection
         """
-        return (
-            self.bm.session.query(DBShapeCollection)
-            .filter(DBShapeCollection.id == id)
-            .one()
-        )
+        try:
+            return (
+                self.bm.session.query(DBShapeCollection)
+                .filter(DBShapeCollection.id == id)
+                .one()
+            )
+        except NoResultFound:
+            raise ShapeCollectionNotFound(idnum=id)
 
     def delete_db_shape_collection(self, id: int) -> None:
         """Delete database shape collection.
@@ -169,12 +181,7 @@ class TableConnection:
         :param id: id of deleted DBShapeCollection
         :type id: int
         """
-        db_shape_collection = (
-            self.bm.session.query(DBShapeCollection)
-            .filter(DBShapeCollection.id == id)
-            .one()
-        )
-
+        db_shape_collection = self.get_db_shape_collection(id)
         self.bm.session.delete(db_shape_collection)
 
     # library functions
@@ -216,7 +223,12 @@ class TableConnection:
         :return: DBLibrary
         :rtype: DBLibrary
         """
-        db_library = self.bm.session.query(DBLibrary).filter(DBLibrary.id == id).one()
+        try:
+            db_library = (
+                self.bm.session.query(DBLibrary).filter(DBLibrary.id == id).one()
+            )
+        except NoResultFound:
+            raise LibraryNotFound(idnum=id)
         return db_library
 
     def get_db_library_by_name(self, name: str) -> DBLibrary:
@@ -227,7 +239,10 @@ class TableConnection:
         :return: DBLibrary
         :rtype: DBLibrary
         """
-        return self.bm.session.query(DBLibrary).filter(DBLibrary.name == name).one()
+        try:
+            return self.bm.session.query(DBLibrary).filter(DBLibrary.name == name).one()
+        except NoResultFound:
+            raise LibraryNotFound(name=name)
 
     def update_db_library_name(self, id: int, name: str) -> None:
         """Update database library name.
@@ -272,7 +287,7 @@ class TableConnection:
         template = DBTemplate(
             name=name,
             body_id=str(uuid.uuid4()),
-            optional_args=[],
+            optional_args=[],  # type: ignore
             library=library,
         )
 
@@ -298,9 +313,12 @@ class TableConnection:
         :return: DBTemplate
         :rtype: DBTemplate
         """
-        db_template = (
-            self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
-        )
+        try:
+            db_template = (
+                self.bm.session.query(DBTemplate).filter(DBTemplate.id == id).one()
+            )
+        except NoResultFound:
+            raise TemplateNotFound(idnum=id)
         return db_template
 
     def get_db_template_by_name(self, name: str) -> DBTemplate:
@@ -316,7 +334,7 @@ class TableConnection:
                 self.bm.session.query(DBTemplate).filter(DBTemplate.name == name).one()
             )
         except NoResultFound:
-            raise NoResultFound(f"No template found with name {name}")
+            raise TemplateNotFound(name=name)
         return db_template
 
     def get_library_defining_db_template(self, id: int) -> DBLibrary:
@@ -329,7 +347,7 @@ class TableConnection:
         """
         return self.get_db_template(id).library
 
-    def get_db_template_dependencies(self, id: int) -> Tuple[DepsAssociation, ...]:
+    def get_db_template_dependencies(self, id: int) -> Tuple[DBTemplateDependency, ...]:
         """Get a template's dependencies and its arguments.
 
         If you don't need the arguments, consider using
@@ -342,11 +360,27 @@ class TableConnection:
         :rtype: tuple[tuple[int, list[str]]]
         """
         db_template_dependencies = tuple(
-            self.bm.session.query(DepsAssociation)
-            .filter(DepsAssociation.dependant_id == id)
+            self.bm.session.query(DBTemplateDependency)
+            .filter(DBTemplateDependency.template_id == id)
             .all()
         )
         return db_template_dependencies
+
+    def get_db_template_dependency(self, id: int) -> Optional[DBTemplateDependency]:
+        """Get template dependency object by its id
+
+        :param id: template dependency id
+        :type id: int
+        :return: the template dependency or None
+        :rtype: Optional[DBTemplateDependency]"""
+        try:
+            return (
+                self.bm.session.query(DBTemplateDependency)
+                .filter(DBTemplateDependency.id == id)
+                .one()
+            )
+        except NoResultFound:
+            return None
 
     def update_db_template_name(self, id: int, name: str) -> None:
         """Update database template name.
@@ -378,7 +412,11 @@ class TableConnection:
         db_template.optional_args = optional_args
 
     def add_template_dependency_preliminary(
-        self, template_id: int, dependency_id: int, args: Dict[str, str]
+        self,
+        template_id: int,
+        dependency_library: str,
+        dependency_template: str,
+        args: Dict[str, str],
     ):
         """Creates a *preliminary* dependency between two templates. This dependency
         is preliminary because the bindings between the dependent/dependency templates
@@ -403,7 +441,7 @@ class TableConnection:
         :raises ValueError: if dependant and dependency template don't share a
         """
         self.logger.debug(
-            f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
+            f"Creating depencency from templates with id: '{template_id}' and target: '{dependency_library}:{dependency_template}'"
         )
         templ = self.get_db_template(template_id)
         if "name" not in args.keys():
@@ -413,14 +451,16 @@ class TableConnection:
         # In the past we had a check here to make sure the two templates were in the same library.
         # This has been removed because it wasn't actually necessary, but we may add it back in
         # in the future.
-        relationship = DepsAssociation(
-            dependant_id=template_id,
-            dependee_id=dependency_id,
-            args=args,
+        relationship = DBTemplateDependency(
+            template_id=template_id,
+            dependency_library_name=dependency_library,
+            dependency_template_name=dependency_template,
+            args=args,  # type: ignore
         )
 
         self.bm.session.add(relationship)
         self.bm.session.flush()
+        self.logger.debug(f"Created Dependency with id: '{relationship.id}'")
 
     def check_all_template_dependencies(self):
         """
@@ -435,7 +475,7 @@ class TableConnection:
                 self.check_template_dependency_relationship(dep)
 
     @lru_cache(maxsize=128)
-    def check_template_dependency_relationship(self, dep: DepsAssociation):
+    def check_template_dependency_relationship(self, dep: DBTemplateDependency):
         """Verify that the dependency between two templates is well-formed. This involves
         a series of checks:
         - existence of the dependent and dependency templates is performed during the
@@ -451,17 +491,17 @@ class TableConnection:
         :raises ValueError: if dependant and dependency template don't share a
             library
         """
-        template_id = dep.dependant_id
-        dependency_id = dep.dependee_id
+        template_id = dep.template_id
         args = dep.args
         self.logger.debug(
-            f"Creating depencency from templates with ids: '{template_id}' and: '{dependency_id}'"
+            f"Creating depencency from templates with ids: '{template_id}' and: '{dep.dependency_template_name}'"
         )
         from buildingmotif.dataclasses import Template
 
         templ = Template.load(template_id)
         params = templ.transitive_parameters
-        dep_templ = Template.load(dependency_id)
+
+        dep_templ = Template.load(dep.dependency_template.id)
         dep_params = dep_templ.transitive_parameters
 
         # check parameters are valid
@@ -502,11 +542,16 @@ class TableConnection:
             f"Deleting depencency from templates with ids: '{template_id}' and: '{dependency_id}'"  # noqa
         )
 
+        dependency_template = self.get_db_template(dependency_id)
+
         relationship = (
-            self.bm.session.query(DepsAssociation)
+            self.bm.session.query(DBTemplateDependency)
             .filter(
-                DepsAssociation.dependant_id == template_id,
-                DepsAssociation.dependee_id == dependency_id,
+                DBTemplateDependency.template_id == template_id,
+                DBTemplateDependency.dependency_library_name
+                == dependency_template.library.name,
+                DBTemplateDependency.dependency_template_name
+                == dependency_template.name,
             )
             .one()
         )

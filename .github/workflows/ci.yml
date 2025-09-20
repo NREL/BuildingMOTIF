@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.10', '3.11', '3.12']
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -62,12 +62,14 @@ jobs:
           virtualenvs-path: ~/.virtualenvs
       - name: poetry install
         run: poetry install --all-extras
+      - name: install pytest-xdist for parallel tests
+        run: poetry run pip install pytest-xdist
       - name: lint
         run: poetry run flake8 buildingmotif
       - name: type check
         run: poetry run mypy --ignore-missing-imports
       - name: unit tests
-        run: poetry run pytest tests/unit --cov=./ --cov-report=xml
+        run: poetry run pytest -n auto tests/unit --cov=./ --cov-report=xml
       - name: build tests
         run: poetry build
 
@@ -101,8 +103,10 @@ jobs:
           virtualenvs-path: ~/.virtualenvs
       - name: poetry install
         run: poetry install --all-extras
+      - name: install pytest-xdist for parallel tests
+        run: poetry run pip install pytest-xdist
       - name: integration tests
-        run: poetry run pytest tests/integration
+        run: poetry run pytest -n auto tests/integration
       - name: bacnet tests
         run: |
           cd tests/integration/fixtures/bacnet
@@ -139,8 +143,10 @@ jobs:
           virtualenvs-path: ~/.virtualenvs
       - name: poetry install
         run: poetry install --all-extras
+      - name: install pytest-xdist for parallel tests
+        run: poetry run pip install pytest-xdist
       - name: library tests
-        run: poetry run pytest tests/library
+        run: poetry run pytest -n auto tests/library
 
   coverage:
     needs: testing

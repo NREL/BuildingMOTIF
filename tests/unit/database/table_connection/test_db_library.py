@@ -1,12 +1,16 @@
 import uuid
 
 import pytest
-from sqlalchemy.exc import NoResultFound
 
+from buildingmotif.database.errors import (
+    LibraryNotFound,
+    ShapeCollectionNotFound,
+    TemplateNotFound,
+)
 from buildingmotif.database.tables import DBLibrary, DBShapeCollection, DBTemplate
 
 
-def test_create_db_library(table_connection, monkeypatch):
+def test_create_db_library(bm, monkeypatch):
     mocked_uuid = uuid.uuid4()
 
     def mockreturn():
@@ -14,7 +18,7 @@ def test_create_db_library(table_connection, monkeypatch):
 
     monkeypatch.setattr(uuid, "uuid4", mockreturn)
 
-    db_library = table_connection.create_db_library(name="my_db_library")
+    db_library = bm.table_connection.create_db_library(name="my_db_library")
 
     assert db_library.name == "my_db_library"
     assert db_library.templates == []
@@ -22,11 +26,11 @@ def test_create_db_library(table_connection, monkeypatch):
     assert db_library.shape_collection.graph_id == str(mocked_uuid)
 
 
-def test_get_db_libraries(table_connection):
-    table_connection.create_db_library(name="my_db_library")
-    table_connection.create_db_library(name="your_db_library")
+def test_get_db_libraries(bm):
+    bm.table_connection.create_db_library(name="my_db_library")
+    bm.table_connection.create_db_library(name="your_db_library")
 
-    db_libraries = table_connection.get_all_db_libraries()
+    db_libraries = bm.table_connection.get_all_db_libraries()
 
     assert len(db_libraries) == 2
     assert all(type(tl) == DBLibrary for tl in db_libraries)
@@ -36,11 +40,11 @@ def test_get_db_libraries(table_connection):
     }
 
 
-def test_get_db_library(table_connection):
-    db_library = table_connection.create_db_library(name="my_library")
-    table_connection.create_db_template("my_db_template", library_id=db_library.id)
+def test_get_db_library(bm):
+    db_library = bm.table_connection.create_db_library(name="my_library")
+    bm.table_connection.create_db_template("my_db_template", library_id=db_library.id)
 
-    db_library = table_connection.get_db_library(id=db_library.id)
+    db_library = bm.table_connection.get_db_library(id=db_library.id)
     assert db_library.name == "my_library"
     assert len(db_library.templates) == 1
     assert type(db_library.templates[0]) == DBTemplate
@@ -48,7 +52,7 @@ def test_get_db_library(table_connection):
 
 
 def test_get_db_library_does_not_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.get_db_library("I don't exist")
 
 
@@ -65,7 +69,7 @@ def test_get_db_library_by_name(table_connection):
 
 
 def test_get_db_library_by_name_not_found(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.get_db_library_by_name("I don't exist")
 
 
@@ -80,7 +84,7 @@ def test_update_db_library_name(table_connection):
 
 
 def test_update_db_library_name_does_not_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.update_db_library_name("I don't exist", "new_name")
 
 
@@ -93,16 +97,16 @@ def test_delete_db_library(table_connection):
 
     table_connection.delete_db_library(db_library.id)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.get_db_library(db_library.id)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(TemplateNotFound):
         table_connection.get_db_template(db_template.id)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(ShapeCollectionNotFound):
         table_connection.get_db_shape_collection(db_shape_collection.id)
 
 
 def tests_delete_db_library_does_does_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(LibraryNotFound):
         table_connection.delete_db_library("does not exist")

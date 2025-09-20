@@ -2,8 +2,8 @@ import uuid
 from unittest import mock
 
 import pytest
-from sqlalchemy.exc import NoResultFound
 
+from buildingmotif.database.errors import ModelNotFound, ShapeCollectionNotFound
 from buildingmotif.database.tables import DBModel, DBShapeCollection
 
 
@@ -24,15 +24,15 @@ def test_create_db_model(mock_uuid4, table_connection):
     assert db_model.manifest.graph_id == str(mocked_manifest_uuid)
 
 
-def test_get_db_models(table_connection):
-    table_connection.create_db_model(
+def test_get_db_models(bm):
+    bm.table_connection.create_db_model(
         name="my_db_model", description="a very good model"
     )
-    table_connection.create_db_model(
+    bm.table_connection.create_db_model(
         name="your_db_model", description="an ok good model"
     )
 
-    db_models = table_connection.get_all_db_models()
+    db_models = bm.table_connection.get_all_db_models()
 
     assert len(db_models) == 2
     assert all(type(m) == DBModel for m in db_models)
@@ -43,13 +43,13 @@ def test_get_db_models(table_connection):
 
 
 @mock.patch("uuid.uuid4")
-def test_get_db_model(mock_uuid4, table_connection):
+def test_get_db_model(mock_uuid4, bm):
     mocked_graph_uuid = uuid.uuid4()
     mocked_manifest_uuid = uuid.uuid4()
     mock_uuid4.side_effect = [mocked_graph_uuid, mocked_manifest_uuid]
 
-    db_model = table_connection.create_db_model(name="my_db_model")
-    db_model = table_connection.get_db_model(id=db_model.id)
+    db_model = bm.table_connection.create_db_model(name="my_db_model")
+    db_model = bm.table_connection.get_db_model(id=db_model.id)
 
     assert db_model.name == "my_db_model"
     assert db_model.graph_id == str(mocked_graph_uuid)
@@ -58,7 +58,7 @@ def test_get_db_model(mock_uuid4, table_connection):
 
 
 def test_get_db_model_does_not_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(ModelNotFound):
         table_connection.get_db_model("I don't exist")
 
 
@@ -73,7 +73,7 @@ def test_update_db_model_name(table_connection):
 
 
 def test_update_db_model_name_does_not_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(ModelNotFound):
         table_connection.update_db_model_name("I don't exist", "new_name")
 
 
@@ -90,7 +90,7 @@ def test_update_db_model_description(table_connection):
 
 
 def test_update_db_model_description_does_not_exist(table_connection):
-    with pytest.raises(NoResultFound):
+    with pytest.raises(ModelNotFound):
         table_connection.update_db_model_description("I don't exist", "new_description")
 
 
@@ -98,13 +98,13 @@ def test_delete_db_model(table_connection):
     db_model = table_connection.create_db_model(name="my_db_model")
     table_connection.delete_db_model(db_model.id)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(ModelNotFound):
         table_connection.get_db_model(db_model.id)
 
-    with pytest.raises(NoResultFound):
+    with pytest.raises(ShapeCollectionNotFound):
         table_connection.get_db_shape_collection(db_model.manifest.id)
 
 
-def tests_delete_db_model_does_does_exist(table_connection):
-    with pytest.raises(NoResultFound):
+def tests_delete_db_model_does_not_exist(table_connection):
+    with pytest.raises(ModelNotFound):
         table_connection.delete_db_model("does not exist")
