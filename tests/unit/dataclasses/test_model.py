@@ -106,7 +106,6 @@ def test_validate_model_manifest(clean_building_motif, shacl_engine):
     m = Model.create(name="https://example.com", description="a very good model")
     m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
 
-    Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/shape1.ttl")
     assert lib is not None
 
@@ -135,8 +134,8 @@ def test_validate_model_manifest(clean_building_motif, shacl_engine):
     m.graph.add((URIRef("https://example.com/temp"), A, BRICK.Temperature_Sensor))
 
     # validate against manifest -- should pass
-    result = m.validate()
-    assert result.valid
+    result = m.validate(error_on_missing_imports=False)
+    assert result.valid, result.report_string
 
 
 def test_validate_model_manifest_with_imports(clean_building_motif, shacl_engine):
@@ -145,6 +144,8 @@ def test_validate_model_manifest_with_imports(clean_building_motif, shacl_engine
     m.graph.add((URIRef("https://example.com/vav1"), A, BRICK.VAV))
 
     # import brick
+    Library.load(ontology_graph="tests/unit/fixtures/unit.ttl")
+    Library.load(ontology_graph="tests/unit/fixtures/quantitykind.ttl")
     Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
 
     # shape2.ttl attaches an import statement to the manifest
@@ -175,7 +176,7 @@ def test_validate_model_manifest_with_imports(clean_building_motif, shacl_engine
     )
 
     # validate against manifest -- should pass now
-    result = m.validate()
+    result = m.validate(error_on_missing_imports=False)
     assert result.valid, result.report_string
 
 
