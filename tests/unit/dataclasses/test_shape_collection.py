@@ -102,6 +102,8 @@ def test_get_shapes_of_domain(clean_building_motif):
 
 def test_shape_collection_resolve_imports(clean_building_motif):
     Library.load(ontology_graph="tests/unit/fixtures/Brick.ttl")
+    Library.load(ontology_graph="tests/unit/fixtures/unit.ttl")
+    Library.load(ontology_graph="tests/unit/fixtures/quantitykind.ttl")
     Library.load(ontology_graph="constraints/constraints.ttl")
     lib = Library.load(ontology_graph="tests/unit/fixtures/shapes/import_test.ttl")
     sc = lib.get_shape_collection()

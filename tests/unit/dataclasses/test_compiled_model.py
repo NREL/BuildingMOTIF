@@ -22,7 +22,7 @@ def test_validate(clean_building_motif_topquadrant):
     ), "Compiled model is not an instance of CompiledModel"
     assert compiled_model.model, "Model is not set in CompiledModel"
 
-    validation_context = compiled_model.validate()
+    validation_context = compiled_model.validate(error_on_missing_imports=False)
     assert validation_context is not None
     assert not validation_context.valid
 

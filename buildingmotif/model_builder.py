@@ -6,7 +6,7 @@ from rdflib.store import Store
 from rdflib.term import Node
 
 from buildingmotif.dataclasses import Library, Template
-from buildingmotif.namespaces import RDF, RDFS
+from buildingmotif.namespaces import PARAM, RDF, RDFS
 
 
 class TemplateBuilderContext(Graph):
@@ -93,6 +93,7 @@ class TemplateWrapper:
         self.template = template
         self.bindings: Dict[str, Node] = {}
         self.ns = ns
+        self.variadic_parameters: set[str] = set()
 
     def __call__(self, **kwargs):
         for k, v in kwargs.items():
@@ -100,7 +101,10 @@ class TemplateWrapper:
         return self
 
     def __getitem__(self, param):
-        if param in self.bindings:
+        if self._is_variadic(param):
+            # use a fresh parameter
+            param = self._get_fresh_variadic(param)
+        elif param in self.bindings:
             return self.bindings[param]
         elif param not in self.template.all_parameters:
             raise KeyError(f"Invalid parameter: {param}")
@@ -110,7 +114,11 @@ class TemplateWrapper:
         return self.bindings[param]
 
     def __setitem__(self, param, value):
-        if param not in self.template.all_parameters:
+        if self._is_variadic(param):
+            # if the parameter is variadic, then we need to
+            # create a new parameter name for each value
+            param = self._get_fresh_variadic(param)
+        elif param not in self.template.all_parameters:
             raise KeyError(f"Invalid parameter: {param}")
         # if value is not a URIRef, Literal or BNode, then put it in the namespace
         if not isinstance(value, (URIRef, Literal, BNode)):
@@ -124,6 +132,82 @@ class TemplateWrapper:
     def parameters(self):
         return self.template.parameters
 
+    def to_variadic(self, parameter: str):
+        """
+        Marks the given parameter as variadic. This means that
+        the parameter can be bound to multiple values. After a parameter
+        has been made variadic, we can refer to any {parameter}{i} parameter name
+        where i is an integer starting from 0.
+
+        Before:
+        t = ctx['junction'](name='my_junc')
+        t['in'] = pumpA['out']
+        t['in'] = pumpB['out'] # this would overwrite the previous value
+
+        After:
+        t = ctx['junction'](name='my_junc')
+        t = t.to_variadic('in')
+        t['in'] = pumpA['out'] # this will create a new parameter 'in0'
+        t['in'] = pumpB['out'] # this will create a new parameter 'in1'
+        """
+        if parameter not in self.template.parameters:
+            raise KeyError(f"Invalid parameter: {parameter}")
+        self.variadic_parameters.add(parameter)
+
+    def _is_variadic(self, parameter: str) -> bool:
+        """
+        Checks if the given parameter is variadic. A variadic parameter
+        can be bound to multiple values.
+
+        :param parameter: The parameter to check
+        :return: True if the parameter is variadic, False otherwise
+        """
+        return (
+            parameter in self.variadic_parameters
+            and parameter in self.template.parameters
+        )
+
+    def _has_variadic_values(self, parameter: str) -> bool:
+        """
+        Checks if the given parameter has any variadic values bound to it.
+        This is used to determine if the parameter can be made variadic.
+
+        :param parameter: The parameter to check
+        :return: True if the parameter has variadic values, False otherwise
+        """
+        if not self._is_variadic(parameter):
+            raise ValueError(f"Parameter {parameter} is not variadic")
+        return any(name.startswith(parameter) for name in self.bindings)
+
+    def _get_fresh_variadic(self, parameter: str) -> str:
+        """
+        returns the smallest parameter{i} that is not bound yet, where i is an integer
+        and parameter is the name of the variadic parameter.
+
+        :param parameter: The name of the variadic parameter
+        :return: an unbound variadic parameter name, e.g. 'in0' or 'out3'
+        """
+        if not self._is_variadic(parameter):
+            raise ValueError(f"Parameter {parameter} is not variadic")
+        i = 0
+        while True:
+            name = f"{parameter}{i}"
+            if name not in self.bindings:
+                break
+            i += 1
+        # now find all tripels in self.template.body that have this parameter
+        # and *duplicate* them with the new name
+        for s, p, o in self.template.body:
+            new_s, new_p, new_o = s, p, o
+            if s == PARAM[parameter]:
+                new_s = PARAM[name]
+            if p == PARAM[parameter]:
+                new_p = PARAM[name]
+            if o == PARAM[parameter]:
+                new_o = PARAM[name]
+            self.template.body.add((new_s, new_p, new_o))
+        return name
+
     def compile(self) -> Graph:
         """
         Compiles the template into a graph. If there are still parameters
@@ -136,8 +220,27 @@ class TemplateWrapper:
         tmp = self.template.evaluate(self.bindings)
         # if this is true, there are still parameters to be bound
         if isinstance(tmp, Template):
+            # remove all variadic_parameters if they have any bindings.
+            # do this by looping through all parameters in the template.
+            # IF any are variadic, then remove all triplets that have the parameter in the subject, predicate or object
+            for param in tmp.parameters:
+                if self._is_variadic(param) and self._has_variadic_values(param):
+                    remove_triples_with_param(tmp.body, param)
             bindings, graph = tmp.fill(self.ns, include_optional=False)
             self.bindings.update(bindings)
             return graph
         else:
             return tmp
+
+
+def remove_triples_with_param(graph: Graph, param: str):
+    """
+    Removes all triples from the graph that have the given parameter
+    in the subject, predicate or object.
+
+    :param graph: The graph to remove triples from
+    :param param: The parameter to remove
+    """
+    for s, p, o in list(graph):
+        if s == PARAM[param] or p == PARAM[param] or o == PARAM[param]:
+            graph.remove((s, p, o))
